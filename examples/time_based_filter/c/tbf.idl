@@ -1,0 +1,4 @@
+struct tbf {
+    long code; //@key
+	long x;
+};
