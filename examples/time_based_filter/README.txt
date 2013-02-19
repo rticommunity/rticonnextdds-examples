@@ -6,7 +6,7 @@ Concept
 -------
 The TIME_BASED_FILTER QosPolicy allows you to specify that data should not be 
 delivered more than once per specified period for data-instances of a 
-DataReaderâ regardless of how fast DataWriters are publishing new samples of the
+DataReader, regardless of how fast DataWriters are publishing new samples of the
 data-instance.
 
 This QoS policy allows you to optimize resource usage (CPU and possibly network 
