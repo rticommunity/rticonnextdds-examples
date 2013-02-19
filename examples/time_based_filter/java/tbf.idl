@@ -1,4 +1,4 @@
-struct tbf {
-  long code; //@key
-  long x;
-};
+struct tbf {
+    long code; //@key
+    long x;
+};

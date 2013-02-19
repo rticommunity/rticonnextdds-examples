@@ -1,4 +1,4 @@
-struct cft {
-    long x;
-    long count;
-};
+struct cft {
+    long x;
+    long count;
+};
