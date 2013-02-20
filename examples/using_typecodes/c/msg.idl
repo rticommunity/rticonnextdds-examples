@@ -1,0 +1,45 @@
+enum enumeration {
+  a = 65, 
+  b, 
+  c
+}; //@top-level false
+
+struct nested2 {
+  short short_bitfield : 4;
+  long long_bitfield : 8;
+  float float_var;
+  double double_var;
+  boolean boolean_var;
+  char char_var;
+  octet octet_var;
+  long long longlong_var;
+  string<100> string_var;
+  sequence<short,2> shortSeq_var;
+  sequence<string<1000>,1000>   stringSeq_var;
+  short short_arr_var[2];
+  short short_arr_var_2[2][3];
+}; //@top-level false
+
+typedef union alias_target switch (long) {
+ case 1:
+   long long_uvar;
+ case 5:
+   long long long_long_uvar;
+ default:
+   short short_uvar;
+} alias_one; //@top-level false
+
+typedef alias_one alias_two; //@top-level false
+
+struct msg {
+  long id; //@key
+  long count;
+  short array_var[2];
+  enumeration enum_type;
+  nested2 struct_var;
+  nested2 struct_var1;
+  nested2 struct_var2;
+  nested2 struct_var3;
+  nested2 struct_var4;
+  alias_two double_aliased_var;
+};
