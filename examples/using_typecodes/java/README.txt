@@ -39,11 +39,11 @@ Before compiling in Java, make sure that the desired version of the javac
 compiler is in your PATH environment variable.
 
 On Windows systems run:
-javac -cp .;%NDDSHOME%\class\nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
+javac -classpath .;%NDDSHOME%\class\nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -cp .:$NDDSHOME/class/nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
+javac -classpath .:$NDDSHOME/class/nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
 
 Running Java Example
 ====================
