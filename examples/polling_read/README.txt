@@ -10,12 +10,12 @@ In RTI Connext there are three ways to receive data:
   read() or take() method. This method is also known as polling for data.
 - Your application can be notified asynchronously whenever new data samples 
   arrive--this is done with a Listener on either the Subscriber or the 
-  DataReader. Connext will invoke the Listener’s callback routine when there is
+  DataReader. Connext will invoke the Listener's callback routine when there is
   new data. Within the callback routine, user code can access the data by 
   calling read() or take() on the DataReader. This method is the way for your 
   application to receive data with the least amount of latency.
 - Your application can wait for new data by using Conditions and a WaitSet, then
-  calling wait(). Connext will block your application’s thread until the 
+  calling wait(). Connext will block your application's thread until the 
   criteria (such as the arrival of samples, or a specific status) set in the 
   Condition becomes true. Then your application resumes and can access the data 
   with read() or take().
