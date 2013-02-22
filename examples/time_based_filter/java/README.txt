@@ -23,10 +23,10 @@ i86Linux2.6gcc4.4.3) run:
 rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk tbf.idl
 
 
-File C:\local\Time_Based_Filter\java\tbf_subscriber.java already exists and will
+File C:\local\time_based_filter\java\tbfSubscriber.java already exists and will
 not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\Time_Based_Filter\java\tbf_publisher.java already exists and will 
+File C:\local\time_Based_filter\java\tbfPublisher.java already exists and will 
 not be replaced with updated content. If you would like to get a new file with 
 the new content, either remove this file or supply -replace option.
 

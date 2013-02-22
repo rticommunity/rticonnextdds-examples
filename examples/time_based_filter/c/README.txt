@@ -26,10 +26,10 @@ rtiddsgen -language C -example i86Linux2.6gcc4.4.3 tbf.idl
 
 You will see messages that look like this:
 
-File C:\local\Time_Based_Filter\c\tbf_subscriber.c already exists and will not 
+File C:\local\time_based_filter\c\tbf_subscriber.c already exists and will not 
 be replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
-File C:\local\Time_Based_Filter\c\tbf_publisher.c already exists and will not 
+File C:\local\time_based_filter\c\tbf_publisher.c already exists and will not 
 be replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
 
