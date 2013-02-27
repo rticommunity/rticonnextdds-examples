@@ -24,10 +24,10 @@ rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk cft.idl
 
 You will see messages that look like this:
 
-File C:\local\content_filtered_topic\java\cftSubscriber.java already exists and 
+File C:\local\Content_Filtered_Topic\java\cftSubscriber.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\content_filtered_topic\java\cftPublisher.java already exists and 
+File C:\local\Content_Filtered_Topic\java\cftPublisher.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 
@@ -68,12 +68,12 @@ ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 java -cp .;%NDDSHOME%\class\nddsjava.jar cftPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar cftSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\class\nddsjava.jar cftSubscriber <domain_id> <sleep_periods>    <select_cft>
 
 On Unix systems (including Linux and MacOS X) run:
 
 java -cp .:$NDDSHOME/class/nddsjava.jar cftPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar cftSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/class/nddsjava.jar cftSubscriber <domain_id> <sleep_periods>     <select_cft>
 
 
 The applications accept two arguments:
