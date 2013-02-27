@@ -49,7 +49,7 @@ modification history
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
 
-/* We use the ypecode from built-in listeners, so we don't need to include
+/* We use the typecode from built-in listeners, so we don't need to include
  * this code*/
 /*
 #include "msg.h"

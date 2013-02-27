@@ -52,7 +52,7 @@ modification history
 #endif
 #include "msg.h"
 
-/* We use the ypecode from built-in listeners, so we don't need to include
+/* We use the typecode from built-in listeners, so we don't need to include
  * this code*/
 /*
 #include "msgSupport.h"
