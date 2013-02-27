@@ -13,9 +13,7 @@ NDDS_QOS_PROFILES is defined and points to this file.
 For more information about XML QoS Profiles see Chapter 15 in the 
 RTI Connext user manual.
 -->
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="/Users/fgarcia/rti/rti_apps/x64Darwin/ndds.5.0.0/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/rti_dds_qos_profiles.xsd"
-     version="5.0.0">
+<dds>
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
@@ -32,21 +30,11 @@ RTI Connext user manual.
             <datawriter_qos>
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
-                    <max_blocking_time>
-                        <sec>60</sec>
-                    </max_blocking_time>
                 </reliability>                
 
                 <history>
                     <kind>KEEP_ALL_HISTORY_QOS</kind>
                 </history>
-
-                <protocol>
-                    <rtps_reliable_writer>
-                        <min_send_window_size>50</min_send_window_size>
-                        <max_send_window_size>50</max_send_window_size>
-                    </rtps_reliable_writer>
-                </protocol>
 		
             </datawriter_qos>
 
@@ -70,7 +58,7 @@ RTI Connext user manual.
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI "Hello, World" Example</name>
+                    <name>RTI Using Sequences C Example</name>
                 </participant_name>
 
             </participant_qos>
