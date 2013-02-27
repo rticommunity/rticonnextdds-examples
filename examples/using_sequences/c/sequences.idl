@@ -1,0 +1,7 @@
+const long MAX_SEQUENCE_LEN = 100;
+
+struct sequences { 
+    string<100> id; //@key
+    short count;
+    sequence<short, MAX_SEQUENCE_LEN> data;
+}; 
