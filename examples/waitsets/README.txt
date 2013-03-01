@@ -44,11 +44,11 @@ thread at a time.
 
 Example Description
 -------------------
-This example shows how to use WaitSets to read data. To initalize the WaitSet, 
-with a set of read and status conditions on which to wait, and attach them to 
-the Waitset.
+This example shows how to use WaitSets to read data. To initialize the WaitSet, 
+we define a set of read and status conditions on which to wait, and attach them 
+to the WaitSet.
 
-Waitsets are completely independent of publishers. For this example, we decrease
+WaitSets are completely independent of publishers. For this example, we decrease
 the liveliness lease duration to trigger the subscriber's StatusCondition.
 
 Note that a WaitSet is a "top-level" entity, not one created by a DDS entity. 
