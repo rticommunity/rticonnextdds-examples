@@ -1,5 +1,5 @@
 ===========================================
- Example Code -- Content Filtered Topic
+ Example Code -- Sequences
 ===========================================
 
 Building Java Example
