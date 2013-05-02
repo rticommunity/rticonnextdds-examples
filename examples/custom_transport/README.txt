@@ -81,11 +81,6 @@ library that creates the plugin, etc.
                             <propagate>0</propagate>
                         </element>                      
                         <element>
-                            <name>dds.transport.FILE.myPlugin.parent.classid</name>
-                            <value>FileTransport</value>
-                            <propagate>0</propagate>
-                        </element>   
-                        <element>
                             <name>dds.transport.FILE.myPlugin.address</name>
                             <value>3.3.3.3</value>
                             <propagate>0</propagate>
