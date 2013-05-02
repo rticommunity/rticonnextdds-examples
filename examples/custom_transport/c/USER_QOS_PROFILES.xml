@@ -20,14 +20,14 @@ RTI Connext user manual.
 
         A QoS library is a named set of QoS profiles.
     -->
-    <qos_library name="dummy_Library">
+    <qos_library name="CustomTransport_Library">
 
         <!-- QoS profile used to configure reliable communication between the DataWriter 
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
-        <qos_profile name="dummy_Profile" is_default_qos="true">
+        <qos_profile name="CustomTransport_Profile" is_default_qos="true">
             <!-- QoS used to configure the data writer created in the example code -->                
             <datawriter_qos>
                 <reliability>
@@ -67,6 +67,11 @@ RTI Connext user manual.
                 <transport_builtin>
                     <mask>MASK_NONE</mask>
                 </transport_builtin>
+                <discovery>
+                    <initial_peers>
+                        <element>FileTransport://3.3.3.3</element>
+                    </initial_peers>
+                </discovery>
                 <property>
                     <value>
                       <element>
@@ -85,11 +90,6 @@ RTI Connext user manual.
                             <propagate>0</propagate>
                         </element>                      
                         <element>
-                            <name>dds.transport.FILE.myPlugin.parent.classid</name>
-                            <value>FifoTransport</value>
-                            <propagate>0</propagate>
-                        </element>   
-                        <element>
                             <name>dds.transport.FILE.myPlugin.address</name>
                             <value>3.3.3.3</value>
                             <propagate>0</propagate>
@@ -99,29 +99,7 @@ RTI Connext user manual.
                             <value>1</value>
                             <propagate>0</propagate>
                         </element>   
- 
-                        <!-- 
-                        <element>
-                            <name>dds.transport.load_plugins</name>
-                            <value>dds.transport.ECHO.echo1</value>
-                            <propagate>0</propagate>
-                        </element>
-                        <element>
-                            <name>dds.transport.ECHO.echo1.library</name>
-                            <value>rti_transport_library</value>
-                            <propagate>0</propagate>
-                        </element>
-                        <element>
-                            <name>dds.transport.ECHO.echo1.create_function</name>
-                            <value>NDDS_Transport_FIFO_create</value>
-                            <propagate>0</propagate>
-                        </element>                      
-                        <element>
-                            <name>dds.transport.ECHO.echo1.parent.classid</name>
-                            <value>EchoTransport</value>
-                            <propagate>0</propagate>
-                        </element>                     
-                         -->                  
+       
                     </value>
                 </property>
                 <!--
@@ -130,7 +108,7 @@ RTI Connext user manual.
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>ParticipantWithFifoTransport</name>
+                    <name>ParticipantWithFileTransport</name>
                 </participant_name>
 
             </participant_qos>

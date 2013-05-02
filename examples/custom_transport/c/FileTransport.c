@@ -16,6 +16,8 @@
 #include <string.h>
 #include "sys/stat.h"
 #include "sys/errno.h"
+#include "signal.h"
+
 
 #include "ndds/osapi/osapi_process.h"
 #include "ndds/ndds_c.h"
@@ -116,13 +118,6 @@
  *                          NDDS_Transport_Plugin* TransportPluginCreateFunctionName(
  *                                  NDDS_Transport_Address_t *default_network_address_out,
  *                                  const struct DDS_PropertyQosPolicy *property_in);
- *
- * dds.transport.FILE.myPlugin.parent.classid   Defines a name for the transport which
- *                                              is propagated via discovery and used
- *                                              to match transport-plugin implementations in
- *                                              different computers. It is the same name that
- *                                              must then be used in the NDDS_DISCOVERY_PEERS
- *                                              environment variable.
  *
  * dds.transport.FILE.myPlugin.address          The network address given to the instance of the
  *                                              transport plugin. Each FILE plugin instance
@@ -720,16 +715,19 @@ struct NDDS_Transport_RecvResource_FILE *NDDS_Transport_FILE_open_file_for_port(
             }
             fclose(file);
             return NULL;
-        } else {
-            /* File is not in active. Reuse it */
-            if ( NDDS_Transport_Log1Enabled(me) ) {
-                printf("%s: file '%s' not actively being used. Reclaiming it.\n", METHOD_NAME, fileName);
-            }
         }
+
+        /* Else. File exists and not in active. Reuse it */
+        if ( NDDS_Transport_Log1Enabled(me) ) {
+             printf("%s: file '%s' not actively being used. Reclaiming it.\n", METHOD_NAME, fileName);
+        }
+        fclose(file);
     }
 
-    /* Non-existing file is interpreted as having an available port. create the file */
-    fclose(file);
+    /* Either the file did not exist or else the owning process is no longer active
+     * either way we open the file (wiping any contents if the file existed) and
+     * initialize the to be used by this process
+     * */
     file = fopen(fileName, "wb+");
     if ( file == NULL ) {
         /* Failed to create a file that did not exist. This should not happen */

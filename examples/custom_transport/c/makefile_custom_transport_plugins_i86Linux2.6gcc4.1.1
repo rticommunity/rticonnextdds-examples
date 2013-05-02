@@ -21,9 +21,9 @@
 # linker should be on your PATH.)
 ######################################################################
 
-c_cc_i86Linux2.6gcc4.1.1 = gcc
+c_cc_i86Linux2.6gcc4.1.1 = gcc -g
 c_cc_flags_i86Linux2.6gcc4.1.1 = -m32 -Wall -fpic 
-c_ld_i86Linux2.6gcc4.1.1 = gcc
+c_ld_i86Linux2.6gcc4.1.1 = gcc -g
 c_ld_flags_i86Linux2.6gcc4.1.1 = -m32 -shared
 DEFINES_ARCH_SPECIFIC = -DRTI_UNIX -DRTI_LINUX
 

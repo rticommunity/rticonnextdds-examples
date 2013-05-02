@@ -77,11 +77,28 @@ On Linux you do it with the command:
 export LD_LIBRARY_PATH=./objs/i86Linux2.6gcc4.1.1:${NDDSHOME}/lib/i86Linux2.6gcc4.1.1
 
 
-(4) Set the NDDS_DISCOVERY_PEERS to match the addresses you configured for
-the transports
+(4) Note that the USER_QOS_PROFILES.xml configures the NDDS_DISCOVERY_PEERS using the
+participant discovery qos. The XML snippet:
+               <discovery>
+                    <initial_peers>
+                        <element>FileTransport://3.3.3.3</element>
+                    </initial_peers>
+                </discovery>
+ 
+Tells the participant to find its peers using the FileTransport (which is the name we 
+assigned to this transport) at address 3.3.3.3 (which is the one we configured for the
+participant using the property "dds.transport.FILE.myPlugin.address"
 
-On MacOSX or Linux you can do that with the command:
-export NDDS_DISCOVERY_PEERS=FileTransport://3.3.3.3
+if we wanted to configure participants to have multiple addresses (e.g. 3.3.3.3 and 2.2.2.2),
+then we should also add all these addresses to the list of discovery peers on all 
+the participants:
+
+               <discovery>
+                    <initial_peers>
+                        <element>FileTransport://3.3.3.3</element>
+                        <element>FileTransport://2.2.2.2</element>
+                    </initial_peers>
+                </discovery>
 
 (5) Run the publisher and subscribing applications
 You should get output similar to this:
