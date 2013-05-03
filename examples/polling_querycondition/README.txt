@@ -46,10 +46,12 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 objs\<arch_name>\querycondition_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\querycondition_subscriber.exe <domain_id> <sleep_periods>
 
 On Unix systems (including Linux) run:
 
 ./objs/<arch_name>/querycondition_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/querycondition_subscriber  <domain_id> <sleep_periods>
 
 The applications accept two arguments:
 
