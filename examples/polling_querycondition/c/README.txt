@@ -1,9 +1,9 @@
-===========================================
- Example Code -- Polling Read
-===========================================
+============================================
+ Example Code -- Polling With QueryCondition
+============================================
 
-Building C++ Example
-====================
+Building C Example
+==================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -16,19 +16,19 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C++ -example i86Win32VS2005 poll.idl
+rtiddsgen -language C -example i86Win32VS2005 querycondition.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 poll.idl
+rtiddsgen -language C -example i86Linux2.6gcc4.4.3 querycondition.idl
 
 You will see messages that look like this:
 
-File C:\local\polling_read\c++\poll_subscriber.cxx already exists and will not be 
+File C:\local\ polling_querycondition\c\querycondition_subscriber.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
-File C:\local\polling_read\c++\poll_publisher.cxx already exists and will not be 
+File C:\local\polling_querycondition\c\querycondition_publisher.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
 
@@ -36,25 +36,22 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
-This is normal and is only informing you that the subscriber/publisher code has 
-not been replaced, which is fine since all the source files for the example are 
-already provided.
 
-Running C++ Example
-===================
+Running C Example
+=================
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-objs\<arch_name>\poll_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\poll_subscriber.exe <domain_id> <sleep_periods>
+objs\<arch_name>\querycondition_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\querycondition_subscriber.exe <domain_id> <sleep_periods>
 
 On Unix systems (including Linux) run:
 
-./objs/<arch_name>/poll_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/poll_subscriber <domain_id> <sleep_periods>
+./objs/<arch_name>/querycondition_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/querycondition_subscriber <domain_id> <sleep_periods>
 
 The applications accept two arguments:
 
