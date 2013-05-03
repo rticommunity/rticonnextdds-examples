@@ -1,60 +1,28 @@
-=============================================
- Example Code -- Polling With Query Condition
-=============================================
+============================================= Example Code -- Polling With Query Condition=============================================Concept-------In RTI Connext DDS, you have the option to query for data that is already in the DataReader's queue using a QueryCondition object.  This lets you retrievedata from the queue based on the values of one or more fields inside of that data.  You do this by:1. Specifying the query that you want to use.  
 
-Building C++ Example
-====================
-Before compiling or running the example, make sure the environment variable 
-NDDSHOME is set to the directory where your version of RTI Connext is installed.
+This either looks like the WHERE clause in SQL, such as "x < 34 OR y > 2" or it
+can be a string parameter that can be compared using a MATCH comparison such as
+"symbol MATCH 'IBM'".  This query can have parameters to it, represented with 
+%0, %1, etc.  These parameters can be changed at runtime.
 
-Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32VS2005 or i86Linux2.6gcc4.4.3). The RTI Connext Core 
-Libraries and Utilities Getting Started Guide describes this process in detail. 
-Follow the same procedure to generate the code and build the examples. Do not 
-use the -replace option.
+2. Creating the QueryCondition object
 
-On Windows systems (assuming you want to generate an example for 
-i86Win32VS2005) run:
+You use your DataReader to create a QueryCondition object, specifying the query
+that you want to run, and parameters to that query.
+3. Use the QueryCondition to retrieve the data subset
 
-rtiddsgen -language C++ -example i86Win32VS2005 querycondition.idl
+You can call read_w_condition() or take_w_condition() to retrieve only the 
+data that passes the query from the DataReader's cache.4. Optionally, change the parameters at runtime 
 
-On UNIX systems (assuming you want to generate an example for 
-i86Linux2.6gcc4.4.3) run:
+You can update the parameters to your query by calling set_query_parameters.
 
-rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 querycondition.idl
+Note that a QueryCondition requires that the single quotes around a string 
+are _inside the query condition parameter._  For example:
 
-You will see messages that look like this:
+    DDS_StringSeq queryParameters;    queryParameters.ensure_length(1,1);
 
-File C:\local\polling_query_conditiond\c++\querycondition_subscriber.cxx already 
-exists and will not be replaced with updated content. If you would like to get a 
-new file with the new content, either remove this file or supply -replace option.
-File C:\local\ polling_query_conditiond\c++\querycondition_publisher.cxx already 
-exists and will not be replaced with updated content. If you would like to get a 
-new file with the new content, either remove this file or supply -replace option.
+    // DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER    queryParameters[0] = DDS_String_dup("'Initial String'");
+    query_condition = _reader->create_querycondition(DDS_ANY_SAMPLE_STATE, 		DDS_ANY_VIEW_STATE, DDS_ALIVE_INSTANCE_STATE,		DDS_String_dup("stringField MATCH %0"), queryParameters);
+    char myParameter[10];
 
-This is normal and is only informing you that the subscriber/publisher code has 
-not been replaced, which is fine since all the source files for the example are 
-already provided.
-
-
-Running C++ Example
-===================
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
-
-On Windows systems run:
-
-objs\<arch_name>\querycondition_publisher.exe  <domain_id> <samples_to_send>
-
-On Unix systems (including Linux) run:
-
-./objs/<arch_name>/querycondition_publisher  <domain_id> <samples_to_send>
-
-The applications accept two arguments:
-
-1. The <domain_id>. Both applications must use the same domain id in order to 
-communicate. The default is 0.
-2. How long the examples should run -- measured in samples for the publisher 
-and sleep periods for the subscriber. A value of '0' instructs the 
-application to run forever; this is the default.
+    // DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER    queryParameters[0] = DDS_String_dup("'Changed String'");    _queryForFlights->set_query_parameters(queryParameters);
