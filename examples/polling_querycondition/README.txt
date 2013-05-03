@@ -23,6 +23,7 @@ are _inside the query condition parameter._  For example:
 
     // DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER    queryParameters[0] = DDS_String_dup("'Initial String'");
     query_condition = _reader->create_querycondition(DDS_ANY_SAMPLE_STATE, 		DDS_ANY_VIEW_STATE, DDS_ALIVE_INSTANCE_STATE,		DDS_String_dup("stringField MATCH %0"), queryParameters);
-    char myParameter[10];
+
+    // ...
 
     // DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER    queryParameters[0] = DDS_String_dup("'Changed String'");    _queryForFlights->set_query_parameters(queryParameters);
