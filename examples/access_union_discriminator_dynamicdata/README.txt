@@ -1,6 +1,6 @@
-===========================================
- Example Code -- Content Filtered Topic
-===========================================
+============================================================
+ Example Code -- Access Union Discriminators in Dynamic Data
+============================================================
 
 Concept
 -------
@@ -11,8 +11,10 @@ fields such as strings or sequences. To be efficient, the entire struct
 Connext uses the discriminator field of the struct to decide what field 
 in the struct is actually sent on the wire.
 
-This example 
-  - creates the type code of for a union 
-  - creates a DynamicData instance
-  - sets one of the field of the union
-  - shows how to retrieve the discriminator 
+Example Description
+--------------------
+In this example we illustrate how to access the discriminator of a Union 
+using the Dynamic Data API.
+
+First, we create the TypeCode for the Union. Then, we create a Dynamic Data 
+instance of it and finally, we show how to access the discriminator.

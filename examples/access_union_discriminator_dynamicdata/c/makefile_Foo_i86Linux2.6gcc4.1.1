@@ -54,7 +54,7 @@ i86Linux2.6gcc4.1.1 : $(DIRECTORIES) $(COMMONOBJS) \
 objs/i86Linux2.6gcc4.1.1/%.out : objs/i86Linux2.6gcc4.1.1/%.o 
 	$(c_ld_i86Linux2.6gcc4.1.1) $(c_ld_flags_i86Linux2.6gcc4.1.1)  -o $(@:%.out=%) $(@:%.out=%.o) $(COMMONOBJS) $(LIBS)
 
-objs/i86Linux2.6gcc4.1.1/%.o : %.c Foo.h 
+objs/i86Linux2.6gcc4.1.1/%.o : %.c 
 	$(c_cc_i86Linux2.6gcc4.1.1) $(c_cc_flags_i86Linux2.6gcc4.1.1)  -o $@ $(DEFINES) $(INCLUDES) -c $<
 
 #
