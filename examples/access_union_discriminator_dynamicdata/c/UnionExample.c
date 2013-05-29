@@ -1,4 +1,4 @@
-/* Foo_publisher.c
+/* UnionExample.c
     
     This example 
       - creates the type code of for a union 
@@ -12,11 +12,11 @@
                                   
        On Unix: 
        
-       objs/<arch>/Foo_publisher  
+       objs/<arch>/UnionExample 
                             
        On Windows:
        
-       objs\<arch>\Foo_publisher  
+       objs\<arch>\UnionExample  
 */
 
 #include <stdio.h>
