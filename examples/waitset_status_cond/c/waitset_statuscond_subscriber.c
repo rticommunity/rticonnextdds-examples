@@ -227,36 +227,36 @@ static int subscriber_main(int domainId, int sample_count)
                 triggeredmask = DDS_Entity_get_status_changes((DDS_Entity*)waitsets_reader);
 
                 if (triggeredmask & DDS_DATA_AVAILABLE_STATUS) {
-					struct waitset_statuscondSeq data_seq = 
-						DDS_SEQUENCE_INITIALIZER;
-					struct DDS_SampleInfoSeq info_seq = 
-						DDS_SEQUENCE_INITIALIZER;
+                    struct waitset_statuscondSeq data_seq = 
+                        DDS_SEQUENCE_INITIALIZER;
+                    struct DDS_SampleInfoSeq info_seq = 
+                        DDS_SEQUENCE_INITIALIZER;
                 
-					retcode = waitset_statuscondDataReader_take(
-						waitsets_reader, &data_seq, &info_seq,
-						DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
-						DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
-					if (retcode != DDS_RETCODE_OK) {
-						printf("take error %d\n", retcode);
-						break;
-					}
+                    retcode = waitset_statuscondDataReader_take(
+                        waitsets_reader, &data_seq, &info_seq,
+                        DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
+                        DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+                    if (retcode != DDS_RETCODE_OK) {
+                        printf("take error %d\n", retcode);
+                        break;
+                    }
                 
-					for (j = 0; j < waitset_statuscondSeq_get_length(&data_seq); ++j) {
-						if (!DDS_SampleInfoSeq_get_reference(&info_seq, j)->valid_data) {
-							printf("   Got metadata\n");                     
-							continue;
-						}
-						waitset_statuscondTypeSupport_print_data(
-							waitset_statuscondSeq_get_reference(&data_seq, j));
-					}
+                    for (j = 0; j < waitset_statuscondSeq_get_length(&data_seq); ++j) {
+                        if (!DDS_SampleInfoSeq_get_reference(&info_seq, j)->valid_data) {
+                            printf("   Got metadata\n");                     
+                            continue;
+                        }
+                        waitset_statuscondTypeSupport_print_data(
+                            waitset_statuscondSeq_get_reference(&data_seq, j));
+                    }
 
-					retcode = waitset_statuscondDataReader_return_loan(
-						waitsets_reader, &data_seq, &info_seq);
-					if (retcode != DDS_RETCODE_OK) {
-						printf("return loan error %d\n", retcode);
-					}
+                    retcode = waitset_statuscondDataReader_return_loan(
+                        waitsets_reader, &data_seq, &info_seq);
+                    if (retcode != DDS_RETCODE_OK) {
+                        printf("return loan error %d\n", retcode);
+                    }
 
-				}
+                }
 
             }
         }
