@@ -1,6 +1,6 @@
-===========================================
- Example Code -- WaitSets
-===========================================
+===============================================
+ Example Code -- WaitSets with Status Condition
+===============================================
 
 Building Java Example
 =====================
@@ -8,26 +8,26 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32VS2005 or i86Linux2.6gcc4.4.3). The RTI Connext Core 
+choice (e.g., i86Win32jdk or i86Linux2.6gcc4.4.3). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk waitsets.idl
+rtiddsgen -language Java -example i86Win32jdk waitset_statuscond.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk waitsets.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk waitset_statuscond.idl
 
 You will see messages that look like this:
 
-File C:\local\waitsets\java\waitsetsSubscriber.java already exists and 
+File C:\local\waitset_statuscond\java\waitset_statuscondSubscriber.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\waitsets\java\waitsetsPublisher.java already exists and 
+File C:\local\waitset_statuscond\java\waitset_statuscondPublisher.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 
@@ -40,11 +40,11 @@ compiler is in your PATH environment variable.
 
 On Windows systems run:
 
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar waitsets.java waitsetsSeq.java waitsetsTypeSupport.java waitsetsTypeCode.java waitsetsDataReader.java waitsetsDataWriter.java waitsetsSubscriber.java waitsetsPublisher.java
+javac -classpath .;%NDDSHOME%\class\nddsjava.jar waitset_statuscond.java waitset_statuscondSeq.java waitset_statuscondTypeSupport.java waitset_statuscondTypeCode.java waitset_statuscondDataReader.java waitset_statuscondDataWriter.java waitset_statuscondSubscriber.java waitset_statuscondPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar waitsets.java waitsetsSeq.java waitsetsTypeSupport.java waitsetsTypeCode.java waitsetsDataReader.java waitsetsDataWriter.java waitsetsSubscriber.java waitsetsPublisher.java
+javac -classpath .:$NDDSHOME/class/nddsjava.jar waitset_statuscond.java waitset_statuscondSeq.java waitset_statuscondTypeSupport.java waitset_statuscondTypeCode.java waitset_statuscondDataReader.java waitset_statuscondDataWriter.java waitset_statuscondSubscriber.java waitset_statuscondPublisher.java
 
 Running Java Example
 ====================
@@ -67,13 +67,13 @@ ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-java -cp .;%NDDSHOME%\class\nddsjava.jar waitsetsPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar waitsetsSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\class\nddsjava.jar waitset_statuscondPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\class\nddsjava.jar waitset_statuscondSubscriber <domain_id> <sleep_periods>
 
 On Unix systems (including Linux and MacOS X) run:
 
-java -cp .:$NDDSHOME/class/nddsjava.jar waitsetsPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar waitsetsSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/class/nddsjava.jar waitset_statuscondPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/class/nddsjava.jar waitset_statuscondSubscriber <domain_id> <sleep_periods>
 
 
 The applications accept two arguments:
