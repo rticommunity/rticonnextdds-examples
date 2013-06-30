@@ -195,7 +195,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     DDSQueryCondition *query_for_guid2;
 
-    /* Query for 'GUID2'  This query paramater can be changed at runtime, 
+    /* Query for 'GUID2'  This query parameter can be changed at runtime, 
      * allowing an application to selectively look at subsets of data
      * at different times. */
     DDS_StringSeq query_parameters;
@@ -219,7 +219,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         DDS_SampleInfoSeq info_seq;
         queryconditionSeq data_seq;
 
-        /* Check for new data calling the DataReader's take() method */
+        /* Check for new data calling the DataReader's read_w_condition() 
+           method */
         retcode = querycondition_reader->read_w_condition(data_seq, info_seq, 
                         DDS_LENGTH_UNLIMITED, query_for_guid2);
         if (retcode == DDS_RETCODE_NO_DATA) {
