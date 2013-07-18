@@ -230,21 +230,19 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         int active_conditions = active_conditions_seq.length();
         printf("Got %d active conditions\n", active_conditions);
 
-		/* In this case, we have only a single condition, but
-			if we had multiple, we would need to iterate over
-			them and check which one is true.  Leaving the logic
-			for the more complex case. */
+        /* In this case, we have only a single condition, but
+            if we had multiple, we would need to iterate over
+            them and check which one is true.  Leaving the logic
+            for the more complex case. */
         for (int i = 0; i < active_conditions; ++i) {
             
-
             /* Compare with Status Conditions */
             if (active_conditions_seq[i] == status_condition) {
                 /* Get the status changes so we can check which status
                  * condition triggered. */
                 DDS_StatusMask triggeredmask =
                         waitset_statuscond_reader->get_status_changes();
-
-
+  
                 /* Subscription matched */
                 if (triggeredmask & DDS_DATA_AVAILABLE_STATUS) {
                 /* Current conditions match our conditions to read data, so
@@ -259,8 +257,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
                  * not sleep in the loop */
                 retcode = waitset_statuscond_reader->take(
                     data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-					DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
-					DDS_ANY_INSTANCE_STATE);
+                    DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+                    DDS_ANY_INSTANCE_STATE);
                 if (retcode != DDS_RETCODE_OK) {
                     printf("take error %d\n", retcode);
                     break;
