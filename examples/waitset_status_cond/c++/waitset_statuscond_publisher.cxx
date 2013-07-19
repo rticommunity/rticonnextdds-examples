@@ -159,34 +159,6 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* If you want to change the DataWriter's QoS programmatically rather than
-     * using the XML file, you will need to add the following lines to your
-     * code and comment out the create_datawriter call above.
-     *
-     * In this case, we reduce the liveliness timeout period to trigger the
-     * StatusCondition DDS_LIVELINESS_CHANGED_STATUS */
-
-    /*
-    DDS_DataWriterQos datawriter_qos;
-    retcode = publisher->get_default_datawriter_qos(datawriter_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_datawriter_qos error\n");
-        return -1;
-    }
-
-    datawriter_qos.liveliness.lease_duration.sec = 1;
-    datawriter_qos.liveliness.lease_duration.nanosec = 0;
-
-    writer = publisher->create_datawriter(
-        topic, datawriter_qos, NULL,
-        DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
-        printf("create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-    */
-
     waitset_statuscond_writer = waitset_statuscondDataWriter::narrow(writer);
     if (waitset_statuscond_writer == NULL) {
         printf("DataWriter narrow error\n");
