@@ -1,6 +1,6 @@
-==============================================
- Example Code -- WaitSet with Status Condition
-==============================================
+=============================================
+ Example Code -- Polling With Query Condition
+=============================================
 
 Building C# Example
 ====================
@@ -16,12 +16,12 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VSdotnet4.0) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 waitset_statuscond.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 querycondition.idl
 
-File C:\local\waitset_status_cond\cs\waitset_statuscond_subscriber.cs already 
+File C:\local\polling_querycondition\cs\querycondition_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
-File C:\local\waitset_status_cond\cs\waitset_statuscond_publisher.cs already 
+File C:\local\polling_querycondition\cs\querycondition_publisher.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
 
@@ -29,7 +29,8 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-Running CS Example
+
+Running C# Example
 ===================
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
@@ -37,14 +38,13 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-bin\<build_type>-VS2010\waitset_statuscond_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\waitset_statuscond_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\querycondition_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\querycondition_subscriber.exe <domain_id> <sleep_periods>
 
+The applications accept two arguments:
 
-The applications accept up to three arguments:
-
-   1. The <domain_id>. Both applications must use the same domain id in order 
-   to communicate. The default is 0.
-   2. How long the examples should run, measured in samples for the publisher 
-   and sleep periods for the subscriber. A value of '0' instructs the 
-   application to run forever; this is the default.
+1. The <domain_id>. Both applications must use the same domain id in order to 
+communicate. The default is 0.
+2. How long the examples should run -- measured in samples for the publisher 
+and sleep periods for the subscriber. A value of '0' instructs the 
+application to run forever; this is the default.
