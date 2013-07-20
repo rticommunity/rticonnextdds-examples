@@ -16,7 +16,7 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VSdotnet4.0) run:
 
-rtiddsgen -language C++ -example i86Win32dotnet4.0 querycondition.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 querycondition.idl
 
 File C:\local\polling_querycondition\cs\querycondition_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 

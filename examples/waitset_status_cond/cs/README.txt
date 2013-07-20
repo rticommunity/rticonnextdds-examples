@@ -16,7 +16,7 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VSdotnet4.0) run:
 
-rtiddsgen -language C++ -example i86Win32dotnet4.0 waitset_statuscond.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 waitset_statuscond.idl
 
 File C:\local\waitset_status_cond\cs\waitset_statuscond_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
