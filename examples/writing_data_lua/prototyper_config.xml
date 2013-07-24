@@ -1,0 +1,84 @@
+
+<!--
+RTI Data Distribution Service Deployment
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="c:/program files/rti/5.0.0/ndds.5.0.0/resource/qos_profiles_5.0.0/schema/rti_dds_profiles.xsd" 
+     version="5.0.0">
+
+    <qos_library name="RTIExampleQosLibrary">
+        <qos_profile name="SensorData">
+            <datawriter_qos>
+                <reliability>
+                    <kind>BEST_EFFORT_RELIABILITY_QOS</kind>
+                </reliability>
+            </datawriter_qos>
+        </qos_profile>
+    </qos_library>
+    
+    <!-- types -->
+    <types>    
+        <struct name="TemperatureType">
+            <member name="appID" type="long" key="true"/>
+            <member name="value" type="float"/>
+        </struct>
+    </types>
+
+
+    <!-- A namespace for a set of domains.  If you are reusing the same     -->
+    <!-- domain configurations in multiple applications, you should define  -->
+    <!-- them in a domain library.                                          -->
+    <domain_library name="ExampleDomains" >
+
+        <!-- A domain is a logical, isolated communication network. -->
+        <!-- Here you must associate data types and topics with a -->
+        <!-- particular domain. -->
+        <domain name="DataDomain" domain_id="0">
+            <register_type name="TemperatureType" kind="dynamicData"
+                     type_ref="TemperatureType" />
+
+            <!-- Have a single topic called Temperature -->
+            <topic name="Temperature" register_type_ref="TemperatureType" />
+
+        </domain>
+
+    </domain_library>
+
+    <!-- Grouping of communication objects -->
+    <participant_library name="ParticipantLibrary">
+
+        <!-- DomainParticipants are containers for all other communication -->
+        <!-- objects. They act within a single domain. (See <domain> above) -->
+        <domain_participant name="Sender"
+                            domain_ref="ExampleDomains::DataDomain">
+
+            <!-- Container for DataWriters that actually send data -->
+            <publisher name="Publisher">
+
+                <!-- Object that sends periodic temperature updates over    -->
+                <!-- the network.  -->
+                <data_writer name="TemperatureWriter" topic_ref="Temperature">
+
+                    <!-- Pattern: Periodic or Sensor Data Pattern -->                    
+                    <datawriter_qos base_name="RTIExampleQosLibrary::SensorData"/>
+                </data_writer>
+
+            </publisher>
+            
+        </domain_participant>
+        
+        <!-- DomainParticipants are containers for all other communication -->
+        <!-- objects. They act within a single domain. (See <domain> above) -->
+        <domain_participant name="Receiver"
+                            domain_ref="ExampleDomains::DataDomain">
+            <!-- Container for the DataReaders that actually receive data -->
+            <subscriber name="Subscriber">
+
+                <!-- DataReader that receives temperature data -->
+                <data_reader name="TemperatureReader" topic_ref="Temperature"/>
+            </subscriber>
+
+        </domain_participant>
+
+    </participant_library>
+</dds>
