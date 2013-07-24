@@ -56,3 +56,4 @@ Choose whether you want to send or receive data.
 
 When you run both the sender and the receiver, you will see that the temperature
 starts at 0, increases to 120, and then decreases to 0.
+
