@@ -1,9 +1,9 @@
-=============================================
- Example Code -- Polling with Query Condition
-=============================================
+===========================================
+ Example Code -- Polling Read
+===========================================
 
 Building Java Example
-=====================
+====================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -13,23 +13,28 @@ Libraries and Utilities Getting Started Guide describes this process in detail.
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
-On Windows systems run:
+On Windows systems (assuming you want to generate an example for 
+i86Win32VS2005) run:
 
-rtiddsgen -language Java -example i86Win32jdk querycondition.idl
+rtiddsgen -language Java -example i86Win32jdk poll.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk querycondition.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk poll.idl
 
 You will see messages that look like this:
 
-File C:\local\polling_query_condition\java\queryconditionSubscriber.java already exists and 
-will not be replaced with updated content. If you would like to get a new file 
-with the new content, either remove this file or supply -replace option.
-File C:\local\polling_query_condition\java\queryconditionPublisher.java already exists and 
-will not be replaced with updated content. If you would like to get a new file 
-with the new content, either remove this file or supply -replace option.
+File C:\local\polling_read\java\pollSubscriber.java already exists and will not be 
+replaced with updated content. If you would like to get a new file with the 
+new content, either remove this file or supply -replace option.
+File C:\local\polling_read\java\pollPublisher.java already exists and will not be 
+replaced with updated content. If you would like to get a new file with the 
+new content, either remove this file or supply -replace option.
+
+This is normal and is only informing you that the subscriber/publisher code has 
+not been replaced, which is fine since all the source files for the example are 
+already provided.
 
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
@@ -40,11 +45,11 @@ compiler is in your PATH environment variable.
 
 On Windows systems run:
 
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar querycondition.java queryconditionSeq.java queryconditionTypeSupport.java queryconditionTypeCode.java queryconditionDataReader.java queryconditionDataWriter.java queryconditionSubscriber.java queryconditionPublisher.java
+javac -classpath .;%NDDSHOME%\class\nddsjava.jar poll.java pollSeq.java pollTypeSupport.java pollTypeCode.java pollDataReader.java pollDataWriter.java pollSubscriber.java pollPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar querycondition.java queryconditionSeq.java queryconditionTypeSupport.java queryconditionTypeCode.java queryconditionDataReader.java queryconditionDataWriter.java queryconditionSubscriber.java queryconditionPublisher.java
+javac -classpath .:$NDDSHOME/class/nddsjava.jar poll.java pollSeq.java pollTypeSupport.java pollTypeCode.java pollDataReader.java pollDataWriter.java pollSubscriber.java pollPublisher.java
 
 Running Java Example
 ====================
@@ -67,13 +72,13 @@ ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-java -cp .;%NDDSHOME%\class\nddsjava.jar queryconditionPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar queryconditionSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\class\nddsjava.jar pollPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\class\nddsjava.jar pollSubscriber <domain_id> <sleep_periods>
 
 On Unix systems (including Linux and MacOS X) run:
 
-java -cp .:$NDDSHOME/class/nddsjava.jar queryconditionPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar queryconditionSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/class/nddsjava.jar pollPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/class/nddsjava.jar pollSubscriber <domain_id> <sleep_periods>
 
 
 The applications accept two arguments:
