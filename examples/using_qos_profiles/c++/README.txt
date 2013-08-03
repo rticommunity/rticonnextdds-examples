@@ -9,7 +9,8 @@ Some of the questions that this example tries to answer include:
     * What should the XML file look like?
     * How do I tell the participant factory which XML files it should use to find profiles?
     * What's the difference between a (default) profile and a (default) QoS?
-    * What are the differences between set_default_profile(), set_qos_with_profile(), and set_default_<entity>_qos_with_profile()?
+    * What are the differences between set_default_profile(), set_qos_with_profile(), and 
+      set_default_<entity>_qos_with_profile()?
     * What if a reader has no default profile? Does it inherit the subscriber's default profile?
     * Can a reader's QoS come from a different profile than its subscriber's QoS?
 
