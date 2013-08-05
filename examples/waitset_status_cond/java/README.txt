@@ -8,7 +8,7 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32jdk or i86Linux2.6gcc4.4.3). The RTI Connext Core 
+choice (e.g., i86Win32jdk or i86Linux2.6gcc4.4.3jdk). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
