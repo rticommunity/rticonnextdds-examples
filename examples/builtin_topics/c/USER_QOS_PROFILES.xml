@@ -33,11 +33,12 @@ RTI Connext user manual.
      			<entity_factory>
      				<autoenable_created_entities>false</autoenable_created_entities>
      			</entity_factory>
+     			<!-- Uncomment for logging 
      			<logging>
-     				<output_file>stderr</output_file>
-     				<category>API</category>
+      				<category>API</category>
      				<verbosity>ALL</verbosity>
      			</logging>
+     			-->
      		</participant_factory_qos>
      		
      		<participant_qos>
