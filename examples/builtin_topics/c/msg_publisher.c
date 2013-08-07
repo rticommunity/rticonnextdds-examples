@@ -62,13 +62,12 @@ modification history
 #include "msg.h"
 #include "msgSupport.h"
 
-//// Start changes for Builtin_Topics
-
-// Authorization string.
+/* Authorization string. */
 const char *auth = "password";
 
-/* Set up a linked list of authorized participant keys.  Datareaders associated
-   with an authorized participant do not need to supply their own password.
+/*
+ * Set up a linked list of authorized participant keys.  Datareaders associated
+ * with an authorized participant do not need to supply their own password.
 */
 struct Auth_Node {
     DDS_BuiltinTopicKey_t key;
@@ -102,15 +101,15 @@ int is_auth_participant(const DDS_BuiltinTopicKey_t *participant_key) {
     return 0;
 }
 
-/* The builtin subscriber sets participant_qos.user_data and
-   reader_qos.user_data, so we set up listeners for the builtin
-   DataReaders to access these fields.
+/*
+ * The builtin subscriber sets participant_qos.user_data and
+ *  reader_qos.user_data, so we set up listeners for the builtin
+ *  DataReaders to access these fields.
 */
 
-// This gets called when a participant has been discovered
+/* This gets called when a participant has been discovered */
 void BuiltinParticipantListener_on_data_available(
     void* listener_data, DDS_DataReader* reader)
-//    void* listener_data, DDS_ParticipantBuiltinTopicDataDataReader* builtin_reader)
 {
     DDS_ParticipantBuiltinTopicDataDataReader *builtin_reader = NULL;
     struct DDS_ParticipantBuiltinTopicDataSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -122,15 +121,17 @@ void BuiltinParticipantListener_on_data_available(
     
     builtin_reader = DDS_ParticipantBuiltinTopicDataDataReader_narrow(reader);
     
-    // We only process newly seen participants
+    /* We only process newly seen participants */
     retcode = DDS_ParticipantBuiltinTopicDataDataReader_take(
         builtin_reader,
         &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, 
         DDS_ANY_SAMPLE_STATE, DDS_NEW_VIEW_STATE, 
         DDS_ANY_INSTANCE_STATE);
 
-    // This happens when we get announcements from participants we
-    // already know about
+    /*
+     * This happens when we get announcements from participants we
+     * already know about
+     */
     if (retcode == DDS_RETCODE_NO_DATA)
         return;
 
@@ -151,14 +152,16 @@ void BuiltinParticipantListener_on_data_available(
         
         if (!info->valid_data)
             continue;
-        // see if there is any participant_data
+        /* see if there is any participant_data */
         if (DDS_OctetSeq_get_length(&data->user_data.value) != 0) {
-            // This sequence is guaranteed to be contiguous
+
+            /* This sequence is guaranteed to be contiguous */
             participant_data = (char*)(DDS_OctetSeq_get_reference(&data->user_data.value, 0));
             if (strcmp(participant_data, auth) == 0) {
                 add_auth_participant(&data->key);
                 isauth = 1;
             }
+
         }
 
         printf("Built-in Reader: found participant \n\tkey->'%08x%08x%08x'\n\tuser_data->'%s'\n",
@@ -175,7 +178,7 @@ void BuiltinParticipantListener_on_data_available(
     }
 }
    
-// This gets called when a new subscriber has been discovered
+/* This gets called when a new subscriber has been discovered */
 void BuiltinSubscriberListener_on_data_available(
     void* listener_data,
     DDS_DataReader* reader)
@@ -190,7 +193,7 @@ void BuiltinSubscriberListener_on_data_available(
 
     builtin_reader = DDS_SubscriptionBuiltinTopicDataDataReader_narrow(reader);
 
-    // We only process newly seen subscribers
+    /* We only process newly seen subscribers */
     retcode = DDS_SubscriptionBuiltinTopicDataDataReader_take(
         builtin_reader,
         &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, 
@@ -218,11 +221,11 @@ void BuiltinSubscriberListener_on_data_available(
         if (!info->valid_data)
             continue;
         
-        // See if this is associated with an authorized participant
+        /* See if this is associated with an authorized participant */
         if (is_auth_participant(&data->participant_key))
             isauth = 1;
             
-        // See if there is any user_data
+        /* See if there is any user_data */
         if (DDS_OctetSeq_get_length(&data->user_data.value) != 0) {
             reader_data = (char*)(DDS_OctetSeq_get_reference(&data->user_data.value, 0));
             if (!isauth && strcmp(reader_data, auth) == 0)
@@ -235,9 +238,9 @@ void BuiltinSubscriberListener_on_data_available(
                data->participant_key.value[2],
                reader_data);
 
-        // Ignore unauthorized subscribers
+        /* Ignore unauthorized subscribers */
         if (!isauth) {
-            // Get the associated participant...
+            /* Get the associated participant... */
             DDS_DomainParticipant *participant = NULL;
             DDS_Subscriber *subscriber = NULL;
 
@@ -246,7 +249,7 @@ void BuiltinSubscriberListener_on_data_available(
 
             printf("Bad authorization, ignoring subscription\n");
             
-            // Ignore the remote reader
+            /* Ignore the remote reader */
             DDS_DomainParticipant_ignore_subscription(participant, &info->instance_handle);
         }
     }
@@ -258,7 +261,6 @@ void BuiltinSubscriberListener_on_data_available(
     }
 }
 
-//// End changes for Builtin_Topics
 
 /* Delete all entities */
 static int publisher_shutdown(
@@ -317,7 +319,13 @@ static int publisher_main(int domainId, int sample_count)
     struct DDS_DataReaderListener builtin_subscriber_listener = DDS_DataReaderListener_INITIALIZER;
     DDS_Subscriber *builtin_subscriber = NULL;
 
-    //// Start changes for Builtin_Topics
+    /* It is recommended to install built-in topic listeners on disabled
+     * entities (EntityFactoryQoS). For this reason it is necessary to set
+     * the autoenable_created_entities setting to false. To do this programmatically,
+     * just uncomment the following code
+     */
+
+    /*
     retcode = DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory, &factory_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("Cannot get factory Qos for domain participant\n");
@@ -347,8 +355,7 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     DDS_DomainParticipantFactoryQos_finalize(&factory_qos);
-
-    //// End changes for Builtin_Topics
+	*/
 
     /* To customize participant QoS, use 
        DDS_DomainParticipantFactory_get_default_participant_qos() */
@@ -361,17 +368,22 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    //// Start changes for Builtin_Topics
-    // Installing listeners for the builtin topics requires several steps
+    /* Start changes for Builtin_Topics
+     Installing listeners for the builtin topics requires several steps:
+     */
 
-    // First get the builtin subscriber
+    /*
+     * First, get the builtin subscriber
+     */
     builtin_subscriber = DDS_DomainParticipant_get_builtin_subscriber(participant);
     if (builtin_subscriber == NULL) {
         printf("***Error: failed to create builtin subscriber\n");
         return -1;
     }
 
-    // Then get builtin subscriber's datareader for participants
+    /*
+     * Then get builtin subscriber's datareader for participants
+     */
     builtin_participant_datareader =
         DDS_Subscriber_lookup_datareader(builtin_subscriber, DDS_PARTICIPANT_TOPIC_NAME);
 
@@ -380,7 +392,9 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Install our listener
+    /*
+     * Install our listener in the builtin datareader
+     */
     builtin_participant_listener.on_data_available =
         BuiltinParticipantListener_on_data_available;
 
@@ -392,7 +406,11 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Get builtin subscriber's datareader for subscribers
+    /*  Now we repeat the same procedure for builtin subscription topics. */
+
+    /*
+     *  Get builtin subscriber's datareader for subscribers
+     */
     builtin_subscriber_datareader =
         DDS_Subscriber_lookup_datareader(builtin_subscriber, DDS_SUBSCRIPTION_TOPIC_NAME);
 
@@ -401,7 +419,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Install our listener
+    /* Install our listener */
     builtin_subscriber_listener.on_data_available =
         BuiltinSubscriberListener_on_data_available;
 
@@ -413,12 +431,10 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Done!  All the listeners are installed, so we can enable the participant now.
     if (DDS_Entity_enable((DDS_Entity*)participant) != DDS_RETCODE_OK) {
         printf("***Error: Failed to Enable Participant\n");
         return -1;
     }
-    //// End changes for Builtin_Topics
 
 
     /* To customize publisher QoS, use

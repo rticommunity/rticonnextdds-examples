@@ -67,6 +67,7 @@ void msgListener_on_requested_incompatible_qos(
     DDS_DataReader* reader,
     const struct DDS_RequestedIncompatibleQosStatus *status)
 {
+
 }
 
 void msgListener_on_sample_rejected(
@@ -193,15 +194,15 @@ static int subscriber_main(int domainId, int sample_count,
     struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
     int len, max;
 
-    //// Start changes for Builtin_Topics
-    // Set user_data qos field for participnt
 
-    /* Get default participant QoS to customize */
+
     retcode = DDS_DomainParticipantFactory_get_default_participant_qos(DDS_TheParticipantFactory, &participant_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_participant_qos error\n");
         return -1;
     }
+
+    /* We include the subscriber credentials into de USER_DATA QoS. */
 
     len = strlen(participant_auth) + 1;
     max = participant_qos.resource_limits.participant_user_data_max_length;
@@ -209,12 +210,15 @@ static int subscriber_main(int domainId, int sample_count,
     if (len > max) {
         printf("error, participant user_data exceeds resource limits\n");
     } else {
-        // DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
-        // on your system, this will not work.
+        /*
+         *  DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
+         *  on your system, this will not work.
+         */
         DDS_OctetSeq_from_array(&participant_qos.user_data.value,
                                 (DDS_Octet*)(participant_auth), len);
     }
-    
+
+
     /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
        instead of participant_qos */
     participant = DDS_DomainParticipantFactory_create_participant(
@@ -226,7 +230,11 @@ static int subscriber_main(int domainId, int sample_count,
         return -1;
     }
 
-    //// End changes for Builtin_Topics
+    /* Done!  All the listeners are installed, so we can enable the participant now. */
+    if (DDS_Entity_enable((DDS_Entity*)participant) != DDS_RETCODE_OK) {
+        printf("***Error: Failed to Enable Participant\n");
+        return -1;
+    }
 
     /* To customize subscriber QoS, use
        DDS_DomainParticipant_get_default_subscriber_qos() */
@@ -276,8 +284,10 @@ static int subscriber_main(int domainId, int sample_count,
     reader_listener.on_data_available =
         msgListener_on_data_available;
 
-    //// Start changes for Builtin_Topics
-    // Set user_data qos field for datareader
+    /*
+     * Start changes for Builtin_Topics
+     * Set user_data qos field for datareader
+	*/
 
     /* Get default datareader QoS to customize */
     retcode = DDS_Subscriber_get_default_datareader_qos(subscriber, &datareader_qos);
@@ -292,8 +302,10 @@ static int subscriber_main(int domainId, int sample_count,
     if (len > max) {
         printf("error, datareader user_data exceeds resource limits\n");
     } else {
-        // DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
-        // on your system, this will not work.
+        /*
+         * DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
+          on your system, this will not work.
+          */
         DDS_OctetSeq_from_array(&datareader_qos.user_data.value,
                                 (DDS_Octet*)(reader_auth), len);
     }
@@ -309,12 +321,12 @@ static int subscriber_main(int domainId, int sample_count,
         return -1;
     }
 
-    //// End changes for Builtin_Topics
-
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-//        printf("msg subscriber sleeping for %d sec...\n",
-//               poll_period.sec);
+/*
+  printf("msg subscriber sleeping for %d sec...\n",
+               poll_period.sec);
+*/
         NDDS_Utility_sleep(&poll_period);
     }
 
@@ -350,8 +362,10 @@ int main(int argc, char *argv[])
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
-    //// Changes for Builtin_Topics
-    // Get arguments for auth strings and pass to subscriber_main()
+    /*
+     * Changes for Builtin_Topics
+     * Get arguments for auth strings and pass to subscriber_main()
+     */
 
     char *participant_auth = "password";
     char *reader_auth = "Reader_Auth";
