@@ -6,8 +6,8 @@ Concept
 -------
 
 Topics come in two flavors: those whose associated data type has specified some 
-fields as defining the ‘key,’ and those whose associated data type has not.
-If the data type has some fields that act as a ‘key,’ the Topic essentially 
+fields as defining the 'key', and those whose associated data type has not.
+If the data type has some fields that act as a 'key', the Topic essentially 
 defines a collection of data-instances whose values can be independently 
 maintained.
 
@@ -15,7 +15,7 @@ Since the key fields are contained within the data structure, Connext could
 examine the key fields each time it needs to determine which data-instance is 
 being modified. However, for performance and semantic reasons, it is better 
 for your application to declare all the data-instances it intends to 
-modify—prior to actually writing any samples. This is known as registration.
+modify-prior to actually writing any samples. This is known as registration.
 
 
 Example Description
