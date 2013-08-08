@@ -214,7 +214,6 @@ static int subscriber_main(int domainId, int sample_count)
      * using the XML, you will need to add the following lines to your code
      * and comment out the create_subscriber() call bellow.
      */
-
     /*
     DDS_StringSeq_ensure_length(&subscriber_qos.partition.name, 2, 2);
     *DDS_StringSeq_get_reference(&subscriber_qos.partition.name, 0) = 
@@ -232,7 +231,6 @@ static int subscriber_main(int domainId, int sample_count)
       return -1;
     }
     */
-    
     subscriber = DDS_DomainParticipant_create_subscriber(participant, 
 							 &DDS_SUBSCRIBER_QOS_DEFAULT, 
 							 NULL,
@@ -242,7 +240,7 @@ static int subscriber_main(int domainId, int sample_count)
       subscriber_shutdown(participant);
       return -1;
     }
-    
+
 
     printf("Setting partition to '%s', '%s'...\n",
            DDS_StringSeq_get(&subscriber_qos.partition.name, 0),
@@ -285,8 +283,32 @@ static int subscriber_main(int domainId, int sample_count)
     reader_listener.on_data_available =
         partitionsListener_on_data_available;
 
-    /* To customize data reader QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
+    /* If you want to change the Datareader QoS programmatically rather than
+     * using the XML, you will need to add the following lines to your code
+     * and comment out the create_datareader() call bellow.
+     */
+    /*
+    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber, &datareader_qos);
+    if (retcode != DDS_RETCODE_OK) {
+      printf("get_default_datareader_qos error\n");
+      return -1;
+    }
+    
+    datareader_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
+    datareader_qos.durability.kind = DDS_TRANSIENT_LOCAL_DURABILITY_QOS;
+    datareader_qos.history.kind = DDS_KEEP_ALL_HISTORY_QOS;
+    
+    reader = DDS_Subscriber_create_datareader(subscriber, 
+					      DDS_Topic_as_topicdescription(topic),
+					      &datareader_qos, 
+					      &reader_listener, 
+					      DDS_STATUS_MASK_ALL);
+    if (reader == NULL) {
+      printf("create_datareader error\n");
+      subscriber_shutdown(participant);
+      return -1;
+    }
+    */
     reader = DDS_Subscriber_create_datareader(
         subscriber, DDS_Topic_as_topicdescription(topic),
         &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
