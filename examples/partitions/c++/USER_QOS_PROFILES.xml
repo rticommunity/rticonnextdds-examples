@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+
+
+<dds>
+	<qos_library name="partitions_Library">
+
+		<qos_profile name="partitions_Profile" is_default_qos="true">
+		
+			<!-- Here we set two partitions the Publisher is going to be
+				 member of: "ABC" and "foo" -->
+			<publisher_qos>
+				<partition>
+					<name>
+						<element>ABC</element>
+					</name>
+					<name>
+						<element>foo</element>
+					</name>
+				</partition>
+			</publisher_qos>
+			
+			<!--  Here we set two partitions the Subscriber is going to
+				be member of: "ABC" and "X*Z" -->
+			<subscriber_qos>
+				<partition>
+					<name>
+						<element>ABC</element>
+					</name>
+					<name>
+						<element>X*Z</element>
+					</name>
+				</partition>
+			</subscriber_qos>
+			
+			<!-- In this example we set a Reliable Data Writer with a history 
+			    depth of 3 samples and Transient Local durability. -->
+			<datawriter_qos>
+				<reliability>
+					<kind>RELIABLE_RELIABILITY_QOS</kind>
+				</reliability>
+
+				<history>
+					<kind>KEEP_LAST_HISTORY_QOS</kind>
+					<depth>3</depth>
+				</history>
+
+				<durability>
+					<kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+				</durability>
+			</datawriter_qos>
+			
+			<!-- And a Reliable Data Reader with keep all history and Transient
+			     local durability. -->
+			<datareader_qos>
+				<reliability>
+					<kind>RELIABLE_RELIABILITY_QOS</kind>
+				</reliability>
+
+				<history>
+					<kind>KEEP_ALL_HISTORY_QOS</kind>
+				</history>
+
+				<durability>
+					<kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+				</durability>
+			</datareader_qos>
+
+			<participant_qos>
+				<!-- The participant name, if it is set, will be displayed in the RTI 
+					Analyzer tool, making it easier for you to tell one application from another 
+					when you're debugging. -->
+				<participant_name>
+					<name>RTI Partitions C++ Example</name>
+				</participant_name>
+
+			</participant_qos>
+		</qos_profile>
+
+	</qos_library>
+</dds>
