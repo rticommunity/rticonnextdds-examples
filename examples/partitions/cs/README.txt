@@ -21,7 +21,7 @@ rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable partitions.idl
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisble partitions.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable partitions.idl
 
 File C:\local\polling_partitions\cs\partitions_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
