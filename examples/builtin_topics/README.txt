@@ -6,7 +6,7 @@ Concept
 -------
 Built-in Topics are a special kind of topics that are used by RTI Connext applications to discover each other. These Topics are handled automatically by the middleware, but in certain scenarios it is useful to access to them. For instance, these Topics allow us to access some relevant information about Connext entities, such as:
 
-- The publications and subscriptions available
+- The publications and susbcriptions available
 - The TypeCode of publications
 - The QoS requested/offered by DataReaders and DataWriters.
 - Access to application specific data in discovery (e.g. USER_DATA)
