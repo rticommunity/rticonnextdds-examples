@@ -171,10 +171,6 @@ public class keysPublisher {
                 publisher.create_datawriter(
                     topic, Publisher.DATAWRITER_QOS_DEFAULT,
                     null /* listener */, StatusKind.STATUS_MASK_NONE);
-            if (writer == null) {
-                System.err.println("create_datawriter error\n");
-                return;
-            }           
 
             /* If you want to set the writer_data_lifecycle QoS settings
              * programmatically rather than using the XML, you will need to add
@@ -192,6 +188,10 @@ public class keysPublisher {
             				null, StatusKind.STATUS_MASK_NONE);
             */
             
+            if (writer == null) {
+                System.err.println("create_datawriter error\n");
+                return;
+            }  
             
             // --- Write --- //
 
