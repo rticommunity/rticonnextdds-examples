@@ -100,7 +100,7 @@ static int publisher_main(int domainId, int sample_count)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;  
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = {1,0};
     struct DDS_PublisherQos publisher_qos = DDS_PublisherQos_INITIALIZER;
     struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;
 
