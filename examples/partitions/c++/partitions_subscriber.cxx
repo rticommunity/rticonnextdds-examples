@@ -193,7 +193,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      * using the XML, you will need to add the following lines to your code
      * and comment out the create_subscriber() call bellow.
      */
-    
+    /*
     subscriber_qos.partition.name.ensure_length(2, 2);
     subscriber_qos.partition.name[0] = DDS_String_dup("ABC");
     subscriber_qos.partition.name[1] = DDS_String_dup("X*Z");
@@ -206,8 +206,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
       subscriber_shutdown(participant);
       return -1;
     }
-    
-    /*
+    */
     subscriber = participant->create_subscriber(
         DDS_SUBSCRIBER_QOS_DEFAULT, NULL, DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
@@ -215,7 +214,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         subscriber_shutdown(participant);
         return -1;
     }
-    */
+
     printf("Setting partition to '%s', '%s'...\n",
            subscriber_qos.partition.name[0],
            subscriber_qos.partition.name[1]);
@@ -251,7 +250,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      * and comment out the create_datareader() call bellow.
      */
     
-    
+    /*
     DDS_DataReaderQos datareader_qos;
     retcode = subscriber->get_default_datareader_qos(datareader_qos);
     if (retcode != DDS_RETCODE_OK) {
@@ -271,9 +270,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
       delete reader_listener;
       return -1;
     }
-    
-
-    /*
+    */
     reader = subscriber->create_datareader(
         topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
         DDS_STATUS_MASK_ALL);
@@ -283,7 +280,6 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         delete reader_listener;
         return -1;
     }
-    */
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
