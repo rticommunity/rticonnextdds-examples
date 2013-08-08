@@ -1,4 +1,4 @@
-/* partitions_publisher.c
+ /* partitions_publisher.c
 
    A publication of data of type partitions
 
@@ -245,6 +245,15 @@ static int publisher_main(int domainId, int sample_count)
     
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("Writing partitions, count %d\n", count);
+        instance->x = count;
+
+	retcode = partitionsDataWriter_write(partitions_writer, 
+					     instance, 
+					     &instance_handle);
+	if (retcode != DDS_RETCODE_OK) {
+	  printf("write error %d\n", retcode);
+	}
 	
 	/* Every 5 samples we will change the Partition name. These are the
          * partition expressions we are going to try: 
@@ -301,16 +310,6 @@ static int publisher_main(int domainId, int sample_count)
 	   DDS_Publisher_set_qos(publisher, &publisher_qos);
 	 }
 
-	 /* Write data */
-	instance->x = count;
-	printf("Writing partitions, count %d\n", count);
-	retcode = partitionsDataWriter_write(partitions_writer, 
-					     instance, 
-					     &instance_handle);
-	if (retcode != DDS_RETCODE_OK) {
-	  printf("write error %d\n", retcode);
-	}
-	
 	NDDS_Utility_sleep(&send_period);
     }
 
