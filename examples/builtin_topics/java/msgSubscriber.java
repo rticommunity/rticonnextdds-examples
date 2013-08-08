@@ -167,11 +167,7 @@ public class msgSubscriber {
                 return;
             }
             
-            participant.get_qos(participant_qos);
-            System.out.println("Using participant id " + participant_qos.wire_protocol.participant_id); // RTI DDS 4.2 and above
-            //System.out.println("Using participant index " + participant_qos.discovery.participant_index); // RTI DDS 4.1 and below
-
-            //// End changes for Builtin_Topics
+            participant.enable();
             
             // --- Create subscriber --- //
     
