@@ -1,6 +1,6 @@
+===============================
 Example Code - Builtin Topics
-
-Applies to RTI Data Distribution Service 4.0 and above.
+===============================
 
 Purpose 
 ======
@@ -15,7 +15,6 @@ This exposes two points. First, even though the builtin topics correspond to a h
 
 Second, the callbacks for participant discovery are guaranteed to fire before the callbacks for readers or writers that are children of that participant. 
 
-Note that there is a fourth builtin topic dealing with information about other Topics. As of 4.1d, such Topic information is not propagated until a particular reader or writer is created for that Topic. So, to get topic information install listeners for reader or writer builtin topics and examine topic_name or topic_data there. 
 
 SUBSCRIBER: 
 This shows how to set the user_data qos fields for participants and data readers. To do this, we first get the relevant default qos, then add our data as an DDS_OctetSeq. These Octets are opaque to DDS, and will not undergo any conversions during transmission. 
@@ -23,10 +22,7 @@ This shows how to set the user_data qos fields for participants and data readers
 This process is identical for topics, publishers and subscribers, except for the specific field names. The topic qos field is topic_data, while the publisher and subscriber fields are called group_data. 
 
 Building
-======
-In the C++ version, the code differs based on the RTI Data Distribution Service version you are using. Please read the README for details.
-
-Make sure you are using one of the relevant RTI Data Distribution Service versions, as specified at the top of the Solution.
+========
 
 Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
 
