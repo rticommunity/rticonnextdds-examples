@@ -217,17 +217,11 @@ extern "C" int subscriber_main(int domainId, int sample_count,
         return -1;
     }
 	
-    participant->get_qos(participant_qos);
-
-	//// Changes from 4.1 to 4.2
-#ifdef RTI_4_1
-    printf("Using participant index %ld\n", participant_qos.discovery.participant_index);	
-#else
-	printf("Using participant id %ld\n", participant_qos.wire_protocol.participant_id);
-#endif
-    
-
-    //// End changes for Builtin_Topics
+    /* The participant is disabled by default. We enable it now */
+    if (participant->enable() != DDS_RETCODE_OK) {
+        printf("***Error: Failed to Enable Participant\n");
+        return 0;
+    }
 
     /* To customize subscriber QoS, use
        participant->get_default_subscriber_qos() */
@@ -357,12 +351,14 @@ int main(int argc, char *argv[])
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
+    char *participant_auth = NULL;
+    char *reader_auth = NULL;
 
     //// Changes for Builtin_Topics
     // Get arguments for auth strings and pass to subscriber_main()
+    participant_auth=strdup("password");
+    reader_auth=strdup("Reader_Auth");
 
-    char *participant_auth = "password";
-    char *reader_auth = "Reader_Auth";
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);

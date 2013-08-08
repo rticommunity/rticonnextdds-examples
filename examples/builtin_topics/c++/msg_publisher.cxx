@@ -62,28 +62,11 @@ modification history
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "ndds/ndds_cpp.h"
 #include "msg.h"
 #include "msgSupport.h"
 
-class msgListener : public DDSDataWriterListener {
-  public:
-    virtual void on_liveliness_lost(
-        DDSDataWriter* /*writer*/,
-        const DDS_LivelinessLostStatus& /*status*/) {
-        printf("liveliness lost\n");
-    }
-
-    virtual void on_publication_matched(
-        DDSDataWriter* /*writer*/,
-        const DDS_PublicationMatchedStatus& status) {
-        printf("publication_matched, current count = %d\n",
-               status.current_count);
-    }
-};
-
-
-//// Start changes for Builtin_Topics
 
 // Authorization string.
 const char *auth = "password";
@@ -163,7 +146,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
         if (!info_seq[i].valid_data)
             continue;
 
-        participant_data = "nil";
+        participant_data=strdup("nil");
         bool isauth = false;
         // see if there is any participant_data
         if (data_seq[i].user_data.value.length() != 0) {
@@ -233,7 +216,7 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
         if (!info_seq[i].valid_data)
             continue;
         
-        reader_data = "nil";
+        reader_data=strdup("nil");
         bool isauth = false;
         // See if this is associated with an authorized participant
         if (is_auth_participant(data_seq[i].participant_key))
@@ -332,12 +315,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
     int count = 0;  
     struct DDS_Duration_t send_period = {1,0};
 
-    //// Start changes for Builtin_Topics
     /* By default, the participant is enabled upon construction.
        At that time our listeners for the builtin topics have not
        been installed, so we disable the participant until we
-       set up the listeners.
-    */
+       set up the listeners. This is done by default in the USER_QOS_PROFILES.xml
+       file. If you want to do it programmatically, just uncomment
+       the following code.
+
     DDS_DomainParticipantFactoryQos factory_qos;
     retcode = DDSTheParticipantFactory->get_qos(factory_qos);
     if (retcode != DDS_RETCODE_OK) {
@@ -366,9 +350,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
             break;
         }
     }
-    //// End changes for Builtin_Topics
+    */
 
-    /* Get default participant QoS to customize */
     DDS_DomainParticipantQos participant_qos;
     retcode = DDSTheParticipantFactory->get_default_participant_qos(participant_qos);
     if (retcode != DDS_RETCODE_OK) {
@@ -388,7 +371,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
        instead of participant_qos */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, participant_qos, 
+        domainId, DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -408,8 +391,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     /* Then get builtin subscriber's datareader for participants
        The type name is a bit hairy, but can be read right to left:
-       DDSParticipantBuiltinTopicDataDataReader is a 
-       DataReader for
+       DDSParticipantBuiltinTopicDataDataReader is a DataReader for
        BuiltinTopicData concerning a discovered
        Participant
     */
@@ -479,29 +461,11 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Get default datawriter QoS to customize */
-    DDS_DataWriterQos datawriter_qos;
-    retcode = publisher->get_default_datawriter_qos(datawriter_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_datawriter_qos error\n");
-        return -1;
-    }
-
-    datawriter_qos.liveliness.lease_duration.sec = 1;
-    datawriter_qos.liveliness.lease_duration.nanosec = 0;
-
-
-    msgListener *writer_listener = new msgListener();
-    /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
+     /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
        instead of datawriter_qos */
     writer = publisher->create_datawriter(
-        topic, datawriter_qos, writer_listener,
-        DDS_STATUS_MASK_ALL);
-
-
-//    writer = publisher->create_datawriter(
-//        topic, datawriter_qos, NULL /* listener */,
-//        DDS_STATUS_MASK_NONE);
+        topic, DDS_DATAWRITER_QOS_DEFAULT, NULL,
+        DDS_STATUS_MASK_NONE);
 
     if (writer == NULL) {
         printf("create_datawriter error\n");
