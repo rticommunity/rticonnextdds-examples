@@ -318,7 +318,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t receive_period = {4,0};
+    DDS_Duration_t receive_period = {1,0};
     int status = 0;
 
     /* To customize the participant QoS, use 
