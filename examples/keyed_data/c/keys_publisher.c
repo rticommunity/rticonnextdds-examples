@@ -106,7 +106,7 @@ static int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;  
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = {1,0};
     int i = 0;
 
     /* If you want to set the writer_data_lifecycle QoS settings

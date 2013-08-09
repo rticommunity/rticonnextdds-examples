@@ -124,7 +124,7 @@ static int publisher_main(int domainId, int sample_count)
 
     const char *type_name = NULL;
     int count = 0;  
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = {1,0};
     int i = 0;
 
     /* To customize participant QoS, use 

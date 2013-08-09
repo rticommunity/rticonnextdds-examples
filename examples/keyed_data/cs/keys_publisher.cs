@@ -224,7 +224,7 @@ public class keysPublisher {
         int[] active = new int[] { 1, 0, 0 }; // Only send active tracks.
 
         /* Main loop */
-        const System.Int32 send_period = 4000; // milliseconds
+        const System.Int32 send_period = 1000; // milliseconds
         for (int count=0;
              (sample_count == 0) || (count < sample_count);
              ++count) {

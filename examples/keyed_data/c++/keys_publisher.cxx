@@ -108,7 +108,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;  
-    DDS_Duration_t send_period = {4,0};
+    DDS_Duration_t send_period = {1,0};
 
     /* To customize participant QoS, use 
     the configuration file USER_QOS_PROFILES.xml */
