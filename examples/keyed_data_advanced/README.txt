@@ -9,11 +9,6 @@ As this example builds on 'Keyed Data' example (available under
 http://community.rti.com/examples/keyed-data), it is advisable to understand 
 that example before investigating this one. 
 
-The OWNERSHIP Qos Policy specifies whether a DataReader receive data for an 
-instance of a Topic sent by multiple DataWriters. This example explores how 
-DataWriters and DataReaders associated to keyed Topics interact with the OWNERSHIP 
-QoS policy.
-
 
 Example Description
 -------------------
@@ -21,10 +16,10 @@ In this example, we will show how the Ownership QoS interacts with the
 registration, unregistration, and disposal of instances of multiple 
 DataWriters. 
 
-We will explore how the on_data_available callback on the DataReader can 
+We will also explore how the on_data_available callback on the DataReader can 
 delegate to other handlers based on instance state changes. 
 
-We will also show how to read only certain keys. Note that this is an 
+Finally, we will show how to read only certain keys. Note that this is an 
 entirely separate mechanism than content based filters. "Filtering" in 
 this case is done on the DataReader side, and thus saves no network overhead. 
 An example of when such a scheme may be useful is when a DataReader is receiving 
