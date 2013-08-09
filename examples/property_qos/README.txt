@@ -4,7 +4,6 @@ Example Code - Using the Property QoS
 
 
 Concept
-
 -------
 
 
