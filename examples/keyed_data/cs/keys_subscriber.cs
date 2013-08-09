@@ -265,13 +265,11 @@ public class keysSubscriber {
         // --- Wait for data --- //
 
         /* Main loop */
-        const System.Int32 receive_period = 4000; // milliseconds
+        const System.Int32 receive_period = 1000; // milliseconds
         for (int count=0;
              (sample_count == 0) || (count < sample_count);
              ++count) {
-            Console.WriteLine(
-                "keys subscriber sleeping for {0} sec...",
-                receive_period / 1000);
+            //Console.WriteLine("keys subscriber sleeping for {0} sec...",receive_period / 1000);
 
             System.Threading.Thread.Sleep(receive_period);
         }

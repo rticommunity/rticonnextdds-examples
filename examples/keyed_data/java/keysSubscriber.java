@@ -183,13 +183,12 @@ public class keysSubscriber {
         
             // --- Wait for data --- //
 
-            final long receivePeriodSec = 4;
+            final long receivePeriodSec = 1;
 
             for (int count = 0;
                  (sampleCount == 0) || (count < sampleCount);
                  ++count) {
-                System.out.println("keys subscriber sleeping for "
-                                   + receivePeriodSec + " sec...");
+                //System.out.println("keys subscriber sleeping for " + receivePeriodSec + " sec...");
                 try {
                     Thread.sleep(receivePeriodSec * 1000);  // in millisec
                 } catch (InterruptedException ix) {

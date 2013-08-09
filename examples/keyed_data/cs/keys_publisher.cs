@@ -197,7 +197,7 @@ public class keysPublisher {
          * which data-instance is being modified.
          * However, for performance and semantic reasons, it is better
          * for your application to declare all the data-instances it intends to
-         * modify—prior to actually writing any samples. This is known as registration.
+         * modify prior to actually writing any samples. This is known as registration.
          */
 
         /* In order to register the instances, we must set their associated keys first */
@@ -224,11 +224,11 @@ public class keysPublisher {
         int[] active = new int[] { 1, 0, 0 }; // Only send active tracks.
 
         /* Main loop */
-        const System.Int32 send_period = 4000; // milliseconds
+        const System.Int32 send_period = 1000; // milliseconds
         for (int count=0;
              (sample_count == 0) || (count < sample_count);
              ++count) {
-            Console.WriteLine("Writing keys, count {0}", count);
+            //Console.WriteLine("Writing keys, count {0}", count);
 
             switch (count)
             {
