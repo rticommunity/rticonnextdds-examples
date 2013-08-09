@@ -210,7 +210,7 @@ public class keysPublisher {
              * which data-instance is being modified.
              * However, for performance and semantic reasons, it is better
              * for your application to declare all the data-instances it intends to
-             * modify—prior to actually writing any samples. This is known as registration.
+             * modify prior to actually writing any samples. This is known as registration.
              */
 
             /* In order to register the instances, we must set their associated keys first */

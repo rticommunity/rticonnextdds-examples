@@ -108,7 +108,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;  
-    DDS_Duration_t send_period = {4,0};
+    DDS_Duration_t send_period = {1,0};
 
     /* To customize participant QoS, use 
     the configuration file USER_QOS_PROFILES.xml */
@@ -212,7 +212,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     * which data-instance is being modified.
     * However, for performance and semantic reasons, it is better
     * for your application to declare all the data-instances it intends to
-    * modify—prior to actually writing any samples. This is known as registration.
+    * modify prior to actually writing any samples. This is known as registration.
     */
 
     /* In order to register the instances, we must set their associated keys first */
