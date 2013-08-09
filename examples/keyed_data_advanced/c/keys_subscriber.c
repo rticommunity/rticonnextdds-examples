@@ -339,7 +339,7 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = {1,0};
 
     /* If you want to set the DataReader QoS settings
     * programmatically rather than using the XML, you will need to add
