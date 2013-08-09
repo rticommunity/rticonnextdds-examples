@@ -228,7 +228,7 @@ public class keysPublisher {
         for (int count=0;
              (sample_count == 0) || (count < sample_count);
              ++count) {
-            Console.WriteLine("Writing keys, count {0}", count);
+            //Console.WriteLine("Writing keys, count {0}", count);
 
             switch (count)
             {

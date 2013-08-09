@@ -36,8 +36,8 @@ already provided.
 
 Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will use to
 build the types and the C# example, respectively:
- 1) First open  keys-dotnet4.0.sln and build the solution. 
- 2) Once you've done that, open keys-csharp.sln and build the C# example.
+ 1) First open  keys_type-dotnet4.0.sln and build the solution. 
+ 2) Once you've done that, open keys_example-csharp.sln and build the C# example.
 
 Running C# Example
 ===================
