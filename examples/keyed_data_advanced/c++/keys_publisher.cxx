@@ -157,6 +157,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
+    /* We are going to load different QoS profiles for the two DWs */
     DDS_DataWriterQos datawriter_qos;
 
     /* To customize data writer QoS, use 
@@ -166,6 +167,10 @@ extern "C" int publisher_main(int domainId, int sample_count)
         DDS_STATUS_MASK_NONE);
     
     retcode = DDSTheParticipantFactory->get_datawriter_qos_from_profile(datawriter_qos,"keys_Library","keys_Profile_dw2");
+    if (retcode != DDS_RETCODE_OK) {
+        printf("get_datawriter_qos_from_profile error\n");
+        return -1;
+    }
 
     /* If you want to set the writer_data_lifecycle QoS settings
      * programmatically rather than using the XML, you will need to add
@@ -196,13 +201,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
         DDS_STATUS_MASK_NONE);
 
     if (writer == NULL) {
-        printf("create_datawriter error\n");
+        printf("create_datawriter1 error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
     if (writer2 == NULL) {
-        printf("create_datawriter error\n");
+        printf("create_datawriter2 error\n");
         publisher_shutdown(participant);
         return -1;
     }
@@ -313,7 +318,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
                 printf("----DW1 unregistering instance %d\n", instance[1]->code); 
                 retcode = keys_writer->unregister_instance(*instance[1], handle[1]);
                 if (retcode != DDS_RETCODE_OK) {
-                    printf("dispose instance error %d\n", retcode);
+                    printf("unregister instance error %d\n", retcode);
                     return -1;
                 }
                 active[1] = 0;

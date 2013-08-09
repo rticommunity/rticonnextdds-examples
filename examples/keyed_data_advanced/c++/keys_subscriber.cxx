@@ -178,7 +178,7 @@ void keysListener::on_data_available(DDSDataReader* reader)
                     continue;
                 }
 
-                /* Here we print a message and change the instance stante
+                /* Here we print a message and change the instance state
                    if the instance state is ALIVE_NO_WRITERS or ALIVE_DISPOSED */
                 if (info_seq[i].instance_state == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
                     instance_lost_writers(keys_reader, &info_seq[i], &dummy);
@@ -257,6 +257,7 @@ void keysListener::instance_disposed(keysDataReader* keys_reader,
     states[msg->code] = disposed;
 }
 
+/* Called to handle relevant data samples */
 void keysListener::handle_data(keysDataReader* keys_reader,
     const DDS_SampleInfo* info,
     const keys* msg) {
