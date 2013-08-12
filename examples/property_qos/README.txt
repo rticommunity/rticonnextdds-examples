@@ -24,32 +24,3 @@ The attached example code shows how to use the Property QosPolicy to modify the 
 2. Setting the Property QoS policy in code 
 3. Changing these values in code without the Property QoS Policy (the code refers to this as the "classic" method), so you can see the difference.
 
-Publisher Output
-----------------
-Ok, send_socket_buffer_size....modified
-Ok, recv_socket_buffer_size....modified
-New UDPv4 send socket buffer size is: 65535 
-New UDPv4 receive socket buffer size is: 65535 
-Writing numbers, count 0
-Writing numbers, count 1
-
-Subscriber Output
------------------
-Ok, send_socket_buffer_size....modified
-Ok, recv_socket_buffer_size....modified
-New UDPv4 send socket buffer size is: 65535 
-New UDPv4 receive socket buffer size is: 65535 
-numbers subscriber sleeping for 4 sec...
-
-number: 500
- halfNumber: 250.000000
-numbers subscriber sleeping for 4 sec...
-
-number: 250
- halfNumber: 125.000000
-numbers subscriber sleeping for 4 sec...
- 
-number: 125
- halfNumber: 62.500000
-numbers subscriber sleeping for 4 sec...
-
