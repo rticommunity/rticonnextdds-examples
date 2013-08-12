@@ -19,6 +19,8 @@ For the second case, setting the properties using the Property QoS is much easie
 3. Change its transport properties
 4. Enable the entity
 
+Example Description
+-------------------
 The attached example code shows how to use the Property QosPolicy to modify the send and receive socket buffer transport properties. It shows this three ways:
 1. Using the XML QoS file to set the Property QoS policy
 2. Setting the Property QoS policy in code 
