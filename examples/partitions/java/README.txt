@@ -24,10 +24,10 @@ rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk partitions.idl
 
 You will see messages that look like this:
 
-File C:\local\using_partitions\java\partitionsSubscriber.java already exists and 
+File C:\local\partitions\java\partitionsSubscriber.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\using_partitions\java\partitionsPublisher.java already exists and 
+File C:\local\partitions\java\partitionsPublisher.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 

@@ -18,10 +18,10 @@ i86Win32VS2005) run:
 
 rtiddsgen -language C++ -example i86Win32VS2005 partitions.idl
 
-File C:\local\using_partitions\c++\partitions_subscriber.cxx already exists and 
+File C:\local\partitions\c++\partitions_subscriber.cxx already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\using_partitions\c++\partitions_publisher.cxx already exists and 
+File C:\local\partitions\c++\partitions_publisher.cxx already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 

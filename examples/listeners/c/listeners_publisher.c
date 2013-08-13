@@ -41,7 +41,7 @@
    objs\<arch>\listeners_subscriber <domain_id>   
        
        
-   modification history
+    modification history
    ------------ -------       
 */
 
@@ -75,8 +75,7 @@ void DataWriterListener_on_offered_incompatible_qos(
     printf("DataWriterListener: on_offered_incompatible_qos()\n");  
 }
 
-void 
-DataWriterListener_on_publication_matched(
+void DataWriterListener_on_publication_matched(
     void *listener_data, 
     DDS_DataWriter *writer, 
     const struct DDS_PublicationMatchedStatus *status)
@@ -90,8 +89,7 @@ DataWriterListener_on_publication_matched(
     }
 }
 
-void 
-DataWriterListener_on_reliable_writer_cache_changed(
+void DataWriterListener_on_reliable_writer_cache_changed(
     void *listener_data, 
     DDS_DataWriter *writer, 
     const struct DDS_ReliableWriterCacheChangedStatus *status)

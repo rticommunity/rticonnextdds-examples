@@ -23,10 +23,10 @@ command, i.e.,
 
 rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable partitions.idl
 
-File C:\local\polling_partitions\cs\partitions_subscriber.cs already 
+File C:\local\partitions\cs\partitions_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
-File C:\local\polling_partitions\cs\partitions_publisher.cs already 
+File C:\local\partitions\cs\partitions_publisher.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
 
