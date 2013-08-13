@@ -40,11 +40,11 @@ compiler is in your PATH environment variable.
 
 On Windows systems run:
 
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar MAX_SEQUENCE_LEN.java partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
+javac -classpath .;%NDDSHOME%\class\nddsjava.jar partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar MAX_SEQUENCE_LEN.java partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
+javac -classpath .:$NDDSHOME/class/nddsjava.jar partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
 
 Running Java Example
 ====================
