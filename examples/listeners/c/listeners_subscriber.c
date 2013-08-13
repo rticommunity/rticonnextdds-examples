@@ -55,7 +55,8 @@ modification history
  * Participant Listener events 
  * ------------------------------------------------------- */
 
-void ParticipantListener_on_requested_deadline_missed(
+void 
+ParticipantListener_on_requested_deadline_missed(
     void* listener_data,
     DDS_DataReader* reader,
     const struct DDS_RequestedDeadlineMissedStatus *status)
@@ -116,7 +117,7 @@ void ParticipantListener_on_data_on_readers(
 {
     DDS_ReturnCode_t retcode;
     printf("ParticipantListener: on_data_on_readers()\n");
-
+    
     /* notify_datareaders() only calls on_data_available for
      * DataReaders with unread samples
      */

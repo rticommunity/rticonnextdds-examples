@@ -51,9 +51,64 @@
 #include "listeners.h"
 #include "listenersSupport.h"
 
+void DataWriterListener_on_offered_deadline_missed(
+    void *listener_data,
+    DDS_DataWriter *writer,
+    const struct DDS_OfferedDeadlineMissedStatus *status)
+{
+    printf("DataWriterListener: on_offered_deadline_missed()\n");
+}
+
+void DataWriterListener_on_liveliness_lost(
+    void *listener_data, 
+    DDS_DataWriter *writer, 
+    const struct DDS_LivelinessLostStatus *status)
+{
+    printf("DataWriterListener: on_liveliness_lost()\n");
+}
+
+void DataWriterListener_on_offered_incompatible_qos(
+    void *listener_data, 
+    DDS_DataWriter *writer, 
+    const struct DDS_OfferedIncompatibleQosStatus *status)
+{
+    printf("DataWriterListener: on_offered_incompatible_qos()\n");  
+}
+
+void 
+DataWriterListener_on_publication_matched(
+    void *listener_data, 
+    DDS_DataWriter *writer, 
+    const struct DDS_PublicationMatchedStatus *status)
+{
+    printf("DataWriterListener: on_publication_matched()\n");
+    if (status->current_count_change < 0) {
+	printf("lost a subscription\n");
+    } 
+    else {
+	printf("found a subscription\n");
+    }
+}
+
+void 
+DataWriterListener_on_reliable_writer_cache_changed(
+    void *listener_data, 
+    DDS_DataWriter *writer, 
+    const struct DDS_ReliableWriterCacheChangedStatus *status)
+{
+    printf("DataWriterListener: on_reliable_writer_cache_changed()\n");    
+}
+
+void DataWriterListener_on_reliable_reader_activity_changed(
+    void *listener_data, 
+    DDS_DataWriter *writer, 
+    const struct DDS_ReliableReaderActivityChangedStatus *status)
+{
+    printf("DataWriterListener: on_reliable_reader_activity_changed()\n");
+}
+
 /* Delete all entities */
-static int publisher_shutdown(
-			      DDS_DomainParticipant *participant)
+static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -100,6 +155,9 @@ static int publisher_main(int domainId, int sample_count)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     
+    struct DDS_DataWriterListener writer_listener = 
+	DDS_DataWriterListener_INITIALIZER;
+
     DDS_Topic *inconsistent_topic = NULL;
     DDS_DataWriter *inconsistent_topic_writer = NULL;
     const char *inconsistent_topic_type_name = NULL;
@@ -247,13 +305,31 @@ static int publisher_main(int domainId, int sample_count)
 
        
 
-    /* To customize data writer QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    writer = DDS_Publisher_create_datawriter(publisher, 
+    /* We will use the Data Writer Listener defined above to print
+     * a message when some of events are triggered in the DataWriter. 
+     * To do that, first we have to pass the writer_listener and then
+     * we have to enable all status in the status mask.
+     */
+
+    /* Set up participant listener */
+    writer_listener.on_offered_deadline_missed =
+	DataWriterListener_on_offered_deadline_missed;
+    writer_listener.on_liveliness_lost =
+	DataWriterListener_on_liveliness_lost;
+    writer_listener.on_offered_incompatible_qos =
+	DataWriterListener_on_offered_incompatible_qos;
+    writer_listener.on_publication_matched =
+	DataWriterListener_on_publication_matched;
+    writer_listener.on_reliable_writer_cache_changed = 
+	DataWriterListener_on_reliable_writer_cache_changed;
+    writer_listener.on_reliable_reader_activity_changed = 
+	DataWriterListener_on_reliable_reader_activity_changed;
+
+    writer = DDS_Publisher_create_datawriter(publisher,
 					     topic,
 					     &DDS_DATAWRITER_QOS_DEFAULT, 
-					     NULL /* listener */, 
-					     DDS_STATUS_MASK_NONE);
+					     &writer_listener  /* listener */, 
+					     DDS_STATUS_MASK_ALL /* enable all statuses */);
     if (writer == NULL) {
 	printf("create_datawriter error\n");
 	publisher_shutdown(participant);
@@ -269,6 +345,7 @@ static int publisher_main(int domainId, int sample_count)
     /* Create data sample for writing */
     instance = listenersTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     
+
     if (instance == NULL) {
 	printf("listenersTypeSupport_create_data error\n");
 	publisher_shutdown(participant);
