@@ -1,5 +1,4 @@
 =============================================
-
 Example code: Using Property QoS
 =============================================
 
@@ -9,11 +8,11 @@ Make sure you are using one of the relevant RTI Data Distribution Service versio
 
 Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
 
-Run rtiddsgen with the -example option and the target architecture of your choice (for example, i86Win32VS2005). The RTI Data Distribution Service Getting Started Guide describes this process in detail. Follow the same procedure to generate the code and build the examples. Do not use the -replace option.
+Run rtiddsgen with the -example option and the target architecture of your choice (for example, i86Win32VS2010). The RTI Data Distribution Service Getting Started Guide describes this process in detail. Follow the same procedure to generate the code and build the examples. Do not use the -replace option.
 
 After running rtiddsgen like this...
 
-C:\local\property_qos\c> rtiddsgen -language C -example i86Win32VS2005 numbers.idl
+C:\local\property_qos\c> rtiddsgen -language C -example i86Win32VS2010 numbers.idl
 
 ...you will see messages that look like this:
 

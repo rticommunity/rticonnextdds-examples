@@ -3,12 +3,9 @@
 Example code: Using Property QoS
 =============================================
 
-
-
 Building C# Example
 
 ====================
-
 Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
