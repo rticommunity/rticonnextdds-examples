@@ -5,7 +5,6 @@ Example code: Using Property QoS
 Building C++ Example
 ====================
 
-
 Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your choice (for example, i86Win32VS2010). The RTI Connext DDS Getting Started Guide describes this process in detail. Follow the same procedure to generate the code and build the examples. Do not use the -replace option.
@@ -20,7 +19,6 @@ File C:\local\property_qos\c++\numbers_subscriber.cxx already exists and will no
 File C:\local\property_qos\c++\numbers_publisher.cxx already exists and will not be replaced with updated content. If you would like to get a new file with the new content, either remove this file or supply -replace option.
 
 This is normal and is only informing you that the subscriber/publisher code has not been replaced, which is fine since all the source files for the example are already provided.
-
 
 Running
 =======

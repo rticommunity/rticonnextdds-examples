@@ -4,7 +4,6 @@ Example code: Using Property QoS
 
 Building Java Example
 =====================
-
 Make sure you are using one of the relevant RTI Data Distribution Service versions, as specified at the top of the Solution.
 
 Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
