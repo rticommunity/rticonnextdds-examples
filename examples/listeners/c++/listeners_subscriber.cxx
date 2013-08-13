@@ -353,6 +353,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
         return -1;
     }
 
@@ -361,6 +362,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (subscriber_listener ==  NULL) {
         printf("subscriber listener instantiation error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
         return -1;
     }
 
@@ -372,6 +374,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
+	delete subscriber_listener;
         return -1;
     }
 
@@ -382,6 +386,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
+	delete participant_listener;
+	delete subscriber_listener;
         return -1;
     }
 
@@ -394,6 +400,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
+	delete subscriber_listener;
         return -1;
     }
 
@@ -402,6 +410,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (reader_listener ==  NULL) {
         printf("reader listener instantiation error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
+	delete subscriber_listener;
         return -1;
     }
 
@@ -417,6 +427,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
+	delete participant_listener;
+	delete subscriber_listener;
         delete reader_listener;
         return -1;
     }

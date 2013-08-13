@@ -305,12 +305,14 @@ extern "C" int publisher_main(int domainId, int sample_count)
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
+	delete writer_listener;
         return -1;
     }
     listeners_writer = listenersDataWriter::narrow(writer);
     if (listeners_writer == NULL) {
         printf("DataWriter narrow error\n");
         publisher_shutdown(participant);
+	delete writer_listener;
         return -1;
     }
 
