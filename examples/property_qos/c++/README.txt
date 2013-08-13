@@ -3,7 +3,6 @@ Example code: Using Property QoS
 =============================================
 
 Building C++ Example
-
 ====================
 
 

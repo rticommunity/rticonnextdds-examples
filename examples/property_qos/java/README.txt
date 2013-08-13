@@ -3,7 +3,6 @@ Example code: Using Property QoS
 =============================================
 
 Building Java Example
-
 =====================
 
 Make sure you are using one of the relevant RTI Data Distribution Service versions, as specified at the top of the Solution.

@@ -1,11 +1,9 @@
 =============================================
-
 Example code: Using Property QoS
 =============================================
 
 Building C# Example
-
-====================
+===================
 Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -30,7 +28,7 @@ not been replaced, which is fine since all the source files for the example are
 already provided.
 
 Running C# Example
-===================
+==================
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure 
 the application loads the QoS defined in USER_QOS_PROFILES.xml):
@@ -46,7 +44,7 @@ and sleep periods for the subscriber. A value of '0' instructs the
 application to run forever; this is the default.
 
 Publisher Output
-=============
+================
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507
@@ -57,7 +55,7 @@ Writing numbers, count 2
 Writing numbers, count 3
 
 Subscriber Output
-==============
+=================
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507
