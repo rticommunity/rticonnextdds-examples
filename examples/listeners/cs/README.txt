@@ -1,5 +1,5 @@
 =============================================
- Example Code -- Partitions
+ Example Code -- Listeners
 =============================================
 
 Building C# Example
@@ -16,17 +16,17 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VSdotnet4.0) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable partitions.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable listeners.idl
 
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable partitions.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable listeners.idl
 
-File C:\local\partitions\cs\partitions_subscriber.cs already 
+File C:\local\listeners\cs\listeners_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
-File C:\local\partitions\cs\partitions_publisher.cs already 
+File C:\local\listeners\cs\listeners_publisher.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
 new file with the new content, either remove this file or supply -replace option.
 
@@ -35,8 +35,8 @@ not been replaced, which is fine since all the source files for the example are
 already provided.
 
 Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will use to
-build the types and the C# example, respectively. First open  partitions_type-dotnet4.0.sln 
-and build the solution. Once you've done that, open partitions_example-csharp.sln and build
+build the types and the C# example, respectively. First open  listeners_type-dotnet4.0.sln 
+and build the solution. Once you've done that, open listeners_example-csharp.sln and build
 the C# example.
 
 Running C# Example
@@ -47,8 +47,8 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-bin\<build_type>-VS2010\partitions_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\partitions_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\listeners_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\listeners_subscriber.exe <domain_id> <sleep_periods>
 
 The applications accept two arguments:
 

@@ -1,5 +1,5 @@
 ===========================================
- Example Code -- Partitions
+ Example Code -- Listeners
 ===========================================
 
 Building Java Example
@@ -15,19 +15,19 @@ use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk partitions.idl
+rtiddsgen -language Java -example i86Win32jdk listeners.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk partitions.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk listeners.idl
 
 You will see messages that look like this:
 
-File C:\local\partitions\java\partitionsSubscriber.java already exists and 
+File C:\local\listeners\java\listenersSubscriber.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\partitions\java\partitionsPublisher.java already exists and 
+File C:\local\listeners\java\listenersPublisher.java already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 
@@ -40,11 +40,11 @@ compiler is in your PATH environment variable.
 
 On Windows systems run:
 
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
+javac -classpath .;%NDDSHOME%\class\nddsjava.jar listeners.java listenersSeq.java listenersTypeSupport.java listenersTypeCode.java listenersDataReader.java listenersDataWriter.java listenersSubscriber.java listenersPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar partitions.java partitionsSeq.java partitionsTypeSupport.java partitionsTypeCode.java partitionsDataReader.java partitionsDataWriter.java partitionsSubscriber.java partitionsPublisher.java
+javac -classpath .:$NDDSHOME/class/nddsjava.jar listeners.java listenersSeq.java listenersTypeSupport.java listenersTypeCode.java listenersDataReader.java listenersDataWriter.java listenersSubscriber.java listenersPublisher.java
 
 Running Java Example
 ====================
@@ -67,13 +67,13 @@ ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-java -cp .;%NDDSHOME%\class\nddsjava.jar partitionsPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar partitionsSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\class\nddsjava.jar listenersPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\class\nddsjava.jar listenersSubscriber <domain_id> <sleep_periods>
 
 On Unix systems (including Linux and MacOS X) run:
 
-java -cp .:$NDDSHOME/class/nddsjava.jar partitionsPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar partitionsSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/class/nddsjava.jar listenersPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/class/nddsjava.jar listenersSubscriber <domain_id> <sleep_periods>
 
 
 The applications accept two arguments:
