@@ -1,5 +1,5 @@
 ===========================================
- Example Code -- Partitions
+ Example Code -- Listeners
 ===========================================
 
 Building C++ Example
@@ -16,12 +16,12 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C++ -example i86Win32VS2005 partitions.idl
+rtiddsgen -language C++ -example i86Win32VS2005 listeners.idl
 
-File C:\local\partitions\c++\partitions_subscriber.cxx already exists and 
+File C:\local\listeners\c++\listeners_subscriber.cxx already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
-File C:\local\partitions\c++\partitions_publisher.cxx already exists and 
+File C:\local\listeners\c++\listeners_publisher.cxx already exists and 
 will not be replaced with updated content. If you would like to get a new file 
 with the new content, either remove this file or supply -replace option.
 
@@ -37,13 +37,13 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-objs\<arch_name>\partitions_publisher.exe   <domain_id> <samples_to_send>
-objs\<arch_name>\partitions_subscriber.exe  <domain_id> <sleep_periods>
+objs\<arch_name>\listeners_publisher.exe   <domain_id> <samples_to_send>
+objs\<arch_name>\listeners_subscriber.exe  <domain_id> <sleep_periods>
 
 UNIX systems:
 
-./objs/<arch_name>/partitions_publisher   <domain_id>   <samples_to_send>
-./objs/<arch_name>/partitions_subscriber  <domain_id>   <sleep_periods>
+./objs/<arch_name>/listeners_publisher   <domain_id>   <samples_to_send>
+./objs/<arch_name>/listeners_subscriber  <domain_id>   <sleep_periods>
 
 The applications accept up to three arguments:
 
