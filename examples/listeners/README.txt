@@ -40,10 +40,4 @@ prints out messages every time an event is triggered. We also create
 an inconsistent topic so the reader's handler gets called.
 
 In the subscriber application we implement three listeners for Participant,
-Subscriber, and DataReader, respectively. When called, each listener shows the 
-callbacks that are triggered -- DataReader before Subscriber, etc.
-
-In particular, note the interaction between on_data_on_readers and 
-on_data_available. The former has higher priority, but it can also notify 
-subordinate listeners. This is useful if there is some generic processing to 
-be done before individual DataReader listeners are called to process a sample.
+Subscriber, and DataReader, respectively. 
