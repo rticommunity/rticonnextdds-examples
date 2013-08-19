@@ -70,6 +70,7 @@ DDS_TypeCode *type_w_sequence_get_typecode() {
 		tc = DDS_TypeCodeFactory_create_struct_tc(tcf, "TypeWithSequence",
 				&members, &err);
 
+
 		DDS_TypeCode_add_member(tc, "sequence_member",
 				DDS_TYPECODE_MEMBER_ID_INVALID, sequence_get_typecode(),
 				DDS_TYPECODE_NONKEY_MEMBER, &err);
@@ -123,7 +124,8 @@ void read_data(DDS_DynamicData *sample) {
 	DDS_DynamicData seqmember;
 	DDS_DynamicData seqelement;
 	DDS_Long value;
-	int i;
+	struct DDS_DynamicDataInfo info;
+	int i,seqlen;
 
 	DDS_DynamicData_initialize(&seqmember, sequence_get_typecode(),
 			&DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
@@ -134,7 +136,19 @@ void read_data(DDS_DynamicData *sample) {
 	DDS_DynamicData_get_complex_member(sample, &seqmember, "sequence_member",
 			DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
 
-	for (i = 0; i < MAX_SEQ_LEN; ++i) {
+
+	/* Now we get the total amount of elements contained in the sequence
+	 * by accessing the dynamic data info
+	 */
+	printf("* Getting sequence member info....\n");
+
+
+	DDS_DynamicData_get_info(&seqmember,&info);
+	seqlen = info.member_count;
+
+	printf("* Sequence contains %d elements\n",seqlen);
+
+	for (i = 0; i < seqlen ; ++i) {
 		/*
 		 * The same results can be obtained using
 		 * bind_complex_member method. The main difference, is that
