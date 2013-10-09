@@ -1,20 +1,19 @@
-			High Priority First Flow Controller Example
-			===========================================
-				   Rajive Joshi 2013.10.08
-				
-				
-DESCRIPTION	
+===========================================================
+Example Code - High Priority First Flow Controller Example
+===========================================================
 
-Shows how to configure a High Priority First Flow Controller. The configuration is
-summarized in:
-     USER_QOS_PROFILES.xml
-
-It shows the configuration of the following items, and all the key changes (from the
-generated example) are documented as XML comments.
+Concept
+-------
+				
+Example Description
+-------------------
+This Example shows how to configure a High Priority First Flow Controller modifying
+the following items -- all the key changes (from the generated example) are documented 
+as XML comments in USER_QOS_PROFILES.xml. 
 
 1. Increase the transport sizes
-   - send and receive buffers
-   - gather-send buffers to maximize message coalescing/batching for a destination
+   - Send and receive buffers
+   - Gather-send buffers to maximize message coalescing/batching for a destination
    
    May require the OS to be tuned to match these settings.
    
@@ -36,12 +35,9 @@ generated example) are documented as XML comments.
 5. Configure data reader to match the large data customizations for the data writer.
    Those settings can be skipped if large data is not being used.
    
+The example uses a modified HelloWorld example to show the High Priority First Flow Controller. 
+The stock examples is modified as follows:
 
-
-EXAMPLE
-
-Uses a modified HelloWorld example to show the High Priority First Flow Controller. The 
-stock examples is modified as follows
 1. $NDDSHOME/example/CPP/Hello_idl/src/HelloWorld.idl is modified to increase the
          HELLODDS_MAX_PAYLOAD_SIZE = 8192*16; // 131MB
    so that we can easily test the the flow controller.
@@ -53,29 +49,10 @@ stock examples is modified as follows
     instance->payload.ensure_length(HELLODDS_MAX_PAYLOAD_SIZE, HELLODDS_MAX_PAYLOAD_SIZE); //<<HPF>>
 
 4. The USER_QOS_PROFILES.xml is modified to configure a High Priority First Flow controller.
-
-5. To Build:
-
-   cd HighPriorityFirstFlowController/
-   
-   Generate makefile/project if not already present:
-       rtiddsgen -makefile <your_platform> HelloWorld.idl 
-   Built it
-           make -f makefile_HelloWorld_ <your_platform>
-        or execute the Windows project
-        
-   Example: 
-        make -f makefile_HelloWorld_x64Darwin10gcc4.2.1 
-
-6. To Run:
-   In a shell window:
-     ./objs/x64Darwin10gcc4.2.1/HelloWorld_publisher 
- 
-   In another shell window:
-     ./objs/x64Darwin10gcc4.2.1/HelloWorld_subscriber 
  
 
-REFERENCES
+References
+----------
 1. RTI_CoreLibrariesAndUtilities_UsersManual, Section 6.6
    FlowControllers (DDS Extension)
 
@@ -84,4 +61,4 @@ REFERENCES
 
 3. Tune Your OS for Performance: 
    http://community.rti.com/best-practices/tune-your-os-performance
- 
+

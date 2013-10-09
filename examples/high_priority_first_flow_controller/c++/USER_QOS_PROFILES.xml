@@ -44,8 +44,8 @@ RTI Connext user manual.
                     <participant_property_string_max_length>4096</participant_property_string_max_length>
                     <type_object_max_serialized_length>8192</type_object_max_serialized_length>
                 </resource_limits>
-
-				<!-- Increase to the the maximum message size allowed by UDP (64k) -->
+		
+		<!-- Increase to the the maximum message size allowed by UDP (64k) -->
                 <receiver_pool>
                     <buffer_size>65530</buffer_size>
                 </receiver_pool>
@@ -123,15 +123,15 @@ RTI Connext user manual.
                         
                         
                         
-						<!-- Highest-Priority-First Flow Controller -->
+			<!-- Highest-Priority-First Flow Controller -->
                         <element>
                             <name>dds.flow_controller.token_bucket.priority_flow.scheduling_policy</name>
                             <value>DDS_HPF_FLOW_CONTROLLER_SCHED_POLICY</value>
                         </element>
                      	<!-- The next set of parameters defines an example flow:
                              - Using 8Kb tokens, a 1M sample will take 128 tokens.
-						     - Setup for 100 MB/sec (838 Mb/sec) 
-					     -->
+			     - Setup for 100 MB/sec (838 Mb/sec) 
+			-->
                         <element>
                             <name>dds.flow_controller.token_bucket.priority_flow.token_bucket.max_tokens</name>
                             <value>128</value>
@@ -162,8 +162,8 @@ RTI Connext user manual.
                     <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
                     <flow_controller_name>dds.flow_controller.token_bucket.priority_flow</flow_controller_name>
  					   
- 					<!-- DataWriter priority - larger number is higher priority --> 
- 					<priority>10</priority>
+ 		    <!-- DataWriter priority - larger number is higher priority --> 
+ 		    <priority>10</priority>
                 </publish_mode>
                 
                 <reliability>
