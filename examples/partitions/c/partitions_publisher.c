@@ -151,7 +151,12 @@ static int publisher_main(int domainId, int sample_count)
 						       &DDS_PUBLISHER_QOS_DEFAULT, 
 						       NULL,
 						       DDS_STATUS_MASK_NONE);
-
+    if (publisher == NULL) {
+      printf("create_publisher error\n");
+      publisher_shutdown(participant);
+      return -1;
+    }
+    
     /* Register type before creating topic */
     type_name = partitionsTypeSupport_get_type_name();
     retcode = partitionsTypeSupport_register_type(
