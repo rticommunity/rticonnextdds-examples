@@ -23,14 +23,6 @@
 					<kind>KEEP_ALL_HISTORY_QOS</kind>
 				</history>
 
-				<!-- Here we reduce the liveliness timeout period to trigger the StatusCondition 
-					DDS_LIVELINESS_CHANGED_STATUS) -->
-				<liveliness>
-					<lease_duration>
-						<sec>1</sec>
-						<nanosec>0</nanosec>
-					</lease_duration>
-				</liveliness>
 			</datawriter_qos>
 
 			<!-- QoS used to configure the data reader created in the example code -->
@@ -43,14 +35,6 @@
 				<history>
 					<kind>KEEP_ALL_HISTORY_QOS</kind>
 				</history>
-				<!-- Here we reduce the liveliness timeout period to trigger the StatusCondition 
-					DDS_LIVELINESS_CHANGED_STATUS. -->
-				<liveliness>
-					<lease_duration>
-						<sec>2</sec>
-						<nanosec>0</nanosec>
-					</lease_duration>
-				</liveliness>
 			</datareader_qos>
 
 			<participant_qos>

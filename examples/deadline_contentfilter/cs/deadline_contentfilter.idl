@@ -1,0 +1,10 @@
+struct deadline_contentfilter {
+
+  long code; //@key
+
+  long x;
+
+  long y;
+
+};
+

@@ -1,0 +1,14 @@
+/* listeners is the data type we will register the topic 
+ * both in the publisher and subscriber applications.
+ */
+struct listeners {
+    short x;
+};
+
+/* We will use msg to register a topic with an inconsistent
+ * data type (i.e., same topic name but different data type)
+ *  and trigger a listener in the subscriber application.
+ */ 
+struct msg {
+    char c;
+};

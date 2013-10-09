@@ -15,7 +15,7 @@ use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk sequences.idl
+rtiddsgen -language Java -example i86Win32jdk waitsets.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
