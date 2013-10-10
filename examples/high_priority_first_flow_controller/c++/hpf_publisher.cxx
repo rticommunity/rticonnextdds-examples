@@ -180,7 +180,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 /*
     instance_handle = hpf_writer->register_instance(*instance);
 */
-    instance->payload.ensure_length(HELLODDS_MAX_PAYLOAD_SIZE, HELLODDS_MAX_PAYLOAD_SIZE); //<<HPF>>
+    instance->payload.ensure_length(HPF_MAX_PAYLOAD_SIZE, HPF_MAX_PAYLOAD_SIZE); //<<HPF>>
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
