@@ -162,8 +162,8 @@ RTI Connext user manual.
                     <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
                     <flow_controller_name>dds.flow_controller.token_bucket.priority_flow</flow_controller_name>
  					   
- 		    <!-- DataWriter priority - larger number is higher priority --> 
- 		    <priority>10</priority>
+                    <!-- DataWriter priority - larger number is higher priority --> 
+                    <priority>10</priority>
                 </publish_mode>
                 
                 <reliability>
@@ -247,7 +247,7 @@ RTI Connext user manual.
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
                 </reliability>
- 
+                
                 <protocol>
                     <rtps_reliable_reader>
                         <min_heartbeat_response_delay>
