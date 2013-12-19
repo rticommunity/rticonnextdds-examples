@@ -1,9 +1,9 @@
 ===========================================
- Example Code -- Content Filtered Topic
+ Example Code -- Asynchronous Publishing
 ===========================================
 
-Building C Example
-==================
+Building C++ Example
+====================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -16,41 +16,41 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C -example i86Win32VS2005 cft.idl
+rtiddsgen -language C++ -example i86Win32VS2005 async.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C -example i86Linux2.6gcc4.4.3 cft.idl
+rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 async.idl
 
 You will see messages that look like this:
 
-File C:\local\content_filtered_topic\c\cft_subscriber.c already exists and will 
-not be replaced with updated content. If you would like to get a new file with 
-the new content, either remove this file or supply -replace option.
-File C:\local\content_filtered_topic\c\cft_publisher.c already exists and will 
-not be replaced with updated content. If you would like to get a new file with 
-the new content, either remove this file or supply -replace option.
+File C:\local\asynchronous_publication\c++\async_subscriber.cxx already exists and 
+will not be replaced with updated content. If you would like to get a new file 
+with the new content, either remove this file or supply -replace option.
+File C:\local\asynchronous_publication\c++\async_publisher.cxx already exists and 
+will not be replaced with updated content. If you would like to get a new file 
+with the new content, either remove this file or supply -replace option.
 
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
-Running C Example
-=================
+Running C++ Example
+===================
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-objs\<arch_name>\cft_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\cft_subscriber.exe <domain_id>  <sleep_periods>	<select_cft>
+objs\<arch_name>\async_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\async_subscriber.exe <domain_id>  <sleep_periods> 
 
 UNIX systems:
 
-./objs/<arch_name>/cft_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/cft_subscriber <domain_id> <sleep_periods>	<select_cft>
+./objs/<arch_name>/async_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/async_subscriber <domain_id> <sleep_periods> 
 
 The applications accept up to three arguments:
 
@@ -59,7 +59,5 @@ The applications accept up to three arguments:
    2. How long the examples should run, measured in samples for the publisher 
    and sleep periods for the subscriber. A value of '0' instructs the 
    application to run forever; this is the default.
-   3. (subscriber only) The "select Content Filtered Topic" switch. If 1, then 
-   we use a Content Filtered Topic. If 0, then we use a normal topic. 
-   The default is 1.
+
    
