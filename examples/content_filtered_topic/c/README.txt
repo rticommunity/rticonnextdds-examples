@@ -45,7 +45,7 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 objs\<arch_name>\cft_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\cft_publisher.exe <domain_id>  <sleep_periods>	<select_cft>
+objs\<arch_name>\cft_subscriber.exe <domain_id>  <sleep_periods>	<select_cft>
 
 UNIX systems:
 
