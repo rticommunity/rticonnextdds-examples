@@ -245,7 +245,7 @@ static int publisher_main(int domainId, int sample_count)
 	//// Changes for Asynchronous_Publication
     // Give time for publisher to send out last few samples
     send_period.sec = 1;
-    NDDSUtility::sleep(send_period);
+    NDDS_Utility_sleep(&send_period);
 
 /*
     retcode = asyncDataWriter_unregister_instance(
