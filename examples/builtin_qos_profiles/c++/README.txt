@@ -44,19 +44,20 @@ already provided.
 Link and Run with Dynamic Libraries
 ===================================
 This example dynamically loads the RTI Monitoring library.  If you statically 
-link with the other RTI libraries, this will fail at runtime.  
+link with the other RTI libraries, this will fail at runtime.
+  
 To dynamically link with the RTI libraries on Windows, choose the Debug DLL or 
 Release DLL build target.  Make sure that RTI's libraries are in the system 
 PATH environment variable, such as:
 PATH=c:\rti\ndds.5.1.0\lib\i86Win32VS2005;... 
 
+To dynamically link with the RTI libraries on Linux, modify the makefile to
+remove the 'z' from the end of the RTI library names, such as:
+-lnddscpp -lnddsc -lnddscore 
 
-<placeholder for linux>
-
-
-Make sure that RTI's libraries are in the system LD_LIBRARY_PATH environment 
-variable, such as:
-export LD_LIBRARY_PATH=/user/local/rti/ndds.5.1.0/lib/i86Linux2.6gcc4.1.1:$(LD_LIBRARY_PATH)
+Also, make sure that RTI's libraries are in the system LD_LIBRARY_PATH 
+environment variable, such as:
+export LD_LIBRARY_PATH=~/rti/ndds.5.1.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH
 
 Running C++ Example
 ===================
