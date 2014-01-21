@@ -2,8 +2,8 @@
  Example Code -- Builtin QoS Profiles
 ===========================================
 
-Building C++ Example
-====================
+Building C Example
+==================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext DDS is 
 installed.
@@ -17,19 +17,19 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C++ -example i86Win32VS2005 profiles.idl
+rtiddsgen -language C -example i86Win32VS2005 profiles.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 profiles.idl
+rtiddsgen -language C -example i86Linux2.6gcc4.4.3 profiles.idl
 
 You will see messages that look like this:
 
-File C:\local\builtin_qos_profiles\c++\profiles_subscriber.cxx already exists and will not be 
+File C:\local\builtin_qos_profiles\c\profiles_subscriber.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
-File C:\local\ builtin_qos_profiles\c++\profiles_publisher.cxx already exists and will not be 
+File C:\local\ builtin_qos_profiles\c\profiles_publisher.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
 
@@ -56,8 +56,8 @@ Also, make sure that RTI's libraries are in the system LD_LIBRARY_PATH
 environment variable, such as:
 export LD_LIBRARY_PATH=~/rti/ndds.5.1.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH
 
-Running C++ Example
-===================
+Running C Example
+=================
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in USER_QOS_PROFILES.xml):
