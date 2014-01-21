@@ -253,8 +253,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      * data.*/
 
     /* reader = subscriber->create_datareader_with_profile(
-        topic, "BuiltinQosLibExp", 
-		"Pattern.ReliableStreaming", reader_listener,
+        topic, DDS_BUILTIN_QOS_LIB_EXP,
+        DDS_PROFILE_PATTERN_RELIABLE_STREAMING, reader_listener,
         DDS_STATUS_MASK_ALL);
     */
     if (reader == NULL) {

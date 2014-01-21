@@ -174,10 +174,22 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     /* To customize data writer QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
-    writer = publisher->create_datawriter_with_profile(
-        topic, "BuiltinQosLibExp", 
-		"Pattern.ReliableStreaming", NULL /* listener */,
+    writer = publisher->create_datawriter(
+        topic, DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
+    /* If you want to change the DataWriter's QoS programatically rather
+     * than using the XML file, you will need to add the following lines to
+     * your code and comment out the create_datawriter call above.
+     * 
+     * This example uses a built-in QoS profile to tune QoS for 
+     * reliable streaming data.*/
+    /* To customize data writer QoS, use 
+       the configuration file USER_QOS_PROFILES.xml */
+    /* writer = publisher->create_datawriter_with_profile(
+        topic, DDS_BUILTIN_QOS_LIB_EXP,
+        DDS_PROFILE_PATTERN_RELIABLE_STREAMING, NULL /* listener * /,
+        DDS_STATUS_MASK_NONE);
+    */
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
