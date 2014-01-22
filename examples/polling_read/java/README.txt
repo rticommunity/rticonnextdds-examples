@@ -36,10 +36,6 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
-This is normal and is only informing you that the subscriber/publisher code has 
-not been replaced, which is fine since all the source files for the example are 
-already provided.
-
 Before compiling in Java, make sure that the desired version of the javac 
 compiler is in your PATH environment variable.
 
@@ -47,12 +43,15 @@ On Windows systems run:
 
 javac -classpath .;%NDDSHOME%\class\nddsjava.jar poll.java pollSeq.java pollTypeSupport.java pollTypeCode.java pollDataReader.java pollDataWriter.java pollSubscriber.java pollPublisher.java
 
+
 On Unix systems (including Linux and MacOS X):
 
 javac -classpath .:$NDDSHOME/class/nddsjava.jar poll.java pollSeq.java pollTypeSupport.java pollTypeCode.java pollDataReader.java pollDataWriter.java pollSubscriber.java pollPublisher.java
 
+
 Running Java Example
 ====================
+
 Before running, make sure that the native Java libraries on which RTI Connext
 depends are in your environment path (or library path). To add Java libraries 
 to your environment...
@@ -66,8 +65,8 @@ export LD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$LD_LIBRARY_PATH
 On MacOSX (assuming your are using Bash) run:
 export DYLD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$DYLD_LIBRARY_PATH
 
-Then, in two separate command prompt windows for the publisher and subscriber. 
-Run the following commands from the example directory (this is necessary to 
+Then, in two separate command prompt windows for the publisher and subscriber, 
+run the following commands from the example directory (this is necessary to 
 ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
@@ -80,11 +79,11 @@ On Unix systems (including Linux and MacOS X) run:
 java -cp .:$NDDSHOME/class/nddsjava.jar pollPublisher  <domain_id> <samples_to_send>
 java -cp .:$NDDSHOME/class/nddsjava.jar pollSubscriber <domain_id> <sleep_periods>
 
-
 The applications accept two arguments:
+   1. The <domain_id>. Both applications must use the same domain ID in order to
+      communicate. The default is 0.
+   2. How long the examples should run, measured in samples for the publisher
 
-   1. The <domain_id>. Both applications must use the same domain ID in order to 
-   communicate. The default is 0.
-   2. How long the examples should run, measured in samples for the publisher 
-   and sleep periods for the subscriber. A value of '0' instructs the 
+      and sleep periods for the subscriber. A value of '0' instructs the
+   
    application to run forever; this is the default.
