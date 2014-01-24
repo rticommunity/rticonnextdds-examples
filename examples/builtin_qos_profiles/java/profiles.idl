@@ -1,0 +1,4 @@
+struct profiles
+{
+	string<256> msg;
+};

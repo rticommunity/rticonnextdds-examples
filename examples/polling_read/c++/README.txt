@@ -36,10 +36,6 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
-This is normal and is only informing you that the subscriber/publisher code has 
-not been replaced, which is fine since all the source files for the example are 
-already provided.
-
 Running C++ Example
 ===================
 In two separate command prompt windows for the publisher and subscriber. Run

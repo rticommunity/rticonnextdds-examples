@@ -1,14 +1,15 @@
 ===========================================
- Example Code -- Polling Read
+ Example Code -- Builtin QoS Profiles
 ===========================================
 
 Building C Example
 ==================
 Before compiling or running the example, make sure the environment variable 
-NDDSHOME is set to the directory where your version of RTI Connext is installed.
+NDDSHOME is set to the directory where your version of RTI Connext DDS is 
+installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32VS2005 or i86Linux2.6gcc4.4.3). The RTI Connext Core 
+choice (e.g., i86Win32VS2005 or i86Linux2.6gcc4.4.3). The RTI Connext DDS Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
@@ -16,19 +17,19 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C -example i86Win32VS2005 poll.idl
+rtiddsgen -language C -example i86Win32VS2005 profiles.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C -example i86Linux2.6gcc4.4.3 poll.idl
+rtiddsgen -language C -example i86Linux2.6gcc4.4.3 profiles.idl
 
 You will see messages that look like this:
 
-File C:\local\polling_read\c\poll_subscriber.c already exists and will not be 
+File C:\local\builtin_qos_profiles\c\profiles_subscriber.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
-File C:\local\polling_read\c\poll_publisher.c already exists and will not be 
+File C:\local\ builtin_qos_profiles\c\profiles_publisher.c already exists and will not be 
 replaced with updated content. If you would like to get a new file with the 
 new content, either remove this file or supply -replace option.
 
@@ -36,6 +37,24 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
+
+Link and Run with Dynamic Libraries
+===================================
+This example dynamically loads the RTI Monitoring library.  If you statically 
+link with the other RTI libraries, this will fail at runtime.
+  
+To dynamically link with the RTI libraries on Windows, choose the Debug DLL or 
+Release DLL build target.  Make sure that RTI's libraries are in the system 
+PATH environment variable, such as:
+PATH=c:\rti\ndds.5.1.0\lib\i86Win32VS2005;... 
+
+To dynamically link with the RTI libraries on Linux, modify the makefile to
+remove the 'z' from the end of the RTI library names, such as:
+-lnddscpp -lnddsc -lnddscore 
+
+Also, make sure that RTI's libraries are in the system LD_LIBRARY_PATH 
+environment variable, such as:
+export LD_LIBRARY_PATH=~/rti/ndds.5.1.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH
 
 Running C Example
 =================
@@ -45,13 +64,13 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-objs\<arch_name>\poll_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\poll_publisher.exe <domain_id> <sleep_periods>
+objs\<arch_name>\profiles_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\profiles_publisher.exe <domain_id> <sleep_periods>
 
 On Unix systems (including Linux) run:
 
-./objs/<arch_name>/poll_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/poll_publisher <domain_id> <sleep_periods>
+./objs/<arch_name>/profiles_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/profiles_publisher <domain_id> <sleep_periods>
 
 The applications accept two arguments:
 
