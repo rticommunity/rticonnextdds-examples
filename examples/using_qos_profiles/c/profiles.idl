@@ -1,0 +1,4 @@
+struct profiles {
+  long code; //@key
+  long x;
+};
