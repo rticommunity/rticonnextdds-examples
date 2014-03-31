@@ -26,19 +26,19 @@
    add and remove them dynamically from the domain.
               
                                    
-    Example:
+   Example:
         
        To run the example application on domain <domain_id>:
-                                  
-       On Unix: 
+                          
+       On UNIX systems: 
        
-       objs/<arch>/profiles_publisher <domain_id> <sample_count>
-       objs/<arch>/profiles_subscriber <domain_id> <sample_count> 
+       objs/<arch>/profiles_publisher <domain_id> 
+       objs/<arch>/profiles_subscriber <domain_id> 
                             
-       On Windows:
+       On Windows systems:
        
-       objs\<arch>\profiles_publisher <domain_id> <sample_count>
-       objs\<arch>\profiles_subscriber <domain_id> <sample_count>
+       objs\<arch>\profiles_publisher <domain_id>  
+       objs\<arch>\profiles_subscriber <domain_id>   
        
        
 modification history
@@ -47,7 +47,6 @@ modification history
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 #include "ndds/ndds_c.h"
 #include "profiles.h"
 #include "profilesSupport.h"
@@ -66,17 +65,6 @@ void profilesListener_on_requested_incompatible_qos(
     DDS_DataReader* reader,
     const struct DDS_RequestedIncompatibleQosStatus *status)
 {
-/* print which reader it is*/
-    struct DDS_DataReaderQos reader_qos = DDS_DataReaderQos_INITIALIZER;
-    DDS_ReturnCode_t retcode = DDS_DataReader_get_qos(reader,&reader_qos);
-    
-    if (retcode != DDS_RETCODE_OK) {
-        printf("reader get_qos error %d\n", retcode);
-        return;
-    }
-    printf("reader %ld: ", reader_qos.protocol.rtps_object_id);
-    printf("requested incompatible QoS\n");
-
 }
 
 void profilesListener_on_sample_rejected(
@@ -115,7 +103,6 @@ void profilesListener_on_data_available(
     struct profilesSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
     DDS_ReturnCode_t retcode;
-    struct DDS_DataReaderQos reader_qos = DDS_DataReaderQos_INITIALIZER;
     int i;
 
     profiles_reader = profilesDataReader_narrow(reader);
@@ -135,19 +122,9 @@ void profilesListener_on_data_available(
         return;
     }
 
-	/* Start changes for Profiles */
-	
-	/* print which reader it is */
-    
-	retcode = DDS_DataReader_get_qos(reader,&reader_qos);
-	if (retcode != DDS_RETCODE_OK) {
-        printf("reader get_qos error %d\n", retcode);
-        return;
-    }
-	printf("reader %ld:\n", reader_qos.protocol.rtps_object_id);
-
-	/* End changes for Profiles */
-
+    printf("=============================================\n");
+    printf("listener received\n");
+    printf("=============================================\n");
     for (i = 0; i < profilesSeq_get_length(&data_seq); ++i) {
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             profilesTypeSupport_print_data(
@@ -161,18 +138,12 @@ void profilesListener_on_data_available(
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
-
-    /* Finalize all */
-    profilesSeq_finalize(&data_seq);
-    DDS_SampleInfoSeq_finalize(&info_seq);
-    DDS_DataReaderQos_finalize(&reader_qos);
-
 }
 
 /* Delete all entities */
 static int subscriber_shutdown(
     DDS_DomainParticipant *participant,
-	struct DDS_DomainParticipantFactoryQos *factory_qos)
+    struct DDS_DomainParticipantFactoryQos *factory_qos)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -182,14 +153,14 @@ static int subscriber_shutdown(
         printf("FactoryQos_finalize error %d\n", retcode);
         status = -1;
     }
-        
+
     if (participant != NULL) {
         retcode = DDS_DomainParticipant_delete_contained_entities(participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_contained_entities error %d\n", retcode);
             status = -1;
         }
-		
+
         retcode = DDS_DomainParticipantFactory_delete_participant(
             DDS_TheParticipantFactory, participant);
         if (retcode != DDS_RETCODE_OK) {
@@ -216,57 +187,78 @@ static int subscriber_shutdown(
 static int subscriber_main(int domainId, int sample_count)
 {
     DDS_DomainParticipant *participant = NULL;
-    DDS_Subscriber *subscriber1 = NULL, *subscriber2 = NULL;
-    DDS_DataReader *reader1 = NULL, *reader2 = NULL, *reader3 = NULL;
-    struct DDS_DataReaderListener
-        reader_listener1 = DDS_DataReaderListener_INITIALIZER,
-        reader_listener2 = DDS_DataReaderListener_INITIALIZER,
-        reader_listener3 = DDS_DataReaderListener_INITIALIZER;
-
+    DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
+    struct DDS_DataReaderListener reader_volatile_listener =
+        DDS_DataReaderListener_INITIALIZER;
+    struct DDS_DataReaderListener reader_transient_local_listener =
+        DDS_DataReaderListener_INITIALIZER;
+    DDS_DataReader *reader_volatile = NULL;
+    DDS_DataReader *reader_transient_local = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t poll_period = {1,0};
+    int status = 0;
 
     struct DDS_DomainParticipantFactoryQos factory_qos =
         DDS_DomainParticipantFactoryQos_INITIALIZER;
-    const char *profile1 = "PartitionA_FastExclusiveReader", 
-        *profile2 = "PartitionB_SlowExclusiveReader";
-    /* If you want to add more XML files, you can do it following the format:
-       {file1_name | file2_name | ...} and updating NUM_PROFILE_FILES accordingly */
-    static const char *myUrlProfile[NUM_PROFILE_FILES] = {"file://./myReaderProfiles.xml"};
-    
+    static const char *myUrlProfile[NUM_PROFILE_FILES] = 
+        {"file://./my_custom_qos_profiles.xml"};
 
-    /* Start changes for Profiles */
+    /* There are several different approaches for loading QoS profiles from XML
+     * files (see Configuring QoS with XML chapter in the RTI Connext Core
+     * Libraries and Utilities User's Manual). In this example we illustrate
+     * two of them:
+     *
+     * 1) Creating a file named USER_QOS_PROFILES.xml, which is loaded,
+     * automatically by the DomainParticipantFactory. In this case, the file
+     * defines a QoS profile named volatile_profile that configures reliable,
+     * volatile DataWriters and DataReaders.
+     *
+     * 2) Adding XML documents to the DomainParticipantFactory using its
+     * Profile QoSPolicy (DDS Extension). In this case, we add
+     * my_custom_qos_profiles.xml to the url_profile sequence, which stores
+     * the URLs of all the XML documents with QoS policies that are loaded by
+     * the DomainParticipantFactory aside from the ones that are automatically
+     * loaded.
+     * my_custom_qos_profiles.xml defines a QoS profile named
+     * transient_local_profile that configures reliable, transient local
+     * DataWriters and DataReaders.
+     */
 
-	/* Here, we add our file name to the url_profile list. 
-	   See User's Manual PROFILE QosPolicy (DDS Extension). */
-    DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory, &factory_qos);
-    DDS_StringSeq_from_array(&(factory_qos.profile.url_profile), (const char **) myUrlProfile, NUM_PROFILE_FILES);
+    /* To load my_custom_qos_profiles.xml, as explained above, we need to modify
+     * the  DDSTheParticipantFactory Profile QoSPolicy */
+    DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory,
+        &factory_qos);
+        
+    /* We are only going to add one XML file to the url_profile sequence, so our
+     * NUM_PROFILE_FILES is 1 (defined at start) */
+    DDS_StringSeq_from_array(&(factory_qos.profile.url_profile),
+        (const char **) myUrlProfile, NUM_PROFILE_FILES);
 
-	
-	/* the xml file must live in the same directory as the running application */
-	retcode = DDS_DomainParticipantFactory_set_qos(DDS_TheParticipantFactory,&factory_qos);
+    /* The XML file will be loaded from the working directory. That means, you
+     * need to run the example like this:
+     * ./objs/<architecture>/profiles_publisher
+     * (see README.txt for more information on how to run the example).
+     *
+     * Note that you can specify the absolute path of the XML QoS file to avoid
+     * this problem.
+     */
+    retcode = DDS_DomainParticipantFactory_set_qos(DDS_TheParticipantFactory,
+        &factory_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("set_qos error %d\n", retcode);
         subscriber_shutdown(participant, &factory_qos);
         return -1;
     }
-
-	/* Since library_name is a frequently-used parameter, we set the default value here so that we
-		can use NULL in method calls. This default value is passed down to participants, pub/subs,
-		and writer/readers. */	
-	retcode = DDS_DomainParticipantFactory_set_default_library(
-	DDS_TheParticipantFactory,"MyReaderLibrary");	
-	if (retcode != DDS_RETCODE_OK) {
-        printf("set_default_library error %d\n", retcode);
-		subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    }
-
-    /* To customize participant QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
+    
+    /* Our default Qos profile, volatile_profile, sets the participant name.
+     * This is the only participant_qos policy that we change in our
+     * example. As this is done in the default QoS profile, we don't need
+     * to specify its name, so we can create the participant using the
+     * create_participant() method rather than using
+     * create_participant_with_profile().  */
     participant = DDS_DomainParticipantFactory_create_participant(
         DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -275,7 +267,20 @@ static int subscriber_main(int domainId, int sample_count)
         subscriber_shutdown(participant, &factory_qos);
         return -1;
     }
-    
+
+    /* We haven't changed the subscriber_qos in any of QoS profiles we use in
+     * this example, so we can just use the create_topic() method. If you want
+     * to load an specific profile in which you may have changed the
+     * publisher_qos, use the create_publisher_with_profile() method. */
+    subscriber = DDS_DomainParticipant_create_subscriber(
+        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
+        DDS_STATUS_MASK_NONE);
+    if (subscriber == NULL) {
+        printf("create_subscriber error\n");
+        subscriber_shutdown(participant, &factory_qos);
+        return -1;
+    }
+
     /* Register the type before creating the topic */
     type_name = profilesTypeSupport_get_type_name();
     retcode = profilesTypeSupport_register_type(participant, type_name);
@@ -285,8 +290,10 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize topic QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
+    /* We haven't changed the topic_qos in any of QoS profiles we use in this
+     * example, so we can just use the create_topic() method. If you want to
+     * load an specific profile in which you may have changed the topic_qos,
+     * use the create_topic_with_profile() method. */
     topic = DDS_DomainParticipant_create_topic(
         participant, "Example profiles",
         type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
@@ -296,160 +303,77 @@ static int subscriber_main(int domainId, int sample_count)
         subscriber_shutdown(participant, &factory_qos);
         return -1;
     }
-    
+
     /* Set up a data reader listener */
-    reader_listener1.on_requested_deadline_missed  =
+    reader_volatile_listener.on_requested_deadline_missed  =
         profilesListener_on_requested_deadline_missed;
-    reader_listener1.on_requested_incompatible_qos =
+    reader_volatile_listener.on_requested_incompatible_qos =
         profilesListener_on_requested_incompatible_qos;
-    reader_listener1.on_sample_rejected =
+    reader_volatile_listener.on_sample_rejected =
         profilesListener_on_sample_rejected;
-    reader_listener1.on_liveliness_changed =
+    reader_volatile_listener.on_liveliness_changed =
         profilesListener_on_liveliness_changed;
-    reader_listener1.on_sample_lost =
+    reader_volatile_listener.on_sample_lost =
         profilesListener_on_sample_lost;
-    reader_listener1.on_subscription_matched =
+    reader_volatile_listener.on_subscription_matched =
         profilesListener_on_subscription_matched;
-    reader_listener1.on_data_available =
+    reader_volatile_listener.on_data_available =
         profilesListener_on_data_available;
 
-	/* [1] */
-	retcode = DDS_DomainParticipant_set_default_subscriber_qos_with_profile(participant, NULL, profile1);
-	if (retcode != DDS_RETCODE_OK) {
-        printf("set_default_subscriber_qos_with_profile error %d\n", retcode);
+    reader_transient_local_listener.on_requested_deadline_missed  =
+        profilesListener_on_requested_deadline_missed;
+    reader_transient_local_listener.on_requested_incompatible_qos =
+        profilesListener_on_requested_incompatible_qos;
+    reader_transient_local_listener.on_sample_rejected =
+        profilesListener_on_sample_rejected;
+    reader_transient_local_listener.on_liveliness_changed =
+        profilesListener_on_liveliness_changed;
+    reader_transient_local_listener.on_sample_lost =
+        profilesListener_on_sample_lost;
+    reader_transient_local_listener.on_subscription_matched =
+        profilesListener_on_subscription_matched;
+    reader_transient_local_listener.on_data_available =
+        profilesListener_on_data_available;
+
+    /* Volatile reader -- As volatile_profile is the default qos profile
+     * we don't need to specify the profile we are going to use, we can
+     * just call create_datareader passing DDS_DATAWRITER_QOS_DEFAULT. */
+    reader_volatile = DDS_Subscriber_create_datareader(
+        subscriber, DDS_Topic_as_topicdescription(topic),
+        &DDS_DATAREADER_QOS_DEFAULT, &reader_volatile_listener,
+        DDS_STATUS_MASK_ALL);
+    if (reader_volatile == NULL) {
+        printf("create_datareader error\n");
         subscriber_shutdown(participant, &factory_qos);
         return -1;
     }
-    
-    /* To customize subscriber QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    subscriber1 = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
-    if (subscriber1 == NULL) {
-        printf("create_subscriber error\n");
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    } /* from [1], subscriber1 should have QoS settings from PartitionA_FastReader */
 
-	/* [2] This just sets the default value for a parameter, similar to the earlier set_default_library call. */
-	retcode = DDS_Subscriber_set_default_profile(subscriber1, NULL, profile2);
-	if (retcode != DDS_RETCODE_OK) {
-        printf("set_default_profile error %d\n", retcode);
+    /* Transient Local writer -- In this case we use
+     * create_datareader_with_profile, because we have to use a profile other
+     * than the default one. This profile has been defined in
+     * my_custom_qos_profiles.xml, but since we already loaded the XML file
+     * we don't need to specify anything else. */
+    reader_transient_local = DDS_Subscriber_create_datareader_with_profile(
+        subscriber,
+        DDS_Topic_as_topicdescription(topic), 
+        "profiles_Library", /* library_name */
+        "transient_local_profile", /* profile_name */
+        &reader_transient_local_listener, /* listener */
+        DDS_STATUS_MASK_ALL);
+    if (reader_transient_local == NULL) {
+        printf("create_datareader error\n");
         subscriber_shutdown(participant, &factory_qos);
         return -1;
     }
 
-    /*** What set_default_profile() does NOT do... ***/	
-	
-    reader1 = DDS_Subscriber_create_datareader(subscriber1,
-        DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener1, DDS_STATUS_MASK_ALL);
-	if (reader1 == NULL) {
-		printf("create_datareader error\n");
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    } /* [2] has no effect on DDS_DATAREADER_QOS_DEFAULT. reader1 should have default middleware QoS settings --> shared ownership. */
-
-    /* reader1 listens for a while */
-    for (count=0; (sample_count == 0) || (count < sample_count / 2); ++count) {
-
-        printf("reader1 sleeping for %d sec...\n", poll_period.sec);
-
+    /* Main loop */
+    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("profiles subscriber sleeping for %d sec...\n",
+               poll_period.sec);
         NDDS_Utility_sleep(&poll_period);
-
-		/* Since reader1 is shared ownership, partition A, reader1 will get an incompatible QoS callback due to writer1. */
     }
 
-    /* Set up a data reader listener 2 and 3 */
-    reader_listener2.on_requested_deadline_missed  =
-        profilesListener_on_requested_deadline_missed;
-    reader_listener2.on_requested_incompatible_qos =
-        profilesListener_on_requested_incompatible_qos;
-    reader_listener2.on_sample_rejected =
-        profilesListener_on_sample_rejected;
-    reader_listener2.on_liveliness_changed =
-        profilesListener_on_liveliness_changed;
-    reader_listener2.on_sample_lost =
-        profilesListener_on_sample_lost;
-    reader_listener2.on_subscription_matched =
-        profilesListener_on_subscription_matched;
-    reader_listener2.on_data_available =
-        profilesListener_on_data_available;
-
-    reader_listener3.on_requested_deadline_missed  =
-        profilesListener_on_requested_deadline_missed;
-    reader_listener3.on_requested_incompatible_qos =
-        profilesListener_on_requested_incompatible_qos;
-    reader_listener3.on_sample_rejected =
-        profilesListener_on_sample_rejected;
-    reader_listener3.on_liveliness_changed =
-        profilesListener_on_liveliness_changed;
-    reader_listener3.on_sample_lost =
-        profilesListener_on_sample_lost;
-    reader_listener3.on_subscription_matched =
-        profilesListener_on_subscription_matched;
-    reader_listener3.on_data_available =
-        profilesListener_on_data_available;
-
-    /*** What set_default_profile() DOES do... ***/
-
-	/* [3] */
-	/* It allows us to pass in NULL where we would normally pass in profile2. */
-	retcode = DDS_Subscriber_set_default_datareader_qos_with_profile(
-	    subscriber1, NULL /* library */, NULL /* profile */);
-	if (retcode != DDS_RETCODE_OK) {
-        printf("set_default_datareader_qos_with_profile error %d\n", retcode);
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    }
-	
-	reader2 = DDS_Subscriber_create_datareader(subscriber1,
-        DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener2, DDS_STATUS_MASK_ALL);
-	if (reader2 == NULL) {
-		printf("create_datareader error\n");
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    } /* from [3], reader2 should be an exclusive slow reader. From [1], writer2 should live in Partition A.
-			Notice the reader's QoS and its subscriber's QoS are from different profiles. */
-	
-	/*** So what's the default subscriber qos now? ***/
-
-    /* [4] */
-     subscriber2 = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
-    if (subscriber2 == NULL) {
-        printf("create_subscriber error\n");
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    } /* from [1], subscriber2 should have QoS settings from PartitionA_FastExclusiveReader. [2] should have no effect. */
-
-	/*** creating the writer without relying on defaults ***/
-	/* Note: we can't use set_qos_with_profile() (or even set_qos()) here because the ownership QoS is immutable. */
-
-	reader3 = DDS_Subscriber_create_datareader_with_profile(subscriber2,
-        DDS_Topic_as_topicdescription(topic),
-        NULL /* Library */, profile1, &reader_listener3, DDS_STATUS_MASK_ALL);
-    if (reader3 == NULL) {
-        printf("create_datareader_with_profile error\n");
-        subscriber_shutdown(participant, &factory_qos);
-        return -1;
-    } /* reader3 should be an exclusive fast reader. From [4], reader3 should live in partition A. */
-
-	/* readers 2 and 3 listen for a while */
-    for (count=sample_count / 2; (sample_count == 0) || (count < sample_count); ++count) {
-
-        printf("readers 2 and 3 sleeping for %d sec...\n", poll_period.sec);
-
-         NDDS_Utility_sleep(&poll_period);
-
-		/* Since reader2 is exclusive slow partition A and reader3 is exclusive fast partition A,
-		reader2 should get every other sample of writer1 and reader3 should get every sample of writer1. */
-    }
-    
-    /* Cleanup and delete all entities */
+    /* Cleanup and delete all entities */ 
     return subscriber_shutdown(participant, &factory_qos);
 }
 
@@ -467,7 +391,7 @@ int wmain(int argc, wchar_t** argv)
     }
 
     /* Uncomment this to turn on additional logging
-        NDDS_Config_Logger_set_verbosity_by_category(
+    NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
         NDDS_CONFIG_LOG_CATEGORY_API, 
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
@@ -489,7 +413,7 @@ int main(int argc, char *argv[])
     }
 
     /* Uncomment this to turn on additional logging
-        NDDS_Config_Logger_set_verbosity_by_category(
+    NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
         NDDS_CONFIG_LOG_CATEGORY_API, 
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);

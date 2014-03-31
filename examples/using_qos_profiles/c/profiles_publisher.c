@@ -32,13 +32,13 @@
                                   
        On Unix: 
        
-       objs/<arch>/profiles_publisher <domain_id> <sample_count>
-       objs/<arch>/profiles_subscriber <domain_id> <sample_count> 
+       objs/<arch>/profiles_publisher <domain_id> 
+       objs/<arch>/profiles_subscriber <domain_id> 
                             
        On Windows:
        
-       objs\<arch>\profiles_publisher <domain_id> <sample_count>
-       objs\<arch>\profiles_subscriber <domain_id> <sample_count>
+       objs\<arch>\profiles_publisher <domain_id>  
+       objs\<arch>\profiles_subscriber <domain_id>   
        
        
 modification history
@@ -51,12 +51,21 @@ modification history
 #include "profiles.h"
 #include "profilesSupport.h"
 
+#define NUM_PROFILE_FILES 1
+
 /* Delete all entities */
 static int publisher_shutdown(
-    DDS_DomainParticipant *participant)
+    DDS_DomainParticipant *participant,
+    struct DDS_DomainParticipantFactoryQos *factory_qos)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
+
+    retcode = DDS_DomainParticipantFactoryQos_finalize(factory_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("FactoryQos_finalize error %d\n", retcode);
+        status = -1;
+    }
 
     if (participant != NULL) {
         retcode = DDS_DomainParticipant_delete_contained_entities(participant);
@@ -91,51 +100,172 @@ static int publisher_shutdown(
 static int publisher_main(int domainId, int sample_count)
 {
     DDS_DomainParticipant *participant = NULL;
-    DDS_Publisher *publisher1 = NULL, *publisher2 = NULL;
+    DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
-    DDS_DataWriter *writer = NULL;
-    profilesDataWriter *profiles_writer1= NULL, *profiles_writer2 = NULL;
+    /* Volatile and transient local writers and profilesDataWriters */
+    DDS_DataWriter *writer_volatile = NULL;
+    DDS_DataWriter * writer_transient_local = NULL;
+    profilesDataWriter *profiles_writer_volatile = NULL;
+    profilesDataWriter *profiles_writer_transient_local = NULL;
     profiles *instance = NULL;
     DDS_ReturnCode_t retcode;
-    DDS_InstanceHandle_t instance_handle1 = DDS_HANDLE_NIL, instance_handle2 = DDS_HANDLE_NIL;
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
-    int count = 0;  
+    int count = 0;
+    /* Send a new sample every second */  
     struct DDS_Duration_t send_period = {1,0};
 
-    /* To customize participant QoS, use 
-       DDSTheParticipantFactory->get_default_participant_qos() */
+    struct DDS_DomainParticipantFactoryQos factory_qos =
+        DDS_DomainParticipantFactoryQos_INITIALIZER;
+    static const char *myUrlProfile[NUM_PROFILE_FILES] =
+        {"file://./my_custom_qos_profiles.xml"};
+
+    /* There are several different approaches for loading QoS profiles from XML
+     * files (see Configuring QoS with XML chapter in the RTI Connext Core
+     * Libraries and Utilities User's Manual). In this example we illustrate
+     * two of them:
+     *
+     * 1) Creating a file named USER_QOS_PROFILES.xml, which is loaded,
+     * automatically by the DomainParticipantFactory. In this case, the file
+     * defines a QoS profile named volatile_profile that configures reliable,
+     * volatile DataWriters and DataReaders.
+     *
+     * 2) Adding XML documents to the DomainParticipantFactory using its
+     * Profile QoSPolicy (DDS Extension). In this case, we add
+     * my_custom_qos_profiles.xml to the url_profile sequence, which stores
+     * the URLs of all the XML documents with QoS policies that are loaded by
+     * the DomainParticipantFactory aside from the ones that are automatically
+     * loaded.
+     * my_custom_qos_profiles.xml defines a QoS profile named
+     * transient_local_profile that configures reliable, transient local
+     * DataWriters and DataReaders.
+     */
+
+    /* To load my_custom_qos_profiles.xml, as explained above, we need to modify
+     * the  DDSTheParticipantFactory Profile QoSPolicy */
+    DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory, 
+        &factory_qos);
+
+    /* We are only going to add one XML file to the url_profile sequence, so our
+     * NUM_PROFILE_FILES is 1 (defined at start) */
+    DDS_StringSeq_from_array(&(factory_qos.profile.url_profile),
+        (const char **) myUrlProfile, NUM_PROFILE_FILES);
+
+    /* The XML file will be loaded from the working directory. That means, you
+     * need to run the example like this:
+     * ./objs/<architecture>/profiles_publisher
+     * (see README.txt for more information on how to run the example).
+     *
+     * Note that you can specify the absolute path of the XML QoS file to avoid
+     * this problem.
+     */
+    retcode = DDS_DomainParticipantFactory_set_qos(DDS_TheParticipantFactory,
+        &factory_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("set_qos error %d\n", retcode);
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
+
+    /* Our default Qos profile, volatile_profile, sets the participant name.
+     * This is the only participant_qos policy that we change in our
+     * example. As this is done in the default QoS profile, we don't need
+     * to specify its name, so we can create the participant using the
+     * create_participant() method rather than using
+     * create_participant_with_profile().  */
     participant = DDS_DomainParticipantFactory_create_participant(
         DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
+
+    /* We haven't changed the publisher_qos in any of QoS profiles we use in
+     * this example, so we can just use the create_publisher() method. If you
+     * want to load an specific profile in which you may have changed the
+     * publisher_qos, use the create_publisher_with_profile() method. */
+    publisher = DDS_DomainParticipant_create_publisher(
+        participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
+        DDS_STATUS_MASK_NONE);
+    if (publisher == NULL) {
+        printf("create_publisher error\n");
+        publisher_shutdown(participant, &factory_qos);
         return -1;
     }
 
     /* Register type before creating topic */
     type_name = profilesTypeSupport_get_type_name();
-    retcode = profilesTypeSupport_register_type(participant, type_name);
+    retcode = profilesTypeSupport_register_type(
+        participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &factory_qos);
         return -1;
     }
 
-    /* To customize topic QoS, use
-       participant->get_default_topic_qos() */
+    /* We haven't changed the topic_qos in any of QoS profiles we use in this
+     * example, so we can just use the create_topic() method. If you want to
+     * load an specific profile in which you may have changed the topic_qos,
+     * use the create_topic_with_profile() method. */
     topic = DDS_DomainParticipant_create_topic(
         participant, "Example profiles",
         type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &factory_qos);
         return -1;
     }
-    
 
-    /* Changes for Profile: rearranged the code a bit */
+    /* Volatile writer -- As volatile_profile is the default qos profile
+     * we don't need to specify the profile we are going to use, we can
+     * just call create_datawriter passing DDS_DATAWRITER_QOS_DEFAULT. */
+    writer_volatile = DDS_Publisher_create_datawriter(
+        publisher,
+        topic,
+        &DDS_DATAWRITER_QOS_DEFAULT, /* Default datawriter_qos */
+        NULL /* listener */,
+        DDS_STATUS_MASK_NONE);
+    if (writer_volatile == NULL) {
+        printf("create_datawriter error\n");
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
+
+    /* Transient Local writer -- In this case we use
+     * create_datawriter_with_profile, because we have to use a profile other
+     * than the default one. This profile has been defined in
+     * my_custom_qos_profiles.xml, but since we already loaded the XML file
+     * we don't need to specify anything else. */
+    writer_transient_local = DDS_Publisher_create_datawriter_with_profile(
+        publisher, /* publisher which creates the writer */
+        topic, /* DDS_topic */
+        "profiles_Library", /* library_name */
+        "transient_local_profile", /*profile_name */
+        NULL /* listener */,
+        DDS_STATUS_MASK_NONE);
+	if (writer_transient_local == NULL) {
+		printf("create_datawriter_with_profile error\n");
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
+     
+    profiles_writer_volatile = profilesDataWriter_narrow(writer_volatile);
+    if (profiles_writer_volatile == NULL) {
+        printf("DataWriter narrow error\n");
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
+
+    profiles_writer_transient_local = profilesDataWriter_narrow(
+        writer_transient_local);
+    if (profiles_writer_transient_local == NULL) {
+        printf("DataWriter narrow error\n");
+        publisher_shutdown(participant, &factory_qos);
+        return -1;
+    }
 
     /* Create data sample for writing */
 
@@ -143,124 +273,69 @@ static int publisher_main(int domainId, int sample_count)
     
     if (instance == NULL) {
         printf("profilesTypeSupport_create_data error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-    
-    /* Start changes for Profiles */
-
-	/* Since library_name is a frequently-used parameter, we set 
-	   the default value here so that we can use NULL in method calls. 
-	   This default value is passed down to participants, pub/subs,
-	   and writer/readers. */
-
-    retcode = DDS_DomainParticipant_set_default_library(participant,"MyWriterLibrary"); 
-	if (retcode != DDS_RETCODE_OK) {
-        printf("set_default_library error %d\n", retcode);
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &factory_qos);
         return -1;
     }
 
-    publisher1 = DDS_DomainParticipant_create_publisher_with_profile(participant,
-        NULL /* library */, "PartitionA_Publisher", NULL /* listener */, DDS_STATUS_MASK_NONE);
-    if (publisher1 == NULL) {
-        printf("create_publisher_with_profile error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-    publisher2 = DDS_DomainParticipant_create_publisher_with_profile(participant,
-        NULL /* library */, "PartitionB_Publisher", NULL /* listener */, DDS_STATUS_MASK_NONE);
-    if (publisher2 == NULL) {
-        printf("create_publisher_with_profile error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-    writer = DDS_Publisher_create_datawriter_with_profile(publisher1,
-		topic, NULL /* library */, "ExclusiveWriter", NULL /* listener */, DDS_STATUS_MASK_NONE);
-	if (writer == NULL) {
-		printf("create_datawriter_with_profile error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-    profiles_writer1 = profilesDataWriter_narrow(writer);
-    if (profiles_writer1 == NULL) {
-        printf("DataWriter narrow error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-    writer = DDS_Publisher_create_datawriter(publisher2,
-		topic, &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
-	if (writer == NULL) {
-		printf("create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-	profiles_writer2 = profilesDataWriter_narrow(writer);
-    if (profiles_writer2 == NULL) {
-        printf("DataWriter narrow error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-    
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
+/*
+    instance_handle = profilesDataWriter_register_instance(
+        profiles_writer, instance);
+*/
 
-    instance_handle1 = profilesDataWriter_register_instance(
-        profiles_writer1, instance);
-    instance_handle2 = profilesDataWriter_register_instance(
-        profiles_writer2, instance);    
+    /* Main loop */
+    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-    /* Main loop. Since we are creating 2 writers, we need to loop 
-       sample_count/2 */
-    for (count=0; (sample_count == 0) || (count < sample_count / 2); ++count) {
+        printf("Writing profiles, count %d\n", count);
 
         /* Modify the data to be written here */
-        instance->x = count * 2 + 1;
-		printf("writer1: writing x = %d\n", instance->x);
+        strcpy(instance->profile_name, "volatile_profile");
+        instance->x = count;
 
-        retcode = profilesDataWriter_write(
-            profiles_writer1, instance, &instance_handle1);
+        printf("Writing profile_name = %s,\t x = %d\n",
+                instance->profile_name,
+                instance->x);
+                
+        retcode = profilesDataWriter_write(profiles_writer_volatile, instance,
+            &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-        instance->x = count * 2 + 2;
-        printf("writer2: writing x = %d\n", instance->x);
+        strcpy(instance->profile_name, "transient_local_profile");
+        instance->x = count;
 
-        retcode = profilesDataWriter_write(
-            profiles_writer2, instance, &instance_handle2);
+        printf("Writing profile_name = %s,\t x = %d\n\n",
+                instance->profile_name,
+                instance->x);
+
+        retcode = retcode = profilesDataWriter_write(
+            profiles_writer_transient_local, instance, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
-        }     
+        }
+
         NDDS_Utility_sleep(&send_period);
     }
 
+/*
     retcode = profilesDataWriter_unregister_instance(
-        profiles_writer1, instance, &instance_handle1);
+        profiles_writer, instance, &instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
-
-    retcode = profilesDataWriter_unregister_instance(
-        profiles_writer2, instance, &instance_handle2);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("unregister instance error %d\n", retcode);
-    }
+*/
 
     /* Delete data sample */
     retcode = profilesTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("profilesTypeSupport_delete_data error %d\n", retcode);
     }
-
+    
     /* Cleanup and delete delete all entities */         
-    return publisher_shutdown(participant);
+    return publisher_shutdown(participant, &factory_qos);
 }
 
 #if defined(RTI_WINCE)

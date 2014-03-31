@@ -1,4 +1,4 @@
 struct profiles {
-  long code; //@key
+  string<100> profile_name; //@key
   long x;
 };
