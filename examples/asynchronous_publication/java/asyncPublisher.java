@@ -201,8 +201,6 @@ public class asyncPublisher {
 //            // will need to keep them on queue.  History defaults to only 
 //            // keeping the last sample enqueued, so we increase that here.
 //            datawriter_qos.history.depth = 12;
-//            datawriter_qos.durability.kind = 
-//            	DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
 //
 //            // Set flowcontroller for datawriter
 //            datawriter_qos.publish_mode.kind = 
