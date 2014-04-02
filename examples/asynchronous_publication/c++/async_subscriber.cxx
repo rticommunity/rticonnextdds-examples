@@ -57,7 +57,7 @@ modification history
 //// Changes for Asynchronous_Publication
 // For timekeeping
 #include <time.h>
-clock_t init;
+time_t init;
 
 
 class asyncListener : public DDSDataReaderListener {
@@ -118,8 +118,7 @@ void asyncListener::on_data_available(DDSDataReader* reader)
         if (info_seq[i].valid_data) {
             //// Start changes for Asynchronous_Publication
             // print the time we get each sample.
-            double elapsed_ticks = clock() - init;
-            double elapsed_secs = elapsed_ticks/CLK_TCK;
+            double elapsed_secs =  difftime(time(0),init);
 
             printf("@ t=%.2fs, got x = %d\n",
                    elapsed_secs, data_seq[i].x);
@@ -183,9 +182,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDS_Duration_t receive_period = {4,0};
     int status = 0;
 	
-	//// Changes for Asynchronous_Publication
+    //// Changes for Asynchronous_Publication
     // for timekeeping
-    init = clock();
+    init = time(0);
 
     /* To customize the participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
