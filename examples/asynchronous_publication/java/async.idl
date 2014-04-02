@@ -1,6 +1,4 @@
 struct async {
-
-	long x;
-
+    long x;
 };
 
