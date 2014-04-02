@@ -20,12 +20,12 @@ rtiddsgen -language C++ -example i86Win32VS2005 profiles.idl
 
 ...you will see messages that look like this:
 
-File C:\local\QoS_Profiles\c++\profiles_subscriber.cxx already exists and will 
-not be replaced with updated content. If you would like to get a new file with 
-the new content, either remove this file or supply -replace option.
-File C:\local\QoS_Profiles\c++\profiles_publisher.cxx already exists and will 
-not be replaced with updated content. If you would like to get a new file with 
-the new content, either remove this file or supply -replace option.
+File C:\local\using_qos_profiles\c++\profiles_subscriber.cxx already exists and 
+will not be replaced with updated content. If you would like to get a new file 
+with the new content, either remove this file or supply -replace option.
+File C:\local\using_qos_profiles\c++\profiles_publisher.cxx already exists and 
+will not be replaced with updated content. If you would like to get a new file 
+with the new content, either remove this file or supply -replace option.
 
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
