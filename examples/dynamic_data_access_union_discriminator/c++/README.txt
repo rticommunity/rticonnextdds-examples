@@ -2,9 +2,9 @@
  Example Code -- Access Union Discriminator In Dynamic Data
 ============================================================
 
-Building C Example
-==================
-The example is contained in the UnionExample.c file. Before compiling
+Building C++ Example
+====================
+The example is contained in the UnionExample.cxx file. Before compiling
 or running the example, make sure the environment variable NDDSHOME is
 set to the directory where you installed RTI Connext DDS.
 
@@ -24,7 +24,7 @@ struct foo {
 
 and run 
 
-rtiddsgen -example <platform_name> -language C Foo.idl
+rtiddsgen -example <platform_name> -language C++ Foo.idl
 
 Once you have run the application, modify the generated makefile and 
 set the COMMONSOURCES and EXEC variables to:
@@ -50,8 +50,8 @@ make -f makefile_Foo_i86Linux3.xgcc4.6.3
 For Windows systems, you will have a new Visual Studio project where you can
 build this solution.
 
-Running C Example
-=================
+Running C++ Example
+===================
 
 Run the following command from the example directory to execute
 the application.
