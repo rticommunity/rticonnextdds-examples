@@ -26,18 +26,10 @@
 using namespace std;
 
 DDS_TypeCode *
-inner_struct_get_typecode() {
+inner_struct_get_typecode(DDS_TypeCodeFactory *tcf) {
 	static DDS_TypeCode *tc = NULL;
-    DDS_TypeCodeFactory* tcf;
-	struct DDS_StructMemberSeq members;
+    DDS_StructMemberSeq members;
 	DDS_ExceptionCode_t err;
-
-    /* Getting a reference to the type code factory */	
-	tcf = DDS_TypeCodeFactory::get_instance();
-    if (tcf == NULL) {
-        cerr << "! Unable to get type code factory singleton" << endl;
-        goto fail;
-    }
 
     /* First, we create the typeCode for a struct */
     tc = tcf->create_struct_tc("InnerStruct", members, err);
@@ -75,18 +67,14 @@ fail:
 }
 
 DDS_TypeCode *
-outer_struct_get_typecode() {
+outer_struct_get_typecode(DDS_TypeCodeFactory * tcf) {
 	static DDS_TypeCode *tc = NULL;
-	DDS_TypeCodeFactory *tcf = NULL;
+    DDS_TypeCode *innerTC = NULL;
+
 	struct DDS_StructMemberSeq members;
 	DDS_ExceptionCode_t err;
 
-    /* Getting a reference to the type code factory */
-    tcf = DDS_TypeCodeFactory::get_instance();
-     if (tcf == NULL) {
-        cerr << "! Unable to get type code factory singleton" << endl;
-        goto fail;
-    }
+    
 
     /* First, we create the typeCode for a struct */
     tc = tcf->create_struct_tc("OuterStruct", members, err);
@@ -95,13 +83,22 @@ outer_struct_get_typecode() {
         goto fail;
     }
     
+    innerTC = inner_struct_get_typecode(tcf);
+    if (innerTC == NULL) {
+        cerr << "! Unable to create innerTC"<<endl;
+        goto fail;
+    }
     /* This struct just will have a data named inner, type: struct inner */
     tc->add_member("inner", DDS_TYPECODE_MEMBER_ID_INVALID,
-				inner_struct_get_typecode(),
+                innerTC,
 				DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, err);
     if (err != DDS_NO_EXCEPTION_CODE) {
          cerr << "! Unable to add member inner struct" << endl;
         goto fail;
+    }
+
+    if (innerTC != NULL) {
+        tcf->delete_tc(innerTC,err);
     }
 
 	DDS_StructMemberSeq_finalize(&members);
@@ -112,14 +109,40 @@ fail:
         tcf->delete_tc(tc, err);
     }
     DDS_StructMemberSeq_finalize(&members);
+    
+    if (innerTC != NULL) {
+        tcf->delete_tc(innerTC,err);
+    }
     return NULL;
 }
 
 int main() {
-	struct DDS_TypeCode *inner_tc = inner_struct_get_typecode();
-	struct DDS_TypeCode *outer_tc = outer_struct_get_typecode();
-	
+    DDS_TypeCodeFactory *tcf = NULL;
     DDS_ExceptionCode_t err;
+
+    /* Getting a reference to the type code factory */
+    tcf = DDS_TypeCodeFactory::get_instance();
+    if (tcf == NULL) {
+        cerr << "! Unable to get type code factory singleton" << endl;
+        return -1;
+    }
+	
+    /* Creating inner typecode */
+    struct DDS_TypeCode *inner_tc = inner_struct_get_typecode(tcf);
+	if (inner_tc == NULL) {
+        cerr << "! Unable to create inner typecode " << endl;
+        return -1;
+    }
+
+    /* Creating outer typecode */
+    struct DDS_TypeCode *outer_tc = outer_struct_get_typecode(tcf);
+	if (inner_tc == NULL) {
+        cerr << "! Unable to create outer typecode " << endl;
+        tcf->delete_tc(outer_tc, err);
+        return -1;
+    }
+
+    /* Creating the other variables that we need */
     DDS_ReturnCode_t retcode;
     int ret = -1;
 
@@ -136,15 +159,13 @@ int main() {
 	outer_tc->print_IDL(0, err);
 
 	/* Setting the inner data */
-	retcode = inner_data.set_double("x", 
-        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 3.14159);
+	retcode = inner_data.set_double("x", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 3.14159);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'x' in the inner struct" << endl;
         goto fail;
     }
 
-	retcode = inner_data.set_double("y",
-        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 2.71828);
+	retcode = inner_data.set_double("y", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 2.71828);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'y' in the inner struct" << endl;
         goto fail;
@@ -185,15 +206,13 @@ int main() {
 	/* get complex member makes a copy of the member, so modifying the dynamic 
 	 data obtained by get complex member WILL NOT modify the outer data */
 	printf("\n + setting new values to inner struct\n");
-	retcode = inner_data.set_double("x",
-        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1.00000);
+	retcode = inner_data.set_double("x", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1.00000);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'x' in the inner struct" << endl;
         goto fail;
     }
 
-	retcode = inner_data.set_double("y", 
-        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 0.00001);
+	retcode = inner_data.set_double("y", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 0.00001);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'y' in the inner struct" << endl;
         goto fail;
@@ -222,8 +241,7 @@ int main() {
 
 	bounded_data.print(stdout, 1);
 
-	/* binding a member does not copy, so modifying the bounded member WILL 
-       modify the outer object */
+	/* binding a member does not copy, so modifying the bounded member WILL modify the outer object */
 	printf("\n + setting new values to inner struct\n");
 	retcode = bounded_data.set_double("x",
 			DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1.00000);
@@ -261,11 +279,11 @@ int main() {
     
 fail:
     if (inner_tc != NULL) {
-        delete inner_tc;
+        tcf->delete_tc(inner_tc,err);
     }
     
     if (outer_tc != NULL) {
-        delete outer_tc;
+        tcf->delete_tc(outer_tc,err);
     }
- 	return 0;
+ 	return ret;
 }

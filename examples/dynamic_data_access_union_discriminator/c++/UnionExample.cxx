@@ -25,9 +25,8 @@
 
 using namespace std;
 
-DDS_TypeCode *createTypeCode() {
+DDS_TypeCode *createTypeCode(DDS_TypeCodeFactory *tcf) {
     static DDS_TypeCode *unionTC = NULL;
-    DDS_TypeCodeFactory *tcf;
     struct DDS_UnionMemberSeq members;
     DDS_ExceptionCode_t err;
 
@@ -36,7 +35,6 @@ DDS_TypeCode *createTypeCode() {
        will be the default one. In this example index = 1 refers
        to the the member 'aLong'. Take into account that index
        starts in 0 */
-    tcf = DDS_TypeCodeFactory::get_instance();
     unionTC = tcf->create_union_tc(
             "Foo",
             DDS_MUTABLE_EXTENSIBILITY,
@@ -101,13 +99,22 @@ fail:
 
 int example () {
     /* Creating the union typeCode */
-    struct DDS_TypeCode *unionTC = createTypeCode();
+    DDS_TypeCodeFactory *tcf = NULL;
+    tcf = DDS_TypeCodeFactory::get_instance();
+    if (tcf == NULL) {
+        cerr << "! Unable to get type code factory singleton" << endl;
+        return -1;
+    }
+
+    struct DDS_TypeCode *unionTC = createTypeCode(tcf);
     DDS_ReturnCode_t retcode;
     struct DDS_DynamicDataMemberInfo info;
     int ret = -1;
+    DDS_ExceptionCode_t err;
     struct DDS_DynamicDataProperty_t  myProperty = 
         DDS_DYNAMIC_DATA_PROPERTY_DEFAULT;
     DDS_Short valueTestShort;
+    
 
     /* Creating a new dynamicData instance based on the union type code */
     struct DDS_DynamicData data(unionTC, myProperty);
@@ -161,7 +168,7 @@ int example () {
 
 fail:
     if (unionTC != NULL) {
-        delete unionTC; 
+        tcf->delete_tc(unionTC,err);
     }
     return ret;
 }

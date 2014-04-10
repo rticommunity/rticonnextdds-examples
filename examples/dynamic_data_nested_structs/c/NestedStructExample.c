@@ -13,11 +13,11 @@
                                   
        On Unix: 
        
-       objs/<arch>/NestedStructExample 
+       objs/<arch>/UnionExample 
                             
        On Windows:
        
-       objs\<arch>\NestedStructExample  
+       objs\<arch>\UnionExample  
 */
 
 #include <ndds_c.h>
@@ -69,6 +69,7 @@ fail:
 DDS_TypeCode *
 outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
 	static DDS_TypeCode *tc = NULL;
+    DDS_TypeCode *innerTC = NULL;
 	struct DDS_StructMemberSeq members= DDS_SEQUENCE_INITIALIZER;
 	DDS_ExceptionCode_t ex;
 
@@ -79,14 +80,19 @@ outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
         fprintf(stderr,"! Unable to create struct TC\n");
         goto fail;
     }
-
+     
+    innerTC = inner_struct_get_typecode(tcf);
     /* This struct just will have a data named inner, type: struct inner */
 	DDS_TypeCode_add_member(tc,"inner",DDS_TYPECODE_MEMBER_ID_INVALID,
-	                inner_struct_get_typecode(tcf),
+	                innerTC,
 	                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, &ex);
     if (ex != DDS_NO_EXCEPTION_CODE) {
         fprintf(stderr,"! Unable to add member x\n");
         goto fail;
+    }
+
+    if (innerTC != NULL) {
+        DDS_TypeCodeFactory_delete_tc(tcf, innerTC, NULL);
     }
 
     DDS_StructMemberSeq_finalize(&members);
@@ -96,6 +102,11 @@ fail:
     if (tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, tc, &ex);
     }
+    
+    if (innerTC != NULL) {
+        DDS_TypeCodeFactory_delete_tc(tcf, innerTC, NULL);
+    }
+
     DDS_StructMemberSeq_finalize(&members);
     return NULL;
 }
@@ -315,13 +326,19 @@ int main() {
     ret = 1;
 
 fail:
-    if (inner_data != NULL) {
+    if (inner_tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(factory, inner_tc, NULL);
+    }
+
+    if (outer_tc != NULL) {
+        DDS_TypeCodeFactory_delete_tc(factory, outer_tc, NULL);
+    }
+
+    if (inner_data != NULL) {
         DDS_DynamicData_delete(inner_data);
     }
     
     if (outer_data != NULL) {
-        DDS_TypeCodeFactory_delete_tc(factory, outer_tc, NULL);
         DDS_DynamicData_delete(outer_data);
     }
 
