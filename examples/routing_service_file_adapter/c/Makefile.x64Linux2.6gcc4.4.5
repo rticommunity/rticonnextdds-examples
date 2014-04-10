@@ -18,6 +18,7 @@
 # linker should be on your PATH.)
 ######################################################################
 
+ROUTING_SERVICE_VERSION = 5.1.0
 DEFINES_ARCH_SPECIFIC = -DRTI_UNIX -DRTI_LINUX -DRTI_64BIT
 
 ARCH = x64Linux2.6gcc4.4.5
@@ -28,7 +29,7 @@ c_ld_flags = -g -m64
 syslibs =  -ldl -lnsl -lm -lpthread -lrt
 
 DEFINES = $(DEFINES_ARCH_SPECIFIC)  
-ROUTINGHOME=$(NDDSHOME)/../RTI_Routing_Service_5.1.0
+ROUTINGHOME=$(NDDSHOME)/../RTI_Routing_Service_$(ROUTING_SERVICE_VERSION)
 INCLUDES = -I. -I$(NDDSHOME)/include -I$(NDDSHOME)/include/ndds -I$(ROUTINGHOME)/include
 
 LIBS = -L$(ROUTINGHOME)/bin/$(ARCH) -L$(NDDSHOME)/lib/$(ARCH) \

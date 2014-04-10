@@ -3,21 +3,36 @@
 ===========================================
 
 Building C Example
-==================
+=============
 Before compiling or running the example, make sure the environment variable 
-NDDSHOME is set to the directory where your version of RTI Connext is installed as explained in the RTI_CoreLibrariesAndUtilities_UsersManual.
-Check that the LD_LIBRARY_PATH environment variable is set, as explained in the Link to RTI_Routing_Service_UsersManual
-You are supposed to have also installed in your computer the RTI Routing Service Adapter SDK in order to correctly build you adapter
+NDDSHOME is set to the directory where your version of RTI Connext DDS is 
+installed.
 
-You can find among the file provided an eample makefile,written for a specific architecture (x64Linux2.6gcc4.4.5). The adapter creates a shared library called libfileadapter.so, and copies it to <RTI Rouitng Service Installation Path>/bin/<architecture> in order to not specify the path of the library in the xml configuration file, but just the name.
+The example includes an example Makefile for the x64Linux2.6gcc4.4.5
+architecture. You can modify the makefile to match the requirements of your 
+specific platform. You will find the flags to use for each specific platform RTI
+Routing Service supports in your installation under the 
+"$ROUTINGHOME/adapters/file/make" directory. If you are using Visual Studio, you
+will also find example Visual Studio solutions under 
+"$ROUTINGHOME/adapters/file/windows". You can modify them to point to this 
+example.
 
-Before running the example, you should take care of a few parameters inside the xml configuration file, like the path for the source and destination directory, and make sure that the specified folders exist.
+The example makefile copies the shared libraries that contain the adapter to 
+$(ROUTINGHOME)/bin/$(ARCH). That means you will probably not need to 
+modify your path to load the libraries. However, if you find problems loading the
+libraries, you will need to add that directory to your Path, if you are using
+Windows, or your LD_LIBRARY_PATH if you are using most of Unix-like systems.
 
 Running C Example
-=================
+=============
 
-If you want to run Routing Service with this adpater, once you have correctly built the adapter, run the routing service specifying where to find the xml configuration file, and the name of the routing_service configuration inside the xml file:
+Before running the example, take a look at file_bridge.xml. It defines the different
+settings to load and configure the adapter. You will need to specify on it the path 
+to the input directory that will be scanned to check for files, as well as the path 
+to the output directory where all the discovered files will be copied over. 
 
-Supposing you are in the RTI_Routing_Service installation directory, run:
-./scripts/rtiroutingservice -cfgFile <path for the file file_bridge.xml>/file_bridge.xml -cfgName file_to_file
+Once you have set the right paths in the XML configuration file, just run RTI
+Routing Service like this:
+
+./scripts/rtiroutingservice -cfgFile /path/to/file_bridge.xml -cfgName file_to_file
 
