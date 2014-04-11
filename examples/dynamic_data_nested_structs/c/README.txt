@@ -56,9 +56,9 @@ Running the C example
 =====================
 This example consist in only one executable that is stored in the 
 "objs/<arch_name>/" directory.For instance, if your architecture is 
-i86Linux2.6gcc4.4.5, you have to run the following command:
+i86Linux3.xgcc4.6.3, you have to run the following command:
 
-$ objs/i86Linux2.6gcc4.4.5/NestedStructExample
+$ objs/i86Linux3.xgcc4.6.3/NestedStructExample
 
 Running the program produces the following output:
 
