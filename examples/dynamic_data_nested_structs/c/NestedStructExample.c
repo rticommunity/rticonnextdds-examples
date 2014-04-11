@@ -5,7 +5,7 @@
             (with inner and outer structs) 
       - creates a DynamicData instance
       - sets the values of the inner struct
-      - see the differents between set_complex_member and bind_complex_member
+      - shows the differences between set_complex_member and bind_complex_member
    
     Example:
         
@@ -19,6 +19,19 @@
        
        objs\<arch>\UnionExample  
 */
+
+/********* IDL representation for this example ************
+ 
+    struct InnerStruct {
+        double x;
+        double y;
+    }; 
+
+    struct OuterStruct {
+       InnerStruct inner;
+    }; 
+
+ */
 
 #include <ndds_c.h>
 
@@ -35,7 +48,7 @@ inner_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
         goto fail;
     }
 
-    /* Case 1 will be a double named x */
+    /* Member 1 will be a double named x */
     DDS_TypeCode_add_member(tc, "x", DDS_TYPECODE_MEMBER_ID_INVALID,
             DDS_TypeCodeFactory_get_primitive_tc(tcf, DDS_TK_DOUBLE),
             DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, &ex);
@@ -45,7 +58,7 @@ inner_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
         goto fail;
     }
         
-    /* Case 2 will be a double named y */
+    /* Member 2 will be a double named y */
     DDS_TypeCode_add_member(tc, "y", DDS_TYPECODE_MEMBER_ID_INVALID,
 	        DDS_TypeCodeFactory_get_primitive_tc(tcf, DDS_TK_DOUBLE),
 	        DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, &ex);
@@ -66,8 +79,7 @@ fail:
 	
 }
 
-DDS_TypeCode *
-outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode * outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
 	static DDS_TypeCode *tc = NULL;
     DDS_TypeCode *innerTC = NULL;
 	struct DDS_StructMemberSeq members= DDS_SEQUENCE_INITIALIZER;
@@ -82,7 +94,12 @@ outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
     }
      
     innerTC = inner_struct_get_typecode(tcf);
-    /* This struct just will have a data named inner, type: struct inner */
+    if (innerTC == NULL) {
+        fprintf(stderr, "! Unable to create struct TC\n");
+        goto fail;
+    }
+    /* Member 1 of outer struct will be a struct of type inner_struct 
+       called inner*/
 	DDS_TypeCode_add_member(tc,"inner",DDS_TYPECODE_MEMBER_ID_INVALID,
 	                innerTC,
 	                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, &ex);
@@ -132,14 +149,14 @@ int main() {
         goto fail;
     }
 
-    /* Creating the inner typeCode */
+    /* Creating the typeCode of the inner_struct */
     inner_tc = inner_struct_get_typecode(factory);
     if (inner_tc == NULL) {
         fprintf(stderr,"! Unable to create typeCode\n");
         goto fail;
     }
 
-    /* Creating the outer typeCode */
+    /* Creating the typeCode of the outer_struct that contains an inner_struct */
     outer_tc = outer_struct_get_typecode(factory);
     if (inner_tc == NULL) {
         fprintf(stderr,"! Unable to create typeCode\n");
@@ -155,7 +172,7 @@ int main() {
 	DDS_TypeCode_print_IDL(inner_tc,0,&err);
 	DDS_TypeCode_print_IDL(outer_tc,0,&err);	
 
-	/* Creating a new dynamicData instance based on the outer type code */
+	/* Now, we create a dynamicData instance for each type */
     outer_data = DDS_DynamicData_new(outer_tc, 
         &DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
     if(outer_data == NULL) {
@@ -192,8 +209,10 @@ int main() {
 
 	printf("\n\n get/set_complex_member API\n"
 	           "----------------------------\n");
-	/* Get/Set complex member API */
-	printf("Setting the initial values of struct with set_complex_member()\n");
+	/* Using set_complex_member, we copy inner_data values in inner_struct of
+       outer_data */
+	printf("Setting initial values of outer_data with "
+           "set_complex_member()\n");
 	retcode = DDS_DynamicData_set_complex_member(
         outer_data,
         "inner",
@@ -225,12 +244,12 @@ int main() {
         goto fail;
     }
 
-	printf("\n + inner struct value\n");
+	printf("\n + inner_data value\n");
 	DDS_DynamicData_print(inner_data,stdout,1);
     
-	/* get complex member makes a copy of the member, so modifying the dynamic 
-	data obtained by get complex member WILL NOT modify the outer data */	
-	printf("\n + setting new values to inner struct\n");
+	/* get_complex_member made a copy of the inner_struct. If we modify 
+       inner_data values, outer_data inner_struct WILL NOT be modified. */	
+	printf("\n + setting new values to inner_data\n");
 	retcode = DDS_DynamicData_set_double(
         inner_data,
         "x",
@@ -250,28 +269,40 @@ int main() {
         fprintf(stderr,"! Unable to set value 'y' in the inner struct \n");
         goto fail;
     }
+    DDS_DynamicData_print(inner_data,stdout,1);
+    
+    
 	/* Current value of outer_data
-	outer: 
+	outer_data: 
           inner:
-	    x: 3.141590
-	    y: 2.718280
+            x: 3.141590
+            y: 2.718280
+    
+    inner_data:
+        x: 1.000000
+	    y: 0.000010    
 	*/
-	printf("\n + current outer struct value \n");
+	
+    printf("\n + current outer_data value \n");
 	DDS_DynamicData_print(outer_data,stdout,1);
     
+    /* Bind/Unbind member API */
 	printf("\n\n bind/unbind API\n"
 	       "------------------\n");
-	/* Bind/Unbind member API */
-    	bounded_data = DDS_DynamicData_new(NULL,
-            &DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
+    printf("Creating a new dynamic data called bounded_data\n");
+    bounded_data = DDS_DynamicData_new(NULL,
+        &DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
     if (bounded_data == NULL) {
         fprintf(stderr,"! Unable to create new dynamic data\n");
         goto fail;
     }
 
-	printf("\n + bind complex member called\n");
+	printf("\n + binding bounded_data to outer_data's inner_struct\n");
 	
-    retcode = DDS_DynamicData_bind_complex_member(
+    /* Using bind_complex_member, we do not copy inner_struct, but bind it. 
+       So, if we modify bounded_data, the inner member inside outer_data WILL
+       also be modified */ 
+	retcode = DDS_DynamicData_bind_complex_member(
         outer_data,
         bounded_data,
         "inner",
@@ -283,9 +314,7 @@ int main() {
 
 	DDS_DynamicData_print(bounded_data,stdout,1);
     
-	/* binding a member does not copy, so modifying the bounded member WILL 
-       modify the outer object */ 
-	printf("\n + setting new values to inner struct\n");
+	printf("\n + setting new values to bounded_data\n");
 	retcode = DDS_DynamicData_set_double(
         bounded_data,
         "x",
@@ -320,7 +349,7 @@ int main() {
         goto fail;
     }
 
-	printf("\n + current outer struct value \n");
+	printf("\n + current outer_data value \n");
 	DDS_DynamicData_print(outer_data,stdout,1);
     
     ret = 1;

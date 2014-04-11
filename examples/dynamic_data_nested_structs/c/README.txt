@@ -75,47 +75,50 @@ struct OuterStruct {
    InnerStruct inner;
 }; //@Extensibility EXTENSIBLE_EXTENSIBILITY
 
+  get/set_complex_member API
+----------------------------
+Setting the initial values of outer_data with set_complex_member()
 
- get/set_complex_member API
-------------------
-Setting the initial values of struct with set_complex_member()
-
-   inner: 
+   inner:
       x: 3.141590
       y: 2.718280
 
  + get_complex_member() called
 
- + inner struct value
+ + inner_data value
 
    x: 3.141590
    y: 2.718280
 
- + setting new values to inner struct
+ + setting new values to inner_data
 
- + current outter struct value 
+   x: 1.000000
+   y: 0.000010
 
-   inner: 
+ + current outer_data value
+
+   inner:
       x: 3.141590
       y: 2.718280
 
 
  bind/unbind API
 ------------------
+Creating a new dynamic data called bounded_data
 
- + bind complex member called
+ + binding bounded_data to outer_data's inner_struct
 
    x: 3.141590
    y: 2.718280
 
- + setting new values to inner struct
+ + setting new values to bounded_data
 
    x: 1.000000
    y: 0.000010
 
- + current outter struct value 
+ + current outer_data value
 
-   inner: 
+   inner:
       x: 1.000000
       y: 0.000010
 

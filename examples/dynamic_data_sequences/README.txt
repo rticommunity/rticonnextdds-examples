@@ -2,7 +2,6 @@
 Example Code - Dynamic Data: Accessing Sequence Members
 ========================================================
 
-
 Concept
 =======
 Dynamic Data provides an easy way to access the members of a data sample. Such 

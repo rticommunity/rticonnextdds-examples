@@ -1,9 +1,9 @@
 /* SequencesExample.cxx
     
     This example 
-      - creates the type code of for a sequence 
+      - creates the type code of a sequence 
       - creates a DynamicData instance
-      - writing and reading the values
+      - writes and reads the values
          
     Example:
         
@@ -158,15 +158,19 @@ void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
     DDS_ExceptionCode_t err;
 
     DDS_DynamicData seqmember(sequenceTC, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-	DDS_DynamicData seqelement(sequenceElementTC, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
+	DDS_DynamicData seqelement(sequenceElementTC, 
+        DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
 	int i = 0;
     
 	for (i = 0; i < MAX_SEQ_LEN; ++i) {
 
 		/* To access the elements of a sequence it is necessary
-		 * to use a the id parameter. This parameter allows
-		 *  accessing to every element of the sequence using a 1-based index.
-		 */
+		 * to use their id. This parameter allows accessing to every element 
+         * of the sequence using a 1-based index.
+         * There are two ways of doing this: bind API and get API.
+         * See the NestedStructExample for further details about the 
+         * differences between these two APIs. */
+         
 #ifdef USE_BIND_API
 		retcode = seqmember.bind_complex_member(seqelement, NULL,
 				i + 1);
@@ -304,14 +308,13 @@ int main() {
     DDS_TypeCode * wSequenceTC = NULL;
     DDS_ExceptionCode_t err;
     
-    /* Getting a reference to the type code fcatory */
+   
     factory = DDS_TypeCodeFactory::get_instance();
     if (factory == NULL) {
         cerr << "! Unable to get type code factory singleton" << endl;
         return -1;
     }
 
-    /* Creating the type code with the type code factory previusly got */
     wSequenceTC = type_w_sequence_get_typecode(factory);
     if (wSequenceTC == NULL) {
         cerr << "! Unable to create wSequence Type Code" << endl;

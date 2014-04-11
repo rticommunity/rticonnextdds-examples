@@ -1,9 +1,9 @@
 /* SequencesExample.c
     
     This example 
-      - creates the type code of for a sequence 
+      - creates the type code of a sequence 
       - creates a DynamicData instance
-      - writing and reading the values
+      - writes and reads the values
          
     Example:
         
@@ -182,8 +182,8 @@ void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
         goto fail;
     }
 
-	seqElementIsInitialized = DDS_DynamicData_initialize(&seqelement, sequenceElementTC,
-			&DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
+	seqElementIsInitialized = DDS_DynamicData_initialize(&seqelement, 
+            sequenceElementTC, &DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
     if (!seqElementIsInitialized) {
         fprintf(stderr,"! Unable to initialize seqElement\n");
         goto fail;
@@ -192,12 +192,15 @@ void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
 	for (i = 0; i < MAX_SEQ_LEN; ++i) {
 
 		/* To access the elements of a sequence it is necessary
-		 * to use a the id parameter. This parameter allows
-		 *  accessing to every element of the sequence using a 1-based index.
-		 */
+		 * to use their id. This parameter allows accessing to every element 
+         * of the sequence using a 1-based index.
+         * There are two ways of doing this: bind API and get API.
+         * See the NestedStructExample for further details about the 
+         * differences between these two APIs. */
+         
 #ifdef USE_BIND_API
-		retcode = DDS_DynamicData_bind_complex_member(&seqmember, &seqelement, NULL,
-				i + 1);
+		retcode = DDS_DynamicData_bind_complex_member(&seqmember, &seqelement,
+                NULL, i + 1);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr,"! Unable to bind complex member\n");
             goto fail;
@@ -316,15 +319,15 @@ void read_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
 		 * in that case the members are not copied, just referenced
 		 */
 #ifdef USE_BIND_API
-		retcode = DDS_DynamicData_bind_complex_member(&seqmember, &seqelement, NULL,
-				i + 1);
+		retcode = DDS_DynamicData_bind_complex_member(&seqmember, &seqelement,
+            NULL, i + 1);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr,"! Unable to bind complex member\n");
             goto fail;
         }
 #else
-		retcode = DDS_DynamicData_get_complex_member(&seqmember, &seqelement, NULL,
-				i + 1);
+		retcode = DDS_DynamicData_get_complex_member(&seqmember, &seqelement, 
+            NULL, i + 1);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr,"! Unable to get complex member\n");
             goto fail;
@@ -371,7 +374,6 @@ int main() {
     DDS_TypeCode *wSequenceTC = NULL;
     DDS_Boolean dynamicDataIsInitialized = DDS_BOOLEAN_FALSE;
 
-    /* Getting a reference to the type code factory */	
     factory = DDS_TypeCodeFactory_get_instance();
     if (factory == NULL) {
         fprintf(stderr,"! Unable to get type code factory singleton\n");
