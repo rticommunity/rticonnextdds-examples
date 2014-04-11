@@ -4,20 +4,61 @@ Dynamic Data API, access to complex member example
 
 
 Building the C example
-===============================================
+======================
 
-Before building the example make sure that the NDDSHOME environment variable is set and its pointing to a valid RTI Connext location.
+The example is contained in the NestedStructExample.c file. 
+Before compiling or running the example, make sure the environment variable 
+NDDSHOME is set to the directory where you installed RTI Connext DDS.
 
-This example is only composed by an unique file called "dynamic_data_nested_struct_example.c". In order to build it on a makefile based system, you can run this command: 
+The accompanying makefiles makefile_Foo_x64Linux3.xgcc4.6.3 and
+makefile_Foo_i86Linux3.xgcc4.6.3 can be used to compile the application
+for makefile_Foo_x64Linux3.xgcc4.6.3 and makefile_Foo_i86Linux3.xgcc4.6.3, 
+respectively.
 
-$ make -f makefile_i86Linux2.6 ARCH=<arch_name>
+To generate a makefile for any other architecture, you can search and 
+replace the architecture on the makefile, or use rtiddsgen to generate
+a makefile specific for it. To use rtiddsgen to generate a makefile,
+create a sample idl file called Foo.idl, with the following contents:
 
-Running the example
-===================
-This example consist in only one executable that is stored in the "objs/<arch_name>/" directory.
-iFor instance, if your architecture is i86Linux2.6gcc4.4.5, you have to run the following command:
+struct foo {
+    long a;
+};
 
-$ objs/i86Linux2.6gcc4.4.5/dynamic_data_nested_struct_example
+and run 
+
+rtiddsgen -example <platform_name> -language C Foo.idl
+
+Once you have run the application, modify the generated makefile and 
+set the COMMONSOURCES and EXEC variables to:
+
+COMMONSOURCES =
+EXEC          = NestedStructExample
+
+# Remove Foo.h from objs/<arch_name>/%.o, for instance:
+objs/i86Linux3.xgcc4.6.3/%.o : %.c
+
+Finally, remove all generated files you will not need. 
+
+rm Foo* USER_QOS_PROFILES.xml
+
+If you are running Windows, follow the same process to generate a Visual
+Studio Project 
+
+Now that you have a makefile compatible with your platform 
+(e.g., i86Linux3.xgcc4.6.3) , run make to build your example.
+
+make -f makefile_Foo_i86Linux3.xgcc4.6.3
+
+For Windows systems, you will have a new Visual Studio project where you can
+build this solution.
+
+Running the C example
+=====================
+This example consist in only one executable that is stored in the 
+"objs/<arch_name>/" directory.For instance, if your architecture is 
+i86Linux3.xgcc4.6.3, you have to run the following command:
+
+$ objs/i86Linux3.xgcc4.6.3/NestedStructExample
 
 Running the program produces the following output:
 

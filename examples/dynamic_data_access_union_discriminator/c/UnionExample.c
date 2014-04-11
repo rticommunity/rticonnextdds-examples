@@ -3,8 +3,9 @@
     This example 
       - creates the type code of for a union 
       - creates a DynamicData instance
-      - sets one of the fields of the union
-      - shows how to retrieve the discriminator 
+      - sets one of the members of the union
+      - shows how to retrieve the discriminator
+      - access to the value of one member of the union
    
     Example:
         
@@ -27,12 +28,16 @@ struct DDS_TypeCode *createTypeCode(struct DDS_TypeCodeFactory *factory) {
     struct DDS_TypeCode *unionTC = NULL;
     DDS_ExceptionCode_t ex;
 
-    /* First, we create the typeCode for a union*/
+    /* First, we create the typeCode for a union */
+    /* Default-member index refers to which member of the union
+       will be the default one. In this example index = 1 refers
+       to the the member 'aLong'. Take into account that index
+       starts in 0 */
     unionTC = DDS_TypeCodeFactory_create_union_tc(
             factory,
             "Foo",
             DDS_TypeCodeFactory_get_primitive_tc(factory, DDS_TK_LONG),
-            1, /* default index */
+            1, /* default-member index */
             NULL, /* For now, it does not have any member */
             &ex);
     if (ex != DDS_NO_EXCEPTION_CODE) {
@@ -44,7 +49,7 @@ struct DDS_TypeCode *createTypeCode(struct DDS_TypeCodeFactory *factory) {
     DDS_TypeCode_add_member(
             unionTC,
             "aShort",
-            -1, /* no default member */
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             DDS_TypeCodeFactory_get_primitive_tc(factory, DDS_TK_SHORT),
             DDS_TYPECODE_NONKEY_MEMBER,
             &ex);
@@ -53,7 +58,7 @@ struct DDS_TypeCode *createTypeCode(struct DDS_TypeCodeFactory *factory) {
         goto fail;
     }
 
-    /* Case 2 will be a long named aLong */
+    /* Case 2, the default, will be a long named aLong */
     DDS_TypeCode_add_member(
             unionTC,
             "aLong",
@@ -66,7 +71,7 @@ struct DDS_TypeCode *createTypeCode(struct DDS_TypeCodeFactory *factory) {
         goto fail;
     }
 
-    /* Case 3, the default, will be a double named aDouble */
+    /* Case 3 will be a double named aDouble */
     DDS_TypeCode_add_member(
             unionTC,
             "aDouble",
@@ -96,15 +101,19 @@ int example () {
     struct DDS_DynamicDataMemberInfo info;
     struct DDS_TypeCodeFactory *factory = NULL;
     int ret = -1;
-    struct DDS_DynamicDataProperty_t  myProperty = DDS_DYNAMIC_DATA_PROPERTY_DEFAULT;
+    struct DDS_DynamicDataProperty_t  myProperty = 
+        DDS_DYNAMIC_DATA_PROPERTY_DEFAULT;
+    DDS_Short valueTestShort;
+    DDS_Boolean dynamicDataIsInitialized = DDS_BOOLEAN_FALSE;
 
-    /* I get a reference to the type code factory */	
+
+    /* Getting a reference to the type code factory */	
     factory = DDS_TypeCodeFactory_get_instance();
     if (factory == NULL) {
         fprintf(stderr, "! Unable to get type code factory singleton\n");
         goto fail;
     }
-
+   
     /* Creating the union typeCode */
     unionTC = createTypeCode(factory);
     if (unionTC == NULL) {
@@ -113,12 +122,14 @@ int example () {
     }
 
     /* Creating a new dynamicData instance based on the union type code */
-    if (!DDS_DynamicData_initialize(&data,unionTC,&myProperty)) {
+    dynamicDataIsInitialized = DDS_DynamicData_initialize(&data,unionTC,&myProperty);
+    if (!dynamicDataIsInitialized) {
         fprintf(stderr,"! Unable to create dynamicData\n");
         goto fail;
     }
 
-    /* If I get the discriminator now, I will get the first one added */
+    /* If we get the current discriminator, it will be the default one
+       (not the first added) */
     retcode = DDS_DynamicData_get_member_info_by_index(
             &data,&info,0);
     if (retcode != DDS_RETCODE_OK) {
@@ -126,13 +137,14 @@ int example () {
         goto fail;
     }
 
-    fprintf(stdout, "The field selected is %s\n", info.member_name);    
+    printf("The member selected is %s\n", info.member_name);    
 
-    /* Now I set one of the members */
+    /* When we set a value in one of the members of the union,
+       the discriminator updates automatically to point that member.  */
     retcode = DDS_DynamicData_set_short(&data,
             "aShort",DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 42);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr,"! Unable to create dynamicData\n");
+        fprintf(stderr,"! Unable to set value to aShort member\n");
         goto fail;
     }
     
@@ -144,13 +156,33 @@ int example () {
         goto fail;
     }
 
-    fprintf(stdout, "The field selected is %s\n", info.member_name);
+    printf("The member selected is %s\n", info.member_name);
+
+    /* Getting the value of the target member */
+    retcode = DDS_DynamicData_get_short(
+        &data,
+        &valueTestShort,
+        "aShort",
+        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
+     if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr,"! Unable to get member value\n");
+        goto fail;
+    }
+
+    printf("The member selected is %s with value: %d\n", 
+        info.member_name, valueTestShort);
 
     ret = 1;
+
 fail:
     if (unionTC != NULL) {
-        DDS_TypeCodeFactory_delete_tc(factory, unionTC,NULL);
+        DDS_TypeCodeFactory_delete_tc(factory, unionTC, NULL);
     }
+
+    if (dynamicDataIsInitialized) {
+        DDS_DynamicData_finalize(&data);
+    }
+
 
     return ret;
 }
