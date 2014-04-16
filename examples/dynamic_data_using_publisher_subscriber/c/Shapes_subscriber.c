@@ -133,8 +133,8 @@ void ShapeTypeListener_on_data_available(
 
 /* Delete all entities */
 static int subscriber_shutdown(
-    DDS_DomainParticipant *participant,
-    struct DDS_DynamicDataTypeSupport *typeSupport)
+                DDS_DomainParticipant *participant,
+                struct DDS_DynamicDataTypeSupport *typeSupport)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
