@@ -1,11 +1,10 @@
-======================================
- Example - Sequences in Dynamic Data
-======================================
+============================================================
+ Example Code -- Access Union Discriminator In Dynamic Data
+============================================================
 
-Building the C++ example
-========================
-
-The example is contained in the SequencesExample.cxx file. Before compiling
+Building C++ Example
+====================
+The example is contained in the UnionExample.cxx file. Before compiling
 or running the example, make sure the environment variable NDDSHOME is
 set to the directory where you installed RTI Connext DDS.
 
@@ -31,7 +30,7 @@ Once you have run the application, modify the generated makefile and
 set the COMMONSOURCES and EXEC variables to:
 
 COMMONSOURCES =
-EXEC          = SequencesExample
+EXEC          = UnionExample
 
 # Remove Foo.h from objs/<arch_name>/%.o, for instance:
 objs/i86Linux3.xgcc4.6.3/%.o : %.c
@@ -51,12 +50,7 @@ make -f makefile_Foo_i86Linux3.xgcc4.6.3
 For Windows systems, you will have a new Visual Studio project where you can
 build this solution.
 
-To test the example using the bind API instead of using the get API, uncomment 
-the following line in the source file:
-
-#define USE_BIND_API 
-
-Running the example
+Running C++ Example
 ===================
 
 Run the following command from the example directory to execute
@@ -64,8 +58,8 @@ the application.
 
 On UNIX systems:
 
-./objs/<arch_name>/SequencesExample
+./objs/<arch_name>/UnionExample
 
 On Windows Systems:
 
-objs\<arch_name>\SequencesExample
+objs\<arch_name>\UnionExample
