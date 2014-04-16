@@ -311,7 +311,7 @@ static int publisher_main(int domainId, int sample_count)
                 instance->profile_name,
                 instance->x);
 
-        retcode = retcode = profilesDataWriter_write(
+        retcode = profilesDataWriter_write(
             profiles_writer_transient_local, instance, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
