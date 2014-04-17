@@ -1,0 +1,10 @@
+x=100,y=200,shapesize=100,color=RED
+x=105,y=205,shapesize=30,color=BLUE
+x=110,y=210,shapesize=40,color=GREEN
+x=120,y=120,shapesize=50,color=YELLOW
+x=50,y=60,shapesize=60,color=RED
+x=80,y=100,shapesize=50,color=YELLOW
+x=90,y=120,shapesize=10,color=GREEN
+x=120,y=50,shapesize=80,color=BLUE
+x=50,y=60,shapesize=70,color=RED
+x=100,y=150,shapesize=150,color=CYAN
