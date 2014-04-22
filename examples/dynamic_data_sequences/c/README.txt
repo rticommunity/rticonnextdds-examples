@@ -5,28 +5,67 @@
 Building the example
 ====================
 
-The example consists in only one file called "dynamic_data_sequences.c" that
-shows how to access to complex sequence types.
+The example is contained in the dynamic_data_sequences.c file. 
+Before compiling or running the example, make sure the environment variable 
+NDDSHOME is set to the directory where you installed RTI Connext DDS.
 
-A Linux makefile is provided, so it can be built with the following command line 
+The accompanying makefiles makefile_Foo_x64Linux3.xgcc4.6.3 and
+makefile_Foo_i86Linux3.xgcc4.6.3 can be used to compile the application
+for makefile_Foo_x64Linux3.xgcc4.6.3 and makefile_Foo_i86Linux3.xgcc4.6.3, 
+respectively.
 
-	$ make -f makefile_i86Linux2.6
+To generate a makefile for any other architecture, you can search and 
+replace the architecture on the makefile, or use rtiddsgen to generate
+a makefile specific for it. To use rtiddsgen to generate a makefile,
+create a sample idl file called Foo.idl, with the following contents:
 
-Remember set $NDDHSOME and ARCH (e.g. i86Linux2.6gcc4.4.5) before running make. For instance
-to build the example for i86Linux2.6gcc4.4.5
+struct foo {
+    long a;
+};
 
-	$ make -f makefile_i86Linux2.6 ARCH=i86Linux2.6gcc4.4.5
+and run 
 
-To test the example using the bind API instead of using the get API, uncomment the following
-line in the source file:
+rtiddsgen -example <platform_name> -language C Foo.idl
+
+Once you have run the application, modify the generated makefile and 
+set the COMMONSOURCES and EXEC variables to:
+
+COMMONSOURCES =
+EXEC          = dynamic_data_sequences
+
+# Remove Foo.h from objs/<arch_name>/%.o, for instance:
+objs/i86Linux3.xgcc4.6.3/%.o : %.c
+
+Finally, remove all generated files you will not need. 
+
+rm Foo* USER_QOS_PROFILES.xml
+
+If you are running Windows, follow the same process to generate a Visual
+Studio Project 
+
+Now that you have a makefile compatible with your platform 
+(e.g., i86Linux3.xgcc4.6.3) , run make to build your example.
+
+make -f makefile_Foo_i86Linux3.xgcc4.6.3
+
+For Windows systems, you will have a new Visual Studio project where you can
+build this solution.
+
+To test the example using the bind API instead of using the get API, uncomment 
+the following line in the source file:
 
 #define USE_BIND_API 
 
 Running the example
 ===================
 
-To run the example just run the generated binary executable, that is stored under the objs/<arch>/ with
-the name dynamic_data_sequences. For instance, if the architecture is i86Linux2.6gcc4.4.5
-just run this command: 
+Run the following command from the example directory to execute
+the application.
 
-	$ objs/i86Linux2.6gcc4.4.5/dynamic_data_sequences
+On UNIX systems:
+
+./objs/<arch_name>/dynamic_data_sequences
+
+On Windows Systems:
+
+objs\<arch_name>\dynamic_data_sequences

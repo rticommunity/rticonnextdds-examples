@@ -2,8 +2,8 @@
  Example Code -- get_publishers
 ===========================================
 
-Building C++ Example
-====================
+Building C Example
+==================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -16,9 +16,9 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C++ -example i86Win32VS2005 Foo.idl
+rtiddsgen -language C -example i86Win32VS2005 Foo.idl
 
-File C:\local\Foo\c++\Foo_publisher.cxx already exists and will
+File C:\local\Foo\c\Foo_publisher.c already exists and will
 not be replaced with updated content. If you would like to get a new file with 
 the new content, either remove this file or supply -replace option.
 
@@ -28,8 +28,8 @@ already provided.
 
 Use the generated makefile of visual studio project to compile your application
 
-Running C++ Example
-===================
+Running C Example
+=================
 Run the following command from the example directory (this is necessary to ensure
 the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
@@ -40,4 +40,3 @@ objs\<arch_name>\Foo_publisher.exe
 UNIX systems:
 
 ./objs/<arch_name>/Foo_publisher
-

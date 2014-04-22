@@ -17,7 +17,7 @@
 		<qos_profile name="volatile_profile" is_default_qos="true">
 			<participant_qos>
 				<participant_name>
-					<name>RTI Profiles Example C++</name>
+					<name>RTI Profiles Example Java</name>
 				</participant_name>
 			</participant_qos>
 
