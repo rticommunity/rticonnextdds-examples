@@ -60,7 +60,9 @@ sequence_element_get_typecode(DDS_TypeCodeFactory *tcf) {
     }
 
     return tc;
-    fail: if (tc != NULL) {
+
+    fail:
+    if (tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, tc, &err);
     }
     return NULL;
@@ -91,7 +93,8 @@ sequence_get_typecode(DDS_TypeCodeFactory *tcf) {
     }
     return tc;
 
-    fail: if (seqElementTC != NULL) {
+    fail:
+    if (seqElementTC != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, seqElementTC, &err);
     }
 
@@ -132,7 +135,9 @@ type_w_sequence_get_typecode(DDS_TypeCodeFactory *tcf) {
 
     DDS_StructMemberSeq_finalize(&members);
     return tc;
-    fail: if (tc != NULL) {
+
+    fail:
+    if (tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, tc, &err);
     }
     if (sequenceTC != NULL) {
@@ -237,7 +242,8 @@ void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
         goto fail;
     }
 
-    fail: if (sequenceTC != NULL) {
+    fail:
+    if (sequenceTC != NULL) {
         DDS_TypeCodeFactory_delete_tc(factory, sequenceTC, &err);
     }
 
@@ -391,7 +397,8 @@ int main() {
     printf("***** Reading a sample *****\n");
     read_data(&sample, factory);
 
-    fail: if (wSequenceTC != NULL) {
+    fail:
+    if (wSequenceTC != NULL) {
         DDS_TypeCodeFactory_delete_tc(factory, wSequenceTC, NULL);
     }
     if (dynamicDataIsInitialized) {

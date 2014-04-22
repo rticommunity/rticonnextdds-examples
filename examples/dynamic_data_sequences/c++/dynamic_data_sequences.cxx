@@ -62,7 +62,8 @@ sequence_element_get_typecode(DDS_TypeCodeFactory *tcf) {
     }
 
     return tc;
-    fail: if (tc != NULL) {
+    fail:
+    if (tc != NULL) {
         tcf->delete_tc(tc, err);
     }
     return NULL;
@@ -92,7 +93,8 @@ sequence_get_typecode(DDS_TypeCodeFactory *tcf) {
     }
     return tc;
 
-    fail: if (seqElementTC != NULL) {
+    fail:
+    if (seqElementTC != NULL) {
         tcf->delete_tc(seqElementTC, err);
     }
     if (tc != NULL) {
@@ -290,7 +292,8 @@ void read_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
 
     }
 
-    fail: if (sequenceTC != NULL) {
+    fail:
+    if (sequenceTC != NULL) {
         factory->delete_tc(sequenceTC, err);
     }
     return;

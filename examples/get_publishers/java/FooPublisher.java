@@ -15,43 +15,43 @@
 
    (2) Start the subscription with the command
        java FooSubscriber <domain_id> <sample_count>
-       
+
    (3) Start the publication with the command
        java FooPublisher <domain_id> <sample_count>
 
    (4) [Optional] Specify the list of discovery initial peers and 
        multicast receive addresses via an environment variable or a file 
        (in the current working directory) called NDDS_DISCOVERY_PEERS.  
-       
+
    You can run any number of publishers and subscribers programs, and can 
    add and remove them dynamically from the domain.
-              
+
    Example:
-        
+
        To run the example application on domain <domain_id>:
-            
+
        Ensure that $(NDDSHOME)/lib/<arch> is on the dynamic library path for
        Java.                       
-       
+
         On Unix: 
              add $(NDDSHOME)/lib/<arch> to the 'LD_LIBRARY_PATH' environment
              variable
-                                         
+
         On Windows:
              add %NDDSHOME%\lib\<arch> to the 'Path' environment variable
-                        
+
 
        Run the Java applications:
-       
+
         java -Djava.ext.dirs=$NDDSHOME/class FooPublisher <domain_id>
 
         java -Djava.ext.dirs=$NDDSHOME/class FooSubscriber <domain_id>        
 
-       
-       
+
+
 modification history
 ------------ -------         
-*/
+ */
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -69,7 +69,7 @@ public class FooPublisher {
     // -----------------------------------------------------------------------
     // Public Methods
     // -----------------------------------------------------------------------
-    
+
     public static void main(String[] args) {
         // --- Get domain ID --- //
         int domainId = 0;
@@ -82,32 +82,32 @@ public class FooPublisher {
         if (args.length >= 2) {
             sampleCount = Integer.valueOf(args[1]).intValue();
         }
-        
+
         /* Uncomment this to turn on additional logging
         Logger.get_instance().set_verbosity_by_category(
             LogCategory.NDDS_CONFIG_LOG_CATEGORY_API,
             LogVerbosity.NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-        */
-        
+         */
+
         // --- Run --- //
         publisherMain(domainId, sampleCount);
     }
-    
-    
-    
+
+
+
     // -----------------------------------------------------------------------
     // Private Methods
     // -----------------------------------------------------------------------
-    
+
     // --- Constructors: -----------------------------------------------------
-    
+
     private FooPublisher() {
         super();
     }
-    
-    
+
+
     // -----------------------------------------------------------------------
-    
+
     private static void publisherMain(int domainId, int sampleCount) {
 
         DomainParticipant participant = null;
@@ -118,32 +118,34 @@ public class FooPublisher {
 
         try {
             // --- Create participant --- //
-    
+
             /* To customize participant QoS, use
                the configuration file
                USER_QOS_PROFILES.xml */
-    
+
             participant = DomainParticipantFactory.TheParticipantFactory.
-                create_participant(
-                    domainId, DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                    null /* listener */, StatusKind.STATUS_MASK_NONE);
+                    create_participant(
+                            domainId, 
+                            DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                            null /* listener */, StatusKind.STATUS_MASK_NONE);
             if (participant == null) {
                 System.err.println("create_participant error\n");
                 return;
             }        
-                    
+
             // --- Create publisher --- //
-    
+
             /* To customize publisher QoS, use
                the configuration file USER_QOS_PROFILES.xml */
 
-/* Start - modifying the generated example to showcase the usage of
- * the get_publishers API
- */   
- 
+            /* Start - modifying the generated example to showcase the usage of
+             * the get_publishers API
+             */   
+
             publisher = participant.create_publisher(
-                DomainParticipant.PUBLISHER_QOS_DEFAULT, null /* listener */,
-                StatusKind.STATUS_MASK_NONE);
+                    DomainParticipant.PUBLISHER_QOS_DEFAULT, 
+                    null /* listener */,
+                    StatusKind.STATUS_MASK_NONE);
             if (publisher == null) {
                 System.err.println("create_publisher error\n");
                 return;
@@ -151,32 +153,33 @@ public class FooPublisher {
             System.out.println("The first publisher is " + publisher); 
 
             publisher2 = participant.create_publisher(
-                DomainParticipant.PUBLISHER_QOS_DEFAULT, null /* listener */,
-                StatusKind.STATUS_MASK_NONE);
+                    DomainParticipant.PUBLISHER_QOS_DEFAULT, 
+                    null /* listener */,
+                    StatusKind.STATUS_MASK_NONE);
             if (publisher2 == null) {
                 System.err.println("create_publisher2 error\n");
                 return;
             }                   
             System.out.println("The second publisher is " + publisher2); 
-           
-             System.out.println("Let's call get_publisher() now and check if I get all my publishers...\n");
+
+            System.out.println("Let's call get_publisher() now and check if I get all my publishers...\n");
             PublisherSeq publisherSeq = new PublisherSeq();
             participant.get_publishers(publisherSeq);
 
-			System.out.println("I found " + publisherSeq.size() + "publishers");
+            System.out.println("I found " + publisherSeq.size() + "publishers");
 
-           for (int i = 0; i < publisherSeq.size(); i++) {
+            for (int i = 0; i < publisherSeq.size(); i++) {
                 Publisher tmp = (Publisher) publisherSeq.get(i);
                 System.out.println("The " + i + " publisher I found is " + tmp);
-           }
-  
-           /* exiting */
-           return;
+            }
 
-/* End - modifying the generated example to showcase the usage of
- * the get_publishers API
- */                
-        
+            /* exiting */
+            return;
+
+            /* End - modifying the generated example to showcase the usage of
+             * the get_publishers API
+             */                
+
         } finally {
 
             // --- Shutdown --- //
@@ -185,7 +188,7 @@ public class FooPublisher {
                 participant.delete_contained_entities();
 
                 DomainParticipantFactory.TheParticipantFactory.
-                    delete_participant(participant);
+                delete_participant(participant);
             }
             /* RTI Connext provides finalize_instance()
                method for people who want to release memory used by the
@@ -197,4 +200,4 @@ public class FooPublisher {
     }
 }
 
-        
+
