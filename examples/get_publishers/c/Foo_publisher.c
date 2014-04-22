@@ -35,7 +35,7 @@
 
 /* Delete all entities */
 static int publisher_shutdown(DDS_DomainParticipant *participant,
-        DDS_PublisherSeq publisherSeq) {
+        struct DDS_PublisherSeq publisherSeq) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
