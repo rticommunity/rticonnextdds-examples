@@ -43,7 +43,6 @@ INCLUDES = -I. -I$(NDDSHOME)/include -I$(NDDSHOME)/include/ndds
 LIBS = -L$(NDDSHOME)/lib/$(ARCH) \
         -lnddscppz -lnddscz -lnddscorez $(syslibs_i86Linux2.6)
 
-CDRSOURCES    = Foo.idl
 COMMONSOURCES = 
 EXEC          = dynamic_data_nested_struct_example
 DIRECTORIES   = objs.dir objs/$(ARCH).dir

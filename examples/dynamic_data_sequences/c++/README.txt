@@ -5,7 +5,7 @@
 Building the C++ example
 ========================
 
-The example is contained in the SequencesExample.cxx file. Before compiling
+The example is contained in the dynamic_data_sequences.cxx file. Before compiling
 or running the example, make sure the environment variable NDDSHOME is
 set to the directory where you installed RTI Connext DDS.
 
@@ -31,7 +31,7 @@ Once you have run the application, modify the generated makefile and
 set the COMMONSOURCES and EXEC variables to:
 
 COMMONSOURCES =
-EXEC          = SequencesExample
+EXEC          = dynamic_data_sequences
 
 # Remove Foo.h from objs/<arch_name>/%.o, for instance:
 objs/i86Linux3.xgcc4.6.3/%.o : %.c
@@ -64,8 +64,8 @@ the application.
 
 On UNIX systems:
 
-./objs/<arch_name>/SequencesExample
+./objs/<arch_name>/dynamic_data_sequences
 
 On Windows Systems:
 
-objs\<arch_name>\SequencesExample
+objs\<arch_name>\dynamic_data_sequences
