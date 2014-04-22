@@ -44,7 +44,7 @@ LIBS = -L$(NDDSHOME)/lib/$(ARCH) \
         -lnddscz -lnddscorez $(syslibs_i86Linux2.6)
 
 COMMONSOURCES = 
-EXEC          = NestedStructExample
+EXEC          = dynamic_data_nested_struct_example
 DIRECTORIES   = objs.dir objs/$(ARCH).dir
 COMMONOBJS    = $(COMMONSOURCES:%.c=objs/$(ARCH)/%.o)
 

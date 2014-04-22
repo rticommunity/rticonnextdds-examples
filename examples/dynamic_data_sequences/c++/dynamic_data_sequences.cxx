@@ -1,22 +1,22 @@
-/* SequencesExample.cxx
-    
-    This example 
-      - creates the type code of a sequence 
-      - creates a DynamicData instance
-      - writes and reads the values
-         
-    Example:
-        
-       To run the example application:
-                                  
-       On Unix: 
-       
-       objs/<arch>/SequencesExample 
-                            
-       On Windows:
-       
-       objs\<arch>\SequencesExample  
-*/
+/* dynamic_data_sequences.cxx
+
+ This example
+ - creates the type code of a sequence
+ - creates a DynamicData instance
+ - writes and reads the values
+
+ Example:
+
+ To run the example application:
+
+ On Unix:
+
+ objs/<arch>/SequencesExample
+
+ On Windows:
+
+ objs\<arch>\SequencesExample
+ */
 
 #include <ndds_cpp.h>
 #include <iostream>
@@ -26,11 +26,11 @@ using namespace std;
 /********* IDL representation for this example ************
  *
  * struct SimpleStruct {
- * 			long a_member;
+ *     long a_member;
  * };
  *
  * struct TypeWithSequence {
- * 			sequence<256,SimpleStruct> sequence_member;
+ * 	   sequence<256,SimpleStruct> sequence_member;
  * };
  */
 
@@ -42,9 +42,9 @@ using namespace std;
 
 DDS_TypeCode *
 sequence_element_get_typecode(DDS_TypeCodeFactory *tcf) {
-	static DDS_TypeCode * tc = NULL;
-	struct DDS_StructMemberSeq members;
-	DDS_ExceptionCode_t err;
+    static DDS_TypeCode * tc = NULL;
+    struct DDS_StructMemberSeq members;
+    DDS_ExceptionCode_t err;
 
     /* First, we create the typeCode for the simple struct */
     tc = tcf->create_struct_tc("SimpleStruct", members, err);
@@ -61,10 +61,9 @@ sequence_element_get_typecode(DDS_TypeCodeFactory *tcf) {
         goto fail;
     }
 
-	return tc;
-fail:
-    if (tc != NULL) {
-        tcf->delete_tc(tc,err);
+    return tc;
+    fail: if (tc != NULL) {
+        tcf->delete_tc(tc, err);
     }
     return NULL;
 }
@@ -74,32 +73,30 @@ sequence_get_typecode(DDS_TypeCodeFactory *tcf) {
     static DDS_TypeCode * tc = NULL;
     DDS_TypeCode *seqElementTC = NULL;
     DDS_ExceptionCode_t err;
-    
+
     seqElementTC = sequence_element_get_typecode(tcf);
-    if(seqElementTC == NULL) {
+    if (seqElementTC == NULL) {
         cerr << "! Unable to create TypeCode" << endl;
         goto fail;
     }
     /* We create the typeCode for the sequence */
-    tc = tcf->create_sequence_tc(MAX_SEQ_LEN,
-            seqElementTC, err);
-    
+    tc = tcf->create_sequence_tc(MAX_SEQ_LEN, seqElementTC, err);
+
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to create the sequence TC" << endl;
         goto fail;
     }
-    
+
     if (seqElementTC != NULL) {
-        tcf->delete_tc(seqElementTC,err);
+        tcf->delete_tc(seqElementTC, err);
     }
     return tc;
 
-fail:
-    if (seqElementTC != NULL) {
-        tcf->delete_tc(seqElementTC,err);
+    fail: if (seqElementTC != NULL) {
+        tcf->delete_tc(seqElementTC, err);
     }
     if (tc != NULL) {
-        tcf->delete_tc(tc,err);
+        tcf->delete_tc(tc, err);
     }
     return NULL;
 }
@@ -126,23 +123,22 @@ type_w_sequence_get_typecode(DDS_TypeCodeFactory *tcf) {
     tc->add_member("sequence_member", DDS_TYPECODE_MEMBER_ID_INVALID,
             sequenceTC, DDS_TYPECODE_NONKEY_MEMBER, err);
     if (sequenceTC != NULL) {
-        tcf->delete_tc(sequenceTC,err);
+        tcf->delete_tc(sequenceTC, err);
     }
 
     return tc;
 
-fail:
-    if (sequenceTC != NULL) {
-        tcf->delete_tc(sequenceTC,err);
+    fail: if (sequenceTC != NULL) {
+        tcf->delete_tc(sequenceTC, err);
     }
     if (tc != NULL) {
-        tcf->delete_tc(tc,err);
+        tcf->delete_tc(tc, err);
     }
     return NULL;
 }
 
 void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
-	/* Creating typecodes */
+    /* Creating typecodes */
     DDS_TypeCode *sequenceTC = sequence_get_typecode(factory);
     if (sequenceTC == NULL) {
         cerr << "! Unable to create sequence typecode " << endl;
@@ -158,66 +154,65 @@ void write_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
     DDS_ExceptionCode_t err;
 
     DDS_DynamicData seqmember(sequenceTC, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-	DDS_DynamicData seqelement(sequenceElementTC, 
-        DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-	int i = 0;
-    
-	for (i = 0; i < MAX_SEQ_LEN; ++i) {
+    DDS_DynamicData seqelement(sequenceElementTC,
+            DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
+    int i = 0;
 
-		/* To access the elements of a sequence it is necessary
-		 * to use their id. This parameter allows accessing to every element 
+    for (i = 0; i < MAX_SEQ_LEN; ++i) {
+
+        /* To access the elements of a sequence it is necessary
+         * to use their id. This parameter allows accessing to every element
          * of the sequence using a 1-based index.
          * There are two ways of doing this: bind API and get API.
          * See the NestedStructExample for further details about the 
          * differences between these two APIs. */
-         
+
 #ifdef USE_BIND_API
-		retcode = seqmember.bind_complex_member(seqelement, NULL,
-				i + 1);
+        retcode = seqmember.bind_complex_member(seqelement, NULL,
+                i + 1);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to bind complex member" << endl;
             goto fail;
         }
 
-		retcode = seqelement.set_long( "a_member",
-				DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, i);
+        retcode = seqelement.set_long( "a_member",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, i);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to set a_member long" << endl;
             goto fail;
         }
-		printf("Writing sequence element #%d : \n", i + 1);
-		seqelement.print(stdout, 1);
-		retcode = seqmember.unbind_complex_member(seqelement);
+        printf("Writing sequence element #%d : \n", i + 1);
+        seqelement.print(stdout, 1);
+        retcode = seqmember.unbind_complex_member(seqelement);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to unbind complex member" << endl;
             goto fail;
         }
 #else
-		retcode = seqelement.set_long("a_member",
-            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,	i);
+        retcode = seqelement.set_long("a_member",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, i);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to set a_member long" << endl;
             goto fail;
         }
 
-		printf("Writing sequence element #%d : \n", i + 1);
-		seqelement.print(stdout, 1);
-		retcode = seqmember.set_complex_member(NULL, i + 1, seqelement);
+        printf("Writing sequence element #%d : \n", i + 1);
+        seqelement.print(stdout, 1);
+        retcode = seqmember.set_complex_member(NULL, i + 1, seqelement);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to set complex member" << endl;
             goto fail;
         }
 #endif
-	}
+    }
 
-	retcode = DDS_DynamicData_set_complex_member(sample, "sequence_member",
-			DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, &seqmember);
+    retcode = DDS_DynamicData_set_complex_member(sample, "sequence_member",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, &seqmember);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set complex member" << endl;
         goto fail;
     }
-fail: 
-    if (sequenceTC != NULL) {
+    fail: if (sequenceTC != NULL) {
         factory->delete_tc(sequenceTC, err);
     }
     if (sequenceElementTC != NULL) {
@@ -233,11 +228,10 @@ void read_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
         return;
     }
 
-    DDS_DynamicData seqmember(sequenceTC,
-        DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-    
+    DDS_DynamicData seqmember(sequenceTC, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
+
     DDS_DynamicData seqelement(NULL, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-    
+
     DDS_ReturnCode_t retcode;
     DDS_ExceptionCode_t err;
 
@@ -246,69 +240,67 @@ void read_data(DDS_DynamicData *sample, DDS_TypeCodeFactory *factory) {
     int i, seqlen;
 
     sample->get_complex_member(seqmember, "sequence_member",
-			DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
 
-	/* Now we get the total amount of elements contained in the array
-	 * by accessing the dynamic data info
-	 */
-	cout << "* Getting sequence member info...." << endl;
-	seqmember.get_info(info);
-	seqlen = info.member_count;
-	cout << "* Sequence contains " << seqlen << " elements" << endl;
+    /* Now we get the total amount of elements contained in the array
+     * by accessing the dynamic data info
+     */
+    cout << "* Getting sequence member info...." << endl;
+    seqmember.get_info(info);
+    seqlen = info.member_count;
+    cout << "* Sequence contains " << seqlen << " elements" << endl;
 
-	for (i = 0; i < seqlen; ++i) {
-		/*
-		 * The same results can be obtained using
-		 * bind_complex_member method. The main difference, is that
-		 * in that case the members are not copied, just referenced
-		 */
+    for (i = 0; i < seqlen; ++i) {
+        /*
+         * The same results can be obtained using
+         * bind_complex_member method. The main difference, is that
+         * in that case the members are not copied, just referenced
+         */
 #ifdef USE_BIND_API
-		retcode = seqmember.bind_complex_member(seqelement, NULL,
-				i + 1);
+        retcode = seqmember.bind_complex_member(seqelement, NULL,
+                i + 1);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to bind complex member" << endl;
             goto fail;
         }
 #else
-		retcode = seqmember.get_complex_member(seqelement, NULL, i + 1);
+        retcode = seqmember.get_complex_member(seqelement, NULL, i + 1);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to bind complex member" << endl;
             goto fail;
         }
 #endif
 
-		retcode = seqelement.get_long(value, "a_member",
-				DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
+        retcode = seqelement.get_long(value, "a_member",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to get long member from seq element" << endl;
             goto fail;
         }
-		cout << "Reading sequence element #" << i + 1 << " :" << endl;
-		seqelement.print(stdout, 1);
+        cout << "Reading sequence element #" << i + 1 << " :" << endl;
+        seqelement.print(stdout, 1);
 
 #ifdef USE_BIND_API
-		retcode = seqmember.unbind_complex_member(seqelement);
+        retcode = seqmember.unbind_complex_member(seqelement);
         if (retcode != DDS_RETCODE_OK) {
             cerr << "! Unable to u8nbind complex member" << endl;
         }
 
 #endif
 
-	}
+    }
 
-fail:
-    if (sequenceTC != NULL) {
+    fail: if (sequenceTC != NULL) {
         factory->delete_tc(sequenceTC, err);
     }
     return;
 }
 
 int main() {
-	DDS_TypeCodeFactory *factory = NULL;
+    DDS_TypeCodeFactory *factory = NULL;
     DDS_TypeCode * wSequenceTC = NULL;
     DDS_ExceptionCode_t err;
-    
-   
+
     factory = DDS_TypeCodeFactory::get_instance();
     if (factory == NULL) {
         cerr << "! Unable to get type code factory singleton" << endl;
@@ -323,17 +315,17 @@ int main() {
 
     DDS_DynamicData sample(wSequenceTC, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
 
-	cout << "***** Writing a sample *****" << endl;
+    cout << "***** Writing a sample *****" << endl;
 
-	write_data(&sample, factory);
+    write_data(&sample, factory);
 
-	cout << "***** Reading a sample *****" << endl;
-	read_data(&sample, factory);
+    cout << "***** Reading a sample *****" << endl;
+    read_data(&sample, factory);
 
     /* Delete the created TC */
-    if(wSequenceTC != NULL) {
+    if (wSequenceTC != NULL) {
         factory->delete_tc(wSequenceTC, err);
     }
 
-	return 0;
+    return 0;
 }

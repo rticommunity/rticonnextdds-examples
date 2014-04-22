@@ -6,7 +6,7 @@ Dynamic Data API, access to complex member example
 Building the C example
 ======================
 
-The example is contained in the NestedStructExample.c file. 
+The example is contained in the dynamic_data_nested_struct_example.c file. 
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where you installed RTI Connext DDS.
 
@@ -32,7 +32,7 @@ Once you have run the application, modify the generated makefile and
 set the COMMONSOURCES and EXEC variables to:
 
 COMMONSOURCES =
-EXEC          = NestedStructExample
+EXEC          = dynamic_data_nested_struct_example
 
 # Remove Foo.h from objs/<arch_name>/%.o, for instance:
 objs/i86Linux3.xgcc4.6.3/%.o : %.c
@@ -58,7 +58,7 @@ This example consist in only one executable that is stored in the
 "objs/<arch_name>/" directory.For instance, if your architecture is 
 i86Linux3.xgcc4.6.3, you have to run the following command:
 
-$ objs/i86Linux3.xgcc4.6.3/NestedStructExample
+$ objs/i86Linux3.xgcc4.6.3/dynamic_data_nested_struct_example
 
 Running the program produces the following output:
 
