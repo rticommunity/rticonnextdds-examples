@@ -71,7 +71,8 @@ inner_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
     DDS_StructMemberSeq_finalize(&members);
     return tc;
 
-    fail: if (tc != NULL) {
+    fail:
+    if (tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, tc, &ex);
     }
     DDS_StructMemberSeq_finalize(&members);
@@ -114,7 +115,8 @@ DDS_TypeCode * outer_struct_get_typecode(struct DDS_TypeCodeFactory *tcf) {
     DDS_StructMemberSeq_finalize(&members);
     return tc;
 
-    fail: if (tc != NULL) {
+    fail:
+    if (tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(tcf, tc, &ex);
     }
 
@@ -247,6 +249,7 @@ int main() {
         fprintf(stderr, "! Unable to set value 'y' in the inner struct \n");
         goto fail;
     }
+
     DDS_DynamicData_print(inner_data, stdout, 1);
 
     /* Current value of outer_data
@@ -322,7 +325,8 @@ int main() {
 
     ret = 1;
 
-    fail: if (inner_tc != NULL) {
+    fail:
+    if (inner_tc != NULL) {
         DDS_TypeCodeFactory_delete_tc(factory, inner_tc, NULL);
     }
 
