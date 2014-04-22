@@ -154,7 +154,8 @@ int example() {
 
     ret = 1;
 
-    fail: if (unionTC != NULL) {
+    fail: 
+    if (unionTC != NULL) {
         DDS_TypeCodeFactory_delete_tc(factory, unionTC, NULL);
     }
 

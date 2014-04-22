@@ -143,7 +143,8 @@ int example() {
 
     ret = 1;
 
-    fail: if (unionTC != NULL) {
+    fail:
+    if (unionTC != NULL) {
         tcf->delete_tc(unionTC, err);
     }
     return ret;
