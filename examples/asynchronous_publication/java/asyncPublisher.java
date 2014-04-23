@@ -193,27 +193,27 @@ public class asyncPublisher {
 
               // --- Create writer --- //
             
-//            /* Get default datawriter QoS to customize */
-//            DataWriterQos datawriter_qos = new DataWriterQos();
-//            publisher.get_default_datawriter_qos(datawriter_qos);
-//
-//            // Since samples are only being sent once per second, datawriter 
-//            // will need to keep them on queue.  History defaults to only 
-//            // keeping the last sample enqueued, so we increase that here.
-//            datawriter_qos.history.depth = 12;
-//
-//            // Set flowcontroller for datawriter
-//            datawriter_qos.publish_mode.kind = 
-//            	PublishModeQosPolicyKind.ASYNCHRONOUS_PUBLISH_MODE_QOS;
-//            datawriter_qos.publish_mode.flow_controller_name = 
-//            	FlowController.FIXED_RATE_FLOW_CONTROLLER_NAME;
-//
-//            /* To create datawriter with default QoS, use 
-//            	Publisher.DATAWRITER_QOS_DEFAULT instead of datawriter_qos */
-//            writer = (asyncDataWriter)
-//                publisher.create_datawriter(
-//                    topic, datawriter_qos,
-//                    null /* listener */, StatusKind.STATUS_MASK_NONE);
+            /* Get default datawriter QoS to customize */
+            DataWriterQos datawriter_qos = new DataWriterQos();
+            publisher.get_default_datawriter_qos(datawriter_qos);
+
+            // Since samples are only being sent once per second, datawriter 
+            // will need to keep them on queue.  History defaults to only 
+            // keeping the last sample enqueued, so we increase that here.
+            datawriter_qos.history.depth = 12;
+
+            // Set flowcontroller for datawriter
+            datawriter_qos.publish_mode.kind = 
+            	PublishModeQosPolicyKind.ASYNCHRONOUS_PUBLISH_MODE_QOS;
+            datawriter_qos.publish_mode.flow_controller_name = 
+            	FlowController.FIXED_RATE_FLOW_CONTROLLER_NAME;
+
+            /* To create datawriter with default QoS, use 
+            	Publisher.DATAWRITER_QOS_DEFAULT instead of datawriter_qos */
+            writer = (asyncDataWriter)
+                publisher.create_datawriter(
+                    topic, datawriter_qos,
+                    null /* listener */, StatusKind.STATUS_MASK_NONE);
             //// End changes for Asynchronous_Publication
             // --- Write --- //
 

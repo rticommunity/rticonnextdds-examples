@@ -75,10 +75,10 @@ public class profilesPublisher {
     }
 
     static void publish(int domain_id, int sample_count) {
-        /* There are several different approaches for loading QoS profiles from XML
-         * files (see Configuring QoS with XML chapter in the RTI Connext Core
-         * Libraries and Utilities User's Manual). In this example we illustrate
-         * two of them:
+        /* There are several different approaches for loading QoS profiles from
+         * XML files (see Configuring QoS with XML chapter in the RTI Connext 
+         * Core Libraries and Utilities User's Manual). In this example we 
+         * illustrate two of them:
          *
          * 1) Creating a file named USER_QOS_PROFILES.xml, which is loaded,
          * automatically by the DomainParticipantFactory. In this case, the file
@@ -88,32 +88,32 @@ public class profilesPublisher {
          * 2) Adding XML documents to the DomainParticipantFactory using its
          * Profile QoSPolicy (DDS Extension). In this case, we add
          * my_custom_qos_profiles.xml to the url_profile sequence, which stores
-         * the URLs of all the XML documents with QoS policies that are loaded by
-         * the DomainParticipantFactory aside from the ones that are automatically
-         * loaded.
+         * the URLs of all the XML documents with QoS policies that are loaded 
+         * by the DomainParticipantFactory aside from the ones that are 
+         * automatically loaded.
          * my_custom_qos_profiles.xml defines a QoS profile named
          * transient_local_profile that configures reliable, transient local
          * DataWriters and DataReaders.
          */
 
-        /* To load my_custom_qos_profiles.xml, as explained above, we need to modify
-         * the  DDSTheParticipantFactory Profile QoSPolicy */
+        /* To load my_custom_qos_profiles.xml, as explained above, we need to 
+         * modify the  DDSTheParticipantFactory Profile QoSPolicy */
 
         DDS.DomainParticipantFactoryQos factory_qos = 
             new DDS.DomainParticipantFactoryQos();
         DDS.DomainParticipantFactory.get_instance().get_qos(factory_qos);
 
-        /* We are only going to add one XML file to the url_profile sequence, so we
-         * ensure a length of 1,1. */
+        /* We are only going to add one XML file to the url_profile sequence,
+         * so we ensure a length of 1,1. */
         factory_qos.profile.url_profile.ensure_length(1, 1);
 
-        /* The XML file will be loaded from the working directory. That means, you
-         * need to run the example like this:
+        /* The XML file will be loaded from the working directory. That means, 
+         * you need to run the example like this:
          * ./objs/<architecture>/profiles_publisher
          * (see README.txt for more information on how to run the example).
          *
-         * Note that you can specify the absolute path of the XML QoS file to avoid
-         * this problem.
+         * Note that you can specify the absolute path of the XML QoS file to 
+         * avoid this problem.
          */
 
         factory_qos.profile.url_profile.set_at(0, 
@@ -143,9 +143,9 @@ public class profilesPublisher {
         // --- Create publisher --- //
 
         /* We haven't changed the publisher_qos in any of QoS profiles we use in
-         * this example, so we can just use the create_publisher() method. If you
-         * want to load an specific profile in which you may have changed the
-         * publisher_qos, use the create_publisher_with_profile() method. */
+         * this example, so we can just use the create_publisher() method. If 
+         * you want to load an specific profile in which you may have changed 
+         * the publisher_qos, use the create_publisher_with_profile() method. */
         DDS.Publisher publisher = participant.create_publisher(
                 DDS.DomainParticipant.PUBLISHER_QOS_DEFAULT,
                 null /* listener */,
@@ -169,10 +169,10 @@ public class profilesPublisher {
             throw e;
         }
 
-        /* We haven't changed the topic_qos in any of QoS profiles we use in this
-         * example, so we can just use the create_topic() method. If you want to
-         * load an specific profile in which you may have changed the topic_qos,
-         * use the create_topic_with_profile() method. */
+        /* We haven't changed the topic_qos in any of QoS profiles we use in 
+         * this example, so we can just use the create_topic() method. If you 
+         * want to load an specific profile in which you may have changed the 
+         * topic_qos, use the create_topic_with_profile() method. */
         DDS.Topic topic = participant.create_topic(
             "Example profiles",
             type_name,
@@ -201,8 +201,8 @@ public class profilesPublisher {
         }
 
         /* Transient Local writer -- In this case we use
-         * create_datawriter_with_profile, because we have to use a profile other
-         * than the default one. This profile has been defined in
+         * create_datawriter_with_profile, because we have to use a profile
+         * other than the default one. This profile has been defined in
          * my_custom_qos_profiles.xml, but since we already loaded the XML file
          * we don't need to specify anything else. */
 
@@ -252,8 +252,8 @@ public class profilesPublisher {
             instance.profile_name = "volatile_profile";
             instance.x = count;
 
-            Console.WriteLine("Writing profile_name = " + instance.profile_name +
-                        "\t x = " + instance.x);
+            Console.WriteLine("Writing profile_name = " + instance.profile_name
+                        + "\t x = " + instance.x);
             try {
                 profiles_writer_volatile.write(instance, ref instance_handle);
             }
@@ -264,12 +264,13 @@ public class profilesPublisher {
             instance.profile_name = "transient_local_profile";
             instance.x = count;
 
-            Console.WriteLine("Writing profile_name = " + instance.profile_name +
-                        "\t x = " + instance.x + "\n");
+            Console.WriteLine("Writing profile_name = " + instance.profile_name
+                        + "\t x = " + instance.x + "\n");
 
             try
             {
-                profiles_writer_transient_local.write(instance, ref instance_handle);
+                profiles_writer_transient_local.write(instance, 
+                    ref instance_handle);
             }
             catch (DDS.Exception e)
             {
