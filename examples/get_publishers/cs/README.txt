@@ -36,8 +36,8 @@ use to build the types and the C# example, respectively. First open
 listeners_type-dotnet4.0.sln and build the solution. Once you've done that, open
 listeners_example-csharp.sln and build the C# example.
 
-Running C++ Example
-===================
+Running C# Example
+==================
 Run the following command from the example directory:
 
 On Windows systems run:
