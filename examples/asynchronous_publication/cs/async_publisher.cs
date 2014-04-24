@@ -131,52 +131,64 @@ public class asyncPublisher {
             throw new ApplicationException("create_topic error");
         }
 
-        /* If you want to change the DataWriter's QoS programmatically rather 
-         * than using the XML file, you will need to add the following lines to 
-         * your code and comment out the create_datawriter call above.
-         *
-         * In this case, we set the publish mode qos to asynchronous publish 
-         * mode, which enables asynchronous publishing.  We also set the flow 
-         * controller to be the fixed rate flow controller, and we increase the 
-         * history depth.
-         */
-        /* Get default datawriter QoS to customize */
-        DDS.DataWriterQos datawriter_qos = new DDS.DataWriterQos();
-        try {
-            publisher.get_default_datawriter_qos(datawriter_qos);
-        }
-        catch (DDS.Exception e)
-        {
-            Console.WriteLine("get_default_datawriter_qos error {0}", e);
-            shutdown(participant);
-            throw e;
-        }
-
-       /* Since samples are only being sent once per second, datawriter will
-        * need to keep them on queue.  History defaults to only keeping the last
-        * sample enqueued, so we increase that here.
-        */
-        datawriter_qos.history.depth = 12;
- 
-        /* Set flowcontroller for datawriter */
-        datawriter_qos.publish_mode.kind = 
-            DDS.PublishModeQosPolicyKind.ASYNCHRONOUS_PUBLISH_MODE_QOS;
-        datawriter_qos.publish_mode.flow_controller_name = 
-            DDS.FlowController.FIXED_RATE_FLOW_CONTROLLER_NAME;
-           
-        // --- Create writer --- //
-
-        /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
-       instead of datawriter_qos */
+        /* To customize data writer QoS, use 
+         * the configuration file USER_QOS_PROFILES.xml */
         DDS.DataWriter writer = publisher.create_datawriter(
             topic,
-            datawriter_qos,
+            DDS.Publisher.DATAWRITER_QOS_DEFAULT,
             null /* listener */,
             DDS.StatusMask.STATUS_MASK_NONE);
         if (writer == null) {
             shutdown(participant);
             throw new ApplicationException("create_datawriter error");
         }
+
+        /* If you want to change the DataWriter's QoS programmatically rather than
+         * using the XML file, you will need to add the following lines to your
+         * code and comment out the create_datawriter call above.
+         *
+         * In this case, we set the publish mode qos to asynchronous publish mode, 
+	     * which enables asynchronous publishing.  We also set the flow controller
+	     * to be the fixed rate flow controller, and we increase the history depth.
+         */
+       // /* Get default datawriter QoS to customize */
+       // DDS.DataWriterQos datawriter_qos = new DDS.DataWriterQos();
+       // try {
+       //     publisher.get_default_datawriter_qos(datawriter_qos);
+       // }
+       // catch (DDS.Exception e)
+       // {
+       //     Console.WriteLine("get_default_datawriter_qos error {0}", e);
+       //     shutdown(participant);
+       //     throw e;
+       // }
+
+       ///* Since samples are only being sent once per second, datawriter will need
+       // * to keep them on queue.  History defaults to only keeping the last
+       // * sample enqueued, so we increase that here.
+       // */
+       // datawriter_qos.history.depth = 12;
+ 
+       // /* Set flowcontroller for datawriter */
+       // datawriter_qos.publish_mode.kind = 
+       //     DDS.PublishModeQosPolicyKind.ASYNCHRONOUS_PUBLISH_MODE_QOS;
+       // datawriter_qos.publish_mode.flow_controller_name = 
+       //     DDS.FlowController.FIXED_RATE_FLOW_CONTROLLER_NAME;
+           
+       // // --- Create writer --- //
+
+       // /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
+       //instead of datawriter_qos */
+       // DDS.DataWriter writer = publisher.create_datawriter(
+       //     topic,
+       //     datawriter_qos,
+       //     null /* listener */,
+       //     DDS.StatusMask.STATUS_MASK_NONE);
+       // if (writer == null) {
+       //     shutdown(participant);
+       //     throw new ApplicationException("create_datawriter error");
+       // }
+
         asyncDataWriter async_writer =
             (asyncDataWriter)writer;
 
