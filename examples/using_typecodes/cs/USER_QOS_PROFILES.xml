@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <!-- 
 Description
-XML QoS Profile for poll
+XML QoS Profile for msg
 
 The QoS configuration of the DDS entities in the generated example is 
 loaded from this file.
@@ -13,40 +13,43 @@ NDDS_QOS_PROFILES is defined and points to this file.
 For more information about XML QoS Profiles see Chapter 15 in the 
 RTI Connext user manual.
 -->
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="C:/Program Files/RTI/5.0.0/ndds.5.0.0/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/rti_dds_qos_profiles.xsd"
-     version="5.0.0">
+<dds>
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
     -->
-    <qos_library name="poll_Library">
+    <qos_library name="msg_Library">
 
         <!-- QoS profile used to configure reliable communication between the DataWriter 
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
-        <qos_profile name="poll_Profile" is_default_qos="true">
+        <qos_profile name="msg_Profile" is_default_qos="true">
+        
+        	<participant_qos>
+        		<!-- The default value for 
+        			resource_limits.type_code_max_serialized_length (2048 bytes)
+        			is an insufficient size to hold the type codes correctly for 
+				    our complex type. So we need to increase 
+					resource_limits.type_code_max_serialized_length so that 
+					built-in topics on the receiver side get the correct type 
+					code information; in this example we set it to 3070 -->
+        		<resource_limits>
+        			<type_code_max_serialized_length>
+        				3070
+        			</type_code_max_serialized_length>
+        		</resource_limits>
+	       	</participant_qos>
             <!-- QoS used to configure the data writer created in the example code -->                
             <datawriter_qos>
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
-                    <max_blocking_time>
-                        <sec>60</sec>
-                    </max_blocking_time>
                 </reliability>                
 
                 <history>
                     <kind>KEEP_ALL_HISTORY_QOS</kind>
                 </history>
-
-                <protocol>
-                    <rtps_reliable_writer>
-                        <min_send_window_size>50</min_send_window_size>
-                        <max_send_window_size>50</max_send_window_size>
-                    </rtps_reliable_writer>
-                </protocol>
 		
             </datawriter_qos>
 
@@ -70,7 +73,7 @@ RTI Connext user manual.
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI Polling Read C# Example</name>
+                    <name>RTI Using Typecodes C# Example</name>
                 </participant_name>
 
             </participant_qos>
