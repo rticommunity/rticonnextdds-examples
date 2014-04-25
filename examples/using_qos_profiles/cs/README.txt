@@ -34,8 +34,8 @@ content, either remove this file or supply -replace option.
 
 Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will 
 use to build the types and the C# example, respectively. First open  
-listeners_type-dotnet4.0.sln and build the solution. Once you've done that, open
-listeners_example-csharp.sln and build the C# example.
+profiles_type-dotnet4.0.sln and build the solution. Once you've done that, open
+profiles_example-csharp.sln and build the C# example.
 
 Running C# Example
 ==================
@@ -46,8 +46,8 @@ my_custom_qos_profiles.xml):
 
 On Windows systems run:
 
-bin\<build_type>-VS2010\waitset_statuscond_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\waitset_statuscond_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\profiles_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\profiles_subscriber.exe <domain_id> <sleep_periods>
 
 The applications accept up to two arguments:
 

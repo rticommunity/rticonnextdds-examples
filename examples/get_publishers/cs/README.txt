@@ -33,8 +33,8 @@ already provided.
 
 Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will 
 use to build the types and the C# example, respectively. First open  
-listeners_type-dotnet4.0.sln and build the solution. Once you've done that, open
-listeners_example-csharp.sln and build the C# example.
+Foo_type-dotnet4.0.sln and build the solution. Once you've done that, open
+Foo_example-csharp.sln and build the C# example.
 
 Running C# Example
 ==================

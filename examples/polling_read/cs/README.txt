@@ -14,9 +14,14 @@ Follow the same procedure to generate the code and build the examples. Do not
 use the -replace option.
 
 On Windows systems (assuming you want to generate an example for 
-i86Win32VS2005) run:
+i86Win32dotnet4.0) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 poll.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable poll.idl
+
+Note: If you are using Visual Studio Express add the -express option to the 
+command, i.e.,
+
+rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable poll.idl
 
 You will see messages that look like this:
 
@@ -30,6 +35,11 @@ new content, either remove this file or supply -replace option.
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
 already provided.
+
+Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will 
+use to build the types and the C# example, respectively. First open  
+poll_type-dotnet4.0.sln and build the solution. Once you've done that, open
+poll_example-csharp.sln and build the C# example.
 
 Running C# Example
 ===================

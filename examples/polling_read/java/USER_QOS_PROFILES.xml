@@ -70,7 +70,7 @@ RTI Connext user manual.
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI "Hello, World" Example</name>
+                    <name>RTI Polling Read Java Example</name>
                 </participant_name>
 
             </participant_qos>
