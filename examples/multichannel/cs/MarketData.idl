@@ -1,0 +1,4 @@
+struct MarketData {
+	string<256> Symbol;  //@key
+	double Price;
+};
