@@ -235,9 +235,9 @@ public class sequencesPublisher {
             	
                 /* We set a different sequenceLength for both instances every
                  * iteration. sequenceLength is based on the value of count 
-                 * and its value cycles between the values of 0 and 
+                 * and its value cycles between the values of 1 and 
                  * MAX_SEQUENCE_LEN. */
-            	int sequenceLength = count % MAX_SEQUENCE_LEN.VALUE;
+            	int sequenceLength = (count % MAX_SEQUENCE_LEN.VALUE) + 1;
             	
                 System.out.println("Writing sequences, count " + count);
                 
