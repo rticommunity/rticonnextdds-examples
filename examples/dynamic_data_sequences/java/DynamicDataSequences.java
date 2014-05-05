@@ -3,8 +3,7 @@ import com.rti.dds.dynamicdata.DynamicDataInfo;
 import com.rti.dds.dynamicdata.DynamicDataMemberInfo;
 import com.rti.dds.typecode.*;
 
-/*********
- * IDL representation for this example ************
+/********* IDL representation for this example ************
  * 
  * public class SimpleStruct { long a_member; };
  * 
@@ -19,12 +18,12 @@ import com.rti.dds.typecode.*;
 
 public class DynamicDataSequences {
     public static int MAX_SEQ_LEN = 5;
+    /*
+     * Modify bin_api to true to use the bind api instead of the get API.
+     */
     public static boolean bin_api = false;
 
-    /*
-     * Uncomment to use the bind api instead of the get API.
-     */
-    // bin_api = true;
+    
 
     static TypeCode sequence_element_get_typecode() {
         StructMember members[] = new StructMember[0];
@@ -32,8 +31,8 @@ public class DynamicDataSequences {
 
         /* First, we create the typeCode for the simple struct */
         try {
-            tc = TypeCodeFactory.TheTypeCodeFactory.create_struct_tc("Foo",
-                    members);
+            tc = TypeCodeFactory.TheTypeCodeFactory.create_struct_tc(
+                    "SimpleStruct", members);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
@@ -41,7 +40,7 @@ public class DynamicDataSequences {
 
         try {
             tc.add_member("a_member", TypeCode.MEMBER_ID_INVALID,
-                    TypeCode.TC_LONG, TypeCode.NONKEY_MEMBER);
+                    TypeCodeFactory.TheTypeCodeFactory.get_primitive_tc(TCKind.TK_LONG), TypeCode.NONKEY_MEMBER);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
@@ -69,17 +68,12 @@ public class DynamicDataSequences {
             return null;
         }
 
-        if (seqElementTC != null) {
-            TypeCodeFactory.TheTypeCodeFactory.delete_tc(seqElementTC);
-        }
-
         return tc;
 
     }
 
     static TypeCode type_w_sequence_get_typecode() {
         StructMember members[] = new StructMember[0];
-        
         TypeCode sequenceTC = sequence_get_typecode();
         if (sequenceTC == null) {
             System.err.println("! Unable to create Type with sequence TC");
@@ -87,7 +81,7 @@ public class DynamicDataSequences {
         }
 
         TypeCode tc = TypeCodeFactory.TheTypeCodeFactory.create_struct_tc(
-                "TypeWithSequence", null);
+                "TypeWithSequence", members);
         if (tc == null) {
             System.err.println("! Unable to create Type with sequence TC");
         }
@@ -100,10 +94,7 @@ public class DynamicDataSequences {
             return null;
         }
 
-        if (sequenceTC != null) {
-            TypeCodeFactory.TheTypeCodeFactory.delete_tc(sequenceTC);
-        }
-
+        
         return tc;
 
     }
@@ -153,6 +144,7 @@ public class DynamicDataSequences {
                             DynamicData.MEMBER_ID_UNSPECIFIED, i);
                     System.out.println("Writing sequence element #" + (i + 1)
                             + " : ");
+                    System.out.println(seqelement);
                     seqmember.set_complex_member(null, i + 1, seqelement);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
@@ -192,7 +184,6 @@ public class DynamicDataSequences {
         DynamicData seqelement = new DynamicData(null,
                 DynamicData.PROPERTY_DEFAULT);
 
-        long value = 1;
         int seqlen = 0;
         DynamicDataInfo info = new DynamicDataInfo();
 
@@ -229,8 +220,6 @@ public class DynamicDataSequences {
                 }
             }
 
-            value = seqmember.get_long("a_member",
-                    DynamicData.MEMBER_ID_UNSPECIFIED);
             System.out.println("Readeing sequence element #" + (i + 1) + " :");
             System.out.println(seqelement);
             
