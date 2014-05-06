@@ -126,14 +126,9 @@ public class ShapeTypePublisher {
         int x_position = 50; /* 50 is the initial position */
         /*** DynamicData parameters that we will need ***/
         TypeCode type_code = null;
-        
+
         try {
             // --- Create participant --- //
-
-            /*
-             * To customize participant QoS, use the configuration file
-             * USER_QOS_PROFILES.xml
-             */
 
             participant = DomainParticipantFactory.TheParticipantFactory
                     .create_participant(domainId,
@@ -146,11 +141,6 @@ public class ShapeTypePublisher {
 
             // --- Create publisher --- //
 
-            /*
-             * To customize publisher QoS, use the configuration file
-             * USER_QOS_PROFILES.xml
-             */
-
             publisher = participant.create_publisher(
                     DomainParticipant.PUBLISHER_QOS_DEFAULT,
                     null /* listener */, StatusKind.STATUS_MASK_NONE);
@@ -160,7 +150,7 @@ public class ShapeTypePublisher {
             }
 
             /*
-             * Create DynamicData using TypeCode from ShapeTypeTypeCode If you 
+             * Create DynamicData using TypeCode from ShapeTypeTypeCode If you
              * are NOT using a type generated with rtiddsgen, you need to create
              * this TypeCode from scratch.
              */
@@ -168,9 +158,8 @@ public class ShapeTypePublisher {
 
             /* Create the Dynamic data type support object */
             DynamicDataTypeSupport type_support = new DynamicDataTypeSupport(
-                    type_code,
-                    DynamicDataTypeSupport.TYPE_PROPERTY_DEFAULT);
-            
+                    type_code, DynamicDataTypeSupport.TYPE_PROPERTY_DEFAULT);
+
             // --- Create topic --- //
 
             /* Register type before creating topic */
@@ -192,11 +181,12 @@ public class ShapeTypePublisher {
             }
 
             // --- Create writer --- //
-            /* First, we create a generic DataWriter for our topic */
-           
-            DynamicDataWriter writer = (DynamicDataWriter)
-                    participant.create_datawriter(topic, 
-                            Publisher.DATAWRITER_QOS_DEFAULT, 
+            /* To use DynamicData, we need to assign the generic
+             * DataWriter to a DynamicDataWriter, using a casting.
+             */
+
+            DynamicDataWriter writer = (DynamicDataWriter) participant
+                    .create_datawriter(topic, Publisher.DATAWRITER_QOS_DEFAULT,
                             null, /* listener */
                             StatusKind.STATUS_MASK_NONE);
             if (writer == null) {
@@ -204,36 +194,31 @@ public class ShapeTypePublisher {
                 return;
             }
 
-            /*
-             * Then, to use DynamicData, we need to assign the generic
-             * DataWriter to a DynamicDataWriter, using a cast.
-             */
-            
             // --- Write --- //
 
             /* Create an instance of the sparse data we are about to send */
-            DynamicData data = new DynamicData(type_code, 
+            DynamicData data = new DynamicData(type_code,
                     DynamicData.PROPERTY_DEFAULT);
 
             /* Initialize the DynamicData object */
             data.set_string("color", DynamicData.MEMBER_ID_UNSPECIFIED, "BLUE");
-            data.set_long("x", DynamicData.MEMBER_ID_UNSPECIFIED, 100);
-            data.set_long("y", DynamicData.MEMBER_ID_UNSPECIFIED, 100);
-            data.set_long("shapesize", DynamicData.MEMBER_ID_UNSPECIFIED, 30);
+            data.set_int("x", DynamicData.MEMBER_ID_UNSPECIFIED, 100);
+            data.set_int("y", DynamicData.MEMBER_ID_UNSPECIFIED, 100);
+            data.set_int("shapesize", DynamicData.MEMBER_ID_UNSPECIFIED, 30);
 
             final long sendPeriodMillis = 100; // 100 ms
 
-            for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+            for (int count = 0; (sampleCount == 0) || (count < sampleCount);
+                    ++count) {
                 System.out.println("Sending shapesize " + (30 + (count % 20)));
                 System.out.println("Sending x position " + x_position);
 
                 /* Modify the shapesize from 30 to 50 */
-                data.set_long("shapesize", DynamicData.MEMBER_ID_UNSPECIFIED,
+                data.set_int("shapesize", DynamicData.MEMBER_ID_UNSPECIFIED,
                         30 + (count % 20));
 
                 /* Modify the position */
-                data.set_long("x", DynamicData.MEMBER_ID_UNSPECIFIED,
-                        x_position);
+                data.set_int("x", DynamicData.MEMBER_ID_UNSPECIFIED, x_position);
 
                 /*
                  * The x_position will be modified adding or substracting 2 to
