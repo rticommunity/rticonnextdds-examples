@@ -3,7 +3,8 @@ import com.rti.dds.dynamicdata.DynamicDataInfo;
 import com.rti.dds.dynamicdata.DynamicDataMemberInfo;
 import com.rti.dds.typecode.*;
 
-/********* IDL representation for this example ************
+/*********
+ * IDL representation for this example ************
  * 
  * public class SimpleStruct { long a_member; };
  * 
@@ -21,9 +22,7 @@ public class DynamicDataSequences {
     /*
      * Modify bin_api to true to use the bind api instead of the get API.
      */
-    public static boolean bin_api = false;
-
-    
+    public static boolean BIN_API = false;
 
     static TypeCode sequence_element_get_typecode() {
         StructMember members[] = new StructMember[0];
@@ -40,7 +39,8 @@ public class DynamicDataSequences {
 
         try {
             tc.add_member("a_member", TypeCode.MEMBER_ID_INVALID,
-                    TypeCodeFactory.TheTypeCodeFactory.get_primitive_tc(TCKind.TK_LONG), TypeCode.NONKEY_MEMBER);
+                    TypeCode.TC_LONG,
+                    TypeCode.NONKEY_MEMBER);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
@@ -94,7 +94,6 @@ public class DynamicDataSequences {
             return null;
         }
 
-        
         return tc;
 
     }
@@ -113,9 +112,9 @@ public class DynamicDataSequences {
             return;
         }
 
-        DynamicData seqmember = new DynamicData(sequenceTC,
+        DynamicData seqMember = new DynamicData(sequenceTC,
                 DynamicData.PROPERTY_DEFAULT);
-        DynamicData seqelement = new DynamicData(sequenceElementTC,
+        DynamicData seqElement = new DynamicData(sequenceElementTC,
                 DynamicData.PROPERTY_DEFAULT);
 
         for (int i = 0; i < MAX_SEQ_LEN; ++i) {
@@ -127,25 +126,26 @@ public class DynamicDataSequences {
              * details about the differences between these two APIs.
              */
 
-            if (bin_api == true) { // bind API
+            if (BIN_API == true) { // bind API
                 try {
-                    seqmember.bind_complex_member(seqelement, null, i + 1);
-                    seqelement.set_long("a_member",
+                    seqMember.bind_complex_member(seqElement, null, i + 1);
+                    seqElement.set_int("a_member",
                             DynamicData.MEMBER_ID_UNSPECIFIED, i);
                     System.out.println("Writing sequence element #" + (i + 1)
                             + " : ");
-                    System.out.println(seqelement);
+                    seqElement.print(null, 1);
+                    seqMember.unbind_complex_member(seqElement);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
             } else { // get API
                 try {
-                    seqelement.set_long("a_member",
+                    seqElement.set_int("a_member",
                             DynamicData.MEMBER_ID_UNSPECIFIED, i);
                     System.out.println("Writing sequence element #" + (i + 1)
                             + " : ");
-                    System.out.println(seqelement);
-                    seqmember.set_complex_member(null, i + 1, seqelement);
+                    seqElement.print(null, 1);
+                    seqMember.set_complex_member(null, i + 1, seqElement);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
@@ -155,7 +155,7 @@ public class DynamicDataSequences {
 
         try {
             sample.set_complex_member("sequence_member",
-                    DynamicData.MEMBER_ID_UNSPECIFIED, seqmember);
+                    DynamicData.MEMBER_ID_UNSPECIFIED, seqMember);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -179,15 +179,15 @@ public class DynamicDataSequences {
             return;
         }
 
-        DynamicData seqmember = new DynamicData(sequenceTC,
+        DynamicData seqMember = new DynamicData(sequenceTC,
                 DynamicData.PROPERTY_DEFAULT);
-        DynamicData seqelement = new DynamicData(null,
+        DynamicData seqElement = new DynamicData(null,
                 DynamicData.PROPERTY_DEFAULT);
 
-        int seqlen = 0;
+        int seqLen = 0;
         DynamicDataInfo info = new DynamicDataInfo();
 
-        sample.get_complex_member(seqmember, "sequence_member",
+        sample.get_complex_member(seqMember, "sequence_member",
                 DynamicData.MEMBER_ID_UNSPECIFIED);
 
         /*
@@ -195,37 +195,37 @@ public class DynamicDataSequences {
          * accessing the dynamic data info
          */
         System.out.println("* Getting sequence member info....");
-        seqmember.get_info(info);
+        seqMember.get_info(info);
 
-        seqlen = info.member_count;
-        System.out.println("* Sequence contains " + seqlen + " elements");
+        seqLen = info.member_count;
+        System.out.println("* Sequence contains " + seqLen + " elements");
 
-        for (int i = 0; i < seqlen; ++i) {
+        for (int i = 0; i < seqLen; ++i) {
             /*
              * The same results can be obtained using bind_complex_member
              * method. The main difference, is that in that case the members are
              * not copied, just referenced
              */
-            if (bin_api) { // using bind API
+            if (BIN_API) { // using bind API
                 try {
-                    seqmember.bind_complex_member(seqelement, null, i + 1);
+                    seqMember.bind_complex_member(seqElement, null, i + 1);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
             } else { // using get API
                 try {
-                    seqmember.get_complex_member(seqelement, null, i + 1);
+                    seqMember.get_complex_member(seqElement, null, i + 1);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
             }
 
-            System.out.println("Readeing sequence element #" + (i + 1) + " :");
-            System.out.println(seqelement);
-            
-            if (bin_api) {
+            System.out.println("Reading sequence element #" + (i + 1) + " :");
+            seqElement.print(null, 1);
+
+            if (BIN_API) {
                 try {
-                    seqmember.unbind_complex_member(seqelement);
+                    seqMember.unbind_complex_member(seqElement);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
@@ -247,7 +247,7 @@ public class DynamicDataSequences {
         System.out.println("***** Writing a sample *****");
         write_data(sample);
 
-        System.out.println("***** Reading a sample *****");
+        System.out.println("\n\n***** Reading a sample *****");
         read_data(sample);
 
         /* Delete the created TC */
