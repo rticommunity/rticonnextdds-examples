@@ -24,7 +24,7 @@ public class DynamicDataSequences {
      */
     public static boolean BIN_API = false;
 
-    static TypeCode sequence_element_get_typecode() {
+    static TypeCode sequenceElementGetTypeCode() {
         StructMember members[] = new StructMember[0];
         TypeCode tc;
 
@@ -50,10 +50,10 @@ public class DynamicDataSequences {
 
     }
 
-    static TypeCode sequence_get_typecode() {
+    static TypeCode sequenceGetTypeCode() {
         TypeCode tc;
 
-        TypeCode seqElementTC = sequence_element_get_typecode();
+        TypeCode seqElementTC = sequenceElementGetTypeCode();
         if (seqElementTC == null) {
             System.err.println("! Unable to create TypeCode");
             return null;
@@ -72,9 +72,9 @@ public class DynamicDataSequences {
 
     }
 
-    static TypeCode type_w_sequence_get_typecode() {
+    static TypeCode typeWithSequenceGetTypecode() {
         StructMember members[] = new StructMember[0];
-        TypeCode sequenceTC = sequence_get_typecode();
+        TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
             System.err.println("! Unable to create Type with sequence TC");
             return null;
@@ -98,15 +98,15 @@ public class DynamicDataSequences {
 
     }
 
-    public static void write_data(DynamicData sample) {
+    public static void writeData(DynamicData sample) {
         /* Creating TypeCodes */
-        TypeCode sequenceTC = sequence_get_typecode();
+        TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
             System.err.println("! Unable to create sequence typecode");
             return;
         }
 
-        TypeCode sequenceElementTC = sequence_element_get_typecode();
+        TypeCode sequenceElementTC = sequenceElementGetTypeCode();
         if (sequenceElementTC == null) {
             System.err.println("! Unable to create sequence element TypeCode");
             return;
@@ -172,8 +172,8 @@ public class DynamicDataSequences {
 
     }
 
-    public static void read_data(DynamicData sample) {
-        TypeCode sequenceTC = sequence_get_typecode();
+    public static void readData(DynamicData sample) {
+        TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
             System.err.println("! Unable to get sequence Typecode");
             return;
@@ -236,7 +236,7 @@ public class DynamicDataSequences {
 
     public static void main(String[] args) {
 
-        TypeCode wSequenceTC = type_w_sequence_get_typecode();
+        TypeCode wSequenceTC = typeWithSequenceGetTypecode();
         if (wSequenceTC == null) {
             System.err.println("! Unable to create wSequence TypeCode");
             return;
@@ -245,10 +245,10 @@ public class DynamicDataSequences {
         DynamicData sample = new DynamicData(wSequenceTC,
                 DynamicData.PROPERTY_DEFAULT);
         System.out.println("***** Writing a sample *****");
-        write_data(sample);
+        writeData(sample);
 
         System.out.println("\n\n***** Reading a sample *****");
-        read_data(sample);
+        readData(sample);
 
         /* Delete the created TC */
         if (wSequenceTC != null) {

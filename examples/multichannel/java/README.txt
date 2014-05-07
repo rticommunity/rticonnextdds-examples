@@ -15,19 +15,19 @@ use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk MarketData.idl
+rtiddsgen -language Java -example i86Win32jdk market_data.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.6.3jdk MarketData.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.6.3jdk market_data.idl
 
 You will see messages that look like this:
 
-File C:\local\MultiChannel\java\MarketDataSubscriber.java already exists and 
+File C:\local\MultiChannel\java\market_dataSubscriber.java already exists and 
  will not be replaced with updated content. If you would like to get a new file
  with the new content, either remove this file or supply -replace option.
-File C:\local\MultiChannel\java\MarketDataPublisher.java already exists and will
+File C:\local\MultiChannel\java\market_dataPublisher.java already exists and will
  not be replaced with updated content. If you would like to get a new file with 
  the new content, either remove this file or supply -replace option.
 File C:\local\MultiChannel\java\USER_QOS_PROFILES.xml already exists and will 
@@ -70,12 +70,12 @@ ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-    java -cp .;%NDDSHOME%\class\nddsjava.jar MarketDataPublisher <domain#> 400
-    java -cp .;%NDDSHOME%\class\nddsjava.jar MarketDataSubscriber <domain#> 10
+    java -cp .;%NDDSHOME%\class\nddsjava.jar market_dataPublisher <domain#> 400
+    java -cp .;%NDDSHOME%\class\nddsjava.jar market_dataSubscriber <domain#> 10
 
 On Unix systems (including Linux and MacOS X) run:
-    java -cp .:$NDDSHOME/class/nddsjava.jar MarketDataPublisher <domain#> 400
-    java -cp .:$NDDSHOME/class/nddsjava.jar MarketDataSubscriber <domain#> 10
+    java -cp .:$NDDSHOME/class/nddsjava.jar market_dataPublisher <domain#> 400
+    java -cp .:$NDDSHOME/class/nddsjava.jar market_dataSubscriber <domain#> 10
 
    The applications accept up to two arguments:
 
@@ -97,11 +97,11 @@ Wireshark Output
  Observe that all data samples are being sent on the wire, i.e. reader-side
  filtering, since there is only one channel.>
 
-MarketData Publisher Output
+market_data Publisher Output
 ===========================
 <nothing>
 
-MarketData Subscriber Output
+market_data Subscriber Output
 ============================
 filter is Symbol MATCH 'A'
 
