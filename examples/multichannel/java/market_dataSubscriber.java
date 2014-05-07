@@ -171,7 +171,7 @@ public class market_dataSubscriber {
             expressionParameters = new StringSeq(1);
             filteredTopic = participant
                     .create_contentfilteredtopic_with_filter(
-                            "Example MarketData", topic, "Symbol MATCH 'A'",
+                            "Example market_data", topic, "Symbol MATCH 'A'",
                             expressionParameters,
                             DomainParticipant.STRINGMATCHFILTER_NAME);
 
