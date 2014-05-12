@@ -1,0 +1,4 @@
+struct cft {
+    long x;
+    long count;
+};
