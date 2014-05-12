@@ -219,11 +219,13 @@ public class cftSubscriber {
          */
         DDS.ContentFilteredTopic cft = null;
         if (sel_cft != 0) {
-            cft = participant.create_contentfilteredtopic("ContentFilteredTopic",
-                topic, "(x >= %0 and x <= %1)", parameters);
+            cft = participant.create_contentfilteredtopic(
+                "ContentFilteredTopic", topic, "(x >= %0 and x <= %1)", 
+                parameters);
             if (cft == null) {
                 shutdown(participant);
-                throw new ApplicationException("create_contentfilteredtopic error");
+                throw new ApplicationException(
+                    "create_contentfilteredtopic error");
             }
         }
 
@@ -256,8 +258,8 @@ public class cftSubscriber {
 
         /* If you want to set the reliability and history QoS settings
          * programmatically rather than using the XML, you will need to add
-         * the following lines to your code and comment out the create_datareader
-         * calls above.
+         * the following lines to your code and comment out the 
+         * create_datareader calls above.
          */
 
         /*
@@ -270,9 +272,12 @@ public class cftSubscriber {
             throw e;
         }
 
-        datareader_qos.reliability.kind = DDS.ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-        datareader_qos.durability.kind = DDS.DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
-        datareader_qos.history.kind = DDS.HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
+        datareader_qos.reliability.kind = 
+            DDS.ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+        datareader_qos.durability.kind = 
+            DDS.DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
+        datareader_qos.history.kind = 
+            DDS.HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
         datareader_qos.history.depth = 20;
 
         if (sel_cft != 0) {

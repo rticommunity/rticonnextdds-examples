@@ -147,8 +147,8 @@ public class cftPublisher {
        
         /* If you want to set the reliability and history QoS settings
          * programmatically rather than using the XML, you will need to add
-         * the following lines to your code and comment out the create_datawriter
-         * call above.
+         * the following lines to your code and comment out the 
+         * create_datawriter call above.
          */
         /*      
         DDS.DataWriterQos datawriter_qos = new DDS.DataWriterQos();
@@ -160,9 +160,12 @@ public class cftPublisher {
             throw e;
         }
         
-        datawriter_qos.reliability.kind = DDS.ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-        datawriter_qos.durability.kind = DDS.DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
-        datawriter_qos.history.kind = DDS.HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
+        datawriter_qos.reliability.kind = 
+            DDS.ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+        datawriter_qos.durability.kind = 
+            DDS.DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
+        datawriter_qos.history.kind = 
+            DDS.HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
         datawriter_qos.history.depth = 20;
 
         DDS.DataWriter writer = publisher.create_datawriter(
@@ -202,9 +205,9 @@ public class cftPublisher {
             /* Modify the data to be sent here */
 
             /* Our purpose is to increment x every time we send a sample and to
-             * reset the x counter to 0 every time we send 10 samples (x=0,1,..,9).
-             * Using the value of count, we can get set x to the appropriate value
-             * applying % 10 operation to it.
+             * reset the x counter to 0 every time we send 10 samples 
+             * (x=0,1,..,9). Using the value of count, we can get set x to the 
+             * appropriate value applying % 10 operation to it.
              */
             instance.count = count;
             instance.x = count % 10;
