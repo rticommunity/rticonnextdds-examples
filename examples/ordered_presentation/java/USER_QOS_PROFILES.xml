@@ -60,7 +60,7 @@
 				    the RTI tools, making it easier for you to tell one 
 				    application from another when you're debugging. -->
 				<participant_name>
-					<name>Orderer presentation C# example</name>
+					<name>Orderer presentation Java example</name>
 				</participant_name>
 
 			</participant_qos>
@@ -94,7 +94,7 @@
 				    the RTI tools, making it easier for you to tell one 
 				    application from another when you're debugging. -->
 				<participant_name>
-					<name>Orderer presentation C# example</name>
+					<name>Orderer presentation Java example</name>
 				</participant_name>
 
 			</participant_qos>
