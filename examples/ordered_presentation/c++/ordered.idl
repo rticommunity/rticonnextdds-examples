@@ -1,0 +1,3 @@
+struct ordered {    long id; //@key
+    long value;
+};
