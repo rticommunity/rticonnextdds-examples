@@ -230,8 +230,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
         /* We set a different sequence_length for both instances every
          * iteration. sequence_length is based on the value of count and
-         * its value cycles between the values of 0 and MAX_SEQUENCE_LEN. */
-        short sequence_length = count % MAX_SEQUENCE_LEN;
+         * its value cycles between the values of 1 and MAX_SEQUENCE_LEN. */
+        short sequence_length = (count % MAX_SEQUENCE_LEN) + 1;
 
         printf("Writing sequences, count %d...\n",
                 count);
@@ -281,7 +281,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
      * sure you don't call delete before unloan(); the next time you
      * access the sequence, you will be accessing freed memory. */
     return_result = borrower_instance->data.unloan();
-    if (return_result != DDS_RETCODE_OK) {
+    if (return_result != DDS_BOOLEAN_TRUE) {
         printf("unloan error \n");
     }
 

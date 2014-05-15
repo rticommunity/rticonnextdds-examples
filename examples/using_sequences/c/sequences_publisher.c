@@ -232,8 +232,8 @@ static int publisher_main(int domainId, int sample_count)
 
         /* We set a different sequence_length for both instances every
          * iteration. sequence_length is based on the value of count and
-         * its value cycles between the values of 0 and MAX_SEQUENCE_LEN. */
-        short sequence_length = count % MAX_SEQUENCE_LEN;
+         * its value cycles between the values of 1 and MAX_SEQUENCE_LEN. */
+        short sequence_length = (count % MAX_SEQUENCE_LEN) + 1;
 
         printf("Writing sequences, count %d...\n",
                 count);
@@ -281,7 +281,9 @@ static int publisher_main(int domainId, int sample_count)
     /* Once we are done with the sequence, we unloan and free the buffer. Make
      * sure you don't call free before DDS_ShortSeq_unloan(); the next time you
      * access the sequence, you will be accessing freed memory. */
-    DDS_ShortSeq_unloan(&borrower_instance->data);
+    if (!DDS_ShortSeq_unloan(&borrower_instance->data)) {
+        printf("Unloan error\n");
+    }
     free(short_buffer);
 
     /* Delete data samples */
