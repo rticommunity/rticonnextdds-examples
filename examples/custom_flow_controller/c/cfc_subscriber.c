@@ -56,52 +56,35 @@ modification history
 #include <time.h>
 clock_t init;
 
-void cfcListener_on_requested_deadline_missed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedDeadlineMissedStatus *status)
-{
+void cfcListener_on_requested_deadline_missed(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status) {
 }
 
-void cfcListener_on_requested_incompatible_qos(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedIncompatibleQosStatus *status)
-{
+void cfcListener_on_requested_incompatible_qos(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status) {
 }
 
-void cfcListener_on_sample_rejected(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleRejectedStatus *status)
-{
+void cfcListener_on_sample_rejected(void* listener_data, DDS_DataReader* reader,
+        const struct DDS_SampleRejectedStatus *status) {
 }
 
-void cfcListener_on_liveliness_changed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_LivelinessChangedStatus *status)
-{
+void cfcListener_on_liveliness_changed(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_LivelinessChangedStatus *status) {
 }
 
-void cfcListener_on_sample_lost(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleLostStatus *status)
-{
+void cfcListener_on_sample_lost(void* listener_data, DDS_DataReader* reader,
+        const struct DDS_SampleLostStatus *status) {
 }
 
-void cfcListener_on_subscription_matched(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SubscriptionMatchedStatus *status)
-{
+void cfcListener_on_subscription_matched(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_SubscriptionMatchedStatus *status) {
 }
 
-void cfcListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
-{
+void cfcListener_on_data_available(void* listener_data, DDS_DataReader* reader) {
     cfcDataReader *cfc_reader = NULL;
     struct cfcSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
@@ -115,10 +98,9 @@ void cfcListener_on_data_available(
         return;
     }
 
-    retcode = cfcDataReader_take(
-        cfc_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = cfcDataReader_take(cfc_reader, &data_seq, &info_seq,
+            DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -132,28 +114,24 @@ void cfcListener_on_data_available(
             /* print the time we get each sample */
 
             elapsed_ticks = clock() - init;
-            elapsed_secs = elapsed_ticks/CLK_TCK;
+            elapsed_secs = elapsed_ticks / CLK_TCK;
 
-            printf("@ t=%.2fs, got x = %d\n",
-                   elapsed_secs, cfcSeq_get_reference(&data_seq, i)->x);
+            printf("@ t=%.2fs, got x = %d\n", elapsed_secs,
+                    cfcSeq_get_reference(&data_seq, i)->x);
             /* End changes for flow_controller */
 
         }
     }
 
-    retcode = cfcDataReader_return_loan(
-        cfc_reader,
-        &data_seq, &info_seq);
+    retcode = cfcDataReader_return_loan(cfc_reader, &data_seq, &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDS_DomainParticipant *participant,
-    struct DDS_DomainParticipantQos *participant_qos)
-{
+static int subscriber_shutdown(DDS_DomainParticipant *participant,
+        struct DDS_DomainParticipantQos *participant_qos) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -165,7 +143,7 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory, participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -174,8 +152,8 @@ static int subscriber_shutdown(
 
     retcode = DDS_DomainParticipantQos_finalize(participant_qos);
     if (retcode != DDS_RETCODE_OK) {
-            printf("participantQos_finalize error %d\n", retcode);
-            status = -1;
+        printf("participantQos_finalize error %d\n", retcode);
+        status = -1;
     }
 
     /* RTI Connext provides the finalize_instance() method on
@@ -193,18 +171,17 @@ static int subscriber_shutdown(
     return status;
 }
 
-static int subscriber_main(int domainId, int sample_count)
-{
+static int subscriber_main(int domainId, int sample_count) {
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-        DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {1,0};
+    struct DDS_Duration_t poll_period = { 1, 0 };
     struct DDS_DomainParticipantQos participant_qos =
             DDS_DomainParticipantQos_INITIALIZER;
 
@@ -216,8 +193,8 @@ static int subscriber_main(int domainId, int sample_count)
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant, &participant_qos);
@@ -256,10 +233,10 @@ static int subscriber_main(int domainId, int sample_count)
 
 
     /* To customize subscriber QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    subscriber = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    subscriber = DDS_DomainParticipant_create_subscriber(participant,
+            &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant, &participant_qos);
@@ -276,11 +253,10 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     /* To customize topic QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    topic = DDS_DomainParticipant_create_topic(
-        participant, "Example cfc",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    topic = DDS_DomainParticipant_create_topic(participant, "Example cfc",
+            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant, &participant_qos);
@@ -288,26 +264,22 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     /* Set up a data reader listener */
-    reader_listener.on_requested_deadline_missed  =
-        cfcListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            cfcListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-        cfcListener_on_requested_incompatible_qos;
-    reader_listener.on_sample_rejected =
-        cfcListener_on_sample_rejected;
-    reader_listener.on_liveliness_changed =
-        cfcListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-        cfcListener_on_sample_lost;
+            cfcListener_on_requested_incompatible_qos;
+    reader_listener.on_sample_rejected = cfcListener_on_sample_rejected;
+    reader_listener.on_liveliness_changed = cfcListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = cfcListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-        cfcListener_on_subscription_matched;
-    reader_listener.on_data_available =
-        cfcListener_on_data_available;
+            cfcListener_on_subscription_matched;
+    reader_listener.on_data_available = cfcListener_on_data_available;
 
     /* To customize data reader QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    reader = DDS_Subscriber_create_datareader(
-        subscriber, DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+     the configuration file USER_QOS_PROFILES.xml */
+    reader = DDS_Subscriber_create_datareader(subscriber,
+            DDS_Topic_as_topicdescription(topic), &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -315,12 +287,12 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-       
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+
         NDDS_Utility_sleep(&poll_period);
     }
 
-    /* Cleanup and delete all entities */ 
+    /* Cleanup and delete all entities */
     return subscriber_shutdown(participant);
 }
 
