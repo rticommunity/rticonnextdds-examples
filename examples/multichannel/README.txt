@@ -15,7 +15,8 @@ PUBLISHER:
 The Publisher publishes round-robin instances with Symbols "A" through "Z" on 8
 different channels of a multi-channel DataWriter. By default, the XML profile is 
 used to specify the QoS. On the create_datawriter() call, you can toggle between 
-writer_qos and DATAWRITER_QOS_DEFAULT to switch between using code and using XML. 
+writer_qos and DATAWRITER_QOS_DEFAULT to switch between using code and using 
+XML. 
 
 SUBSCRIBER:
 The Subscriber uses a ContentFilteredTopic (CFT) with the STRINGMATCH filter, 
