@@ -47,15 +47,15 @@ Example Description
 -------------------
 
 PUBLISHER: 
-The Publisher sets its presentation QoS to enable topic-level ordered access. 
-Note however, that this only enforces ordering on instances from a given 
-datawriter, and not from all writers to that topic. Also note that only allows 
-datareaders to access samples in an ordered manner; it does not require that 
-they do so, as this subscribing application shows. 
+The Publisher sets its presentation QoS properties to enable topic-level ordered
+access. However, note that this only enforces ordering on instances from a given 
+datawriter, and not from all writers of that topic. Also note that ordered-
+access configuration needs to be configured in the subscription side makes so 
+samples are read in an ordered manner. 
 
 SUBSCRIBER: 
-The Subscriber application actually creates two DDS subscribers, to illustrate 
-the effects of the access_scope presentation QoS. Subscriber 0 uses instance 
+The Subscriber application ilustrates the effects of the access_scope 
+presentation QoS, to creates two DDS subscribers. Subscriber 0 uses instance 
 scope, meaning changes and samples are only guaranteed to be ordered *within* a 
 given instance. Subscriber 1 uses topic scope, which enforces order *across* 
 instances that are modified by the same datawriter. 
