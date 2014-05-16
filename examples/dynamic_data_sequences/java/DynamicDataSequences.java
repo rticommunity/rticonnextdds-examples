@@ -12,11 +12,6 @@ import com.rti.dds.typecode.*;
  * };
  */
 
-/*
- * Uncomment to use the bind api instead of the get API.
- */
-// Constants.bin_api = true;
-
 public class DynamicDataSequences {
     public static int MAX_SEQ_LEN = 5;
     /*
