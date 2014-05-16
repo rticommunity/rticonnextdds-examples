@@ -42,4 +42,5 @@ In this example first we fill the 'sequence_member' sequence with data
 (write_data function). After that, we access to each of the elements in the 
 sequence (read_data function).
 
-The same concepts shown in this example works for arrays and primitive sequences.
+The same concepts shown in this example works for arrays and primitive 
+sequences.
