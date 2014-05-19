@@ -61,7 +61,8 @@ public class DynamicDataNestedStruct {
 		System.out.println("------------------\n");
 
 		/* Get/Set complex member API */
-		System.out.println("Setting the initial values of struct with set_complex_member()\n");
+		System.out.println("Setting the initial values of struct with " + 
+		        "set_complex_member()\n");
 		outer_data.set_complex_member("inner",
 				DynamicData.MEMBER_ID_UNSPECIFIED, inner_data);
 
@@ -92,7 +93,8 @@ public class DynamicDataNestedStruct {
 		
 		bounded_data.print(null, 1);
 		
-		/* binding a member does not copy, so modifying the bounded member WILL modify the outer object */
+		/* binding a member does not copy, so modifying the bounded member 
+		 * WILL modify the outer object */
 		System.out.println("\n + setting new values to inner struct\n");
 		bounded_data.set_double("x",
 				DynamicData.MEMBER_ID_UNSPECIFIED, 1.00000);

@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
 
-struct DDS_TypeCode *createTypeCode(struct DDS_TypeCodeFactory *factory) {
+struct DDS_TypeCode *create_type_code(struct DDS_TypeCodeFactory *factory) {
     struct DDS_TypeCode *unionTC = NULL;
     DDS_ExceptionCode_t ex;
 
@@ -99,7 +99,7 @@ int example() {
     }
 
     /* Creating the union typeCode */
-    unionTC = createTypeCode(factory);
+    unionTC = create_type_code(factory);
     if (unionTC == NULL) {
         fprintf(stderr, "! Unable to create typeCode\n");
         goto fail;

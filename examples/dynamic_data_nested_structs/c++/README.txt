@@ -1,10 +1,9 @@
 ===============================================================
-Dynamic Data API, access to complex member example
+ Example Code -- Nested Struct in Dynamic Data
 ===============================================================
 
-
 Building the C++ example
-===============================================
+========================
 
 The example is contained in the dynamic_data_nested_struct_example.cxx file.
 Before compiling or running the example, make sure the environment variable 

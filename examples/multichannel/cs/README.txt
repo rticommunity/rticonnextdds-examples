@@ -23,7 +23,8 @@ rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable market_data.idl
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable market_data.idl
+rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable 
+market_data.idl
 
 ...you will see messages that look like this:
 

@@ -173,78 +173,80 @@ public class market_dataPublisher {
              * a IP to send the data.
              */
             /* Start changes for MultiChannel */
-            // DataWriterQos writer_qos = new DataWriterQos();
-            // try {
-            // publisher.get_default_datawriter_qos(writer_qos);
-            // } catch (Exception e) {
-            // System.err.println("! Unable to get_default_datawriter_qos "
-            // + e);
-            // }
-            //
-            // writer_qos.multi_channel.channels.setMaximum(8);
-            // ChannelSettings_t channel = new ChannelSettings_t();
-            // channel.multicast_settings.setMaximum(1);
-            // TransportMulticastSettings_t multicast_setting = new
-            // TransportMulticastSettings_t();
-            // try {
-            // channel.filter_expression = "Symbol MATCH '[A-C]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.2");
-            // channel.multicast_settings.add(multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[D-F]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.3");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[G-I]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.4");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[J-L]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.5");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[M-O]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.6");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[P-S]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.7");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[T-V]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.8");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            //
-            // channel.filter_expression = "Symbol MATCH '[W-Z]*'";
-            // multicast_setting.receive_address = InetAddress
-            // .getByName("239.255.0.9");
-            // channel.multicast_settings.set(0, multicast_setting);
-            // writer_qos.multi_channel.channels.add(
-            // new ChannelSettings_t(channel));
-            // } catch (Exception e) {
-            // System.err.println("Unable to create qos settings: " + e);
-            // }
+/*      
+            DataWriterQos writer_qos = new DataWriterQos();
+            try {
+                publisher.get_default_datawriter_qos(writer_qos);
+            } catch (Exception e) {
+                System.err.println("! Unable to get_default_datawriter_qos "
+                        + e);
+            }
+
+            writer_qos.multi_channel.channels.setMaximum(8);
+            ChannelSettings_t channel = new ChannelSettings_t();
+            channel.multicast_settings.setMaximum(1);
+            TransportMulticastSettings_t multicast_setting = 
+                    new TransportMulticastSettings_t();
+            try {
+                channel.filter_expression = "Symbol MATCH '[A-C]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.2");
+                channel.multicast_settings.add(multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[D-F]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.3");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[G-I]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.4");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[J-L]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.5");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[M-O]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.6");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[P-S]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.7");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[T-V]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.8");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+
+                channel.filter_expression = "Symbol MATCH '[W-Z]*'";
+                multicast_setting.receive_address = InetAddress
+                        .getByName("239.255.0.9");
+                channel.multicast_settings.set(0, multicast_setting);
+                writer_qos.multi_channel.channels.add(new ChannelSettings_t(
+                        channel));
+            } catch (Exception e) {
+                System.err.println("Unable to create qos settings: " + e);
+            }
+            */
             // --- Create writer --- //
 
             /*
@@ -279,7 +281,8 @@ public class market_dataPublisher {
 
             final long sendPeriodMillis = 100; // 0.1 seconds
 
-            for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+            for (int count = 0; (sampleCount == 0) || (count < sampleCount); 
+                    ++count) {
                 // System.out.println("Writing market_data, count " + count);
 
                 /* Changes for MultiChannel */
