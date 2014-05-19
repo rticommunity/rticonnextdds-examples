@@ -60,7 +60,8 @@ public class sequencesExample {
                 return null;
             }
             /* We create the typeCode for the sequence */
-            DDS.TypeCode tc = tcf.create_sequence_tc(MAX_SEQ_LEN, seq_element_tc);
+            DDS.TypeCode tc = tcf.create_sequence_tc(MAX_SEQ_LEN, 
+                    seq_element_tc);
 
             return tc;
         } catch (DDS.Exception e) {

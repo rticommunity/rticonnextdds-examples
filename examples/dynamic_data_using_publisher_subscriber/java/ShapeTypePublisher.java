@@ -218,7 +218,8 @@ public class ShapeTypePublisher {
                         30 + (count % 20));
 
                 /* Modify the position */
-                data.set_int("x", DynamicData.MEMBER_ID_UNSPECIFIED, x_position);
+                data.set_int("x", DynamicData.MEMBER_ID_UNSPECIFIED, 
+                        x_position);
 
                 /*
                  * The x_position will be modified adding or substracting 2 to

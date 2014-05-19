@@ -240,8 +240,8 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
                     DDS_TOPIC_PRESENTATION_QOS;
         }
 
-*/        /* To create subscriber with default QoS, use DDS_SUBSCRIBER_QOS_DEFAULT
-         instead of subscriber_qos */
+*/        /* To create subscriber with default QoS, use
+           * DDS_SUBSCRIBER_QOS_DEFAULT instead of subscriber_qos */
 /*        subscriber[i] = participant->create_subscriber(subscriber_qos, NULL,
                 DDS_STATUS_MASK_NONE);
         if (subscriber[i] == NULL) {
@@ -262,8 +262,8 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
 
         datareader_qos.history.depth = 10;
 
-*/        /* To create datareader with default QoS, use DDS_DATAREADER_QOS_DEFAULT
-         instead of datareader_qos */
+*/        /* To create datareader with default QoS,
+           * use DDS_DATAREADER_QOS_DEFAULT instead of datareader_qos */
 /*        reader[i] = subscriber[i]->create_datareader(topic, datareader_qos,
                 NULL, DDS_STATUS_MASK_ALL);
         if (reader[i] == NULL) {

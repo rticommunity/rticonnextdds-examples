@@ -1,7 +1,6 @@
 ===============================================================
-Dynamic Data API, access to complex member example
+ Example Code -- Nested Struct in Dynamic Data
 ===============================================================
-
 
 Building the C example
 ======================

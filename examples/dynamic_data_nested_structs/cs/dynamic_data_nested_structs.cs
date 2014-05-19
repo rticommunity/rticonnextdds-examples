@@ -127,7 +127,8 @@ public class nestedStructExample {
             inner_data.print(1);
 
             /* get_complex_member made a copy of the inner_struct. If we modify
-             * inner_data values, outer_data inner_struct WILL NOT be modified.*/
+             * inner_data values, outer_data inner_struct WILL NOT be modified.
+             */
 
             Console.WriteLine("\n + setting new values to inner_data");
             inner_data.set_double("x", DDS.DynamicData.MEMBER_ID_UNSPECIFIED,

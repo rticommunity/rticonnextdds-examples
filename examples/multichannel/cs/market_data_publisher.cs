@@ -130,7 +130,7 @@ public class market_dataPublisher {
 
         /* If you want to change the DataWriter's QoS programmatically rather 
          * than using the XML file, you will need to add the following lines to 
-         * your code and modify the datawriter creation fuction using writer_qos.
+         * your code and modify the datawriter creation fuction using writer_qos
          *
          * In this case, we set the publish as multichannel using the differents
          * channel to send differents symbol. Every channel have a IP to send 

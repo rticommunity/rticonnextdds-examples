@@ -232,9 +232,9 @@ public class ShapeTypePublisher {
              */   
              x_position += (direction * 2);
             /* The x_position will stay between 50 and 150 pixels.
-             * When the position is greater than 150 'direction' will be negative
-             * (moving to the left) and when it is lower than 50 'direction' will 
-             * be possitive (moving to the right).
+             * When the position is greater than 150 'direction' will be 
+             * negative (moving to the left) and when it is lower than 50 
+             * 'direction' will be possitive (moving to the right).
              */
             if (x_position >= 150) {
                 direction = -1;

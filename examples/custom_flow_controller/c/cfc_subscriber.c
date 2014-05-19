@@ -84,7 +84,8 @@ void cfcListener_on_subscription_matched(void* listener_data,
         const struct DDS_SubscriptionMatchedStatus *status) {
 }
 
-void cfcListener_on_data_available(void* listener_data, DDS_DataReader* reader) {
+void cfcListener_on_data_available(void* listener_data, DDS_DataReader* reader)
+{
     cfcDataReader *cfc_reader = NULL;
     struct cfcSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
@@ -282,7 +283,7 @@ static int subscriber_main(int domainId, int sample_count) {
             &reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &participant_qos);
         return -1;
     }
 
@@ -293,7 +294,7 @@ static int subscriber_main(int domainId, int sample_count) {
     }
 
     /* Cleanup and delete all entities */
-    return subscriber_shutdown(participant);
+    return subscriber_shutdown(participant, &participant_qos);
 }
 
 #if defined(RTI_WINCE)

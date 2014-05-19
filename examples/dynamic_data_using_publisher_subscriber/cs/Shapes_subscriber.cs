@@ -71,7 +71,8 @@ public class ShapeTypeSubscriber {
             ref DDS.SubscriptionMatchedStatus status) {}
 
         public override void on_data_available(DDS.DataReader reader) {
-            /* We need to create a DynamicDataReader to receive the DynamicData */
+            /* We need to create a DynamicDataReader to receive the DynamicData
+             */
             DDS.DynamicDataReader DynamicData_reader =
                 (DDS.DynamicDataReader)reader;
             

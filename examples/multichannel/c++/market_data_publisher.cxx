@@ -161,49 +161,49 @@ extern "C" int publisher_main(int domainId, int sample_count) {
      }
      */
     /* Create 8 channels based on Symbol */
-    /*
-     writer_qos.multi_channel.channels.ensure_length(8, 8);
-     writer_qos.multi_channel.channels[0].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[A-C]*'");
-     writer_qos.multi_channel.channels[0].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[0].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.2");
-     writer_qos.multi_channel.channels[1].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[D-F]*'");
-     writer_qos.multi_channel.channels[1].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[1].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.3");
-     writer_qos.multi_channel.channels[2].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[G-I]*'");
-     writer_qos.multi_channel.channels[2].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[2].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.4");
-     writer_qos.multi_channel.channels[3].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[J-L]*'");
-     writer_qos.multi_channel.channels[3].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[3].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.5");
-     writer_qos.multi_channel.channels[4].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[M-O]*'");
-     writer_qos.multi_channel.channels[4].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[4].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.6");
-     writer_qos.multi_channel.channels[5].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[P-S]*'");
-     writer_qos.multi_channel.channels[5].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[5].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.7");
-     writer_qos.multi_channel.channels[6].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[T-V]*'");
-     writer_qos.multi_channel.channels[6].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[6].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.8");
-     writer_qos.multi_channel.channels[7].filter_expression = DDS_String_dup(
-     "Symbol MATCH '[W-Z]*'");
-     writer_qos.multi_channel.channels[7].multicast_settings.ensure_length(1, 1);
-     writer_qos.multi_channel.channels[7].multicast_settings[0].receive_address =
-     DDS_String_dup("239.255.0.9");
-     */
+/*
+    writer_qos.multi_channel.channels.ensure_length(8, 8);
+    writer_qos.multi_channel.channels[0].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[A-C]*'");
+    writer_qos.multi_channel.channels[0].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[0].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.2");
+    writer_qos.multi_channel.channels[1].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[D-F]*'");
+    writer_qos.multi_channel.channels[1].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[1].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.3");
+    writer_qos.multi_channel.channels[2].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[G-I]*'");
+    writer_qos.multi_channel.channels[2].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[2].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.4");
+    writer_qos.multi_channel.channels[3].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[J-L]*'");
+    writer_qos.multi_channel.channels[3].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[3].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.5");
+    writer_qos.multi_channel.channels[4].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[M-O]*'");
+    writer_qos.multi_channel.channels[4].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[4].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.6");
+    writer_qos.multi_channel.channels[5].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[P-S]*'");
+    writer_qos.multi_channel.channels[5].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[5].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.7");
+    writer_qos.multi_channel.channels[6].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[T-V]*'");
+    writer_qos.multi_channel.channels[6].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[6].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.8");
+    writer_qos.multi_channel.channels[7].filter_expression = DDS_String_dup(
+            "Symbol MATCH '[W-Z]*'");
+    writer_qos.multi_channel.channels[7].multicast_settings.ensure_length(1, 1);
+    writer_qos.multi_channel.channels[7].multicast_settings[0].receive_address =
+            DDS_String_dup("239.255.0.9");
+*/
     /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     /* toggle between writer_qos and DDS_DATAWRITER_QOS_DEFAULT to alternate
