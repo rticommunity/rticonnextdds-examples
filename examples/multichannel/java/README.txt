@@ -27,9 +27,9 @@ You will see messages that look like this:
 File C:\local\MultiChannel\java\market_dataSubscriber.java already exists and 
  will not be replaced with updated content. If you would like to get a new file
  with the new content, either remove this file or supply -replace option.
-File C:\local\MultiChannel\java\market_dataPublisher.java already exists and will
- not be replaced with updated content. If you would like to get a new file with 
- the new content, either remove this file or supply -replace option.
+File C:\local\MultiChannel\java\market_dataPublisher.java already exists and 
+will not be replaced with updated content. If you would like to get a new file 
+with the new content, either remove this file or supply -replace option.
 File C:\local\MultiChannel\java\USER_QOS_PROFILES.xml already exists and will 
 not be replaced with updated content. If you would like to get a new file with 
 the new content, either remove this file or supply -replace option.
@@ -85,7 +85,8 @@ On Unix systems (including Linux and MacOS X) run:
    and sleep periods for the subscriber. A value of '0' instructs the 
    application to run forever; this is the default.
    
-While generating the output below, we used values that would capture the most interesting behavior.
+While generating the output below, we used values that would capture the most 
+interesting behavior.
 
 Wireshark Output
 ================

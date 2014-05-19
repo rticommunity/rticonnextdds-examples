@@ -279,7 +279,8 @@ public class market_dataPublisher {
 
             final long sendPeriodMillis = 100; // 0.1 seconds
 
-            for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+            for (int count = 0; (sampleCount == 0) || (count < sampleCount); 
+                    ++count) {
                 // System.out.println("Writing market_data, count " + count);
 
                 /* Changes for MultiChannel */
