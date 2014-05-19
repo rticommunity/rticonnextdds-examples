@@ -43,15 +43,6 @@ modification history
 
 public class cfcPublisher {
 
-    private static String initialize_array_of_strings (
-        String str, Char value, int elements) {
-            str = "";
-            for (int i = 0; i < elements; ++i) {
-                str += value;
-            }
-            return str.ToString();
-    }
-
     public static void Main(string[] args) {
 
         // --- Get domain ID --- //
@@ -300,7 +291,12 @@ public class cfcPublisher {
         /*
         instance_handle = cfc_writer.register_instance(instance);
         */
-
+        char[] str = new char[1000];
+        for (int i = 0; i < 1000; ++i) {
+            str[i] = 'a';
+        }
+        String data = new String(str);
+        
         /* Main loop */
         System.Int32 send_period = 1000; // milliseconds
         for (int count=0;
@@ -313,9 +309,7 @@ public class cfcPublisher {
                 int sample = count * 10 + i;
                 Console.WriteLine("Writing cfc, sample {0}", sample);
                 instance.x = sample;
-                instance.str = 
-                    initialize_array_of_strings(instance.str, '1', 999);
-                instance.str += '0';
+                instance.str = data;
                 try {
                     cfc_writer.write(instance, ref instance_handle);
                 } catch (DDS.Exception e) {
