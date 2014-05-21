@@ -65,4 +65,3 @@ The applications accept up to three arguments:
    3. (subscriber only) The "select Content Filtered Topic" switch. If 1, then 
    we use a Content Filtered Topic. If 0, then we use a normal topic. 
    The default is 1.
-   
