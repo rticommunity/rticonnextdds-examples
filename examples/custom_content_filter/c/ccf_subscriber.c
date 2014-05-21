@@ -42,7 +42,8 @@
        
        
 modification history
------------- -------       
+------------ -------
+ 20May2014,amb Example adapted for RTI Connext DDS 5.1
 */
 
 #include <stdio.h>
@@ -210,7 +211,7 @@ static int subscriber_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* Start changes for Custom_Content_Filter */
+    /*------ Start changes for Custom_Content_Filter ------*/
     /* Create and register custom filter */
     custom_filter.compile = custom_filter_compile_function;
     custom_filter.evaluate = custom_filter_evaluate_function;
@@ -240,10 +241,8 @@ static int subscriber_main(int domainId, int sample_count) {
 
     printf("Filter: 2 divides x\n");
 
-    /* Also note that we pass 'ccf' rather than 'topic' to the datareader
-     * below
-     */
-    /* End changes for Custom_Content_Filter */
+    /* Note that we pass 'ccf' rather than 'topic' to the datareader below */
+    /*------ End changes for Custom_Content_Filter ------*/
 
     /* Set up a data reader listener */
     reader_listener.on_requested_deadline_missed =

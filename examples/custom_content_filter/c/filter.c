@@ -1,13 +1,26 @@
+/* filter.c
+ *
+ * This file contains the functions needed by the Custom Content Filter to work.
+ *
+ * See the example README.txt file for details about each of these functions.
+ *
+ *  modification history
+ *  ------------ -------
+ *  20May2014,amb Example adapted for RTI Connext DDS 5.1
+ */
+
 /* Custom compile data */
 struct cdata {
     long param;
     int (*eval_func)(long, long);
 };
 
+/* Evaluation function for 'divides' filter */
 int divide_test(long sample_data, long p) {
     return (sample_data % p == 0);
 }
 
+/* Evaluation function for 'greater than' filter */
 int gt_test(long sample_data, long p) {
     return (p > sample_data);
 }
@@ -20,8 +33,9 @@ DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
     struct cdata* cd;
 
     /* First free old data, if any */
-    if (old_compile_data != NULL)
+    if (old_compile_data != NULL) {
         free(old_compile_data);
+    }
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
      * and <var> is an integral member of the msg structure.
@@ -35,19 +49,23 @@ DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
      */
 
     /* Check form: */
-    if (strncmp(expression, "%0 %1 ", 6) != 0)
+    if (strncmp(expression, "%0 %1 ", 6) != 0) {
         goto err;
+    }
 
-    if (strlen(expression) < 7)
+    if (strlen(expression) < 7) {
         goto err;
+    }
 
     /* Check that we have params */
-    if (DDS_StringSeq_get_length(parameters) < 2)
+    if (DDS_StringSeq_get_length(parameters) < 2) {
         goto err;
+    }
 
     cd = (struct cdata*) malloc(sizeof(struct cdata));
     sscanf(DDS_StringSeq_get(parameters, 0), "%ld", &cd->param);
 
+    /* Establish the correct evaluation function depending on the filter */
     if (strcmp(DDS_StringSeq_get(parameters, 1), "greater-than") == 0) {
         cd->eval_func = gt_test;
     } else if (strcmp(DDS_StringSeq_get(parameters, 1), "divides") == 0) {
@@ -66,7 +84,7 @@ DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
     return DDS_RETCODE_BAD_PARAMETER;
 }
 
-/* Called to evaluated each sample */
+/* Called to evaluated each sample. Will vary depending on the filter. */
 DDS_Boolean custom_filter_evaluate_function(void *filter_data,
         void* compile_data, const void* sample,
         const struct DDS_FilterSampleInfo * meta_data) {
@@ -76,14 +94,16 @@ DDS_Boolean custom_filter_evaluate_function(void *filter_data,
     cd = (struct cdata*) compile_data;
     msg = (struct ccf*) sample;
 
-    if (cd->eval_func(msg->x, cd->param))
+    if (cd->eval_func(msg->x, cd->param)) {
         return DDS_BOOLEAN_TRUE;
-    else
+    } else {
         return DDS_BOOLEAN_FALSE;
+    }
 }
 
 void custom_filter_finalize_function(void *filter_data, void *compile_data) {
-    if (compile_data != NULL)
+    if (compile_data != NULL) {
         free(compile_data);
+    }
 }
 
