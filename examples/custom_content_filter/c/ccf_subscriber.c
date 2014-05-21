@@ -81,7 +81,8 @@ void ccfListener_on_subscription_matched(void* listener_data,
         const struct DDS_SubscriptionMatchedStatus *status) {
 }
 
-void ccfListener_on_data_available(void* listener_data, DDS_DataReader* reader) {
+void ccfListener_on_data_available(void* listener_data,
+        DDS_DataReader* reader) {
     ccfDataReader *ccf_reader = NULL;
     struct ccfSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
@@ -239,7 +240,9 @@ static int subscriber_main(int domainId, int sample_count) {
 
     printf("Filter: 2 divides x\n");
 
-    /* Also note that we pass 'ccf' rather than 'topic' to the datareader below */
+    /* Also note that we pass 'ccf' rather than 'topic' to the datareader
+     * below
+     */
     /* End changes for Custom_Content_Filter */
 
     /* Set up a data reader listener */
@@ -254,8 +257,7 @@ static int subscriber_main(int domainId, int sample_count) {
             ccfListener_on_subscription_matched;
     reader_listener.on_data_available = ccfListener_on_data_available;
 
-    /* To customize data reader QoS, use 
-     the configuration file USER_QOS_PROFILES.xml */
+    /* NOTE THAT WE USE THE CUSTOM FILTERED TOPIC TO READ NEW SAMPLES */
     reader = DDS_Subscriber_create_datareader(subscriber,
             DDS_Topic_as_topicdescription(cft), &DDS_DATAREADER_QOS_DEFAULT,
             &reader_listener, DDS_STATUS_MASK_ALL);

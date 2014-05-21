@@ -2,8 +2,8 @@
  Example Code -- Custom Content Filter
 ===========================================
 
-Building C Example
-==================
+Building C++ Example
+====================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
@@ -16,47 +16,45 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-rtiddsgen -language C -example i86Win32VS2005 ccf.idl
+rtiddsgen -language C++ -example i86Win32VS2005 ccf.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C -example i86Linux2.6gcc4.4.3 ccf.idl
+rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 ccf.idl
 
 You will see messages that look like this:
 
-File C:\local\custom_content_filter\c\ccf_subscriber.c already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
-File C:\local\custom_content_filter\c\ccf_publisher.c already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
+File C:\local\custom_content_filter\c++\ccf_subscriber.cxx already exists and 
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
+File C:\local\custom_content_filter\c++\ccf_publisher.cxx already exists and
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
 
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
 already provided.
 
-Running C Example
-=================
+Running C++ Example
+===================
 In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
+the following commands from the example directory. 
 
-Windows systems:
+n Windows systems run:
 
-    * objs\<arch_name>\ccf_publisher.exe <domain#> <samples_to_send>
-    * objs\<arch_name>\ccf_subscriber.exe <domain#> <sleep_periods>
+objs\<arch_name>\ccf_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\ccf_subscriber.exe <domain_id>  <sleep_periods> 
 
 UNIX systems:
 
-    * ./objs/<arch_name>/ccf_publisher <domain#> <samples_to_send>
-    * ./objs/<arch_name>/ccf_subscriber <domain#> <sleep_periods>
+./objs/<arch_name>/ccf_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/ccf_subscriber <domain_id> <sleep_periods> 
 
-The applications accept up to three arguments:
+The applications accept up to two arguments:
 
    1. The <domain_id>. Both applications must use the same domain id in order 
    to communicate. The default is 0.
    2. How long the examples should run, measured in samples for the publisher 
    and sleep periods for the subscriber. A value of '0' instructs the 
    application to run forever; this is the default.
-   
