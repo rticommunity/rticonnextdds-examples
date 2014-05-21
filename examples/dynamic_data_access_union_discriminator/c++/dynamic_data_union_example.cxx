@@ -25,7 +25,7 @@
 
 using namespace std;
 
-DDS_TypeCode *createTypeCode(DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
     static DDS_TypeCode *unionTC = NULL;
     struct DDS_UnionMemberSeq members;
     DDS_ExceptionCode_t err;
@@ -86,7 +86,7 @@ int example() {
         return -1;
     }
 
-    struct DDS_TypeCode *unionTC = createTypeCode(tcf);
+    struct DDS_TypeCode *unionTC = create_type_code(tcf);
     DDS_ReturnCode_t retcode;
     struct DDS_DynamicDataMemberInfo info;
     int ret = -1;

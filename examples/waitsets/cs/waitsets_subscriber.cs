@@ -257,7 +257,7 @@ public class waitsetsSubscriber {
             timeout.sec = 1;
 
             /* wait() blocks execution of the thread until one or more attached
-             * Conditions become true, or until a user-specified timeout expires.
+             * Conditions become true, or until a user-specified timeout expires
              */
             try {
                 waitset.wait(active_conditions_seq, timeout);
@@ -288,7 +288,8 @@ public class waitsetsSubscriber {
 
                     /* Liveliness changed */
                     DDS.StatusMask test = triggeredmask &
-                        (DDS.StatusMask)DDS.StatusKind.LIVELINESS_CHANGED_STATUS;
+                        (DDS.StatusMask)DDS.StatusKind.
+                            LIVELINESS_CHANGED_STATUS;
                     if (test != DDS.StatusMask.STATUS_MASK_NONE) {
                         DDS.LivelinessChangedStatus st = 
                             new DDS.LivelinessChangedStatus();

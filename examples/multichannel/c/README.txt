@@ -16,14 +16,14 @@ use the -replace option.
 On Windows systems (assuming you want to generate an example for 
 i86Win32VS2005) run:
 
-    rtiddsgen -language C -example i86Win32VS2005 MarketData.idl
+    rtiddsgen -language C -example i86Win32VS2005 market_data.idl
 
 ...you will see messages that look like this:
 
-File C:\.\MarketData_subscriber.c already exists and will not be replaced
+File C:\.\market_data_subscriber.c already exists and will not be replaced
  with updated content. If you would like to get a new file with the new
  content, either remove this file or supply -replace option.
-File C:\.\MarketData_publisher.c already exists and will not be replaced
+File C:\.\market_data_publisher.c already exists and will not be replaced
  with updated content. If you would like to get a new file with the new
  content, either remove this file or supply -replace option.
 File C:\.\USER_QOS_PROFILES.xml already exists and will not be replaced
@@ -44,13 +44,13 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 Windows systems:
 
-    * objs\<arch>\MarketData_publisher.exe <domain#> 400
-    * objs\<arch>\MarketData_subscriber.exe <domain#> 10    
+    * objs\<arch>\market_data_publisher.exe <domain#> 400
+    * objs\<arch>\market_data_subscriber.exe <domain#> 10    
 
 UNIX systems:
 
-    * objs/<arch>/MarketData_publisher.exe <domain#> 400
-    * objs/<arch>/MarketData_subscriber.exe <domain#> 10    
+    * objs/<arch>/market_data_publisher.exe <domain#> 400
+    * objs/<arch>/market_data_subscriber.exe <domain#> 10    
 
 The applications accept two arguments:
 
@@ -73,11 +73,11 @@ Wireshark Output
  Observe that all data samples are being sent on the wire, i.e. reader-side 
  filtering, since there is only one channel.>
 
-MarketData Publisher Output
+market_data Publisher Output
 ===========================
 <nothing>
 
-MarketData Subscriber Output
+market_data Subscriber Output
 ============================
 filter is Symbol MATCH 'A'
 
