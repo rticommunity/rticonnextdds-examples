@@ -36,14 +36,6 @@ three stages that it needs.
 
 Example Description
 -------------------
-PUBLISHER: 
-As filtering can also occur on the publishing side, we register the custom 
-content filter here as well. 
-
-SUBSCRIBER: 
-This shows how to create and use a custom content filter. For information on  
-filters, see also example 'Content Filtered Topic'. 
-      
 Our Custom Content Filter uses a STRINGMATCH-based filter. It takes the 
 expression "%0 %1 x", where %0 is an integer, %1 is "divides" or "greater-than", 
 and x is the field we are comparing in the sample. The Filter lets the sample 
