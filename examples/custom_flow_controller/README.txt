@@ -14,7 +14,7 @@ using the DomainParticipant's PROPERTY QosPolicy (DDS Extension).
 
 Example Description
 -------------------
-This example shows how to create a custom flow controllers to manage a
+This example shows how to create a custom flow controllers to manage an
 asynchronous publisher.
 
 In the 'Asynchronous Publishing' example we showed how asynchronous 
