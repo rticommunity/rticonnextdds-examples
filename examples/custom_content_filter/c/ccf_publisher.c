@@ -51,7 +51,7 @@
 #include "ndds/ndds_c.h"
 #include "ccf.h"
 #include "ccfSupport.h"
-
+/* Custom filter defined here */
 #include "filter.c"
 
 /* Delete all entities */

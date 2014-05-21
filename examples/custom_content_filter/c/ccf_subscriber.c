@@ -43,7 +43,7 @@
        
 modification history
 ------------ -------
- 20May2014,amb Example adapted for RTI Connext DDS 5.1
+ 21May2014,amb Example adapted for RTI Connext DDS 5.1
 */
 
 #include <stdio.h>
@@ -52,6 +52,7 @@ modification history
 #include "ccf.h"
 #include "ccfSupport.h"
 
+/* Custom filter defined here */
 #include "filter.c"
 
 void ccfListener_on_requested_deadline_missed(void* listener_data,
@@ -256,7 +257,10 @@ static int subscriber_main(int domainId, int sample_count) {
             ccfListener_on_subscription_matched;
     reader_listener.on_data_available = ccfListener_on_data_available;
 
-    /* NOTE THAT WE USE THE CUSTOM FILTERED TOPIC TO READ NEW SAMPLES */
+    /*
+     * NOTE THAT WE USE THE PREVIOUSLY CREATED CUSTOM FILTERED TOPIC TO READ
+     * NEW SAMPLES
+     */
     reader = DDS_Subscriber_create_datareader(subscriber,
             DDS_Topic_as_topicdescription(cft), &DDS_DATAREADER_QOS_DEFAULT,
             &reader_listener, DDS_STATUS_MASK_ALL);

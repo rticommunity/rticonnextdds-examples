@@ -50,7 +50,8 @@
        
        
 modification history
------------- -------   
+------------ -------
+20May2014,amb Example adapted for RTI Connext DDS 5.1   
 */
 
 import java.net.InetAddress;
@@ -192,7 +193,10 @@ public class ccfSubscriber {
 
             listener = new ccfListener();
 
-            /* NOTE THAT WE USE THE CUSTOM FILTERED TOPIC TO READ NEW SAMPLES */
+            /*
+             * NOTE THAT WE USE THE PREVIOUSLY CREATED CUSTOM FILTERED TOPIC TO READ
+             * NEW SAMPLES
+             */
             reader = (ccfDataReader) subscriber.create_datareader(cft,
                     Subscriber.DATAREADER_QOS_DEFAULT, listener,
                     StatusKind.STATUS_MASK_ALL);

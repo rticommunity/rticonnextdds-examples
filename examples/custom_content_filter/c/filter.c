@@ -6,7 +6,7 @@
  *
  *  modification history
  *  ------------ -------
- *  20May2014,amb Example adapted for RTI Connext DDS 5.1
+ *  21May2014,amb Example adapted for RTI Connext DDS 5.1
  */
 
 /* Custom compile data */

@@ -43,6 +43,7 @@
        
 modification history
 ------------ -------       
+21May2014,amb Example adapted for RTI Connext DDS 5.1
 */
 
 #include <stdio.h>
@@ -243,7 +244,10 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     /* Create a data reader listener */
     reader_listener = new ccfListener();
 
-    /* NOTE THAT WE USE THE CUSTOM FILTERED TOPIC TO READ NEW SAMPLES */
+    /*
+     * NOTE THAT WE USE THE PREVIOUSLY CREATED CUSTOM FILTERED TOPIC TO READ
+     * NEW SAMPLES
+     */
     reader = subscriber->create_datareader(cft, DDS_DATAREADER_QOS_DEFAULT,
             reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {

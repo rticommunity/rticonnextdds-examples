@@ -1,3 +1,14 @@
+/* filter.cxx
+ *
+ * This file contains the functions needed by the Custom Content Filter to work.
+ *
+ * See the example README.txt file for details about each of these functions.
+ *
+ *  modification history
+ *  ------------ -------
+ *  21May2014,amb Example adapted for RTI Connext DDS 5.1
+ */
+
 class custom_filter_type: public DDSContentFilter {
 public:
     virtual DDS_ReturnCode_t compile(void** new_compile_data,

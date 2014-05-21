@@ -42,7 +42,8 @@
 
        
 modification history
------------- -------       
+------------ -------
+21May2014,amb Example adapted for RTI Connext DDS 5.1
 */
 
 #include <stdio.h>
@@ -53,7 +54,6 @@ modification history
 #include "ccf.h"
 #include "ccfSupport.h"
 #include "ndds/ndds_cpp.h"
-
 /* Custom filter defined here */
 #include "filter.cxx"
 
