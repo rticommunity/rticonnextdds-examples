@@ -50,7 +50,7 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 bin\<build_type>-VS2010\async_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\async_subscriber.exe <domain_id> <sleep_periods> <participant_authorization> <reader_authorization>
+bin\<build_type>-VS2010\async_subscriber.exe <domain_id> <sleep_periods> <participant_auth> <reader_auth>
 
 The applications accept up to two arguments (four to subscriber):
 
@@ -69,25 +69,20 @@ The applications accept up to two arguments (four to subscriber):
 
 While generating the output below, we used values that would capture the most 
 interesting behavior.
-The execution parameters are:
-    bin\<build_type>-VS2010\msg_publisher.exe <domain#> 3
-    bin\<build_type>-VS2010\msg_subscriber.exe <domain#> 5 password foo
 
 Publisher Output
 ================
 Built-in Reader: found participant
-        key->'0a1e01dd 000009b8 00000001'
+        key->'1673909612'
         user_data->'password'
-instance_handle: dd011e0ab8090000 01000000c1010000 0000001000000001
+instance_handle: 9E02460A.A80A0000.1000000.C1010000
 Built-in Reader: found subscriber
-        participant_key->'0a1e01dd 000009b8 00000001'
-        key->'0a1e01dd 000009b8 00000001'
-        user_data->'foo'
-instance_handle: dd011e0ab8090000 0100000004000080 0000001000000001
-publication_matched, current count = 1
+        participant_key->'1673909612'
+        key-> '-473574231'
+        user_data-> 'Reader_Auth'
+instance_handle: 9E02460A.A80A0000.1000000.4000080
 Writing msg, count 0
 Writing msg, count 1
-Writing msg, count 2
 
 Subscriber Output
 =================

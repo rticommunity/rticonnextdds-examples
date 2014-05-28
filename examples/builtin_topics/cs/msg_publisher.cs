@@ -45,17 +45,21 @@ public class msgPublisher {
     // Authorization string.
     private const String auth = "password";
 
-    /* Set up a linked list of authorized participant keys.  Datareaders associated
-     * with an authorized participant do not need to supply their own password.
+    /* Set up a linked list of authorized participant keys.  Datareaders 
+     * associated with an authorized participant do not need to supply their 
+     * own password.
      */
-    private static LinkedList<DDS.BuiltinTopicKey_t> auth_list = new LinkedList<DDS.BuiltinTopicKey_t>();
+    private static LinkedList<DDS.BuiltinTopicKey_t> auth_list = 
+        new LinkedList<DDS.BuiltinTopicKey_t>();
 
-    public static void add_auth_participant(DDS.BuiltinTopicKey_t participant_key) {
-        auth_list.AddLast(participant_key);
+    public static void add_auth_participant(
+        DDS.BuiltinTopicKey_t participant_key) {
+            auth_list.AddLast(participant_key);
     }
 
-    public static Boolean is_auth_participant(DDS.BuiltinTopicKey_t participant_key) {
-        return auth_list.Contains(participant_key);
+    public static Boolean is_auth_participant(
+        DDS.BuiltinTopicKey_t participant_key) {
+            return auth_list.Contains(participant_key);
     }
 
     /* The builtin subscriber sets participant_qos.user_data and
@@ -91,32 +95,35 @@ public class msgPublisher {
                         participant_data = "nil";
                         Boolean is_auth = false;
                         cur_participant_builtin_topic_data =
-                            (DDS.ParticipantBuiltinTopicData) data_seq.get_at(i);
+                            (DDS.ParticipantBuiltinTopicData) 
+                                data_seq.get_at(i);
 
                         // see if there is any participant_data
-                        if (cur_participant_builtin_topic_data.user_data.value.length > 0) {
+                        if (cur_participant_builtin_topic_data.
+                                user_data.value.length > 0) {
 
                             //This sequences is guaranteed to be contiguous
-                            participant_data = System.Text.Encoding.Default.GetString(
-                                cur_participant_builtin_topic_data.user_data.value.buffer);
+                            participant_data = 
+                                System.Text.Encoding.Default.GetString(
+                                cur_participant_builtin_topic_data.
+                                    user_data.value.buffer);
                             if (participant_data.Equals(auth)) {
-                                add_auth_participant(cur_participant_builtin_topic_data.key);
+                                add_auth_participant(
+                                    cur_participant_builtin_topic_data.key);
                                 is_auth = true;
                             }
-
-                            //if (cur_participant_builtin_topic_data.user_data.value ==
-                            //    System.Text.Encoding.Default.) {
-                            //    add_auth_participant(cur_participant_builtin_topic_data.key);
-                            //    is_auth = true;
-                            //}
                         }
-                        Console.WriteLine("Built-in Reader: found participant \n\tkey->'" + 
-                            cur_participant_builtin_topic_data.key.GetHashCode() + 
-                            "'\n\tuser_data->'" + participant_data + "'");
-                        Console.WriteLine("instance_handle: " + info.instance_handle);
+                        Console.WriteLine(
+                            "Built-in Reader: found participant \n\tkey->'" + 
+                            cur_participant_builtin_topic_data.key.GetHashCode() 
+                            + "'\n\tuser_data->'" + participant_data + "'");
+                        Console.WriteLine(
+                            "instance_handle: " + info.instance_handle);
                         if (is_auth == false) {
-                            Console.WriteLine("Bad authorization, ignoring participant");
-                            DDS.DomainParticipant participant = reader.get_subscriber().get_participant();
+                            Console.WriteLine(
+                                "Bad authorization, ignoring participant");
+                            DDS.DomainParticipant participant = 
+                                reader.get_subscriber().get_participant();
                             DDS.InstanceHandle_t temp = info.instance_handle;
                             participant.ignore_participant(ref temp);
                             info.instance_handle = temp;
@@ -135,7 +142,8 @@ public class msgPublisher {
     }
 
     public class BuiltinSubscriberListener: DDS.DataReaderListener {
-        DDS.SubscriptionBuiltinTopicDataSeq data_seq = new DDS.SubscriptionBuiltinTopicDataSeq();
+        DDS.SubscriptionBuiltinTopicDataSeq data_seq = 
+            new DDS.SubscriptionBuiltinTopicDataSeq();
         DDS.SampleInfoSeq info_seq = new DDS.SampleInfoSeq();
 
         // This gets called when a new subscriber has been discovered
@@ -143,7 +151,8 @@ public class msgPublisher {
             DDS.SubscriptionBuiltinTopicDataDataReader builtin_reader =
                 (DDS.SubscriptionBuiltinTopicDataDataReader)reader;
             String reader_data;
-            DDS.SubscriptionBuiltinTopicData cur_subscription_builtin_topic_data;
+            DDS.SubscriptionBuiltinTopicData 
+                cur_subscription_builtin_topic_data;
 
             try {
                 //We only process newly seen subscribers
@@ -161,30 +170,44 @@ public class msgPublisher {
                         reader_data = "nil";
                         Boolean is_auth = false;
                         cur_subscription_builtin_topic_data = 
-                            (DDS.SubscriptionBuiltinTopicData) data_seq.get_at(i);
+                            (DDS.SubscriptionBuiltinTopicData)
+                                data_seq.get_at(i);
 
-                        // See if this is associated with an authorized participant
-                        if (is_auth_participant(cur_subscription_builtin_topic_data.participant_key)) {
+                        /* See if this is associated with an authorized 
+                         * participant
+                         */
+                        if (is_auth_participant(
+                            cur_subscription_builtin_topic_data.
+                                participant_key)) {
                             is_auth = true;
                         }
 
                         // See if there is any user_data
-                        if (cur_subscription_builtin_topic_data.user_data.value.length > 0) {
-                            reader_data = System.Text.Encoding.Default.GetString(
-                                    cur_subscription_builtin_topic_data.user_data.value.buffer);
+                        if (cur_subscription_builtin_topic_data.
+                                user_data.value.length > 0) {
+                            reader_data = 
+                                System.Text.Encoding.Default.GetString(
+                                    cur_subscription_builtin_topic_data.
+                                    user_data.value.buffer);
                             if (is_auth == false && reader_data.Equals(auth)) {
                                 is_auth = true;
                             }
                         }
 
-                        Console.WriteLine("Built-in Reader: found subscriber \n\tparticipant_key->'" +
-                            cur_subscription_builtin_topic_data.participant_key.GetHashCode() +
-                            "'\n\tkey-> '" + cur_subscription_builtin_topic_data.key.GetHashCode() + 
+                        Console.WriteLine("Built-in Reader: found subscriber");
+                        Console.WriteLine("\tparticipant_key->'" +
+                            cur_subscription_builtin_topic_data.
+                                participant_key.GetHashCode() + "'\n\tkey-> '" +
+                                cur_subscription_builtin_topic_data.
+                                    key.GetHashCode() + 
                             "'\n\tuser_data-> '" + reader_data + "'");
-                        Console.WriteLine("instance_handle: " + info.instance_handle);
+                        Console.WriteLine(
+                            "instance_handle: " + info.instance_handle);
                         if(is_auth == false) {
-                            Console.WriteLine("Bad autorhization, ignoring subscription");
-                            DDS.DomainParticipant participant = reader.get_subscriber().get_participant();
+                            Console.WriteLine(
+                                "Bad autorhization, ignoring subscription");
+                            DDS.DomainParticipant participant =
+                                reader.get_subscriber().get_participant();
                             DDS.InstanceHandle_t temp = info.instance_handle;
                             participant.ignore_subscription(ref temp);
                             info.instance_handle = temp;
@@ -251,9 +274,9 @@ public class msgPublisher {
         
         /* Start changes for Builtin_Topics */
 
-        /* If you want to change the Participant's QoS programmatically rather than
-         * using the XML file, you will need to add the following lines to your
-         * code and comment out the participant call above.
+        /* If you want to change the Factory's QoS programmatically rather 
+         * than using the XML file, you will need to add the following lines to
+         * your code and comment out the participant call above.
          */
 
         /* By default, the participant is enabled upon construction.
@@ -262,37 +285,19 @@ public class msgPublisher {
          * set up the listeners.
          */
 /*
-        DDS.DomainParticipantFactoryQos factory_qos = new DDS.DomainParticipantFactoryQos();
+        DDS.DomainParticipantFactoryQos factory_qos = 
+            new DDS.DomainParticipantFactoryQos();
         DDS.DomainParticipantFactory.get_instance().get_qos(factory_qos);
         factory_qos.entity_factory.autoenable_created_entities = false;
         DDS.DomainParticipantFactory.get_instance().set_qos(factory_qos);
 
-        // Get default participant QoS to customize
-        DDS.DomainParticipantQos participant_qos = new DDS.DomainParticipantQos();
-        DDS.DomainParticipantFactory.get_instance().get_default_participant_qos(participant_qos);
-
-        participant_qos.discovery_config.participant_liveliness_assert_period.sec = 10;
-        participant_qos.discovery_config.participant_liveliness_assert_period.nanosec = 0;
-
-        participant_qos.discovery_config.participant_liveliness_lease_duration.sec = 12;
-        participant_qos.discovery_config.participant_liveliness_lease_duration.nanosec = 0;
-
-        DDS.DomainParticipant participant =
-            DDS.DomainParticipantFactory.get_instance().create_participant(
-                domain_id,
-                participant_qos,
-                null,
-                DDS.StatusMask.STATUS_MASK_NONE);
-        if (participant == null) {
-            shutdown(participant);
-            throw new ApplicationException("create_participant error");
-        }
 */
 
         // Installing listeners for the builting topics requires several steps
 
         // First get the builting subscriber
-        DDS.Subscriber builtin_subscriber = participant.get_builtin_subscriber();
+        DDS.Subscriber builtin_subscriber = 
+            participant.get_builtin_subscriber();
         if (builtin_subscriber == null) {
             shutdown(participant);
             throw new ApplicationException("create_builtin_subscriber error");
@@ -304,9 +309,12 @@ public class msgPublisher {
 	     * DataReader for BuiltinTopicData concerning a discovered
 	     * Participant
 	     */
-        DDS.ParticipantBuiltinTopicDataDataReader builtin_participant_datareader =
-            (DDS.ParticipantBuiltinTopicDataDataReader)builtin_subscriber.lookup_datareader(
-                DDS.ParticipantBuiltinTopicDataTypeSupport.PARTICIPANT_TOPIC_NAME);
+        DDS.ParticipantBuiltinTopicDataDataReader 
+            builtin_participant_datareader =
+                (DDS.ParticipantBuiltinTopicDataDataReader)
+                    builtin_subscriber.lookup_datareader(
+                        DDS.ParticipantBuiltinTopicDataTypeSupport.
+                        PARTICIPANT_TOPIC_NAME);
 
         // Install our listener
         BuiltinParticipantListener builtin_participant_listener =
@@ -320,11 +328,14 @@ public class msgPublisher {
             shutdown(participant);
             Console.WriteLine("set_listener error: {0}", e);
         }
+        
         // Get builtin subscriber's datareader for subscribers
-        DDS.SubscriptionBuiltinTopicDataDataReader builtin_subscription_datareader =
-            (DDS.SubscriptionBuiltinTopicDataDataReader)
-                builtin_subscriber.lookup_datareader(
-                DDS.SubscriptionBuiltinTopicDataTypeSupport.SUBSCRIPTION_TOPIC_NAME);
+        DDS.SubscriptionBuiltinTopicDataDataReader 
+            builtin_subscription_datareader =
+                (DDS.SubscriptionBuiltinTopicDataDataReader)
+                    builtin_subscriber.lookup_datareader(
+                        DDS.SubscriptionBuiltinTopicDataTypeSupport.
+                        SUBSCRIPTION_TOPIC_NAME);
         if (builtin_participant_datareader == null) {
             shutdown(participant);
             throw new ApplicationException("lookup_datareader error");
@@ -338,7 +349,9 @@ public class msgPublisher {
                 (DDS.StatusMask.STATUS_MASK_NONE |
                 (DDS.StatusMask)DDS.StatusKind.DATA_AVAILABLE_STATUS));
 
-        // Done!  All the listeners are installed, so we can enable the participant now.
+        /* Done!  All the listeners are installed, so we can enable the 
+         * participant now.
+         */
         participant.enable();
 
         /* End changes for Builtin_Topics */
@@ -491,11 +504,15 @@ public class msgPublisher {
     }
 
     private class msgListener : DDS.DataWriterListener {
-    	public void on_liveliness_lost(DDS.DataWriter writer, DDS.LivelinessLostStatus status) {
-    		Console.WriteLine("liveliness lost, total count = " + status.total_count);    		
+    	public void on_liveliness_lost(DDS.DataWriter writer, 
+    	    DDS.LivelinessLostStatus status) {
+    		    Console.WriteLine("liveliness lost, total count = " +
+    		    status.total_count);    		
     	}
-    	public void on_publication_matched (DDS.DataWriter writer, DDS.PublicationMatchedStatus status) {
-    		Console.WriteLine("publication_matched, current count = " + status.current_count);
+    	public void on_publication_matched (DDS.DataWriter writer,
+    	    DDS.PublicationMatchedStatus status) {
+    		    Console.WriteLine("publication_matched, current count = " +
+    		    status.current_count);
     	}
     }
 }

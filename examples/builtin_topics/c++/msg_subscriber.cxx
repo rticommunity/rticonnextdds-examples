@@ -56,9 +56,6 @@ modification history
 #include "msg.h"
 #include "msgSupport.h"
 
-// UNCOMMENT THE FOLLOWING LINE IF YOU ARE USING RTI DATA DISTRIBUTION SERVICE 4.1 OR EARLIER
-//#define RTI_4_1
-
 class msgListener : public DDSDataReaderListener {
   public:
     virtual void on_requested_deadline_missed(
@@ -179,12 +176,13 @@ extern "C" int subscriber_main(int domainId, int sample_count,
     struct DDS_Duration_t receive_period = {1,0};
     int status = 0;
 
-    //// Start changes for Builtin_Topics
-    // Set user_data qos field for participant
+    /* Start changes for Builtin_Topics */
+    /* Set user_data qos field for participant */
 
     /* Get default participant QoS to customize */
     DDS_DomainParticipantQos participant_qos;
-    retcode = DDSTheParticipantFactory->get_default_participant_qos(participant_qos);
+    retcode = DDSTheParticipantFactory->get_default_participant_qos(
+            participant_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_participant_qos error\n");
         return -1;
@@ -193,15 +191,16 @@ extern "C" int subscriber_main(int domainId, int sample_count,
     DDS_StringSeq temp(0);
     participant_qos.discovery.multicast_receive_addresses = temp;
 
-    // user_data is opaque to DDS, so we include trailing \0 for string
-    int len = strlen(participant_auth) + 1;
+    /* user_data is opaque to DDS, so we include trailing \0 for string */
+    int len = strlen(participant_auth);
     int max = participant_qos.resource_limits.participant_user_data_max_length;
 
     if (len > max) {
         printf("error, participant user_data exceeds resource limits\n");
     } else {
-        // DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
-        // on your system, this will not work.
+        /* DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
+         * on your system, this will not work.
+         */
         participant_qos.user_data.value.from_array(
             reinterpret_cast<const DDS_Octet*>(participant_auth), len);
     }
@@ -271,8 +270,8 @@ extern "C" int subscriber_main(int domainId, int sample_count,
         return -1;
     }
 
-    //// Start changes for Builtin_Topics
-    // Set user_data qos field for datareader
+    /* Start changes for Builtin_Topics */
+    /* Set user_data qos field for datareader */
 
     /* Get default datareader QoS to customize */
     DDS_DataReaderQos datareader_qos;
@@ -282,15 +281,16 @@ extern "C" int subscriber_main(int domainId, int sample_count,
         return -1;
     }
 
-    // user_data is opaque to DDS, so we include trailing \0 for string
-    len = strlen(reader_auth) + 1;
+    /* user_data is opaque to DDS, so we include trailing \0 for string */
+    len = strlen(reader_auth);
     max = participant_qos.resource_limits.reader_user_data_max_length;
 
     if (len > max) {
         printf("error, datareader user_data exceeds resource limits\n");
     } else {
-        // DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
-        // on your system, this will not work.
+        /* DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
+         * on your system, this will not work.
+         */
         datareader_qos.user_data.value.from_array(
             reinterpret_cast<const DDS_Octet*>(reader_auth), len);
     }
@@ -306,13 +306,10 @@ extern "C" int subscriber_main(int domainId, int sample_count,
         delete reader_listener;
         return -1;
     }
-    //// End changes for Builtin_Topics
+    /* End changes for Builtin_Topics */
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
-//        printf("msg subscriber sleeping for %d sec...\n",
-//               receive_period.sec);
 
         NDDSUtility::sleep(receive_period);
     }
@@ -353,9 +350,11 @@ int main(int argc, char *argv[])
     int sample_count = 0; /* infinite loop */
     char *participant_auth = NULL;
     char *reader_auth = NULL;
+    char *temp_participant_auth = NULL;
+    char *temp_reader_auth = NULL;
 
-    //// Changes for Builtin_Topics
-    // Get arguments for auth strings and pass to subscriber_main()
+    /* Changes for Builtin_Topics */
+    /* Get arguments for auth strings and pass to subscriber_main() */
     participant_auth=strdup("password");
     reader_auth=strdup("Reader_Auth");
 
@@ -373,13 +372,23 @@ int main(int argc, char *argv[])
         reader_auth = argv[4];
     }
 
+    /* Create strings ensuring they finish in '\0' */
+    temp_participant_auth = (char*) calloc(strlen(participant_auth) + 1,
+            sizeof(char));
+    strcpy(temp_participant_auth, participant_auth);
+
+    temp_reader_auth = (char*) calloc(strlen(reader_auth) + 1, sizeof(char));
+    strcpy(temp_reader_auth, reader_auth);
+
+
     /* Uncomment this to turn on additional logging
     NDDSConfigLogger::get_instance()->
         set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
                                   NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
     
-    return subscriber_main(domainId, sample_count, participant_auth, reader_auth);
+    return subscriber_main(domainId, sample_count, participant_auth,
+            reader_auth);
 }
 #endif
 

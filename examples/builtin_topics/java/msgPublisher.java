@@ -82,10 +82,12 @@ public class msgPublisher {
 	// Authorization string.
 	public static String auth = "password";
 	
-	/* Set up a linked list of authorized participant keys.  Datareaders associated
-	   with an authorized participant do not need to supply their own password.
-	*/	
-	public static LinkedList<BuiltinTopicKey_t> Auth_List = new LinkedList<BuiltinTopicKey_t>();
+	/* Set up a linked list of authorized participant keys.  
+	 * Datareaders associated
+	 * with an authorized participant do not need to supply their own password.
+	 */	
+	public static LinkedList<BuiltinTopicKey_t> Auth_List = 
+	        new LinkedList<BuiltinTopicKey_t>();
 	
     // -----------------------------------------------------------------------
     // Public Methods
@@ -95,7 +97,8 @@ public class msgPublisher {
 		Auth_List.addLast(participant_key);
 	}
 	
-	public static boolean is_auth_participant(BuiltinTopicKey_t participant_key) {
+	public static boolean is_auth_participant(
+	        BuiltinTopicKey_t participant_key) {
 		return Auth_List.contains(participant_key);
 	}
 	
@@ -104,7 +107,8 @@ public class msgPublisher {
 	   DataReaders to access these fields.
 	*/
 	public static class BuiltinParticipantListener extends DataReaderAdapter {
-		ParticipantBuiltinTopicDataSeq _dataSeq = new ParticipantBuiltinTopicDataSeq();
+		ParticipantBuiltinTopicDataSeq _dataSeq = 
+		        new ParticipantBuiltinTopicDataSeq();
         SampleInfoSeq _infoSeq = new SampleInfoSeq();
 		
 		// This gets called when a participant has been discovered
@@ -130,25 +134,37 @@ public class msgPublisher {
                     if (info.valid_data) {
                     	participant_data = "nil";
                     	boolean isauth = false;                    	
-                    	cur_participant_builtin_topic_data = (ParticipantBuiltinTopicData)_dataSeq.get(i);
+                    	cur_participant_builtin_topic_data = 
+                    	        (ParticipantBuiltinTopicData)_dataSeq.get(i);
                     	
                     	// see if there is any participant_data
-                    	if (cur_participant_builtin_topic_data.user_data.value.size() > 0) {
+                    	if (cur_participant_builtin_topic_data.
+                    	        user_data.value.size() > 0) {
                     		
                     		// This sequence is guaranteed to be contiguous
-	                        participant_data = new String(cur_participant_builtin_topic_data.user_data.value.toArrayByte(null));
+	                        participant_data = 
+	                                new String(
+	                                        cur_participant_builtin_topic_data.
+	                                        user_data.value.toArrayByte(null));
 	                        if (participant_data.equals(auth)) {
-	                        	add_auth_participant(cur_participant_builtin_topic_data.key);
+	                        	add_auth_participant(
+	                        	        cur_participant_builtin_topic_data.key);
 	                        	isauth = true;
 	                        }
                     	}
-                    	System.out.println("Built-in Reader: found participant \n\tkey->'" + Arrays.toString(cur_participant_builtin_topic_data.key.value)
-                    			+ "'\n\tuser_data->'" + participant_data + "'");                        
-                        System.out.println("instance_handle: " + info.instance_handle);
+                    	System.out.println("Builtin Reader: found participant");
+                    	System.out.println("\tkey->'" + Arrays.toString(
+                    	        cur_participant_builtin_topic_data.key.value) +
+                    			"'\n\tuser_data->'" + participant_data + "'");                        
+                        System.out.println("instance_handle: " +
+                    			info.instance_handle);
                         if (!isauth) {
-                        	System.out.println("Bad authorization, ignoring participant");
-                        	DomainParticipant participant = reader.get_subscriber().get_participant();
-                        	participant.ignore_participant(info.instance_handle);
+                        	System.out.println(
+                        	        "Bad authorization, ignoring participant");
+                        	DomainParticipant participant = 
+                        	        reader.get_subscriber().get_participant();
+                        	participant.ignore_participant(
+                        	        info.instance_handle);
                         }
                     }                    
                 }
@@ -165,7 +181,8 @@ public class msgPublisher {
 	}
 	
 	public static class BuiltinSubscriberListener extends DataReaderAdapter {
-		SubscriptionBuiltinTopicDataSeq _dataSeq = new SubscriptionBuiltinTopicDataSeq();
+		SubscriptionBuiltinTopicDataSeq _dataSeq =
+		        new SubscriptionBuiltinTopicDataSeq();
         SampleInfoSeq _infoSeq = new SampleInfoSeq();
 		
 		// This gets called when a new subscriber has been discovered
@@ -191,29 +208,48 @@ public class msgPublisher {
                     if (info.valid_data) {
                     	reader_data = "nil";
                     	boolean isauth = false;                    	
-                    	cur_subscription_builtin_topic_data = (SubscriptionBuiltinTopicData)_dataSeq.get(i);
+                    	cur_subscription_builtin_topic_data = 
+                    	        (SubscriptionBuiltinTopicData)_dataSeq.get(i);
                     	
-                    	// See if this is associated with an authorized participant
-                    	if (is_auth_participant(cur_subscription_builtin_topic_data.participant_key)) {
+                    	/* See if this is associated with an authorized 
+                    	 * participant
+                    	 */
+                    	if (is_auth_participant(
+                    	        cur_subscription_builtin_topic_data.
+                    	        participant_key)) {
                     		isauth = true;
                     	}
                     	
                     	// see if there is any user_data
-                    	if (cur_subscription_builtin_topic_data.user_data.value.size() > 0) {
-	                        reader_data = new String(cur_subscription_builtin_topic_data.user_data.value.toArrayByte(null));
+                    	if (cur_subscription_builtin_topic_data.
+                    	        user_data.value.size() > 0) {
+	                        reader_data = 
+	                                new String(
+	                                        cur_subscription_builtin_topic_data.
+	                                        user_data.value.toArrayByte(null));
 	                        if (!isauth && reader_data.equals(auth)) {
 	                        	isauth = true;
 	                        }
                     	}
-                    	System.out.println("Built-in Reader: found subscriber \n\tparticipant_key->'"
-                    			+ Arrays.toString(cur_subscription_builtin_topic_data.participant_key.value) + "'\n\tkey->'"
-                    			+ Arrays.toString(cur_subscription_builtin_topic_data.key.value)
+                    	System.out.println("Built-in Reader: found subscriber");
+                    	System.out.println("\tparticipant_key->'"
+                    			+ Arrays.toString(
+                    			        cur_subscription_builtin_topic_data.
+                    			        participant_key.value) + "'\n\tkey->'"
+                    			+ Arrays.toString(
+                    			        cur_subscription_builtin_topic_data.
+                    			        key.value)
                     			+ "'\n\tuser_data->'" + reader_data + "'");
-                        System.out.println("instance_handle: " + info.instance_handle);
+                    	
+                        System.out.println("instance_handle: " + 
+                                info.instance_handle);
                         if (!isauth) {
-                        	System.out.println("Bad authorization, ignoring subscription");
-                        	DomainParticipant participant = reader.get_subscriber().get_participant();
-                        	participant.ignore_subscription(info.instance_handle);
+                        	System.out.println(
+                        	        "Bad authorization, ignoring subscription");
+                        	DomainParticipant participant = 
+                        	        reader.get_subscriber().get_participant();
+                        	participant.ignore_subscription(
+                        	        info.instance_handle);
                         }
                     }                    
                 }
@@ -275,48 +311,51 @@ public class msgPublisher {
         try {
         	
         	//// Start changes for Builtin_Topics
+            /* If you want to change the Factory's QoS programmatically rather 
+             * than using the XML file, you will need to add the following lines
+             * to your code and comment out the participant call above.
+             */
+
             /* By default, the participant is enabled upon construction.
-               At that time our listeners for the builtin topics have not
-               been installed, so we disable the participant until we
-               set up the listeners.
-            */
-        	
-        	DomainParticipantFactoryQos factory_qos = new DomainParticipantFactoryQos();
+             * At that time our listeners for the builtin topics have not
+             * been installed, so we disable the participant until we
+             * set up the listeners.
+             */
+/*            
+        	DomainParticipantFactoryQos factory_qos =
+        	        new DomainParticipantFactoryQos();
         	DomainParticipantFactory.TheParticipantFactory.get_qos(factory_qos);
         	factory_qos.entity_factory.autoenable_created_entities = false;
         	DomainParticipantFactory.TheParticipantFactory.set_qos(factory_qos);
         	
-        	/* Get default participant QoS to customize */
-        	DomainParticipantQos participant_qos = new DomainParticipantQos();
-        	DomainParticipantFactory.TheParticipantFactory.get_default_participant_qos(participant_qos);
-        	
-        	participant_qos.discovery.multicast_receive_addresses.clear();
-        	
-        	participant_qos.discovery_config.participant_liveliness_assert_period.sec = 10;
-        	participant_qos.discovery_config.participant_liveliness_assert_period.nanosec = 0;
-        	
-        	participant_qos.discovery_config.participant_liveliness_lease_duration.sec = 12;
-        	participant_qos.discovery_config.participant_liveliness_lease_duration.nanosec = 0;
-        	
+        	participant_liveliness_lease_duration.nanosec = 0;
+*/      	
             // --- Create participant --- //
     
-        	/* To create participant with default QoS, use DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT instead of participant_qos */
+        	/* To create participant with default QoS, use 
+        	 * DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT instead 
+        	 * of participant_qos 
+        	 */
     
             participant = DomainParticipantFactory.TheParticipantFactory.
                 create_participant(
-                    domainId, participant_qos,
+                    domainId, DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                     null /* listener */, StatusKind.STATUS_MASK_NONE);
             if (participant == null) {
                 System.err.println("create_participant error\n");
                 return;
             }
             
-            // Installing listeners for the builtin topics requires several steps
+            /* Installing listeners for the builtin topics requires several 
+             * steps
+             */
             
             // First get the builtin subscriber
-            Subscriber builtin_subscriber = participant.get_builtin_subscriber();
+            Subscriber builtin_subscriber = 
+                    participant.get_builtin_subscriber();
             if (builtin_subscriber == null) {
-            	System.err.println("***Error: failed to create builtin subscriber\n");
+            	System.err.println(
+            	        "***Error: failed to create builtin subscriber\n");
                 return;
             }
             
@@ -327,28 +366,49 @@ public class msgPublisher {
 	           BuiltinTopicData concerning a discovered
 	           Participant
 	        */
-            ParticipantBuiltinTopicDataDataReader builtin_participant_datareader = (ParticipantBuiltinTopicDataDataReader) builtin_subscriber.lookup_datareader(ParticipantBuiltinTopicDataTypeSupport.PARTICIPANT_TOPIC_NAME);
+            ParticipantBuiltinTopicDataDataReader 
+                builtin_participant_datareader = 
+                    (ParticipantBuiltinTopicDataDataReader) 
+                        builtin_subscriber.lookup_datareader(
+                                ParticipantBuiltinTopicDataTypeSupport.
+                                PARTICIPANT_TOPIC_NAME);
             if (builtin_participant_datareader == null) {
-            	System.err.println("***Error: failed to create builtin participant data reader\n");
+            	System.err.println(
+            	        "***Error: failed to create builtin participant data"
+            	        + " reader\n");
                 return;
             }
             
             // Install our listener
-            BuiltinParticipantListener builtin_participant_listener = new BuiltinParticipantListener();
-            builtin_participant_datareader.set_listener(builtin_participant_listener, StatusKind.DATA_AVAILABLE_STATUS);
+            BuiltinParticipantListener builtin_participant_listener = 
+                    new BuiltinParticipantListener();
+            builtin_participant_datareader.set_listener(
+                    builtin_participant_listener, 
+                    StatusKind.DATA_AVAILABLE_STATUS);
             
             // Get builtin subscriber's datareader for subscribers
-            SubscriptionBuiltinTopicDataDataReader builtin_subscription_datareader = (SubscriptionBuiltinTopicDataDataReader) builtin_subscriber.lookup_datareader(SubscriptionBuiltinTopicDataTypeSupport.SUBSCRIPTION_TOPIC_NAME);
+            SubscriptionBuiltinTopicDataDataReader 
+                builtin_subscription_datareader = 
+                    (SubscriptionBuiltinTopicDataDataReader) 
+                        builtin_subscriber.lookup_datareader(
+                                SubscriptionBuiltinTopicDataTypeSupport.
+                                SUBSCRIPTION_TOPIC_NAME);
             if (builtin_subscription_datareader == null) {
-            	System.err.println("***Error: failed to create builtin subscription data reader\n");
+            	System.err.println("***Error: failed to create builtin "
+            	        + "subscription data reader\n");
                 return;
             }
             
             // Install our listener
-            BuiltinSubscriberListener builtin_subscriber_listener = new BuiltinSubscriberListener();
-            builtin_subscription_datareader.set_listener(builtin_subscriber_listener, StatusKind.DATA_AVAILABLE_STATUS);
+            BuiltinSubscriberListener builtin_subscriber_listener =
+                    new BuiltinSubscriberListener();
+            builtin_subscription_datareader.set_listener(
+                    builtin_subscriber_listener, 
+                    StatusKind.DATA_AVAILABLE_STATUS);
             
-            // Done!  All the listeners are installed, so we can enable the participant now.
+            /* Done!  All the listeners are installed, so we can enable the 
+             * participant now.
+             */
             participant.enable();
             
             //// End changes for Builtin_Topics
@@ -384,27 +444,19 @@ public class msgPublisher {
                 System.err.println("create_topic error\n");
                 return;
             }
-            
-            //// Start changes for Builtin_Topics
-            
-            /* Get default datawriter QoS to customize */
-            DataWriterQos datawriter_qos = new DataWriterQos();
-            publisher.get_default_datawriter_qos(datawriter_qos);
-            datawriter_qos.liveliness.lease_duration.sec = 1;
-            datawriter_qos.liveliness.lease_duration.nanosec = 0;
-            
+     
             msgListener writer_listener = new msgListener();            
                 
             // --- Create writer --- //
     
-            /* To create writer with default QoS, use Publisher.DATAWRITER_QOS_DEFAULT, instead of datawriter_qos */
+            /* To create writer with default QoS, use 
+             * Publisher.DATAWRITER_QOS_DEFAULT, instead of datawriter_qos 
+             */
     
             writer = (msgDataWriter)
                 publisher.create_datawriter(
-                    topic, datawriter_qos,
+                    topic, Publisher.DATAWRITER_QOS_DEFAULT,
                     writer_listener, StatusKind.STATUS_MASK_ALL);
-            
-            //// End changes for Builtin_Topics
             
             if (writer == null) {
                 System.err.println("create_datawriter error\n");
@@ -417,9 +469,10 @@ public class msgPublisher {
             msg instance = new msg();
 
             InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
-            /* For a data type that has a key, if the same instance is going to be
-               written multiple times, initialize the key here
-               and register the keyed instance prior to writing */
+            /* For a data type that has a key, if the same instance is going 
+             * to be written multiple times, initialize the key here
+             * and register the keyed instance prior to writing 
+             */
             //instance_handle = writer.register_instance(instance);
 
             //// Changes for Builtin_Topics
@@ -446,9 +499,11 @@ public class msgPublisher {
 
             //writer.unregister_instance(instance, instance_handle);
         } catch (RETCODE_IMMUTABLE_POLICY immutable) {
-        	System.out.println("Cannot set factory Qos due to IMMUTABLE_POLICY for domain participant");
+        	System.out.println("Cannot set factory Qos due to IMMUTABLE_POLICY"
+        	        + " for domain participant");
         } catch (RETCODE_INCONSISTENT_POLICY inconsistent) {
-        	System.out.println("Cannot set factory Qos due to INCONSISTENT_POLICY for domain participant");
+        	System.out.println("Cannot set factory Qos due to "
+        	        + "INCONSISTENT_POLICY for domain participant");
         } finally {
 
             // --- Shutdown --- //
@@ -469,11 +524,15 @@ public class msgPublisher {
     }
     
     private static class msgListener extends DataWriterAdapter {
-    	public void on_liveliness_lost(DataWriter writer, LivelinessLostStatus status) {
-    		System.out.println("liveliness lost, total count = " + status.total_count);    		
+    	public void on_liveliness_lost(DataWriter writer, 
+    	        LivelinessLostStatus status) {
+    		System.out.println("liveliness lost, total count = " 
+    	        + status.total_count);    		
     	}
-    	public void on_publication_matched (DataWriter writer, PublicationMatchedStatus status) {
-    		System.out.println("publication_matched, current count = " + status.current_count);
+    	public void on_publication_matched (DataWriter writer,
+    	        PublicationMatchedStatus status) {
+    		System.out.println("publication_matched, current count = "
+    	        + status.current_count);
     	}
     }
 }

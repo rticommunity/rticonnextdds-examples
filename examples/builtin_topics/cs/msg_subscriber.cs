@@ -156,33 +156,37 @@ public class msgSubscriber {
         }
     }
 
-    static void subscribe(int domain_id, int sample_count, String participant_auth,
-        String reader_auth) {
+    static void subscribe(int domain_id, int sample_count, 
+        String participant_auth, String reader_auth) {
 
         // --- Create participant --- //
 
         /* Start changes for programmatically qos */
 
-        /* If you want to change the Participant's QoS programmatically rather than
-         * using the XML file, you will need to add the following lines to your
-         * code and comment out the participant call above.
+        /* If you want to change the Participant's QoS programmatically rather
+         * than using the XML file, you will need to add the following lines to
+         * your code and comment out the participant call above.
          */
         
         /* Set user_data qos field for participant */
         
         /* Get default participant QoS to customize */
-        DDS.DomainParticipantQos participant_qos = new DDS.DomainParticipantQos();
-        DDS.DomainParticipantFactory.get_instance().get_default_participant_qos(participant_qos);
+        DDS.DomainParticipantQos participant_qos =
+            new DDS.DomainParticipantQos();
+        DDS.DomainParticipantFactory.get_instance().
+            get_default_participant_qos(participant_qos);
 
         DDS.StringSeq temp = new DDS.StringSeq(0);
         participant_qos.discovery.multicast_receive_addresses = temp;
 
         // user_data is opaque to DDS, so we include trailing \0 for string
         int len = participant_auth.Length;
-        int max = participant_qos.resource_limits.participant_user_data_max_length;
+        int max =
+            participant_qos.resource_limits.participant_user_data_max_length;
 
         if (len > max) {
-            Console.WriteLine("error, participant user_data exceeds resource limits");
+            Console.WriteLine(
+                "error, participant user_data exceeds resource limits");
         } else {
             /* Byte type is defined to be 8 bits.  If chars are not 8 bits
              * on your system, this will not work. 
@@ -270,7 +274,8 @@ public class msgSubscriber {
 
 
         if (len > max) {
-            Console.WriteLine("error, datareader user_data exceeds resource limits");
+            Console.WriteLine(
+                "error, datareader user_data exceeds resource limits");
         } else {
             /* Byte type is defined to be 8 bits.  If chars are not 8 bits
              * on your system, this will not work. 
