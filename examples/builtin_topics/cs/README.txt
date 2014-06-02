@@ -49,8 +49,8 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-bin\<build_type>-VS2010\async_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\async_subscriber.exe <domain_id> <sleep_periods> <participant_auth> <reader_auth>
+bin\<build_type>-VS2010\msg_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\msg_subscriber.exe <domain_id> <sleep_periods> <participant_auth> <reader_auth>
 
 The applications accept up to two arguments (four to subscriber):
 
