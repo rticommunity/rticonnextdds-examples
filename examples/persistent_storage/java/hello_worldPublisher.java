@@ -255,7 +255,8 @@ public class hello_worldPublisher {
             final long send_period_millis = 1 * 1000; // 1 seconds
             final long one_sec = 1000;
 
-            for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+            for (int count = 0; (sample_count == 0) || (count < sample_count); 
+                    ++count) {
                 System.out.println("Writing hello_world, count "
                         + initial_value);
 

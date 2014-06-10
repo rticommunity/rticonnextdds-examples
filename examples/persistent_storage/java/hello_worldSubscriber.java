@@ -289,7 +289,8 @@ public class hello_worldSubscriber {
 
                     if (info.valid_data) {
                         System.out.println(
-                            ((hello_world)_dataSeq.get(i)).toString("Received",0));
+                            ((hello_world)_dataSeq.get(i)).
+                                toString("Received",0));
 
 
                     }
