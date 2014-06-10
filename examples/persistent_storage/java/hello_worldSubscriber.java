@@ -115,8 +115,6 @@ public class hello_worldSubscriber {
         if (domain_id < 0 || sample_count < 0 || drs < 0) {
             return;
         }
-        System.out.println(" domain_id: " + domain_id
-                + " sample_count: " + sample_count + " drs: " + drs);
         
         /* Uncomment this to turn on additional logging
         Logger.get_instance().set_verbosity_by_category(

@@ -132,10 +132,7 @@ public class hello_worldPublisher {
                 || dwh < 0) {
             return;
         }
-        System.out.println(" sleep: " + sleep + " domain_id: " + domain_id
-                + " sample_count: " + sample_count + " initial_value: "
-                + initial_value + " dwh: " + dwh);
-
+       
         /* Uncomment this to turn on additional logging
         Logger.get_instance().set_verbosity_by_category(
             LogCategory.NDDS_CONFIG_LOG_CATEGORY_API,
@@ -238,7 +235,10 @@ public class hello_worldPublisher {
                                 "persistence_service_Profile", null,
                                 StatusKind.STATUS_MASK_NONE);
             }
-
+            if (writer == null) {
+                System.err.println("create_writer error\n");
+                return;
+            }
             // --- Write --- //
 
             /* Create data sample for writing */
