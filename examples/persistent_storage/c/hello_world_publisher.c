@@ -112,7 +112,7 @@ static int publisher_shutdown(DDS_DomainParticipant *participant) {
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count, int initial_count,
+static int publisher_main(int domain_id, int sample_count, int initial_count,
         int dwh, int sleep) {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
@@ -131,7 +131,7 @@ static int publisher_main(int domainId, int sample_count, int initial_count,
     /* To customize participant QoS, use 
      the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
+            DDS_TheParticipantFactory, domain_id, &DDS_PARTICIPANT_QOS_DEFAULT,
             NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -172,7 +172,7 @@ static int publisher_main(int domainId, int sample_count, int initial_count,
 
     /* If you use the durable writer history, you need to set 
      * additional properties. These properties are been included 
-     * in the To get more information see the 
+     * in its profile. To get more information see the 
      * USER_QOS_PROFILES.xml file.
      */
     if (dwh == 1) {
@@ -262,31 +262,8 @@ static int publisher_main(int domainId, int sample_count, int initial_count,
     return publisher_shutdown(participant);
 }
 
-#if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
-{
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domainId = _wtoi(argv[1]);
-    }
-    if (argc >= 3) {
-        sample_count = _wtoi(argv[2]);
-    }
-
-    /* Uncomment this to turn on additional logging
-    NDDS_Config_Logger_set_verbosity_by_category(
-        NDDS_Config_Logger_get_instance(),
-        NDDS_CONFIG_LOG_CATEGORY_API, 
-        NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return publisher_main(domainId, sample_count);
-}
-#elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[]) {
-    int domainId = 0;
+    int domain_id = 0;
     int sample_count = 0; /* infinite loop */
     int initial_value = 0;
     int dwh = 0;
@@ -305,7 +282,7 @@ int main(int argc, char *argv[]) {
 
     for (i = 1; i < argc;) {
         READ_INTEGER_PARAM("-sleep", sleep);
-        READ_INTEGER_PARAM("-domai_id", domainId);
+        READ_INTEGER_PARAM("-domain_id", domain_id);
         READ_INTEGER_PARAM("-sample_count", sample_count);
         READ_INTEGER_PARAM("-initial_value", initial_value);
         READ_INTEGER_PARAM("-dwh", dwh);
@@ -320,9 +297,8 @@ int main(int argc, char *argv[]) {
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
-    return publisher_main(domainId, sample_count, initial_value, dwh, sleep);
+    return publisher_main(domain_id, sample_count, initial_value, dwh, sleep);
 }
-#endif
 
 #ifdef RTI_VX653
 const unsigned char* __ctype = NULL;

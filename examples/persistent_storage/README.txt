@@ -13,7 +13,7 @@ options can be classified in three:
     QosPolicy controls whether or not, and how, published samples are stored by
     the DataWriter application for DataReaders that are found after the samples
     were initially written. The samples stored by the DataWriter constitute the
-    DataWriter’s history.
+    DataWriter's history.
     
     Connext provides the capability to make the DataWriter history durable, by
     persisting its content in a relational database. This makes it possible for
@@ -35,7 +35,7 @@ options can be classified in three:
     
   - Persistence Service: Persistence Service is a Connext application that saves
     data samples to transient or permanent storage, so they can be delivered to
-    subscribing applications that join the system at a later time—even if the
+    subscribing applications that join the system at a later time-even if the
     publishing application has already terminated.
     
     Persistence Service runs as a separate application; you can run it on the
