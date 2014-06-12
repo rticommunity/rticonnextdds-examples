@@ -6,8 +6,8 @@ How to install ODBC connector
 =============================
     In this section we explain how to install the MySQL relational database
 with the ODBC connector which will be used by this example. MySQL is used in the
-'durable writer history', 'durable reader state' and 'persistence service' use
-cases.
+'Durable Writer History', 'Durable Reader State' and 'Persistence Service'
+scenarios.
 
 MySQL Installation
 ------------------
@@ -15,13 +15,11 @@ MySQL Installation
 ** Windows-Based Systems
 
 1) First, verify that MySQL 5.1 and ODBC Connector 5.1 are installed and running
-on your system. The installation of MySQL is beyond the scope of this 
-readme.txt.
-However, take into account the following details:
+on your system. The installation of MySQL is beyond the scope of this document.
+Please refer to the MySQL Reference Manual for the process to install and 
+configure MySQL. However, take into account the following details:
     - Install the correct version according to your system (32 bits vs 64 bits).
     - Make sure that the daemon is running (mysqld.exe).
-Please refer to the MySQL Reference Manual for the process to install and 
-configure MySQL.
 
 2) RTI Persistence Service requires the installation of the MySQL ODBC 5.1 
 driver. The driver is not bundled with the MySQL server and must be 
@@ -35,24 +33,22 @@ you are compiling using Visual Studio Express, you will need a 32-bit connector.
 
 Create a MySQL Account
 ----------------------
-Before you run this HelloWorld example using MySQL, you need to obtain a MySQL 
-user account from your database administrator. If you are acting as your own 
-database administrator, start mysql from the command prompt to connect to the 
+Before you run this example using MySQL, you need to obtain a MySQL user account
+from your database administrator. If you are acting as your own database 
+administrator, start MySQL from the command prompt to connect to the 
 MySQL server as the MySQL root user:
-
 > mysql -uroot
 If you have assigned a password to the root account, you will also need to 
 provide a -p option.
 
 For example, to create a new MySQL account with a user name of "test" and 
 a password of "test", enter the following:
-
 > mysql -uroot
 mysql> GRANT ALL PRIVILEGES ON *.* TO 'test'@'localhost' IDENTIFIED
 BY 'test' WITH GRANT OPTION;
 mysql> exit;
 
-The remaining sections in this readme.txt assume that a MySQL user named "test"
+The remaining sections of this document assume that a MySQL user named "test"
 with the password "test" has an account on the local host.
 
 Creating a working DSN

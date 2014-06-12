@@ -128,8 +128,8 @@ static int publisher_main(int domain_id, int sample_count, int initial_count,
     struct DDS_Duration_t send_period = { 1, 0 };
     struct DDS_Duration_t one_sec = { 1, 0 };
 
-    /* To customize participant QoS, use 
-     the configuration file USER_QOS_PROFILES.xml */
+    /* To customize participant QoS, use  the configuration file
+     * USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
             DDS_TheParticipantFactory, domain_id, &DDS_PARTICIPANT_QOS_DEFAULT,
             NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -139,8 +139,8 @@ static int publisher_main(int domain_id, int sample_count, int initial_count,
         return -1;
     }
 
-    /* To customize publisher QoS, use 
-     the configuration file USER_QOS_PROFILES.xml */
+    /* To customize publisher QoS, use the configuration file
+     * USER_QOS_PROFILES.xml */
     publisher = DDS_DomainParticipant_create_publisher(participant,
             &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
             DDS_STATUS_MASK_NONE);
@@ -170,10 +170,10 @@ static int publisher_main(int domain_id, int sample_count, int initial_count,
         return -1;
     }
 
-    /* If you use the durable writer history, you need to set 
-     * additional properties. These properties are been included 
-     * in its profile. To get more information see the 
-     * USER_QOS_PROFILES.xml file.
+    /* If you use Durable Writer History, you need to set
+     * several properties. These properties are set in the USER_QOS_PROFILE.xml
+     * file, "durable_writer_history_Profile" profile. See that file for further
+     * details.
      */
     if (dwh == 1) {
         writer = DDS_Publisher_create_datawriter_with_profile(publisher, topic,
@@ -203,7 +203,6 @@ static int publisher_main(int domain_id, int sample_count, int initial_count,
     }
 
     /* Create data sample for writing */
-
     instance = hello_worldTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
 
     if (instance == NULL) {

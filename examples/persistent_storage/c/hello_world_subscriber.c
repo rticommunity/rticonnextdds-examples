@@ -245,10 +245,9 @@ static int subscriber_main(int domain_id, int sample_count, int drs) {
             hello_worldListener_on_subscription_matched;
     reader_listener.on_data_available = hello_worldListener_on_data_available;
 
-    /* If you use the durable reader state, you need to set 
-     * additional properties. These properties are been included 
-     * in its profile. To get more information see the 
-     * USER_QOS_PROFILES.xml file.
+    /* If you use Durable Reader State, you need to set up several properties.
+     * In this example, we have modified them using a QoS XML profile. See
+     * further details in USER_QOS_PROFILES.xml.
      */
     if (drs == 1) {
         reader = DDS_Subscriber_create_datareader_with_profile(subscriber,
