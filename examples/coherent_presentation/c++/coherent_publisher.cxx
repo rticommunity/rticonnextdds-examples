@@ -59,9 +59,7 @@ modification history
 #include "ndds/ndds_cpp.h"
 
 /* Delete all entities */
-static int publisher_shutdown(
-    DDSDomainParticipant *participant)
-{
+static int publisher_shutdown(DDSDomainParticipant *participant) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -94,8 +92,7 @@ static int publisher_shutdown(
     return status;
 }
 
-extern "C" int publisher_main(int domainId, int sample_count)
-{
+extern "C" int publisher_main(int domainId, int sample_count) {
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
@@ -105,17 +102,17 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
-    int count = 0;  
-    DDS_Duration_t send_period = {1,0};
+    int count = 0;
+    DDS_Duration_t send_period = { 1, 0 };
     DDS_PublisherQos publisher_qos;
     DDS_DataWriterQos datawriter_qos;
     int mod = 0;
 
     /* To customize participant QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    participant = DDSTheParticipantFactory->create_participant(domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
@@ -123,9 +120,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     /* To customize publisher QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    publisher = participant->create_publisher(DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
@@ -140,8 +137,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Start changes for coherent_presentation */
 
     /* Get default publisher QoS to customize */
-/*    
-    retcode = participant->get_default_publisher_qos(publisher_qos);
+
+/*    retcode = participant->get_default_publisher_qos(publisher_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_publisher_qos error\n");
         return -1;
@@ -153,8 +150,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
 /*    publisher_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
     publisher_qos.presentation.coherent_access = DDS_BOOLEAN_TRUE;
 
-    publisher = participant->create_publisher(
-        publisher_qos, NULL, DDS_STATUS_MASK_NONE);
+    publisher = participant->create_publisher(publisher_qos, NULL,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
@@ -165,8 +162,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     /* Register type before creating topic */
     type_name = coherentTypeSupport::get_type_name();
-    retcode = coherentTypeSupport::register_type(
-        participant, type_name);
+    retcode = coherentTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -174,23 +170,19 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     /* To customize topic QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic(
-        "Example coherent",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    topic = participant->create_topic("Example coherent", type_name,
+            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-
     /* To customize data writer QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    writer = publisher->create_datawriter(
-        topic, DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    writer = publisher->create_datawriter(topic, DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -203,7 +195,6 @@ extern "C" int publisher_main(int domainId, int sample_count)
      */
     /* Start changes for coheren_presentation */
 
-   
 /*    retcode = publisher->get_default_datawriter_qos(datawriter_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datawriter_qos error\n");
@@ -214,9 +205,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
     datawriter_qos.history.depth = 10;
     datawriter_qos.protocol.rtps_reliable_writer.heartbeats_per_max_samples = 0;
 
-    writer = publisher->create_datawriter(
-        topic, datawriter_qos, NULL,
-        DDS_STATUS_MASK_NONE);
+    writer = publisher->create_datawriter(topic, datawriter_qos, NULL,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -234,16 +224,16 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Create data sample for writing */
 
     instance = coherentTypeSupport::create_data();
-    
+
     if (instance == NULL) {
         printf("coherentTypeSupport::create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-   /* For a data type that has a key, if the same instance is going to be
-       written multiple times, initialize the key here
-       and register the keyed instance prior to writing */
+    /* For a data type that has a key, if the same instance is going to be
+     written multiple times, initialize the key here
+     and register the keyed instance prior to writing */
 
     instance->id = 0;
     instance_handle = coherent_writer->register_instance(*instance);
@@ -252,9 +242,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
     printf("Begin Coherent Changes\n");
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         NDDSUtility::sleep(send_period);
-        
+
         mod = count % 7;
         if (mod == 6) {
             publisher->begin_coherent_changes();
@@ -266,7 +256,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         instance->field = 'a' + mod;
         instance->value = (int) (rand() / (RAND_MAX / 10.0));
 
-        printf("  Updating instance, %c->%d\n", instance->field, instance->value);
+        printf("  Updating instance, %c->%d\n", instance->field,
+                instance->value);
 
         retcode = coherent_writer->write(*instance, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -278,13 +269,11 @@ extern "C" int publisher_main(int domainId, int sample_count)
             printf("End Coherent Changes\n\n");
         }
     }
-    
-    retcode = coherent_writer->unregister_instance(
-        *instance, instance_handle);
+
+    retcode = coherent_writer->unregister_instance(*instance, instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
-
 
     /* Delete data sample */
     retcode = coherentTypeSupport::delete_data(instance);
@@ -300,8 +289,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
 int wmain(int argc, wchar_t** argv)
 {
     int domainId = 0;
-    int sample_count = 0; /* infinite loop */ 
-    
+    int sample_count = 0; /* infinite loop */
+
     if (argc >= 2) {
         domainId = _wtoi(argv[1]);
     }
@@ -314,13 +303,12 @@ int wmain(int argc, wchar_t** argv)
         set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
                                   NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
-    
+
     return publisher_main(domainId, sample_count);
 }
- 
+
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -347,12 +335,13 @@ const unsigned char* __ctype = *(__ctypePtrGet());
 extern "C" void usrAppInit ()
 {
 #ifdef  USER_APPL_INIT
-    USER_APPL_INIT;         /* for backwards compatibility */
+    USER_APPL_INIT; /* for backwards compatibility */
 #endif
-    
+
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-   
+    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
 }
 #endif
 

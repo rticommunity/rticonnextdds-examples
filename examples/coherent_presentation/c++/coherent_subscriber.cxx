@@ -56,7 +56,7 @@ modification history
 
 /* Start changes for coherent_presentation */
 static const unsigned int STATENVALS = 6;
-int statevals[STATENVALS] = {0};
+int statevals[STATENVALS] = { 0 };
 
 void print_state() {
     char c = 'a';
@@ -76,37 +76,36 @@ void set_state(char c, int value) {
 }
 /* End changes for coherent_presentation */
 
-class coherentListener : public DDSDataReaderListener {
-  public:
-    virtual void on_requested_deadline_missed(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedDeadlineMissedStatus& /*status*/) {}
-    
-    virtual void on_requested_incompatible_qos(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedIncompatibleQosStatus& /*status*/) {}
-    
-    virtual void on_sample_rejected(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleRejectedStatus& /*status*/) {}
+class coherentListener: public DDSDataReaderListener {
+public:
+    virtual void on_requested_deadline_missed(DDSDataReader* /*reader*/,
+            const DDS_RequestedDeadlineMissedStatus& /*status*/) {
+    }
 
-    virtual void on_liveliness_changed(
-        DDSDataReader* /*reader*/,
-        const DDS_LivelinessChangedStatus& /*status*/) {}
+    virtual void on_requested_incompatible_qos(DDSDataReader* /*reader*/,
+            const DDS_RequestedIncompatibleQosStatus& /*status*/) {
+    }
 
-    virtual void on_sample_lost(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleLostStatus& /*status*/) {}
+    virtual void on_sample_rejected(DDSDataReader* /*reader*/,
+            const DDS_SampleRejectedStatus& /*status*/) {
+    }
 
-    virtual void on_subscription_matched(
-        DDSDataReader* /*reader*/,
-        const DDS_SubscriptionMatchedStatus& /*status*/) {}
+    virtual void on_liveliness_changed(DDSDataReader* /*reader*/,
+            const DDS_LivelinessChangedStatus& /*status*/) {
+    }
+
+    virtual void on_sample_lost(DDSDataReader* /*reader*/,
+            const DDS_SampleLostStatus& /*status*/) {
+    }
+
+    virtual void on_subscription_matched(DDSDataReader* /*reader*/,
+            const DDS_SubscriptionMatchedStatus& /*status*/) {
+    }
 
     virtual void on_data_available(DDSDataReader* reader);
 };
 
-void coherentListener::on_data_available(DDSDataReader* reader)
-{
+void coherentListener::on_data_available(DDSDataReader* reader) {
     coherentDataReader *coherent_reader = NULL;
     coherentSeq data_seq;
     DDS_SampleInfoSeq info_seq;
@@ -120,9 +119,8 @@ void coherentListener::on_data_available(DDSDataReader* reader)
         return;
     }
 
-    retcode = coherent_reader->take(
-        data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = coherent_reader->take(data_seq, info_seq, DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
@@ -132,7 +130,7 @@ void coherentListener::on_data_available(DDSDataReader* reader)
     }
 
     /* Start changes for coherent_presentation */
-    
+
     /* Firstly process all samples */
     for (i = 0; i < data_seq.length(); ++i) {
         if (info_seq[i].valid_data) {
@@ -143,7 +141,7 @@ void coherentListener::on_data_available(DDSDataReader* reader)
 
     /* The, print the results */
     if (len > 0) {
-        printf("Received %d updates\n",len);
+        printf("Received %d updates\n", len);
         print_state();
         printf("\n");
     }
@@ -156,9 +154,7 @@ void coherentListener::on_data_available(DDSDataReader* reader)
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
-{
+static int subscriber_shutdown(DDSDomainParticipant *participant) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -190,26 +186,25 @@ static int subscriber_shutdown(
     return status;
 }
 
-extern "C" int subscriber_main(int domainId, int sample_count)
-{
+extern "C" int subscriber_main(int domainId, int sample_count) {
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
     DDSTopic *topic = NULL;
-    coherentListener *reader_listener = NULL; 
+    coherentListener *reader_listener = NULL;
     DDSDataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t receive_period = {4,0};
+    DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
     DDS_SubscriberQos subscriber_qos;
     DDS_DataReaderQos datareader_qos;
 
     /* To customize the participant QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    participant = DDSTheParticipantFactory->create_participant(domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
@@ -217,9 +212,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     /* To customize the subscriber QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    subscriber = participant->create_subscriber(DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -240,20 +235,19 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     subscriber_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
     subscriber_qos.presentation.coherent_access = DDS_BOOLEAN_TRUE;
 
-    subscriber = participant->create_subscriber(
-        subscriber_qos, NULL, DDS_STATUS_MASK_NONE);
+    subscriber = participant->create_subscriber(subscriber_qos, NULL,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
         return -1;
     }
-
-*/    /* End changes for coherent_presentation */
+*/
+    /* End changes for coherent_presentation */
 
     /* Register the type before creating the topic */
     type_name = coherentTypeSupport::get_type_name();
-    retcode = coherentTypeSupport::register_type(
-        participant, type_name);
+    retcode = coherentTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
@@ -261,11 +255,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     /* To customize the topic QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic(
-        "Example coherent",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     the configuration file USER_QOS_PROFILES.xml */
+    topic = participant->create_topic("Example coherent", type_name,
+            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -276,10 +268,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     reader_listener = new coherentListener();
 
     /* To customize the data reader QoS, use 
-       the configuration file USER_QOS_PROFILES.xml */
-    reader = subscriber->create_datareader(
-        topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
-        DDS_STATUS_MASK_ALL);
+     the configuration file USER_QOS_PROFILES.xml */
+    reader = subscriber->create_datareader(topic, DDS_DATAREADER_QOS_DEFAULT,
+            reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -300,9 +291,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     datareader_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
     datareader_qos.history.depth = 10;
 
-    reader = subscriber->create_datareader(
-        topic, datareader_qos, reader_listener,
-        DDS_STATUS_MASK_ALL);
+    reader = subscriber->create_datareader(topic, datareader_qos,
+            reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -313,7 +303,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 */    /* End changes for coherent_presentation */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
 
         NDDSUtility::sleep(receive_period);
     }
@@ -329,8 +319,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 int wmain(int argc, wchar_t** argv)
 {
     int domainId = 0;
-    int sample_count = 0; /* infinite loop */ 
-    
+    int sample_count = 0; /* infinite loop */
+
     if (argc >= 2) {
         domainId = _wtoi(argv[1]);
     }
@@ -348,8 +338,7 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -360,13 +349,12 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
 
-
     /* Uncomment this to turn on additional logging
-    NDDSConfigLogger::get_instance()->
-        set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
-                                  NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-                                  
+     NDDSConfigLogger::get_instance()->
+     set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
+     NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
+     */
+
     return subscriber_main(domainId, sample_count);
 }
 #endif
@@ -377,12 +365,13 @@ const unsigned char* __ctype = *(__ctypePtrGet());
 extern "C" void usrAppInit ()
 {
 #ifdef  USER_APPL_INIT
-    USER_APPL_INIT;         /* for backwards compatibility */
+    USER_APPL_INIT; /* for backwards compatibility */
 #endif
-    
+
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-   
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
 }
 #endif
 
