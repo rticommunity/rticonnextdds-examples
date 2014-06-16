@@ -119,7 +119,7 @@ public class hello_worldPublisher {
         // --- Create participant --- //
 
         /* To customize participant QoS, use 
-           the configuration file USER_QOS_PROFILES.xml */
+         * the configuration file USER_QOS_PROFILES.xml */
         DDS.DomainParticipant participant =
             DDS.DomainParticipantFactory.get_instance().create_participant(
                 domain_id,
@@ -134,7 +134,7 @@ public class hello_worldPublisher {
         // --- Create publisher --- //
 
         /* To customize publisher QoS, use 
-           the configuration file USER_QOS_PROFILES.xml */
+         * the configuration file USER_QOS_PROFILES.xml */
         DDS.Publisher publisher = participant.create_publisher(
         DDS.DomainParticipant.PUBLISHER_QOS_DEFAULT,
         null /* listener */,
@@ -158,7 +158,7 @@ public class hello_worldPublisher {
         }
 
         /* To customize topic QoS, use 
-           the configuration file USER_QOS_PROFILES.xml */
+         * the configuration file USER_QOS_PROFILES.xml */
         DDS.Topic topic = participant.create_topic(
             "Example hello_world",
             type_name,
@@ -171,10 +171,10 @@ public class hello_worldPublisher {
         }
 
         // --- Create writer --- //
-        /* If you use the durable writer history, you need to set 
-         * additional properties. These properties are been included 
-         * in its profile. To get more information see the 
-         * USER_QOS_PROFILES.xml file.
+        /* If you use Durable Writer History, you need to set several 
+         * properties. These properties are set in the USER_QOS_PROFILE.xml
+         * file, "durable_writer_history_Profile" profile. See that file for
+         * further details.
          */
         DDS.DataWriter writer = null;
         if (dwh == 1) {

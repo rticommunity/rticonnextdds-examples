@@ -47,17 +47,17 @@ open hello_world_example-csharp.sln and build the C# example.
 
 Running C# Example
 ==================
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
+Use two separate command prompts for publisher and subscriber. Run the following
+commands from the example directory (this is necessary to ensure the application
+loads the QoS defined in USER_QOS_PROFILES.xml):
 
-********* IF YOU ARE USING TIMESTEN, MAYBE YOU WILL NEED RUN THE COMMAND PROMPT 
-********* LIKE ADMINISTRATOR. OTHERWISE, DURABLE READER STATE, DURABLE WRITER 
-********* HISTORY AND PERSISTENCE SERVICE WILL NOT RUN CORRECTLY.
+**** IF YOU ARE USING TIMESTEN, YOU MAY NEED RUN THE COMMAND PROMPT AS      ****
+**** ADMINISTRATOR. OTHERWISE, NONE OF THE SCENARIOS WILL NOT RUN CORRECTLY ****
 
-(For TimesTen users) Besides, you need to uncomment the indicates lines in the 
-USER_QOS_PROFILES.xml and persistence_service_configuration.xml, to load the 
-correct driver (we assuming you have installed TimesTen 11.2.1)
+(For TimesTen users) In addition, you need to uncomment some lines in the 
+USER_QOS_PROFILES.xml and persistence_service_configuration.xml to load the 
+correct driver (we assuming you have installed TimesTen 11.2.1). Refer to those
+documents for further details.
 
 Run the scenarios as described in the presentation persistent_storage.pps
 

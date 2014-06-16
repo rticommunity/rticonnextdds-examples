@@ -230,11 +230,11 @@ public class hello_worldSubscriber {
             new hello_worldListener();
         DDS.DataReader reader = null;
 
-        /* If you use the durable reader state, you need to set 
-         * additional properties. These properties are been included 
-         * in its profile. To get more information see the 
-         * USER_QOS_PROFILES.xml file.
+        /* If you use Durable Reader State, you need to set up several properties.
+         * In this example, we have modified them using a QoS XML profile. See
+         * further details in USER_QOS_PROFILES.xml.
          */
+
         if (drs == 1) {
             reader = subscriber.create_datareader_with_profile(topic,
                 "persistence_example_Library",

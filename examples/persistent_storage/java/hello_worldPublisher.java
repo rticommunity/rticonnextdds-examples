@@ -214,10 +214,10 @@ public class hello_worldPublisher {
                 return;
             }
 
-            /*
-             * If you use the durable writer history, you need to set additional
-             * properties. These properties are been included in its profile. To
-             * get more information see the USER_QOS_PROFILES.xml file.
+            /* If you use Durable Writer History, you need to set several 
+             * properties. These properties are set in the USER_QOS_PROFILE.xml
+             * file, "durable_writer_history_Profile" profile. See that file for
+             * further details.
              */
 
             // --- Create writer --- //
