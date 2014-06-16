@@ -139,7 +139,7 @@ void coherentListener::on_data_available(DDSDataReader* reader) {
         }
     }
 
-    /* The, print the results */
+    /* Then, we print the results */
     if (len > 0) {
         printf("Received %d updates\n", len);
         print_state();

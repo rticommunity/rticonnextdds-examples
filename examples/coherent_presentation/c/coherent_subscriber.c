@@ -144,7 +144,7 @@ void coherentListener_on_data_available(void* listener_data,
         }
     }
 
-    /* Then, we print results */
+    /* Then, we print the results */
     if (len > 0) {
         printf("Received %d updates\n", len);
         print_state();

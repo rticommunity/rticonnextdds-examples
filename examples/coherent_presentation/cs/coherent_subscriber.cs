@@ -122,6 +122,7 @@ public class coherentSubscriber {
                 }
             }
 
+            // Then, we print the results
             if (len > 0) {
                 Console.WriteLine("Received {0} updates", len);
                 print_state();
