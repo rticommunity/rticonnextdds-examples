@@ -15,7 +15,7 @@ RTI Connext user manual.
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="/opt/RTI/ndds.5.0.0/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/rti_dds_qos_profiles.xsd"
-     version="5.0.0">
+     version="5.1.0">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.

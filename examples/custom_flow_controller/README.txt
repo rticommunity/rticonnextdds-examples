@@ -16,7 +16,7 @@ create a custom one for your needs.
 A FlowController is the object responsible for shaping the network traffic by 
 determining when attached asynchronous DataWriters are allowed to write data.
 
-This example shows how to create a custom flow controllers to manage a
+This example shows how to create a custom flow controller to manage a
 asynchronous publisher.
 
 Example Description

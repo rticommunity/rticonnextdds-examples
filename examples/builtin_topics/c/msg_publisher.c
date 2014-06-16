@@ -68,7 +68,7 @@ const char *auth = "password";
 /*
  * Set up a linked list of authorized participant keys.  Datareaders associated
  * with an authorized participant do not need to supply their own password.
-*/
+ */
 struct Auth_Node {
     DDS_BuiltinTopicKey_t key;
     struct Auth_Node *next;
@@ -79,11 +79,12 @@ struct Auth_Node *Auth_List = NULL;
 void add_auth_participant(const DDS_BuiltinTopicKey_t *participant_key) {
     struct Auth_Node *cur = Auth_List;
     if (Auth_List == NULL) {
-        cur = Auth_List = (struct Auth_Node*)(malloc(sizeof(struct Auth_Node)));
+        cur = Auth_List =
+                (struct Auth_Node*) (malloc(sizeof(struct Auth_Node)));
     } else {
-        while(cur->next != NULL)
+        while (cur->next != NULL)
             cur = cur->next;
-        cur->next = (struct Auth_Node*)(malloc(sizeof(struct Auth_Node)));
+        cur->next = (struct Auth_Node*) (malloc(sizeof(struct Auth_Node)));
         cur = cur->next;
     }
 
@@ -105,28 +106,26 @@ int is_auth_participant(const DDS_BuiltinTopicKey_t *participant_key) {
  * The builtin subscriber sets participant_qos.user_data and
  *  reader_qos.user_data, so we set up listeners for the builtin
  *  DataReaders to access these fields.
-*/
+ */
 
 /* This gets called when a participant has been discovered */
-void BuiltinParticipantListener_on_data_available(
-    void* listener_data, DDS_DataReader* reader)
-{
+void BuiltinParticipantListener_on_data_available(void* listener_data,
+        DDS_DataReader* reader) {
     DDS_ParticipantBuiltinTopicDataDataReader *builtin_reader = NULL;
-    struct DDS_ParticipantBuiltinTopicDataSeq data_seq = DDS_SEQUENCE_INITIALIZER;
+    struct DDS_ParticipantBuiltinTopicDataSeq data_seq =
+            DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
     DDS_ReturnCode_t retcode;
 
     int i;
     int len;
-    
+
     builtin_reader = DDS_ParticipantBuiltinTopicDataDataReader_narrow(reader);
-    
+
     /* We only process newly seen participants */
-    retcode = DDS_ParticipantBuiltinTopicDataDataReader_take(
-        builtin_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, 
-        DDS_ANY_SAMPLE_STATE, DDS_NEW_VIEW_STATE, 
-        DDS_ANY_INSTANCE_STATE);
+    retcode = DDS_ParticipantBuiltinTopicDataDataReader_take(builtin_reader,
+            &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
 
     /*
      * This happens when we get announcements from participants we
@@ -141,7 +140,7 @@ void BuiltinParticipantListener_on_data_available(
     }
 
     len = DDS_ParticipantBuiltinTopicDataSeq_get_length(&data_seq);
-    for(i = 0; i < len; ++i) {
+    for (i = 0; i < len; ++i) {
         struct DDS_SampleInfo* info = NULL;
         struct DDS_ParticipantBuiltinTopicData* data = NULL;
         char* participant_data = "nil";
@@ -149,14 +148,15 @@ void BuiltinParticipantListener_on_data_available(
 
         info = DDS_SampleInfoSeq_get_reference(&info_seq, i);
         data = DDS_ParticipantBuiltinTopicDataSeq_get_reference(&data_seq, i);
-        
+
         if (!info->valid_data)
             continue;
         /* see if there is any participant_data */
         if (DDS_OctetSeq_get_length(&data->user_data.value) != 0) {
 
             /* This sequence is guaranteed to be contiguous */
-            participant_data = (char*)(DDS_OctetSeq_get_reference(&data->user_data.value, 0));
+            participant_data = (char*) (DDS_OctetSeq_get_reference(
+                    &data->user_data.value, 0));
             if (strcmp(participant_data, auth) == 0) {
                 add_auth_participant(&data->key);
                 isauth = 1;
@@ -164,27 +164,40 @@ void BuiltinParticipantListener_on_data_available(
 
         }
 
-        printf("Built-in Reader: found participant \n\tkey->'%08x%08x%08x'\n\tuser_data->'%s'\n",
-               data->key.value[0],
-               data->key.value[1],
-               data->key.value[2],
-               participant_data);
-    }
+        printf("Built-in Reader: found participant \n");
+        printf("\tkey->'%08x%08x%08x'\n\tuser_data->'%s'\n",
+                data->key.value[0], data->key.value[1], data->key.value[2],
+                participant_data);
+    
+        /* Ignore unauthorized subscribers */
+        if (!isauth) {
+            /* Get the associated participant... */
+            DDS_DomainParticipant *participant = NULL;
+            DDS_Subscriber *subscriber = NULL;
+        
+            subscriber = DDS_DataReader_get_subscriber(reader);
+            participant = DDS_Subscriber_get_participant(subscriber);
 
+            printf("Bad authorization, ignoring participant\n");
+
+            /* Ignore the remote reader */
+            DDS_DomainParticipant_ignore_participant(participant,
+                    &info->instance_handle);
+        }
+    }
     retcode = DDS_ParticipantBuiltinTopicDataDataReader_return_loan(
-        builtin_reader, &data_seq, &info_seq);
+            builtin_reader, &data_seq, &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
-   
+
 /* This gets called when a new subscriber has been discovered */
-void BuiltinSubscriberListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
-{
+void BuiltinSubscriberListener_on_data_available(void* listener_data,
+        DDS_DataReader* reader) {
     DDS_SubscriptionBuiltinTopicDataDataReader *builtin_reader = NULL;
-    struct DDS_SubscriptionBuiltinTopicDataSeq data_seq = DDS_SEQUENCE_INITIALIZER;
+    struct DDS_SubscriptionBuiltinTopicDataSeq data_seq =
+            DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
     DDS_ReturnCode_t retcode;
 
@@ -194,11 +207,9 @@ void BuiltinSubscriberListener_on_data_available(
     builtin_reader = DDS_SubscriptionBuiltinTopicDataDataReader_narrow(reader);
 
     /* We only process newly seen subscribers */
-    retcode = DDS_SubscriptionBuiltinTopicDataDataReader_take(
-        builtin_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, 
-        DDS_ANY_SAMPLE_STATE, DDS_NEW_VIEW_STATE, 
-        DDS_ANY_INSTANCE_STATE);
+    retcode = DDS_SubscriptionBuiltinTopicDataDataReader_take(builtin_reader,
+            &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA)
         return;
@@ -220,23 +231,23 @@ void BuiltinSubscriberListener_on_data_available(
 
         if (!info->valid_data)
             continue;
-        
+
         /* See if this is associated with an authorized participant */
         if (is_auth_participant(&data->participant_key))
             isauth = 1;
-            
+
         /* See if there is any user_data */
         if (DDS_OctetSeq_get_length(&data->user_data.value) != 0) {
-            reader_data = (char*)(DDS_OctetSeq_get_reference(&data->user_data.value, 0));
+            reader_data = (char*) (DDS_OctetSeq_get_reference(
+                    &data->user_data.value, 0));
             if (!isauth && strcmp(reader_data, auth) == 0)
                 isauth = 1;
         }
 
-        printf("Built-in Reader: found subscriber \n\tparticipant_key->'%08x%08x%08x'\n\tuser_data->'%s'\n",
-               data->participant_key.value[0],
-               data->participant_key.value[1],
-               data->participant_key.value[2],
-               reader_data);
+        printf("Built-in Reader: found subscriber \n");
+        printf("\tparticipant_key->'%08x%08x%08x'\n\tuser_data->'%s'\n",
+                data->participant_key.value[0], data->participant_key.value[1],
+                data->participant_key.value[2], reader_data);
 
         /* Ignore unauthorized subscribers */
         if (!isauth) {
@@ -244,28 +255,26 @@ void BuiltinSubscriberListener_on_data_available(
             DDS_DomainParticipant *participant = NULL;
             DDS_Subscriber *subscriber = NULL;
 
-            subscriber = DDS_DataReader_get_subscriber(reader);            
+            subscriber = DDS_DataReader_get_subscriber(reader);
             participant = DDS_Subscriber_get_participant(subscriber);
 
             printf("Bad authorization, ignoring subscription\n");
-            
+
             /* Ignore the remote reader */
-            DDS_DomainParticipant_ignore_subscription(participant, &info->instance_handle);
+            DDS_DomainParticipant_ignore_subscription(participant,
+                    &info->instance_handle);
         }
     }
 
     retcode = DDS_SubscriptionBuiltinTopicDataDataReader_return_loan(
-        builtin_reader, &data_seq, &info_seq);
+            builtin_reader, &data_seq, &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
 
-
 /* Delete all entities */
-static int publisher_shutdown(
-    DDS_DomainParticipant *participant)
-{
+static int publisher_shutdown(DDS_DomainParticipant *participant) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -277,7 +286,7 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory, participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -285,22 +294,21 @@ static int publisher_shutdown(
     }
 
     /* RTI Data Distribution Service provides finalize_instance() method for
-       people who want to release memory used by the participant factory
-       singleton. Uncomment the following block of code for clean destruction of
-       the participant factory singleton. */
-/*
-    retcode = DDS_DomainParticipantFactory_finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        printf("finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-*/
+     people who want to release memory used by the participant factory
+     singleton. Uncomment the following block of code for clean destruction of
+     the participant factory singleton. */
+    /*
+     retcode = DDS_DomainParticipantFactory_finalize_instance();
+     if (retcode != DDS_RETCODE_OK) {
+     printf("finalize_instance error %d\n", retcode);
+     status = -1;
+     }
+     */
 
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count)
-{
+static int publisher_main(int domainId, int sample_count) {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
@@ -310,23 +318,27 @@ static int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
-    int count = 0;  
-    struct DDS_Duration_t send_period = {1,0};
-    struct DDS_DomainParticipantFactoryQos factory_qos = DDS_DomainParticipantFactoryQos_INITIALIZER;
+    int count = 0;
+    struct DDS_Duration_t send_period = { 1, 0 };
+    struct DDS_DomainParticipantFactoryQos factory_qos =
+            DDS_DomainParticipantFactoryQos_INITIALIZER;
     DDS_DataReader *builtin_participant_datareader = NULL;
-    struct DDS_DataReaderListener builtin_participant_listener = DDS_DataReaderListener_INITIALIZER;
+    struct DDS_DataReaderListener builtin_participant_listener =
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *builtin_subscriber_datareader = NULL;
-    struct DDS_DataReaderListener builtin_subscriber_listener = DDS_DataReaderListener_INITIALIZER;
+    struct DDS_DataReaderListener builtin_subscriber_listener =
+            DDS_DataReaderListener_INITIALIZER;
     DDS_Subscriber *builtin_subscriber = NULL;
 
     /* It is recommended to install built-in topic listeners on disabled
      * entities (EntityFactoryQoS). For this reason it is necessary to set
-     * the autoenable_created_entities setting to false. To do this programmatically,
-     * just uncomment the following code
+     * the autoenable_created_entities setting to false. To do this
+     * programmatically, just uncomment the following code
      */
 
     /*
-    retcode = DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory, &factory_qos);
+    retcode = DDS_DomainParticipantFactory_get_qos(DDS_TheParticipantFactory,
+            &factory_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("Cannot get factory Qos for domain participant\n");
         return -1;
@@ -334,21 +346,25 @@ static int publisher_main(int domainId, int sample_count)
 
     factory_qos.entity_factory.autoenable_created_entities = DDS_BOOLEAN_FALSE;
 
-    switch(DDS_DomainParticipantFactory_set_qos(DDS_TheParticipantFactory, &factory_qos)) {
+    switch(DDS_DomainParticipantFactory_set_qos(DDS_TheParticipantFactory,
+            &factory_qos)) {
         case DDS_RETCODE_OK:
             break;
         case DDS_RETCODE_IMMUTABLE_POLICY: {    
-            printf("Cannot set factory Qos due to IMMUTABLE_POLICY for domain participant\n");
+            printf("Cannot set factory Qos due to IMMUTABLE_POLICY");
+            printf(" for domain participant\n");
             return -1;
             break;
         }
         case DDS_RETCODE_INCONSISTENT_POLICY: {    
-            printf("Cannot set factory Qos due to INCONSISTENT_POLICY for domain participant\n");
+            printf("Cannot set factory Qos due to INCONSISTENT_POLICY ");
+            printf("for domain participant\n");
             return -1;
             break;
         }
         default: {
-            printf("Cannot set factory Qos for unknown reason for domain participant\n");
+            printf("Cannot set factory Qos for unknown reason for domain ");
+            printf("participant\n");
             return -1;
             break;
         }
@@ -375,7 +391,8 @@ static int publisher_main(int domainId, int sample_count)
     /*
      * First, get the builtin subscriber
      */
-    builtin_subscriber = DDS_DomainParticipant_get_builtin_subscriber(participant);
+    builtin_subscriber = DDS_DomainParticipant_get_builtin_subscriber(
+            participant);
     if (builtin_subscriber == NULL) {
         printf("***Error: failed to create builtin subscriber\n");
         return -1;
@@ -385,7 +402,8 @@ static int publisher_main(int domainId, int sample_count)
      * Then get builtin subscriber's datareader for participants
      */
     builtin_participant_datareader =
-        DDS_Subscriber_lookup_datareader(builtin_subscriber, DDS_PARTICIPANT_TOPIC_NAME);
+        DDS_Subscriber_lookup_datareader(builtin_subscriber,
+                DDS_PARTICIPANT_TOPIC_NAME);
 
     if (builtin_participant_datareader == NULL) {
         printf("***Error: failed to create builtin participant data reader\n");
@@ -412,7 +430,8 @@ static int publisher_main(int domainId, int sample_count)
      *  Get builtin subscriber's datareader for subscribers
      */
     builtin_subscriber_datareader =
-        DDS_Subscriber_lookup_datareader(builtin_subscriber, DDS_SUBSCRIPTION_TOPIC_NAME);
+        DDS_Subscriber_lookup_datareader(builtin_subscriber,
+                DDS_SUBSCRIPTION_TOPIC_NAME);
 
     if (builtin_subscriber_datareader == NULL) {
         printf("***Error: failed to create builtin subscription data reader\n");

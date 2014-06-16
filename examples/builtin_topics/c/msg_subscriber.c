@@ -55,53 +55,37 @@ modification history
 #include "msg.h"
 #include "msgSupport.h"
 
-void msgListener_on_requested_deadline_missed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedDeadlineMissedStatus *status)
-{
+void msgListener_on_requested_deadline_missed(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status) {
 }
 
-void msgListener_on_requested_incompatible_qos(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedIncompatibleQosStatus *status)
-{
+void msgListener_on_requested_incompatible_qos(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status) {
 
 }
 
-void msgListener_on_sample_rejected(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleRejectedStatus *status)
-{
+void msgListener_on_sample_rejected(void* listener_data, DDS_DataReader* reader,
+        const struct DDS_SampleRejectedStatus *status) {
 }
 
-void msgListener_on_liveliness_changed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_LivelinessChangedStatus *status)
-{
+void msgListener_on_liveliness_changed(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_LivelinessChangedStatus *status) {
 }
 
-void msgListener_on_sample_lost(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleLostStatus *status)
-{
+void msgListener_on_sample_lost(void* listener_data, DDS_DataReader* reader,
+        const struct DDS_SampleLostStatus *status) {
 }
 
-void msgListener_on_subscription_matched(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SubscriptionMatchedStatus *status)
-{
+void msgListener_on_subscription_matched(void* listener_data,
+        DDS_DataReader* reader,
+        const struct DDS_SubscriptionMatchedStatus *status) {
 }
 
-void msgListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
-{
+void msgListener_on_data_available(void* listener_data,
+        DDS_DataReader* reader) {
     msgDataReader *msg_reader = NULL;
     struct msgSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
@@ -114,10 +98,9 @@ void msgListener_on_data_available(
         return;
     }
 
-    retcode = msgDataReader_take(
-        msg_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = msgDataReader_take(msg_reader, &data_seq, &info_seq,
+            DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -127,23 +110,18 @@ void msgListener_on_data_available(
 
     for (i = 0; i < msgSeq_get_length(&data_seq); ++i) {
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
-            msgTypeSupport_print_data(
-                msgSeq_get_reference(&data_seq, i));
+            msgTypeSupport_print_data(msgSeq_get_reference(&data_seq, i));
         }
     }
 
-    retcode = msgDataReader_return_loan(
-        msg_reader,
-        &data_seq, &info_seq);
+    retcode = msgDataReader_return_loan(msg_reader, &data_seq, &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDS_DomainParticipant *participant)
-{
+static int subscriber_shutdown(DDS_DomainParticipant *participant) {
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -155,7 +133,7 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory, participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -178,25 +156,24 @@ static int subscriber_shutdown(
 }
 
 static int subscriber_main(int domainId, int sample_count,
-                           char *participant_auth, char *reader_auth)
-{
+        char *participant_auth, char *reader_auth) {
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-        DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {1,0};
-    struct DDS_DomainParticipantQos participant_qos = DDS_DomainParticipantQos_INITIALIZER;
+    struct DDS_Duration_t poll_period = { 1, 0 };
+    struct DDS_DomainParticipantQos participant_qos =
+            DDS_DomainParticipantQos_INITIALIZER;
     struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
     int len, max;
 
-
-
-    retcode = DDS_DomainParticipantFactory_get_default_participant_qos(DDS_TheParticipantFactory, &participant_qos);
+    retcode = DDS_DomainParticipantFactory_get_default_participant_qos(
+            DDS_TheParticipantFactory, &participant_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_participant_qos error\n");
         return -1;
@@ -204,7 +181,7 @@ static int subscriber_main(int domainId, int sample_count,
 
     /* We include the subscriber credentials into de USER_DATA QoS. */
 
-    len = strlen(participant_auth) + 1;
+    len = strlen(participant_auth);
     max = participant_qos.resource_limits.participant_user_data_max_length;
 
     if (len > max) {
@@ -215,32 +192,33 @@ static int subscriber_main(int domainId, int sample_count,
          *  on your system, this will not work.
          */
         DDS_OctetSeq_from_array(&participant_qos.user_data.value,
-                                (DDS_Octet*)(participant_auth), len);
+                (DDS_Octet*) (participant_auth), len);
     }
 
-
     /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
-       instead of participant_qos */
+     instead of participant_qos */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &participant_qos,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory, domainId, &participant_qos,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-    /* Done!  All the listeners are installed, so we can enable the participant now. */
-    if (DDS_Entity_enable((DDS_Entity*)participant) != DDS_RETCODE_OK) {
+    /* Done!  All the listeners are installed, so we can enable the
+     * participant now.
+     */
+    if (DDS_Entity_enable((DDS_Entity*) participant) != DDS_RETCODE_OK) {
         printf("***Error: Failed to Enable Participant\n");
         return -1;
     }
 
     /* To customize subscriber QoS, use
-       DDS_DomainParticipant_get_default_subscriber_qos() */
-    subscriber = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     DDS_DomainParticipant_get_default_subscriber_qos() */
+    subscriber = DDS_DomainParticipant_create_subscriber(participant,
+            &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -257,11 +235,10 @@ static int subscriber_main(int domainId, int sample_count,
     }
 
     /* To customize topic QoS, use
-       DDS_DomainParticipant_get_default_topic_qos() */
-    topic = DDS_DomainParticipant_create_topic(
-        participant, "Example msg",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+     DDS_DomainParticipant_get_default_topic_qos() */
+    topic = DDS_DomainParticipant_create_topic(participant, "Example msg",
+            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -269,34 +246,31 @@ static int subscriber_main(int domainId, int sample_count,
     }
 
     /* Setup data reader listener */
-    reader_listener.on_requested_deadline_missed  =
-        msgListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            msgListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-        msgListener_on_requested_incompatible_qos;
-    reader_listener.on_sample_rejected =
-        msgListener_on_sample_rejected;
-    reader_listener.on_liveliness_changed =
-        msgListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-        msgListener_on_sample_lost;
+            msgListener_on_requested_incompatible_qos;
+    reader_listener.on_sample_rejected = msgListener_on_sample_rejected;
+    reader_listener.on_liveliness_changed = msgListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = msgListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-        msgListener_on_subscription_matched;
-    reader_listener.on_data_available =
-        msgListener_on_data_available;
+            msgListener_on_subscription_matched;
+    reader_listener.on_data_available = msgListener_on_data_available;
 
     /*
      * Start changes for Builtin_Topics
      * Set user_data qos field for datareader
-	*/
+     */
 
     /* Get default datareader QoS to customize */
-    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber, &datareader_qos);
+    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber,
+            &datareader_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datareader_qos error\n");
         return -1;
     }
 
-    len = strlen(reader_auth) + 1;
+    len = strlen(reader_auth);
     max = participant_qos.resource_limits.reader_user_data_max_length;
 
     if (len > max) {
@@ -304,17 +278,17 @@ static int subscriber_main(int domainId, int sample_count,
     } else {
         /*
          * DDS_Octet is defined to be 8 bits.  If chars are not 8 bits
-          on your system, this will not work.
-          */
+         on your system, this will not work.
+         */
         DDS_OctetSeq_from_array(&datareader_qos.user_data.value,
-                                (DDS_Octet*)(reader_auth), len);
+                (DDS_Octet*) (reader_auth), len);
     }
 
     /* To create datareader with default QoS, use DDS_DATAREADER_QOS_DEFAULT
-       instead of datareader_qos */
-    reader = DDS_Subscriber_create_datareader(
-        subscriber, DDS_Topic_as_topicdescription(topic),
-        &datareader_qos, &reader_listener, DDS_STATUS_MASK_ALL);
+     instead of datareader_qos */
+    reader = DDS_Subscriber_create_datareader(subscriber,
+            DDS_Topic_as_topicdescription(topic), &datareader_qos,
+            &reader_listener, DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -322,15 +296,15 @@ static int subscriber_main(int domainId, int sample_count,
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-/*
-  printf("msg subscriber sleeping for %d sec...\n",
-               poll_period.sec);
-*/
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        /*
+         printf("msg subscriber sleeping for %d sec...\n",
+         poll_period.sec);
+         */
         NDDS_Utility_sleep(&poll_period);
     }
 
-    /* Cleanup and delete delete all entities */ 
+    /* Cleanup and delete delete all entities */
     return subscriber_shutdown(participant);
 }
 
@@ -339,7 +313,7 @@ int wmain(int argc, wchar_t** argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
-    
+
     if (argc >= 2) {
         domainId = _wtoi(argv[1]);
     }
@@ -357,8 +331,7 @@ int wmain(int argc, wchar_t** argv)
     return subscriber_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -367,8 +340,10 @@ int main(int argc, char *argv[])
      * Get arguments for auth strings and pass to subscriber_main()
      */
 
-    char *participant_auth = "password";
-    char *reader_auth = "Reader_Auth";
+    char *participant_auth = strdup("password");
+    char *reader_auth = strdup("Reader_Auth");
+    char *temp_participant_auth;
+    char *temp_reader_auth;
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);
@@ -383,6 +358,14 @@ int main(int argc, char *argv[])
         reader_auth = argv[4];
     }
 
+    /* Create strings ensuring they finish in '\0' */
+    temp_participant_auth = (char*) calloc(strlen(participant_auth) + 1,
+            sizeof(char));
+    strcpy(temp_participant_auth, participant_auth);
+
+    temp_reader_auth = (char*) calloc(strlen(reader_auth) + 1, sizeof(char));
+    strcpy(temp_reader_auth, reader_auth);
+
     /* Uncomment this to turn on additional logging
     NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
@@ -390,6 +373,12 @@ int main(int argc, char *argv[])
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
-    return subscriber_main(domainId, sample_count, participant_auth, reader_auth);    
+    subscriber_main(domainId, sample_count, temp_participant_auth,
+            temp_reader_auth);
+    
+    free(temp_reader_auth);
+    free(temp_participant_auth);
+
+    return 0;
 }
 #endif
