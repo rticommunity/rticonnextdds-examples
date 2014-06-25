@@ -27,13 +27,13 @@ many samples via multicast. After filtering in on_data_available, the rest of
 the application does not need to deal with keys it doesn't care about. 
 
 The example creates two DataWriters:
- A) DW1 : It writes positive numbers. Has a OWNERSHIP strenght of 10.
- B) DW2 : It writes negative numbers. Has a OWNERSHIP strenght of 5.
+ A) DW1 : It writes positive numbers. Has a OWNERSHIP strength of 10.
+ B) DW2 : It writes negative numbers. Has a OWNERSHIP strength of 5.
 
 These DataWrites have the following behavior: 
- - At t=0 DW1 starts continously writting to an instance (ins0).
+ - At t=0 DW1 starts continuously writing to an instance (ins0).
 
- - At t=0 DW2 starts continously writting to an instance (ins1).
+ - At t=0 DW2 starts continuously writing to an instance (ins1).
 
  - At t=4 DW1 registers two instances (ins1 and ins2).
    Since DW1 has the greater OWNERSHIP strength, only its ins1 updates are delivered to the DR.
