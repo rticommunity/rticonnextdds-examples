@@ -18,7 +18,7 @@ get_<type>_seq(). However, such approach is not possible for non-primitive data
 (such as user defined types).
 
 Dynamic data allows accessing to the elements of arrays and sequences using 
-a 1-based index access. For this purpuse the use of methods such 
+a 1-based index access. For this purpose the use of methods such 
 get_complex_member() or bind_complex_member() are required. 
 
 Example description

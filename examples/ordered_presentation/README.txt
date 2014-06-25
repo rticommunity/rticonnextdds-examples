@@ -52,7 +52,7 @@ datawriter, and not from all writers of that topic. Also note that ordered-
 access configuration needs to be configured in the subscription side makes so 
 samples are read in an ordered manner. 
 
-The Subscriber application ilustrates the effects of the access_scope 
+The Subscriber application illustrates the effects of the access_scope 
 presentation QoS, to creates two DDS subscribers. Subscriber 0 uses instance 
 scope, meaning changes and samples are only guaranteed to be ordered *within* a 
 given instance. Subscriber 1 uses topic scope, which enforces order *across* 

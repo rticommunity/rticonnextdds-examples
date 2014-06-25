@@ -19,7 +19,7 @@ flow controller.
 
 Large data is defined as samples larger than the message_size_max of the installed 
 transports. Sending large data requires a sample to be fragmented into smaller 
-messages, and reassembled at the other end. Sending large data RELIABILY 
+messages, and reassembled at the other end. Sending large data RELIABLY 
 requires the use of an asynchronous publisher.
 
 The default QoS configuration must be modified to use a high priority
@@ -54,7 +54,7 @@ by rtiddsgen.
 4. Configure data writer to use the High Priority First flow controller installed 
    with the participant. 
    
-   Assigns a priority of 10 to the DataWriiter (for illustration).
+   Assigns a priority of 10 to the DataWriter (for illustration).
 
    4.1 Assuming LARGE DATA will be sent, optimize the RESOURCE_LIMITS
        and the PROTOCOL. Those settings can be skipped if large data is not 

@@ -5,7 +5,7 @@
 Concept
 -------
 
-Connext DDS interacts with the underlying network/communications transport via a 
+RTI Connext DDS interacts with the underlying network/communications transport via a 
 RTI Pluggable Transport API (PT API).  
 The PT API sits in the protocol stack below the DDS Protocol (DDS-RTPS) layer. 
 It is used for sending and receiving all the information between DomainParticipants. 
@@ -29,7 +29,7 @@ mechanism and gives them to the DDS-RTPS layer above.
 | <Transport Implementation> |
 +----------------------------+
 
-Connext DDS uses the PT API to implement all the supported transports bundled in the
+RTI Connext DDS uses the PT API to implement all the supported transports bundled in the
 standard distribution, including UDP/IP, TCP/IP, TLS, DTLS, Shared Memory, etc.  
 
 Application developers can use the PT API to develop custom transports. 
@@ -131,7 +131,7 @@ Multiple DomainParticipants can communicate using the FileTransport.
 The DomainParticipants may run on different computers as
 long as they have access to some common file systems. 
 
-DomainPartiipants may also be configured to have different "addresses" regardless
+DomainParticipants may also be configured to have different "addresses" regardless
 of weather they run on the same computer. The FileTransort only uses the address 
 to construct the filename.
 

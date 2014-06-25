@@ -38,7 +38,7 @@ just "D". You will notice that the DataReader does not have to specify multiple
 multicast receive addresses, because it learns about the DataWriter's 
 receive_addresses upon endpoint discovery and then receives on them. 
 
-The example includes also two pcap files captured with Wireshark that
+The example includes also two PCAP files captured with Wireshark that
 show the traffic using multichannel and single channel.
 
 - multichannel.pcap shows the wire traffic when multichannel is used. 
