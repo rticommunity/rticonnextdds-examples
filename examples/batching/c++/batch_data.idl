@@ -1,0 +1,3 @@
+struct batch_data {
+    long x;
+};
