@@ -263,7 +263,8 @@ public class batch_dataSubscriber {
 
                     if (info.valid_data) {
                         System.out.println(
-                            ((batch_data)_dataSeq.get(i)).toString("Received",0));
+                            ((batch_data)_dataSeq.get(i)).
+                                toString("Received",0));
 
 
                     }

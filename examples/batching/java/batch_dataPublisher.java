@@ -114,7 +114,8 @@ public class batch_dataPublisher {
     
     // -----------------------------------------------------------------------
     
-    private static void publisherMain(int domainId, int sampleCount, int turbo_mode_on) {
+    private static void publisherMain(int domainId, int sampleCount, 
+            int turbo_mode_on) {
 
         DomainParticipant participant = null;
         Publisher publisher = null;
@@ -202,8 +203,8 @@ public class batch_dataPublisher {
             batch_data instance = new batch_data();
 
             InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
-            /* For a data type that has a key, if the same instance is going to be
-               written multiple times, initialize the key here
+            /* For a data type that has a key, if the same instance is going to
+               be written multiple times, initialize the key here
                and register the keyed instance prior to writing */
             //instance_handle = writer.register_instance(instance);
 
