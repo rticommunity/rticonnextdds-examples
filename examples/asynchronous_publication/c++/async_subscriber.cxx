@@ -119,7 +119,7 @@ void asyncListener::on_data_available(DDSDataReader* reader)
             //// Start changes for Asynchronous_Publication
             // print the time we get each sample.
             double elapsed_ticks = clock() - init;
-            double elapsed_secs = elapsed_ticks/CLK_TCK;
+            double elapsed_secs = elapsed_ticks/CLOCKS_PER_SEC;
 
             printf("@ t=%.2fs, got x = %d\n",
                    elapsed_secs, data_seq[i].x);

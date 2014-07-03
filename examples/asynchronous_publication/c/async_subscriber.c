@@ -51,8 +51,8 @@ modification history
 #include "async.h"
 #include "asyncSupport.h"
 
-//// Changes for Asynchronous_Publication
-// For timekeeping
+/* Changes for Asynchronous_Publication*/
+/* For timekeeping */
 #include <time.h>
 clock_t init;
 
@@ -127,15 +127,15 @@ void asyncListener_on_data_available(
 
     for (i = 0; i < asyncSeq_get_length(&data_seq); ++i) {
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
-            //// Start changes for Asynchronous_Publication
-            // print the time we get each sample.
+            /* Start changes for Asynchronous_Publication */
+            /* print the time we get each sample. */
             double elapsed_ticks = clock() - init;
-            double elapsed_secs = elapsed_ticks/CLK_TCK;
+            double elapsed_secs = elapsed_ticks/CLOCKS_PER_SEC;
 
             printf("@ t=%.2fs, got x = %d\n",
                    elapsed_secs, asyncSeq_get_reference(&data_seq, i)->x);
 
-            //// End changes for Asynchronous_Publication
+            /* End changes for Asynchronous_Publication */
 
         }
     }
@@ -198,8 +198,8 @@ static int subscriber_main(int domainId, int sample_count)
     int count = 0;
     struct DDS_Duration_t poll_period = {4,0};
 
-	//// Changes for Asynchronous_Publication
-    // for timekeeping
+	/* Changes for Asynchronous_Publication */
+    /* for timekeeping */
     init = clock();
 
     /* To customize participant QoS, use 
