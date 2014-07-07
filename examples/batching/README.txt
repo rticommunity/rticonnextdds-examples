@@ -19,33 +19,28 @@ limited by CPU capacity and not by network bandwidth. Batching many smaller
 samples to be sent in a single large packet will increase network utilization 
 and thus throughput in terms of samples per second.
 
-In the other hand, 'Turbo Mode' is an experimental feature that uses an 
-intelligent algorithm that automatically adjusts the number of bytes in a batch
-at run time according to current system conditions, such as write speed 
-(or write frequency) and sample size. This intelligence is what gives it the 
-ability to increase throughput at high message rates and avoid negatively 
-impacting message latency at low message rates
+Turbo Mode is an experimental feature that uses an intelligent algorithm 
+that adjusts the number of bytes in a batch at runtime according to 
+current system conditions, such as write speed (or write frequency) and 
+sample size. This intelligence is what gives it the ability to increase 
+throughput at high message rates and avoid negatively impacting message 
+latency at low message rates
 
 Example description
 --------------------
-PUBLISHER
 This example shows the differences between batching and turbo mode. Both options
-will send batch. This means that instead of sending each sample out on the wire
-with its own header, the example will store the data in a batch until it is full 
-and then sending the entire batch as one data packet. This saves on overhead 
-taken up by headers and such because all the data in the batch shares the same 
-header. 
+will send batches. This means that instead of sending each sample out on the wire
+with its own header, the middleware will store the data in a batch until it is full 
+and then will send the entire batch as one data packet.
 
-We have two different publisher (two different profiles). The first of them, 
-we will use the batch QoS setting. We can write specifically how many samples 
-have the batch. You can use Wireshark to see this feature: 
+The publisher application has two configurations (two different profiles):
+
+- The first one uses the Batching QoS setting. We have included a package capture
+you can analyze using wireshark.
+
     batchin_10_samples.pcap file package no. 98.
 
-The other way, Turbo Mode can be used and the number of samples in the batch 
-(if it is needed to use batching) will be chosen automatically. In this case 
-the used batch is 15 samples. You can use Wireshark to see this feature:
-    turbo_mode.pcap file package no. 76.
+- The second one uses Turbo Mode. We have included a package capture you can
+analyze using wireshark.
 
-SUBSCRIBER
-No change from default behavior except for a few modifications to load its 
-corresponding profiles. 
+    turbo_mode.pcap file package no. 76.
