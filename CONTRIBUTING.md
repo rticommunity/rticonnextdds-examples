@@ -5,6 +5,7 @@ In order to accept your pull request, we need you to sign a Contributor License 
 
 ### License
 (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+
 RTI grants Licensee a license to use, modify, compile, and create derivative works 
 of the Software.  Licensee has the right to distribute object form only for use with RTI 
 products.  The Software is provided “as is”, with no warranty of any type, including 
