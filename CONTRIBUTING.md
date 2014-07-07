@@ -4,8 +4,6 @@
 In order to accept your pull request, we need you to sign a Contributor License Agreement (CLA). Complete your CLA here: http://community.rti.com/cla. You only need to do this once, we cross-check your Github username with the list of contributors who have signed the CLA.
 
 ### License
-(c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
-
 RTI grants Licensee a license to use, modify, compile, and create derivative works 
 of the Software.  Licensee has the right to distribute object form only for use with RTI 
 products.  The Software is provided “as is”, with no warranty of any type, including 
