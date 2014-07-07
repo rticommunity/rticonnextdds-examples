@@ -18,7 +18,6 @@ aircraft is on a collision course).
 
 Example Description
 -------------------
-PUBLISHER:
 This example illustrates how to use coherency QoS to force writes to be grouped 
 on the receiving side. Suppose the reader is tracking the state of an object 
 with many fields. If changes to fields occur relatively infrequently, it is 
@@ -30,7 +29,6 @@ updates to occur atomically. Coherent presentation at the instance level scope
 allows us to do this. If there are additional dependencies *across* instances, 
 topic level scope makes these changes atomic to the reader.
 
-SUBSCRIBER:
 This shows how coherent access can be used to ensure written samples are viewed 
 atomically; that is, all samples sent between begin_ and end_coherent changes 
 will be available before the reader is notified that there are samples to read.

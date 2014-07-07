@@ -24,7 +24,6 @@ expression.
 
 Example Description
 -------------------
-
 In this example, the publisher application reliably transmits 0, 1, 2, .. 9 and 
 repeats. The last twenty samples are saved for late joiners. 
 
@@ -34,11 +33,14 @@ expression: "name MATCH %0", but it could be a static string as well, such as
 "name MATCH 'RTI'". The filter parameters, represented by %k(where k = 0 to 99),
 are passed in as a DDS_StringSeq when the content filtered topic is created. 
 
-To create this kind of topic, we need to use the next function:
-    create_contentfilteredtopic_with_filter()
-using DDS_STRINGMATCHFILTER_NAME like 'filter_name'.
+To create this kind of topic, we need to use create_contentfilteredtopic_with_filter
+as follows:
 
-These parameters can be changed at runtime via append_to_expression_parameter()
+create_contentfilteredtopic_with_filter(
+            "ContentFilteredTopic", topic, "name MATCH %0", parameters, 
+            DDS_STRINGMATCHFILTER_NAME);
+
+Parameters can be changed at runtime via append_to_expression_parameter()
 and remove_from_expression_parameter(). In the example we the expression 
 parameters to three different values. 
 

@@ -1,9 +1,6 @@
 ===========================================
  Example Code -- Persistent Storage
 ===========================================
-This file explains different methods to storage data persistently. For details 
-on configuring the databases needed for some of these methods, refer to the file
-README_DATABASES.txt.
 
 Concept
 -------
@@ -82,4 +79,11 @@ This example shows the three different scenarios explained above.
 - Persistence Service
     1. When Persistence Service is running, it stores all the samples sent.
     2. Then when a new DataReader joins, Persistence Service re-sends them to 
-       the DataReaders,even if the DataWriter is no longer alive.
+       the DataReaders, even if the DataWriter is no longer alive.
+
+
+Note
+----
+This file explains different methods to storage data persistently. For details 
+on configuring the databases needed for some of these methods, refer to the file
+README_DATABASES.txt.

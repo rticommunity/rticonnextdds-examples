@@ -1,56 +1,61 @@
 <?xml version="1.0"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:noNamespaceSchemaLocation="rti_persistence_service.xsd">
-	<!-- QoS Library containing the QoS profile used in the generated example. 
-		A QoS library is a named set of QoS profiles. -->
-	<persistence_service name="persistence_service_filesystem">
-		<persistent_storage>
-			<filesystem>
-				<file_prefix>PS_</file_prefix>
-			</filesystem>
-		</persistent_storage>
+    xsi:noNamespaceSchemaLocation="rti_persistence_service.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example. 
+        A QoS library is a named set of QoS profiles. -->
+    <persistence_service name="persistence_service_filesystem">
+        <persistent_storage>
+            <filesystem>
+                <file_prefix>PS_</file_prefix>
+            </filesystem>
+        </persistent_storage>
 
-		<participant name="persistence_participant">
-			<!-- Choose the same domain that the publisher/subscriber will run <domain_id>201</domain_id> -->
-			<persistence_group>
-				<filter>*</filter>
-				<use_durability_service>false</use_durability_service>
-				<single_publisher>true</single_publisher>
-				<single_subscriber>true</single_subscriber>
-				<datawriter_qos base_name="BuiltinQosLibExp::Generic.StrictReliable" />
-				<datareader_qos base_name="BuiltinQosLibExp::Generic.StrictReliable" />
-			</persistence_group>
-		</participant>
+        <participant name="persistence_participant">
+            <!-- Choose the same domain that the publisher/subscriber will 
+                run <domain_id>201</domain_id> -->
+            <persistence_group>
+                <filter>*</filter>
+                <use_durability_service>false</use_durability_service>
+                <single_publisher>true</single_publisher>
+                <single_subscriber>true</single_subscriber>
+                <datawriter_qos
+                    base_name="BuiltinQosLibExp::Generic.StrictReliable" />
+                <datareader_qos
+                    base_name="BuiltinQosLibExp::Generic.StrictReliable" />
+            </persistence_group>
+        </participant>
 
-	</persistence_service>
+    </persistence_service>
 
-	<persistence_service name="persistence_service_database">
-		<persistent_storage>
-			<external_database>
-				<!-- DSN used to connect to the database using ODBC. You should create 
-					this DSN through the ODBC settings on Windows systems, or in your .odbc.ini 
-					file on UNIX/Linux systems. -->
-				<dsn>test_dsn</dsn>
-				<!-- Use this odbc_library if you are going to use TimesTen. For MySql 
-					let it commented -->
-				<!-- <odbc_library>ttdv1121.dll</odbc_library> -->
-				<!-- There are additional tags like username and password, add them if 
-					your DataBase needs this arguments -->
-			</external_database>
-		</persistent_storage>
+    <persistence_service name="persistence_service_database">
+        <persistent_storage>
+            <external_database>
+                <!-- DSN used to connect to the database using ODBC. You 
+                    should create this DSN through the ODBC settings on Windows systems, or in 
+                    your .odbc.ini file on UNIX/Linux systems. -->
+                <dsn>test_dsn</dsn>
+                <!-- Use this odbc_library if you are going to use TimesTen. 
+                    For MySql let it commented -->
+                <!-- <odbc_library>ttdv1121.dll</odbc_library> -->
+                <!-- There are additional tags like username and password, 
+                    add them if your DataBase needs this arguments -->
+            </external_database>
+        </persistent_storage>
 
-		<participant name="persistence_database_participant">
-			<!-- Choose the same domain that the publisher/subscriber -->
-			<!-- <domain_id>201</domain_id> -->
-			<persistence_group>
-				<filter>*</filter>
-				<use_durability_service>false</use_durability_service>
-				<single_publisher>true</single_publisher>
-				<single_subscriber>true</single_subscriber>
-				<datawriter_qos base_name="BuiltinQosLibExp::Generic.StrictReliable" />
-				<datareader_qos base_name="BuiltinQosLibExp::Generic.StrictReliable" />
-			</persistence_group>
-		</participant>
-	</persistence_service>
+        <participant name="persistence_database_participant">
+            <!-- Choose the same domain that the publisher/subscriber -->
+            <!-- <domain_id>201</domain_id> -->
+            <persistence_group>
+                <filter>*</filter>
+                <use_durability_service>false</use_durability_service>
+                <single_publisher>true</single_publisher>
+                <single_subscriber>true</single_subscriber>
+                <datawriter_qos
+                    base_name="BuiltinQosLibExp::Generic.StrictReliable" />
+                <datareader_qos
+                    base_name="BuiltinQosLibExp::Generic.StrictReliable" />
+            </persistence_group>
+        </participant>
+    </persistence_service>
 </dds>
     
