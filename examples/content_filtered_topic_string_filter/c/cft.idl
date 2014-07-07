@@ -1,0 +1,4 @@
+struct cft {
+    long count;
+    string name;//@key
+};

@@ -167,37 +167,38 @@ static int publisher_main(int domainId, int sample_count)
 	 * which enables asynchronous publishing.  We also set the flow controller
 	 * to be the fixed rate flow controller, and we increase the history depth.
      */
+	/*
+    /* Start changes for Asynchronous_Publication */
 
     /* Get default datawriter QoS to customize */
-    
-    /*
-    retcode = DDS_Publisher_get_default_datawriter_qos(publisher, &datawriter_qos);
+/*    retcode = DDS_Publisher_get_default_datawriter_qos(publisher, &datawriter_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datawriter_qos error\n");
         return -1;
     }
+
+*/    /* Since samples are only being sent once per second, datawriter will need
+       to keep them on queue.  History defaults to only keeping the last
+       sample enqueued, so we increase that here.
     */
-    /* Since samples are only being sent once per second, datawriter will need
-     * to keep them on queue.  History defaults to only keeping the last
-     * sample enqueued, so we increase that here.*/
-    /* datawriter_qos.history.depth = 12; */
+/*    datawriter_qos.history.depth = 12;
 
-    /* Set flowcontroller for datawriter */
-    /*datawriter_qos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
-    datawriter_qos.publish_mode.flow_controller_name = DDS_FIXED_RATE_FLOW_CONTROLLER_NAME;*/
+*/    /* Set flowcontroller for datawriter */
+/*    datawriter_qos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
+    datawriter_qos.publish_mode.flow_controller_name = DDS_FIXED_RATE_FLOW_CONTROLLER_NAME;
 
-    /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
+*/    /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
        instead of datawriter_qos */
-    /*
-    writer = DDS_Publisher_create_datawriter(
+
+/*    writer = DDS_Publisher_create_datawriter(
         publisher, topic,
-        &datawriter_qos, NULL , DDS_STATUS_MASK_NONE);
+        &datawriter_qos, NULL, DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
         return -1;
     }
-    */
+*/
     async_writer = asyncDataWriter_narrow(writer);
     if (async_writer == NULL) {
         printf("DataWriter narrow error\n");
@@ -229,7 +230,7 @@ static int publisher_main(int domainId, int sample_count)
         printf("Writing async, count %d\n", count);
 
         /* Modify the data to be written here */
-        // send count as data.
+        /* send count as data. */
         instance->x = count;        
 
         /* Write data */
@@ -242,8 +243,8 @@ static int publisher_main(int domainId, int sample_count)
         NDDS_Utility_sleep(&send_period);
     }
 
-	//// Changes for Asynchronous_Publication
-    // Give time for publisher to send out last few samples
+	/* Changes for Asynchronous_Publication */
+    /* Give time for publisher to send out last few samples */
     send_period.sec = 1;
     NDDS_Utility_sleep(&send_period);
 

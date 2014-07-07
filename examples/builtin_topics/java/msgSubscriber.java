@@ -125,7 +125,8 @@ public class msgSubscriber {
     // -----------------------------------------------------------------------
     
     //// Changes for Builtin_Topics
-    private static void subscriberMain(int domainId, int sampleCount, String participant_auth, String reader_auth) {
+    private static void subscriberMain(int domainId, int sampleCount, 
+            String participant_auth, String reader_auth) {
 
         DomainParticipant participant = null;
         Subscriber subscriber = null;
@@ -137,26 +138,33 @@ public class msgSubscriber {
         	
         	//// Start changes for Builtin_Topics
         	// Set user_data qos field for participant
-        	
-        	/* Get default participant QoS to customize */
-        	DomainParticipantQos participant_qos = new DomainParticipantQos();
-        	DomainParticipantFactory.TheParticipantFactory.get_default_participant_qos(participant_qos);
-        	
-        	participant_qos.discovery.multicast_receive_addresses.clear();
+
+            /* Get default participant QoS to customize */
+            DomainParticipantQos participant_qos = new DomainParticipantQos();
+            DomainParticipantFactory.TheParticipantFactory
+                    .get_default_participant_qos(participant_qos);
+
+            participant_qos.discovery.multicast_receive_addresses.clear();
         	
         	// user_data is opaque to DDS, so we include trailing \0 for string
-        	int len = participant_auth.length() + 1;
-        	int max = participant_qos.resource_limits.participant_user_data_max_length;
+        	int len = participant_auth.length();
+        	int max = participant_qos.resource_limits.
+        	            participant_user_data_max_length;
         	
         	if (len > max) {
-        		System.out.println("error, participant user_data exceeds resource limits");
+        		System.out.println(
+        		        "error, participant user_data exceeds resource limits");
         	} else {
-        		participant_qos.user_data.value.addAllByte(participant_auth.getBytes());
+        		participant_qos.user_data.value.addAllByte(
+        		        participant_auth.getBytes());
         	}
 
             // --- Create participant --- //
     
-        	/* To create participant with default QoS, use DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT instead of participant_qos */
+        	/* To create participant with default QoS, use 
+        	 * DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT instead of 
+        	 * participant_qos 
+        	 */
             
             participant = DomainParticipantFactory.TheParticipantFactory.
                 create_participant(
@@ -211,16 +219,20 @@ public class msgSubscriber {
         	subscriber.get_default_datareader_qos(datareader_qos);
         	
         	// user_data is opaque to DDS, so we include trailing \0 for string
-        	len = reader_auth.length() + 1;
+        	len = reader_auth.length();
         	max = participant_qos.resource_limits.reader_user_data_max_length;
         	
         	if (len > max) {
-        		System.out.println("error, datareader user_data exceeds resource limits");
+        		System.out.println(
+        		        "error, datareader user_data exceeds resource limits");
         	} else {
-        		datareader_qos.user_data.value.addAllByte(reader_auth.getBytes());
+        		datareader_qos.user_data.value.addAllByte(
+        		        reader_auth.getBytes());
         	}
     
-        	/* To create datareader with default QoS, use Subscriber.DATAREADER_QOS_DEFAULT instead of datareader_qos */
+        	/* To create datareader with default QoS, use 
+        	 * Subscriber.DATAREADER_QOS_DEFAULT instead of datareader_qos 
+        	 */
     
             reader = (msgDataReader)
                 subscriber.create_datareader(
