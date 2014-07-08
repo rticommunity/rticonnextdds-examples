@@ -41,9 +41,11 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
         const char *expression, const DDS_StringSeq& parameters,
         const DDS_TypeCode* type_code, const char* type_class_name,
         void *old_compile_data) {
+    struct cdata* cd = NULL;
+    
     /* First free old data, if any */
     if (old_compile_data != NULL) {
-        free( old_compile_data);
+        delete old_compile_data;
     }
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
@@ -71,7 +73,7 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
         goto err;
     }
 
-    cdata* cd = (struct cdata*) malloc(sizeof(struct cdata));
+    cd = (struct cdata*) malloc(sizeof(struct cdata));
     sscanf(parameters[0], "%ld", &cd->param);
 
     if (strcmp(parameters[1], "greater-than") == 0) {
@@ -85,7 +87,8 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
     *new_compile_data = cd;
     return DDS_RETCODE_OK;
 
-    err: printf("CustomFilter: Unable to compile expression '%s'\n",
+err:
+    printf("CustomFilter: Unable to compile expression '%s'\n",
             expression);
     printf("              with parameters '%s' '%s'\n", parameters[0],
             parameters[1]);
