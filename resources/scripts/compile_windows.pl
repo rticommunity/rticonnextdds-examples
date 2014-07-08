@@ -10,7 +10,8 @@ $FOLDER_TO_CHECK = $ARGV[0];
 $TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
-$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/buildtools/windows/local/preship/" . 
+                "ndds/ndds." . $ARGV[1];
 #$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 
 # This variable is the architecture name 
