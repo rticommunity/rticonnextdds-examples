@@ -53,7 +53,7 @@ sub unix_path {
     return $path;
 }
 
-# This function call rtiddsgen for the idl file using the corresponding 
+# This function calls rtiddsgen for the idl file using the corresponding 
 # architecture and language 
 #   input parameter:
 #       $language: the language which the example are going to be compiled
@@ -84,7 +84,7 @@ sub call_rtiddsgen {
     system $call_string;
 }
 
-# This function run the makefile generated with the rtiddsgen 
+# This function runs the makefile generated with the rtiddsgen 
 #   input parameter (they are used in the construction of the makefile name):
 #       $architecture: the arechitecture which the example are going to be built
 #       $idl_filename: the filename of the .idl file which contains the types
@@ -131,7 +131,7 @@ sub call_compiler {
 }
 
 
-# This function read recursively all the files in a folder and process them:
+# This function reads recursively all the files in a folder and process them:
 #   - if a file is found: check if its extension is supported
 #           - if the file has not a supported extension: look for a new file
 #           - if the file has a supported extension: check if it has copyright
