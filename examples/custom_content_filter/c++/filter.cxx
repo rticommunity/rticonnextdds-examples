@@ -42,8 +42,9 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
         const DDS_TypeCode* type_code, const char* type_class_name,
         void *old_compile_data) {
     /* First free old data, if any */
-    if (old_compile_data != NULL)
-        delete old_compile_data;
+    if (old_compile_data != NULL) {
+        free( old_compile_data);
+    }
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
      * and <var> is an integral member of the msg structure.
@@ -57,17 +58,20 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
      */
 
     /* Check form: */
-    if (strncmp(expression, "%0 %1 ", 6) != 0)
+    if (strncmp(expression, "%0 %1 ", 6) != 0) {
         goto err;
+    }
 
-    if (strlen(expression) < 7)
+    if (strlen(expression) < 7) {
         goto err;
+    }
 
     /* Check that we have params */
-    if (parameters.length() < 2)
+    if (parameters.length() < 2) {
         goto err;
+    }
 
-    cdata* cd = new cdata();
+    cdata* cd = (struct cdata*) malloc(sizeof(struct cdata));
     sscanf(parameters[0], "%ld", &cd->param);
 
     if (strcmp(parameters[1], "greater-than") == 0) {
@@ -80,6 +84,7 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
 
     *new_compile_data = cd;
     return DDS_RETCODE_OK;
+
     err: printf("CustomFilter: Unable to compile expression '%s'\n",
             expression);
     printf("              with parameters '%s' '%s'\n", parameters[0],

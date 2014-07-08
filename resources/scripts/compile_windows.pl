@@ -12,7 +12,6 @@ $TOP_DIRECTORY = cwd();
 # This variable is the NDDSHOME environment variable
 $NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 #$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
-#$NDDS_VERSION = "C:\\RTI\\RTI Connext DDS Pro 510\\RTI\\ndds." . $ARGV[1];
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
@@ -36,6 +35,7 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};
 # Global variable to save the language to compile
 $LANGUAGE = "";
 
+#
 $DOT_NET_VERSION = "dotnet4.0";
 
 # we get the number of bit of the architecture, this is: "i86Win32" or 

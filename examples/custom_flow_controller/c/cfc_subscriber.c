@@ -115,7 +115,7 @@ void cfcListener_on_data_available(void* listener_data, DDS_DataReader* reader)
             /* print the time we get each sample */
 
             elapsed_ticks = clock() - init;
-            elapsed_secs = elapsed_ticks / CLK_TCK;
+            elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
             printf("@ t=%.2fs, got x = %d\n", elapsed_secs,
                     cfcSeq_get_reference(&data_seq, i)->x);
