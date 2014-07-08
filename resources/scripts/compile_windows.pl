@@ -1,15 +1,18 @@
 #!C:/Perl64/bin/perl.exe -w
+use Cwd;
+
 # Example of use:
-#    perl compile_unix.pl <working_directory> <ndds_version> <architecture>
+#    perl compile_windows.pl <working_directory> <ndds_version> <architecture>
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 #$TOP_DIRECTORY is the directory where you have executed the script
-$TOP_DIRECTORY = $ENV{'PWD'};
+$TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
-#$NDDS_VERSION = "/opt/rti/ndds." . $ARGV[1];
-$NDDS_VERSION = "/local/preship/ndds/ndds." . $ARGV[1];
+$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+#$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+#$NDDS_VERSION = "C:\\RTI\\RTI Connext DDS Pro 510\\RTI\\ndds." . $ARGV[1];
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
@@ -20,17 +23,24 @@ $ENV{'NDDSHOME'} = $NDDS_VERSION;
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
-#set LD_LIBRARY_PATH
-#C/C++ architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
-                            $ENV{'LD_LIBRARY_PATH'};
+#set PATH
+#C/C++/C# architecture
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
-                            $ENV{'LD_LIBRARY_PATH'};                           
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
+#include Java compiler (Javac) in the path
+#$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
+#    "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
+
 
 # Global variable to save the language to compile
 $LANGUAGE = "";
 
+$DOT_NET_VERSION = "dotnet4.0";
+
+# we get the number of bit of the architecture, this is: "i86Win32" or 
+# "x64Win64"
+$ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -56,11 +66,21 @@ sub call_rtiddsgen {
 
     #if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
-        $architecture .= "jdk";
+        $architecture = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
     }
-    my ($call_string) = "rtiddsgen -language " . $language . " -example " .
-                        $architecture . " " . $idl_filename;
+    my ($call_string) = "";
     
+    $call_string =  "rtiddsgen -language " . $language . " -example " .
+                    $architecture . " " . $idl_filename;
+    
+    if ($language eq "C#") {
+        $call_string = "rtiddsgen -language " . $language . " -example " . 
+            $ARCHITECTURE_NUMBER_OF_BITS . $DOT_NET_VERSION . 
+            " -ppDisable " . $idl_filename;
+    }
+    
+      
+    #print "call_string: <" . $call_string . ">\n";
     system $call_string;
 }
 
@@ -71,28 +91,41 @@ sub call_rtiddsgen {
 #       $path: complete relative path for the idl file
 #   output parameter:
 #       none
-sub call_makefile {
+sub call_compiler {
     my ($architecture, $idl_filename, $path) = @_;
     # $type has the name of the idle without the extension .idl
     my ($data_type) = substr $idl_filename, 0, -4;
 
     #if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
-        $architecture .= "jdk";
+        my ($architecture) = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
     }
     
     # delete the idl file name from the path, and we have the folder where the 
     # idl file is
-    $execution_folder = substr $path, 0, (-1 * length $idl_filename);
+    my ($execution_folder) = substr $path, 0, (-1 * length $idl_filename);
+       
+    my ($compile_string) = "";
+    my ($visual_studio_year) = substr $ARCH, length($ARCH) -4;
     
-    #change to the directory where the example is (where the rtiddsgen has been
+    if ($LANGUAGE eq "C" or $LANGUAGE eq "C++") {
+        $compile_string = "msbuild " . $data_type . "-vs" . 
+                $visual_studio_year . ".sln";
+    } elsif ($LANGUAGE eq "Java") {
+        $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
+                          "nddsjava.jar" . " *.java";
+    } elsif ($LANGUAGE eq "C#") {
+        # Firstly, compiling type 
+        $compile_string = "msbuild " . $data_type . "-csharp.sln";
+    }
+
+    #print $compile_string;
+    
+    # change to the directory where the example is (where the rtiddsgen has been
     # executed) to run the makefile
     chdir $execution_folder;
-    
-    my ($make_string) = "make -f " . "makefile_" . $data_type . "_" . 
-                        $architecture;
-    system $make_string;
-    
+          
+    system $compile_string;
     # return to the top directory again
     chdir $TOP_DIRECTORY;
 }
@@ -122,7 +155,7 @@ sub process_all_files {
     foreach $register (@files) {
         # In the unix script we want to skip the C# examples. They are under
         # cs subdirectory
-        next if $register eq "."  or  $register eq ".." or $register eq "cs";
+        next if $register eq "."  or  $register eq "..";
                 
         my $file = "$folder/$register";
         $file = unix_path($file);
@@ -138,17 +171,19 @@ sub process_all_files {
                 "**************\n";
             
             call_rtiddsgen ($LANGUAGE, $ARCH, $file);
-            call_makefile ($ARCH, $register, $file);
+            call_compiler ($ARCH, $register, $file);
             
         } elsif (-d $file) {
             if ($register eq "c") {
                 $LANGUAGE = "C";
             } elsif ($register eq "c++") {
                 $LANGUAGE = "C++";
+            } elsif ($register eq "cs") {
+                $LANGUAGE = "C#";
             } elsif ($register eq "java") {
                 $LANGUAGE = "Java";
             }
-                        
+            
             process_all_files($file);
         }
     }
