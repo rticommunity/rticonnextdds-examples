@@ -20,7 +20,7 @@ $ARCH = $ARGV[2];
 $ENV{'NDDSHOME'} = $NDDS_VERSION;
 
 #set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 
 #set PATH
 #C/C++/C# architecture
