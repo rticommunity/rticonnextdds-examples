@@ -20,6 +20,12 @@ $ENV{'NDDSHOME'} = $NDDS_VERSION;
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
+#include Java compiler (Javac) in the path
+$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+    "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
+
+
+
 #set LD_LIBRARY_PATH
 #C/C++ architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
