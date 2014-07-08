@@ -54,7 +54,7 @@ modification history
 #include "deadline_contentfilter.h"
 #include "deadline_contentfilterSupport.h"
 
-//// Start changes for Deadline
+/* Start changes for Deadline */
 
 void deadlineListener_on_offered_deadline_missed(
     void* listener_data,
@@ -63,7 +63,8 @@ void deadlineListener_on_offered_deadline_missed(
 {
     deadline_contentfilter dummy;
     DDS_ReturnCode_t retcode = deadline_contentfilterDataWriter_get_key_value(
-        deadline_contentfilterDataWriter_narrow(writer), &dummy, &status->last_instance_handle);
+        deadline_contentfilterDataWriter_narrow(writer), &dummy, &status->
+            last_instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_key_value error %d\n", retcode);
         return;
@@ -72,7 +73,7 @@ void deadlineListener_on_offered_deadline_missed(
     printf("Offered deadline missed on instance code = %d\n", dummy.code);
 }
 
-//// End changes for Deadline
+/* End changes for Deadline */
 
 /* Delete all entities */
 static int publisher_shutdown(
@@ -121,13 +122,13 @@ static int publisher_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;  
-    struct DDS_Duration_t deadline_period = {1, 500000000}; // 1.5sec
+    struct DDS_Duration_t deadline_period = {1, 500000000}; /* 1.5sec */
     struct DDS_Duration_t send_period = {1,0};
     deadline_contentfilter *instance0 = NULL;
     deadline_contentfilter *instance1 = NULL;
     DDS_InstanceHandle_t handle0 = DDS_HANDLE_NIL;
     DDS_InstanceHandle_t handle1 = DDS_HANDLE_NIL;
-    /* struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;*/
+    /*struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;*/
 
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
@@ -193,19 +194,20 @@ static int publisher_main(int domainId, int sample_count)
      * In this case, we set the deadline period to 1.5 seconds to trigger
      * a deadline if the DataWriter does not update often enough.
      */
-    /*
-    //// Start changes for Deadline
-    writer_listener.on_offered_deadline_missed =
+    
+    /* Start changes for Deadline */
+/*    writer_listener.on_offered_deadline_missed =
         deadlineListener_on_offered_deadline_missed;
 
-    retcode = DDS_Publisher_get_default_datawriter_qos(publisher, &datawriter_qos);
+    retcode = DDS_Publisher_get_default_datawriter_qos(publisher,
+                    &datawriter_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datawriter_qos error\n");
         return -1;
     }
 
-    // Set deadline QoS
-    datawriter_qos.deadline.period = deadline_period;
+*/    /* Set deadline QoS */
+/*    datawriter_qos.deadline.period = deadline_period;
 
     writer = DDS_Publisher_create_datawriter(
         publisher, topic,
@@ -215,29 +217,32 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant);
         return -1;
     }
+*/
+    /* End changes for Deadline */
 
-    //// End changes for Deadline
-
-    */
-    deadline_contentfilter_writer = deadline_contentfilterDataWriter_narrow(writer);
+   
+    deadline_contentfilter_writer =
+            deadline_contentfilterDataWriter_narrow(writer);
     if (deadline_contentfilter_writer == NULL) {
         printf("DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    //// Start changes for Deadline
+    /* Start changes for Deadline */
     
     /* Create data sample for writing */
-    instance0 = deadline_contentfilterTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-    instance1 = deadline_contentfilterTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance0 =
+            deadline_contentfilterTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance1 =
+            deadline_contentfilterTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance0 == NULL || instance1 == NULL) {
         printf("deadlineTypeSupport_create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    // Set keys -- we specify 'code' as the key field in the .idl
+    /* Set keys -- we specify 'code' as the key field in the .idl */
     instance0->code = 0;
     instance1->code = 1;
 
@@ -245,13 +250,15 @@ static int publisher_main(int domainId, int sample_count)
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
 
-    handle0 = deadline_contentfilterDataWriter_register_instance(deadline_contentfilter_writer, instance0);
-    handle1 = deadline_contentfilterDataWriter_register_instance(deadline_contentfilter_writer, instance1);
+    handle0 = deadline_contentfilterDataWriter_register_instance(
+            deadline_contentfilter_writer, instance0);
+    handle1 = deadline_contentfilterDataWriter_register_instance(
+            deadline_contentfilter_writer, instance1);
 
     instance0->x = instance0->y = instance1->x = instance1->y = 0;
 
     /* Main loop */
-//    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+/*  for (count=0; (sample_count == 0) || (count < sample_count); ++count) { */
     for (count=0; (count < sample_count); ++count) {
         NDDS_Utility_sleep(&send_period);
 
@@ -260,7 +267,8 @@ static int publisher_main(int domainId, int sample_count)
         instance1->x++;
         instance1->y++;
 
-        printf("Writing instance0, x = %d, y = %d\n", instance0->x, instance0->y);
+        printf("Writing instance0, x = %d, y = %d\n", instance0->x,
+                instance0->y);
         retcode = deadline_contentfilterDataWriter_write(
             deadline_contentfilter_writer, instance0, &handle0);
         if (retcode != DDS_RETCODE_OK) {
@@ -268,7 +276,8 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         if (count < 15) {
-            printf("Writing instance1, x = %d, y = %d\n", instance1->x, instance1->y);
+            printf("Writing instance1, x = %d, y = %d\n", instance1->x,
+                    instance1->y);
             retcode = deadline_contentfilterDataWriter_write(
                 deadline_contentfilter_writer, instance1, &handle1);
             if (retcode != DDS_RETCODE_OK) {
@@ -291,16 +300,20 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     /* Delete data sample */
-    retcode = deadline_contentfilterTypeSupport_delete_data_ex(instance0, DDS_BOOLEAN_TRUE);
+    retcode = deadline_contentfilterTypeSupport_delete_data_ex(instance0,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        printf("deadline_contentfilterTypeSupport_delete_data_ex error %d\n", retcode);
+        printf("deadline_contentfilterTypeSupport_delete_data_ex error %d\n",
+                retcode);
     }
-    retcode = deadline_contentfilterTypeSupport_delete_data_ex(instance1, DDS_BOOLEAN_TRUE);
+    retcode = deadline_contentfilterTypeSupport_delete_data_ex(instance1,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        printf("deadline_contentfilterTypeSupport_delete_data_ex error %d\n", retcode);
+        printf("deadline_contentfilterTypeSupport_delete_data_ex error %d\n",
+                retcode);
     }
 
-    //// End changes for Deadline
+    /* End changes for Deadline */
     /* Cleanup and delete delete all entities */         
     return publisher_shutdown(participant);
 }
@@ -361,7 +374,8 @@ void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

@@ -63,7 +63,7 @@ modification history
 #include "deadline_contentfilterSupport.h"
 
 
-//// Start changes for Deadline
+/* Start changes for Deadline */
 class deadline_contentfilterListener : public DDSDataWriterListener {
   public:
     virtual void on_offered_deadline_missed(
@@ -84,7 +84,7 @@ class deadline_contentfilterListener : public DDSDataWriterListener {
     }
 };
 
-//// End changes for Deadline
+/* End changes for Deadline */
 
 /* Delete all entities */
 static int publisher_shutdown(
@@ -176,8 +176,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    //// Start changes for Deadline
-    // Create listener
+    /* Start changes for Deadline */
+    /* Create listener */
     deadline_contentfilterListener* writer_listener = NULL;
     writer_listener = new deadline_contentfilterListener();
     if (writer_listener ==  NULL) {
@@ -210,8 +210,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Set deadline QoS
-    DDS_Duration_t deadline_period = {1, 500000000}; // 1.5sec
+*/    /* Set deadline QoS */
+/*    DDS_Duration_t deadline_period = {1, 500000000};
     datawriter_qos.deadline.period = deadline_period;
 
     writer = publisher->create_datawriter(
@@ -224,17 +224,18 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 	*/
 
-    //// End changes for Deadline
+    /* End changes for Deadline */
 
-    deadline_contentfilter_writer = deadline_contentfilterDataWriter::narrow(writer);
+    deadline_contentfilter_writer =
+            deadline_contentfilterDataWriter::narrow(writer);
     if (deadline_contentfilter_writer == NULL) {
         printf("DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    //// Start changes for Deadline
-    // Create two instances for writing
+    /* Start changes for Deadline */
+    /* Create two instances for writing */
 
     deadline_contentfilter *instance0 = NULL;
     deadline_contentfilter *instance1 = NULL;
@@ -250,7 +251,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    // Set keys -- we specify 'code' as the key field in the .idl
+    /* Set keys -- we specify 'code' as the key field in the .idl*/
     instance0->code = 0;
     instance1->code = 1;
 
@@ -261,7 +262,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     handle0 = deadline_contentfilter_writer->register_instance(*instance0);
     handle1 = deadline_contentfilter_writer->register_instance(*instance1);
 
-    struct DDS_Duration_t send_period = {1, 0}; // 1sec
+    struct DDS_Duration_t send_period = {1, 0};
 
     instance0->x = instance0->y = instance1->x = instance1->y = 0;
 
@@ -274,7 +275,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         instance1->x++;
         instance1->y++;
 
-        printf("Writing instance0, x = %d, y = %d\n", instance0->x, instance0->y);
+        printf("Writing instance0, x = %d, y = %d\n", instance0->x,
+                instance0->y);
         retcode = deadline_contentfilter_writer->write(*instance0, handle0);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
@@ -283,7 +285,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         if (count < 15) {
-            printf("Writing instance1, x = %d, y = %d\n", instance1->x, instance1->y);
+            printf("Writing instance1, x = %d, y = %d\n", instance1->x,
+                    instance1->y);
             retcode = deadline_contentfilter_writer->write(*instance1, handle1);
             if (retcode != DDS_RETCODE_OK) {
                 printf("write error %d\n", retcode);
@@ -295,11 +298,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
     }
 
-    retcode = deadline_contentfilter_writer->unregister_instance(*instance0, handle0);
+    retcode = deadline_contentfilter_writer->unregister_instance(*instance0,
+            handle0);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
-    retcode = deadline_contentfilter_writer->unregister_instance(*instance1, handle1);
+    retcode = deadline_contentfilter_writer->unregister_instance(*instance1,
+            handle1);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
@@ -307,14 +312,16 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Delete data sample */
     retcode = deadline_contentfilterTypeSupport::delete_data(instance0);
     if (retcode != DDS_RETCODE_OK) {
-        printf("deadline_contentfilterTypeSupport::delete_data error %d\n", retcode);
+        printf("deadline_contentfilterTypeSupport::delete_data error %d\n",
+                retcode);
     }
     retcode = deadline_contentfilterTypeSupport::delete_data(instance1);
     if (retcode != DDS_RETCODE_OK) {
-        printf("deadline_contentfilterTypeSupport::delete_data error %d\n", retcode);
+        printf("deadline_contentfilterTypeSupport::delete_data error %d\n",
+                retcode);
     }
 
-    //// End changes for Deadline
+    /* End changes for Deadline */
 
     /* Delete all entities */
     return publisher_shutdown(participant);
