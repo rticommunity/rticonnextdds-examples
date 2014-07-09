@@ -24,8 +24,6 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
     "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
 
-$RETURN_VALUE = 0;
-
 #set LD_LIBRARY_PATH
 #C/C++ architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 

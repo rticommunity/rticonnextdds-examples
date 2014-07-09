@@ -14,6 +14,14 @@ $ENV{'NDDSHOME'} = $NDDS_HOME;
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
     "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
 
+#set LD_LIBRARY_PATH
+#C/C++ architecture
+$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+                            $ENV{'LD_LIBRARY_PATH'};
+#Java Architecture
+$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
+                            $ENV{'LD_LIBRARY_PATH'};                           
+
 
 # This function runs the makefile generated with the rtiddsgen 
 #   input parameter (they are used in the construction of the makefile name):

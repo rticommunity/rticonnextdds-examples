@@ -29,7 +29,7 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
 #include Java compiler (Javac) in the path
-$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
+$ENV{'PATH'} = $ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
     "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
 
 # Global variable to save the language to compile

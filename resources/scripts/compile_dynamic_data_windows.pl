@@ -13,6 +13,12 @@ print "NDDSHOME: " . $ENV{'NDDSHOME'} . "\n";
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
+#set PATH
+#C/C++/C# architecture
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+#Java Architecture
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
+
 #include Java compiler (Javac) in the path
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
     "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
