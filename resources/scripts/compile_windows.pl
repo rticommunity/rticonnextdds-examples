@@ -12,21 +12,21 @@ $TOP_DIRECTORY = cwd();
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
-    $NDDS_VERSION = $ENV{'NDDSHOME'};
+    $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
-    $NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $ARGV[1];
 }
 
-#$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
-#$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+#$NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+#$NDDS_HOME = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
 
 #set NDDSHOME
-$ENV{'NDDSHOME'} = unix_path($NDDS_VERSION);
+$ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
@@ -35,15 +35,16 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 #C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'ARCH_OS'} . "jdk;" . 
+                $ENV{'PATH'};                           
 #include Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+        "PLATFORMSDK/win32/jdk1.7.0_04";
 }
 
-$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
 
 # Global variable to save the language to compile
 $LANGUAGE = "";
@@ -80,18 +81,14 @@ sub call_rtiddsgen {
     #if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
         $architecture = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
+    } elsif ($LANGUAGE eq "C#") {
+        $architecture = $ARCHITECTURE_NUMBER_OF_BITS . $DOT_NET_VERSION . 
+                        " -ppDisable ";
     }
     my ($call_string) = "";
     
     $call_string =  "rtiddsgen -language " . $language . " -example " .
-                    $architecture . " " . $idl_filename;
-    
-    if ($language eq "C#") {
-        $call_string = "rtiddsgen -language " . $language . " -example " . 
-            $ARCHITECTURE_NUMBER_OF_BITS . $DOT_NET_VERSION . 
-            " -ppDisable " . $idl_filename;
-    }
-    
+                    $architecture . " " . $idl_filename; 
       
     #print "call_string: <" . $call_string . ">\n";
     system $call_string;
@@ -129,7 +126,8 @@ sub call_compiler {
                 $visual_studio_year . ".sln";
     } elsif ($LANGUAGE eq "Java") {
         $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
-                          "nddsjava.jar" . " *.java";
+                          "nddsjava.jar *.java";
+        print $compile_string . "\n";
     } elsif ($LANGUAGE eq "C#") {
         # Firstly, compiling type 
         $compile_string = "msbuild " . $data_type . "-csharp.sln";

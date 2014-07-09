@@ -1,7 +1,10 @@
+use Cwd;
+
+$ARCH = "i86Win32VS2010";
 $NDDS_VERSION = "5.1.0";
 
 #$TOP_DIRECTORY is the directory where you have executed the script
-$TOP_DIRECTORY = $ENV{'PWD'};
+$TOP_DIRECTORY = cwd();
 
 $NDDS_HOME = "";
 
@@ -18,27 +21,29 @@ else {
 $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 
 #set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 
 #set PATH
 #C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . "x64Win64" . "jdk;" . 
+               $ENV{'PATH'};                           
 
 #include Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+        "PLATFORMSDK/win32/jdk1.7.0_04";
 }
+
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
             
 #This solution name is the same one for all dynamic data C/C++ examples
 $VS_SOLUTION_NAME_C = "Hello-i86Win32VS2010.sln";
 
 #This solution name is the same one for all dynamic data C# examples
 $VS_SOLUTION_NAME_CS = "Hello-i86Win32dotnet4.0.sln";
-
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -68,14 +73,14 @@ sub call_compiler {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_C;
     }
     elsif ($language eq "Java") {
-        $compile_string = "javac -classpath .;\"%NDDSHOME%\"/class/nddsjava.jar"
-                    . " *.java";
+        $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
+                          "nddsjava.jar *.java";
+        
         print $compile_string . "\n";
     } elsif ($language eq "C#") {
-        $compile_string = "msbuild " .$VS_SOLUTION_NAME_CS;
+        $compile_string = "msbuild " . $VS_SOLUTION_NAME_CS;
     }
-    print "Compile string: <" . $compile_string . ">";
-    
+
     #change to the directory where the example is (where the rtiddsgen has been
     # executed) to run the makefile
     chdir $path;
@@ -107,7 +112,7 @@ call_compiler ("C++", "./examples/dynamic_data_access_union_discriminator/c++");
 call_compiler ("C#", "./examples/dynamic_data_access_union_discriminator/cs");
 
 call_compiler ("Java", 
-            "./examples/dynamic_data_access_union_discriminator/java");
+            "./examples/dynamic_data_access_union_discriminator/Java");
         
 #dynamic data nested structs example       
 call_compiler ("C", "./examples/dynamic_data_nested_structs/c");

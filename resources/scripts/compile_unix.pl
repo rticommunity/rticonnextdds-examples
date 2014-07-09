@@ -1,29 +1,29 @@
 #!C:/Perl64/bin/perl.exe -w
 # Example of use:
 #    perl compile_unix.pl <working_directory> <ndds_version> <architecture>
+use Cwd;
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 #$TOP_DIRECTORY is the directory where you have executed the script
-$TOP_DIRECTORY = $ENV{'PWD'};
+$TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
-#$NDDS_VERSION = "/opt/rti/ndds." . $ARGV[1];
+#$NDDS_HOME = "/opt/rti/ndds." . $ARGV[1];
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (!defined $ENV{'NDDSHOME'}) {
-    $NDDS_VERSION = $ENV{'NDDSHOME'};
+    $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
-    $NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $ARGV[1];
 }
-
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
 
 #set NDDSHOME
-$ENV{'NDDSHOME'} = $NDDS_VERSION;
+$ENV{'NDDSHOME'} = $NDDS_HOME;
 
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
@@ -32,10 +32,10 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+        "PLATFORMSDK/linux/jdk1.7.0_04";
 }
 
-$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
 
 #set LD_LIBRARY_PATH

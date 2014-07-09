@@ -1,9 +1,12 @@
+use Cwd;
+
 $ARCH = "i86Linux2.6gcc4.4.5";
 $NDDS_VERSION = "5.1.0";
 
 #$TOP_DIRECTORY is the directory where you have executed the script
-$TOP_DIRECTORY = $ENV{'PWD'};
+$TOP_DIRECTORY = cwd();
 
+$NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (!defined $ENV{'NDDSHOME'}) {
@@ -20,10 +23,10 @@ $ENV{'NDDSHOME'} = $NDDS_HOME;
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+        "PLATFORMSDK/linux/jdk1.7.0_04";
 }
 
-$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
 #set LD_LIBRARY_PATH
 #C/C++ architecture
@@ -48,7 +51,8 @@ sub call_makefile {
     
     my ($make_string) = "";
     if ($language eq "Java") {
-        $make_string = "javac -classpath .:\"$NDDSHOME\"/class/nddsjava.jar *.java";
+        $make_string = "javac -classpath .:\"$NDDSHOME\"/class/nddsjava.jar " . 
+                        "*.java";
         print $compile_string . "\n";
     } else {
         $make_string = "make -f " . "makefile_Foo_" . $architecture;
