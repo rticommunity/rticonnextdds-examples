@@ -82,7 +82,7 @@ sub call_rtiddsgen {
       
     #print "call_string: <" . $call_string . ">\n";
     system $call_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
 }
@@ -129,7 +129,7 @@ sub call_compiler {
     chdir $execution_folder;
           
     system $compile_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
     # return to the top directory again

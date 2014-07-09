@@ -68,7 +68,7 @@ sub call_rtiddsgen {
                         $architecture . " " . $idl_filename;
     
     system $call_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
 }
@@ -101,7 +101,7 @@ sub call_makefile {
     my ($make_string) = "make -f " . "makefile_" . $data_type . "_" . 
                         $architecture;
     system $make_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
     

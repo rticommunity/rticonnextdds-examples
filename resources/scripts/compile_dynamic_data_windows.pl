@@ -53,7 +53,7 @@ sub call_compiler {
     chdir $path;
     
     system $compile_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
     

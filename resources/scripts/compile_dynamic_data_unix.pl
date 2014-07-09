@@ -40,7 +40,7 @@ sub call_makefile {
     chdir $path;
     
     system $make_string;
-    if ( $? == -1 ) {
+    if ( $? != 0 ) {
         exit(1);
     }
     
