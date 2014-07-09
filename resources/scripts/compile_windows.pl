@@ -32,7 +32,6 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
     "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
 
-
 # Global variable to save the language to compile
 $LANGUAGE = "";
 
@@ -83,6 +82,9 @@ sub call_rtiddsgen {
       
     #print "call_string: <" . $call_string . ">\n";
     system $call_string;
+    if ( $? == -1 ) {
+        exit(1);
+    }
 }
 
 # This function runs the makefile generated with the rtiddsgen 
@@ -127,6 +129,9 @@ sub call_compiler {
     chdir $execution_folder;
           
     system $compile_string;
+    if ( $? == -1 ) {
+        exit(1);
+    }
     # return to the top directory again
     chdir $TOP_DIRECTORY;
 }
@@ -191,4 +196,3 @@ sub process_all_files {
 }
 
 process_all_files ($FOLDER_TO_CHECK);
-

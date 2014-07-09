@@ -40,6 +40,9 @@ sub call_makefile {
     chdir $path;
     
     system $make_string;
+    if ( $? == -1 ) {
+        exit(1);
+    }
     
     # return to the top directory again
     chdir $TOP_DIRECTORY;
@@ -78,4 +81,3 @@ call_makefile ($ARCH, "C", "./examples/dynamic_data_sequences/c");
 call_makefile ($ARCH, "C++", "./examples/dynamic_data_sequences/c++");
 
 call_makefile ($ARCH, "Java", "./examples/dynamic_data_sequences/java");
-

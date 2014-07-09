@@ -23,7 +23,6 @@ $VS_SOLUTION_NAME_C = "Hello-i86Win32VS2010.sln";
 #This solution name is the same one for all dynamic data C# examples
 $VS_SOLUTION_NAME_CS = "Hello-i86Win32dotnet4.0.sln";
 
-
 # This function runs the makefile generated with the rtiddsgen 
 #   input parameter (they are used in the construction of the makefile name):
 #       $language: this is the language which is going to be used to compile
@@ -54,6 +53,9 @@ sub call_compiler {
     chdir $path;
     
     system $compile_string;
+    if ( $? == -1 ) {
+        exit(1);
+    }
     
     # return to the top directory again
     chdir $TOP_DIRECTORY;
@@ -96,4 +98,3 @@ call_compiler ("C++", "./examples/dynamic_data_sequences/c++");
 call_compiler ("C#", "./examples/dynamic_data_sequences/cs");
 
 call_compiler ("Java", "./examples/dynamic_data_sequences/java");
-

@@ -69,7 +69,7 @@ sub call_rtiddsgen {
     
     system $call_string;
     if ( $? == -1 ) {
-        $RETURN_VALUE = 1;
+        exit(1);
     }
 }
 
@@ -102,7 +102,7 @@ sub call_makefile {
                         $architecture;
     system $make_string;
     if ( $? == -1 ) {
-        $RETURN_VALUE = 1;
+        exit(1);
     }
     
     # return to the top directory again
@@ -167,4 +167,4 @@ sub process_all_files {
 }
 
 process_all_files ($FOLDER_TO_CHECK);
-exit($RETURN_VALUE);
+
