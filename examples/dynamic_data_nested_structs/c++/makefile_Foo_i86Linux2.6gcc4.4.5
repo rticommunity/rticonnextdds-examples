@@ -40,7 +40,8 @@ INCLUDES = -I. -I$(NDDSHOME)/include -I$(NDDSHOME)/include/ndds
 LIBS = -L$(NDDSHOME)/lib/i86Linux2.6gcc4.4.5 \
         -lnddscz -lnddscorez $(syslibs_i86Linux2.6gcc4.4.5)
 
-EXEC          = dynamic_data_nested_struct_example
+COMMONSOURCES = 
+EXEC          = dynamic_data_nested_structs_example
 DIRECTORIES   = objs.dir objs/i86Linux2.6gcc4.4.5.dir
 COMMONOBJS    = $(COMMONSOURCES:%.c=objs/i86Linux2.6gcc4.4.5/%.o)
 
@@ -52,7 +53,7 @@ i86Linux2.6gcc4.4.5 : $(DIRECTORIES) $(COMMONOBJS) \
 objs/i86Linux2.6gcc4.4.5/%.out : objs/i86Linux2.6gcc4.4.5/%.o 
 	$(c_ld_i86Linux2.6gcc4.4.5) $(c_ld_flags_i86Linux2.6gcc4.4.5)  -o $(@:%.out=%) $(@:%.out=%.o) $(COMMONOBJS) $(LIBS)
 
-objs/i86Linux2.6gcc4.4.5/%.o : %.c
+objs/i86Linux2.6gcc4.4.5/%.o : %.c Foo.h 
 	$(c_cc_i86Linux2.6gcc4.4.5) $(c_cc_flags_i86Linux2.6gcc4.4.5)  -o $@ $(DEFINES) $(INCLUDES) -c $<
 
 #

@@ -10,7 +10,8 @@ $FOLDER_TO_CHECK = $ARGV[0];
 $TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
-$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
+$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/buildtools/windows/local/preship/" . 
+                "ndds/ndds." . $ARGV[1];
 #$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 
 # This variable is the architecture name 
@@ -20,7 +21,7 @@ $ARCH = $ARGV[2];
 $ENV{'NDDSHOME'} = $NDDS_VERSION;
 
 #set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 
 #set PATH
 #C/C++/C# architecture
@@ -30,7 +31,6 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};
 #include Java compiler (Javac) in the path
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
     "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
-
 
 # Global variable to save the language to compile
 $LANGUAGE = "";
@@ -82,6 +82,9 @@ sub call_rtiddsgen {
       
     #print "call_string: <" . $call_string . ">\n";
     system $call_string;
+    if ( $? != 0 ) {
+        exit(1);
+    }
 }
 
 # This function runs the makefile generated with the rtiddsgen 
@@ -126,6 +129,9 @@ sub call_compiler {
     chdir $execution_folder;
           
     system $compile_string;
+    if ( $? != 0 ) {
+        exit(1);
+    }
     # return to the top directory again
     chdir $TOP_DIRECTORY;
 }
@@ -190,4 +196,3 @@ sub process_all_files {
 }
 
 process_all_files ($FOLDER_TO_CHECK);
-

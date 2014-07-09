@@ -10,6 +10,11 @@ $NDDS_HOME = "/local/preship/ndds/ndds." . $NDDS_VERSION;
 #set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
+#include Java compiler (Javac) in the path
+$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+    "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
+
+
 # This function runs the makefile generated with the rtiddsgen 
 #   input parameter (they are used in the construction of the makefile name):
 #       $architecture: the arechitecture which the example are going to be built
@@ -35,6 +40,9 @@ sub call_makefile {
     chdir $path;
     
     system $make_string;
+    if ( $? != 0 ) {
+        exit(1);
+    }
     
     # return to the top directory again
     chdir $TOP_DIRECTORY;
@@ -73,4 +81,3 @@ call_makefile ($ARCH, "C", "./examples/dynamic_data_sequences/c");
 call_makefile ($ARCH, "C++", "./examples/dynamic_data_sequences/c++");
 
 call_makefile ($ARCH, "Java", "./examples/dynamic_data_sequences/java");
-

@@ -24,7 +24,7 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 $ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
     "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
 
-
+$RETURN_VALUE = 0;
 
 #set LD_LIBRARY_PATH
 #C/C++ architecture
@@ -68,6 +68,9 @@ sub call_rtiddsgen {
                         $architecture . " " . $idl_filename;
     
     system $call_string;
+    if ( $? != 0 ) {
+        exit(1);
+    }
 }
 
 # This function runs the makefile generated with the rtiddsgen 
@@ -98,6 +101,9 @@ sub call_makefile {
     my ($make_string) = "make -f " . "makefile_" . $data_type . "_" . 
                         $architecture;
     system $make_string;
+    if ( $? != 0 ) {
+        exit(1);
+    }
     
     # return to the top directory again
     chdir $TOP_DIRECTORY;
