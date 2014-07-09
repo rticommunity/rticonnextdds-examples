@@ -9,7 +9,15 @@ $TOP_DIRECTORY = $ENV{'PWD'};
 
 # This variable is the NDDSHOME environment variable
 #$NDDS_VERSION = "/opt/rti/ndds." . $ARGV[1];
-$NDDS_VERSION = "/local/preship/ndds/ndds." . $ARGV[1];
+# If NDDSHOME is defined, leave it as is, else it is defined by default
+if (!defined $ENV{'NDDSHOME'}) {
+    $NDDS_VERSION = $ENV{'NDDSHOME'};
+}
+else { 
+    $NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                        $ARGV[1];
+}
+
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
@@ -21,10 +29,14 @@ $ENV{'NDDSHOME'} = $NDDS_VERSION;
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
 #include Java compiler (Javac) in the path
-$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-    "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
+# If JAVAHOME is not defined we defined it by default
+if (!defined $ENV{'JAVAHOME'}) {
+    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+}
 
-$RETURN_VALUE = 0;
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
+
 
 #set LD_LIBRARY_PATH
 #C/C++ architecture

@@ -5,14 +5,33 @@ $NDDS_VERSION = "5.1.0";
 $TOP_DIRECTORY = $ENV{'PWD'};
 
 # This variable is the NDDSHOME environment variable
-$NDDS_HOME = "/local/preship/ndds/ndds." . $NDDS_VERSION;
-
+# If NDDSHOME is defined, leave it as is, else it is defined by default
+if (!defined $ENV{'NDDSHOME'}) {
+    $NDDS_HOME = $ENV{'NDDSHOME'};
+}
+else { 
+    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                        $NDDS_VERSION;
+}
 #set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
 #include Java compiler (Javac) in the path
-$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
-    "PLATFORMSDK/linux/jdk1.7.0_04/bin:" . $ENV{'PATH'};
+# If JAVAHOME is not defined we defined it by default
+if (!defined $ENV{'JAVAHOME'}) {
+    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+}
+
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
+
+#set LD_LIBRARY_PATH
+#C/C++ architecture
+$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+                            $ENV{'LD_LIBRARY_PATH'};
+#Java Architecture
+$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
+                            $ENV{'LD_LIBRARY_PATH'};                           
 
 
 # This function runs the makefile generated with the rtiddsgen 

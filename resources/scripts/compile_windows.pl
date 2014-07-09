@@ -10,15 +10,23 @@ $FOLDER_TO_CHECK = $ARGV[0];
 $TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
-$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/buildtools/windows/local/preship/" . 
-                "ndds/ndds." . $ARGV[1];
+# If NDDSHOME is defined, leave it as is, else it is defined by default
+if (defined $ENV{'NDDSHOME'}) {
+    $NDDS_VERSION = $ENV{'NDDSHOME'};
+}
+else { 
+    $NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                        $ARGV[1];
+}
+
+#$NDDS_VERSION = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 #$NDDS_VERSION = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
 
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
 
 #set NDDSHOME
-$ENV{'NDDSHOME'} = $NDDS_VERSION;
+$ENV{'NDDSHOME'} = unix_path($NDDS_VERSION);
 
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
@@ -29,8 +37,13 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
 #include Java compiler (Javac) in the path
-$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
-    "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
+# If JAVAHOME is not defined we defined it by default
+if (!defined $ENV{'JAVAHOME'}) {
+    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+}
+
+$ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin" . $ENV{'PATH'};
 
 # Global variable to save the language to compile
 $LANGUAGE = "";

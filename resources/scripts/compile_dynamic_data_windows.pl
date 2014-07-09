@@ -3,25 +3,53 @@ $NDDS_VERSION = "5.1.0";
 #$TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = $ENV{'PWD'};
 
-# This variable is the NDDSHOME environment variable
-$NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/buildtools/windows/local/preship/" . 
-             "ndds/ndds." . $ARGV[1];
+$NDDS_HOME = "";
 
+# This variable is the NDDSHOME environment variable
+# If NDDSHOME is defined, leave it as is, else it is defined by default
+if (defined $ENV{'NDDSHOME'}) {
+    $NDDS_HOME = $ENV{'NDDSHOME'};
+}
+else { 
+    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                        $NDDS_VERSION;
+}
 #set NDDSHOME
-$ENV{'NDDSHOME'} = $NDDS_HOME;
-print "NDDSHOME: " . $ENV{'NDDSHOME'} . "\n";
+$ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
+
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
-#include Java compiler (Javac) in the path
-$ENV{'PATH'}=$ENV{'RTI_TOOLSDRIVE'} . "/Buildtools/Windows/local/" . 
-    "applications/Java/PLATFORMSDK/win32/jdk1.7.0_04/bin;" . $ENV{'PATH'};
+#set PATH
+#C/C++/C# architecture
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+#Java Architecture
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk;" . $ENV{'PATH'};                           
 
+#include Java compiler (Javac) in the path
+# If JAVAHOME is not defined we defined it by default
+if (!defined $ENV{'JAVAHOME'}) {
+    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+        "PLATFORMSDK/linux/jdk1.7.0_04" . $ENV{'PATH'};
+}
+            
 #This solution name is the same one for all dynamic data C/C++ examples
 $VS_SOLUTION_NAME_C = "Hello-i86Win32VS2010.sln";
 
 #This solution name is the same one for all dynamic data C# examples
 $VS_SOLUTION_NAME_CS = "Hello-i86Win32dotnet4.0.sln";
+
+
+# This function change the '\' character by '/' like is used in UNIX
+#   input parameter:
+#       $path: the string to be converted
+#   output parameter:
+#       $path = $path using UNIX format
+sub unix_path {
+    my ($path) = @_;
+    ($path = shift) =~ tr!\\!/!;
+    return $path;
+}
 
 # This function runs the makefile generated with the rtiddsgen 
 #   input parameter (they are used in the construction of the makefile name):

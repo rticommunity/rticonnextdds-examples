@@ -225,7 +225,7 @@ static int publisher_main(int domainId, int sample_count)
 */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) 
+	for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
         printf("Writing async, count %d\n", count);
 

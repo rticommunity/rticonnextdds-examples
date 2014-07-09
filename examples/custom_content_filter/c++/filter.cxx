@@ -44,9 +44,8 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
     struct cdata* cd = NULL;
     
     /* First free old data, if any */
-    if (old_compile_data != NULL) {
-        delete old_compile_data;
-    }
+    delete old_compile_data;
+
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
      * and <var> is an integral member of the msg structure.
