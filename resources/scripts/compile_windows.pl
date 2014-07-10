@@ -44,7 +44,7 @@ $ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
 #C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'ARCH_OS'} . "jdk;" . 
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
                 $ENV{'PATH'};                           
 #include Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
