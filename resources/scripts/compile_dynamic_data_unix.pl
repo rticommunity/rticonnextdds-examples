@@ -51,11 +51,11 @@ sub call_makefile {
     
     my ($make_string) = "";
     if ($language eq "Java") {
-        $make_string = "javac -classpath .:\"$NDDSHOME\"/class/nddsjava.jar " . 
+        $make_string = "javac -classpath .:\"\$NDDSHOME\"/class/nddsjava.jar " . 
                         "*.java";
-        print $compile_string . "\n";
+        print $make_string . "\n";
     } else {
-        $make_string = "make -f " . "makefile_Foo_" . $architecture;
+        $make_string = "make -f makefile_Foo_" . $architecture;
     }
 
     #change to the directory where the example is (where the rtiddsgen has been
