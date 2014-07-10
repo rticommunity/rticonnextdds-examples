@@ -9,7 +9,7 @@ $TOP_DIRECTORY = cwd();
 $NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
-if (!defined $ENV{'NDDSHOME'}) {
+if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
