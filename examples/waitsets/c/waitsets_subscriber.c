@@ -108,6 +108,8 @@ static int subscriber_main(int domainId, int sample_count)
     /* To change the DataReader's QoS programmatically you will need to
      * declare and initialize datareader_qos here. */
     struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    struct waitsetsSeq data_seq = DDS_SEQUENCE_INITIALIZER;
+    struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
 
 
     /* To customize participant QoS, use 
@@ -345,10 +347,10 @@ static int subscriber_main(int domainId, int sample_count)
                  printf("Read condition\n");
                  /* Current conditions match our conditions to read data, so
                   * we can read data just like we would do in any other
-                  * example. */
-                 struct waitsetsSeq data_seq = DDS_SEQUENCE_INITIALIZER;
-                 struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
-
+                  * example. We use data_seq and info_seq to this task
+                  * defined at start.
+                  */
+                 
                  /* You may want to call take_w_condition() or
                   * read_w_condition() on the Data Reader. This way you will use
                   * the same status masks that were set on the Read Condition.
