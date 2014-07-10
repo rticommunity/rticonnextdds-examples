@@ -212,4 +212,4 @@ sub process_all_files {
     }
 }
 
-#process_all_files ($FOLDER_TO_CHECK);
+process_all_files ($FOLDER_TO_CHECK);
