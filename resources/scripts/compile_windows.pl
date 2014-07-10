@@ -31,6 +31,15 @@ $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 #set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 
+# If OS_ARCH is not defined, we take it from the input architecture
+if (!defined $ENV{'OS_ARCH'}) {
+    $ENV{'OS_ARCH'} = substr $ARCH, 0, 8;
+}
+
+# we get the number of bit of the architecture, this is: "i86Win32" or 
+# "x64Win64"
+$ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
+
 #set PATH
 #C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
@@ -49,12 +58,9 @@ $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
 # Global variable to save the language to compile
 $LANGUAGE = "";
 
-#
+# This is the dot net version
 $DOT_NET_VERSION = "dotnet4.0";
 
-# we get the number of bit of the architecture, this is: "i86Win32" or 
-# "x64Win64"
-$ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:

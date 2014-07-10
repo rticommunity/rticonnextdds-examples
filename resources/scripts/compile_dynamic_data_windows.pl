@@ -27,7 +27,7 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 #C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 #Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . "x64Win64" . "jdk;" . 
+$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
                $ENV{'PATH'};                           
 
 #include Java compiler (Javac) in the path

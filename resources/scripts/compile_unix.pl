@@ -8,10 +8,12 @@ $FOLDER_TO_CHECK = $ARGV[0];
 #$TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
+$NDDS_HOME = "";
+
 # This variable is the NDDSHOME environment variable
 #$NDDS_HOME = "/opt/rti/ndds." . $ARGV[1];
 # If NDDSHOME is defined, leave it as is, else it is defined by default
-if (!defined $ENV{'NDDSHOME'}) {
+if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
