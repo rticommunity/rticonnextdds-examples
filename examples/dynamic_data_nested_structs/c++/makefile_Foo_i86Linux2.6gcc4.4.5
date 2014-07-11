@@ -33,17 +33,17 @@ syslibs_i86Linux2.6gcc4.4.5 = -ldl -lnsl -lm -lpthread -lrt
 DEFINES_ARCH_SPECIFIC = -DRTI_UNIX -DRTI_LINUX
 
 
-DEFINES = $(DEFINES_ARCH_SPECIFIC)  
+DEFINES = $(DEFINES_ARCH_SPECIFIC) $(cxx_DEFINES_ARCH_SPECIFIC) 
 
 INCLUDES = -I. -I$(NDDSHOME)/include -I$(NDDSHOME)/include/ndds
 
 LIBS = -L$(NDDSHOME)/lib/i86Linux2.6gcc4.4.5 \
-        -lnddscz -lnddscorez $(syslibs_i86Linux2.6gcc4.4.5)
+        -lnddscppz -lnddscz -lnddscorez $(syslibs_i86Linux2.6gcc4.4.5)
 
 COMMONSOURCES = 
 EXEC          = dynamic_data_nested_struct_example
 DIRECTORIES   = objs.dir objs/i86Linux2.6gcc4.4.5.dir
-COMMONOBJS    = $(COMMONSOURCES:%.c=objs/i86Linux2.6gcc4.4.5/%.o)
+COMMONOBJS    = $(COMMONSOURCES:%.cxx=objs/i86Linux2.6gcc4.4.5/%.o)
 
 # We actually stick the objects in a sub directory to keep your directory clean.
 i86Linux2.6gcc4.4.5 : $(DIRECTORIES) $(COMMONOBJS) \
@@ -51,20 +51,20 @@ i86Linux2.6gcc4.4.5 : $(DIRECTORIES) $(COMMONOBJS) \
 	       $(EXEC:%=objs/i86Linux2.6gcc4.4.5/%.out)
 
 objs/i86Linux2.6gcc4.4.5/%.out : objs/i86Linux2.6gcc4.4.5/%.o 
-	$(c_ld_i86Linux2.6gcc4.4.5) $(c_ld_flags_i86Linux2.6gcc4.4.5)  -o $(@:%.out=%) $(@:%.out=%.o) $(COMMONOBJS) $(LIBS)
+	$(cxx_ld_i86Linux2.6gcc4.4.5) $(cxx_ld_flags_i86Linux2.6gcc4.4.5)  -o $(@:%.out=%) $(@:%.out=%.o) $(COMMONOBJS) $(LIBS)
 
-objs/i86Linux2.6gcc4.4.5/%.o : %.c
-	$(c_cc_i86Linux2.6gcc4.4.5) $(c_cc_flags_i86Linux2.6gcc4.4.5)  -o $@ $(DEFINES) $(INCLUDES) -c $<
+objs/i86Linux2.6gcc4.4.5/%.o : %.cxx
+	$(cxx_cc_i86Linux2.6gcc4.4.5) $(cxx_cc_flags_i86Linux2.6gcc4.4.5)  -o $@ $(DEFINES) $(INCLUDES) -c $<
 
 #
 # Uncomment these lines if you want the support files regenerated when idl
 # file is modified
 #
-#Foo.c Foo.h \
-#FooPlugin.c FooPlugin.h \
-#FooSupport.c FooSupport.h : \
+#Foo.cxx Foo.h \
+#FooPlugin.cxx FooPlugin.h \
+#FooSupport.cxx FooSupport.h : \
 #		Foo.idl
-#	$(NDDSHOME)/scripts/rtiddsgen Foo.idl -replace -language C
+#	$(NDDSHOME)/scripts/rtiddsgen Foo.idl -replace
 
 # Here is how we create those subdirectories automatically.
 %.dir : 
