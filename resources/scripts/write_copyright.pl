@@ -1,3 +1,14 @@
+################################################################################
+# (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# RTI grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no warranty
+# of any type, including any warranty for fitness for any purpose. RTI is under
+# no obligation to maintain or support the Software.  RTI shall not be liable 
+# for any incidental or consequential damages arising out of the use or 
+# inability to use the software.
+################################################################################
+
 #!C:/Perl64/bin/perl.exe -w
 # Example of use:
 #  perl write_copyright.pl <working_directory> <option_flag> <extensions>...
@@ -9,17 +20,24 @@ use File::Copy qw(move);
 ########################## GLOBAL VARIABLES ####################################
 ################################################################################
 
+$COPYRIGHT_FILENAME_C_STYLE = "resources/copyright_c_style.txt";
+$COPYRIGHT_FILENAME_XML_STYLE = "resources/copyright_xml_style.txt";
 
 # The next function will load the number of character on the copyright text
-$COPYRIGHT_LENGTH = chars_per_file("resources/copyright.txt");
+$COPYRIGHT_LENGTH_C_STYLE = chars_per_file($COPYRIGHT_FILENAME_C_STYLE);
+$COPYRIGHT_LENGTH_XML_STYLE = chars_per_file($COPYRIGHT_FILENAME_XML_STYLE);
 
 # This variable is the number of bytes of the copyright.txt file. It is needed
 # to seek in the file
-$COPYRIGHT_SIZE = -s "resources/copyright.txt";
+$COPYRIGHT_SIZE_C_STYLE = -s $COPYRIGHT_FILENAME_C_STYLE;
+$COPYRIGHT_SIZE_XML_STYLE = -s $COPYRIGHT_FILENAME_XML_STYLE;
 
 # The next function will load the copyright text
-$COPYRIGHT_TEXT = read_text_w_length("resources/copyright.txt", 
-                                    $COPYRIGHT_LENGTH);
+$COPYRIGHT_TEXT_C_STYLE = read_text_w_length($COPYRIGHT_FILENAME_C_STYLE , 
+                        $COPYRIGHT_LENGTH_C_STYLE);
+
+$COPYRIGHT_TEXT_XML_STYLE = read_text_w_length($COPYRIGHT_FILENAME_XML_STYLE , 
+                        $COPYRIGHT_LENGTH_XML_STYLE);
 
 # The next variable will have the extensions of the files which are going to
 # be examined
@@ -121,19 +139,30 @@ sub read_text_w_length {
 #       $have_copyright: 1 (True) or 0 (False), if the $filename has the 
 #                        copyright
 sub check_if_copyright {
-    my ($filename) = @_;
+    my ($filename, $is_xml_file) = @_;
     my ($copyright) = "";
     open(my $fh, '<:utf8', $filename)
         or die "Could not open file '$filename' $!";
- 
-    read($fh, $copyright, $COPYRIGHT_LENGTH);
-    close $fh;
-    
-    my ($have_copyright) = 0;
-    if ($copyright eq $COPYRIGHT_TEXT) {
-        $have_copyright = 1;
+   
+    if($is_xml_file) {
+        read($fh, $copyright, $COPYRIGHT_LENGTH_XML_STYLE);
+    } else {
+        read($fh, $copyright, $COPYRIGHT_LENGTH_C_STYLE);
     }
- 
+    
+    close $fh;
+            
+    my ($have_copyright) = 0;
+    
+    if ($is_xml_file) {
+        if ($copyright eq $COPYRIGHT_TEXT_XML_STYLE) {
+            $have_copyright = 1;
+        }
+    } else {
+        if ($copyright eq $COPYRIGHT_TEXT_C_STYLE) {
+            $have_copyright = 1;
+        }
+    }
     return $have_copyright;
 }
 
@@ -143,7 +172,7 @@ sub check_if_copyright {
 #   output parameter:
 #       none
 sub copy_copyright_in_file {
-    my ($filename) = @_;
+    my ($filename, $is_xml_file) = @_;
     #buffer will store the text file
     my ($buffer) = "";
     open(my $fh, '+<:utf8', $filename)
@@ -154,7 +183,11 @@ sub copy_copyright_in_file {
     #set the file handle at the start of the file
     seek $fh, 0, 0;
     
-    print $fh $COPYRIGHT_TEXT.$buffer;
+    if ($is_xml_file) {
+        print $fh $COPYRIGHT_TEXT_XML_STYLE.$buffer;
+    } else {
+        print $fh $COPYRIGHT_TEXT_C_STYLE.$buffer;
+    }
 
     close $fh;
 }
@@ -165,7 +198,7 @@ sub copy_copyright_in_file {
 #   output parameter:
 #       none
 sub delete_copyright_in_file {
-    my ($filename) = @_;
+    my ($filename, $is_xml_file) = @_;
     #buffer will store the text file
     my ($buffer) = "";
     my ($new_filename) = $filename.".new";
@@ -175,7 +208,11 @@ sub delete_copyright_in_file {
     open (my $new_fh, '>>:utf8', $new_filename);
     
     #set the file handle at the end of the copyright header
-    seek $fh, $COPYRIGHT_SIZE, 0;
+    if ($is_xml_file) {
+        seek $fh, $COPYRIGHT_SIZE_XML_STYLE, 0;
+    } else {
+        seek $fh, $COPYRIGHT_SIZE_C_STYLE, 0;
+    }
     
     while (<$fh>) {
         my $line = $_;
@@ -240,24 +277,31 @@ sub process_all_files {
         my $file = "$folder/$register";
         $file = unix_path($file);
         
+        my ($is_xml_file) = 0;
+        
         # If a file has been found-> check if it has copyright
         if (-f $file) {
             # If the file has not one of the introduced extensions -> do nothing
             next if $file !~ /\.($EXTENSIONS)$/i;
+            
+            if (substr ($register, 0, -4) eq ".xml") {
+                $is_xml_file = 1;
+            }
+            
             print "Text file Checking: $file\n";
             ##### ACTIONS IF THE FILE HAS THE COPYRIGHT OR NOT ######
-            if ( check_if_copyright ($file) ) {
+            if ( check_if_copyright ($file, $is_xml_file) ) {
                 print "File $file has the copyright written\n";  
                 
                 #delete copyright header
                 if ($OPTIONS_FLAG == 2) {
-                    delete_copyright_in_file($file);
+                    delete_copyright_in_file($file, $is_xml_file);
                     print "File $file: copyright header deleted\n";
                 }
             } else {
                 #copy copyright header
                 if ($OPTIONS_FLAG == 1) {
-                    copy_copyright_in_file($file);
+                    copy_copyright_in_file($file, is_xml_file);
                     print "File $file: copyright header copied\n";
                 }
             }            
