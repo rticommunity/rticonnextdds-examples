@@ -126,7 +126,6 @@ sub read_text_w_length {
 }
 
 
-
 ################################################################################
 ######################### COPYRIGHT FUNCTIONS ##################################
 ################################################################################
@@ -141,21 +140,38 @@ sub read_text_w_length {
 sub check_if_copyright {
     my ($filename, $is_xml_file) = @_;
     my ($copyright) = "";
+    my ($buffer) = "";
     open(my $fh, '<:utf8', $filename)
         or die "Could not open file '$filename' $!";
-   
+    
+    # To copy all the file in a string
+    local $/ = undef;
+    $buffer = <$fh>;
+    
+    # We get the xml definition string, which is the one between <? and ?>
+    my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)/;
+    
     if($is_xml_file) {
-        read($fh, $copyright, $COPYRIGHT_LENGTH_XML_STYLE);
+        my ($xml_definition_length) = length $xml_definition_text;
+        
+        # We positioning our handler at the first of the file and get text from
+        # start to the end of copyright string
+        seek $fh, 0, 0;
+        read($fh, $copyright,
+                    $COPYRIGHT_LENGTH_XML_STYLE + $xml_definition_length);
     } else {
+        # We positioning our handler after the xml definition tag
+        seek $fh, 0, 0;
         read($fh, $copyright, $COPYRIGHT_LENGTH_C_STYLE);
     }
-    
+     
     close $fh;
-            
-    my ($have_copyright) = 0;
     
+    my ($have_copyright) = 0;
     if ($is_xml_file) {
-        if ($copyright eq $COPYRIGHT_TEXT_XML_STYLE) {
+        # $aux has the string with the xml definition + copyright in xml style 
+        my ($aux) = $xml_definition_text . $COPYRIGHT_TEXT_XML_STYLE;
+        if ($copyright eq $aux) {
             $have_copyright = 1;
         }
     } else {
@@ -177,15 +193,28 @@ sub copy_copyright_in_file {
     my ($buffer) = "";
     open(my $fh, '+<:utf8', $filename)
         or die "Could not open file '$filename' $!";
-    local $/ = undef;
     
-    $buffer = <$fh>;
     #set the file handle at the start of the file
     seek $fh, 0, 0;
     
+    while (<$fh>) {
+        $buffer .= $_;
+    }
+    
     if ($is_xml_file) {
-        print $fh $COPYRIGHT_TEXT_XML_STYLE.$buffer;
+        # We get the xml definition string, which is the one between <? and ?>
+        my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/;
+        $buffer = $2;
+        my ($xml_definition_length) = length $xml_definition_text;
+                
+        #set the file handle at the start of the file
+        seek $fh, 0, 0;
+        print $fh $xml_definition_text . $COPYRIGHT_TEXT_XML_STYLE . 
+                $buffer;
+        
     } else {
+        #set the file handle at the start of the file
+        seek $fh, 0, 0;
         print $fh $COPYRIGHT_TEXT_C_STYLE.$buffer;
     }
 
@@ -206,17 +235,27 @@ sub delete_copyright_in_file {
     open(my $fh, '+<:utf8', $filename)
         or die "Could not open file '$filename' $!";
     open (my $new_fh, '>>:utf8', $new_filename);
+     
+    # To copy all the file in a string
+    local $/ = undef;
+    $buffer = <$fh>;
     
     #set the file handle at the end of the copyright header
     if ($is_xml_file) {
-        seek $fh, $COPYRIGHT_SIZE_XML_STYLE, 0;
+        # We get the xml definition string, which is the one between <? and ?>
+        my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/;
+        # auxiliar variable $2 has all the text less from start of the file to
+        # the first of the copyright string
+        $buffer = substr $2, $COPYRIGHT_LENGTH_XML_STYLE, length $2;
+                
+        print $new_fh $xml_definition_text . $buffer;
+        
     } else {
         seek $fh, $COPYRIGHT_SIZE_C_STYLE, 0;
-    }
-    
-    while (<$fh>) {
-        my $line = $_;
-        print $new_fh $line;
+        while (<$fh>) {
+            my $line = $_;
+            print $new_fh $line;
+        }
     }
     
     close $new_fh;
@@ -277,17 +316,17 @@ sub process_all_files {
         my $file = "$folder/$register";
         $file = unix_path($file);
         
-        my ($is_xml_file) = 0;
-        
         # If a file has been found-> check if it has copyright
         if (-f $file) {
             # If the file has not one of the introduced extensions -> do nothing
             next if $file !~ /\.($EXTENSIONS)$/i;
             
-            if (substr ($register, 0, -4) eq ".xml") {
+            my ($is_xml_file) = 0;
+            my ($file_extension) = $file =~ /(\.[^.]+)$/;
+            
+            if ($file_extension eq ".xml") {
                 $is_xml_file = 1;
             }
-            
             print "Text file Checking: $file\n";
             ##### ACTIONS IF THE FILE HAS THE COPYRIGHT OR NOT ######
             if ( check_if_copyright ($file, $is_xml_file) ) {
@@ -301,7 +340,7 @@ sub process_all_files {
             } else {
                 #copy copyright header
                 if ($OPTIONS_FLAG == 1) {
-                    copy_copyright_in_file($file, is_xml_file);
+                    copy_copyright_in_file($file, $is_xml_file);
                     print "File $file: copyright header copied\n";
                 }
             }            
