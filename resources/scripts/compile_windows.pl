@@ -187,8 +187,6 @@ sub process_all_files {
     close DIR;
 
     foreach $register (@files) {
-        # In the unix script we want to skip the C# examples. They are under
-        # cs subdirectory
         next if $register eq "."  or  $register eq "..";
                 
         my $file = "$folder/$register";
