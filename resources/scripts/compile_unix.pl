@@ -13,15 +13,19 @@
 #    perl compile_unix.pl <working_directory> <ndds_version> <architecture>
 use Cwd;
 
+################################################################################
+########################## GLOBAL VARIABLES ####################################
+################################################################################
+
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
-#$TOP_DIRECTORY is the directory where you have executed the script
+# $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
 $NDDS_HOME = "";
 
 # This variable is the NDDSHOME environment variable
-#$NDDS_HOME = "/opt/rti/ndds." . $ARGV[1];
+# $NDDS_HOME = "/opt/rti/ndds." . $ARGV[1];
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
@@ -34,13 +38,13 @@ else {
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
 
-#set NDDSHOME
+# set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
-#set the scripts folder to the PATH
+# set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
-#include Java compiler (Javac) in the path
+# include Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
@@ -49,18 +53,21 @@ if (!defined $ENV{'JAVAHOME'}) {
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
-
-#set LD_LIBRARY_PATH
-#C/C++ architecture
+# set LD_LIBRARY_PATH
+# C/C++ architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
                             $ENV{'LD_LIBRARY_PATH'};
-#Java Architecture
+# Java Architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
                             $ENV{'LD_LIBRARY_PATH'};                           
 
-# Global variable to save the language to compile
+# Global variable to save the language to compile, will be modified with every
+# compile string we launch
 $LANGUAGE = "";
 
+################################################################################
+######################### AUXILIAR FUNCTIONS ###################################
+################################################################################
 
 # This function changes the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -72,6 +79,10 @@ sub unix_path {
     ($path = shift) =~ tr!\\!/!;
     return $path;
 }
+
+################################################################################
+##################### BUILD AND COMPILE FUNCTIONS ##############################
+################################################################################
 
 # This function calls rtiddsgen for the idl file using the corresponding 
 # architecture and language 
@@ -91,7 +102,9 @@ sub call_rtiddsgen {
     my ($call_string) = "rtiddsgen -language " . $language . " -example " .
                         $architecture . " " . $idl_filename;
     
+    # create the string to call rtiddsgen
     system $call_string;
+    # if the system call has errors, the program exits with the error code 1
     if ( $? != 0 ) {
         exit(1);
     }
@@ -106,10 +119,10 @@ sub call_rtiddsgen {
 #       none
 sub call_makefile {
     my ($architecture, $idl_filename, $path) = @_;
-    # $type has the name of the idle without the extension .idl
+    # $type has the name of the idl file without the extension .idl
     my ($data_type) = substr $idl_filename, 0, -4;
 
-    #if the compilation language is Java, add jdk at the final of the $ARCH
+    # if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
         $architecture .= "jdk";
     }
@@ -118,13 +131,15 @@ sub call_makefile {
     # idl file is
     $execution_folder = substr $path, 0, (-1 * length $idl_filename);
     
-    #change to the directory where the example is (where the rtiddsgen has been
+    # change to the directory where the example is (where the rtiddsgen has been
     # executed) to run the makefile
     chdir $execution_folder;
     
+    # we create a string to run the makefile for all language, C, C++ and Java
     my ($make_string) = "make -f " . "makefile_" . $data_type . "_" . 
                         $architecture;
     system $make_string;
+    # if the system call has errors, the program exits with the error code 1
     if ( $? != 0 ) {
         exit(1);
     }

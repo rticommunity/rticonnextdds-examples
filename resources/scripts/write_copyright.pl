@@ -67,9 +67,12 @@ $OPTIONS_FLAG = $ARGV[1];
 sub get_extensions {
     my ($buffer) = "";
     
+    # We start the $i in 2 because we have used the 2nd firsts parameters for
+    # <working_directory> and <option_flag>
     for($i = 2; $i < scalar(@ARGV); $i++) {
         $buffer .= $ARGV[$i] . "|";
     }
+    #remove the last |
     chop($buffer);
     
     return $buffer;
@@ -151,6 +154,8 @@ sub check_if_copyright {
     # We get the xml definition string, which is the one between <? and ?>
     my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)/;
     
+    # if the file is an xml file, we have to use him in a different way, because
+    # the copyright should be checked/copied/deleted after the xml definition.
     if($is_xml_file) {
         my ($xml_definition_length) = length $xml_definition_text;
         
