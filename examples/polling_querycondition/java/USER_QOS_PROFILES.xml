@@ -14,8 +14,8 @@ For more information about XML QoS Profiles see Chapter 15 in the
 RTI Connext user manual.
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="C:/Program Files/RTI/5.0.0/ndds.5.0.0/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/rti_dds_qos_profiles.xsd"
-     version="5.0.0">
+     xsi:noNamespaceSchemaLocation="C:/Program Files/RTI/5.1.0/ndds.5.1.0/scripts/../resource/rtiddsgen/../qos_profiles_5.1.0/schema/rti_dds_qos_profiles.xsd"
+     version="5.1.0">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
@@ -71,7 +71,7 @@ RTI Connext user manual.
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI WaitSets with StatusCondtiion Java Example</name>
+                    <name>RTI Poll With QueryCondition Java Example</name>
                 </participant_name>
 
             </participant_qos>
