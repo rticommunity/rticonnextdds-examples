@@ -339,6 +339,8 @@ sub process_all_files {
             # if you are going to check whether the file has copyright and 
             # the file has not it -> exit with error 1
             if ($OPTIONS_FLAG == 0 and $file_has_copyright == 0) {
+                print "ERROR: The file does not have the copyright written: " .
+                            "$file\n";
                 exit (1);
             }
             
