@@ -124,6 +124,11 @@ sub process_all_files {
 process_all_files ($FOLDER_TO_CHECK);
 
 # validate xml files in persistent_storage example
+print "\n*******************************************************" . 
+                "****************\n";
+print "***** EXAMPLE: persistent_storage\n";
+print "*********************************************************" . 
+                "**************\n";
 validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml", 
                         $XSD_PATH);
 
@@ -153,9 +158,21 @@ validate_xml ("./examples/persistent_storage/java/" .
                 "./resources/rti_persistence_service.xsd");
 
 # validate xml files in routing_service_file_adapter
+print "\n*******************************************************" . 
+                "****************\n";
+print "***** EXAMPLE: routing_service_file_adapter\n";
+print "*********************************************************" . 
+                "**************\n";
+
 validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml", 
                     "./resources/rti_routing_service.xsd");
                     
-# validate xml files in routing_service_file_adapter
+# validate xml files in writing_data_lua
+print "\n*******************************************************" . 
+                "****************\n";
+print "***** EXAMPLE: writing_data_lua\n";
+print "*********************************************************" . 
+                "**************\n";
+
 validate_xml ("./examples/writing_data_lua/prototyper_config.xml",
                     "./resources/rti_dds_profiles.xsd");
