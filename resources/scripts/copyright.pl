@@ -333,8 +333,17 @@ sub process_all_files {
                 $is_xml_file = 1;
             }
             print "Text file Checking: $file\n";
+            
+            my ($file_has_copyright) = check_if_copyright ($file, $is_xml_file);
+            
+            # if you are going to check whether the file has copyright and 
+            # the file has not it -> exit with error 1
+            if ($OPTIONS_FLAG == 0 and $file_has_copyright == 0) {
+                exit (1);
+            }
+            
             ##### ACTIONS IF THE FILE HAS THE COPYRIGHT OR NOT ######
-            if ( check_if_copyright ($file, $is_xml_file) ) {
+            if ( $file_has_copyright ) {
                 print "File $file has the copyright written\n";  
                 
                 #delete copyright header

@@ -1,4 +1,4 @@
-  The script write_copyright.pl receives a variable number of arguments. The
+  The script copyright.pl receives a variable number of arguments. The
 first one is the parent directory to check, including its child directories.
 The second one is a flag to copy copyright in the corresponding files or just 
 check if that files have it or not. The other arguments are the extensions of 
@@ -22,13 +22,14 @@ definition, so a normal copyright in a xml file is:
         </END_THE_XML_FILE>
     
   You can call the script:
-    ./resources/scripts/write_copyright.pl <working_directory> <option_flag> <extensions>...
+    ./resources/scripts/copyright.pl <working_directory> <option_flag> <extensions>...
   
   Where:
   1. <working_directory> is the parent directory to check. 
   2. <option_flag> If the copyright will be checked, copied or deleted. 
         - A value '0' indicates that the copyright only will be checked if the 
-          files contain it or not.
+          files contain it or not. If you use this option and the file does
+          not have copyright, the script will fail.
         - A value '1' indicates that the copyright will be copied in the files
           which do not have it. 
         - A value '2' indicates that the copyright will be deleted in the files
@@ -38,13 +39,13 @@ definition, so a normal copyright in a xml file is:
   
   An execution example to check if some files has copyright is:
   
-    ./resources/scripts/write_copyright.pl ./examples 0 c cxx cs xml idl h
+    ./resources/scripts/copyright.pl ./examples 0 c cxx cs xml idl h
   
   The script will check if the files with extensions .c .cxx .cs .xml .idl .h 
 has copyright in the directory ./examples.
 
   If you want to copy the copyright in the files which do not have it:
-     ./resources/scripts/write_copyright.pl ./examples 1 cxx cs xml idl h
+     ./resources/scripts/copyright.pl ./examples 1 cxx cs xml idl h
 
   Now, the script are going to check the files with extensions .c .cxx .cs .xml 
 .idl .h in has the directory ./examples. If that files do not have the copyright
