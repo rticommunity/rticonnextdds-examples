@@ -113,7 +113,7 @@ sub process_all_files {
                 "**************\n";
             
             # if validate_xml has any error, it exit with code 1
-            validate_xml ($file, $XSD_PATH) != 0)
+            validate_xml ($file, $XSD_PATH);
                 
         } elsif (-d $file) {
             process_all_files($file);
