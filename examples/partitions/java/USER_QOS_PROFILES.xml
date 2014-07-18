@@ -1,7 +1,9 @@
 <?xml version="1.0"?>
 
 
-<dds>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/opt/RTI/ndds.5.1.0/scripts/../resource/rtiddsgen/../qos_profiles_5.1.0/schema/rti_dds_qos_profiles.xsd"
+     version="5.1.0">
 	<qos_library name="partitions_Library">
 
 		<qos_profile name="partitions_Profile" is_default_qos="true">
@@ -12,8 +14,6 @@
 				<partition>
 					<name>
 						<element>ABC</element>
-					</name>
-					<name>
 						<element>foo</element>
 					</name>
 				</partition>
@@ -25,8 +25,6 @@
 				<partition>
 					<name>
 						<element>ABC</element>
-					</name>
-					<name>
 						<element>X*Z</element>
 					</name>
 				</partition>

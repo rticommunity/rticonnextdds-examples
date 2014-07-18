@@ -4,7 +4,9 @@
 	is used only when it is in the current working directory or when the enviroment 
 	variable NDDS_QOS_PROFILES is defined and points to this file. For more information 
 	about XML QoS Profiles see Chapter 15 in the RTI Connext user manual. -->
-<dds>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/opt/RTI/ndds.5.1.0/scripts/../resource/rtiddsgen/../qos_profiles_5.1.0/schema/rti_dds_qos_profiles.xsd"
+     version="5.1.0">
 	<!-- QoS Library containing the QoS profile used in the generated example. 
 		A QoS library is a named set of QoS profiles. -->
 	<qos_library name="waitsets_Library">

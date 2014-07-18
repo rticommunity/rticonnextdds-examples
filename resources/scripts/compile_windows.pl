@@ -1,12 +1,27 @@
+################################################################################
+# (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# RTI grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no warranty
+# of any type, including any warranty for fitness for any purpose. RTI is under
+# no obligation to maintain or support the Software.  RTI shall not be liable 
+# for any incidental or consequential damages arising out of the use or 
+# inability to use the software.
+################################################################################
+
 #!C:/Perl64/bin/perl.exe -w
 use Cwd;
 
 # Example of use:
 #    perl compile_windows.pl <working_directory> <ndds_version> <architecture>
 
+################################################################################
+########################## GLOBAL VARIABLES ####################################
+################################################################################
+
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
-#$TOP_DIRECTORY is the directory where you have executed the script
+# $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
 # This variable is the NDDSHOME environment variable
@@ -19,16 +34,13 @@ else {
                         $ARGV[1];
 }
 
-#$NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
-#$NDDS_HOME = $ENV{'RTI_DRIVE'} . "/local/preship/ndds/ndds." . $ARGV[1];
-
 # This variable is the architecture name 
 $ARCH = $ARGV[2];
 
-#set NDDSHOME
+# set NDDSHOME
 $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 
-#set the scripts folder to the PATH
+# set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
 
 # If OS_ARCH is not defined, we take it from the input architecture
@@ -40,13 +52,13 @@ if (!defined $ENV{'OS_ARCH'}) {
 # "x64Win64"
 $ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
 
-#set PATH
-#C/C++/C# architecture
+# set PATH
+# C/C++/C# architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
-#Java Architecture
+# Java Architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
                 $ENV{'PATH'};                           
-#include Java compiler (Javac) in the path
+# include Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
@@ -55,12 +67,16 @@ if (!defined $ENV{'JAVAHOME'}) {
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
 
-# Global variable to save the language to compile
+# Global variable to save the language to compile, will be modified with every
+# compile string we launch
 $LANGUAGE = "";
 
 # This is the dot net version
 $DOT_NET_VERSION = "dotnet4.0";
 
+################################################################################
+######################### AUXILIAR FUNCTIONS ###################################
+################################################################################
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -73,6 +89,10 @@ sub unix_path {
     return $path;
 }
 
+################################################################################
+##################### BUILD AND COMPILE FUNCTIONS ##############################
+################################################################################
+
 # This function calls rtiddsgen for the idl file using the corresponding 
 # architecture and language 
 #   input parameter:
@@ -84,20 +104,25 @@ sub unix_path {
 sub call_rtiddsgen {
     my ($language, $architecture, $idl_filename) = @_;
 
-    #if the compilation language is Java, add jdk at the final of the $ARCH
+    # if the compilation language is Java, we have to add jdk at the final of 
+    # the $ARCH
     if ($LANGUAGE eq "Java") {
         $architecture = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
-    } elsif ($LANGUAGE eq "C#") {
+    } 
+    # if the compilation language is C#, we have to add the dot net version
+    # and disable the preprocessor
+    elsif ($LANGUAGE eq "C#") {
         $architecture = $ARCHITECTURE_NUMBER_OF_BITS . $DOT_NET_VERSION . 
                         " -ppDisable ";
     }
     my ($call_string) = "";
     
+    # create the string to call rtiddsgen
     $call_string =  "rtiddsgen -language " . $language . " -example " .
                     $architecture . " " . $idl_filename; 
       
-    #print "call_string: <" . $call_string . ">\n";
     system $call_string;
+    # if the system call has errors, the program exits with the error code 1
     if ( $? != 0 ) {
         exit(1);
     }
@@ -127,28 +152,35 @@ sub call_compiler {
     my ($compile_string) = "";
     my ($visual_studio_year) = substr $ARCH, length($ARCH) -4;
     
+    # we create the compile string for visual studio projects, which is the same
+    # one for C and C++ languages
     if ($LANGUAGE eq "C" or $LANGUAGE eq "C++") {
         $compile_string = "msbuild " . $data_type . "-vs" . 
                 $visual_studio_year . ".sln";
-    } elsif ($LANGUAGE eq "Java") {
+    } 
+    # if the language is Java, all the files will be compiled with *.java
+    elsif ($LANGUAGE eq "Java") {
         $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
                           "nddsjava.jar *.java";
         print $compile_string . "\n";
-    } elsif ($LANGUAGE eq "C#") {
+    } 
+    # if the language is C# we create the compile string for visual studio C# 
+    # projects
+    elsif ($LANGUAGE eq "C#") {
         # Firstly, compiling type 
         $compile_string = "msbuild " . $data_type . "-csharp.sln";
     }
 
-    #print $compile_string;
-    
     # change to the directory where the example is (where the rtiddsgen has been
     # executed) to run the makefile
     chdir $execution_folder;
           
+    # if the system call has errors, the program exits with the error code 1
     system $compile_string;
     if ( $? != 0 ) {
         exit(1);
     }
+    
     # return to the top directory again
     chdir $TOP_DIRECTORY;
 }
@@ -176,8 +208,6 @@ sub process_all_files {
     close DIR;
 
     foreach $register (@files) {
-        # In the unix script we want to skip the C# examples. They are under
-        # cs subdirectory
         next if $register eq "."  or  $register eq "..";
                 
         my $file = "$folder/$register";
