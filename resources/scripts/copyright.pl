@@ -182,6 +182,15 @@ sub check_if_copyright {
     } else {
         if ($copyright eq $COPYRIGHT_TEXT_C_STYLE) {
             $have_copyright = 1;
+        } else {
+            # the file does not has copyright
+            print "ERROR: The file does not have the copyright written: " .
+                            "$filename\n";
+            
+            print "copyright:\n<?$copyright?>\n" .
+                  "copy_c_st:\n<?$COPYRIGHT_TEXT_C_STYLE?>\n";
+            
+            exit(1);            
         }
     }
     return $have_copyright;
