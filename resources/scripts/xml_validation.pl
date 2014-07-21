@@ -22,11 +22,7 @@ $FOLDER_TO_CHECK = $ARGV[0];
 $XSD_PATH = $ARGV[1];
 
 # Path to the xmllint, if it is empty, the tool is in the path
-$XMLLINT_PATH = "/local/applications/libxml2/i86Linux2.6gcc4.1.1/bin/xmllint/";
-
-# Path to the xmlstarlet, if it is empty, the tool is in the path
-$XMLSTARLET_PATH = "/local/applications/xmlstarlet/i86Linux2.6gcc4.1.1/bin/" . 
-                    "xml/";
+$XMLLINT_PATH = "";
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -57,14 +53,10 @@ sub validate_xml {
     system $call_string;
     if ( $? != 0 ) {
         $have_error = 1;
-    } else {
-        $call_string =  $XMLSTARLET_PATH . "xmlstarlet val -e -s " . $xsd_path . 
-                            " " . $xml_filename; 
-          
-        system $call_string;
-        if ( $? != 0 ) {
-            exit(1);
-        }
+    } 
+    
+    if ( $? != 0 ) {
+        exit(1);
     }
 }
 

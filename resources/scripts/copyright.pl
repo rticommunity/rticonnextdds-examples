@@ -44,7 +44,7 @@ $COPYRIGHT_TEXT_XML_STYLE = read_text_w_length($COPYRIGHT_FILENAME_XML_STYLE ,
 $EXTENSIONS = get_extensions();
 
 # This variable is the file-name where the black list is
-$BLACK_LIST_FILENAME = "resources/black_list.txt";
+$BLACK_LIST_FILENAME = "resources/external_examples.txt";
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
