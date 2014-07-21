@@ -297,7 +297,7 @@ public class cftSubscriber {
         */
 
         /* Change the filter */
-        if (sel_cft) {
+        if (sel_cft == 1) {
             Console.WriteLine(">>> Now setting a new filter: name MATCH \"EVEN\"");
             try {
                 cft.append_to_expression_parameter(0, "EVEN");

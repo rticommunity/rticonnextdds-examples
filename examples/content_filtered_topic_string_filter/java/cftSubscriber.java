@@ -255,7 +255,7 @@ public class cftSubscriber {
             System.out.println(">>> Now setting a new filter: "
                     + "name MATCH \"EVEN\"");
             
-            if (sel_cft) {
+            if (sel_cft == 1) {
                 try { 
                     cft.append_to_expression_parameter(0, "EVEN");
                 } catch (Exception e) {
