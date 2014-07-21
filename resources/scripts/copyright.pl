@@ -190,7 +190,7 @@ sub check_if_copyright {
             print "copyright:\n<?$copyright?>\n" .
                   "copy_c_st:\n<?$COPYRIGHT_TEXT_C_STYLE?>\n";
             
-            exit(1);            
+            #exit(1);            
         }
     }
     return $have_copyright;
