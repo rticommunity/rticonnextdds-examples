@@ -307,15 +307,16 @@ public class cftSubscriber {
         */
 
         /* Change the filter */
-        Console.WriteLine(">>> Now setting a new filter: name MATCH \"EVEN\"");
-        try {
-            cft.append_to_expression_parameter(0, "EVEN");
-        } catch (DDS.Exception e) {
-            Console.WriteLine("append_to_expression_parameter error {0}", e);
-            shutdown(participant);
-            throw e;
+        if (sel_cft) {
+            Console.WriteLine(">>> Now setting a new filter: name MATCH \"EVEN\"");
+            try {
+                cft.append_to_expression_parameter(0, "EVEN");
+            } catch (DDS.Exception e) {
+                Console.WriteLine("append_to_expression_parameter error {0}", e);
+                shutdown(participant);
+                throw e;
+            }
         }
-
         // --- Wait for data --- //
 
         /* Main loop */
