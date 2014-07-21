@@ -126,28 +126,28 @@ validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml",
 
 validate_xml ("./examples/persistent_storage/c/" . 
                 "persistence_service_configuration.xml", 
-                "./resources/rti_persistence_service.xsd");
+        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
                 
 validate_xml ("./examples/persistent_storage/c++/USER_QOS_PROFILES.xml", 
                         $XSD_PATH);
 
 validate_xml ("./examples/persistent_storage/c++/" . 
                 "persistence_service_configuration.xml",
-                "./resources/rti_persistence_service.xsd");
+        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
 
 validate_xml ("./examples/persistent_storage/cs/USER_QOS_PROFILES.xml", 
                         $XSD_PATH);
 
 validate_xml ("./examples/persistent_storage/cs/" . 
                 "persistence_service_configuration.xml",
-                "./resources/rti_persistence_service.xsd");
+        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
 
 validate_xml ("./examples/persistent_storage/java/USER_QOS_PROFILES.xml", 
                         $XSD_PATH);
 
 validate_xml ("./examples/persistent_storage/java/" . 
                 "persistence_service_configuration.xml",
-                "./resources/rti_persistence_service.xsd");
+        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
 
 # validate xml files in routing_service_file_adapter
 print "\n*******************************************************" . 
@@ -157,7 +157,7 @@ print "*********************************************************" .
                 "**************\n";
 
 validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml", 
-                    "./resources/rti_routing_service.xsd");
+            "http://community.rti.com/schema/5.1.0/rti_routing_service.xsd");
                     
 # validate xml files in writing_data_lua
 print "\n*******************************************************" . 
