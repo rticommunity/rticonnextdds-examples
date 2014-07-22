@@ -156,7 +156,7 @@ print "***** EXAMPLE: routing_service_file_adapter\n";
 print "*********************************************************" . 
                 "**************\n";
 
-validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml", 
+validate_xml ("./examples/routing_service_file_adapter/c/file_bridge.xml", 
             "http://community.rti.com/schema/5.1.0/rti_routing_service.xsd");
                     
 # validate xml files in writing_data_lua
@@ -167,4 +167,4 @@ print "*********************************************************" .
                 "**************\n";
 
 validate_xml ("./examples/writing_data_lua/prototyper_config.xml",
-                    "./resources/rti_dds_profiles.xsd");
+                "http://community.rti.com/schema/5.1.0/rti_dds_profiles.xsd");
