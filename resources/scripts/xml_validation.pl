@@ -22,7 +22,9 @@ $FOLDER_TO_CHECK = $ARGV[0];
 $XSD_PATH = $ARGV[1];
 
 # Path to the xmllint, if it is empty, the tool is in the path
-$XMLLINT_PATH = "";
+if (!defined $ENV{'XMLLINT_PATH'}) {
+    $ENV{'XMLLINT_PATH'} = "";
+}
 
 # This function change the '\' character by '/' like is used in UNIX
 #   input parameter:
@@ -47,7 +49,7 @@ sub validate_xml {
     my ($call_string) = "";
     my ($have_error) = 0;
     
-    $call_string =  $XMLLINT_PATH  ."xmllint --noout --schema " . $xsd_path . 
+    $call_string =  $ENV{'XMLLINT_PATH'} ."xmllint --noout --schema " . $xsd_path . 
                         " " . $xml_filename; 
       
     system $call_string;
