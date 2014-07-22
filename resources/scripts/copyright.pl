@@ -182,16 +182,7 @@ sub check_if_copyright {
     } else {
         if ($copyright eq $COPYRIGHT_TEXT_C_STYLE) {
             $have_copyright = 1;
-        } else {
-            # the file does not has copyright
-            print "ERROR: The file does not have the copyright written: " .
-                            "$filename\n";
-            
-            print "copyright:\n<?$copyright?>\n" .
-                  "copy_c_st:\n<?$COPYRIGHT_TEXT_C_STYLE?>\n";
-            
-            #exit(1);            
-        }
+        } 
     }
     return $have_copyright;
 }
@@ -216,15 +207,17 @@ sub copy_copyright_in_file {
     }
     
     if ($is_xml_file) {
+        my ($xml_definition_text) = "";
         # We get the xml definition string, which is the one between <? and ?>
-        my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/;
-        $buffer = $2;
-        my ($xml_definition_length) = length $xml_definition_text;
-                
-        #set the file handle at the start of the file
+        if ($buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/) {
+            $xml_definition_text = $1;
+            $buffer = $2;
+        } 
+        # if the file does not have the xml definition, we copy the copyright 
+        # at start of the file
+        # set the file handle at the start of the file
         seek $fh, 0, 0;
-        print $fh $xml_definition_text . $COPYRIGHT_TEXT_XML_STYLE . 
-                $buffer;
+        print $fh $xml_definition_text . $COPYRIGHT_TEXT_XML_STYLE . $buffer;
         
     } else {
         #set the file handle at the start of the file
