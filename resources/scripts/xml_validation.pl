@@ -13,7 +13,7 @@
 use Cwd;
 
 # Example of use:
-#    perl compile_windows.pl <working_directory> <ndds_version> <architecture>
+#    perl xml_validation.pl <working_directory> <path_schema>
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
