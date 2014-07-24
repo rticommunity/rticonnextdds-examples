@@ -108,7 +108,7 @@ sub add_xml_dds_attributes {
     close $fh;
     
     # We get the text before the <dds> tag, and after that tag
-    $buffer =~ /([\s\S]*)<\s*dds[\s\S]*?>([\s\S]*)/;
+    $buffer =~ /([\s\S]*)<\s*dds[\s\S]*?>\n([\s\S]*)/;
     my ($text_before_dds_tag) = $1;
     my ($text_after_dds_tag) = $2;
     
@@ -191,19 +191,23 @@ sub replace_xml_dds_attributes {
     close $fh;
     
     # We get the text before the <dds> tag, and after that tag
-    $buffer =~ /([\s\S]*)<\s*dds[\s\S]*?>([\s\S]*)/;
+    $buffer =~ /([\s\S]*)<\s*dds[\s\S]*?>\n([\s\S]*)/;
     my ($text_before_dds_tag) = $1;
     my ($text_after_dds_tag) = $2;
     
     my $new_schema_type = get_filename_from_path($new_schema_location);
+    my ($modified) = 0;
     
     # if the xml and the new schema_type are the same one, then we can replace
     # the version and the path to this schema
-    if ($new_schema_type eq $xml_schema_type) {
+    if ($xml_schema_type eq $new_schema_type) {
         # we modify the old values for the new ones
         $xml->{dds}[0]{version} = $new_version;
         $xml->{dds}[0]{'xsi:noNamespaceSchemaLocation'} = $new_schema_location;
-    }   
+    } else {
+        #if the schema is not the same one, then return not_modified 
+        return $modified;
+    }  
     $xml->{dds}[0]{'xmlns:xsi'} = "http://www.w3.org/2001/XMLSchema-instance";
     
     my ($dds_tag_version) = "";
@@ -223,20 +227,19 @@ sub replace_xml_dds_attributes {
             
     }
     
-    my ($modified) = 0;
     my ($dds_tag) = "<dds ";
     if (!$dds_tag_xmlns eq "") {
          $dds_tag .= "xmlns:xsi=\"$dds_tag_xmlns\"";
-         $replaced = 1;
+         $modified = 1;
     } 
     if (!$dds_tag_schema_location eq "") {
         $dds_tag .=
           "\n     xsi:noNamespaceSchemaLocation=\"$dds_tag_schema_location\"";
-          $replaced = 1;
+          $modified = 1;
     }
     if (!$dds_tag_version eq "") {
         $dds_tag .= "\n     version=\"$dds_tag_version\"";
-        $replaced = 1;
+        $modified = 1;
     }
     
     $dds_tag .= ">\n";
@@ -278,8 +281,6 @@ sub process_all_files {
         # different xsd schema. The xmlvalidator will be called manually for
         # them with the corresponding xsd schema they need.
         next if $register eq "."  or  $register eq ".." or 
-                $register eq "persistent_storage" or 
-                $register eq "routing_service_file_adapter" or
                 $register eq "writing_data_lua";
                 
         my $file = "$folder/$register";
@@ -314,6 +315,8 @@ sub process_all_files {
             } elsif ($OPTION_FLAG == 2) {
                 if (replace_xml_dds_attributes($file, $DDS_VERSION, $XSD_PATH)){
                     print "Replaced the attributes to the dds tag: $file\n";
+                } else {
+                    print "ERROR: The schema is not the same one\n";
                 }
             }
         } elsif (-d $file) {
