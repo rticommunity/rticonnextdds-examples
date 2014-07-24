@@ -10,7 +10,9 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  -->
-<dds>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.1.0/rti_dds_profiles.xsd"
+     version="5.1.0">
 	<!-- QoS Library containing the QoS profile used in the generated example. 
 		A QoS library is a named set of QoS profiles. -->
 	<qos_library name="profiles_Library">

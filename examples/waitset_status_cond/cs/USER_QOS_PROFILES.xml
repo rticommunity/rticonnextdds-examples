@@ -43,7 +43,7 @@ RTI Connext user manual.
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
                     <max_blocking_time>
-                        <sec>60</sec>
+                        <sec>80</sec>
                     </max_blocking_time>
                 </reliability>                
 
