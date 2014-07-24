@@ -1,3 +1,6 @@
+  This script uses a environment variable called XMLLINT_PATH in order to 
+point where the xmllint program is installed. If this environment variable is 
+not defined, the script supposes the xmllint is in the path.
   The script xml_validation.pl receives 2 arguments in command line. 
 The first one is the parent directory to check, including its child directories.
 The second one is the path where the XSD scheme is. 

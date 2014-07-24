@@ -47,15 +47,11 @@ sub unix_path {
 sub validate_xml {
     my ($xml_filename, $xsd_path) = @_;
     my ($call_string) = "";
-    my ($have_error) = 0;
-    
+   
     $call_string =  $ENV{'XMLLINT_PATH'} ."xmllint --noout --schema " . $xsd_path . 
                         " " . $xml_filename; 
       
     system $call_string;
-    if ( $? != 0 ) {
-        $have_error = 1;
-    } 
     
     if ( $? != 0 ) {
         exit(1);

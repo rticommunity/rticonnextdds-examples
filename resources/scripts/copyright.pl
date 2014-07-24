@@ -152,7 +152,7 @@ sub check_if_copyright {
     $buffer = <$fh>;
     
     # We get the xml definition string, which is the one between <? and ?>
-    my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)/;
+    my ($xml_definition_text) = $buffer =~ /(<\?xml[\s\S]*?\?>\s*)/;
     
     # if the file is an xml file, we have to use him in a different way, because
     # the copyright should be checked/copied/deleted after the xml definition.
@@ -209,7 +209,7 @@ sub copy_copyright_in_file {
     if ($is_xml_file) {
         my ($xml_definition_text) = "";
         # We get the xml definition string, which is the one between <? and ?>
-        if ($buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/) {
+        if ($buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/) {
             $xml_definition_text = $1;
             $buffer = $2;
         } 
@@ -250,7 +250,7 @@ sub delete_copyright_in_file {
     #set the file handle at the end of the copyright header
     if ($is_xml_file) {
         # We get the xml definition string, which is the one between <? and ?>
-        my ($xml_definition_text) = $buffer =~ /(<\?xml[^\?>]*\?>\s*)([\s\S]*)/;
+        my ($xml_definition_text) = $buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/;
         # auxiliar variable $2 has all the text less from start of the file to
         # the first of the copyright string
         $buffer = substr $2, $COPYRIGHT_LENGTH_XML_STYLE, length $2;
