@@ -223,25 +223,33 @@ sub replace_xml_dds_attributes {
             
     }
     
+    my ($modified) = 0;
     my ($dds_tag) = "<dds ";
     if (!$dds_tag_xmlns eq "") {
          $dds_tag .= "xmlns:xsi=\"$dds_tag_xmlns\"";
+         $replaced = 1;
     } 
     if (!$dds_tag_schema_location eq "") {
         $dds_tag .=
           "\n     xsi:noNamespaceSchemaLocation=\"$dds_tag_schema_location\"";
+          $replaced = 1;
     }
     if (!$dds_tag_version eq "") {
         $dds_tag .= "\n     version=\"$dds_tag_version\"";
+        $replaced = 1;
     }
     
     $dds_tag .= ">\n";
-
-    # if the xml has been modified, we moving the new file to the old file
-    open (my $fh, '>>:utf8', $new_filename);
-    print $fh $text_before_dds_tag . $dds_tag . $text_after_dds_tag;
-    close $fh or warn "$0: close $path: $!";
-    move $new_filename, $xml_filename; 
+    
+    if ($modified) {
+        # if the xml has been modified, we moving the new file to the old file
+        open (my $fh, '>>:utf8', $new_filename);
+        print $fh $text_before_dds_tag . $dds_tag . $text_after_dds_tag;
+        close $fh or warn "$0: close $path: $!";
+        move $new_filename, $xml_filename; 
+    }    
+    
+    return $modified;
 }
 
 # This function reads recursively all the files in a folder and process them:
@@ -313,6 +321,4 @@ sub process_all_files {
     }
 }
 
-#process_all_files ($FOLDER_TO_CHECK);
-#add_xml_dds_attributes("./test/test.xml", $DDS_VERSION, $XSD_PATH);
-replace_xml_dds_attributes("./test/test.xml", $DDS_VERSION, $XSD_PATH);
+process_all_files ($FOLDER_TO_CHECK);
