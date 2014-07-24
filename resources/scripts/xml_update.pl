@@ -86,7 +86,7 @@ sub check_xml_dds_attributes {
 #                     attirbutes or not
 sub add_xml_dds_attributes {
     my ($xml_filename, $new_version, $new_schema_location) = @_;
-    print $new_schema_location;
+    
     my $xs = XML::Simple->new( KeepRoot => 1, KeyAttr => 1, ForceArray => 1 );
     my $xml = $xs->XMLin($xml_filename);
    
@@ -312,8 +312,9 @@ sub process_all_files {
                 }
             # replacing all the <dds> tag attributes by the new ones   
             } elsif ($OPTION_FLAG == 2) {
-                replace_xml_dds_attributes($file, $DDS_VERSION, $XSD_PATH);
-                print "Replaced the attributes to the dds tag: $file\n";
+                if (replace_xml_dds_attributes($file, $DDS_VERSION, $XSD_PATH)){
+                    print "Replaced the attributes to the dds tag: $file\n";
+                }
             }
         } elsif (-d $file) {
             process_all_files($file);
