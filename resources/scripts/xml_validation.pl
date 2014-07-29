@@ -18,15 +18,35 @@ use Cwd;
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 
-# The second command prompt argument is the path to the xsd file 
-$XSD_PATH = $ARGV[1];
+# The second command prompt argument is the version we are going to validate
+# the xml files
+$NDDS_VERSION = $ARGV[1];
 
-# Path to the xmllint, if it is empty, the tool is in the path
+# XSD_PATH is the path where the schemas are
+$XSD_PATH = "http://community.rti.com/schema/" . $NDDS_VERSION . "/";
+
+# Names of the schema files 
+$RTI_DDS_QOS_PROFILES = "rti_dds_qos_profiles.xsd";
+$RTI_DDS_PROFILES = "rti_dds_profiles.xsd";
+$RTI_PERSISTENCE_SERVICE = "rti_persistence_service.xsd";
+$RTI_ROUTING_SERVICE = "rti_routing_service.xsd";
+$RTI_RECORD = "rti_record.xsd";
+$RTI_REPLAY = "rti_replay.xsd";
+
+# These variables are pointing to an specific schema in the community portal
+$PATH_RTI_DDS_QOS_PROFILES = $XSD_PATH . $RTI_DDS_QOS_PROFILES;
+$PATH_RTI_DDS_PROFILES = $XSD_PATH . $RTI_DDS_PROFILES;
+$PATH_RTI_PERSISTENCE_SERVICE = $XSD_PATH . $RTI_PERSISTENCE_SERVICE;
+$PATH_RTI_ROUTING_SERVICE = $XSD_PATH . $RTI_ROUTING_SERVICE;
+$PATH_RTI_RECORD = $XSD_PATH . $RTI_RECORD;
+$PATH_RTI_REPLAY = $XSD_PATH . $RTI_REPLAY;
+
+# Path to the xmllint, if it is empty, the tool is in the global path
 if (!defined $ENV{'XMLLINT_PATH'}) {
     $ENV{'XMLLINT_PATH'} = "";
 }
 
-# This function change the '\' character by '/' like is used in UNIX
+# This function changes the '\' character by '/' like is used in UNIX
 #   input parameter:
 #       $path: the string to be converted
 #   output parameter:
@@ -37,20 +57,20 @@ sub unix_path {
     return $path;
 }
 
-# This function calls a xml validator to check if a xml file is correct 
+# This function calls an XML validator to check if a XML file is correct 
 # following a xsd schema 
 #   input parameter:
-#       $xml_filename: the language which the example are going to be compiled
-#       $xsd_path: the arechitecture which the example are going to be built
+#       $xml_filename: the name of the file we want to validate
+#       $xsd_path: the path to the schema (.xsd) we want our xml follows
 #   output parameter:
 #       $end_correct: 1 (True) or 0 (False), if the file has error or not
 sub validate_xml {
     my ($xml_filename, $xsd_path) = @_;
     my ($call_string) = "";
    
-    $call_string =  $ENV{'XMLLINT_PATH'} ."xmllint --noout --schema " . $xsd_path . 
-                        " " . $xml_filename; 
-      
+    $call_string =  $ENV{'XMLLINT_PATH'} . "xmllint --noout --schema " . 
+                        $xsd_path . " " . $xml_filename; 
+    
     system $call_string;
     
     if ( $? != 0 ) {
@@ -59,15 +79,8 @@ sub validate_xml {
 }
 
 
-# This function reads recursively all the files in a folder and process them:
-#   - if a file is found: check if its extension is supported
-#           - if the file has not a supported extension: look for a new file
-#           - if the file has a supported extension: check if it has copyright
-#               - if the file has copyright: print a advise
-#                    - if delete option is enabled: delete the copyright header
-#               - else and enabled copy copyright option: copy the copyright 
-#                       header in the file
-#
+# This function reads recursively all the files and validate all the .xml files.
+# It will exits with error if the script cannot validate any file.
 #   input parameter:
 #       $folder: the name of the folder to read
 #   output parameter:
@@ -92,8 +105,7 @@ sub process_all_files {
         my $file = "$folder/$register";
         $file = unix_path($file);
         
-        # if we find a idl file -> run rtiddsgen and then built it with the 
-        # generated make
+        # if we find a xml file we call the validate_xml function
         if (-f $file) {
             next if $file !~ /\.xml$/i;
             print "\n*******************************************************" . 
@@ -103,7 +115,7 @@ sub process_all_files {
                 "**************\n";
             
             # if validate_xml has any error, it exit with code 1
-            validate_xml ($file, $XSD_PATH);
+            validate_xml ($file, $PATH_RTI_DDS_QOS_PROFILES);
                 
         } elsif (-d $file) {
             process_all_files($file);
@@ -113,41 +125,41 @@ sub process_all_files {
 
 process_all_files ($FOLDER_TO_CHECK);
 
-# validate xml files in persistent_storage example
+# validating the XML files in persistent_storage example
 print "\n*******************************************************" . 
                 "****************\n";
 print "***** EXAMPLE: persistent_storage\n";
 print "*********************************************************" . 
                 "**************\n";
 validate_xml ("./examples/persistent_storage/c/USER_QOS_PROFILES.xml", 
-                        $XSD_PATH);
+                        $PATH_RTI_DDS_QOS_PROFILES);
 
 validate_xml ("./examples/persistent_storage/c/" . 
                 "persistence_service_configuration.xml", 
-        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
+                 $PATH_RTI_PERSISTENCE_SERVICE);
                 
 validate_xml ("./examples/persistent_storage/c++/USER_QOS_PROFILES.xml", 
-                        $XSD_PATH);
+                        $PATH_RTI_DDS_QOS_PROFILES);
 
 validate_xml ("./examples/persistent_storage/c++/" . 
                 "persistence_service_configuration.xml",
-        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
+                $PATH_RTI_PERSISTENCE_SERVICE);
 
 validate_xml ("./examples/persistent_storage/cs/USER_QOS_PROFILES.xml", 
-                        $XSD_PATH);
+                      $PATH_RTI_DDS_QOS_PROFILES);
 
 validate_xml ("./examples/persistent_storage/cs/" . 
                 "persistence_service_configuration.xml",
-        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
+                $PATH_RTI_PERSISTENCE_SERVICE);
 
 validate_xml ("./examples/persistent_storage/java/USER_QOS_PROFILES.xml", 
-                        $XSD_PATH);
+                       $PATH_RTI_DDS_QOS_PROFILES);
 
 validate_xml ("./examples/persistent_storage/java/" . 
                 "persistence_service_configuration.xml",
-        "http://community.rti.com/schema/5.1.0/rti_persistence_service.xsd");
+                $PATH_RTI_PERSISTENCE_SERVICE);
 
-# validate xml files in routing_service_file_adapter
+# validating XML files in routing_service_file_adapter example
 print "\n*******************************************************" . 
                 "****************\n";
 print "***** EXAMPLE: routing_service_file_adapter\n";
@@ -155,14 +167,16 @@ print "*********************************************************" .
                 "**************\n";
 
 validate_xml ("./examples/routing_service_file_adapter/c/file_bridge.xml", 
-            "http://community.rti.com/schema/5.1.0/rti_routing_service.xsd");
-                    
-# validate xml files in writing_data_lua
-print "\n*******************************************************" . 
-                "****************\n";
-print "***** EXAMPLE: writing_data_lua\n";
-print "*********************************************************" . 
-                "**************\n";
+                $PATH_RTI_ROUTING_SERVICE);
 
-validate_xml ("./examples/writing_data_lua/prototyper_config.xml",
-                "http://community.rti.com/schema/5.1.0/rti_dds_profiles.xsd");
+# This example is commented because the rti_dds_profiles.xsd fails with older
+# versions of xmllint                    
+# validating XML files in writing_data_lua example
+# print "\n*******************************************************" . 
+#                "****************\n";
+# print "***** EXAMPLE: writing_data_lua\n";
+# print "*********************************************************" . 
+#                "**************\n";
+
+#validate_xml ("./examples/writing_data_lua/prototyper_config.xml",
+#               $PATH_RTI_DDS_PROFILES);

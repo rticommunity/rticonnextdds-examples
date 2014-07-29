@@ -1,3 +1,6 @@
+  The script compile_dynamic_data_unix.pl has the same conditions than 
+compile_unix.pl and follow the same README.txt file.
+
   This script is based in the IDL files. It takes the name of the file and then
 call the correct rtiddsgen sentence, using the architecture name and the 
 programming language (depends of the folder where that example is). For 
@@ -5,7 +8,8 @@ instance, if the example is under "c" subdirectory, the language to compile is
 C. However, if the working subdirectory is "java", this script modify a little 
 bit its architecture in order to be correct when the programming language is 
 Java.
-  The script will set the next environment variables if they are not:
+  The script will set the next environment variables if they are not defined
+(Setting your own environment variables is recommended):
     NDDSHOME: will be set to 
         "$RTI_TOOLSDRIVE/local/preship/ndds/ndds." + version introduced by
             command line.

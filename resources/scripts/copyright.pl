@@ -43,8 +43,8 @@ $COPYRIGHT_TEXT_XML_STYLE = read_text_w_length($COPYRIGHT_FILENAME_XML_STYLE ,
 # be examined
 $EXTENSIONS = get_extensions();
 
-# This variable is the file-name where the black list is
-$BLACK_LIST_FILENAME = "resources/external_examples.txt";
+# This variable is the file-name where the external examples list is
+$EXTERNAL_EXAMPLES_FILENAME = "resources/external_examples.txt";
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
@@ -52,7 +52,7 @@ $FOLDER_TO_CHECK = $ARGV[0];
 #   Value '0': JUST CHECK IF THE FILES HAS COPYRIGHT OR NOT.
 #   Value '1': COPY THE COPYRIGHT HEADER IN THE FILES WHICH HAVE NOT IT.
 #   Value '2': DELETE THE COPYRIGHT HEADER IN THE FILES WHICH HAVE IT.
-$OPTIONS_FLAG = $ARGV[1];
+$OPTION_FLAG = $ARGV[1];
 
 ################################################################################
 ######################### AUXILIAR FUNCTIONS ###################################
@@ -78,7 +78,7 @@ sub get_extensions {
     return $buffer;
 }
 
-# This function change the '\' character by '/' like is used in UNIX
+# This function changes the '\' character by '/' like is used in UNIX
 #   input parameter:
 #       $path: the string to be converted
 #   output parameter:
@@ -89,7 +89,7 @@ sub unix_path {
     return $path;
 }
 
-# This function count the number of characters from one file.
+# This function counts the number of characters from one file.
 #   input parameter:
 #       $filename: the name of the file where the characters have been counted.
 #   output parameter:
@@ -154,24 +154,26 @@ sub check_if_copyright {
     # We get the xml definition string, which is the one between <? and ?>
     my ($xml_definition_text) = $buffer =~ /(<\?xml[\s\S]*?\?>\s*)/;
     
-    # if the file is an xml file, we have to use him in a different way, because
+    # if the file is an XML file, we have to use him in a different way, because
     # the copyright should be checked/copied/deleted after the xml definition.
+    # Besides, we need to load another copyright header
     if($is_xml_file) {
         my ($xml_definition_length) = length $xml_definition_text;
         
-        # We positioning our handler at the first of the file and get text from
-        # start to the end of copyright string
+        # We positioning our handler at the first of the file and get the text 
+        # from the start to the end of copyright string
         seek $fh, 0, 0;
         read($fh, $copyright,
                     $COPYRIGHT_LENGTH_XML_STYLE + $xml_definition_length);
     } else {
-        # We positioning our handler after the xml definition tag
+        # We positioning our handler at the start of the file 
         seek $fh, 0, 0;
         read($fh, $copyright, $COPYRIGHT_LENGTH_C_STYLE);
     }
      
     close $fh;
     
+    # we check if the file has the copyright written or not
     my ($have_copyright) = 0;
     if ($is_xml_file) {
         # $aux has the string with the xml definition + copyright in xml style 
@@ -194,21 +196,23 @@ sub check_if_copyright {
 #       none
 sub copy_copyright_in_file {
     my ($filename, $is_xml_file) = @_;
-    #buffer will store the text file
+    # buffer will store the text file
     my ($buffer) = "";
     open(my $fh, '+<:utf8', $filename)
         or die "Could not open file '$filename' $!";
     
-    #set the file handle at the start of the file
+    # set the file handle at the start of the file
     seek $fh, 0, 0;
     
+    # saving the file in a string $buffer
     while (<$fh>) {
         $buffer .= $_;
     }
     
     if ($is_xml_file) {
         my ($xml_definition_text) = "";
-        # We get the xml definition string, which is the one between <? and ?>
+        # We get the xml definition string, which is the one which is
+        # between <? and ?>. Also, we get the rest of the file in $buffer
         if ($buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/) {
             $xml_definition_text = $1;
             $buffer = $2;
@@ -218,9 +222,8 @@ sub copy_copyright_in_file {
         # set the file handle at the start of the file
         seek $fh, 0, 0;
         print $fh $xml_definition_text . $COPYRIGHT_TEXT_XML_STYLE . $buffer;
-        
     } else {
-        #set the file handle at the start of the file
+        # set the file handle at the start of the file
         seek $fh, 0, 0;
         print $fh $COPYRIGHT_TEXT_C_STYLE.$buffer;
     }
@@ -235,7 +238,7 @@ sub copy_copyright_in_file {
 #       none
 sub delete_copyright_in_file {
     my ($filename, $is_xml_file) = @_;
-    #buffer will store the text file
+    # buffer will store the text file
     my ($buffer) = "";
     my ($new_filename) = $filename.".new";
     
@@ -243,21 +246,25 @@ sub delete_copyright_in_file {
         or die "Could not open file '$filename' $!";
     open (my $new_fh, '>>:utf8', $new_filename);
      
-    # To copy all the file in a string
+    # to copy all the file in a string
     local $/ = undef;
     $buffer = <$fh>;
     
-    #set the file handle at the end of the copyright header
+    # set the file handle at the end of the copyright header
     if ($is_xml_file) {
-        # We get the xml definition string, which is the one between <? and ?>
+        # we get the xml definition string, which is the one between <? and ?>
         my ($xml_definition_text) = $buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/;
-        # auxiliar variable $2 has all the text less from start of the file to
-        # the first of the copyright string
+        # auxiliar variable $2 has all the text after the xml definition
+        # $buffer will store the text after the copyright_header
         $buffer = substr $2, $COPYRIGHT_LENGTH_XML_STYLE, length $2;
-                
+        
+        # we save in the new file the xml_definition + the $buffer (all the 
+        # text without the copyright header
         print $new_fh $xml_definition_text . $buffer;
         
     } else {
+        # in C type commentaries, we just delete the $COPYRIGHT_SIZE_C_STYLE 
+        # first characters 
         seek $fh, $COPYRIGHT_SIZE_C_STYLE, 0;
         while (<$fh>) {
             my $line = $_;
@@ -267,20 +274,23 @@ sub delete_copyright_in_file {
     
     close $new_fh;
     close $fh;
+    # delete the old file
     unlink $fh;
+    # modify the name of the new created file with the old one
     move $new_filename, $filename;
 }
 
-# This function will check if a string is in a file
+# This function will check if a string is in a file, so, whether an example is 
+# in the external examples list or not
 #   input parameter:
 #       $filename: the name of the file which contains the strings
 #       $folder_to_check: it is the string (folder_name) which we will check
 #           if it is in the file
 #   output parameter:
-#       $black_list: 1 (True) or 0 (False), if the $filename contains the folder
-sub is_in_the_black_list {
+#       $is_external_example: 1 (True) or 0 (False), if the $filename contains the folder
+sub is_external_example_list {
     my ($filename, $folder_to_check) = @_;
-    my ($black_list) = 0; #false by default
+    my ($is_external_example) = 0; #false by default
     
     open (my $fh, '<:utf8', $filename)
         or die "Could not open file '$filename': $!";
@@ -289,21 +299,20 @@ sub is_in_the_black_list {
         chomp($line);
         $line = unix_path($line);
         if ($line eq $folder_to_check) {
-            $black_list = 1;
+            $is_external_example = 1;
             last;
         }
     }
-    return $black_list;    
+    return $is_external_example;    
 }
 
 # This function read recursively all the files in a folder and process them:
-#   - if a file is found: check if its extension is supported
-#           - if the file has not a supported extension: look for a new file
-#           - if the file has a supported extension: check if it has copyright
-#               - if the file has copyright: print a advise
-#                    - if delete option is enabled: delete the copyright header
-#               - else and enabled copy copyright option: copy the copyright 
-#                       header in the file
+#   - We have 3 differents option:
+#       $OPTION_FLAG = 0: Checking whether the file (with correct extension) has 
+#       copyright header: 
+#           - If it hasn't copyright header: exit with error
+#       $OPTION_FLAG = 1: Adding copyright header (if the file hasn't it).
+#       $OPTION_FLAG = 2: Deleting copyright header (if the file has it).
 #
 #   input parameter:
 #       $folder: the name of the folder to read
@@ -340,7 +349,7 @@ sub process_all_files {
             
             # if you are going to check whether the file has copyright and 
             # the file has not it -> exit with error 1
-            if ($OPTIONS_FLAG == 0 and $file_has_copyright == 0) {
+            if ($OPTION_FLAG == 0 and $file_has_copyright == 0) {
                 print "ERROR: The file does not have the copyright written: " .
                             "$file\n";
                 exit (1);
@@ -351,20 +360,21 @@ sub process_all_files {
                 print "File $file has the copyright written\n";  
                 
                 #delete copyright header
-                if ($OPTIONS_FLAG == 2) {
+                if ($OPTION_FLAG == 2) {
                     delete_copyright_in_file($file, $is_xml_file);
                     print "File $file: copyright header deleted\n";
                 }
             } else {
                 #copy copyright header
-                if ($OPTIONS_FLAG == 1) {
+                if ($OPTION_FLAG == 1) {
                     copy_copyright_in_file($file, $is_xml_file);
                     print "File $file: copyright header copied\n";
                 }
             }            
 
         } elsif (-d $file) {
-            if (! is_in_the_black_list($BLACK_LIST_FILENAME, $file) ) {
+            if (! is_external_example_list($EXTERNAL_EXAMPLES_FILENAME, 
+            $file) ) {
                 process_all_files($file);
             }
         }

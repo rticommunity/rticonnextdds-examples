@@ -7,12 +7,12 @@ the files that you want to examine (you may write many extensions as you want).
   You have to ensure the script runs in the top repository directory.
 
   You need a file copyright_c_style.txt and copyright_xml_style.txt in the 
-directory ./resources/ which contains the copyright text to be checked, copied
+directory ./resources/. They contain the copyright text to be checked, copied
 or deleted.
 
-  If the script detects that the file with are working with, is a xml file, 
-it automatically checks/copies/deletes the copyright_xml_style after the xml
-definition, so a normal copyright in a xml file is:
+  If the script detects that the file with is working with is an XML file: 
+it automatically checks/copies/deletes the copyright_xml_style after the XML
+definition, so the XML files will look like:
         <? XML_DEFINITION ?>
         <!-- 
             COPYRIGHT HEADER
@@ -37,24 +37,28 @@ definition, so a normal copyright in a xml file is:
   3. <extensions>... is a no limited list with all the extensions of the files 
      which are going to be checked.
   
-  An execution example to check if some files has copyright is:
+  In order to know if some files has copyright (just checking for it), we can 
+call the script as follow:
   
     ./resources/scripts/copyright.pl ./examples 0 c cxx cs xml idl h
   
   The script will check if the files with extensions .c .cxx .cs .xml .idl .h 
-has copyright in the directory ./examples.
+has copyright in the directory (and subdirectories): ./examples.
 
   If you want to copy the copyright in the files which do not have it:
      ./resources/scripts/copyright.pl ./examples 1 cxx cs xml idl h
 
   Now, the script are going to check the files with extensions .c .cxx .cs .xml 
-.idl .h in has the directory ./examples. If that files do not have the copyright
-header, copy it, else do nothing. The xml files will be checked like it has
-explained above.
+.idl .h in the directory ./examples. If those files do not have the copyright
+header, the script copies it, else does nothing. The XML files will be checked 
+like it has been explained above.
 
-  A 'black list' can be used. The directories (or subdirectories) included in 
-this list will be skipped. This 'black list' have to be saved in 
-./resources/black_list.txt
-
-  The black_list.txt should contain the directories without finishing in "/" 
-or "\". For example ./example/batching
+  Maybe we want to skip some directories because they are external examples and
+we do not want to copy the copyright header. The script needs a file called 
+"external_examples.txt" in the next path:
+      ./resources/external_examples.txt
+  The directories which was written in this file will be skipped by the 
+copyright.pl script. This file should contain the directories without finishing 
+in "/" or "\". For example the next line in that file will skip the batching
+example in all the languages:
+      ./example/batching
