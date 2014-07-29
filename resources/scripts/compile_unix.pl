@@ -16,7 +16,7 @@ use Cwd;
 ################################################################################
 ########################## GLOBAL VARIABLES ####################################
 ################################################################################
-
+ 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 # $TOP_DIRECTORY is the directory where you have executed the script
@@ -33,6 +33,8 @@ if (defined $ENV{'NDDSHOME'}) {
 else { 
     $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $ARGV[1];
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+          "$RTI_TOOLDRIVE/local/preship/ndds/ndds.{VERSION}\n";
 }
 
 # This variable is the architecture name 
@@ -44,11 +46,14 @@ $ENV{'NDDSHOME'} = $NDDS_HOME;
 # set the scripts folder to the PATH
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 
-# include Java compiler (Javac) in the path
+# including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/linux/jdk1.7.0_04";
+    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
+       "$RTI_TOOLDRIVE/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
@@ -119,7 +124,7 @@ sub call_rtiddsgen {
 #       none
 sub call_makefile {
     my ($architecture, $idl_filename, $path) = @_;
-    # $type has the name of the idl file without the extension .idl
+    # data_type has the name of the idl file without the extension .idl
     my ($data_type) = substr $idl_filename, 0, -4;
 
     # if the compilation language is Java, add jdk at the final of the $ARCH
@@ -127,12 +132,12 @@ sub call_makefile {
         $architecture .= "jdk";
     }
     
-    # delete the idl file name from the path, and we have the folder where the 
+    # deleting the idl file name from the path, and we have the folder where the 
     # idl file is
     $execution_folder = substr $path, 0, (-1 * length $idl_filename);
     
-    # change to the directory where the example is (where the rtiddsgen has been
-    # executed) to run the makefile
+    # changing to the directory where the example is (where the rtiddsgen has 
+    # been executed) to run the makefile
     chdir $execution_folder;
     
     # we create a string to run the makefile for all language, C, C++ and Java
@@ -141,6 +146,8 @@ sub call_makefile {
     system $make_string;
     # if the system call has errors, the program exits with the error code 1
     if ( $? != 0 ) {
+        # return to the top directory again
+        chdir $TOP_DIRECTORY;
         exit(1);
     }
     
@@ -149,15 +156,10 @@ sub call_makefile {
 }
 
 
-# This function reads recursively all the files in a folder and process them:
-#   - if a file is found: check if its extension is supported
-#           - if the file has not a supported extension: look for a new file
-#           - if the file has a supported extension: check if it has copyright
-#               - if the file has copyright: print a advise
-#                    - if delete option is enabled: delete the copyright header
-#               - else and enabled copy copyright option: copy the copyright 
-#                       header in the file
-#
+# This function reads recursively all the files in a folder and call:
+#   - call_rtiddsgen: this function generates all the needed files to compile, 
+#                     using rtiddsgen
+#   - call_makefile: this function calls the makefile to compile the example
 #   input parameter:
 #       $folder: the name of the folder to read
 #   output parameter:
@@ -179,7 +181,7 @@ sub process_all_files {
         $file = unix_path($file);
         
         # if we find a idl file -> run rtiddsgen and then built it with the 
-        # generated make
+        # generated makefile
         if (-f $file) {
             next if $file !~ /\.idl$/i;
             print "\n*******************************************************" . 

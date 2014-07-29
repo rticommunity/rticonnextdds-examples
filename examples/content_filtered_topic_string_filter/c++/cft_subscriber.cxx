@@ -244,25 +244,31 @@ extern "C" int subscriber_main(int domainId, int sample_count, int sel_cft)
 
     /* Here we create the reader either using a Content Filtered Topic or
      * a normal topic */
-    //if (sel_cft) {
-    //    printf("Using ContentFiltered Topic\n");
-    //    reader = subscriber->create_datareader(
-    //        cft, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
-    //        DDS_STATUS_MASK_ALL);
-    //} else {
-    //    printf("Using Normal Topic\n");
-    //    reader = subscriber->create_datareader(
-    //        topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
-    //        DDS_STATUS_MASK_ALL);
-    //}
-    //if (reader == NULL) {
-    //    printf("create_datareader error\n");
-    //    subscriber_shutdown(participant);
-    //    delete reader_listener;
-    //    return -1;
-    //}
+    if (sel_cft) {
+        printf("Using ContentFiltered Topic\n");
+        reader = subscriber->create_datareader(
+            cft, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
+            DDS_STATUS_MASK_ALL);
+    } else {
+        printf("Using Normal Topic\n");
+        reader = subscriber->create_datareader(
+            topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
+            DDS_STATUS_MASK_ALL);
+    }
+    if (reader == NULL) {
+        printf("create_datareader error\n");
+        subscriber_shutdown(participant);
+        delete reader_listener;
+        return -1;
+    }
 
-	
+
+    /* If you want to set the reliability and history QoS settings
+     * programmatically rather than using the XML, you will need to add
+     * the following lines to your code and comment out the 
+     * create_datareader calls above.
+     */
+/*	
     DDS_DataReaderQos datareader_qos;
     retcode = subscriber->get_default_datareader_qos(datareader_qos);
     if (retcode != DDS_RETCODE_OK) {
@@ -293,14 +299,16 @@ extern "C" int subscriber_main(int domainId, int sample_count, int sel_cft)
         return -1;
     }
     
-
+*/
     /* Change the filter */
-    printf(">>> Now setting a new filter: name MATCH \"EVEN\"\n");
-    retcode = cft->append_to_expression_parameter(0,"EVEN");
-    if (retcode != DDS_RETCODE_OK) {
-        printf("append_to_expression_parameter error\n");
-        subscriber_shutdown(participant);
-        return -1;
+    if (sel_cft) {
+        printf(">>> Now setting a new filter: name MATCH \"EVEN\"\n");
+        retcode = cft->append_to_expression_parameter(0,"EVEN");
+        if (retcode != DDS_RETCODE_OK) {
+            printf("append_to_expression_parameter error\n");
+            subscriber_shutdown(participant);
+            return -1;
+        }
     }
 
     /* Main loop */
@@ -379,7 +387,7 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
     if (argc >= 4) {
-        sel_cft = atoi(argv[2]);
+        sel_cft = atoi(argv[3]);
     }
 
     /* Uncomment this to turn on additional logging

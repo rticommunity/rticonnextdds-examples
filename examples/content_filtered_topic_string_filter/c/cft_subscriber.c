@@ -249,7 +249,7 @@ static int subscriber_main(int domainId, int sample_count, int sel_cft)
     DDS_StringSeq_set_maximum(&parameters, 1);
     /* Here we set the default filter using the param_list */
     DDS_StringSeq_from_array(&parameters, param_list, 1);
-
+    printf ("sel_cft: %d\n",sel_cft);
     if (sel_cft) {
         /* create_contentfilteredtopic_with_filter */
         cft = DDS_DomainParticipant_create_contentfilteredtopic_with_filter(
@@ -334,15 +334,16 @@ static int subscriber_main(int domainId, int sample_count, int sel_cft)
     }
 */
     /* Change the filter */
-    printf(">>> Now setting a new filter: name MATCH \"EVEN\"\n");
-    retcode = DDS_ContentFilteredTopic_append_to_expression_parameter(
-        cft, 0,"EVEN");
-    if (retcode != DDS_RETCODE_OK) {
-        printf("append_to_expression_parameter error\n");
-        subscriber_shutdown(participant);
-        return -1;
+    if (sel_cft) {
+        printf(">>> Now setting a new filter: name MATCH \"EVEN\"\n");
+        retcode = DDS_ContentFilteredTopic_append_to_expression_parameter(
+            cft, 0,"EVEN");
+        if (retcode != DDS_RETCODE_OK) {
+            printf("append_to_expression_parameter error\n");
+            subscriber_shutdown(participant);
+            return -1;
+        }
     }
-
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -420,9 +421,10 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
     if (argc >= 4) {
-        sel_cft = atoi(argv[2]);
+        sel_cft = atoi(argv[3]);
     }
-
+    printf ("domainid: %d, sample_count: %d, sel_cft: %d", 
+        domainId, sample_count, sel_cft);
     /* Uncomment this to turn on additional logging
     NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),

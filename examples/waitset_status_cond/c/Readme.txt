@@ -1,79 +1,56 @@
-Applies to RTI Data Distribution Service 4.0 and above.
+==============================================
+ Example Code -- WaitSet with Status Condition
+==============================================
 
-Purpose
-=======
-PUBLISHER:
-Waitsets are completely independent of publishers.
+Building C Example
+==================
+Before compiling or running the example, make sure the environment variable 
+NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
-SUBSCRIBER:
-This example shows how to use WaitSets with a StatusCondition to read data. As the listener callback on_data_available is now unused, we remove it. To initialize the WaitSet, we create the condition on which to wait, and attach it to the Waitset.
+Run rtiddsgen with the -example option and the target architecture of your 
+choice (e.g., i86Win32VS2005 or i86Linux2.6gcc4.4.3). The RTI Connext Core 
+Libraries and Utilities Getting Started Guide describes this process in detail. 
+Follow the same procedure to generate the code and build the examples. Do not 
+use the -replace option.
 
-Note that the WaitSet is a "top-level" entity, not one created by a DDS entity. It is only related to a reader by the contained conditions, which are created via DataReaders.
+On Windows systems (assuming you want to generate an example for 
+i86Win32VS2005) run:
 
-Also note that WaitSets block in the context of the application rather than DDS threads. Thus, there are fewer constraints on processing data than if we're working in an on_data_available callback, since DDS housekeeping threads continue to run.
+rtiddsgen -language C -example i86Win32VS2005 waitset_statuscond.idl
 
-Building
-=======
-Make sure you are using one of the relevant RTI Data Distribution Service versions, as specified at the top of the Solution.
+File C:\local\waitset_status_cond\c\waitset_statuscond_subscriber.c already 
+exists and will not be replaced with updated content. If you would like to get a 
+new file with the new content, either remove this file or supply -replace 
+option.
+File C:\local\waitset_status_cond\c\waitset_statuscond_publisher.c already 
+exists and will not be replaced with updated content. If you would like to get a 
+new file with the new content, either remove this file or supply -replace 
+option.
 
-Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
+This is normal and is only informing you that the subscriber/publisher code has
+not been replaced, which is fine since all the source files for the example are
+already provided.
 
-Run rtiddsgen with the -example option and the target architecture of your choice (for example, i86Win32VS2010). The RTI Data Distribution Service Getting Started Guide describes this process in detail. Follow the same procedure to generate the code and build the examples. Do not use the -replace option.
+Running C Example
+=================
+In two separate command prompt windows for the publisher and subscriber. Run
+the following commands from the example directory (this is necessary to ensure
+the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
-After running rtiddsgen like this...
+On Windows systems run:
 
-C:\local\Waitsets\c++> rtiddsgen -language C++ -example i86Win32VS2010 waitset_statuscond.idl
-
-...you will see a message that looks like this:
-
-File C:\local\Waitsets\c\waitset_statuscond_subscriber.c already exists and will not be replaced with updated content. If you would like to get a new file with the new content, either remove this file or supply -replace option.
-
-This is normal and is only informing you that the subscriber code has not been replaced, which is fine since all the source files for the example are already provided.
-
-Running
-=======
-In two separate command prompt windows for the publisher and subscriber, navigate to the objs/<arch> directory and run these commands:
-
-Windows systems:
-
-    * waitset_statuscond_publisher.exe <domain#> 6
-    * waitset_statuscond_subscriber.exe <domain#> 10
+objs\<arch_name>\waitset_statuscond_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\waitset_statuscond_subscriber.exe <domain_id> <sleep_periods>
 
 UNIX systems:
 
-    * ./waitset_statuscond_publisher <domain#> 6
-    * ./waitset_statuscond_subscriber <domain#> 10
+./objs/<arch_name>/waitset_statuscond_publisher <domain_id>  <samples_to_send>
+./objs/<arch_name>/waitset_statuscond_subscriber <domain_id>  <sleep_periods>
 
-The applications accept two arguments:
+The applications accept up to two arguments:
 
-   1. The <domain #>. Both applications must use the same domain # in order to communicate. The default is 0.
-   2. How long the examples should run, measured in samples for the publisher and sleep periods for the subscriber. A value of '0' instructs the application to run forever; this is the default.
-
-While generating the output below, we used values that would capture the most interesting behavior.
-
-Publisher Output
-=============
-Writing waitset_statuscond, count 0
-Writing waitset_statuscond, count 1
-Writing waitset_statuscond, count 2
-Writing waitset_statuscond, count 3
-Writing waitset_statuscond, count 4
-Writing waitset_statuscond, count 5
-
-Subscriber Output
-==============
-got 1 active conditions
-   x: 1
-got 1 active conditions
-   x: 2
-got 1 active conditions
-   x: 3
-got 1 active conditions
-   x: 4
-got 1 active conditions
-   x: 5
-got 1 active conditions
-   Got metadata
-wait timed out
-wait timed out
-wait timed out
+   1. The <domain_id>. Both applications must use the same domain id in order 
+   to communicate. The default is 0.
+   2. How long the examples should run, measured in samples for the publisher 
+   and sleep periods for the subscriber. A value of '0' instructs the 
+   application to run forever; this is the default.

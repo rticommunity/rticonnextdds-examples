@@ -18,7 +18,7 @@ use Cwd;
 ################################################################################
 ########################## GLOBAL VARIABLES ####################################
 ################################################################################
-
+ 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 # $TOP_DIRECTORY is the directory where you have executed the script
@@ -32,6 +32,8 @@ if (defined $ENV{'NDDSHOME'}) {
 else { 
     $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $ARGV[1];
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+          "%RTI_TOOLDRIVE%/local/preship/ndds/ndds.{VERSION}\n";
 }
 
 # This variable is the architecture name 
@@ -58,11 +60,13 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 # Java Architecture
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
                 $ENV{'PATH'};                           
-# include Java compiler (Javac) in the path
+# including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/win32/jdk1.7.0_04";
+    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
+      "%RTI_TOOLDRIVE%/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
@@ -78,7 +82,7 @@ $DOT_NET_VERSION = "dotnet4.0";
 ######################### AUXILIAR FUNCTIONS ###################################
 ################################################################################
 
-# This function change the '\' character by '/' like is used in UNIX
+# This function changes the '\' character by '/' like is used in UNIX
 #   input parameter:
 #       $path: the string to be converted
 #   output parameter:
@@ -140,7 +144,7 @@ sub call_compiler {
     # $type has the name of the idle without the extension .idl
     my ($data_type) = substr $idl_filename, 0, -4;
 
-    #if the compilation language is Java, add jdk at the final of the $ARCH
+    # if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
         my ($architecture) = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
     }
@@ -178,6 +182,8 @@ sub call_compiler {
     # if the system call has errors, the program exits with the error code 1
     system $compile_string;
     if ( $? != 0 ) {
+        # return to the top directory again
+        chdir $TOP_DIRECTORY;
         exit(1);
     }
     
@@ -186,15 +192,10 @@ sub call_compiler {
 }
 
 
-# This function reads recursively all the files in a folder and process them:
-#   - if a file is found: check if its extension is supported
-#           - if the file has not a supported extension: look for a new file
-#           - if the file has a supported extension: check if it has copyright
-#               - if the file has copyright: print a advise
-#                    - if delete option is enabled: delete the copyright header
-#               - else and enabled copy copyright option: copy the copyright 
-#                       header in the file
-#
+# This function reads recursively all the files in a folder and call:
+#   - call_rtiddsgen: this function generates all the needed files to compile, 
+#                     using rtiddsgen
+#   - call_makefile: this function calls the makefile to compile the example
 #   input parameter:
 #       $folder: the name of the folder to read
 #   output parameter:

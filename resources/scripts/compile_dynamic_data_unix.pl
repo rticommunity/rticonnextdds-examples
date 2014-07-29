@@ -11,11 +11,13 @@
 
 use Cwd;
 
-$ARCH = "i86Linux2.6gcc4.4.5";
-$NDDS_VERSION = "5.1.0";
-
 #$TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
+
+# We get the working_directory, NDDS_VERSION and the ARCH by command line
+$FOLDER_TO_CHECK = $ARGV[0];
+$NDDS_VERSION = $ARGV[1];
+$ARCH = $ARGV[2];
 
 $NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
@@ -26,24 +28,29 @@ if (defined $ENV{'NDDSHOME'}) {
 else { 
     $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $NDDS_VERSION;
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+          "$RTI_TOOLDRIVE/local/preship/ndds/ndds.{VERSION}\n";
 }
-#set NDDSHOME
+# set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
-#include Java compiler (Javac) in the path
+# including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/linux/jdk1.7.0_04";
+    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
+       "$RTI_TOOLDRIVE/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
-#set LD_LIBRARY_PATH
-#C/C++ architecture
+# set LD_LIBRARY_PATH
+# C/C++ architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
                             $ENV{'LD_LIBRARY_PATH'};
-#Java Architecture
+# Java Architecture
 $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
                             $ENV{'LD_LIBRARY_PATH'};                           
 
@@ -54,7 +61,8 @@ $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" .
 #       $language: this is the language which is going to be used to compile
 #       $path: relative directory where the example is
 #   output parameter:
-#       none
+#       if there are any problem running the makefile, the script will exits 
+#       with errors
 sub call_makefile {
     my ($architecture, $language, $path) = @_;
     
@@ -91,27 +99,29 @@ sub print_example_name {
     print "*********************************************************" . 
           "**************\n";
 }
-
+ 
 #dynamic data access union discriminator example
 call_makefile ($ARCH, "C", 
-        "./examples/dynamic_data_access_union_discriminator/c");
+        $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c");
 
 call_makefile ($ARCH, "C++", 
-        "./examples/dynamic_data_access_union_discriminator/c++");
+        $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c++");
 
 call_makefile ($ARCH, "Java", 
-        "./examples/dynamic_data_access_union_discriminator/Java");
+        $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/Java");
         
 #dynamic data nested structs example       
-call_makefile ($ARCH, "C", "./examples/dynamic_data_nested_structs/c");
+call_makefile ($ARCH, "C", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c");
 
-call_makefile ($ARCH, "C++", "./examples/dynamic_data_nested_structs/c++");
+call_makefile ($ARCH, "C++",
+        $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c++");
 
-call_makefile ($ARCH, "Java", "./examples/dynamic_data_nested_structs/java");
+call_makefile ($ARCH, "Java",
+        $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/java");
 
 #dynamic data sequences example
-call_makefile ($ARCH, "C", "./examples/dynamic_data_sequences/c");
+call_makefile ($ARCH, "C", $FOLDER_TO_CHECK . "/dynamic_data_sequences/c");
 
-call_makefile ($ARCH, "C++", "./examples/dynamic_data_sequences/c++");
+call_makefile ($ARCH, "C++", $FOLDER_TO_CHECK . "/dynamic_data_sequences/c++");
 
-call_makefile ($ARCH, "Java", "./examples/dynamic_data_sequences/java");
+call_makefile ($ARCH, "Java",$FOLDER_TO_CHECK . "/dynamic_data_sequences/java");

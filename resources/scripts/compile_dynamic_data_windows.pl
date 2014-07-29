@@ -11,11 +11,13 @@
 
 use Cwd;
 
-$ARCH = "i86Win32VS2010";
-$NDDS_VERSION = "5.1.0";
-
 #$TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
+
+# We get the working_directory, NDDS_VERSION and the ARCH by command line
+$FOLDER_TO_CHECK = $ARGV[0];
+$NDDS_VERSION = $ARGV[1];
+$ARCH = $ARGV[2];
 
 $NDDS_HOME = "";
 
@@ -27,6 +29,8 @@ if (defined $ENV{'NDDSHOME'}) {
 else { 
     $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                         $NDDS_VERSION;
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+          "%RTI_TOOLDRIVE%/local/preship/ndds/ndds.{VERSION}\n";
 }
 #set NDDSHOME
 $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
@@ -41,22 +45,24 @@ $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
 $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
                $ENV{'PATH'};                           
 
-#include Java compiler (Javac) in the path
+# including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/win32/jdk1.7.0_04";
+    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
+      "%RTI_TOOLDRIVE%/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
             
-#This solution name is the same one for all dynamic data C/C++ examples
+# This solution name is the same one for all dynamic data C/C++ examples
 $VS_SOLUTION_NAME_C = "Hello-i86Win32VS2010.sln";
 
-#This solution name is the same one for all dynamic data C# examples
+# This solution name is the same one for all dynamic data C# examples
 $VS_SOLUTION_NAME_CS = "Hello-i86Win32dotnet4.0.sln";
 
-# This function change the '\' character by '/' like is used in UNIX
+# This function changes the '\' character by '/' like is used in UNIX
 #   input parameter:
 #       $path: the string to be converted
 #   output parameter:
@@ -80,6 +86,8 @@ sub call_compiler {
     
     my ($compile_string) = "";
     
+    # we create the compile string using msbuild compiler and the name of the
+    # projects we have defined at the first of the file
     if ($language eq "C" or $language eq "C++") {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_C;
     }
@@ -92,12 +100,14 @@ sub call_compiler {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_CS;
     }
 
-    #change to the directory where the example is (where the rtiddsgen has been
-    # executed) to run the makefile
+    # we need to swap the directory where the example is (where the rtiddsgen
+    # has been executed) to run the makefile
     chdir $path;
     
     system $compile_string;
     if ( $? != 0 ) {
+        # return to the top directory again
+        chdir $TOP_DIRECTORY;
         exit(1);
     }
     
@@ -114,31 +124,34 @@ sub print_example_name {
     print "*********************************************************" . 
           "**************\n";
 }
-
+ 
 #dynamic data access union discriminator example
-call_compiler ("C", "./examples/dynamic_data_access_union_discriminator/c");
+call_compiler ("C", 
+    $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c");
 
-call_compiler ("C++", "./examples/dynamic_data_access_union_discriminator/c++");
+call_compiler ("C++", $FOLDER_TO_CHECK .
+    "./dynamic_data_access_union_discriminator/c++");
 
-call_compiler ("C#", "./examples/dynamic_data_access_union_discriminator/cs");
+call_compiler ("C#", 
+    $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/cs");
 
 call_compiler ("Java", 
-            "./examples/dynamic_data_access_union_discriminator/Java");
+    $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/Java");
         
 #dynamic data nested structs example       
-call_compiler ("C", "./examples/dynamic_data_nested_structs/c");
+call_compiler ("C", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c");
 
-call_compiler ("C++", "./examples/dynamic_data_nested_structs/c++");
+call_compiler ("C++", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c++");
 
-call_compiler ("C#", "./examples/dynamic_data_nested_structs/cs");
+call_compiler ("C#", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/cs");
 
-call_compiler ("Java", "./examples/dynamic_data_nested_structs/java");
+call_compiler ("Java", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/java");
 
 #dynamic data sequences example
-call_compiler ("C", "./examples/dynamic_data_sequences/c");
+call_compiler ("C", $FOLDER_TO_CHECK . "/dynamic_data_sequences/c");
 
-call_compiler ("C++", "./examples/dynamic_data_sequences/c++");
+call_compiler ("C++", $FOLDER_TO_CHECK . "/dynamic_data_sequences/c++");
 
-call_compiler ("C#", "./examples/dynamic_data_sequences/cs");
+call_compiler ("C#", $FOLDER_TO_CHECK . "/dynamic_data_sequences/cs");
 
-call_compiler ("Java", "./examples/dynamic_data_sequences/java");
+call_compiler ("Java", $FOLDER_TO_CHECK . "/dynamic_data_sequences/java");

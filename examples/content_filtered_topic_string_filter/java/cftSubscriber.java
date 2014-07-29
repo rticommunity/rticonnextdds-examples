@@ -265,14 +265,15 @@ public class cftSubscriber {
             System.out.println(">>> Now setting a new filter: "
                     + "name MATCH \"EVEN\"");
             
-            try { 
-                cft.append_to_expression_parameter(0, "EVEN");
-            } catch (Exception e) {
-                System.err.println("append_to_expression_parameter "
-                        + "error");
-                return;
-            }
-            
+            if (sel_cft == 1) {
+                try { 
+                    cft.append_to_expression_parameter(0, "EVEN");
+                } catch (Exception e) {
+                    System.err.println("append_to_expression_parameter "
+                            + "error");
+                    return;
+                }
+            }            
             final long receivePeriodSec = 1;
 
             for (int count = 0;
