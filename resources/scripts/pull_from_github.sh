@@ -29,7 +29,7 @@
 
 # Path to the directory where you have the examples, i.e., path to the directory
 # where repositories have been cloned.
-examples_path=/ssd/atlassian/RTI/RE-R63-COP
+examples_path=/ssd/atlassian/installed/Bamboo/xml-data/build-dir/131073/RE-R63-SHIP
 
 # List of repositories--separated by spaces--you want to bundle
 repositories_list="rticonnextdds-examples"
