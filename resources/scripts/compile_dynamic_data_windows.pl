@@ -16,8 +16,8 @@ $TOP_DIRECTORY = cwd();
 
 # We get the working_directory, NDDS_VERSION and the ARCH by command line
 $FOLDER_TO_CHECK = $ARGV[0];
-$NDDS_VERSION = $ENV[1];
-$ARCH = $ENV[2];
+$NDDS_VERSION = $ARGV[1];
+$ARCH = $ARGV[2];
 
 $NDDS_HOME = "";
 
@@ -124,7 +124,7 @@ sub print_example_name {
     print "*********************************************************" . 
           "**************\n";
 }
-
+ 
 #dynamic data access union discriminator example
 call_compiler ("C", 
     $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c");

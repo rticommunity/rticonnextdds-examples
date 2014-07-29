@@ -305,7 +305,7 @@ sub is_external_example_list {
     }
     return $is_external_example;    
 }
-
+ 
 # This function read recursively all the files in a folder and process them:
 #   - We have 3 differents option:
 #       $OPTION_FLAG = 0: Checking whether the file (with correct extension) has 

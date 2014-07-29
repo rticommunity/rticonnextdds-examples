@@ -1,4 +1,4 @@
-  The script compile_dynamic_data_windows.pl has the same conditions than 
+  The script compile_dynamic_data_windows.pl has the same conditions than  
 compile_windows.pl and follow the same README.txt file.
 
   This script is based in the IDL files. It takes the name of the file and then

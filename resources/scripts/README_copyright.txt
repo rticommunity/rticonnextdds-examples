@@ -1,4 +1,4 @@
-  The script copyright.pl receives a variable number of arguments. The
+  The script copyright.pl receives a variable number of arguments. The 
 first one is the parent directory to check, including its child directories.
 The second one is a flag to copy copyright in the corresponding files or just 
 check if that files have it or not. The other arguments are the extensions of 

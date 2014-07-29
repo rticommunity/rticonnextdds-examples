@@ -1,4 +1,4 @@
-  This script uses a environment variable called XMLLINT_PATH in order to 
+  This script uses a environment variable called XMLLINT_PATH in order to  
 point where the xmllint program is installed. If this environment variable is 
 not defined, the script supposes the xmllint is in the path.
   The script xml_validation.pl receives 2 arguments in command line. 

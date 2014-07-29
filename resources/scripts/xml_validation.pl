@@ -56,7 +56,7 @@ sub unix_path {
     ($path = shift) =~ tr!\\!/!;
     return $path;
 }
-
+ 
 # This function calls an XML validator to check if a XML file is correct 
 # following a xsd schema 
 #   input parameter:

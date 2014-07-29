@@ -2,7 +2,7 @@
 attributes. Those attributes are included with rtiddsgen. However, there are old 
 examples which have not it. Besides, in order to maintain the USER_QOS_PROFILES
 in all the examples when the DDS version changes, we can use xml_update script 
-to swap the DDS version and the version where it is pointing, because the XML
+to swap the DDS version and the version where it is pointing, because the XML 
 validator, if the version is not the same one, will fail. A normal <dds> tag,
 with the default attributes, is:
 

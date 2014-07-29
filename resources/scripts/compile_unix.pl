@@ -16,7 +16,7 @@ use Cwd;
 ################################################################################
 ########################## GLOBAL VARIABLES ####################################
 ################################################################################
-
+ 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
 # $TOP_DIRECTORY is the directory where you have executed the script
