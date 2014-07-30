@@ -38,13 +38,13 @@ sub bundle_top_directory {
     my $error = 0;
     
     # if a system call does not return 0, there is an error
-    $error += system "mkdir -p $path/bundles/$REPOSITORY_NAME";
-    chdir "$path/bundles/";
+    $error += system "mkdir -p $path/bundles/$REPOSITORY_NAME/$REPOSITORY_NAME";
+    chdir "$path/bundles/$REPOSITORY_NAME";
     $error += system "cp -r $examples_directory/* ./$REPOSITORY_NAME";
     $error += system "zip -r " . $REPOSITORY_NAME . ".zip $REPOSITORY_NAME";
     $error += system "tar cvzf " . $REPOSITORY_NAME . 
                                                     ".tar.gz $REPOSITORY_NAME";
-    $error += system "rm -rf $path/bundles/$REPOSITORY_NAME";
+    $error += system "rm -rf $path/bundles/$REPOSITORY_NAME/$REPOSITORY_NAME";
         
     # return to the top directory again
     chdir $TOP_DIRECTORY;
