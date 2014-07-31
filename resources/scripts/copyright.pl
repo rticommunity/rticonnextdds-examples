@@ -253,7 +253,8 @@ sub delete_copyright_in_file {
     # set the file handle at the end of the copyright header
     if ($is_xml_file) {
         # we get the xml definition string, which is the one between <? and ?>
-        my ($xml_definition_text) = $buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/;
+        my ($xml_definition_text) = 
+                        $buffer =~ /(<\?xml[\s\S]*?\?>\s*)([\s\S]*)/;
         # auxiliar variable $2 has all the text after the xml definition
         # $buffer will store the text after the copyright_header
         $buffer = substr $2, $COPYRIGHT_LENGTH_XML_STYLE, length $2;
@@ -287,7 +288,8 @@ sub delete_copyright_in_file {
 #       $folder_to_check: it is the string (folder_name) which we will check
 #           if it is in the file
 #   output parameter:
-#       $is_external_example: 1 (True) or 0 (False), if the $filename contains the folder
+#       $is_external_example: 1 (True) or 0 (False), if the $filename 
+#                             contains the folder
 sub is_external_example_list {
     my ($filename, $folder_to_check) = @_;
     my ($is_external_example) = 0; #false by default
