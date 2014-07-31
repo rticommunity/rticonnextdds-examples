@@ -22,9 +22,10 @@ $FOLDER_TO_CHECK = $ARGV[0];
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
-# This variable is repository name
+# This variable is the repository name got from the commmand line arguments
 $REPOSITORY_NAME = $ARGV[1];
 
+# This variable is the path to the repository folder 
 $REPOSITORY_PATH = $TOP_DIRECTORY . "/" . $REPOSITORY_NAME;
 
 
@@ -32,6 +33,11 @@ $REPOSITORY_PATH = $TOP_DIRECTORY . "/" . $REPOSITORY_NAME;
 ######################### BUNDLING FUNCTIONS ###################################
 ################################################################################
 
+# This function bundles the top directory with all the examples
+#   input parameter:
+#       $path: the path to the top directory
+#   output parameter:
+#       none, if there is any error, exit with error code 
 sub bundle_top_directory {
     my ($path) = @_;
     my $examples_directory = "$path/examples";
@@ -56,6 +62,11 @@ sub bundle_top_directory {
     }
 }
 
+# This function bundles all the examples in a their corresponding folder
+#   input parameter:
+#       $path: the path to the top directory
+#   output parameter:
+#       none, if there is any error, exit with error code 
 sub bundle_each_example {
     my ($path)  = @_;
 
@@ -68,8 +79,10 @@ sub bundle_each_example {
 
     # we copy all the files to the repository_name folder
     system "cp -r * ./$REPOSITORY_NAME";
+    # we delete the repository_name folder inside of itself
     system "rm -rf ./$REPOSITORY_NAME/$REPOSITORY_NAME";
-   
+    system "rm -rf ./$REPOSITORY_NAME/bundles/*";
+    
     chdir $exampes_path;
     system "cp -r  * $REPOSITORY_PATH/examples";
     
@@ -85,7 +98,7 @@ sub bundle_each_example {
         $error += system "mv " . $register . 
                                 ".zip $REPOSITORY_PATH/bundles/$register";
         
-        #if error is not 0, there was error in the execution
+        # if error is not 0, there was error in the execution
         if ($error) {
             print "Error bundling $register example\n";
             exit ($error);
