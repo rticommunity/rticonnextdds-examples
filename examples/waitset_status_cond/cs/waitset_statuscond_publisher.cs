@@ -43,8 +43,10 @@ using System.Text;
 
        To run the example application on domain <domain_id>:
 
-       bin\<Debug|Release>\waitset_statuscond_publisher <domain_id> <sample_count>
-       bin\<Debug|Release>\waitset_statuscond_subscriber <domain_id> <sample_count>
+       bin\<Debug|Release>\waitset_statuscond_publisher <domain_id> 
+                                                               <sample_count>
+       bin\<Debug|Release>\waitset_statuscond_subscriber <domain_id> 
+                                                               <sample_count>
 
        
 modification history
@@ -174,7 +176,7 @@ public class waitset_statuscondPublisher {
         */
 
         /* Main loop */
-        const System.Int32 send_period = 4000; // milliseconds
+        const System.Int32 send_period = 1 * 1000; // milliseconds
         for (int count=0;
              (sample_count == 0) || (count < sample_count);
              ++count) {

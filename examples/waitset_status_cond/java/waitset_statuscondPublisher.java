@@ -53,9 +53,11 @@
 
        Run the Java applications:
        
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondPublisher <domain_id>
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondPublisher    
+                                                                    <domain_id>
 
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondSubscriber <domain_id>        
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondSubscriber
+                                                                    <domain_id>        
 
        
        
@@ -190,17 +192,18 @@ public class waitset_statuscondPublisher {
             waitset_statuscond instance = new waitset_statuscond();
 
             InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
-            /* For a data type that has a key, if the same instance is going to be
-               written multiple times, initialize the key here
-               and register the keyed instance prior to writing */
+            /* For a data type that has a key, if the same instance is going to
+             * be written multiple times, initialize the key here
+             * and register the keyed instance prior to writing */
             //instance_handle = writer.register_instance(instance);
 
-            final long sendPeriodMillis = 4 * 1000; // 4 seconds
+            final long sendPeriodMillis = 1 * 1000; // 4 seconds
 
             for (int count = 0;
                  (sampleCount == 0) || (count < sampleCount);
                  ++count) {
-                System.out.println("Writing waitset_statuscond, count " + count);
+                System.out.println("Writing waitset_statuscond, count " 
+                        + count);
 
                 /* Modify the instance to be written here */
                 instance.x = (short) count;

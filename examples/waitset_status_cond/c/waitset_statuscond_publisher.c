@@ -218,7 +218,8 @@ static int publisher_main(int domainId, int sample_count)
 */
 
     /* Delete data sample */
-    retcode = waitset_statuscondTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = waitset_statuscondTypeSupport_delete_data_ex(instance,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("waitset_statuscondTypeSupport_delete_data error %d\n", retcode);
     }
@@ -283,7 +284,8 @@ void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

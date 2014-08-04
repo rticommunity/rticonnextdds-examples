@@ -54,31 +54,21 @@
 
        Run the Java applications:
        
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondPublisher <domain_id>
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondPublisher
+                                                                 <domain_id>
 
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondSubscriber <domain_id>  
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_statuscondSubscriber 
+                                                                 <domain_id>  
        
        
 modification history
 ------------ -------   
 */
 
-import com.rti.dds.domain.DomainParticipant;
-import com.rti.dds.domain.DomainParticipantFactory;
-import com.rti.dds.infrastructure.ConditionSeq;
-import com.rti.dds.infrastructure.Duration_t;
-import com.rti.dds.infrastructure.RETCODE_TIMEOUT;
-import com.rti.dds.infrastructure.ResourceLimitsQosPolicy;
-import com.rti.dds.infrastructure.StatusCondition;
-import com.rti.dds.infrastructure.StatusKind;
-import com.rti.dds.infrastructure.WaitSet;
-import com.rti.dds.subscription.InstanceStateKind;
-import com.rti.dds.subscription.SampleInfo;
-import com.rti.dds.subscription.SampleInfoSeq;
-import com.rti.dds.subscription.SampleStateKind;
-import com.rti.dds.subscription.Subscriber;
-import com.rti.dds.subscription.ViewStateKind;
-import com.rti.dds.topic.Topic;
+import com.rti.dds.domain.*;
+import com.rti.dds.infrastructure.*;
+import com.rti.dds.subscription.*;
+import com.rti.dds.topic.*;
 
 // ===========================================================================
 
@@ -216,8 +206,8 @@ public class waitset_statuscondSubscriber {
 
             /* Create and attach conditions to the WaitSet
              * -------------------------------------------
-             * Finally, we create the WaitSet and attach both the Read Conditions
-             * and the Status Condition to it.
+             * Finally, we create the WaitSet and attach both the Read 
+             * Conditions and the Status Condition to it.
              */
             WaitSet waitset = new WaitSet();
 
@@ -227,10 +217,9 @@ public class waitset_statuscondSubscriber {
 
             // --- Wait for data --- //
 
-            final long receivePeriodSec = 4;
+            final long receivePeriodSec = 1;
 
-            for (int count = 0;
-                 (sampleCount == 0) || (count < sampleCount);
+            for (int count = 0; (sampleCount == 0) || (count < sampleCount);
                  ++count) {
                 ConditionSeq active_conditions_seq = 
                     new ConditionSeq();
@@ -286,26 +275,38 @@ public class waitset_statuscondSubscriber {
                              * and the WaitSet will wake up immediately - 
                              * causing high CPU usage when it does not sleep in
                              * the loop */
-                            reader.take(
-                                data_seq, info_seq, 
-                                ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                                SampleStateKind.ANY_SAMPLE_STATE, 
-                                ViewStateKind.ANY_VIEW_STATE,
-                                InstanceStateKind.ANY_INSTANCE_STATE);
-    
-                            /* Print data */
-                            for (int j = 0; j < data_seq.size(); ++j) {
-                                if (!((SampleInfo)info_seq.get(j)).valid_data) {
-                                    System.out.println("Got metadata");
-                                    continue;
+                            boolean follow = true;
+                            while (follow) {
+                                try {
+                                    reader.take(
+                                       data_seq, info_seq, 
+                                       ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                                       SampleStateKind.ANY_SAMPLE_STATE, 
+                                       ViewStateKind.ANY_VIEW_STATE,
+                                       InstanceStateKind.ANY_INSTANCE_STATE);
+                
+                                    /* Print data */
+                                    for (int j = 0; j < data_seq.size(); ++j) {
+                                        if (!((SampleInfo)
+                                                info_seq.get(j)).valid_data) {
+                                            System.out.println("Got metadata");
+                                            continue;
+                                        }
+                                        System.out.println(
+                                                ((waitset_statuscond)
+                                                        data_seq.get(j))
+                                                    .toString());
+                                    }
+                                } catch (RETCODE_NO_DATA noData) {
+                                    /* When there isn't data, the subscriber
+                                     * stop to take samples
+                                     */
+                                    follow = false;
+                                } finally {
+                                    /* Return the loaned data */
+                                    reader.return_loan(data_seq, info_seq);
                                 }
-                                System.out.println(
-                                        ((waitset_statuscond)data_seq.get(j))
-                                            .toString());
                             }
-	
-	                        /* Return the loaned data */
-                            reader.return_loan(data_seq, info_seq);
                         }
                     }
                 }

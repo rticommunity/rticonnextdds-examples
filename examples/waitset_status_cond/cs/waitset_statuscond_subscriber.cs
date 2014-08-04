@@ -42,8 +42,10 @@ using System.Text;
         
        To run the example application on domain <domain_id>:
                           
-       bin\<Debug|Release>\waitset_statuscond_publisher <domain_id> <sample_count>  
-       bin\<Debug|Release>\waitset_statuscond_subscriber <domain_id> <sample_count>
+       bin\<Debug|Release>\waitset_statuscond_publisher <domain_id> 
+                                                               <sample_count>  
+       bin\<Debug|Release>\waitset_statuscond_subscriber <domain_id> 
+                                                               <sample_count>
               
        
 modification history
@@ -52,7 +54,7 @@ modification history
 
 public class waitset_statuscondSubscriber {
 
-    public static void Main(string[] args) {
+    public static void Main( string[] args ) {
 
         // --- Get domain ID --- //
         int domain_id = 0;
@@ -76,13 +78,12 @@ public class waitset_statuscondSubscriber {
         try {
             waitset_statuscondSubscriber.subscribe(
                 domain_id, sample_count);
-        }
-        catch(DDS.Exception) {
+        } catch (DDS.Exception) {
             Console.WriteLine("error in subscriber");
         }
     }
 
-    static void subscribe(int domain_id, int sample_count) {
+    static void subscribe( int domain_id, int sample_count ) {
 
         // --- Create participant --- //
 
@@ -91,7 +92,7 @@ public class waitset_statuscondSubscriber {
         DDS.DomainParticipant participant =
             DDS.DomainParticipantFactory.get_instance().create_participant(
                 domain_id,
-                DDS.DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT, 
+                DDS.DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                 null /* listener */,
                 DDS.StatusMask.STATUS_MASK_NONE);
         if (participant == null) {
@@ -115,13 +116,12 @@ public class waitset_statuscondSubscriber {
         // --- Create topic --- //
 
         /* Register the type before creating the topic */
-        System.String type_name = 
+        System.String type_name =
             waitset_statuscondTypeSupport.get_type_name();
         try {
             waitset_statuscondTypeSupport.register_type(
                 participant, type_name);
-        }
-        catch(DDS.Exception e) {
+        } catch (DDS.Exception e) {
             Console.WriteLine("register_type error {0}", e);
             shutdown(participant);
             throw e;
@@ -157,7 +157,7 @@ public class waitset_statuscondSubscriber {
         }
 
         // Get narrowed datareader
-        waitset_statuscondDataReader waitset_reader = 
+        waitset_statuscondDataReader waitset_reader =
             (waitset_statuscondDataReader)reader;
 
         /* Get status conditions
@@ -172,15 +172,12 @@ public class waitset_statuscondSubscriber {
          * Now that we have the Status Condition, we are going to enable the
          * status we are interested in: knowing that data is available
          */
-        try
-        {
+        try {
             status_condition.set_enabled_statuses(
                 (DDS.StatusMask)DDS.StatusKind.DATA_AVAILABLE_STATUS);
-        }
-        catch (DDS.Exception e)
-        {
+        } catch (DDS.Exception e) {
             shutdown(participant);
-            throw new ApplicationException("set_enabled_statuses error {0}", 
+            throw new ApplicationException("set_enabled_statuses error {0}",
                 e);
         }
 
@@ -193,64 +190,65 @@ public class waitset_statuscondSubscriber {
 
 
         /* Attach Status Conditions */
-        try
-        {
+        try {
             waitset.attach_condition(status_condition);
-        }
-        catch (DDS.Exception e)
-        {
+        } catch (DDS.Exception e) {
             shutdown(participant);
-            throw new ApplicationException("set_enabled_statuses error {0}", 
+            throw new ApplicationException("set_enabled_statuses error {0}",
                 e);
 
         }
         // --- Wait for data --- //
-        int count = 0;
         DDS.Duration_t timeout;
         timeout.nanosec = (uint)500000000;
         timeout.sec = 1;
 
         /* Main loop */
-        while (sample_count == 0 || count < sample_count)
-        {
+        for (int count = 0; (sample_count == 0) || (count < sample_count);
+                 ++count) {
             DDS.ConditionSeq active_conditions = new DDS.ConditionSeq();
 
             // The triggered condition(s) will be placed in active_conditions
-            try
-            {
+            try {
                 waitset.wait(active_conditions, timeout);
                 Console.WriteLine("got {0} active conditions", active_conditions.length);
+            } catch (DDS.Retcode_Timeout) {
+                Console.WriteLine("Wait timed out!! No conditions were " +
+                    "triggered.");
+                continue;
+            } catch (DDS.Exception e) {
+                Console.WriteLine("wait error {0}", e);
+                break;
+            }
+            for (int i = 0; i < active_conditions.length; ++i) {
+                /* In this case, we have only a single condition, but
+		     	if we had multiple, we would need to iterate over
+		       	them and check which one is true.  Leaving the logic
+		       	for the more complex case. */
+                if (active_conditions.get_at(i) == status_condition) {
+                    DDS.StatusMask triggeredmask =
+                        waitset_reader.get_status_changes();
 
-                for (int i = 0; i < active_conditions.length; ++i)
-                {
-                    /* In this case, we have only a single condition, but
-		        	if we had multiple, we would need to iterate over
-		        	them and check which one is true.  Leaving the logic
-		        	for the more complex case. */
-                    if (active_conditions.get_at(i) == status_condition)
-                    {
-                        DDS.StatusMask triggeredmask =
-                            waitset_reader.get_status_changes();
-
-                        if ((triggeredmask &
-                            (DDS.StatusMask)
-                            DDS.StatusKind.DATA_AVAILABLE_STATUS) != 0)
-                        {
-                            /* Current conditions match our conditions to read data, so
-                             * we can read data just like we would do in any other
-                             * example. */
-                            waitset_statuscondSeq data_seq
+                    if ((triggeredmask &
+                        (DDS.StatusMask)
+                        DDS.StatusKind.DATA_AVAILABLE_STATUS) != 0) {
+                        /* Current conditions match our conditions to read data, so
+                         * we can read data just like we would do in any other
+                         * example. */
+                        waitset_statuscondSeq data_seq
                                 = new waitset_statuscondSeq();
-                            DDS.SampleInfoSeq info_seq
-                                = new DDS.SampleInfoSeq();
+                        DDS.SampleInfoSeq info_seq
+                            = new DDS.SampleInfoSeq();
 
-                            try
-                            {
-                                /* Access data using read(), take(), etc.  If 
-                                 * you fail to do this the condition will 
-                                 * remain true, and the WaitSet will wake up 
-                                 * immediately - causing high CPU usage when it
-                                 * does not sleep in the loop */
+                        /* Access data using read(), take(), etc.  If 
+                         * you fail to do this the condition will 
+                         * remain true, and the WaitSet will wake up 
+                         * immediately - causing high CPU usage when it
+                         * does not sleep in the loop 
+                         */
+                        bool follow = true;
+                        while (follow) {
+                            try {
                                 waitset_reader.take(
                                     data_seq,
                                     info_seq,
@@ -259,51 +257,26 @@ public class waitset_statuscondSubscriber {
                                     DDS.ViewStateKind.ANY_VIEW_STATE,
                                     DDS.InstanceStateKind.ANY_INSTANCE_STATE);
 
-                            }
-                            catch (DDS.Retcode_NoData e)
-                            {
-                                shutdown(participant);
-                                throw e;
-                            }
-                            catch (DDS.Exception e)
-                            {
-                                shutdown(participant);
-                                throw e;
-                            }
-
-                            /* Iterate over returned data.  Print the data 
-                             * values if it is not metadata.
-                             */
-                            System.Int32 data_length = data_seq.length;
-                            for (int j = 0; i < data_length; ++i)
-                            {
-                                if (!info_seq.get_at(j).valid_data)
-                                {
-                                    Console.WriteLine("Got metadata");
-                                    continue;    
+                                System.Int32 data_length = data_seq.length;
+                                for (int j = 0; i < data_length; ++i) {
+                                    if (!info_seq.get_at(j).valid_data) {
+                                        Console.WriteLine("Got metadata");
+                                        continue;
+                                    }
+                                    waitset_statuscondTypeSupport.print_data(data_seq.get_at(j));
                                 }
-                                waitset_statuscondTypeSupport.print_data(data_seq.get_at(j));
-                            }
-
-                            try
-                            {
+                            } catch (DDS.Retcode_NoData) {
+                                /* When there isn't data, the subscriber stop to
+                                 * take samples
+                                 */
+                                follow = false;
+                            } finally {
                                 /* Return the loaned data */
                                 waitset_reader.return_loan(data_seq, info_seq);
                             }
-                            catch (DDS.Exception e)
-                            {
-                                Console.WriteLine("return loan error {0}", e);
-                            }
-
                         }
                     }
                 }
-            }
-            catch (DDS.Retcode_Timeout)
-            {
-                Console.WriteLine("wait timed out");
-                count += 2;
-                continue;
             }
         }
         // --- Shutdown --- //
@@ -314,7 +287,7 @@ public class waitset_statuscondSubscriber {
 
 
     static void shutdown(
-        DDS.DomainParticipant participant) {
+        DDS.DomainParticipant participant ) {
 
         /* Delete all entities */
 
