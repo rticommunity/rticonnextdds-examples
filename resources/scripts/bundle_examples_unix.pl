@@ -28,6 +28,8 @@ $REPOSITORY_NAME = $ARGV[1];
 # This variable is the path to the repository folder 
 $REPOSITORY_PATH = $TOP_DIRECTORY . "/" . $REPOSITORY_NAME;
 
+$EXAMPLES_PATH = $TOP_DIRECTORY . $FOLDER_TO_CHECK;
+
 
 ################################################################################
 ######################### BUNDLING FUNCTIONS ###################################
@@ -40,7 +42,7 @@ $REPOSITORY_PATH = $TOP_DIRECTORY . "/" . $REPOSITORY_NAME;
 #       none, if there is any error, exit with error code 
 sub bundle_top_directory {
     my ($path) = @_;
-    my $examples_directory = "$path/examples";
+    my $examples_directory = $EXAMPLES_PATH;
     my $error = 0;
     
     # if a system call does not return 0, there is an error
@@ -70,7 +72,7 @@ sub bundle_top_directory {
 sub bundle_each_example {
     my ($path)  = @_;
 
-    my $exampes_path = "$path/examples/";
+    my $exampes_path = $EXAMPLES_PATH;
  
     opendir DIR, $exampes_path or die "ERROR trying to open $exampes_path $!\n";
     my @files = readdir DIR;
