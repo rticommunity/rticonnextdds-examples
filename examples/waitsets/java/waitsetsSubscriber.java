@@ -334,7 +334,8 @@ public class waitsetsSubscriber {
                                     read_condition);
         
                                 for (int j = 0; j < info_seq.size(); ++j) {
-                                    if (!((SampleInfo)info_seq.get(j)).valid_data) {
+                                    if (!((SampleInfo)
+                                            info_seq.get(j)).valid_data) {
                                         System.out.print("Got metadata\n");
                                         continue;
                                     }
