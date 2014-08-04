@@ -336,28 +336,33 @@ public class waitsetsSubscriber {
                      * This is just a suggestion, you can always use
                      * read() or take() like in any other example.
                      */
-                    try {
-                        waitsets_reader.take_w_condition(
-                            data_seq, info_seq,
-                            DDS.ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                            read_condition);
-                    } catch (DDS.Exception e) {
-                        Console.WriteLine("take error {0}", e);
-                        break;
-                    }
-
-                    for (int j = 0; j < data_seq.length; ++j) {
-                        if (!info_seq.get_at(j).valid_data) {
-                            Console.WriteLine("Got metadata");
-                            continue;
-                        }
-                        waitsetsTypeSupport.print_data(data_seq.get_at(i));
-                    }
-                    waitsets_reader.return_loan(data_seq, info_seq);
+                    bool follow = true;
+                    while (follow) {
+                        try {
+                            waitsets_reader.take_w_condition(
+                                data_seq, info_seq,
+	                            DDS.ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+	                            read_condition);
+	
+	                        for (int j = 0; j < data_seq.length; ++j) {
+	                            if (!info_seq.get_at(j).valid_data) {
+	                                Console.WriteLine("Got metadata");
+	                                continue;
+	                            }
+	                            waitsetsTypeSupport.print_data(
+	                                data_seq.get_at(i));
+	                        }
+	                    } catch (DDS.Retcode_NoData) {
+	                        /* When there isn't data, the subscriber stop to
+                             * take samples
+	                         */
+	                        follow = false;
+	                    } finally {
+	                        waitsets_reader.return_loan(data_seq, info_seq);
+	                    }
+                    }                    
                 }
-
             }
-
         }
 
         // --- Shutdown --- //

@@ -179,7 +179,8 @@ static int publisher_main(int domainId, int sample_count)
      * StatusCondition DDS_LIVELINESS_CHANGED_STATUS */
 
     /*
-    retcode = DDS_Publisher_get_default_datawriter_qos(publisher, &datawriter_qos);
+    retcode = DDS_Publisher_get_default_datawriter_qos(publisher,
+                                                            &datawriter_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datawriter_qos error\n");
         return -1;
@@ -316,7 +317,8 @@ void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

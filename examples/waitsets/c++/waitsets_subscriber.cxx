@@ -334,21 +334,23 @@ extern "C" int subscriber_main(int domainId, int sample_count)
                  * This is just a suggestion, you can always use
                  * read() or take() like in any other example.
                  */
-                retcode = waitsets_reader->take_w_condition(
-                    data_seq, info_seq, DDS_LENGTH_UNLIMITED, read_condition);
-                if (retcode != DDS_RETCODE_OK) {
-                    printf("take error %d\n", retcode);
-                    break;
-                }
-
-                for (int j = 0; j < data_seq.length(); ++j) {
-                    if (!info_seq[j].valid_data) {
-                        printf("Got metadata\n");
-                        continue;
+                retcode = DDS_RETCODE_OK;
+                while (retcode != DDS_RETCODE_NO_DATA) {
+                    retcode = waitsets_reader->take_w_condition(
+                        data_seq, info_seq, DDS_LENGTH_UNLIMITED,
+                                                        read_condition);
+                    
+                    for (int j = 0; j < data_seq.length(); ++j) {
+                        if (!info_seq[j].valid_data) {
+                            printf("Got metadata\n");
+                            continue;
+                        }
+                        waitsetsTypeSupport::print_data(&data_seq[j]);
                     }
-                    waitsetsTypeSupport::print_data(&data_seq[j]);
+                    waitsets_reader->return_loan(data_seq, info_seq);
+
                 }
-                waitsets_reader->return_loan(data_seq, info_seq);
+               
             }
 
         }
@@ -419,7 +421,8 @@ extern "C" void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

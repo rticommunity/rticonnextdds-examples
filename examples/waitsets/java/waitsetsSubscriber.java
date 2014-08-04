@@ -270,7 +270,8 @@ public class waitsetsSubscriber {
                     waitset.wait(active_conditions, duration);
                 } catch (RETCODE_TIMEOUT e) {
                     /* We get to timeout if no conditions were triggered */
-                    System.out.print("Wait timed out!! No conditions were triggered\n");
+                    System.out.print("Wait timed out!! No conditions were"
+                            + " triggered\n");
                     continue;
                 }
                 /* Get the number of active conditions */
@@ -293,7 +294,8 @@ public class waitsetsSubscriber {
                             LivelinessChangedStatus st = 
                             		new LivelinessChangedStatus();
                             reader.get_liveliness_changed_status(st);
-                            System.out.print("Liveliness changed => Active writers = "
+                            System.out.print("Liveliness changed => "
+                                    + "Active writers = "
                                              + st.alive_count + "\n");
                         }
                         
@@ -303,15 +305,16 @@ public class waitsetsSubscriber {
                             SubscriptionMatchedStatus st = 
                             		new SubscriptionMatchedStatus();
                             reader.get_subscription_matched_status(st);
-                            System.out.print("Subscription matched => Cumulative matches = "
+                            System.out.print("Subscription matched => "
+                                    + "Cumulative matches = "
                                              + st.total_count + "\n");
                         }
                     } 
                     /* Compare with Read Conditions */
                     else if (active_conditions.get(i) == read_condition) {
-                        /* Current conditions match our conditions to read data, so
-                         * we can read data just like we would do in any other
-                         * example. */
+                        /* Current conditions match our conditions to read data,
+                         * so we can read data just like we would do in any 
+                         * other example. */
                     	waitsetsSeq data_seq = new waitsetsSeq();
                         SampleInfoSeq info_seq = new SampleInfoSeq();
 
@@ -322,25 +325,35 @@ public class waitsetsSubscriber {
                          * always use read() or take() like in any other 
                          * example.
                          */
-                        reader.take_w_condition(
-                            data_seq, info_seq,
-                            ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                            read_condition);
-
-                        for (int j = 0; j < info_seq.size(); ++j) {
-                            if (!((SampleInfo)info_seq.get(j)).valid_data) {
-                                System.out.print("Got metadata\n");
-                                continue;
+                        boolean follow = true;
+                        while (follow) {
+                            try{
+                                reader.take_w_condition(
+                                    data_seq, info_seq,
+                                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                                    read_condition);
+        
+                                for (int j = 0; j < info_seq.size(); ++j) {
+                                    if (!((SampleInfo)info_seq.get(j)).valid_data) {
+                                        System.out.print("Got metadata\n");
+                                        continue;
+                                    }
+                                    
+                                    waitsets data = (waitsets)data_seq.get(j);
+                                    System.out.println("   x: " + data.x);
+        
+                                }
+                            } catch (RETCODE_NO_DATA noData) {
+                                /* When there isn't data, the subscriber stop to
+                                 * take samples
+                                 */
+                                follow = false;
+                            } finally {
+                                reader.return_loan(data_seq, info_seq);
                             }
-                            count++;
-                            waitsets data = (waitsets)data_seq.get(j);
-                            System.out.println("   x: " + data.x);
-
                         }
-                        reader.return_loan(data_seq, info_seq);
                     }
-                }
-                        
+                }       
             }
         } finally {
 

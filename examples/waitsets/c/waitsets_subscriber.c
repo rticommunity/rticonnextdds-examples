@@ -186,7 +186,8 @@ static int subscriber_main(int domainId, int sample_count)
      */
 
     /*
-    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber, &datareader_qos);
+    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber,
+                                                        &datareader_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datareader_qos error\n");
         return -1;
@@ -367,31 +368,26 @@ static int subscriber_main(int domainId, int sample_count)
                   * This is just a suggestion, you can always use
                   * read() or take() like in any other example.
                   */
-                 retcode = waitsetsDataReader_take_w_condition(
+                 retcode = DDS_RETCODE_OK;
+                 while (retcode != DDS_RETCODE_NO_DATA) {
+                     retcode = waitsetsDataReader_take_w_condition(
                      waitsets_reader, &data_seq, &info_seq,
                      DDS_LENGTH_UNLIMITED, read_condition);
-                 if (retcode != DDS_RETCODE_OK) {
-                     printf("take error %d\n", retcode);
-                     break;
-                 }
-
-                 for (j = 0; j < waitsetsSeq_get_length(&data_seq); ++j) {
-                     if (!DDS_SampleInfoSeq_get_reference(&info_seq, j)->valid_data) {
-                         printf("Got metadata\n");
-                         continue;
+                    
+                     for (j = 0; j < waitsetsSeq_get_length(&data_seq); ++j) {
+                         if (!DDS_SampleInfoSeq_get_reference(
+                                 &info_seq, j)->valid_data) {
+                             printf("Got metadata\n");
+                             continue;
+                         }
+                         waitsetsTypeSupport_print_data(
+                             waitsetsSeq_get_reference(&data_seq, j));
                      }
-                     waitsetsTypeSupport_print_data(
-                         waitsetsSeq_get_reference(&data_seq, j));
-                 }
-
-                 retcode = waitsetsDataReader_return_loan(
-                     waitsets_reader, &data_seq, &info_seq);
-                 if (retcode != DDS_RETCODE_OK) {
-                     printf("return loan error %d\n", retcode);
+                     waitsetsDataReader_return_loan(
+                         waitsets_reader, &data_seq, &info_seq);
                  }
              }
          }
-
     }
 
     /* Delete all entities */
@@ -460,7 +456,8 @@ void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif
