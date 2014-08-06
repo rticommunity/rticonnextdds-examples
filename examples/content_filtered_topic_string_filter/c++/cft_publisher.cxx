@@ -113,6 +113,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;  
     DDS_Duration_t send_period = {1,0};
+    char* even_string =  DDS_String_dup("EVEN");
+    char* odd_string =  DDS_String_dup("ODD");
 
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
@@ -228,9 +230,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
         /* Modify the data to be sent here */
         if(count%2 == 1){
-            instance->name = "ODD";
+            instance->name = odd_string;
         } else {
-            instance->name = "EVEN";
+            instance->name = even_string;
         }
         
         instance->count = count;

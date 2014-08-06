@@ -111,6 +111,8 @@ static int publisher_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;  
     struct DDS_Duration_t send_period = {1,0};
+    char* even_string =  DDS_String_dup("EVEN");
+    char* odd_string =  DDS_String_dup("ODD");
     /* We need this structure in case we want to change the datawriter_qos
      * programmatically.*/
     struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;
@@ -232,9 +234,9 @@ static int publisher_main(int domainId, int sample_count)
 
         /* Modify the data to be written here */
         if(count%2 == 1){
-            instance->name = "ODD";
+            instance->name = odd_string;
         } else {
-            instance->name = "EVEN";
+            instance->name = even_string;
         }
         
         instance->count = count;
