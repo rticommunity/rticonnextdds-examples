@@ -52,9 +52,11 @@
 
        Run the Java applications:
        
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_query_condPublisher <domain_id>
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_query_condPublisher 
+                                                                    <domain_id>
 
-        java -Djava.ext.dirs=$NDDSHOME/class waitset_query_condSubscriber <domain_id>        
+        java -Djava.ext.dirs=$NDDSHOME/class waitset_query_condSubscriber 
+                                                                    <domain_id>        
 
        
        
@@ -192,9 +194,10 @@ public class waitset_query_condPublisher {
             waitset_query_cond instance = new waitset_query_cond();
 
             InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
-            /* For a data type that has a key, if the same instance is going to be
-               written multiple times, initialize the key here
-               and register the keyed instance prior to writing */
+            /* For a data type that has a key, if the same instance is going 
+             * to be written multiple times, initialize the key here
+             * and register the keyed instance prior to writing 
+             */
             //instance_handle = writer.register_instance(instance);
 
             final long sendPeriodMillis = 500; // 0.5 second
@@ -202,7 +205,8 @@ public class waitset_query_condPublisher {
             for (int count = 0;
                  (sampleCount == 0) || (count < sampleCount);
                  ++count) {
-                System.out.println("Writing waitset_query_cond, count " + count);
+                System.out.println("Writing waitset_query_cond, count " +
+                        count);
 
                 /* Modify the instance to be written here */
                 if (count%2 == 1) {

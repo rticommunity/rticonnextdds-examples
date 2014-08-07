@@ -227,7 +227,8 @@ static int publisher_main(int domainId, int sample_count)
 */
 
     /* Delete data sample */
-    retcode = waitset_query_condTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = waitset_query_condTypeSupport_delete_data_ex(instance,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("waitset_query_condTypeSupport_delete_data error %d\n", retcode);
     }

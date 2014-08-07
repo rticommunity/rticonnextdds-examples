@@ -153,7 +153,8 @@ static int subscriber_main(int domainId, int sample_count)
 
     /* Register the type before creating the topic */
     type_name = waitset_query_condTypeSupport_get_type_name();
-    retcode = waitset_query_condTypeSupport_register_type(participant, type_name);
+    retcode = waitset_query_condTypeSupport_register_type(participant,
+            type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
@@ -245,7 +246,8 @@ static int subscriber_main(int domainId, int sample_count)
             printf (">>> We keep one sample in the history\n");
             printf ("-------------------------------------\n\n");
             DDS_StringSeq_from_array(&query_parameters, param_list, 1);
-            DDS_QueryCondition_set_query_parameters(query_condition, &query_parameters);
+            DDS_QueryCondition_set_query_parameters(query_condition,
+                    &query_parameters);
             
         }
         /* wait() blocks execution of the thread until one or more attached
@@ -273,7 +275,8 @@ static int subscriber_main(int domainId, int sample_count)
                         DDS_LENGTH_UNLIMITED, 
                         DDS_QueryCondition_as_readcondition(query_condition));
                     
-                for (i = 0; i < waitset_query_condSeq_get_length(&data_seq); ++i) {
+                for (i = 0; i < waitset_query_condSeq_get_length(&data_seq);
+                        ++i) {
                     if (!DDS_SampleInfoSeq_get_reference(
                             &info_seq, i)->valid_data) {
                         printf("Got metadata\n");
@@ -347,7 +350,8 @@ void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

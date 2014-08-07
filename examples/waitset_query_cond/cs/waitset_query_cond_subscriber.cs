@@ -42,8 +42,10 @@ using System.Text;
         
        To run the example application on domain <domain_id>:
                           
-       bin\<Debug|Release>\waitset_query_cond_publisher <domain_id> <sample_count>  
-       bin\<Debug|Release>\waitset_query_cond_subscriber <domain_id> <sample_count>
+       bin\<Debug|Release>\waitset_query_cond_publisher <domain_id> 
+                                                               <sample_count>  
+       bin\<Debug|Release>\waitset_query_cond_subscriber <domain_id>
+                                                               <sample_count>
               
        
 modification history
@@ -227,7 +229,8 @@ public class waitset_query_condSubscriber {
             }
 
             /* wait() blocks execution of the thread until one or more attached
-             * Conditions become true, or until a user-specified timeout expires.
+             * Conditions become true, or until a user-specified timeout 
+             * expires.
              */
             try {
                 waitset.wait(active_conditions_seq, wait_timeout);

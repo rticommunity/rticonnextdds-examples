@@ -43,8 +43,10 @@ using System.Text;
 
        To run the example application on domain <domain_id>:
 
-       bin\<Debug|Release>\waitset_query_cond_publisher <domain_id> <sample_count>
-       bin\<Debug|Release>\waitset_query_cond_subscriber <domain_id> <sample_count>
+       bin\<Debug|Release>\waitset_query_cond_publisher <domain_id>
+                                                                <sample_count>
+       bin\<Debug|Release>\waitset_query_cond_subscriber <domain_id>
+                                                                <sample_count>
 
        
 modification history
@@ -160,7 +162,8 @@ public class waitset_query_condPublisher {
         // --- Write --- //
 
         /* Create data sample for writing */
-        waitset_query_cond instance = waitset_query_condTypeSupport.create_data();
+        waitset_query_cond instance =
+            waitset_query_condTypeSupport.create_data();
         if (instance == null) {
             shutdown(participant);
             throw new ApplicationException(
