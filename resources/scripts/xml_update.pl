@@ -79,7 +79,7 @@ sub get_schema_from_file {
    
     my $schema_location = $xml->{dds}[0]{'xsi:noNamespaceSchemaLocation'};
     $schema_location = unix_path($schema_location);
-    my $schema_type = get_filename_from_path($schema_location);
+    my $schema_type = get_filename_from_path(unix_path($schema_location));
     
     return $schema_type;
 }
@@ -101,7 +101,7 @@ sub check_xml_dds_attributes {
     my $version = $xml->{dds}[0]{'version'};
     my $xmlns = $xml->{dds}[0]{'xmlns:xsi'};
     my $schema_location = $xml->{dds}[0]{'xsi:noNamespaceSchemaLocation'};
-    my $schema_type = get_filename_from_path($schema_location);
+    my $schema_type = get_filename_from_path(unix_path($schema_location));
     
     my $dds_tag_has_all_attributes = 0; 
      
@@ -135,8 +135,9 @@ sub add_xml_dds_attributes {
     my $version = $xml->{dds}[0]{'version'};
     my $xmlns = $xml->{dds}[0]{'xmlns:xsi'};
     my $schema_location = $xml->{dds}[0]{'xsi:noNamespaceSchemaLocation'};
-    my $schema_type = get_filename_from_path($schema_location);
-    my $new_schema_type = get_filename_from_path($new_schema_location);
+    my $schema_type = get_filename_from_path(unix_path($schema_location));
+    my $new_schema_type = get_filename_from_path(
+                                unix_path($new_schema_location));
     
     my $new_filename = $xml_filename . ".new";
     my $modified = 0;
@@ -231,7 +232,7 @@ sub replace_xml_dds_attributes {
     my $version = $xml->{dds}[0]{'version'};
     my $xmlns = $xml->{dds}[0]{'xmlns:xsi'};
     my $schema_location = $xml->{dds}[0]{'xsi:noNamespaceSchemaLocation'};
-    my $schema_type = get_filename_from_path($schema_location);
+    my $schema_type = get_filename_from_path(unix_path($schema_location));
     
     my $new_filename = $xml_filename . ".new";
     
@@ -251,7 +252,8 @@ sub replace_xml_dds_attributes {
     my ($text_after_dds_tag) = $2;
     
     # we ge the name of the schema we want to write in the file
-    my $new_schema_type = get_filename_from_path($new_schema_location);
+    my $new_schema_type = get_filename_from_path(
+                                    unix_path($new_schema_location));
     my ($modified) = 0;
     
     # if the xml and the new schema_type are the same one, then we can replace
