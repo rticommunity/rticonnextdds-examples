@@ -64,8 +64,9 @@ modification history
 #include "waitset_statuscondSupport.h"
 #include "ndds/ndds_cpp.h"
 
-/* We don't need to use listeners as we are going to use waitset_statuscond and Conditions
- * so we have removed the auto generated code for listeners here */
+/* We don't need to use listeners as we are going to use waitset_statuscond and
+ * Conditions so we have removed the auto generated code for listeners here
+ */
 
 /* Delete all entities */
 static int subscriber_shutdown(
@@ -255,42 +256,38 @@ extern "C" int subscriber_main(int domainId, int sample_count)
   
                 /* Subscription matched */
                 if (triggeredmask & DDS_DATA_AVAILABLE_STATUS) {
-                /* Current conditions match our conditions to read data, so
-                 * we can read data just like we would do in any other
-                 * example. */
-                waitset_statuscondSeq data_seq;
-                DDS_SampleInfoSeq info_seq;
+                    /* Current conditions match our conditions to read data, so
+                     * we can read data just like we would do in any other
+                     * example. */
+                    waitset_statuscondSeq data_seq;
+                    DDS_SampleInfoSeq info_seq;
 
-                /* Access data using read(), take(), etc.  If you fail to do 
-                 * this the condition will remain true, and the WaitSet will
-                 * wake up immediately - causing high CPU usage when it does 
-                 * not sleep in the loop */
-                retcode = waitset_statuscond_reader->take(
-                    data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-                    DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
-                    DDS_ANY_INSTANCE_STATE);
-                if (retcode != DDS_RETCODE_OK) {
-                    printf("take error %d\n", retcode);
-                    break;
-                }
-
-                for (int j = 0; j < data_seq.length(); ++j) {
-                    if (!info_seq[j].valid_data) {
-                        printf("Got metadata\n");
-                        continue;
+                    /* Access data using read(), take(), etc.  If you fail to do 
+                     * this the condition will remain true, and the WaitSet will
+                     * wake up immediately - causing high CPU usage when it does 
+                     * not sleep in the loop */
+                    retcode = DDS_RETCODE_OK;
+                    while (retcode != DDS_RETCODE_NO_DATA) {
+                        retcode = waitset_statuscond_reader->take(
+                            data_seq, info_seq, DDS_LENGTH_UNLIMITED,
+                            DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+                            DDS_ANY_INSTANCE_STATE);
+                    
+                        for (int j = 0; j < data_seq.length(); ++j) {
+                            if (!info_seq[j].valid_data) {
+                                printf("Got metadata\n");
+                                continue;
+                            }
+                            waitset_statuscondTypeSupport::print_data(
+                                    &data_seq[j]);
+                        }
+                        /* Return the loaned data */
+                        waitset_statuscond_reader->return_loan(data_seq,
+                                info_seq);
                     }
-                    waitset_statuscondTypeSupport::print_data(&data_seq[j]);
-                }
-
-                /* Return the loaned data */
-                waitset_statuscond_reader->return_loan(data_seq, info_seq);
                 }
             }
-
-
-
         }
-
     }
 
     /* Delete all entities */
@@ -357,7 +354,8 @@ extern "C" void usrAppInit ()
 #endif
     
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
    
 }
 #endif

@@ -249,7 +249,7 @@ static int subscriber_main(int domainId, int sample_count, int sel_cft)
     DDS_StringSeq_set_maximum(&parameters, 1);
     /* Here we set the default filter using the param_list */
     DDS_StringSeq_from_array(&parameters, param_list, 1);
-    printf ("sel_cft: %d\n",sel_cft);
+    
     if (sel_cft) {
         /* create_contentfilteredtopic_with_filter */
         cft = DDS_DomainParticipant_create_contentfilteredtopic_with_filter(
@@ -423,8 +423,7 @@ int main(int argc, char *argv[])
     if (argc >= 4) {
         sel_cft = atoi(argv[3]);
     }
-    printf ("domainid: %d, sample_count: %d, sel_cft: %d", 
-        domainId, sample_count, sel_cft);
+   
     /* Uncomment this to turn on additional logging
     NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
