@@ -61,4 +61,6 @@ we do not want to copy the copyright header. The script needs a file called
 copyright.pl script. This file should contain the directories without finishing 
 in "/" or "\". For example the next line in that file will skip the batching
 example in all the languages:
-      ./example/batching
+      ./examples/batching
+Also, you can skip a file instead of a folder, you should write:
+      ./example/batching/README.txt
