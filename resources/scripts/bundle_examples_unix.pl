@@ -28,7 +28,7 @@ $REPOSITORY_NAME = $ARGV[1];
 # This variable is the path to the repository folder 
 $REPOSITORY_PATH = $TOP_DIRECTORY . "/" . $REPOSITORY_NAME;
 
-$EXAMPLES_PATH = $TOP_DIRECTORY . $FOLDER_TO_CHECK;
+$EXAMPLES_PATH = $TOP_DIRECTORY . "/" . $FOLDER_TO_CHECK;
 
 
 ################################################################################
