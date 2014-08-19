@@ -22,7 +22,7 @@ definition, so the XML files will look like:
         </END_THE_XML_FILE>
     
   You can call the script:
-    ./resources/scripts/copyright.pl <working_directory> <option_flag> <extensions>...
+    perl ./resources/scripts/copyright.pl <working_directory> <option_flag> <extensions>...
   
   Where:
   1. <working_directory> is the parent directory to check. 
