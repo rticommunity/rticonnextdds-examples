@@ -24,9 +24,6 @@ expression.
 
 Example Description
 -------------------
-In this example, the publisher application reliably transmits 0, 1, 2, .. 9 and 
-repeats. The last twenty samples are saved for late joiners. 
-
 After this topic is created, a Content Filtered Topic is created based on the 
 normal topic. In this case, we will use a parameterized STRINGMATCH filter 
 expression: "name MATCH %0", but it could be a static string as well, such as 
@@ -41,7 +38,7 @@ create_contentfilteredtopic_with_filter(
             DDS_STRINGMATCHFILTER_NAME);
 
 Parameters can be changed at runtime via append_to_expression_parameter()
-and remove_from_expression_parameter(). In the example we the expression 
+and remove_from_expression_parameter(). In the example, we modify the expression 
 parameters to three different values. 
 
 - When the application starts, the expression parameters are set to 
