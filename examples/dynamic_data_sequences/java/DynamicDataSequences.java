@@ -16,9 +16,12 @@ import com.rti.dds.typecode.*;
 /*********
  * IDL representation for this example ************
  * 
- * public class SimpleStruct { long a_member; };
+ * public class SimpleStruct { 
+ *     long a_member;
+ * };
  * 
- * public class TypeWithSequence { sequence<256,SimpleStruct> sequence_member;
+ * public class TypeWithSequence { 
+ *     sequence<SimpleStruct,5> sequence_member;
  * };
  */
 

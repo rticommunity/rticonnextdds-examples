@@ -338,6 +338,10 @@ sub process_all_files {
         if (-f $file) {
             # If the file has not one of the introduced extensions -> do nothing
             next if $file !~ /\.($EXTENSIONS)$/i;
+            # If a file is in the external example list, we skip it
+            if (is_external_example_list($EXTERNAL_EXAMPLES_FILENAME, $file)) {
+                next;
+            }
             
             my ($is_xml_file) = 0;
             my ($file_extension) = $file =~ /(\.[^.]+)$/;

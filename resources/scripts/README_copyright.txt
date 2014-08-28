@@ -22,7 +22,7 @@ definition, so the XML files will look like:
         </END_THE_XML_FILE>
     
   You can call the script:
-    ./resources/scripts/copyright.pl <working_directory> <option_flag> <extensions>...
+    perl ./resources/scripts/copyright.pl <working_directory> <option_flag> <extensions>...
   
   Where:
   1. <working_directory> is the parent directory to check. 
@@ -61,4 +61,6 @@ we do not want to copy the copyright header. The script needs a file called
 copyright.pl script. This file should contain the directories without finishing 
 in "/" or "\". For example the next line in that file will skip the batching
 example in all the languages:
-      ./example/batching
+      ./examples/batching
+Also, you can skip a file instead of a folder, you should write:
+      ./example/batching/README.txt

@@ -6,7 +6,7 @@ The first one is the parent directory to check, including its child directories.
 The second one is the ndds_version which the XSD file is using. 
   
   You can call this script:
-    ./resources/scripts/xml_validation.pl <working_directory> <ndds_version>
+    perl ./resources/scripts/xml_validation.pl <working_directory> <ndds_version>
   
   Where:
   1. <working_directory> is the parent directory to check. 

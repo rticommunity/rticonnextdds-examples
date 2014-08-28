@@ -23,7 +23,7 @@ to the schema. The <path_schema> is used to add or replace it in the <dds> tag
 in the XML file.
 
   You can call the script as follow:
-    perl xml_update.pl <working_directory> <option_flag> <ndds_version> <path_schema>
+    perl ./resources/scripts/xml_update.pl <working_directory> <option_flag> <ndds_version> <path_schema>
   
   Where:
   1. <working_directory> is the parent directory to check. 

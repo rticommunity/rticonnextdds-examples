@@ -40,7 +40,7 @@ using namespace std;
  * };
  *
  * struct TypeWithSequence {
- * 	   sequence<256,SimpleStruct> sequence_member;
+ * 	   sequence<SimpleStruct,5> sequence_member;
  * };
  */
 
