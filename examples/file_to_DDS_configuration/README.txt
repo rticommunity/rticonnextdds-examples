@@ -1,3 +1,9 @@
+/*********************************************************************************************
+(c) 2005-2014  Copyright, Real-Time Innovations, Inc.  All rights reserved.            
+Permission to modify and use for internal purposes granted.           
+This software is provided "as is", without warranty, express or implied.                                                                            
+**********************************************************************************************/
+
 ==================================================================================================================================
 Route/QoS Configuration Example - File to DDS Adapter: Using a Routing Service Customized Adapter to Connect a Simple File to DDS
 ==================================================================================================================================
@@ -14,6 +20,11 @@ The input adapter reads lines from a text file and the output adapter saves the 
 
 The file adapter is provided under <Routing Service home>/adapters/file and source code and projects can be found in 
 <RoutingService home>/adapters/tutorial/C.
+
+IMPORTANT!
+Please Notice that the adapter kit isn’t available for download from RTI's website, so if you are interested in the adapter kit, 
+You should contact your local account team to get access to it.
+
 
 Prerequisites
 =============
