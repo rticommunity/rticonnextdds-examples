@@ -40,12 +40,12 @@ end
 local current 
 
 -- If the temperature hits 120 degrees, start to decrement	
-if (TEMPERATURE['previous'] == 120) then
+if (TEMPERATURE['previous'] >= 120) then
 	INCREMENT = -1
 end
 
 -- If the temperature hits 0 degrees, start to increment	
-if (TEMPERATURE['previous'] == 0) then 
+if (TEMPERATURE['previous'] <= 0) then 
 	INCREMENT = 1
 end
 
