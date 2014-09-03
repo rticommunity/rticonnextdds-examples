@@ -5,9 +5,8 @@
 Concept
 -------
 This example is generating data and writing it over DDS using Lua.  This 
-requires the RTI Prototyper with Lua, which is experimental in version
-5.0.0, and can be downloaded from:
-http://community.rti.com/downloads/experimental/rti-prototyper-with-lua
+requires the RTI Prototyper with Lua 5.1.0, which is shipped with RTI Connext 
+DDS 5.1.0.
 
 This is interesting for two reasons:
 1. This shows how to create simple DDS applications for prototyping or
@@ -49,10 +48,20 @@ Then, it writes the value to the network:
 
 Run the Example
 ---------------
-INSTALL_DIR is the location where RTI Prototyper with Lua is installed.
-INSTALL_DIR\scripts\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
+In two separate command prompt windows for the sender and receiver. Run
+the following commands from the example directory:
 
-Choose whether you want to send or receive data.
+ - For the sender run:
+Windows: %NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
+Linux: $NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
+
+One time you run the sender, you have to type 0 in order to pick a sender.
+
+ - For the receiver run:
+Windows: %NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml
+Linux: $NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml
+
+Type 1 to create a default receiver (it is not defined in any .lua file). 
 
 When you run both the sender and the receiver, you will see that the temperature
 starts at 0, increases to 120, and then decreases to 0.
