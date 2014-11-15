@@ -145,7 +145,7 @@ static int publisher_main(int domainId, int sample_count) {
      *
      * In this case, we set the presentation publish mode ordered in the topic.
      */
-/*
+    /*
     retcode = DDS_DomainParticipant_get_default_publisher_qos(participant,
             &publisher_qos);
     if (retcode != DDS_RETCODE_OK) {
@@ -163,7 +163,7 @@ static int publisher_main(int domainId, int sample_count) {
         publisher_shutdown(participant, &publisher_qos);
         return -1;
     }
-*/
+     */
     /* Register type before creating topic */
     type_name = orderedTypeSupport_get_type_name();
     retcode = orderedTypeSupport_register_type(participant, type_name);
