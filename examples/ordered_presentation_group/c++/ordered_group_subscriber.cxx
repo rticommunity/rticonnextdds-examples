@@ -31,29 +31,29 @@
    (4) [Optional] Specify the list of discovery initial peers and 
        multicast receive addresses via an environment variable or a file 
        (in the current working directory) called NDDS_DISCOVERY_PEERS. 
-       
+
    You can run any number of publishers and subscribers programs, and can 
    add and remove them dynamically from the domain.
-              
-                                   
+
+
    Example:
-        
+
        To run the example application on domain <domain_id>:
-                          
+
        On Unix: 
-       
+
        objs/<arch>/ordered_group_publisher <domain_id> 
        objs/<arch>/ordered_group_subscriber <domain_id> 
-                            
+
        On Windows:
-       
+
        objs\<arch>\ordered_group_publisher <domain_id>  
        objs\<arch>\ordered_group_subscriber <domain_id>   
-              
-       
+
+
 modification history
 ------------ -------       
-*/
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -66,82 +66,84 @@ modification history
 
 ////////////////////////////////////////////////////////////////////////
 class ordered_groupSubscriberListener : public DDSSubscriberListener {
-  public:    
-	virtual void on_data_on_readers(DDSSubscriber* subscriber);
+public:    
+    virtual void on_data_on_readers(DDSSubscriber* subscriber);
 };
 
-void ordered_groupSubscriberListener::on_data_on_readers(DDSSubscriber* subscriber)
+void ordered_groupSubscriberListener::on_data_on_readers(
+        DDSSubscriber* subscriber)
 {
-		DDSDataReaderSeq MyDataReaders;
-		DDS_ReturnCode_t retcode;
-		int i;
-		
-		/* IMPORTANT for GROUP access scope: Invoking begin_access() */
-		subscriber->begin_access(); 
+    DDSDataReaderSeq MyDataReaders;
+    DDS_ReturnCode_t retcode;
+    int i;
 
-		/* Obtain DataReaders. We obtain a sequence of DataReaders that specifies
+    /* IMPORTANT for GROUP access scope: Invoking begin_access() */
+    subscriber->begin_access(); 
+
+    /* Obtain DataReaders. We obtain a sequence of DataReaders that specifies
 		the order in which each sample should be read */
-		retcode = subscriber->get_datareaders(MyDataReaders,DDS_ANY_SAMPLE_STATE,
-		DDS_ANY_VIEW_STATE,DDS_ANY_INSTANCE_STATE);
-		if (retcode != DDS_RETCODE_OK) {
-            printf("ERROR error %d\n", retcode);
-			/* IMPORTANT. Remember to invoke end_access() before a return call. 
+    retcode = subscriber->get_datareaders(MyDataReaders,DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,DDS_ANY_INSTANCE_STATE);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("ERROR error %d\n", retcode);
+        /* IMPORTANT. Remember to invoke end_access() before a return call. 
 			Also reset DataReaders sequence */
-			MyDataReaders.ensure_length(0,0);			
-			subscriber->end_access(); 
-			return;
+        MyDataReaders.ensure_length(0,0);			
+        subscriber->end_access(); 
+        return;
+    }
+
+    /* Read the samples received, following the DataReaders sequence */
+    for(i=0; i<MyDataReaders.length(); i++){
+
+        ordered_groupDataReader *ordered_group_reader = NULL;
+        ordered_group data;					
+        DDS_SampleInfo info;
+        ordered_group_initialize(&data);	
+
+        ordered_group_reader = 
+                ordered_groupDataReader::narrow(MyDataReaders.get_at(i));
+        if (ordered_group_reader == NULL) {
+            printf("DataReader narrow error\n");
+            /* IMPORTANT. Remember to invoke end_access() before a return call. 
+				Also reset DataReaders sequence */
+            MyDataReaders.ensure_length(0,0);			
+            subscriber->end_access(); 
+            return;
         }
 
-		/* Read the samples received, following the DataReaders sequence */
-		for(i=0; i<MyDataReaders.length(); i++){
-		
-			ordered_groupDataReader *ordered_group_reader = NULL;
-			ordered_group data;					
-			DDS_SampleInfo info;
-			ordered_group_initialize(&data);	
+        /* IMPORTANT. Use take_next_sample(). We need to take only
+         * one sample each time, as we want to follow the sequence of 
+         * DataReaders. This way the samples will be returned in the
+         * order in which they were modified */
+        retcode = ordered_group_reader->take_next_sample(data, info); 
 
-			ordered_group_reader = ordered_groupDataReader::narrow(MyDataReaders.get_at(i));
-			if (ordered_group_reader == NULL) {
-				printf("DataReader narrow error\n");
-				/* IMPORTANT. Remember to invoke end_access() before a return call. 
-				Also reset DataReaders sequence */
-				MyDataReaders.ensure_length(0,0);			
-				subscriber->end_access(); 
-				return;
-			}
-        	
-			/* IMPORTANT. Use take_next_sample(). We need to take only
-			one sample each time, as we want to follow the sequence of 
-			DataReaders. This way the samples will be returned in the
-			order in which they were modified */
-			retcode = ordered_group_reader->take_next_sample(data, info); 
-			
-			/* In case there is no data in current DataReader, 
+        /* In case there is no data in current DataReader, 
 			check next in the sequence */
-			if (retcode == DDS_RETCODE_NO_DATA) {
-				continue;
-			} else if (retcode != DDS_RETCODE_OK) {
-				printf("take error %d\n", retcode);
-				continue;
-			} 
-				
-			/* Print data sample */
-			if (info.valid_data) {				
-				ordered_groupTypeSupport::print_data(&data);
-			}
-			
-		}
-		/* Reset DataReaders sequence */
-		MyDataReaders.ensure_length(0,0);
+        if (retcode == DDS_RETCODE_NO_DATA) {
+            continue;
+        } else if (retcode != DDS_RETCODE_OK) {
+            printf("take error %d\n", retcode);
+            continue;
+        } 
 
-		/* IMPORTANT for GROUP access scope: Invoking end_access() */
-		subscriber->end_access(); 
+        /* Print data sample */
+        if (info.valid_data) {				
+            ordered_groupTypeSupport::print_data(&data);
+        }
+
+    }
+    /* Reset DataReaders sequence */
+    MyDataReaders.ensure_length(0,0);
+
+    /* IMPORTANT for GROUP access scope: Invoking end_access() */
+    subscriber->end_access(); 
 }
 /////////////////////////////////////////////////////////////////////////
 
 /* Delete all entities */
 static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
+        DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -164,13 +166,13 @@ static int subscriber_shutdown(
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
-/*
+    /*
     retcode = DDSDomainParticipantFactory::finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         printf("finalize_instance error %d\n", retcode);
         status = -1;
     }
-*/
+     */
     return status;
 }
 
@@ -180,14 +182,14 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDSSubscriber *subscriber = NULL;
 
     DDSTopic *topic1 = NULL;
-	DDSTopic *topic2 = NULL;
-	DDSTopic *topic3 = NULL;
+    DDSTopic *topic2 = NULL;
+    DDSTopic *topic3 = NULL;
 
     ordered_groupSubscriberListener *subscriber_listener = NULL; 
 
     DDSDataReader *reader1 = NULL;
-	DDSDataReader *reader2 = NULL;
-	DDSDataReader *reader3 = NULL;
+    DDSDataReader *reader2 = NULL;
+    DDSDataReader *reader3 = NULL;
 
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
@@ -198,67 +200,68 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* To customize the participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-	/* Create Subscriber listener and establish on_data_on_readers callback */
+    /* Create Subscriber listener and establish on_data_on_readers callback */
 
-	subscriber_listener = new ordered_groupSubscriberListener();
+    subscriber_listener = new ordered_groupSubscriberListener();
 
     /* To customize the subscriber QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     subscriber = participant->create_subscriber(
-		DDS_SUBSCRIBER_QOS_DEFAULT, subscriber_listener, DDS_DATA_ON_READERS_STATUS);
+            DDS_SUBSCRIBER_QOS_DEFAULT, subscriber_listener, 
+            DDS_DATA_ON_READERS_STATUS);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
-		delete subscriber_listener;
+        delete subscriber_listener;
         return -1;
     }
 
     /* Register the type before creating the topic */
     type_name = ordered_groupTypeSupport::get_type_name();
     retcode = ordered_groupTypeSupport::register_type(
-        participant, type_name);
+            participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
         return -1;
     }
 
-	/* TOPICS */ 
+    /* TOPICS */ 
 
     /* To customize the topic QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     topic1 = participant->create_topic(
-        "Topic1",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Topic1",
+            type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic1 == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-	topic2 = participant->create_topic(
-        "Topic2",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+    topic2 = participant->create_topic(
+            "Topic2",
+            type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic2 == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-	topic3 = participant->create_topic(
-        "Topic3",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+    topic3 = participant->create_topic(
+            "Topic3",
+            type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic3 == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -270,26 +273,26 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* To customize the data reader QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     reader1 = subscriber->create_datareader(
-        topic1, DDS_DATAREADER_QOS_DEFAULT, NULL,
-        DDS_STATUS_MASK_NONE);
+            topic1, DDS_DATAREADER_QOS_DEFAULT, NULL,
+            DDS_STATUS_MASK_NONE);
     if (reader1 == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);        
         return -1;
     }
 
-	reader2 = subscriber->create_datareader(
-        topic2, DDS_DATAREADER_QOS_DEFAULT, NULL,
-        DDS_STATUS_MASK_NONE);
+    reader2 = subscriber->create_datareader(
+            topic2, DDS_DATAREADER_QOS_DEFAULT, NULL,
+            DDS_STATUS_MASK_NONE);
     if (reader2 == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);        
         return -1;
     }
 
-	reader3 = subscriber->create_datareader(
-        topic3, DDS_DATAREADER_QOS_DEFAULT, NULL,
-        DDS_STATUS_MASK_NONE);
+    reader3 = subscriber->create_datareader(
+            topic3, DDS_DATAREADER_QOS_DEFAULT, NULL,
+            DDS_STATUS_MASK_NONE);
     if (reader3 == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);        
@@ -300,7 +303,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
         printf("ordered_group subscriber sleeping for %d sec...\n",
-               receive_period.sec);
+                receive_period.sec);
 
         NDDSUtility::sleep(receive_period);
     }
@@ -317,20 +320,20 @@ int wmain(int argc, wchar_t** argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */ 
-    
+
     if (argc >= 2) {
         domainId = _wtoi(argv[1]);
     }
     if (argc >= 3) {
         sample_count = _wtoi(argv[2]);
     }
-    
+
     /* Uncomment this to turn on additional logging
     NDDSConfigLogger::get_instance()->
         set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
                                   NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-                                  
+     */
+
     return subscriber_main(domainId, sample_count);
 }
 
@@ -352,8 +355,8 @@ int main(int argc, char *argv[])
     NDDSConfigLogger::get_instance()->
         set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
                                   NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-                                  
+     */
+
     return subscriber_main(domainId, sample_count);
 }
 #endif
@@ -366,10 +369,11 @@ extern "C" void usrAppInit ()
 #ifdef  USER_APPL_INIT
     USER_APPL_INIT;         /* for backwards compatibility */
 #endif
-    
+
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-   
+    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, 
+            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
 }
 #endif
 

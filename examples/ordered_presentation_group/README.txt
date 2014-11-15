@@ -43,39 +43,55 @@ may have four different values:
 
 Example Description
 -------------------
-In this example we illustrate how to use Group access_scope for the order in which
-samples are presented to the subscribing application.
+In this example we illustrate how to use Group access_scope for the order in 
+which samples are presented to the subscribing application.
 
 The Publisher sets its presentation QoS properties to enable GROUP-level ordered
-access. This enforces ordering on instances from any DataWriters and Topics for a given Publisher. 
-Also note that ordered-access configuration needs to be configured in the subscription side so samples are read in an ordered manner. 
+access. This enforces ordering on instances from any DataWriters and Topics for 
+a given Publisher.  Also note that ordered-access configuration needs to be 
+configured in the subscription side so samples are read in an ordered manner. 
 
 The Subscriber application illustrates the effects of the GROUP access_scope 
-presentation QoS. Changes made to instances via DataWriter entities attached to the same Publisher are made available to Subscribers on the same order they occurred. For more information about these QoS you can see section 6.4.6 "PRESENTATION QosPolicy" of the User's Manual.
+presentation QoS. Changes made to instances via DataWriter entities attached 
+to the same Publisher are made available to Subscribers on the same order they
+occurred. For more information about these QoS you can see section 6.4.6 
+"PRESENTATION QosPolicy" of the User's Manual.
 
-The example creates 3 Topics, 3 DataWriters, 3 DataReaders and 3 instances. Each DataWriter publishes two samples of the corresponding topic. This process is repeated once a second. The order in which the DataWriters publish the samples is: { DW1-Sample1, DW1-Sample2, DW2-Sample1, DW2-Sample2, DW3-Sample1, DW3-Sample2 }. 
+The example creates 3 Topics, 3 DataWriters, 3 DataReaders and 3 instances. 
+Each DataWriter publishes two samples of the corresponding topic. This process 
+is repeated once a second. The order in which the DataWriters publish the 
+samples is: { DW1-Sample1, DW1-Sample2, DW2-Sample1, DW2-Sample2, DW3-Sample1, 
+DW3-Sample2 }. 
 
 The key points in the example are: 
 
-- In the Subscriber, we implement a subscriber listener for the callback ON_DATA_ON_READERS. This callback will activate every time any DataReader has data available. 
+- In the Subscriber, we implement a subscriber listener for the callback 
+ON_DATA_ON_READERS. This callback will activate every time any DataReader has 
+data available. 
 
-We want to read the samples in the order in which they were modified. For doing that, in the implementation of the callback we invoke begin_access() and end_access(). Inside this block, we call get_datareaders() to obtain an ordered sequence of the DataReaders. This sequence specifies the reading order for the samples. See more information in sections 7.2.5 "Beginning and Ending Group-Ordered Access" and 7.2.7 "Getting DataReaders with Specific Samples" of the User's Manual. 
+We want to read the samples in the order in which they were modified. For doing 
+that, in the implementation of the callback we invoke begin_access() and 
+end_access(). Inside this block, we call get_datareaders() to obtain an ordered
+sequence of the DataReaders. This sequence specifies the reading order for the 
+samples. See more information in sections 7.2.5 "Beginning and Ending 
+Group-Ordered Access" and 7.2.7 "Getting DataReaders with Specific Samples" of 
+the User's Manual. 
 
-We need to iterate across the sequence of DataReaders and read one sample each time. For doing this, use take_next_sample() instead of take(). 
+We need to iterate across the sequence of DataReaders and read one sample each
+time. For doing this, use take_next_sample() instead of take(). 
 
 - In USER_QOS_PROFILES.xml, we set Group Access Scope and Ordered Access QoS: 
 
-	<publisher_qos> 
-		<presentation> 
-			<ordered_access>true</ordered_access> 
-			<access_scope>GROUP_PRESENTATION_QOS</access_scope> 
-		</presentation> 
-	</publisher_qos> 
+<publisher_qos> 
+    <presentation> 
+        <ordered_access>true</ordered_access> 
+            <access_scope>GROUP_PRESENTATION_QOS</access_scope> 
+    </presentation> 
+</publisher_qos> 
 
-	<subscriber_qos> 
-		<presentation> 
-			<ordered_access>true</ordered_access> 
-			<access_scope>GROUP_PRESENTATION_QOS</access_scope> 
-		</presentation> 
-	</subscriber_qos> 
-
+<subscriber_qos> 
+    <presentation> 
+        <ordered_access>true</ordered_access> 
+        <access_scope>GROUP_PRESENTATION_QOS</access_scope> 
+    </presentation> 
+</subscriber_qos> 

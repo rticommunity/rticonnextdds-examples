@@ -78,28 +78,28 @@ For more information about XML QoS Profiles see Chapter 15 in the
 RTI Connext user manual.
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="C:/RTI/ndds.5.1.0/scripts/../resource/rtiddsgen/../qos_profiles_5.1.0/schema/rti_dds_qos_profiles.xsd"
-     version="5.1.0">
-    <!-- QoS Library containing the QoS profile used in the generated example.
-
-        A QoS library is a named set of QoS profiles.
-    -->
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.1.0/rti_dds_qos_profiles.xsd"
+    version="5.1.0">
+    <!-- QoS Library containing the QoS profile used in the generated example. 
+        A QoS library is a named set of QoS profiles. -->
     <qos_library name="ordered_group_Library">
 
-        <!-- QoS profile used to configure reliable communication between the DataWriter 
-             and DataReader created in the example code.
-
-             A QoS profile groups a set of related QoS.
-        -->
-        <qos_profile name="ordered_group_Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->                
+        <!-- QoS profile used to configure reliable communication between 
+            the DataWriter and DataReader created in the example code. A QoS profile 
+            groups a set of related QoS. -->
+        <qos_profile name="ordered_group_Profile"
+            base_name="BuiltinQosLibExp::Generic.StrictReliable"
+            is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example 
+                code -->
             <datawriter_qos>
                 <publication_name>
                     <name>ordered_groupDataWriter</name>
                 </publication_name>
             </datawriter_qos>
 
-            <!-- QoS used to configure the data reader created in the example code -->                
+            <!-- QoS used to configure the data reader created in the example 
+                code -->
             <datareader_qos>
                 <subscription_name>
                     <name>ordered_groupDataReader</name>
@@ -107,11 +107,9 @@ RTI Connext user manual.
             </datareader_qos>
 
             <participant_qos>
-                <!--
-                The participant name, if it is set, will be displayed in the
-                RTI tools, making it easier for you to tell one
-                application from another when you're debugging.
-                -->
+                <!-- The participant name, if it is set, will be displayed 
+                    in the RTI tools, making it easier for you to tell one application from another 
+                    when you're debugging. -->
                 <participant_name>
                     <name>ordered_groupParticipant</name>
                     <role_name>ordered_groupParticipantRole</role_name>
@@ -119,22 +117,23 @@ RTI Connext user manual.
 
             </participant_qos>
 
-          <!-- Set presentation QoS in publisher and subscriber. Selected GROUP access scope and ORDERED access -->
-          <publisher_qos>
-            <presentation>
-              <ordered_access>true</ordered_access>
-              <access_scope>GROUP_PRESENTATION_QOS</access_scope>
-            </presentation>
-          </publisher_qos>
+            <!-- Set presentation QoS in publisher and subscriber. Selected 
+                GROUP access scope and ORDERED access -->
+            <publisher_qos>
+                <presentation>
+                    <ordered_access>true</ordered_access>
+                    <access_scope>GROUP_PRESENTATION_QOS</access_scope>
+                </presentation>
+            </publisher_qos>
 
-          <subscriber_qos>
-            <presentation>
-              <ordered_access>true</ordered_access>
-              <access_scope>GROUP_PRESENTATION_QOS</access_scope>
-            </presentation>
-          </subscriber_qos>
+            <subscriber_qos>
+                <presentation>
+                    <ordered_access>true</ordered_access>
+                    <access_scope>GROUP_PRESENTATION_QOS</access_scope>
+                </presentation>
+            </subscriber_qos>
 
-       </qos_profile>
+        </qos_profile>
 
     </qos_library>
 </dds>

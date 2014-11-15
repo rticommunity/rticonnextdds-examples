@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 const long HELLO_MAX_STRING_SIZE = 256;
-struct ordered_group {
-string<HELLO_MAX_STRING_SIZE> message;
+    struct ordered_group {
+    string<HELLO_MAX_STRING_SIZE> message;
 };

@@ -31,29 +31,29 @@
    (4) [Optional] Specify the list of discovery initial peers and 
        multicast receive addresses via an environment variable or a file 
        (in the current working directory) called NDDS_DISCOVERY_PEERS. 
-       
+
    You can run any number of publishers and subscribers programs, and can 
    add and remove them dynamically from the domain.
-              
-                                   
+
+
    Example:
-        
+
        To run the example application on domain <domain_id>:
-                                  
+
        On Unix: 
-       
+
        objs/<arch>/ordered_group_publisher <domain_id> 
        objs/<arch>/ordered_group_subscriber <domain_id> 
-                            
+
        On Windows:
-       
+
        objs\<arch>\ordered_group_publisher <domain_id>  
        objs\<arch>\ordered_group_subscriber <domain_id>   
-       
-       
+
+
 modification history
 ------------ -------       
-*/
+ */
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,7 +63,7 @@ modification history
 
 /* Delete all entities */
 static int publisher_shutdown(
-    DDS_DomainParticipant *participant)
+        DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -76,7 +76,7 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory, participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -87,13 +87,13 @@ static int publisher_shutdown(
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
-/*
+    /*
     retcode = DDS_DomainParticipantFactory_finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         printf("finalize_instance error %d\n", retcode);
         status = -1;
     }
-*/
+     */
 
     return status;
 }
@@ -103,24 +103,24 @@ static int publisher_main(int domainId, int sample_count)
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
 
-	/* Declaration of Topics */
+    /* Declaration of Topics */
     DDS_Topic *topic1 = NULL;
-	DDS_Topic *topic2 = NULL;
-	DDS_Topic *topic3 = NULL;
+    DDS_Topic *topic2 = NULL;
+    DDS_Topic *topic3 = NULL;
 
-	/* Declaration of DataWriters */
+    /* Declaration of DataWriters */
     DDS_DataWriter *writer1 = NULL;
-	DDS_DataWriter *writer2 = NULL;
-	DDS_DataWriter *writer3 = NULL;
+    DDS_DataWriter *writer2 = NULL;
+    DDS_DataWriter *writer3 = NULL;
 
-	ordered_groupDataWriter * ordered_group_writer1 = NULL;
-	ordered_groupDataWriter * ordered_group_writer2 = NULL;
-	ordered_groupDataWriter * ordered_group_writer3 = NULL;
+    ordered_groupDataWriter * ordered_group_writer1 = NULL;
+    ordered_groupDataWriter * ordered_group_writer2 = NULL;
+    ordered_groupDataWriter * ordered_group_writer3 = NULL;
 
-	/* Declaration of instances */
+    /* Declaration of instances */
     ordered_group *instance1 = NULL;
-	ordered_group *instance2 = NULL;	
-	ordered_group *instance3 = NULL;	
+    ordered_group *instance2 = NULL;	
+    ordered_group *instance3 = NULL;	
 
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
@@ -131,8 +131,8 @@ static int publisher_main(int domainId, int sample_count)
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
@@ -142,19 +142,19 @@ static int publisher_main(int domainId, int sample_count)
     /* To customize publisher QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     publisher = DDS_DomainParticipant_create_publisher(
-        participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	/* Register DATA TYPES. In this example, only one data type */
+    /* Register DATA TYPES. In this example, only one data type */
     /* Register type before creating topic */
     type_name = ordered_groupTypeSupport_get_type_name();
     retcode = ordered_groupTypeSupport_register_type(
-        participant, type_name);
+            participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -166,42 +166,43 @@ static int publisher_main(int domainId, int sample_count)
     /* To customize topic QoS, use 
        the configuration file USER_QOS_PROFILES.xml */   
     topic1 = DDS_DomainParticipant_create_topic(
-        participant, "Topic1",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant, "Topic1",
+            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic1 == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	topic2 = DDS_DomainParticipant_create_topic(
-        participant, "Topic2",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+    topic2 = DDS_DomainParticipant_create_topic(
+            participant, "Topic2",
+            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic2 == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	topic3 = DDS_DomainParticipant_create_topic(
-        participant, "Topic3",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+    topic3 = DDS_DomainParticipant_create_topic(
+            participant, "Topic3",
+            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic3 == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	/* DATAWRITERS */
+    /* DATAWRITERS */
 
     /* To customize data writer QoS, use 
        the configuration file USER_QOS_PROFILES.xml */
     writer1 = DDS_Publisher_create_datawriter(
-        publisher, topic1,
-        &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            publisher, topic1,
+            &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, 
+            DDS_STATUS_MASK_NONE);
     if (writer1 == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -213,10 +214,11 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant);
         return -1;
     }
-	
-	writer2 = DDS_Publisher_create_datawriter(
-        publisher, topic2,
-        &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+
+    writer2 = DDS_Publisher_create_datawriter(
+            publisher, topic2,
+            &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, 
+            DDS_STATUS_MASK_NONE);
     if (writer2 == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -229,9 +231,10 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-	writer3 = DDS_Publisher_create_datawriter(
-        publisher, topic3,
-        &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    writer3 = DDS_Publisher_create_datawriter(
+            publisher, topic3,
+            &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, 
+            DDS_STATUS_MASK_NONE);
     if (writer3 == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -244,29 +247,29 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-	
-	/* INSTANCES */
+
+    /* INSTANCES */
 
     /* Create data sample for writing */
 
     instance1 = ordered_groupTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-    
+
     if (instance1 == NULL) {
         printf("ordered_groupTypeSupport_create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	instance2 = ordered_groupTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-    
+    instance2 = ordered_groupTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+
     if (instance2 == NULL) {
         printf("ordered_groupTypeSupport_create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-	instance3 = ordered_groupTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-    
+    instance3 = ordered_groupTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+
     if (instance3 == NULL) {
         printf("ordered_groupTypeSupport_create_data error\n");
         publisher_shutdown(participant);
@@ -276,10 +279,10 @@ static int publisher_main(int domainId, int sample_count)
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
-/*
+    /*
     instance_handle = ordered_groupDataWriter_register_instance(
         ordered_group_writer, instance);
-*/
+     */
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -287,50 +290,56 @@ static int publisher_main(int domainId, int sample_count)
         printf("Writing ordered_group, count %d\n", count);
 
         /* Modify the data to be sent and Write data */
-        instance1->message = "First sample, Topic 1 sent by DataWriter number 1";
+        instance1->message = 
+                "First sample, Topic 1 sent by DataWriter number 1";
 
         retcode = ordered_groupDataWriter_write(
-            ordered_group_writer1, instance1, &instance_handle);
+                ordered_group_writer1, instance1, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-		instance1->message = "Second sample, Topic 1 sent by DataWriter number 1";
+        instance1->message = 
+                "Second sample, Topic 1 sent by DataWriter number 1";
 
-		retcode = ordered_groupDataWriter_write(
-            ordered_group_writer1, instance1, &instance_handle);
+        retcode = ordered_groupDataWriter_write(
+                ordered_group_writer1, instance1, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-		instance2->message = "First sample, Topic 2 sent by DataWriter number 2";
-		
-		retcode = ordered_groupDataWriter_write(
-            ordered_group_writer2, instance2, &instance_handle);
+        instance2->message = 
+                "First sample, Topic 2 sent by DataWriter number 2";
+
+        retcode = ordered_groupDataWriter_write(
+                ordered_group_writer2, instance2, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-		instance2->message = "Second sample, Topic 2 sent by DataWriter number 2";
-		
-		retcode = ordered_groupDataWriter_write(
-            ordered_group_writer2, instance2, &instance_handle);
+        instance2->message = 
+                "Second sample, Topic 2 sent by DataWriter number 2";
+
+        retcode = ordered_groupDataWriter_write(
+                ordered_group_writer2, instance2, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-		instance3->message = "First sample, Topic 3 sent by DataWriter number 3";
-		
-		retcode = ordered_groupDataWriter_write(
-            ordered_group_writer3, instance3, &instance_handle);
+        instance3->message = 
+                "First sample, Topic 3 sent by DataWriter number 3";
+
+        retcode = ordered_groupDataWriter_write(
+                ordered_group_writer3, instance3, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
 
-		instance3->message = "Second sample, Topic 3 sent by DataWriter number 3";
-		
-		retcode = ordered_groupDataWriter_write(
-            ordered_group_writer3, instance3, &instance_handle);
+        instance3->message = 
+                "Second sample, Topic 3 sent by DataWriter number 3";
+
+        retcode = ordered_groupDataWriter_write(
+                ordered_group_writer3, instance3, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
@@ -338,28 +347,31 @@ static int publisher_main(int domainId, int sample_count)
         NDDS_Utility_sleep(&send_period);
     }
 
-/*
+    /*
     retcode = ordered_groupDataWriter_unregister_instance(
         ordered_group_writer, instance, &instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
-*/
+     */
 
     /* Delete data sample */
-    retcode = ordered_groupTypeSupport_delete_data_ex(instance1, DDS_BOOLEAN_TRUE);
+    retcode = ordered_groupTypeSupport_delete_data_ex(instance1, 
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("ordered_groupTypeSupport_delete_data error %d\n", retcode);
     }
 
-	/* Delete data sample */
-    retcode = ordered_groupTypeSupport_delete_data_ex(instance2, DDS_BOOLEAN_TRUE);
+    /* Delete data sample */
+    retcode = ordered_groupTypeSupport_delete_data_ex(instance2, 
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("ordered_groupTypeSupport_delete_data error %d\n", retcode);
     }
 
-	/* Delete data sample */
-    retcode = ordered_groupTypeSupport_delete_data_ex(instance3, DDS_BOOLEAN_TRUE);
+    /* Delete data sample */
+    retcode = ordered_groupTypeSupport_delete_data_ex(instance3, 
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         printf("ordered_groupTypeSupport_delete_data error %d\n", retcode);
     }
@@ -373,7 +385,7 @@ int wmain(int argc, wchar_t** argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */ 
-    
+
     if (argc >= 2) {
         domainId = _wtoi(argv[1]);
     }
@@ -386,8 +398,8 @@ int wmain(int argc, wchar_t** argv)
         NDDS_Config_Logger_get_instance(),
         NDDS_CONFIG_LOG_CATEGORY_API, 
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-        
+     */
+
     return publisher_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
@@ -402,14 +414,14 @@ int main(int argc, char *argv[])
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
-    
+
     /* Uncomment this to turn on additional logging
     NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
         NDDS_CONFIG_LOG_CATEGORY_API, 
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-        
+     */
+
     return publisher_main(domainId, sample_count);
 }
 #endif
@@ -422,9 +434,10 @@ void usrAppInit ()
 #ifdef  USER_APPL_INIT
     USER_APPL_INIT;         /* for backwards compatibility */
 #endif
-    
+
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-   
+    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, 
+            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
+
 }
 #endif
