@@ -6,7 +6,7 @@ calls the correct rtiddsgen sentence, using the architecture name and the
 programming language (depends of the folder where that example is). For 
 instance, if the example is under "c" subdirectory, the language to compile is 
 C. However, if the folder is "java", this script creates the corresponding 
-rtiddsgen sentence to compile in Java.
+rtiddsgen & compilation sentences to build in Java.
   The script will set the next environment variables if they are not defined
 (Setting your own environment variables is recommended):
     NDDSHOME: will be set to 
