@@ -5,9 +5,8 @@ compile_unix.pl and follow the same README.txt file.
 call the correct rtiddsgen sentence, using the architecture name and the 
 programming language (depends of the folder where that example is). For 
 instance, if the example is under "c" subdirectory, the language to compile is 
-C. However, if the working subdirectory is "java", this script modify a little 
-bit its architecture in order to be correct when the programming language is 
-Java.
+C. However, if the folder is "java", this script creates the corresponding 
+rtiddsgen sentence to compile in Java.
   The script will set the next environment variables if they are not defined
 (Setting your own environment variables is recommended):
     NDDSHOME: will be set to 
@@ -16,11 +15,11 @@ Java.
     JAVAHOME: will be set to 
         "$RTI_TOOLSDRIVE/local/applications/Java/PLATFORMSDK/linux/jdk1.7.0_04"
         
-  The script compile_unix.pl receives 3 arguments. The first one is the parent 
-directory where you are going to build, including its child directories.
-The second one is the ndds version that you are going to use to compile the 
-files inside the parent directory. And the last one, is the architecture which 
-the example are going to build on. 
+  The script compile_unix.pl receives 3 arguments. The first one is the 
+parent directory where you are going to build the repository, including its 
+child directories. The second one is the ndds version that you are going to use 
+to compile the source files. And the last one, is the architecture which the 
+examples are going to build on. 
 
   So, the general expression is:
     perl ./resources/scripts/compile_unix.pl <working_directory> <ndds_version> <architecture>
