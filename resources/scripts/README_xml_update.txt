@@ -27,12 +27,12 @@ in the XML file.
   
   Where:
   1. <working_directory> is the parent directory to check. 
-  2. <option_flag> indicates which action the script are going to do. 
-        - A value '0' indicates that the script are going to check whether the
+  2. <option_flag> indicates which action the script is going to do. 
+        - A value '0' indicates that the script is going to check whether the
           <dds> tag has all the 3 attributes which has been explained above.
-        - A value '1' indicates that the script are going to add the attributes
+        - A value '1' indicates that the script is going to add the attributes
           that the <dds> tag did not have. 
-        - A value '2' indicates that the script are going to replace the 
+        - A value '2' indicates that the script is going to replace the 
           attributes <path_schema> and <ndds_version> when the <dds> tag's 
           schema is pointing to the same file than the introduced one by command
           line.
@@ -41,11 +41,11 @@ in the XML file.
   4.- <path_schema> is the path where the XSD file is. 
           
   We need the <path_schema> and we do not use the one which is in the community 
-portal because the script are going to check if the schema_name (the name of the
+portal because the script is going to check if the schema_name (the name of the
 XSD file) is the same one we have written in the XML file. If it is the same 
 one, the script could replace/update the VERSION and the schema_path attributes
 in the XML file. Besides, we need to indicate which kind of schema we are going
 to use (rti_dds_qos_profiles.xsd, rti_persistence_service.xsd ...) 
 
-  Futhermore, if the schema we are using is rti_persistence_service.xsd, we 
+  Furthermore, if the schema we are using is rti_persistence_service.xsd, we 
 will not copy/replace the dds version, because it does not need it.
