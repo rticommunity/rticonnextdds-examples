@@ -1,0 +1,59 @@
+In order to append a new copyright header format for working with, it is 
+necessary follow the next steps: 
+  1- Add a new global variable with the path to the new copyright style 
+     document:
+    $COPYRIGHT_FILENAME_XML_STYLE = "resources/copyright_xml_style.txt";
+  2- Get the number of characters of the file
+    $COPYRIGHT_LENGTH_XML_STYLE = chars_per_file($COPYRIGHT_FILENAME_XML_STYLE);
+  3- Get the number of bytes of the copyright header file in order to seek into 
+     the file
+    $COPYRIGHT_SIZE_XML_STYLE = -s $COPYRIGHT_FILENAME_XML_STYLE;
+  4- Load the copyright text in a variable
+    $COPYRIGHT_TEXT_XML_STYLE = read_text_w_length(
+                $COPYRIGHT_FILENAME_XML_STYLE, $COPYRIGHT_LENGTH_XML_STYLE);
+
+Once our global variables are set up, we have to add some sentences in the next 
+functions: ‘check_if_copyright’, ‘copy_copyright_in_file’, 
+‘delete_copyright_in_file’: 
+  1- Check_if_copyright
+    Add an elsif clause with the extension you want to add, positioning the file
+    handler at the position you need and read the copyright from the file:
+    
+        elsif ($file_extension eq ".sh") {
+            # We positioning our handler at the start of the file 
+            seek $fh, 0, 0;
+            read($fh, $copyright, $COPYRIGHT_LENGTH_SH_STYLE);
+        }
+
+  Then, check if the copyright is written and add the checking sentence:
+        elsif ($file_extension eq ".sh"){
+            if ($copyright eq $COPYRIGHT_TEXT_SH_STYLE) {
+                $have_copyright = 1;
+            }
+        }
+  2- copy_copyright_in_file
+    In order to copy the copyright header in a file, you have to add an elsif 
+    clause for the corresponding programming language. Into elsif clause, 
+    positioning the file handler at the start of the file and copy the copyright
+    header and the $buffer, which contains the rest of the file:
+
+        elsif ($file_extension eq ".sh") {
+            # set the file handle at the start of the file
+            seek $fh, 0, 0;
+            print $fh $COPYRIGHT_TEXT_SH_STYLE.$buffer;
+        } 
+  3- delete_copyright_in_file
+    In order to delete the copyright header in a file, you have to add an elsif
+    clause for the corresponding programming language. Into elsif clause, 
+    the file handler is positioned after the copyright text, and copy the rest
+    of the file in a new one.
+
+        elsif ($file_extension eq ".sh") {
+            # in SH type commentaries, we just delete the 
+            # $COPYRIGHT_SIZE_SH_STYLE first characters 
+            seek $fh, $COPYRIGHT_SIZE_SH_STYLE, 0;
+            while (<$fh>) {
+                my $line = $_;
+                print $new_fh $line;
+            }
+        }
