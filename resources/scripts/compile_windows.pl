@@ -36,6 +36,7 @@ if ($NDDS_VERSION ge "5.2.0") {
     $IS_NEW_DIR_STRUCTURE = 1;
 } 
 
+$NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
@@ -44,11 +45,11 @@ if (defined $ENV{'NDDSHOME'}) {
 else { 
     if ($IS_NEW_DIR_STRUCTURE) {
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
-                            $NDDS_VERSION . "/unlicensed/rticonnext_dds-" . 
+                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
                             $NDDS_VERSION;
         print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
               "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION" . 
-              "/unlicensed/rticonnext_dds-$NDDS_VERSION\n";
+              "/unlicensed/rti_connext_dds-$NDDS_VERSION\n";
     } else {
         
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
@@ -61,7 +62,7 @@ else {
 
 # check wheter NDDS_HOME directoy exists
 if (!-d $NDDS_HOME) {
-    print "ERROR: The default NDDSHOME directory doesn't exists.";
+    print "ERROR: The default NDDSHOME directory doesn't exists: $NDDS_HOME";
     exit (1);
 }
 
