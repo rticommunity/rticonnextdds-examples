@@ -19,32 +19,57 @@ use Cwd;
  
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
+# $NDDS_VERSION is the version introduced by command line
+$NDDS_VERSION = $ARGV[1];
+# This variable is the architecture name 
+$ARCH = $ARGV[2];
+
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
-$NDDS_HOME = "";
+$IS_NEW_DIR_STRUCTURE = 0;
+if ($NDDS_VERSION ge "5.2.0") {
+    $IS_NEW_DIR_STRUCTURE = 1;
+} 
 
+$NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
 # $NDDS_HOME = "/opt/rti/ndds." . $ARGV[1];
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
-else { 
-    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
-                        $ARGV[1];
-    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-          "$RTI_TOOLDRIVE/local/preship/ndds/ndds.{VERSION}\n";
+else {
+    if ($IS_NEW_DIR_STRUCTURE) {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
+                            $NDDS_VERSION;
+        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION" . 
+              "/unlicensed/rti_connext_dds-$NDDS_VERSION\n";
+    } else { 
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION;
+        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+              "$RTI_TOOLSDRIVE/local/preship/ndds/ndds.$NDDS_VERSION\n";
+    }
 }
 
-# This variable is the architecture name 
-$ARCH = $ARGV[2];
+# check wheter NDDS_HOME directoy exists
+if (!-d $NDDS_HOME) {
+    print "ERROR: The default NDDSHOME directory doesn't exists: $NDDS_HOME";
+    exit (1);
+}
 
 # set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
 # set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+if ($IS_NEW_DIR_STRUCTURE) {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin;" . $ENV{'PATH'};
+} else {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+}
 
 # including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
@@ -52,19 +77,28 @@ if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/linux/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
-       "$RTI_TOOLDRIVE/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+      "$RTI_TOOLSDRIVE/local/applications/Java/PLATFORMSDK/linux/jdk1.7.0_04\n";
 
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
 # set LD_LIBRARY_PATH
-# C/C++ architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
-                            $ENV{'LD_LIBRARY_PATH'};
-# Java Architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
-                            $ENV{'LD_LIBRARY_PATH'};                           
+if ($IS_NEW_DIR_STRUCTURE) {
+    # C/C++/C# architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+        $ENV{'LD_LIBRARY_PATH'};
+    # Java Architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/java:" . 
+        $ENV{'LD_LIBRARY_PATH'};  
+} else {
+    # C/C++/C# architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+        $ENV{'LD_LIBRARY_PATH'};
+    # Java Architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
+        $ENV{'LD_LIBRARY_PATH'};                           
+}
 
 # Global variable to save the language to compile, will be modified with every
 # compile string we launch
@@ -101,8 +135,12 @@ sub call_rtiddsgen {
     my ($language, $architecture, $idl_filename) = @_;
 
     #if the compilation language is Java, add jdk at the final of the $ARCH
-    if ($LANGUAGE eq "Java") {
-        $architecture .= "jdk";
+    if ($language eq "Java") {
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $architecture = $ARCH;        
+        } else {
+            $architecture .= "jdk";
+        }
     }
     my ($call_string) = "rtiddsgen -language " . $language . " -example " .
                         $architecture . " " . $idl_filename;
@@ -129,7 +167,11 @@ sub call_makefile {
 
     # if the compilation language is Java, add jdk at the final of the $ARCH
     if ($LANGUAGE eq "Java") {
-        $architecture .= "jdk";
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $architecture = $ARCH;        
+        } else {
+            $architecture .= "jdk";
+        }
     }
     
     # deleting the idl file name from the path, and we have the folder where the 
