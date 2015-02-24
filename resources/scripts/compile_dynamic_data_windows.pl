@@ -21,29 +21,56 @@ $ARCH = $ARGV[2];
 
 $NDDS_HOME = "";
 
+# Check whether the version is greater or equal than 5.2.0
+$IS_NEW_DIR_STRUCTURE = 0;
+if ($NDDS_VERSION ge "5.2.0") {
+    $IS_NEW_DIR_STRUCTURE = 1;
+} 
+
+
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
-    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
-                        $NDDS_VERSION;
-    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-          "%RTI_TOOLDRIVE%/local/preship/ndds/ndds.{VERSION}\n";
+    if ($IS_NEW_DIR_STRUCTURE) {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION . "/unlicensed/rticonnext_dds-" . 
+                            $NDDS_VERSION;
+        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION/" . 
+              "/unlicensed/rticonnext_dds-$NDDS_VERSION\n";
+    } else {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION;
+        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION\n";
+    }
 }
 #set NDDSHOME
 $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 
 #set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
+if ($IS_NEW_DIR_STRUCTURE) {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin;" . $ENV{'PATH'};
+} else {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
+}
 
 #set PATH
-#C/C++/C# architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
-#Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
-               $ENV{'PATH'};                           
+if ($IS_NEW_DIR_STRUCTURE) {
+     # C/C++/C# architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+    # Java Architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/java;" . $ENV{'PATH'};  
+} else {
+    #C/C++/C# architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+    #Java Architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
+               $ENV{'PATH'}; 
+}
 
 # including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
@@ -51,7 +78,8 @@ if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/win32/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
-      "%RTI_TOOLDRIVE%/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+        "%RTI_TOOLSDRIVE%/local/applications/Java/PLATFORMSDK/win32/" . 
+        "jdk1.7.0_04\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
@@ -73,7 +101,7 @@ sub unix_path {
     return $path;
 }
 
-# This function runs the makefile generated with the rtiddsgen 
+# This function runs the makefile or VS project of the example
 #   input parameter (they are used in the construction of the makefile name):
 #       $language: this is the language which is going to be used to compile
 #       $path: relative directory where the example is
@@ -100,8 +128,7 @@ sub call_compiler {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_CS;
     }
 
-    # we need to swap the directory where the example is (where the rtiddsgen
-    # has been executed) to run the makefile
+    # we need to swap the directory where the makefile is
     chdir $path;
     
     system $compile_string;
