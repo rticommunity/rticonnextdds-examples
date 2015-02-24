@@ -207,8 +207,13 @@ sub call_compiler {
     } 
     # if the language is Java, all the files will be compiled with *.java
     elsif ($LANGUAGE eq "Java") {
-        $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" . 
-                          "nddsjava.jar *.java";
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" . 
+                              "nddsjava.jar *.java";
+        } else {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
+                              "nddsjava.jar *.java";
+        }
         print $compile_string . "\n";
     } 
     # if the language is C# we create the compile string for visual studio C# 
