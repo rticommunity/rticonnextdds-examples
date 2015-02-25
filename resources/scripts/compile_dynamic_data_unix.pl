@@ -106,8 +106,13 @@ sub call_makefile {
     
     my ($make_string) = "";
     if ($language eq "Java") {
-        $make_string = "javac -classpath .:\"\$NDDSHOME\"/class/nddsjava.jar " . 
-                        "*.java";
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $make_string = "javac -classpath .:\"\$NDDSHOME\"/lib/java/" . 
+                        "nddsjava.jar *.java";
+        } else {
+            $make_string = "javac -classpath .:\"\$NDDSHOME\"/class/" . 
+                        "nddsjava.jar *.java";
+        }
         print $make_string . "\n";
     } else {
         $make_string = "make -f makefile_Foo_" . $architecture;
