@@ -44,15 +44,12 @@ else {
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                             $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
                             $NDDS_VERSION;
-        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION" . 
-              "/unlicensed/rti_connext_dds-$NDDS_VERSION\n";
     } else { 
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                             $NDDS_VERSION;
-        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-              "$RTI_TOOLSDRIVE/local/preship/ndds/ndds.$NDDS_VERSION\n";
     }
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+        "$NDDS_HOME\n";
 }
 
 # check wheter NDDS_HOME directoy exists
@@ -66,7 +63,7 @@ $ENV{'NDDSHOME'} = $NDDS_HOME;
 
 # set the scripts folder to the PATH
 if ($IS_NEW_DIR_STRUCTURE) {
-    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin;" . $ENV{'PATH'};
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin:" . $ENV{'PATH'};
 } else {
     $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
 }
@@ -77,8 +74,7 @@ if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/linux/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
-      "$RTI_TOOLSDRIVE/local/applications/Java/PLATFORMSDK/linux/jdk1.7.0_04\n";
-
+      "$ENV{'JAVAHOME'}\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
