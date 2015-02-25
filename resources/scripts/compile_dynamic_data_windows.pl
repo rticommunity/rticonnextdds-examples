@@ -38,15 +38,12 @@ else {
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                             $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
                             $NDDS_VERSION;
-        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION/" . 
-              "/unlicensed/rti_connext_dds-$NDDS_VERSION\n";
     } else {
         $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
                             $NDDS_VERSION;
-        print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-              "%RTI_TOOLSDRIVE%/local/preship/ndds/ndds.$NDDS_VERSION\n";
     }
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+        "$NDDS_HOME\n";
 }
 
 # check wheter NDDS_HOME directoy exists
@@ -85,8 +82,7 @@ if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/win32/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
-        "%RTI_TOOLSDRIVE%/local/applications/Java/PLATFORMSDK/win32/" . 
-        "jdk1.7.0_04\n";
+        "$ENV{'JAVAHOME'}\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
@@ -127,12 +123,22 @@ sub call_compiler {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_C;
     }
     elsif ($language eq "Java") {
-        $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
-                          "nddsjava.jar *.java";
-        
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" . 
+                              "nddsjava.jar *.java";
+        } else {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
+                              "nddsjava.jar *.java";
+            
+        }
         print $compile_string . "\n";
     } elsif ($language eq "C#") {
-        $compile_string = "msbuild " . $VS_SOLUTION_NAME_CS;
+        if ($IS_NEW_DIR_STRUCTURE) {
+            #using the new dis structure, we use the same project name than C
+            $compile_string = "msbuild " . $VS_SOLUTION_NAME_C;
+        } else {
+            $compile_string = "msbuild " . $VS_SOLUTION_NAME_CS;
+        }
     }
 
     # we need to swap the directory where the makefile is
