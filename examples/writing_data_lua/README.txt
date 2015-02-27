@@ -5,8 +5,7 @@
 Concept
 -------
 This example is generating data and writing it over DDS using Lua.  This 
-requires the RTI Prototyper with Lua 5.1.0, which is shipped with RTI Connext 
-DDS 5.1.0.
+example uses RTI Connext DDS 5.2.0.
 
 This is interesting for two reasons:
 1. This shows how to create simple DDS applications for prototyping or
@@ -52,14 +51,14 @@ In two separate command prompt windows for the sender and receiver. Run
 the following commands from the example directory:
 
  - For the sender run:
-Windows: %NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
-Linux: $NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
+Windows: %NDDSHOME%\bin\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
+Linux: $NDDSHOME%\bin\rtiddsprototyper -cfgFile prototyper_config.xml -luaFile temperature.lua
 
-One time you run the sender, you have to type 0 in order to pick a sender.
+Once you run the sender, you have to type 0 in order to pick a sender.
 
  - For the receiver run:
-Windows: %NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml
-Linux: $NDDSHOME%\scripts\rtiddsprototyper -cfgFile prototyper_config.xml
+Windows: %NDDSHOME%\bin\rtiddsprototyper -cfgFile prototyper_config.xml
+Linux: $NDDSHOME%\bin\rtiddsprototyper -cfgFile prototyper_config.xml
 
 Type 1 to create a default receiver (it is not defined in any .lua file). 
 

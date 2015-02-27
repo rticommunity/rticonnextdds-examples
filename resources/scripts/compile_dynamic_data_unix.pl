@@ -20,17 +20,37 @@ $NDDS_VERSION = $ARGV[1];
 $ARCH = $ARGV[2];
 
 $NDDS_HOME = "";
+
+# Check whether the version is greater or equal than 5.2.0
+$IS_NEW_DIR_STRUCTURE = 0;
+if ($NDDS_VERSION ge "5.2.0") {
+    $IS_NEW_DIR_STRUCTURE = 1;
+} 
+
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else { 
-    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
-                        $NDDS_VERSION;
+    if ($IS_NEW_DIR_STRUCTURE) {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
+                            $NDDS_VERSION;
+    } else {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+                            $NDDS_VERSION;
+    }
     print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
-          "$RTI_TOOLDRIVE/local/preship/ndds/ndds.{VERSION}\n";
+        "$NDDS_HOME\n";
 }
+
+# check wheter NDDS_HOME directoy exists
+if (!-d $NDDS_HOME) {
+    print "ERROR: The default NDDSHOME directory doesn't exists: $NDDS_HOME";
+    exit (1);
+}
+
 # set NDDSHOME
 $ENV{'NDDSHOME'} = $NDDS_HOME;
 
@@ -40,22 +60,38 @@ if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
         "PLATFORMSDK/linux/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
-       "$RTI_TOOLDRIVE/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+       "$ENV{'JAVAHOME'}\n";
 
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin:" . $ENV{'PATH'};
 
+# set the scripts folder to the PATH
+if ($IS_NEW_DIR_STRUCTURE) {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin:" . $ENV{'PATH'};
+} else {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts:" . $ENV{'PATH'};
+}
+
 # set LD_LIBRARY_PATH
-# C/C++ architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
-                            $ENV{'LD_LIBRARY_PATH'};
-# Java Architecture
-$ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
-                            $ENV{'LD_LIBRARY_PATH'};                           
+if ($IS_NEW_DIR_STRUCTURE) {
+    # C/C++/C# architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+        $ENV{'LD_LIBRARY_PATH'};
+    # Java Architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/java:" . 
+        $ENV{'LD_LIBRARY_PATH'};  
+} else {
+    # C/C++/C# architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ":" . 
+        $ENV{'LD_LIBRARY_PATH'};
+    # Java Architecture
+    $ENV{'LD_LIBRARY_PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . "jdk:" . 
+        $ENV{'LD_LIBRARY_PATH'};                           
+}
 
 
-# This function runs the makefile generated with the rtiddsgen 
+# This function runs the makefile for building 
 #   input parameter (they are used in the construction of the makefile name):
 #       $architecture: the arechitecture which the example are going to be built
 #       $language: this is the language which is going to be used to compile
@@ -70,15 +106,19 @@ sub call_makefile {
     
     my ($make_string) = "";
     if ($language eq "Java") {
-        $make_string = "javac -classpath .:\"\$NDDSHOME\"/class/nddsjava.jar " . 
-                        "*.java";
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $make_string = "javac -classpath .:\"\$NDDSHOME\"/lib/java/" . 
+                        "nddsjava.jar *.java";
+        } else {
+            $make_string = "javac -classpath .:\"\$NDDSHOME\"/class/" . 
+                        "nddsjava.jar *.java";
+        }
         print $make_string . "\n";
     } else {
         $make_string = "make -f makefile_Foo_" . $architecture;
     }
 
-    #change to the directory where the example is (where the rtiddsgen has been
-    # executed) to run the makefile
+    #change to the directory where the makefile is
     chdir $path;
     
     system $make_string;

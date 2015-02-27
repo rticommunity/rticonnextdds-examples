@@ -8,20 +8,20 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32dotnet4.0). The RTI Connext Core 
+choice (e.g., i86Win32VS2010). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems (assuming you want to generate an example for 
-i86Win32dotnet4.0) run:
+i86Win32VS2010) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable cft.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable cft.idl
 
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable cft.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable cft.idl
 
 ...you will see messages that look like this:
 
@@ -44,7 +44,7 @@ already provided.
 
 Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will 
 use to build the types and the C# example, respectively. First open  
-async_type-dotnet4.0.sln and build the solution. Once you've done that, open
+cft_type-dotnet4.0.sln and build the solution. Once you've done that, open
 cft_example-csharp.sln and build the C# example.
 
 Running C# Example
