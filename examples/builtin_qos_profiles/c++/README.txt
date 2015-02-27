@@ -26,17 +26,16 @@ rtiddsgen -language C++ -example i86Linux2.6gcc4.4.3 profiles.idl
 
 You will see messages that look like this:
 
-File C:\local\builtin_qos_profiles\c++\profiles_subscriber.cxx already exists and will not be 
-replaced with updated content. If you would like to get a new file with the 
-new content, either remove this file or supply -replace option.
-File C:\local\ builtin_qos_profiles\c++\profiles_publisher.cxx already exists and will not be 
-replaced with updated content. If you would like to get a new file with the 
-new content, either remove this file or supply -replace option.
+File C:\local\builtin_qos_profiles\c++\profiles_subscriber.cxx already exists 
+and will not be replaced with updated content. If you would like to get a new 
+file with the new content, either remove this file or supply -replace option.
+File C:\local\ builtin_qos_profiles\c++\profiles_publisher.cxx already exists 
+and will not be replaced with updated content. If you would like to get a new 
+file with the new content, either remove this file or supply -replace option.
 
 This is normal and is only informing you that the subscriber/publisher code has 
 not been replaced, which is fine since all the source files for the example are 
 already provided.
-
 
 Link and Run with Dynamic Libraries
 ===================================
@@ -46,7 +45,7 @@ link with the other RTI libraries, this will fail at runtime.
 To dynamically link with the RTI libraries on Windows, choose the Debug DLL or 
 Release DLL build target.  Make sure that RTI's libraries are in the system 
 PATH environment variable, such as:
-PATH=c:\rti\ndds.5.1.0\lib\i86Win32VS2005;... 
+PATH=c:\rti\rti_connext_dds-5.2.0\lib\i86Win32VS2005;... 
 
 To dynamically link with the RTI libraries on Linux, modify the makefile to
 remove the 'z' from the end of the RTI library names, such as:

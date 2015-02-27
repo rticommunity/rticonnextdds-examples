@@ -9,20 +9,20 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32dotnet4.0). The RTI Connext Core 
+choice (e.g., i86Win32VS2010). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems (assuming you want to generate an example for 
-i86Win32dotnet4.0) run:
+i86Win32VS2010) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable hello_world.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable hello_world.idl
 
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable hello_world.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable hello_world.idl
 
 You will see messages that look like this:
 
@@ -81,7 +81,7 @@ Scenarios commands:
     Persistence Service Scenario
     1) Run persistence service (in the same folder that there are 
     persistence_service_configuration.xml): 
-        %NDDSHOME%\scripts\rtipersistenceservice.bat -cfgFile persistence_service_configuration.xml 
+        %NDDSHOME%\bin\rtipersistenceservice.bat -cfgFile persistence_service_configuration.xml 
             -cfgName <persistence_service_database|persistence_service_filesystem>
 
     2) bin\<build_type>-VS2010\hello_world_subscriber.exe

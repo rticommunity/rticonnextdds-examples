@@ -4,40 +4,75 @@ Example code: Using Property QoS
 
 Building Java Example
 =====================
-Make sure you are using one of the relevant RTI Data Distribution Service versions, as specified at the top of the Solution.
+Before compiling or running the example, make sure the environment variable 
+NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
-Before compiling or running the example, make sure the environment variable NDDSHOME is set to the directory where your version of RTI Data Distribution Service is installed.
+Run rtiddsgen with the -example option and the target architecture of your 
+choice (e.g., i86Win32VS2010). The RTI Connext Core Libraries and Utilities 
+Getting Started Guide describes this process in detail. 
+Follow the same procedure to generate the code and build the examples. Do not 
+use the -replace option.
 
-Run rtiddsgen with the -example option and the target architecture of your choice (for example, i86Win32VS2005). The RTI Data Distribution Service Getting Started Guide describes this process in detail. Follow the same procedure to generate the code and build the examples. Do not use the -replace option.
+On Windows systems (assuming you want to generate an example for 
+i86Win32VS2010) run:
 
-After running rtiddsgen like this...
+rtiddsgen -language Java -example i86Win32VS2010 numbers.idl
 
-C:\local\property_qos\java> rtiddsgen -language Java -example i86Win32VS2005 numbers.idl
+On UNIX systems (assuming you want to generate an example for 
+i86Linux2.6gcc4.4.3) run:
+
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3 numbers.idl
 
 ...you will see messages that look like this:
 
-File C:\local\property_qos\java\numbers_subscriber.java already exists and will not be replaced with updated content. If you would like to get a new file with the new content, either remove this file or supply -replace option.
-File C:\local\property_qos\java\numbers_publisher.java already exists and will not be replaced with updated content. If you would like to get a new file with the new content, either remove this file or supply -replace option.
+File C:\local\property_qos\java\numbers_subscriber.java already exists and will
+not be replaced with updated content. If you would like to get a new file with
+the new content, either remove this file or supply -replace option.
+File C:\local\property_qos\java\numbers_publisher.java already exists and will 
+not be replaced with updated content. If you would like to get a new file with 
+the new content, either remove this file or supply -replace option.
+File C:\local\property_qos\java\USER_QOS_PROFILES.xml already exists and will 
+not be replaced with updated content. If you would like to get a new file with 
+the new content, either remove this file or supply -replace option.
 
-This is normal and is only informing you that the subscriber/publisher code has not been replaced, which is fine since all the source files for the example are already provided.
+This is normal and is only informing you that the subscriber/publisher code has
+not been replaced, which is fine since all the source files for the example are
+already provided.
 
-Before compiling in Java, make sure that the desired version of the javac compiler is in your PATH environment variable.
+Before compiling in Java, make sure that the desired version of the javac 
+compiler is in your PATH environment variable.
+
+On Windows systems run:
+
+javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
+
+On Unix systems (including Linux and MacOS X):
+
+javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 
 Running Java Example
 ====================
-Before running, make sure that the desired version of the java compiler is in your PATH environment variable.
+In two separate command prompt windows for the publisher and subscriber. 
+Run the following commands from the example directory (this is necessary to 
+ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
-In two separate command prompt windows for the publisher and subscriber, run these commands:
+On Windows systems run:
 
-    * java -cp .\;%nddshome%\class\nddsjava.jar numbersPublisher <domain#> 4
-    * java -cp .\;%nddshome%\class\nddsjava.jar numbersSubscriber <domain#> 4
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar numbersPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar numbersSubscriber <domain_id> <sleep_periods>
 
-The applications accept two arguments:
+On Unix systems (including Linux and MacOS X) run:
 
-   1. The <domain #>. Both applications must use the same domain # in order to communicate. The default is 0.
-   2. How long the examples should run, measured in samples for the publisher and sleep periods for the subscriber. A value of '0' instructs the application to run forever; this is the default.
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar numbersPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar numbersSubscriber <domain_id> <sleep_periods>
 
-While generating the output below, we used values that would capture the most interesting behavior.
+The applications accept up to two arguments:
+
+   1. The <domain_id>. Both applications must use the same domain id in order 
+   to communicate. The default is 0.
+   2. How long the examples should run, measured in samples for the publisher 
+   and sleep periods for the subscriber. A value of '0' instructs the 
+   application to run forever; this is the default.
 
 Publisher Output
 ================

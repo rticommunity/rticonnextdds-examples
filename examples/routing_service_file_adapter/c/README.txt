@@ -3,7 +3,7 @@
 ===========================================
 
 Building C Example
-=============
+==================
 Before compiling or running the example, make sure the environment variable 
 NDDSHOME is set to the directory where your version of RTI Connext DDS is 
 installed.
@@ -24,7 +24,7 @@ libraries, you will need to add that directory to your Path, if you are using
 Windows, or your LD_LIBRARY_PATH if you are using most of Unix-like systems.
 
 Running C Example
-=============
+=================
 
 Before running the example, take a look at file_bridge.xml. It defines the different
 settings to load and configure the adapter. You will need to specify on it the path 

@@ -8,19 +8,21 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32jdk or i86Linux2.6gcc4.4.3jdk). The RTI Connext Core 
+choice (e.g., i86Win32VS2010 or i86Linux2.6gcc4.4.3). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk ccf.idl
+rtiddsgen -language Java -example i86Win32VS2010 ccf.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk ccf.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3 ccf.idl
+
+...you will see messages that look like this:
 
 File C:\local\custom_content_filter\java\cftSubscriber.java already exists and 
 will not be replaced with updated content. If you would like to get a new file
@@ -38,42 +40,27 @@ compiler is in your PATH environment variable.
 
 On Windows systems run:
 
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar *.java
+javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar *.java
+javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 
 
 Running Java Example
 ====================
-
-Before running, make sure that the native Java libraries on which RTI Connext
-depends are in your environment path (or library path). To add Java libraries 
-to your environment...
-
-On Windows systems run: 
-set PATH=%NDDSHOME%\lib\i86Win32jdk;%PATH%
-
-On Unix systems except MacOS X (assuming you are using Bash) run:
-export LD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$LD_LIBRARY_PATH
-
-On MacOSX (assuming your are using Bash) run:
-export DYLD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$DYLD_LIBRARY_PATH
-
-Then, in two separate command prompt windows for the publisher and subscriber. 
+In two separate command prompt windows for the publisher and subscriber. 
 Run the following commands from the example directory:
 
 On Windows systems run:
 
-java -cp .;%NDDSHOME%\class\nddsjava.jar ccfPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar ccfSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ccfPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ccfSubscriber <domain_id> <sleep_periods>
 
 On Unix systems (including Linux and MacOS X) run:
 
-java -cp .:$NDDSHOME/class/nddsjava.jar ccfPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar ccfSubscriber <domain_id> <sleep_periods>
-
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar ccfPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar ccfSubscriber <domain_id> <sleep_periods>
 
 The applications accept up to two arguments:
 
