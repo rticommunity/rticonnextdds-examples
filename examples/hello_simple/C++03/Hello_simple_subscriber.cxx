@@ -15,8 +15,8 @@
 
 using namespace dds::core;
 using namespace dds::domain;
-using namespace dds::topic;
 using namespace dds::sub;
+using namespace dds::topic;
 
 // Domain id
 const int DOMAIN_ID = 0;
@@ -40,7 +40,7 @@ public:
             // Valid (this isn't just a lifecycle sample): print it
             if (sample_it->info().valid()) {
                 const dds::core::string& sample = sample_it->data();
-                cout << sample << endl;
+                std::cout << sample << std::endl;
 
                 // Empty sample to quit
                 if (sample.size() == 0)
@@ -66,13 +66,15 @@ int main() {
     // Create a Topic and automatically register the type.
     Topic<StringTopicType> topic (participant, "HelloSimple");
 
-    // Create a DataReader with default QoS.
+    // Create a DataReader with default QoS and the listener.
     // The subscriber is created in-line.
-    DataReader<StringTopicType> reader (Subscriber(participant), topic);
-
-    // Set the listener to the subscriber.
     HelloReaderListener listener;
-    reader.listener(&listener, dds::core::status::StatusMask::data_available());
+    DataReader<StringTopicType> reader(
+        Subscriber(participant),
+        topic,
+        dds::sub::qos::DataReaderQos(),
+        &listener,
+        dds::core::status::StatusMask::data_available());
 
     // --- Sleep During Asynchronous Reception ---------------------------- //
 

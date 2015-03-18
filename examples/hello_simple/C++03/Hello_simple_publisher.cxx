@@ -9,12 +9,13 @@
  use the software.
  ******************************************************************************/
 #include <iostream>
+#include <string>
 #include <dds/pub/ddspub.hpp>
 
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
 using namespace dds::core;
+using namespace dds::domain;
+using namespace dds::pub;
+using namespace dds::topic;
 
 // By default StringTopicType can manage strings up to 1K
 const int MAX_STRING_SIZE = 1024;
@@ -52,16 +53,22 @@ int main() {
     // readers can receive data that were written before they started.
     // However, for the sake of keeping this example as simple as possible,
     // it asks you to wait for both sides to start before continuing.
-    char sample[MAX_STRING_SIZE];
+    std::string sample;
     while (true) {
         std::cout << "Please type a message> ";
-        if (!cin.getline(sample, MAX_STRING_SIZE-1)) {
+        if (!std::getline(std::cin, sample)) {
             break;
+        }
+
+        if (sample.size() >= MAX_STRING_SIZE) {
+            std::cout << "WARNING: The input string is bigger than default" << std::endl;
+            std::cout << "StringTopicType size. Input will be resized." << std::endl;
+            sample.resize(MAX_STRING_SIZE - 1);
         }
 
         writer.write(sample);
 
-        if (strlen(sample) == 0) {
+        if (sample.empty()) {
             break;
         }
     }
