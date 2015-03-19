@@ -18,7 +18,7 @@ using namespace dds::pub;
 using namespace dds::topic;
 
 // By default StringTopicType can manage strings up to 1K
-const int MAX_STRING_SIZE = 1024;
+const size_t MAX_STRING_SIZE = 1024;
 
 // Domain id
 const int DOMAIN_ID = 0;
