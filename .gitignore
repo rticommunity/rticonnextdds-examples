@@ -1,0 +1,6 @@
+# Visual Studio files and output files
+objs/
+*.vcxproj.filters
+*.vcxproj.user
+*.sdf
+*.opensdf
