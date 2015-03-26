@@ -24,10 +24,10 @@ const int DOMAIN_ID = 0;
 // The listener of events and data from the middleware
 class HelloReaderListener : public NoOpDataReaderListener<StringTopicType> {
 public:
-    HelloReaderListener() : must_shutdown(false) { }
+    HelloReaderListener() : m_must_shutdown(false) { }
 
-    bool get_must_shutdown() {
-        return must_shutdown;
+    bool must_shutdown() const {
+        return m_must_shutdown;
     }
 
     void on_data_available(DataReader<StringTopicType>& reader) {
@@ -44,13 +44,13 @@ public:
 
                 // Empty sample to quit
                 if (sample.size() == 0)
-                    must_shutdown = true;
+                    m_must_shutdown = true;
             }
         }
     }
 
 private:
-    bool must_shutdown;
+    bool m_must_shutdown;
 };
 
 int main() {
@@ -82,7 +82,7 @@ int main() {
     // Distribution Service will call the on_data_available_callback function.
     std::cout << "Ready to read data." << std::endl;
     std::cout << "Press CTRL+C to terminate." << std::endl;
-    while (!listener.get_must_shutdown()) {
+    while (!listener.must_shutdown()) {
         rti::util::sleep(Duration(4));
     }
 
