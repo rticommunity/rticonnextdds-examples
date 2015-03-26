@@ -4,3 +4,4 @@ objs/
 *.vcxproj.user
 *.sdf
 *.opensdf
+*.suo
