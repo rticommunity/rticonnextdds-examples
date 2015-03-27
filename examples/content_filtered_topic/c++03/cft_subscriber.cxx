@@ -131,7 +131,7 @@ void subscriber_main(int domainId, int sample_count, int sel_cft)
     }
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count << sample_count); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         // Receive period of 1 second.
         rti::util::sleep(Duration(1));
 
