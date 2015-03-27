@@ -32,10 +32,10 @@
                 </reliability>                
                 <!-- Enabled transient local durability to provide history to
                      late-joiners. -->
-				<durability>
-					<kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-				</durability>
-				<!-- The last twenty samples are saved for late joiners -->
+				        <durability>
+					          <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+				        </durability>
+				        <!-- The last twenty samples are saved for late joiners -->
                 <history>
                     <kind>KEEP_LAST_HISTORY_QOS</kind>
                     <depth>20</depth>
@@ -49,10 +49,10 @@
                 </reliability>
                 <!-- Enabled transient local durability to get history when
                      late-joining the DDS domain. -->
-				<durability>
-					<kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-				</durability>    
-				<!-- The last twenty samples are saved for late joiners -->
+				        <durability>
+					        <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+				        </durability>
+				        <!-- The last twenty samples are saved for late joiners -->
                 <history>
                     <kind>KEEP_LAST_HISTORY_QOS</kind>
                     <depth>20</depth>                    
@@ -61,16 +61,14 @@
 
             <participant_qos>
                 <!--
-                The participant name, if it is set, will be displayed in the
-                RTI Analyzer tool, making it easier for you to tell one
-                application from another when you're debugging.
-                -->
-                <participant_name>
-                    <name>RTI Content Filtered Topic C++03 Example</name>
-                </participant_name>
-
+                  The participant name, if it is set, will be displayed in the
+                  RTI Analyzer tool, making it easier for you to tell one
+                  application from another when you're debugging.
+                  -->
+                  <participant_name>
+                      <name>RTI Content Filtered Topic C++03 Example</name>
+                  </participant_name>
             </participant_qos>
         </qos_profile>
-
     </qos_library>
 </dds>
