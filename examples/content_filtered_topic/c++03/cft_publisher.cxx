@@ -32,8 +32,8 @@ int publisher_main(int domainId, int sample_count)
 
     // If you want to set the reliability and history QoS settings
     // programmatically rather than using the XML, you will need to add
-    // the following lines to your code and comment out the create_datawriter
-    // call above.
+    // the following lines to your code and comment out the datawriter
+    // constructor call above.
 
     /*
     DataWriterQos datawriter_qos;
@@ -55,8 +55,6 @@ int publisher_main(int domainId, int sample_count)
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-        std::cout << "Writing cft, count " << count << std::endl;
-
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
