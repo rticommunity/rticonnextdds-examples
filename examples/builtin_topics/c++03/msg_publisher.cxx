@@ -108,39 +108,10 @@ void publisherMain(int domainId, int sampleCount)
     // set up the listeners. This is done by default in the
     // USER_QOS_PROFILES.xml file. If you want to do it programmatically,
     // just uncomment the following code.
-/*
-    DDS_DomainParticipantFactoryQos factory_qos;
-    retcode = DDSTheParticipantFactory->get_qos(factory_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("Cannot get factory Qos for domain participant\n");
-        return -1;
-    }
-
-	factory_qos.entity_factory.autoenable_created_entities = DDS_BOOLEAN_FALSE;
-
-    switch(DDSTheParticipantFactory->set_qos(factory_qos)) {
-        case DDS_RETCODE_OK:
-            break;
-        case DDS_RETCODE_IMMUTABLE_POLICY: {    
-            printf("Cannot set factory Qos due to IMMUTABLE_POLICY ");
-            printf("for domain participant\n");
-            return -1;
-            break;
-        }
-        case DDS_RETCODE_INCONSISTENT_POLICY: {    
-            printf("Cannot set factory Qos due to INCONSISTENT_POLICY for ");
-            printf("domain participant\n");
-            return -1;
-            break;
-        }
-        default: {
-            printf("Cannot set factory Qos for unknown reason for ");
-            printf("domain participant\n");
-            return -1;
-            break;
-        }
-    }
-    */
+    
+    // DomainParticipantFactoryQos factoryQos;
+    // factoryQos << EntityFactory::ManuallyEnable();
+    // DomainParticipant::participant_factory_qos(factoryQos);
 
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to add the following lines to
@@ -222,6 +193,10 @@ void publisherMain(int domainId, int sampleCount)
     }
 
     // writer.unregister_instance(instance);
+
+    // Creating an entity with a listener automatically retains the entity, so
+    // we must either explicitly close the DataReader...
+    participant.close();
 }
 
 void main(int argc, char* argv[])
