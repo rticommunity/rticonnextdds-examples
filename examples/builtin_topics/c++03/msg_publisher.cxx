@@ -13,31 +13,90 @@
 #include <string>
 #include <list>
 #include <algorithm>
-#include "msg.hpp"
-#include <dds/pub/ddspub.hpp>
+#include <iostream>
+#include <iomanip>
 
+#include <dds/pub/ddspub.hpp>
+#include <dds/sub/ddssub.hpp>
+#include "msg.hpp"
+
+using namespace dds::core;
 using namespace dds::domain;
 using namespace dds::topic;
+using namespace dds::sub;
 
 // Authorization string
-const std::string auth = "password";
+const std::string Auth = "password";
 
 // Set up a list of authorized participant keys. Datareaders associated
 // with an authorized participant do not need to suplly their own password.
-std::list<BuiltinTopicKey> Auth_list;
+std::list<BuiltinTopicKey> AuthList;
 
-void add_auth_participant(const BuiltinTopicKey& participant_key)
+bool isAuthParticipant(const BuiltinTopicKey& participantKey)
 {
-    Auth_list.push_back(participant_key);
+    auto item = std::find(AuthList.begin(), AuthList.end(), participantKey);
+    return item != AuthList.end();
 }
 
-bool is_auth_participant(const BuiltinTopicKey& participant_key)
-{
-    return (std::find(Auth_list.begin(), Auth_list.end(), participant_key) !=
-        Auth_list.end());
-}
+// The builtin subscriber sets participant_qos.user_data and
+// reader_qos.user_data, so we set up listeners for the builtin
+// DataReaders to access these fields.
+class BuiltinParticipantLister : 
+    NoOpDataReaderListener<ParticipantBuiltinTopicData> {
+public:
+    // This gets called when a participant has been discovered
+    void on_data_available(DataReader<ParticipantBuiltinTopicData>& reader)
+    {
+        // We only process newly seen participants
+        LoanedSamples<ParticipantBuiltinTopicData> samples = reader.select()
+            .state(dds::sub::status::DataState::new_instance())
+            .take();
 
-void publisher_main(int domainId, int sample_count)
+        for (auto sampleIt = samples.begin();
+            sampleIt != samples.end();
+            ++sampleIt) {
+
+            if (!sampleIt->info().valid()) {
+                continue;
+            }
+
+            const ByteSeq& userData = sampleIt->data().user_data().value();
+            std::string userAuth (userData.begin(), userData.end());
+            const BuiltinTopicKey& key = sampleIt->data().key();
+            bool isAuth = false;
+
+            // Check if the password match.
+            if (Auth.compare(userAuth)) {
+                AuthList.push_back(key);
+                isAuth = true;
+            }
+
+            std::ios::fmtflags defaultFormat(std::cout.flags());
+            std::cout << std::hex << std::setw(8) << std::setfill('0');
+
+            std::cout << "Built-in Reader: found participant" << std::endl
+                      << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
+                      << " " << key.value()[2] << "'"         << std::endl
+                      << "\tuser_data->'" << userAuth << "'"  << std::endl
+                      << "instance_handle: " 
+                      << sampleIt->info().instance_handle()   << std::endl;
+
+            std::cout.flags(defaultFormat);
+
+            if (!isAuth) {
+                std::cout << "Bad authorization, ignoring participant"
+                          << std::endl;
+                const DomainParticipant& participant = 
+                    reader.subscriber().participant();
+                ignore(
+                    const_cast<DomainParticipant&>(participant),
+                    sampleIt->info().instance_handle());
+            }
+        }
+    }
+};
+
+void publisherMain(int domainId, int sampleCount)
 {
     
 }
@@ -45,18 +104,18 @@ void publisher_main(int domainId, int sample_count)
 void main(int argc, char* argv[])
 {
     int domainId = 0;
-    int sample_count = 0; /* infinite loop */
+    int sampleCount = 0; /* infinite loop */
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);
     }
     if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+        sampleCount = atoi(argv[2]);
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
     
-    return publisher_main(domainId, sample_count);
+    publisherMain(domainId, sampleCount);
 }
