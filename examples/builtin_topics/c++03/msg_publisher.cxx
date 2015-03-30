@@ -8,7 +8,6 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-// http://en.cppreference.com/w/cpp/container/list
 
 #include <string>
 #include <list>
@@ -16,14 +15,19 @@
 #include <iostream>
 #include <iomanip>
 
+#include <dds/domain/ddsdomain.hpp>
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
 #include "msg.hpp"
 
 using namespace dds::core;
+using namespace dds::core::policy;
+using namespace rti::core::policy;
 using namespace dds::domain;
+using namespace dds::domain::qos;
 using namespace dds::topic;
 using namespace dds::sub;
+using namespace dds::pub;
 
 // Authorization string
 const std::string Auth = "password";
@@ -41,8 +45,8 @@ bool isAuthParticipant(const BuiltinTopicKey& participantKey)
 // The builtin subscriber sets participant_qos.user_data and
 // reader_qos.user_data, so we set up listeners for the builtin
 // DataReaders to access these fields.
-class BuiltinParticipantLister : 
-    NoOpDataReaderListener<ParticipantBuiltinTopicData> {
+class BuiltinParticipantListener : 
+    public NoOpDataReaderListener<ParticipantBuiltinTopicData> {
 public:
     // This gets called when a participant has been discovered
     void on_data_available(DataReader<ParticipantBuiltinTopicData>& reader)
@@ -66,7 +70,7 @@ public:
             bool isAuth = false;
 
             // Check if the password match.
-            if (Auth.compare(userAuth)) {
+            if (Auth.compare(userAuth) == 0) {
                 AuthList.push_back(key);
                 isAuth = true;
             }
@@ -77,18 +81,18 @@ public:
             std::cout << "Built-in Reader: found participant" << std::endl
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'"         << std::endl
-                      << "\tuser_data->'" << userAuth << "'"  << std::endl
-                      << "instance_handle: " 
-                      << sampleIt->info().instance_handle()   << std::endl;
+                      << "\tuser_data->'" << userAuth << "'"  << std::endl;
+                    //<< "instance_handle: " << instanceHandle[0] << std::endl;
 
             std::cout.flags(defaultFormat);
 
             if (!isAuth) {
                 std::cout << "Bad authorization, ignoring participant"
                           << std::endl;
+                
                 const DomainParticipant& participant = 
                     reader.subscriber().participant();
-                ignore(
+                dds::domain::ignore(
                     const_cast<DomainParticipant&>(participant),
                     sampleIt->info().instance_handle());
             }
@@ -98,7 +102,126 @@ public:
 
 void publisherMain(int domainId, int sampleCount)
 {
+    // By default, the participant is enabled upon construction.
+    // At that time our listeners for the builtin topics have not
+    // been installed, so we disable the participant until we
+    // set up the listeners. This is done by default in the
+    // USER_QOS_PROFILES.xml file. If you want to do it programmatically,
+    // just uncomment the following code.
+/*
+    DDS_DomainParticipantFactoryQos factory_qos;
+    retcode = DDSTheParticipantFactory->get_qos(factory_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("Cannot get factory Qos for domain participant\n");
+        return -1;
+    }
+
+	factory_qos.entity_factory.autoenable_created_entities = DDS_BOOLEAN_FALSE;
+
+    switch(DDSTheParticipantFactory->set_qos(factory_qos)) {
+        case DDS_RETCODE_OK:
+            break;
+        case DDS_RETCODE_IMMUTABLE_POLICY: {    
+            printf("Cannot set factory Qos due to IMMUTABLE_POLICY ");
+            printf("for domain participant\n");
+            return -1;
+            break;
+        }
+        case DDS_RETCODE_INCONSISTENT_POLICY: {    
+            printf("Cannot set factory Qos due to INCONSISTENT_POLICY for ");
+            printf("domain participant\n");
+            return -1;
+            break;
+        }
+        default: {
+            printf("Cannot set factory Qos for unknown reason for ");
+            printf("domain participant\n");
+            return -1;
+            break;
+        }
+    }
+    */
+
+    // If you want to change the Participant's QoS programmatically rather
+    // than using the XML file, you will need to add the following lines to
+    // your code and comment out the participant call above.
+    DomainParticipantQos participantQos;
+    DiscoveryConfig discoveryConfig;
     
+    participantQos << Discovery().multicast_receive_addresses(StringSeq(0))
+        << discoveryConfig.participant_liveliness_assert_period(Duration(10))
+        << discoveryConfig.participant_liveliness_lease_duration(Duration(12));
+
+    // To create participant with default QoS use the one-argument constructor
+    DomainParticipant participant (domainId, participantQos);
+
+    // Start changes for Builtin_Topics
+    // Installing listeners for the builtin topics requires several steps
+
+    // First get the builtin subscriber
+    Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
+
+    // Then get builtin subscriber's datareader for participants.
+    std::vector<DataReader<ParticipantBuiltinTopicData>> participant_reader;
+    find<DataReader<ParticipantBuiltinTopicData>>(
+        builtin_subscriber,
+        dds::topic::PARTICIPANT_TOPIC_NAME,
+        std::back_inserter(participant_reader));
+
+    // Install our listener
+    BuiltinParticipantListener *builtin_participant_listener = 
+        new BuiltinParticipantListener;
+    participant_reader[0].listener(
+        builtin_participant_listener,
+        dds::core::status::StatusMask::data_available());
+
+    // Get builtin subscriber's datareader for subscribers
+    std::vector<DataReader<PublicationBuiltinTopicData>> publication_reader;
+    find<DataReader<PublicationBuiltinTopicData>>(
+        builtin_subscriber,
+        dds::topic::PUBLICATION_TOPIC_NAME,
+        std::back_inserter(publication_reader));
+
+    // Install our listener
+    // TODO
+
+    // Done!  All the listeners are installed, so we can enable the 
+    // participant now.
+    participant.enable();
+
+    // End changes for Builtin_Topics
+    
+    // To customize publisher QoS, use participant.default_publisher_qos()
+    Publisher publisher (participant);
+
+    // To customize topic QoS, use participant.default_topic_qos()
+    Topic<msg> topic (participant, "Example msg");
+    
+    // To customize topic QoS, use publisher.default_writer_qos()
+    DataWriter<msg> writer (publisher, topic);
+    
+    // Create data sample for writing
+    msg instance;
+
+    // For data type that has key, if the same instance is going to be
+    // written multiple times, initialize the key here
+    // and register the keyed instance prior to writing
+
+    InstanceHandle instance_handle = InstanceHandle::nil();
+    // instance_handle = writer.register_instance(instance);
+
+    // Main loop
+    for (short count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+        rti::util::sleep(Duration(1));
+        std::cout << "Writing msg, count " << count << std::endl;
+
+        // Modify the data to be sent here
+        instance.x(count);
+
+        writer.write(instance, instance_handle);
+    }
+
+    // writer.unregister_instance(instance);
 }
 
 void main(int argc, char* argv[])
