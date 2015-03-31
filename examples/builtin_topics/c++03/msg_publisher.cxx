@@ -15,6 +15,7 @@
 #include <iostream>
 #include <iomanip>
 
+#include <rti/core/ListenerBinder.hpp>
 #include <dds/domain/ddsdomain.hpp>
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
@@ -82,7 +83,7 @@ public:
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'"         << std::endl
                       << "\tuser_data->'" << userAuth << "'"  << std::endl;
-                    //<< "instance_handle: " << instanceHandle[0] << std::endl;
+                      //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
 
             std::cout.flags(defaultFormat);
 
@@ -118,7 +119,7 @@ void publisherMain(int domainId, int sampleCount)
     // your code and comment out the participant call above.
     DomainParticipantQos participantQos;
     DiscoveryConfig discoveryConfig;
-    
+
     participantQos << Discovery().multicast_receive_addresses(StringSeq(0))
         << discoveryConfig.participant_liveliness_assert_period(Duration(10))
         << discoveryConfig.participant_liveliness_lease_duration(Duration(12));
@@ -139,11 +140,14 @@ void publisherMain(int domainId, int sampleCount)
         dds::topic::PARTICIPANT_TOPIC_NAME,
         std::back_inserter(participant_reader));
 
-    // Install our listener
+    // Install our listener using ListenerBinder, a RAII that will take care
+    // of destructing it.
     BuiltinParticipantListener *builtin_participant_listener = 
         new BuiltinParticipantListener;
-    participant_reader[0].listener(
-        builtin_participant_listener,
+
+    rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData>> scoped_listener (
+        participant_reader[0],
+        *builtin_participant_listener,
         dds::core::status::StatusMask::data_available());
 
     // Get builtin subscriber's datareader for subscribers
@@ -193,10 +197,6 @@ void publisherMain(int domainId, int sampleCount)
     }
 
     // writer.unregister_instance(instance);
-
-    // Creating an entity with a listener automatically retains the entity, so
-    // we must either explicitly close the DataReader...
-    participant.close();
 }
 
 void main(int argc, char* argv[])
@@ -215,5 +215,9 @@ void main(int argc, char* argv[])
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
     
-    publisherMain(domainId, sampleCount);
+    try {
+        publisherMain(domainId, sampleCount);
+    } catch (std::exception ex) {
+        std::cout << "Exception caught: " << ex.what() << std::endl;
+    }
 }
