@@ -150,7 +150,7 @@ public:
             std::cout.flags(defaultFormat);
 
             if (!isAuth) {
-                std::cout << "Bad authorization, ignoring participant"
+                std::cout << "Bad authorization, ignoring subscription"
                           << std::endl;
                 
                 // Get the associated participant...
