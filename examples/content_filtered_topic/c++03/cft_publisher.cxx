@@ -19,7 +19,7 @@ using namespace dds::pub;
 using namespace dds::pub::qos;
 using namespace dds::topic;
 
-int publisher_main(int domainId, int sample_count)
+void publisherMain(int domainId, int sampleCount)
 {
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
@@ -54,7 +54,7 @@ int publisher_main(int domainId, int sample_count)
     //instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
@@ -65,7 +65,7 @@ int publisher_main(int domainId, int sample_count)
         instance.x(count % 10);
 
         std::cout << "Writing cft, count " << instance.count() << "\t"
-                  << "x=" << instance.x() << std::endl;
+                  << "x=" << instance.x()  << std::endl;
 
         writer->write(instance, instance_handle);
 
@@ -73,26 +73,25 @@ int publisher_main(int domainId, int sample_count)
         rti::util::sleep(Duration(1));
     }
 
-    writer.unregister_instance(instance_handle);
-    return 0;
+    //writer.unregister_instance(instance_handle);
 }
 
-int main(int argc, char *argv[])
+void main(int argc, char *argv[])
 {
     int domainId = 0;
-    int sample_count = 0; /* infinite loop */
+    int sampleCount = 0; /* infinite loop */
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);
     }
 
     if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+        sampleCount = atoi(argv[2]);
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    return publisher_main(domainId, sample_count);
+    publisherMain(domainId, sampleCount);
 }
