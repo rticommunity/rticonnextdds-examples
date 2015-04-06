@@ -9,31 +9,39 @@
  use the software.
  ******************************************************************************/
 #include <iostream>
-#include <string>
 
-#include <dds/dds.hpp>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/core/ListenerBinder.hpp>
+
 #include "batch_data.hpp"
 
 using namespace dds::core;
 using namespace dds::domain;
-using namespace dds::domain::qos;
 using namespace dds::topic;
-using namespace dds::pub;
+using namespace dds::sub;
 
-void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
+class batch_dataReaderListener : public dds::sub::NoOpDataReaderListener<batch_data> {
+  public:
+    void on_data_available(DataReader<batch_data>& reader)
+    {
+        // Take all samples
+        LoanedSamples<batch_data> samples = reader.take();
+        std::copy(
+            samples.begin(),
+            samples.end(),
+            LoanedSamples<batch_data>::ostream_iterator(std::cout, "\n"));
+    }
+};
+
+void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
 {
-    // Seconds to wait between samples published.
-    Duration send_period (1);
-
     // We pick the profile name if the turbo_mode is selected or not.
     // If turbo_mode is not selected, the batching profile will be used.
     std::string profile_name = "batching_Library::";
     if (turbo_mode_on) {
         std::cout << "Turbo Mode enable" << std::endl;
         profile_name.append("turbo_mode_profile");
-
-        // If turbo_mode, we do not want to wait to send samples.
-        send_period.sec(0);
     } else {
         std::cout << "Manual batching enable" << std::endl;
         profile_name.append("batch_profile");
@@ -46,42 +54,36 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
 
     Topic<batch_data> topic (participant, "Example batch_data");
 
-    Publisher publisher (
+    Subscriber subscriber (
         participant,
-        QosProvider::Default()->publisher_qos(profile_name));
+        QosProvider::Default()->subscriber_qos(profile_name));
 
-    DataWriter<batch_data> writer (
-        publisher,
+    DataReader<batch_data> reader(
+        subscriber,
         topic,
-        QosProvider::Default()->datawriter_qos(profile_name));
+        QosProvider::Default().datareader_qos());
 
-    // Create data sample for writing.
-    batch_data sample;
+    // Set the listener using a RAII so it's exception-safe
+    batch_dataReaderListener* listener = new batch_dataReaderListener();
+    rti::core::ListenerBinder<DataReader<batch_data>> scoped_listener (
+        reader,
+        *listener,
+        dds::core::status::StatusMask::data_available());
 
-    // For a data type that has a key, if the same instance is going to be
-    // written multiple times, initialize the key here and register the keyed
-    // instance prior to writing.
-    InstanceHandle instance_handle = InstanceHandle::nil();
-    //instance_handle = writer.register_instance(sample);
-
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        // Modify the data to be written here
-        sample.x(count);
-
-        std::cout << "Writing batch_data, count " << count << std::endl;
-        writer.write(sample);
-
-        rti::util::sleep(send_period);
+    // Main loop
+    for (int count = 0; count < sample_count || sample_count == 0; ++count) {
+        std::cout << "batch_data subscriber sleeping for 4 sec...\n";
+        rti::util::sleep(dds::core::Duration(4));
     }
 
-    //writer.unregister_instance(sample);
+    delete listener;
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; // infinite loop
-    bool turbo_mode_on = false;
+    bool turbo_mode_on = 0;
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -100,10 +102,10 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisher_main(domain_id, sample_count, turbo_mode_on);
+        subscriber_main(domain_id, sample_count, turbo_mode_on);
     } catch (const std::exception& ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what() << "\n";
         return -1;
     }
 
