@@ -20,6 +20,8 @@ using namespace dds::core;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
+using namespace dds::sub::qos;
+using namespace dds::core::policy;
 
 class batch_dataReaderListener : public dds::sub::NoOpDataReaderListener<batch_data> {
   public:
@@ -27,10 +29,11 @@ class batch_dataReaderListener : public dds::sub::NoOpDataReaderListener<batch_d
     {
         // Take all samples
         LoanedSamples<batch_data> samples = reader.take();
-        std::copy(
-            samples.begin(),
-            samples.end(),
-            LoanedSamples<batch_data>::ostream_iterator(std::cout, "\n"));
+        for (auto sample_it = samples.begin(); sample_it != samples.end(); sample_it++) {    
+            if (sample_it->info().valid()) {
+                 std::cout << sample_it->data() << std::endl; 
+            }
+        }
     }
 };
 
@@ -61,7 +64,7 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
     DataReader<batch_data> reader(
         subscriber,
         topic,
-        QosProvider::Default().datareader_qos());
+        QosProvider::Default()->datareader_qos(profile_name));
 
     // Set the listener using a RAII so it's exception-safe
     batch_dataReaderListener* listener = new batch_dataReaderListener();
