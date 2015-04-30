@@ -371,9 +371,12 @@ sub process_all_files {
             # replacing all the <dds> tag attributes by the new ones   
             } elsif ($OPTION_FLAG == 2) {
                 if (replace_xml_dds_attributes($file, $NDDS_VERSION, $XSD_PATH)){
-                    print "Replaced the attributes to the dds tag: $file\n";
+                    print "Replaced the attributes to the dds tag: " .
+					get_filename_from_path($file) . "\n";
                 } else {
-                    print "ERROR: The schema is not the same one\n";
+                    print "ERROR: The file " . get_filename_from_path($file) . 
+					      " does not use the same schema than the introduced" .
+						  " one: $XSD_PATH\n";
                 }
             }
         } elsif (-d $file) {
