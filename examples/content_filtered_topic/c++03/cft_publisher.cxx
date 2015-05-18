@@ -19,12 +19,12 @@ using namespace dds::pub;
 using namespace dds::pub::qos;
 using namespace dds::topic;
 
-void publisherMain(int domainId, int sampleCount)
+void publisher_main(int domain_id, int sample_count)
 {
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant (domainId);
+    DomainParticipant participant (domain_id);
 
     Topic<cft> topic (participant, "Example cft");
 
@@ -54,7 +54,7 @@ void publisherMain(int domainId, int sampleCount)
     //instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
@@ -67,7 +67,7 @@ void publisherMain(int domainId, int sampleCount)
         std::cout << "Writing cft, count " << instance.count() << "\t"
                   << "x=" << instance.x()  << std::endl;
 
-        writer->write(instance, instance_handle);
+        writer.write(instance, instance_handle);
 
         // Send a new sample every second
         rti::util::sleep(Duration(1));
@@ -78,20 +78,20 @@ void publisherMain(int domainId, int sampleCount)
 
 void main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sampleCount = 0; /* infinite loop */
+    int domain_id = 0;
+    int sample_count = 0; /* infinite loop */
 
     if (argc >= 2) {
-        domainId = atoi(argv[1]);
+        domain_id = atoi(argv[1]);
     }
 
     if (argc >= 3) {
-        sampleCount = atoi(argv[2]);
+        sample_count = atoi(argv[2]);
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    publisherMain(domainId, sampleCount);
+    publisher_main(domain_id, sample_count);
 }
