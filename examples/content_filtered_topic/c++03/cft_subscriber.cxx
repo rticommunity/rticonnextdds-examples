@@ -9,7 +9,8 @@
  use the software.
  ******************************************************************************/
 #include "cft.hpp"
-#include <dds/sub/ddssub.hpp>
+#include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
 using namespace dds::core::status;
@@ -27,19 +28,23 @@ public:
         LoanedSamples<cft> samples = reader.take();
 
         // Print samples by copying to std::cout
-        std::copy(
-            samples.begin(),
-            samples.end(),
-            LoanedSamples<cft>::ostream_iterator(std::cout, "\n"));
+        for (auto sampleIt = samples.begin();
+            sampleIt != samples.end();
+            ++sampleIt) {
+
+            if (sampleIt->info().valid()) {
+                std::cout << sampleIt->data() << std::endl;
+            }
+        }
     }
 };
 
-void subscriberMain(int domainId, int sampleCount, bool isCft)
+void subscriber_main(int domain_id, int sample_count, bool is_cft)
 {
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant (domainId);
+    DomainParticipant participant (domain_id);
 
     Topic<cft> topic (participant, "Example cft");
 
@@ -50,78 +55,7 @@ void subscriberMain(int domainId, int sampleCount, bool isCft)
     // sequence of parameters will be "1", "4" (i.e., 1 <= x <= 4).
     parameters[0] = "1";
     parameters[1] = "4";
-
-    // Create a data reader listener
-    CftListener readerListener;
-
-    // Create the content filtered topic in the case sel_cft is true
-    // The Content Filter Expresion has two parameters:
-    // - %0 -- x must be greater or equal than %0.
-    // - %1 -- x must be less or equal than %1.
-    ContentFilteredTopic<cft>* cftTopic;
-    DataReader<cft>* reader;
-    
-    if (isCft) {
-        std::cout << "Using ContentFiltered Topic" << std::endl;
-        cftTopic = new ContentFilteredTopic<cft>(
-            topic,
-            "ContentFilteredTopic",
-            Filter("x >= %0 AND x <= %1", parameters));
-        
-        reader = new DataReader<cft>(
-            Subscriber(participant),
-            *cftTopic,
-            DataReaderQos(),
-            &readerListener,
-            StatusMask::data_available());
-    } else {
-        std::cout << "Using Normal Topic" << std::endl;
-
-        reader = new DataReader<cft>(
-            Subscriber(participant),
-            topic,
-            DataReaderQos(),
-            &readerListener,
-            StatusMask::data_available());
-    }
-    
-    // If you want to set the reliability and history QoS settings
-    // programmatically rather than using the XML, you will need to add
-    // the following lines to your code and comment out the datareader
-    // constructor call above.
-    
-    /*
-    DataReaderQos datareaderQos;
-    datareaderQos << Reliability::Reliable();
-    datareaderQos << Durability::TransientLocal();
-    datareaderQos << History::KeepLast(20);
-    
-    if (isCft) {
-        std::cout << "Using ContentFiltered Topic" << std::endl;
-        cftTopic = new ContentFilteredTopic<cft>(
-            topic,
-            "ContentFilteredTopic",
-            Filter("(x >= %0 and x <= %1)", parameters));
-
-        reader = new DataReader<cft>(
-            Subscriber(participant),
-            *cftTopic,
-            datareaderQos,
-            &readerListener,
-            StatusMask::data_available());
-    } else {
-        std::cout << "Using Normal Topic" << std::endl;
-
-        reader = new DataReader<cft>(
-            Subscriber(participant),
-            topic,
-            datareaderQos,
-            &readerListener,
-            StatusMask::data_available());
-    }
-    */
-
-    if (isCft) {
+    if (is_cft) {
         std::cout << std::endl
                   << "==========================" << std::endl
                   << "Using CFT"                  << std::endl
@@ -129,14 +63,60 @@ void subscriberMain(int domainId, int sampleCount, bool isCft)
                   << "==========================" << std::endl;
     }
 
+    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+
+    // If you want to set the reliability and history QoS settings
+    // programmatically rather than using the XML, you will need to add
+    // the following lines to your code and comment out the reader_qos
+    // constructor call above.
+    //DataReaderQos reader_qos;
+    //reader_qos << Reliability::Reliable();
+    //reader_qos << Durability::TransientLocal();
+    //reader_qos << History::KeepLast(20);
+
+    // Create the content filtered topic in the case sel_cft is true
+    // The Content Filter Expresion has two parameters:
+    // - %0 -- x must be greater or equal than %0.
+    // - %1 -- x must be less or equal than %1.
+    ContentFilteredTopic<cft> cft_topic = dds::core::null;
+    DataReader<cft> reader = dds::core::null;
+
+    if (is_cft) {
+        std::cout << "Using ContentFiltered Topic" << std::endl;
+        cft_topic = ContentFilteredTopic<cft>(
+            topic,
+            "ContentFilteredTopic",
+            Filter("x >= %0 AND x <= %1", parameters));
+        reader = DataReader<cft>(
+            Subscriber(participant),
+            cft_topic,
+            reader_qos);
+    } else {
+        std::cout << "Using Normal Topic" << std::endl;
+        reader = DataReader<cft>(
+            Subscriber(participant),
+            topic,
+            reader_qos);
+    }
+
+    
+    
+    // Create a data reader listener using ListenerBinder, a RAII that
+    // will take care of setting it to NULL on destruction.
+    CftListener reader_listener;
+    rti::core::ListenerBinder<DataReader<cft>> scoped_listener (
+        reader,
+        reader_listener,
+        dds::core::status::StatusMask::data_available());
+
     // Main loop
-    for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         // Receive period of 1 second.
         rti::util::sleep(Duration(1));
 
         // If we are not using CFT, we do not need to change the filter
         // parameters
-        if (!isCft) {
+        if (!is_cft) {
             continue;
         }
 
@@ -149,7 +129,7 @@ void subscriberMain(int domainId, int sampleCount, bool isCft)
 
             parameters[0] = "5";
             parameters[1] = "9";
-            cftTopic->filter_parameters(parameters.begin(), parameters.end());
+            cft_topic->filter_parameters(parameters.begin(), parameters.end());
         } else if (count == 20) {
             std::cout << std::endl
                       << "==========================" << std::endl
@@ -158,39 +138,32 @@ void subscriberMain(int domainId, int sampleCount, bool isCft)
                       << "==========================" << std::endl;
 
             parameters[0] = "3";
-            cftTopic->filter_parameters(parameters.begin(), parameters.end());
+            cft_topic->filter_parameters(parameters.begin(), parameters.end());
         }
-    }
-
-    reader->close();
-    delete reader;
-
-    if (isCft) {
-        delete cftTopic;
     }
 }
 
 void main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sampleCount = 0; // Infinite loop
-    bool isCft = true;   // Use content filtered topic?
+    int domain_id = 0;
+    int sample_count = 0; // Infinite loop
+    bool is_cft = true;   // Use content filtered topic?
 
     if (argc >= 2) {
-        domainId = atoi(argv[1]);
+        domain_id = atoi(argv[1]);
     }
 
     if (argc >= 3) {
-        sampleCount = atoi(argv[2]);
+        sample_count = atoi(argv[2]);
     }
 
     if (argc >= 4) {
-        isCft = (argv[3][0] == '1');
+        is_cft = (argv[3][0] == '1');
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    return subscriberMain(domainId, sampleCount, isCft);
+    return subscriber_main(domain_id, sample_count, is_cft);
 }
