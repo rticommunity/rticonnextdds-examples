@@ -101,7 +101,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    CftListener* reader_listener;
+    CftListener* reader_listener = new CftListener;
     rti::core::ListenerBinder< DataReader<cft> > scoped_listener =
         rti::core::bind_and_manage_listener(
             reader,
@@ -164,6 +164,13 @@ int main(int argc, char *argv[])
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    subscriber_main(domain_id, sample_count, is_cft);
+    try {
+        subscriber_main(domain_id, sample_count, is_cft);
+    } catch (const std::exception& ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        return -1;
+    }
+
     return 0;
 }
