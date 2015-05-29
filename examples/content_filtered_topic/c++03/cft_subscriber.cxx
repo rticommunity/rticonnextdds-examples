@@ -28,7 +28,7 @@ public:
         LoanedSamples<cft> samples = reader.take();
 
         // Print samples by copying to std::cout
-        for (auto sampleIt = samples.begin();
+        for (LoanedSamples<cft>::iterator sampleIt = samples.begin();
             sampleIt != samples.end();
             ++sampleIt) {
 
@@ -50,7 +50,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Sequence of parameters for the content filter expression
     std::vector<std::string> parameters(2);
-    
+
     // The default parameter list that we will include in the
     // sequence of parameters will be "1", "4" (i.e., 1 <= x <= 4).
     parameters[0] = "1";
@@ -99,15 +99,14 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
             reader_qos);
     }
 
-    
-    
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    CftListener reader_listener;
-    rti::core::ListenerBinder<DataReader<cft>> scoped_listener (
-        reader,
-        reader_listener,
-        dds::core::status::StatusMask::data_available());
+    CftListener* reader_listener;
+    rti::core::ListenerBinder< DataReader<cft> > scoped_listener =
+        rti::core::bind_and_manage_listener(
+            reader,
+            reader_listener,
+            dds::core::status::StatusMask::data_available());
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -143,7 +142,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     }
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; // Infinite loop
@@ -165,5 +164,6 @@ void main(int argc, char *argv[])
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    return subscriber_main(domain_id, sample_count, is_cft);
+    subscriber_main(domain_id, sample_count, is_cft);
+    return 0;
 }

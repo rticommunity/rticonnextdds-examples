@@ -49,7 +49,7 @@ void publisher_main(int domain_id, int sample_count)
     // For a data type that has a key, if the same instance is going to be
     // written multiple times, initialize the key here
     // and register the keyed instance prior to writing.
-    
+
     InstanceHandle instance_handle = InstanceHandle::nil();
     //instance_handle = writer.register_instance(instance);
 
@@ -76,7 +76,7 @@ void publisher_main(int domain_id, int sample_count)
     //writer.unregister_instance(instance_handle);
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
@@ -94,4 +94,5 @@ void main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     publisher_main(domain_id, sample_count);
+    return 0;
 }
