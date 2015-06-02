@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -101,11 +101,10 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    CftListener* reader_listener = new CftListener;
     rti::core::ListenerBinder< DataReader<cft> > scoped_listener =
         rti::core::bind_and_manage_listener(
             reader,
-            reader_listener,
+            new CftListener,
             dds::core::status::StatusMask::data_available());
 
     // Main loop
@@ -128,7 +127,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
             parameters[0] = "5";
             parameters[1] = "9";
-            cft_topic->filter_parameters(parameters.begin(), parameters.end());
+            cft_topic.filter_parameters(parameters.begin(), parameters.end());
         } else if (count == 20) {
             std::cout << std::endl
                       << "==========================" << std::endl
@@ -137,7 +136,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
                       << "==========================" << std::endl;
 
             parameters[0] = "3";
-            cft_topic->filter_parameters(parameters.begin(), parameters.end());
+            cft_topic.filter_parameters(parameters.begin(), parameters.end());
         }
     }
 }

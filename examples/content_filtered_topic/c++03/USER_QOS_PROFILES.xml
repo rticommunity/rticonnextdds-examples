@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -19,43 +19,43 @@
     -->
     <qos_library name="cft_Library">
 
-        <!-- QoS profile used to configure reliable communication between the DataWriter 
+        <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
         <qos_profile name="cft_Profile" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->                
+            <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
-                </reliability>                
+                </reliability>
                 <!-- Enabled transient local durability to provide history to
                      late-joiners. -->
-				        <durability>
-					          <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-				        </durability>
-				        <!-- The last twenty samples are saved for late joiners -->
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <!-- The last twenty samples are saved for late joiners -->
                 <history>
                     <kind>KEEP_LAST_HISTORY_QOS</kind>
                     <depth>20</depth>
                 </history>
             </datawriter_qos>
 
-            <!-- QoS used to configure the data reader created in the example code -->                
+            <!-- QoS used to configure the data reader created in the example code -->
             <datareader_qos>
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
                 </reliability>
                 <!-- Enabled transient local durability to get history when
                      late-joining the DDS domain. -->
-				        <durability>
-					        <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-				        </durability>
-				        <!-- The last twenty samples are saved for late joiners -->
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <!-- The last twenty samples are saved for late joiners -->
                 <history>
                     <kind>KEEP_LAST_HISTORY_QOS</kind>
-                    <depth>20</depth>                    
+                    <depth>20</depth>
                 </history>
             </datareader_qos>
 
