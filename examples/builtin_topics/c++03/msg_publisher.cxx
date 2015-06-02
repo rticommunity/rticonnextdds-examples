@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -46,7 +46,7 @@ bool isAuthParticipant(const BuiltinTopicKey& participantKey)
 // The builtin subscriber sets participant_qos.user_data and
 // reader_qos.user_data, so we set up listeners for the builtin
 // DataReaders to access these fields.
-class BuiltinParticipantListener : 
+class BuiltinParticipantListener :
     public NoOpDataReaderListener<ParticipantBuiltinTopicData> {
 public:
     // This gets called when a participant has been discovered
@@ -90,9 +90,9 @@ public:
             if (!isAuth) {
                 std::cout << "Bad authorization, ignoring participant"
                           << std::endl;
-                
+
                 // Get the associated participant...
-                const DomainParticipant& participant = 
+                const DomainParticipant& participant =
                     reader.subscriber().participant();
 
                 // Ignore the remote participant
@@ -146,15 +146,15 @@ public:
                       << " " << key.value()[2] << "'" << std::endl
                       << "\tuser_data->'" << userAuth << "'"  << std::endl;
                       //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
-            
+
             std::cout.flags(defaultFormat);
 
             if (!isAuth) {
                 std::cout << "Bad authorization, ignoring subscription"
                           << std::endl;
-                
+
                 // Get the associated participant...
-                const DomainParticipant& participant = 
+                const DomainParticipant& participant =
                     reader.subscriber().participant();
 
                 // Ignore the remote reader
@@ -174,7 +174,7 @@ void publisherMain(int domainId, int sampleCount)
     // set up the listeners. This is done by default in the
     // USER_QOS_PROFILES.xml file. If you want to do it programmatically,
     // just uncomment the following code.
-    
+
     // DomainParticipantFactoryQos factoryQos;
     // factoryQos << EntityFactory::ManuallyEnable();
     // DomainParticipant::participant_factory_qos(factoryQos);
@@ -207,7 +207,7 @@ void publisherMain(int domainId, int sampleCount)
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL on destruction.
-    BuiltinParticipantListener *builtin_participant_listener = 
+    BuiltinParticipantListener *builtin_participant_listener =
         new BuiltinParticipantListener;
 
     rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData>> scoped_listener (
@@ -231,21 +231,21 @@ void publisherMain(int domainId, int sampleCount)
         *builtin_subscriber_listener,
         dds::core::status::StatusMask::data_available());
 
-    // Done!  All the listeners are installed, so we can enable the 
+    // Done!  All the listeners are installed, so we can enable the
     // participant now.
     participant.enable();
 
     // End changes for Builtin_Topics
-    
+
     // To customize publisher QoS, use participant.default_publisher_qos()
     Publisher publisher (participant);
 
     // To customize topic QoS, use participant.default_topic_qos()
     Topic<msg> topic (participant, "Example msg");
-    
+
     // To customize topic QoS, use publisher.default_writer_qos()
     DataWriter<msg> writer (publisher, topic);
-    
+
     // Create data sample for writing
     msg instance;
 
@@ -285,7 +285,7 @@ void main(int argc, char* argv[])
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
-    
+
     try {
         publisherMain(domainId, sampleCount);
     } catch (std::exception ex) {
