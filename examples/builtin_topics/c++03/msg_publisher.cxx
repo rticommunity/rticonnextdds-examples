@@ -183,7 +183,7 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to add the following lines to
     // your code and comment out the participant call above.
-    DomainParticipantQos participant_qos;
+    DomainParticipantQos participant_qos = QosProvider::Default().participant_qos();
     DiscoveryConfig discoveryConfig;
 
     participant_qos << Discovery().multicast_receive_addresses(StringSeq(0))
@@ -193,7 +193,7 @@ void publisher_main(int domain_id, int sample_count)
     // To create participant with default QoS use the one-argument constructor
     DomainParticipant participant (domain_id, participant_qos);
 
-    // Start changes for Builtin_Topics
+    // ## Start changes for Builtin_Topics ##
     // Installing listeners for the builtin topics requires several steps
 
     // First get the builtin subscriber
@@ -228,11 +228,11 @@ void publisher_main(int domain_id, int sample_count)
             new BuiltinSubscriberListener,
             dds::core::status::StatusMask::data_available());
 
-    // Done!  All the listeners are installed, so we can enable the
+    // Done! All the listeners are installed, so we can enable the
     // participant now.
     participant.enable();
 
-    // End changes for Builtin_Topics
+    // ## End changes for Builtin_Topics ##
 
     // To customize publisher QoS, use participant.default_publisher_qos()
     Publisher publisher (participant);
