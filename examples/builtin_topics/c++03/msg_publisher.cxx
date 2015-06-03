@@ -15,11 +15,9 @@
 #include <iostream>
 #include <iomanip>
 
-#include <dds/domain/ddsdomain.hpp>
-#include <dds/pub/ddspub.hpp>
-#include <dds/sub/ddssub.hpp>
-#include <rti/core/ListenerBinder.hpp>
 #include "msg.hpp"
+#include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -37,9 +35,12 @@ const std::string Auth = "password";
 // with an authorized participant do not need to suplly their own password.
 std::list<BuiltinTopicKey> AuthList;
 
-bool isAuthParticipant(const BuiltinTopicKey& participantKey)
+bool is_auth_participant(const BuiltinTopicKey& participantKey)
 {
-    auto item = std::find(AuthList.begin(), AuthList.end(), participantKey);
+    std::list<BuiltinTopicKey>::iterator item = std::find(AuthList.begin(),
+                                                            AuthList.end(),
+                                                            participantKey);
+
     return item != AuthList.end();
 }
 
@@ -57,26 +58,26 @@ public:
             .state(dds::sub::status::DataState::new_instance())
             .take();
 
-        for (auto sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
+        for (LoanedSamples<ParticipantBuiltinTopicData>::iterator sampleIt = samples.begin();
+                sampleIt != samples.end();
+                ++sampleIt) {
 
             if (!sampleIt->info().valid()) {
                 continue;
             }
 
-            const ByteSeq& userData = sampleIt->data().user_data().value();
-            std::string userAuth (userData.begin(), userData.end());
+            const ByteSeq& user_data = sampleIt->data().user_data().value();
+            std::string userAuth (user_data.begin(), user_data.end());
             const BuiltinTopicKey& key = sampleIt->data().key();
-            bool isAuth = false;
+            bool is_auth = false;
 
             // Check if the password match.
             if (Auth.compare(userAuth) == 0) {
                 AuthList.push_back(key);
-                isAuth = true;
+                is_auth = true;
             }
 
-            std::ios::fmtflags defaultFormat(std::cout.flags());
+            std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
             std::cout << "Built-in Reader: found participant" << std::endl
@@ -85,9 +86,9 @@ public:
                       << "\tuser_data->'" << userAuth << "'"  << std::endl;
                       //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
 
-            std::cout.flags(defaultFormat);
+            std::cout.flags(default_format);
 
-            if (!isAuth) {
+            if (!is_auth) {
                 std::cout << "Bad authorization, ignoring participant"
                           << std::endl;
 
@@ -115,7 +116,7 @@ public:
             .state(dds::sub::status::DataState::new_instance())
             .take();
 
-        for (auto sampleIt = samples.begin();
+        for (LoanedSamples<SubscriptionBuiltinTopicData>::iterator sampleIt = samples.begin();
             sampleIt != samples.end();
             ++sampleIt) {
 
@@ -124,16 +125,16 @@ public:
             }
 
             // See if this associated with an authorized participant
-            bool isAuth = isAuthParticipant(sampleIt->data().participant_key());
+            bool is_auth = is_auth_participant(sampleIt->data().participant_key());
 
             // See if there is any user_data
-            const ByteSeq& userData = sampleIt->data().user_data().value();
-            std::string userAuth (userData.begin(), userData.end());
+            const ByteSeq& user_data = sampleIt->data().user_data().value();
+            std::string userAuth (user_data.begin(), user_data.end());
             if (Auth.compare(userAuth) == 0) {
-                isAuth = true;
+                is_auth = true;
             }
 
-            std::ios::fmtflags defaultFormat(std::cout.flags());
+            std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
             const BuiltinTopicKey& partKey = sampleIt->data().participant_key();
@@ -147,9 +148,9 @@ public:
                       << "\tuser_data->'" << userAuth << "'"  << std::endl;
                       //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
 
-            std::cout.flags(defaultFormat);
+            std::cout.flags(default_format);
 
-            if (!isAuth) {
+            if (!is_auth) {
                 std::cout << "Bad authorization, ignoring subscription"
                           << std::endl;
 
@@ -166,7 +167,7 @@ public:
     }
 };
 
-void publisherMain(int domainId, int sampleCount)
+void publisher_main(int domain_id, int sample_count)
 {
     // By default, the participant is enabled upon construction.
     // At that time our listeners for the builtin topics have not
@@ -182,15 +183,15 @@ void publisherMain(int domainId, int sampleCount)
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to add the following lines to
     // your code and comment out the participant call above.
-    DomainParticipantQos participantQos;
+    DomainParticipantQos participant_qos;
     DiscoveryConfig discoveryConfig;
 
-    participantQos << Discovery().multicast_receive_addresses(StringSeq(0))
+    participant_qos << Discovery().multicast_receive_addresses(StringSeq(0))
         << discoveryConfig.participant_liveliness_assert_period(Duration(10))
         << discoveryConfig.participant_liveliness_lease_duration(Duration(12));
 
     // To create participant with default QoS use the one-argument constructor
-    DomainParticipant participant (domainId, participantQos);
+    DomainParticipant participant (domain_id, participant_qos);
 
     // Start changes for Builtin_Topics
     // Installing listeners for the builtin topics requires several steps
@@ -199,37 +200,33 @@ void publisherMain(int domainId, int sampleCount)
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
     // Then get builtin subscriber's datareader for participants.
-    std::vector<DataReader<ParticipantBuiltinTopicData>> participant_reader;
-    find<DataReader<ParticipantBuiltinTopicData>>(
+    std::vector< DataReader<ParticipantBuiltinTopicData> > participant_reader;
+    find< DataReader<ParticipantBuiltinTopicData> >(
         builtin_subscriber,
-        dds::topic::PARTICIPANT_TOPIC_NAME,
+        dds::topic::participant_topic_name(),
         std::back_inserter(participant_reader));
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL on destruction.
-    BuiltinParticipantListener *builtin_participant_listener =
-        new BuiltinParticipantListener;
-
-    rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData>> scoped_listener (
-        participant_reader[0],
-        *builtin_participant_listener,
-        dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder< DataReader<ParticipantBuiltinTopicData> > scoped_listener =
+        rti::core::bind_and_manage_listener(
+            participant_reader[0],
+            new BuiltinParticipantListener,
+            dds::core::status::StatusMask::data_available());
 
     // Get builtin subscriber's datareader for subscribers
-    std::vector<DataReader<SubscriptionBuiltinTopicData>> subscription_reader;
-    find<DataReader<SubscriptionBuiltinTopicData>>(
+    std::vector< DataReader<SubscriptionBuiltinTopicData> > subscription_reader;
+    find< DataReader<SubscriptionBuiltinTopicData> >(
         builtin_subscriber,
-        dds::topic::SUBSCRIPTION_TOPIC_NAME,
+        dds::topic::subscription_topic_name(),
         std::back_inserter(subscription_reader));
 
     // Install our listener using ListenerBinder
-    BuiltinSubscriberListener *builtin_subscriber_listener =
-        new BuiltinSubscriberListener();
-
-    rti::core::ListenerBinder<DataReader<SubscriptionBuiltinTopicData>> scoped_sub_listener (
-        subscription_reader[0],
-        *builtin_subscriber_listener,
-        dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder< DataReader<SubscriptionBuiltinTopicData> > scoped_sub_listener =
+        rti::core::bind_and_manage_listener(
+            subscription_reader[0],
+            new BuiltinSubscriberListener,
+            dds::core::status::StatusMask::data_available());
 
     // Done!  All the listeners are installed, so we can enable the
     // participant now.
@@ -257,7 +254,7 @@ void publisherMain(int domainId, int sampleCount)
     // instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (short count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+    for (short count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         rti::util::sleep(Duration(1));
         std::cout << "Writing msg, count " << count << std::endl;
 
@@ -270,16 +267,16 @@ void publisherMain(int domainId, int sampleCount)
     // writer.unregister_instance(instance);
 }
 
-void main(int argc, char* argv[])
+int main(int argc, char* argv[])
 {
-    int domainId = 0;
-    int sampleCount = 0; /* infinite loop */
+    int domain_id = 0;
+    int sample_count = 0; /* infinite loop */
 
     if (argc >= 2) {
-        domainId = atoi(argv[1]);
+        domain_id = atoi(argv[1]);
     }
     if (argc >= 3) {
-        sampleCount = atoi(argv[2]);
+        sample_count = atoi(argv[2]);
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
@@ -287,8 +284,11 @@ void main(int argc, char* argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisherMain(domainId, sampleCount);
+        publisher_main(domain_id, sample_count);
     } catch (std::exception ex) {
         std::cout << "Exception caught: " << ex.what() << std::endl;
+        return -1;
     }
+
+    return 0;
 }
