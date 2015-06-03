@@ -14,9 +14,11 @@
 
 #include "msg.hpp"
 #include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
+using namespace rti::core;
 using namespace rti::core::policy;
 using namespace dds::domain;
 using namespace dds::domain::qos;
@@ -31,8 +33,8 @@ public:
     {
         LoanedSamples<msg> samples = reader.take();
         for (LoanedSamples<msg>::iterator sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
+                sampleIt != samples.end();
+                ++sampleIt) {
 
             if (sampleIt->info().valid()) {
                 std::cout << sampleIt->data() << std::endl;
@@ -45,13 +47,13 @@ void subscriber_main(int domain_id, int sample_count,
     std::string participant_auth, std::string reader_auth)
 {
     // Set user_data qos field for participant
-    DomainParticipantQos participant_qos;
+    DomainParticipantQos participant_qos = QosProvider::Default().participant_qos();
     participant_qos << Discovery().multicast_receive_addresses(StringSeq(0));
 
-    unsigned int max_user_data =
+    unsigned int max_participant_user_data =
         participant_qos.policy<DomainParticipantResourceLimits>()
         .participant_user_data_max_length();
-    if (participant_auth.size() > max_user_data) {
+    if (participant_auth.size() > max_participant_user_data) {
         std::cout << "error, participant user_data exceeds resource limits"
                   << std::endl;
     } else {
@@ -62,22 +64,19 @@ void subscriber_main(int domain_id, int sample_count,
     // To create participant with default QoS use the one-argument constructor
     DomainParticipant participant (domain_id, participant_qos);
 
-    // Participant is disabled by default. We enable it now
+    // Participant is disabled by default in USER_QOS_PROFILES. We enable it now
     participant.enable();
-
-    // To customize publisher QoS, use participant.default_subscriber_qos()
-    Subscriber subscriber (participant);
 
     // To customize topic QoS, use participant.default_topic_qos()
     Topic<msg> topic (participant, "Example msg");
 
-    // Create data reader listener
-    MsgListener* reader_listener = new MsgListener();
-
     // Set user_data for field for datareader
-    DataReaderQos reader_qos;
+    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
-    if (reader_auth.size() > max_user_data) {
+    unsigned int max_reader_user_data =
+        participant_qos.policy<DomainParticipantResourceLimits>()
+        .reader_user_data_max_length();
+    if (reader_auth.size() > max_reader_user_data) {
         std::cout << "error, datareader user_data exceeds resource limits"
                   << std::endl;
     } else {
@@ -85,15 +84,20 @@ void subscriber_main(int domain_id, int sample_count,
     }
 
     // To create datareader with default QoS use the one-argument constructor
-    DataReader<msg> reader (subscriber, topic, reader_qos, reader_listener);
+    DataReader<msg> reader (Subscriber(participant), topic, reader_qos);
+
+    // Create a data reader listener using ListenerBinder, a RAII that
+    // will take care of setting it to NULL on destruction.
+    ListenerBinder< DataReader<msg> > scoped_listener = bind_and_manage_listener(
+        reader,
+        new MsgListener,
+        dds::core::status::StatusMask::data_available());
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         // Each "sample_count" is one second.
         rti::util::sleep(Duration(1));
     }
-
-    delete reader_listener;
 }
 
 int main(int argc, char* argv[])
