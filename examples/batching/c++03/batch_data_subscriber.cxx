@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -23,15 +23,18 @@ using namespace dds::sub;
 using namespace dds::sub::qos;
 using namespace dds::core::policy;
 
-class batch_dataReaderListener : public dds::sub::NoOpDataReaderListener<batch_data> {
+class BatchDataReaderListener : public dds::sub::NoOpDataReaderListener<batch_data> {
   public:
     void on_data_available(DataReader<batch_data>& reader)
     {
         // Take all samples
         LoanedSamples<batch_data> samples = reader.take();
-        for (auto sample_it = samples.begin(); sample_it != samples.end(); sample_it++) {    
+        for (LoanedSamples<batch_data>::iterator sample_it = samples.begin();
+                sample_it != samples.end();
+                sample_it++) {
+
             if (sample_it->info().valid()) {
-                 std::cout << sample_it->data() << std::endl; 
+                 std::cout << sample_it->data() << std::endl;
             }
         }
     }
@@ -53,40 +56,38 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
     // To customize entities QoS use the configuration file USER_QOS_PROFILES.xml
     DomainParticipant participant (
         domain_id,
-        QosProvider::Default()->participant_qos(profile_name));
+        QosProvider::Default().participant_qos(profile_name));
 
     Topic<batch_data> topic (participant, "Example batch_data");
 
     Subscriber subscriber (
         participant,
-        QosProvider::Default()->subscriber_qos(profile_name));
+        QosProvider::Default().subscriber_qos(profile_name));
 
     DataReader<batch_data> reader(
         subscriber,
         topic,
-        QosProvider::Default()->datareader_qos(profile_name));
+        QosProvider::Default().datareader_qos(profile_name));
 
     // Set the listener using a RAII so it's exception-safe
-    batch_dataReaderListener* listener = new batch_dataReaderListener();
-    rti::core::ListenerBinder<DataReader<batch_data>> scoped_listener (
-        reader,
-        *listener,
-        dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder< DataReader<batch_data> > scoped_listener =
+        rti::core::bind_and_manage_listener(
+            reader,
+            new BatchDataReaderListener,
+            dds::core::status::StatusMask::data_available());
 
     // Main loop
     for (int count = 0; count < sample_count || sample_count == 0; ++count) {
         std::cout << "batch_data subscriber sleeping for 4 sec...\n";
         rti::util::sleep(dds::core::Duration(4));
     }
-
-    delete listener;
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; // infinite loop
-    bool turbo_mode_on = 0;
+    bool turbo_mode_on = false;
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -120,4 +121,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

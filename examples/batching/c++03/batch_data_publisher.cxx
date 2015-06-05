@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -42,18 +42,18 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
     // To customize entities QoS use the configuration file USER_QOS_PROFILES.xml
     DomainParticipant participant (
         domain_id,
-        QosProvider::Default()->participant_qos(profile_name));
+        QosProvider::Default().participant_qos(profile_name));
 
     Topic<batch_data> topic (participant, "Example batch_data");
 
     Publisher publisher (
         participant,
-        QosProvider::Default()->publisher_qos(profile_name));
+        QosProvider::Default().publisher_qos(profile_name));
 
     DataWriter<batch_data> writer (
         publisher,
         topic,
-        QosProvider::Default()->datawriter_qos(profile_name));
+        QosProvider::Default().datawriter_qos(profile_name));
 
     // Create data sample for writing.
     batch_data sample;
@@ -115,4 +115,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
