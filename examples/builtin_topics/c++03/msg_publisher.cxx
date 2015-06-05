@@ -84,7 +84,7 @@ public:
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'"         << std::endl
                       << "\tuser_data->'" << user_auth << "'" << std::endl
-                      << "instance_handle: " << sampleIt->info().instance_handle()
+                      << "\tinstance_handle: " << sampleIt->info().instance_handle()
                       << std::endl;
 
             std::cout.flags(default_format);
@@ -147,7 +147,7 @@ public:
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
                       << "\tuser_data->'" << user_auth << "'"  << std::endl
-                      << "instance_handle: " << sampleIt->info().instance_handle()
+                      << "\tinstance_handle: " << sampleIt->info().instance_handle()
                       << std::endl;
 
             std::cout.flags(default_format);
