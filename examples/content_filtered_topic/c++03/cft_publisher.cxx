@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -19,12 +19,12 @@ using namespace dds::pub;
 using namespace dds::pub::qos;
 using namespace dds::topic;
 
-void publisherMain(int domainId, int sampleCount)
+void publisher_main(int domain_id, int sample_count)
 {
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant (domainId);
+    DomainParticipant participant (domain_id);
 
     Topic<cft> topic (participant, "Example cft");
 
@@ -49,12 +49,12 @@ void publisherMain(int domainId, int sampleCount)
     // For a data type that has a key, if the same instance is going to be
     // written multiple times, initialize the key here
     // and register the keyed instance prior to writing.
-    
+
     InstanceHandle instance_handle = InstanceHandle::nil();
     //instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sampleCount == 0) || (count < sampleCount); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
@@ -67,7 +67,7 @@ void publisherMain(int domainId, int sampleCount)
         std::cout << "Writing cft, count " << instance.count() << "\t"
                   << "x=" << instance.x()  << std::endl;
 
-        writer->write(instance, instance_handle);
+        writer.write(instance, instance_handle);
 
         // Send a new sample every second
         rti::util::sleep(Duration(1));
@@ -76,22 +76,30 @@ void publisherMain(int domainId, int sampleCount)
     //writer.unregister_instance(instance_handle);
 }
 
-void main(int argc, char *argv[])
+int main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sampleCount = 0; /* infinite loop */
+    int domain_id = 0;
+    int sample_count = 0; /* infinite loop */
 
     if (argc >= 2) {
-        domainId = atoi(argv[1]);
+        domain_id = atoi(argv[1]);
     }
 
     if (argc >= 3) {
-        sampleCount = atoi(argv[2]);
+        sample_count = atoi(argv[2]);
     }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-    publisherMain(domainId, sampleCount);
+    try {
+        publisher_main(domain_id, sample_count);
+    } catch (const std::exception& ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        return -1;
+    }
+
+    return 0;
 }
