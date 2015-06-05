@@ -33,15 +33,15 @@ const std::string Auth = "password";
 
 // Set up a list of authorized participant keys. Datareaders associated
 // with an authorized participant do not need to suplly their own password.
-std::list<BuiltinTopicKey> AuthList;
+std::list<BuiltinTopicKey> Auth_list;
 
 bool is_auth_participant(const BuiltinTopicKey& participantKey)
 {
-    std::list<BuiltinTopicKey>::iterator item = std::find(AuthList.begin(),
-                                                            AuthList.end(),
+    std::list<BuiltinTopicKey>::iterator item = std::find(Auth_list.begin(),
+                                                            Auth_list.end(),
                                                             participantKey);
 
-    return item != AuthList.end();
+    return item != Auth_list.end();
 }
 
 // The builtin subscriber sets participant_qos.user_data and
@@ -67,13 +67,13 @@ public:
             }
 
             const ByteSeq& user_data = sampleIt->data().user_data().value();
-            std::string userAuth (user_data.begin(), user_data.end());
+            std::string user_auth (user_data.begin(), user_data.end());
             const BuiltinTopicKey& key = sampleIt->data().key();
             bool is_auth = false;
 
             // Check if the password match.
-            if (Auth.compare(userAuth) == 0) {
-                AuthList.push_back(key);
+            if (Auth.compare(user_auth) == 0) {
+                Auth_list.push_back(key);
                 is_auth = true;
             }
 
@@ -83,8 +83,9 @@ public:
             std::cout << "Built-in Reader: found participant" << std::endl
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'"         << std::endl
-                      << "\tuser_data->'" << userAuth << "'"  << std::endl;
-                      //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
+                      << "\tuser_data->'" << user_auth << "'" << std::endl
+                      << "instance_handle: " << sampleIt->info().instance_handle()
+                      << std::endl;
 
             std::cout.flags(default_format);
 
@@ -129,8 +130,8 @@ public:
 
             // See if there is any user_data
             const ByteSeq& user_data = sampleIt->data().user_data().value();
-            std::string userAuth (user_data.begin(), user_data.end());
-            if (Auth.compare(userAuth) == 0) {
+            std::string user_auth (user_data.begin(), user_data.end());
+            if (Auth.compare(user_auth) == 0) {
                 is_auth = true;
             }
 
@@ -145,8 +146,9 @@ public:
                       << partKey.value()[2] << "'" << std::endl
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
-                      << "\tuser_data->'" << userAuth << "'"  << std::endl;
-                      //<< "instance_handle: " << sampleIt->info().instance_handle() << std::endl;
+                      << "\tuser_data->'" << user_auth << "'"  << std::endl
+                      << "instance_handle: " << sampleIt->info().instance_handle()
+                      << std::endl;
 
             std::cout.flags(default_format);
 
