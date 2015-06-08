@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -170,7 +170,70 @@ public:
 };
 
 class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
+    virtual void on_requested_deadline_missed(
+        DataReader<listeners>& reader,
+        const dds::core::status::RequestedDeadlineMissedStatus& status)
+    {
+        std::cout << "ReaderListener: on_requested_deadline_missed()"
+                  << std::endl;
+    }
 
+    virtual void on_requested_incompatible_qos(
+        DataReader<listeners>& reader,
+        const dds::core::status::RequestedIncompatibleQosStatus& status)
+    {
+        std::cout << "ReaderListener: on_requested_incompatible_qos()"
+                  << std::endl;
+    }
+
+    virtual void on_sample_rejected(
+        DataReader<listeners>& reader,
+        const dds::core::status::SampleRejectedStatus& status)
+    {
+        std::cout << "ReaderListener: on_sample_rejected()"
+                  << std::endl;
+    }
+
+    virtual void on_liveliness_changed(
+        DataReader<listeners>& reader,
+        const dds::core::status::LivelinessChangedStatus& status)
+    {
+        std::cout << "ReaderListener: on_liveliness_changed()"   << std::endl
+                  << "  Alive writers: " << status.alive_count() << std::endl;
+    }
+
+    virtual void on_sample_lost(
+        DataReader<listeners>& reader,
+        const dds::core::status::SampleLostStatus& status)
+    {
+        std::cout << "ReaderListener: on_sample_lost()"
+                  << std::endl;
+    }
+
+    virtual void on_subscription_matched(
+        DataReader<listeners>& reader,
+        const dds::core::status::SubscriptionMatchedStatus& status)
+    {
+        std::cout << "ReaderListener: on_subscription_matched()"
+                  << std::endl;
+    }
+
+    virtual void on_data_available(DataReader<listeners>& reader)
+    {
+        LoanedSamples<listeners> samples = reader.take();
+        for (LoanedSamples<listeners>::iterator sampleIt = samples.begin();
+                sampleIt != samples.end();
+                ++sampleIt) {
+
+            // If the reference we get is valid data, it means we have actual
+            // data available, otherwise we got metadata.
+            if (sampleIt->info().valid()) {
+                std::cout << sampleIt->data() << std::endl;
+            } else {
+                std::cout << "  Got metadata" << std::endl;
+            }
+        }
+    }
 };
 
 void subscriber_main(int domain_id, int sample_count)
