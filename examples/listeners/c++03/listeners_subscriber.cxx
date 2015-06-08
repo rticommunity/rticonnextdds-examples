@@ -22,7 +22,79 @@ using namespace dds::sub;
 using namespace dds::topic;
 
 class MyParticipantListener : public NoOpDomainParticipantListener {
+public:
+    virtual void on_requested_deadline_missed(
+        dds::pub::AnyDataWriter& writer,
+        const dds::core::status::OfferedDeadlineMissedStatus& status)
+    {
+        std::cout << "ParticipantListener: on_requested_deadline_missed()"
+                  << std::endl;
+    }
 
+    virtual void on_offered_incompatible_qos(
+        dds::pub::AnyDataWriter& writer,
+        const ::dds::core::status::OfferedIncompatibleQosStatus& status)
+    {
+        std::cout << "ParticipantListener: on_offered_incompatible_qos()"
+                  << std::endl;
+    }
+
+    virtual void on_sample_rejected(
+        dds::sub::AnyDataReader& the_reader,
+        const dds::core::status::SampleRejectedStatus& status)
+    {
+        std::cout << "ParticipantListener: on_sample_rejected()"
+                  << std::endl;
+    }
+
+    virtual void on_liveliness_changed(
+        dds::sub::AnyDataReader& the_reader,
+        const dds::core::status::LivelinessChangedStatus& status)
+    {
+        std::cout << "ParticipantListener: on_liveliness_changed()"
+                  << std::endl;
+    }
+
+
+    virtual void on_sample_lost(
+        dds::sub::AnyDataReader& the_reader,
+        const dds::core::status::SampleLostStatus& status)
+    {
+        std::cout << "ParticipantListener: on_sample_lost()"
+                  << std::endl;
+    }
+
+    virtual void on_subscription_matched(
+        dds::sub::AnyDataReader& the_reader,
+        const dds::core::status::SubscriptionMatchedStatus& status)
+    {
+        std::cout << "ParticipantListener: on_subscription_matched()"
+                  << std::endl;
+    }
+
+    virtual void on_data_available(dds::sub::AnyDataReader& the_reader)
+    {
+        std::cout << "ParticipantListener: on_data_available()"
+                  << std::endl;
+    }
+
+
+    virtual void on_data_on_readers(dds::sub::Subscriber& sub)
+    {
+        // Notify DataReaders only calls on_data_available for
+        // DataReaders with unread samples.
+        sub->notify_datareaders();
+        std::cout << "ParticipantListener: on_data_on_readers()"
+                  << std::endl;
+    }
+
+    virtual void on_inconsistent_topic(
+        dds::topic::AnyTopic& topic,
+        const dds::core::status::InconsistentTopicStatus& status)
+    {
+        std::cout << "ParticipantListener: on_inconsistent_topic()"
+                  << std::endl;
+    }
 };
 
 class MySubscriberListener : public NoOpSubscriberListener {
