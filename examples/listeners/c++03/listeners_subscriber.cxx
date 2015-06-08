@@ -17,6 +17,7 @@
 
 using namespace dds::core;
 using namespace rti::core;
+using namespace dds::core::status;
 using namespace dds::domain;
 using namespace dds::sub;
 using namespace dds::topic;
@@ -83,7 +84,7 @@ public:
     {
         // Notify DataReaders only calls on_data_available for
         // DataReaders with unread samples.
-        sub->notify_datareaders();
+        sub.notify_datareaders();
         std::cout << "ParticipantListener: on_data_on_readers()"
                   << std::endl;
     }
@@ -98,7 +99,74 @@ public:
 };
 
 class MySubscriberListener : public NoOpSubscriberListener {
+public:
+    virtual void on_requested_deadline_missed(
+        AnyDataReader& the_reader,
+        const dds::core::status::RequestedDeadlineMissedStatus& status)
+    {
+        std::cout << "SubscriberListener: on_requested_deadline_missed()"
+                  << std::endl;
+    }
 
+    virtual void on_requested_incompatible_qos(
+        AnyDataReader& the_reader,
+        const dds::core::status::RequestedIncompatibleQosStatus& status)
+    {
+        std::cout << "SubscriberListener: on_requested_incompatible_qos()"
+                  << std::endl;
+    }
+
+    virtual void on_sample_rejected(
+        AnyDataReader& the_reader,
+        const dds::core::status::SampleRejectedStatus& status)
+    {
+        std::cout << "SubscriberListener: on_sample_rejected()"
+                  << std::endl;
+    }
+
+    virtual void on_liveliness_changed(
+        AnyDataReader& the_reader,
+        const dds::core::status::LivelinessChangedStatus& status)
+    {
+        std::cout << "SubscriberListener: on_liveliness_changed()"
+                  << std::endl;
+    }
+
+    virtual void on_sample_lost(
+        AnyDataReader& the_reader,
+        const dds::core::status::SampleLostStatus& status)
+    {
+        std::cout << "SubscriberListener: on_sample_lost()"
+                  << std::endl;
+    }
+
+    virtual void on_subscription_matched(
+        AnyDataReader& the_reader,
+        const dds::core::status::SubscriptionMatchedStatus& status)
+    {
+        std::cout << "SubscriberListener: on_subscription_matched()"
+                  << std::endl;
+    }
+
+    virtual void on_data_available(AnyDataReader& the_reader)
+    {
+        std::cout << "SubscriberListener: on_data_available()"
+                  << std::endl;
+    }
+
+    virtual void on_data_on_readers(Subscriber& sub)
+    {
+        static int count = 0;
+        std::cout << "SubscriberListener: on_data_on_readers()"
+                  << std::endl;
+
+        sub->notify_datareaders();
+        if (++count > 3) {
+            StatusMask new_mask = StatusMask::all();
+            new_mask &= ~StatusMask::data_on_readers();
+            sub.listener(this, new_mask);
+        }
+    }
 };
 
 class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
