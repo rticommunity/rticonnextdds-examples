@@ -139,7 +139,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
-        std::cout << "Writing listeners, count" << count << std::endl;
+        std::cout << "Writing listeners, count " << count << std::endl;
 
         // Modify the data to be sent here
         instance.x(count);
