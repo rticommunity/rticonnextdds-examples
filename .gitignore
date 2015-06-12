@@ -28,3 +28,8 @@ build.xml
 makefile*
 *.sln
 *.vcxproj
+
+# IDE tools files
+.clang_complete
+.linter-clang-flags
+.linter-clang-includes

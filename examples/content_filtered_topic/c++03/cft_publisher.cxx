@@ -8,16 +8,16 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-#include <string>
-#include <dds/pub/ddspub.hpp>
+
 #include "cft.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
 using namespace dds::domain;
+using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
-using namespace dds::topic;
 
 void publisher_main(int domain_id, int sample_count)
 {
@@ -28,20 +28,16 @@ void publisher_main(int domain_id, int sample_count)
 
     Topic<cft> topic (participant, "Example cft");
 
-    DataWriter<cft> writer (Publisher(participant), topic);
+    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
 
     // If you want to set the reliability and history QoS settings
-    // programmatically rather than using the XML, you will need to add
-    // the following lines to your code and comment out the datawriter
-    // constructor call above.
+    // programmatically rather than using the XML, you will need to comment out
+    // the following lines of code.
+    // writer_qos << Reliability::Reliable()
+    //            << Durability::TransientLocal()
+    //            << History::KeepLast(20);
 
-    /*
-    DataWriterQos datawriter_qos;
-    datawriter_qos << Reliability::Reliable();
-    datawriter_qos << Durability::TransientLocal();
-    datawriter_qos << History::KeepLast(20);
-    DataWriter<cft> writer (Publisher(participant), topic, datawriter_qos);
-    */
+    DataWriter<cft> writer (Publisher(participant), topic, writer_qos);
 
     // Create data sample for writing
     cft instance;
@@ -51,7 +47,7 @@ void publisher_main(int domain_id, int sample_count)
     // and register the keyed instance prior to writing.
 
     InstanceHandle instance_handle = InstanceHandle::nil();
-    //instance_handle = writer.register_instance(instance);
+    // instance_handle = writer.register_instance(instance);
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -73,7 +69,7 @@ void publisher_main(int domain_id, int sample_count)
         rti::util::sleep(Duration(1));
     }
 
-    //writer.unregister_instance(instance_handle);
+    // writer.unregister_instance(instance_handle);
 }
 
 int main(int argc, char *argv[])
