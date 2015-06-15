@@ -8,23 +8,23 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-#include <iostream>
 
-#include <dds/sub/ddssub.hpp>
-#include <dds/core/ddscore.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include <string>
 
 #include "batch_data.hpp"
+#include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
+using namespace dds::core::policy;
+using namespace dds::core::status;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
-using namespace dds::core::policy;
 
-class BatchDataReaderListener : public dds::sub::NoOpDataReaderListener<batch_data> {
-  public:
+class BatchDataReaderListener : public NoOpDataReaderListener<batch_data> {
+public:
     void on_data_available(DataReader<batch_data>& reader)
     {
         // Take all samples
@@ -53,7 +53,7 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
         profile_name.append("batch_profile");
     }
 
-    // To customize entities QoS use the configuration file USER_QOS_PROFILES.xml
+    // To customize entities QoS use the file USER_QOS_PROFILES.xml
     DomainParticipant participant (
         domain_id,
         QosProvider::Default().participant_qos(profile_name));
@@ -74,19 +74,19 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
         rti::core::bind_and_manage_listener(
             reader,
             new BatchDataReaderListener,
-            dds::core::status::StatusMask::data_available());
+            StatusMask::data_available());
 
     // Main loop
     for (int count = 0; count < sample_count || sample_count == 0; ++count) {
         std::cout << "batch_data subscriber sleeping for 4 sec...\n";
-        rti::util::sleep(dds::core::Duration(4));
+        rti::util::sleep(Duration(4));
     }
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0; // Infinite loop
     bool turbo_mode_on = false;
 
     if (argc >= 2) {
@@ -115,8 +115,6 @@ int main(int argc, char *argv[])
 
     // RTI Connext provides a finalize_participant_factory() method
     // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
     // dds::domain::DomainParticipant::finalize_participant_factory();
 
     return 0;

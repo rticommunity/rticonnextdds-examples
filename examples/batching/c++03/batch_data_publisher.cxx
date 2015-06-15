@@ -8,11 +8,11 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-#include <iostream>
+
 #include <string>
 
-#include <dds/dds.hpp>
 #include "batch_data.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -39,7 +39,7 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
         profile_name.append("batch_profile");
     }
 
-    // To customize entities QoS use the configuration file USER_QOS_PROFILES.xml
+    // To customize entities QoS use the file USER_QOS_PROFILES.xml
     DomainParticipant participant (
         domain_id,
         QosProvider::Default().participant_qos(profile_name));
@@ -110,7 +110,6 @@ int main(int argc, char *argv[])
     // RTI Connext provides a finalize_participant_factory() method
     // if you want to release memory used by the participant factory singleton.
     // Uncomment the following line to release the singleton:
-    //
     // dds::domain::DomainParticipant::finalize_participant_factory();
 
     return 0;
