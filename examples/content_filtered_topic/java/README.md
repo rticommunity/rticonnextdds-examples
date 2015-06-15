@@ -1,6 +1,6 @@
 # Example Code: Content Filtered Topic
 
-## Building C++03 Example
+## Building Java Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -12,15 +12,15 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C++03 -example i86Win32VS2010 cft.idl
+rtiddsgen -language Java -example i86Win32VS2010 cft.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\content_filtered_topic\c++03\cft_subscriber.cxx already exists and
+File C:\local\content_filtered_topic\java\cftSubscriber.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\content_filtered_topic\c++03\cft_publisher.cxx already exists and
+File C:\local\content_filtered_topic\java\cftPublisher.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
 ```
@@ -29,21 +29,34 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-## Running C++03 Example
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+Before compiling in Java, make sure that the desired version of the *javac*
+compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\cft_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\cft_subscriber.exe <domain_id> <sleep_periods> <select_cft>
+javac -classpath ".;%NDDSHOME%\lib\java\nddsjava.jar" cft.java cftSeq.java cftTypeSupport.java cftTypeCode.java cftDataReader.java cftDataWriter.java cftSubscriber.java cftPublisher.java
 ```
 
 On *UNIX* systems run:
 ```
-./objs/<arch_name>/cft_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/cft_subscriber <domain_id> <sleep_periods> <select_cft>
+javac -classpath ".:$NDDSHOME/lib/java/nddsjava.jar" cft.java cftSeq.java cftTypeSupport.java cftTypeCode.java cftDataReader.java cftDataWriter.java cftSubscriber.java cftPublisher.java
+```
+
+## Running Java Example
+In two separate command prompt windows for the publisher and subscriber.
+Run the following commands from the example directory (this is necessary to
+ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+
+On *Windows* systems run:
+```
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" cftPublisher  <domain_id> <samples_to_send>
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" cftSubscriber <domain_id> <sleep_periods> <select_cft>
+```
+
+On *UNIX* systems run:
+```
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" cftPublisher  <domain_id> <samples_to_send>
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" cftSubscriber <domain_id> <sleep_periods> <select_cft>
 ```
 
 The applications accept up to three arguments:
