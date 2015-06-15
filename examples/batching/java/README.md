@@ -1,6 +1,6 @@
 # Example Code: Batching example
 
-## Building C++03 Example
+## Building Java Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -11,20 +11,19 @@ Libraries and Utilities Getting Started Guide* describes this process in detail.
 Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
-
 ```
-rtiddsgen -language C++03 -example i86Win32VS2010 batch_data.idl
+rtiddsgen -language Java -example i86Win32VS2010 batch_data.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\batching\c++03\batch_data_subscriber.cxx already exists and
+File C:\local\batching\java\batch_data_subscriber.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\batching\c++03\batch_data_publisher.cxx already exists and
+File C:\local\batching\java\batch_data_publisher.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\batching\c++03\USER_QOS_PROFILES.xml already exists and
+File C:\local\batching\java\USER_QOS_PROFILES.xml already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
 ```
@@ -33,21 +32,34 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-## Running C++03 Example
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+Before compiling in Java, make sure that the desired version of the *javac*
+compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\batch_data_publisher.exe  <domain_id> <turbo_mode> <samples_to_send>
-objs\<arch_name>\batch_data_subscriber.exe <domain_id> <turbo_mode> <sleep_periods>
+javac -classpath ".;%NDDSHOME%\lib\java\nddsjava.jar" *.java
 ```
 
-On *UNIX* systems run:
+On *Unix* systems (including Linux and MacOS X):
 ```
-./objs/<arch_name>/batch_data_publisher  <domain_id> <turbo_mode> <samples_to_send>
-./objs/<arch_name>/batch_data_subscriber <domain_id> <turbo_mode> <sleep_periods>
+javac -classpath ".:$NDDSHOME/lib/java/nddsjava.jar" *.java
+```
+
+## Running Java Example
+In two separate command prompt windows for the publisher and subscriber.
+Run the following commands from the example directory (this is necessary to
+ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+
+On *Windows* systems run:
+```
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" batch_dataPublisher  <domain_id> <turbo_mode> <samples_to_send>
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+```
+
+On *Unix* systems run:
+```
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" batch_dataPublisher  <domain_id> <turbo_mode> <samples_to_send>
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
 ```
 
 The applications accept up to three arguments:
