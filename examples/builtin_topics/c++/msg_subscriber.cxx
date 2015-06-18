@@ -59,6 +59,7 @@ modification history
   strings given on command line
 * Updated for 4.1 to 4.2: participant_index changed to participant_id
 * Refactor and remove unused variables and classes
+* Fix not including null char in participant user_data password.
 */
 
 #include <stdio.h>
@@ -196,7 +197,7 @@ extern "C" int subscriber_main(int domain_id, int sample_count,
     }
 
     /* user_data is opaque to DDS, so we include trailing \0 for string */
-    int len = strlen(participant_auth);
+    int len = strlen(participant_auth) + 1;
     int max = participant_qos.resource_limits.participant_user_data_max_length;
 
     if (len > max) {
@@ -290,14 +291,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
-    char *participant_auth = NULL;
-    char *reader_auth = NULL;
-    char *temp_participant_auth = NULL;
-
-    /* Changes for Builtin_Topics */
-    /* Get arguments for auth strings and pass to subscriber_main() */
-    participant_auth=strdup("password");
-
+    char *participant_auth = "password";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -308,11 +302,6 @@ int main(int argc, char *argv[])
     if (argc >= 4) {
         participant_auth = argv[3];
     }
-
-    /* Create strings ensuring they finish in '\0' */
-    temp_participant_auth = (char*) calloc(strlen(participant_auth) + 1,
-            sizeof(char));
-    strcpy(temp_participant_auth, participant_auth);
 
     /* Uncomment this to turn on additional logging
     NDDSConfigLogger::get_instance()->
