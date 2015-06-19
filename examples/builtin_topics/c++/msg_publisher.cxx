@@ -176,7 +176,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
                data_seq[i].key.value[2],
                participant_data);
 
-		int ih[6];
+        int ih[6];
         memcpy(ih, &info_seq[i].instance_handle,
                 sizeof(info_seq[i].instance_handle));
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
@@ -248,7 +248,7 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
                 ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
     }
 
-	builtin_reader->return_loan(data_seq, info_seq);
+    builtin_reader->return_loan(data_seq, info_seq);
 }
 
 /* End changes for Builtin_Topics */
@@ -319,7 +319,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-	factory_qos.entity_factory.autoenable_created_entities = DDS_BOOLEAN_FALSE;
+    factory_qos.entity_factory.autoenable_created_entities = DDS_BOOLEAN_FALSE;
 
     switch(DDSTheParticipantFactory->set_qos(factory_qos)) {
         case DDS_RETCODE_OK:
