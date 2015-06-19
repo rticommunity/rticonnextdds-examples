@@ -183,7 +183,6 @@ static int subscriber_main(int domain_id, int sample_count,
     struct DDS_Duration_t poll_period = { 1, 0 };
     struct DDS_DomainParticipantQos participant_qos =
             DDS_DomainParticipantQos_INITIALIZER;
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
     int len, max;
 
     retcode = DDS_DomainParticipantFactory_get_default_participant_qos(
@@ -192,6 +191,13 @@ static int subscriber_main(int domain_id, int sample_count,
         printf("get_default_participant_qos error\n");
         return -1;
     }
+
+    /* The maximum length for USER_DATA QoS field is set by default
+       to 256 bytes. To increase it programmatically uncomment the
+       following line of code. */
+    /*
+    participant_qos.resource_limits.participant_user_data_max_length = 1024;
+    */
 
     /* We include the subscriber credentials into de USER_DATA QoS. */
     len = strlen(participant_auth) + 1;

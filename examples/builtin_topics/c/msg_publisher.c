@@ -329,6 +329,8 @@ static int publisher_main(int domain_id, int sample_count) {
     struct DDS_DataReaderListener builtin_subscriber_listener =
             DDS_DataReaderListener_INITIALIZER;
     DDS_Subscriber *builtin_subscriber = NULL;
+    struct DDS_DomainParticipantQos participant_qos =
+            DDS_DomainParticipantQos_INITIALIZER;
 
     /* It is recommended to install built-in topic listeners on disabled
      * entities (EntityFactoryQoS). For this reason it is necessary to set
@@ -371,6 +373,21 @@ static int publisher_main(int domain_id, int sample_count) {
     }
 
     DDS_DomainParticipantFactoryQos_finalize(&factory_qos);
+    */
+
+    /* The maximum length for USER_DATA QoS field is set by default
+       to 256 bytes. To increase it programmatically uncomment the
+       following lines of code and replace DDS_PARTICIPANT_QOS_DEFAULT
+       with participant_qos in the constructor call. */
+    /*
+    retcode = DDS_DomainParticipantFactory_get_default_participant_qos(
+            DDS_TheParticipantFactory, &participant_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("get_default_participant_qos error\n");
+        return -1;
+    }
+
+    participant_qos.resource_limits.participant_user_data_max_length = 1024;
     */
 
     /* To customize participant QoS, use
