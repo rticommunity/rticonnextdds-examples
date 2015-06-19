@@ -354,12 +354,14 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     /* If you want to change the Participant's QoS programmatically rather
-     * than using the XML file, you will need to uncomment the following lines.
+     * than using the XML file, you will need to uncomment the following line.
      */
-    /* TODO: Increase participant_user_data_max_length programmatically. */
+    /*
+    participant_qos.resource_limits.participant_user_data_max_length = 1024;
+    */
 
-    /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
-       instead of participant_qos */
+    /* To customize participant QoS, use
+       the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
         domainId, participant_qos,
         NULL /* listener */, DDS_STATUS_MASK_NONE);

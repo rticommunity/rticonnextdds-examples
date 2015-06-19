@@ -196,6 +196,13 @@ extern "C" int subscriber_main(int domain_id, int sample_count,
         return -1;
     }
 
+    /* The maximum length for USER_DATA QoS field is set by default
+       to 256 bytes. To increase it programmatically uncomment the
+       following line of code. */
+    /*
+    participant_qos.resource_limits.participant_user_data_max_length = 1024;
+    */
+
     /* user_data is opaque to DDS, so we include trailing \0 for string */
     int len = strlen(participant_auth) + 1;
     int max = participant_qos.resource_limits.participant_user_data_max_length;
