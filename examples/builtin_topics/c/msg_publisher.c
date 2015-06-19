@@ -66,6 +66,8 @@ modification history
 * Install listeners
 
 * Do not ignore subscriber since it is a bad security practice.
+
+* Print key and instance_handle info.
 */
 
 #include <stdio.h>
@@ -131,6 +133,7 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
 
     int i;
     int len;
+    int ih[6];
 
     builtin_reader = DDS_ParticipantBuiltinTopicDataDataReader_narrow(reader);
 
@@ -181,6 +184,11 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
                 data->key.value[0], data->key.value[1], data->key.value[2],
                 participant_data);
 
+        memcpy(ih, &info->instance_handle,
+                sizeof(info->instance_handle));
+        printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
+                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
+
         /* Ignore unauthorized subscribers */
         if (!isauth) {
             /* Get the associated participant... */
@@ -215,6 +223,7 @@ void BuiltinSubscriberListener_on_data_available(void* listener_data,
 
     int i;
     int len;
+    int ih[6];
 
     builtin_reader = DDS_SubscriptionBuiltinTopicDataDataReader_narrow(reader);
 
@@ -246,6 +255,15 @@ void BuiltinSubscriberListener_on_data_available(void* listener_data,
         printf("\tparticipant_key->'%08x%08x%08x'\n",
                 data->participant_key.value[0], data->participant_key.value[1],
                 data->participant_key.value[2]);
+
+        printf("\tkey->'%08x %08x %08x'\n",
+                data->key.value[0], data->key.value[1],
+                data->key.value[2]);
+
+        memcpy(ih, &info->instance_handle,
+                sizeof(info->instance_handle));
+        printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
+                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
     }
 
     retcode = DDS_SubscriptionBuiltinTopicDataDataReader_return_loan(
