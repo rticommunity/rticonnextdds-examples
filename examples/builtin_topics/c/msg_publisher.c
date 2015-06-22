@@ -80,45 +80,8 @@ modification history
 const char *auth = "password";
 
 /*
- * Set up a linked list of authorized participant keys.  Datareaders associated
- * with an authorized participant do not need to supply their own password.
- */
-struct Auth_Node {
-    DDS_BuiltinTopicKey_t key;
-    struct Auth_Node *next;
-};
-
-struct Auth_Node *Auth_List = NULL;
-
-void add_auth_participant(const DDS_BuiltinTopicKey_t *participant_key) {
-    struct Auth_Node *cur = Auth_List;
-    if (Auth_List == NULL) {
-        cur = Auth_List =
-                (struct Auth_Node*) (malloc(sizeof(struct Auth_Node)));
-    } else {
-        while (cur->next != NULL)
-            cur = cur->next;
-        cur->next = (struct Auth_Node*) (malloc(sizeof(struct Auth_Node)));
-        cur = cur->next;
-    }
-
-    memcpy(&cur->key, participant_key, sizeof(cur->key));
-    cur->next = NULL;
-}
-
-int is_auth_participant(const DDS_BuiltinTopicKey_t *participant_key) {
-    struct Auth_Node *cur = Auth_List;
-    while (cur != NULL) {
-        if (memcmp(&cur->key, participant_key, sizeof(cur->key)) == 0)
-            return 1;
-        cur = cur->next;
-    }
-    return 0;
-}
-
-/*
  * The builtin subscriber sets participant_qos.user_data and
- *  reader_qos.user_data, so we set up listeners for the builtin
+ * so we set up listeners for the builtin
  *  DataReaders to access these fields.
  */
 
@@ -159,7 +122,7 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
         struct DDS_SampleInfo* info = NULL;
         struct DDS_ParticipantBuiltinTopicData* data = NULL;
         char* participant_data = "nil";
-        int isauth = 0;
+        int is_auth = 0;
 
         info = DDS_SampleInfoSeq_get_reference(&info_seq, i);
         data = DDS_ParticipantBuiltinTopicDataSeq_get_reference(&data_seq, i);
@@ -172,11 +135,7 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
             /* This sequence is guaranteed to be contiguous */
             participant_data = (char*) (DDS_OctetSeq_get_reference(
                     &data->user_data.value, 0));
-            if (strcmp(participant_data, auth) == 0) {
-                add_auth_participant(&data->key);
-                isauth = 1;
-            }
-
+            is_auth = (strcmp(participant_data, auth) == 0);
         }
 
         printf("Built-in Reader: found participant \n");
@@ -190,7 +149,7 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
                 ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
 
         /* Ignore unauthorized subscribers */
-        if (!isauth) {
+        if (!is_auth) {
             /* Get the associated participant... */
             DDS_DomainParticipant *participant = NULL;
             DDS_Subscriber *subscriber = NULL;

@@ -55,16 +55,8 @@ public class msgPublisher {
     // Authorization string.
     private const string auth = "password";
 
-    /* Set up a linked list of authorized participant keys.  Datareaders
-     * associated with an authorized participant do not need to supply their
-     * own password.
-     */
-    private static List<DDS.BuiltinTopicKey_t> auth_list =
-        new List<DDS.BuiltinTopicKey_t>();
-
-    /* The builtin subscriber sets participant_qos.user_data and
-     * reader_qos.user_data, so we set up listeners for the builtin
-     * DataReaders to access these fields.
+    /* The builtin subscriber sets participant_qos.user_data so we set up
+       listeners for the builtin DataReaders to access these fields.
      */
 
     public class BuiltinParticipantListener : DDS.DataReaderListener {
@@ -109,18 +101,17 @@ public class msgPublisher {
                                 0,
                                 cur_participant_builtin_topic_data.
                                     user_data.value.length);
-                            if (participant_data == auth) {
-                                auth_list.Add(
-                                    cur_participant_builtin_topic_data.key);
-                                is_auth = true;
-                            }
+
+                            is_auth = (participant_data == auth);
                         }
+
                         Console.WriteLine(
                             "Built-in Reader: found participant \n\tkey->'" +
                             cur_participant_builtin_topic_data.key.GetHashCode()
                             + "'\n\tuser_data->'" + participant_data + "'");
                         Console.WriteLine(
                             "instance_handle: " + info.instance_handle);
+
                         if (!is_auth) {
                             Console.WriteLine(
                                 "Bad authorization, ignoring participant");

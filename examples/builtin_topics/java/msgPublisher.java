@@ -92,26 +92,6 @@ public class msgPublisher {
     // Authorization string.
     public static String auth = "password";
 
-    /* Set up a linked list of authorized participant keys.
-     * Datareaders associated
-     * with an authorized participant do not need to supply their own password.
-     */
-    public static LinkedList<BuiltinTopicKey_t> Auth_List =
-            new LinkedList<BuiltinTopicKey_t>();
-
-    // -----------------------------------------------------------------------
-    // Public Methods
-    // -----------------------------------------------------------------------
-
-    public static void add_auth_participant(BuiltinTopicKey_t participant_key) {
-        Auth_List.addLast(participant_key);
-    }
-
-    public static boolean is_auth_participant(
-            BuiltinTopicKey_t participant_key) {
-        return Auth_List.contains(participant_key);
-    }
-
     /* The builtin subscriber sets participant_qos.user_data and
        reader_qos.user_data, so we set up listeners for the builtin
        DataReaders to access these fields.
@@ -143,7 +123,7 @@ public class msgPublisher {
 
                     if (info.valid_data) {
                         participant_data = "nil";
-                        boolean isauth = false;
+                        boolean is_auth = false;
                         cur_participant_builtin_topic_data =
                                 (ParticipantBuiltinTopicData)_dataSeq.get(i);
 
@@ -156,19 +136,17 @@ public class msgPublisher {
                                     new String(
                                             cur_participant_builtin_topic_data.
                                             user_data.value.toArrayByte(null));
-                            if (participant_data.equals(auth)) {
-                                add_auth_participant(
-                                        cur_participant_builtin_topic_data.key);
-                                isauth = true;
-                            }
+                            is_auth = participant_data.equals(auth);
                         }
+
                         System.out.println("Builtin Reader: found participant");
                         System.out.println("\tkey->'" + Arrays.toString(
                                 cur_participant_builtin_topic_data.key.value) +
                                 "'\n\tuser_data->'" + participant_data + "'");
                         System.out.println("instance_handle: " +
                                 info.instance_handle);
-                        if (!isauth) {
+
+                        if (!is_auth) {
                             System.out.println(
                                     "Bad authorization, ignoring participant");
                             DomainParticipant participant =

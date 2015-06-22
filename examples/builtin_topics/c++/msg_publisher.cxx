@@ -81,43 +81,8 @@ modification history
 /* Authorization string. */
 const char *auth = "password";
 
-/* Set up a linked list of authorized participant keys.  Datareaders associated
-   with an authorized participant do not need to supply their own password.
-*/
-struct Auth_Node {
-    DDS_BuiltinTopicKey_t key;
-    struct Auth_Node *next;
-};
-
-struct Auth_Node *Auth_List = NULL;
-
-void add_auth_participant(const DDS_BuiltinTopicKey_t &participant_key) {
-    Auth_Node *cur = Auth_List;
-    if (Auth_List == NULL) {
-        cur = Auth_List = new Auth_Node();
-    } else {
-        while(cur->next != NULL)
-            cur = cur->next;
-        cur->next = new Auth_Node();
-        cur = cur->next;
-    }
-
-    memcpy(&cur->key, &participant_key, sizeof(cur->key));
-    cur->next = NULL;
-}
-
-bool is_auth_participant(const DDS_BuiltinTopicKey_t &participant_key) {
-    Auth_Node *cur = Auth_List;
-    while (cur != NULL) {
-        if (memcmp(&cur->key, &participant_key, sizeof(cur->key)) == 0)
-            return true;
-        cur = cur->next;
-    }
-    return false;
-}
-
 /* The builtin subscriber sets participant_qos.user_data and
-   reader_qos.user_data, so we set up listeners for the builtin
+   so we set up listeners for the builtin
    DataReaders to access these fields.
 */
 
@@ -158,15 +123,12 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
             continue;
 
         participant_data = "nil";
-        bool isauth = false;
+        bool is_auth = false;
         /* see if there is any participant_data */
         if (data_seq[i].user_data.value.length() != 0) {
             /* This sequence is guaranteed to be contiguous */
             participant_data = (char*)&data_seq[i].user_data.value[0];
-            if (strcmp(participant_data, auth) == 0) {
-                add_auth_participant(data_seq[i].key);
-                isauth = true;
-            }
+            is_auth = (strcmp(participant_data, auth) == 0);
         }
 
         printf("Built-in Reader: found participant \n");
@@ -182,7 +144,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
                 ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
 
-        if (!isauth) {
+        if (!is_auth) {
             printf("Bad authorization, ignoring participant\n");
             DDSDomainParticipant *participant =
                 reader->get_subscriber()->get_participant();
