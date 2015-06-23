@@ -33,15 +33,23 @@ void publisher_main(int domain_id, int sample_count)
     // To customize topic QoS, use file USER_QOS_PROFILES.xml
     Topic<async> topic (participant, "Example async");
 
+    // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
     //
     // In this case, we set the publish mode QoS to asynchronous publish mode,
     // which enables asynchronous publishing. We also set the flow controller
     // to be the fixed rate flow controller, and we increase the history depth.
+    // writer_qos << Reliability::Reliable(Duration(60));
 
-    // Get the default DataWriter QoS to customize.
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    // DataWriterProtocol writer_protocol_qos;
+    // RtpsReliableWriterProtocol rtps_writer_protocol;
+    // rtps_writer_protocol.min_send_window_size(50);
+    // rtps_writer_protocol.max_send_window_size(50);
+    // writer_protocol_qos.rtps_reliable_writer(rtps_writer_protocol);
+    // writer_qos << writer_protocol_qos;
 
     // Since samples are only being sent once per second, DataWriter will need
     // to keep them on queue.  History defaults to only keeping the last

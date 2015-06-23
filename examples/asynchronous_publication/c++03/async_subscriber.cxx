@@ -17,9 +17,11 @@
 #include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
+using namespace dds::sub::qos;
 
 // For timekeeping
 clock_t InitTime;
@@ -55,11 +57,19 @@ void subscriber_main(int domain_id, int sample_count)
     // To customize the topic QoS, use the file USER_QOS_PROFILES.xml
     Topic<async> topic (participant, "Example async");
 
-    // To customize the DataReader QoS, use the file USER_QOS_PROFILES.xml
-    DataReader<async> reader (Subscriber(participant), topic);
+    // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
+    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
-    // Create a data reader listener using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
+    // If you want to change the DataWriter's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+    // reader_qos << Reliability::Reliable(Duration(60));
+    // reader_qos << History::KeepAll();
+
+    // Create a DataReader with a QoS
+    DataReader<async> reader (Subscriber(participant), topic, reader_qos);
+
+    // Create a data reader listener using ListenerBinder, a RAII utility that
+    // will take care of reseting it from the reader and deleting it.
     rti::core::ListenerBinder< DataReader<async> > scoped_listener =
         rti::core::bind_and_manage_listener(
             reader,
