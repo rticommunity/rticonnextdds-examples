@@ -130,25 +130,16 @@ void publisher_main(int domain_id, int sample_count)
     // Create data sample for writing
     listeners instance;
 
-    // For a data type that has a key, if the same instance is going to be
-    // written multiple times, initialize the key here
-    // and register the keyed instance prior to writing
-
-    InstanceHandle instance_handle = InstanceHandle::nil();
-    // instance_handle = writer.register_instance(instance);
-
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
         std::cout << "Writing listeners, count " << count << std::endl;
 
-        // Modify the data to be sent here
+        // Modify data and send it.
         instance.x(count);
+        writer.write(instance);
 
-        writer.write(instance, instance_handle);
         rti::util::sleep(Duration(2));
     }
-
-    // writer.unregister_instance(instance);
 }
 
  int main(int argc, char* argv[])
