@@ -34,7 +34,7 @@ void publisher_main(int domain_id, int sample_count)
     Topic<async> topic (participant, "Example async");
 
     // If you want to change the DataWriter's QoS programmatically rather than
-    // using the XML file, uncommen the following lines.
+    // using the XML file, uncomment the following lines.
     //
     // In this case, we set the publish mode QoS to asynchronous publish mode,
     // which enables asynchronous publishing. We also set the flow controller
@@ -46,10 +46,10 @@ void publisher_main(int domain_id, int sample_count)
     // Since samples are only being sent once per second, DataWriter will need
     // to keep them on queue.  History defaults to only keeping the last
     // sample enqueued, so we increase that here.
-    writer_qos << History::KeepLast(12);
+    // writer_qos << History::KeepLast(12);
 
     // Set flowcontroller for DataWriter
-    writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME);
+    // writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME);
 
     // Create the DataWriter with a QoS.
     DataWriter<async> writer (Publisher(participant), topic, writer_qos);
@@ -60,9 +60,7 @@ void publisher_main(int domain_id, int sample_count)
     // For a data type that has a key, if the same instance is going to be
     // written multiple times, initialize the key here
     // and register the keyed instance prior to writing.
-
-    InstanceHandle instance_handle = InstanceHandle::nil();
-    //instance_handle = writer.register_instance(instance);
+    // InstanceHandle instance_handle = writer.register_instance(instance);
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
@@ -71,10 +69,14 @@ void publisher_main(int domain_id, int sample_count)
         // Send count as data
         instance.x(count);
 
+        // Send it, if using instance_handle:
+        // writer.write(instance, instance_handle);
         writer.write(instance);
+
         rti::util::sleep(Duration(0,100000000));
     }
 
+    // If using instance_handle, unregister it.
     //writer.unregister_instance(instance_handle);
 }
 
