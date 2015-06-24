@@ -13,19 +13,35 @@
 #include <dds/dds.hpp>
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::cond;
+using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
 void subscriber_main(int domain_id, int sample_count)
 {
+    // Create a DomainParticipant with default Qos.
     DomainParticipant participant(domain_id);
 
+    // Create a Topic -- and automatically register the type.
     Topic<querycondition> topic(participant, "Example querycondition");
 
-    DataReader<querycondition> reader(Subscriber(participant), topic);
+     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+
+    // If you want to change the DataReader's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+    // reader_qos << Reliability::Reliable()
+    //            << History::KeepLast(6);
+
+    // Create a DataReader.
+    DataReader<querycondition> reader(
+        Subscriber(participant),
+        topic,
+        reader_qos);
 
     // Query for 'GUID2'. This query parameter can be changed at runtime
     // allowing an application to selectively look at subsets of data

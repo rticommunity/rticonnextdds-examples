@@ -16,17 +16,33 @@
 #include <dds/dds.hpp>
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
+using namespace dds::pub::qos;
 
 void publisher_main(int domain_id, int sample_count)
 {
+    // Create a DomainParticipant with default Qos.
     DomainParticipant participant (domain_id);
 
+    // Create a Topic -- and automatically register the type.
     Topic<querycondition> topic (participant, "Example querycondition");
 
-    DataWriter<querycondition> writer (Publisher(participant), topic);
+    // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+
+    // If you want to change the DataReader's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+    // writer_qos << Reliability::Reliable()
+    //            << History::KeepAll();
+
+    // Create a DataWriter.
+    DataWriter<querycondition> writer(
+        Publisher(participant),
+        topic,
+        writer_qos);
 
     querycondition instance;
 

@@ -62,7 +62,7 @@
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI Poll With QueryCondition C++ Example</name>
+                    <name>RTI Poll With QueryCondition C++03 Example</name>
                 </participant_name>
 
             </participant_qos>
