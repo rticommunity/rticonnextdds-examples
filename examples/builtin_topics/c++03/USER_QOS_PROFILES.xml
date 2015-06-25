@@ -54,7 +54,6 @@ RTI Connext user manual.
             <participant_qos>
                 <resource_limits>
                     <participant_user_data_max_length>1024</participant_user_data_max_length>
-                    <reader_user_data_max_length>1024</reader_user_data_max_length>
                 </resource_limits>
             </participant_qos>
         </qos_profile>
