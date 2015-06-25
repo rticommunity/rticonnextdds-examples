@@ -31,22 +31,8 @@ using namespace dds::pub;
 // Authorization string
 const std::string Auth = "password";
 
-// Set up a list of authorized participant keys. Datareaders associated
-// with an authorized participant do not need to suplly their own password.
-std::list<BuiltinTopicKey> Auth_list;
-
-bool is_auth_participant(const BuiltinTopicKey& participantKey)
-{
-    std::list<BuiltinTopicKey>::iterator item = std::find(Auth_list.begin(),
-                                                            Auth_list.end(),
-                                                            participantKey);
-
-    return item != Auth_list.end();
-}
-
-// The builtin subscriber sets participant_qos.user_data and
-// reader_qos.user_data, so we set up listeners for the builtin
-// DataReaders to access these fields.
+// The builtin subscriber sets participant_qos.user_data, so we set up listeners
+// for the builtin DataReaders to access these fields.
 class BuiltinParticipantListener :
     public NoOpDataReaderListener<ParticipantBuiltinTopicData> {
 public:
@@ -68,24 +54,21 @@ public:
 
             const ByteSeq& user_data = sampleIt->data().user_data().value();
             std::string user_auth (user_data.begin(), user_data.end());
-            const BuiltinTopicKey& key = sampleIt->data().key();
             bool is_auth = false;
 
             // Check if the password match.
-            if (Auth.compare(user_auth) == 0) {
-                Auth_list.push_back(key);
-                is_auth = true;
-            }
+            is_auth = (Auth.compare(user_auth) == 0);
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
+            const BuiltinTopicKey& key = sampleIt->data().key();
             std::cout << "Built-in Reader: found participant" << std::endl
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'"         << std::endl
                       << "\tuser_data->'" << user_auth << "'" << std::endl
-                      << "\tinstance_handle: " << sampleIt->info().instance_handle()
-                      << std::endl;
+                      << "\tinstance_handle: "
+                      << sampleIt->info().instance_handle()   << std::endl;
 
             std::cout.flags(default_format);
 
@@ -125,16 +108,6 @@ public:
                 continue;
             }
 
-            // See if this associated with an authorized participant
-            bool is_auth = is_auth_participant(sampleIt->data().participant_key());
-
-            // See if there is any user_data
-            const ByteSeq& user_data = sampleIt->data().user_data().value();
-            std::string user_auth (user_data.begin(), user_data.end());
-            if (Auth.compare(user_auth) == 0) {
-                is_auth = true;
-            }
-
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
@@ -146,25 +119,10 @@ public:
                       << partKey.value()[2] << "'" << std::endl
                       << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
-                      << "\tuser_data->'" << user_auth << "'"  << std::endl
-                      << "\tinstance_handle: " << sampleIt->info().instance_handle()
-                      << std::endl;
+                      << "\tinstance_handle: "
+                      << sampleIt->info().instance_handle() << std::endl;
 
             std::cout.flags(default_format);
-
-            if (!is_auth) {
-                std::cout << "Bad authorization, ignoring subscription"
-                          << std::endl;
-
-                // Get the associated participant...
-                const DomainParticipant& participant =
-                    reader.subscriber().participant();
-
-                // Ignore the remote reader
-                dds::sub::ignore(
-                    const_cast<DomainParticipant&>(participant),
-                    sampleIt->info().instance_handle());
-            }
         }
     }
 };
@@ -178,26 +136,25 @@ void publisher_main(int domain_id, int sample_count)
     // USER_QOS_PROFILES.xml file. If you want to do it programmatically,
     // just uncomment the following code.
 
-    // DomainParticipantFactoryQos factoryQos;
+    // DomainParticipantFactoryQos factoryQos =
+    //     DomainParticipant::participant_factory_qos();
     // factoryQos << EntityFactory::ManuallyEnable();
     // DomainParticipant::participant_factory_qos(factoryQos);
 
-    // If you want to change the Participant's QoS programmatically rather
-    // than using the XML file, you will need to add the following lines to
-    // your code and comment out the participant call above.
-    DomainParticipantQos participant_qos = QosProvider::Default().participant_qos();
-    DiscoveryConfig discoveryConfig;
+    // If you want to change the Participant's QoS programmatically rather than
+    // using the XML file, you will need to comment out these lines and pass
+    // the variable participant_qos as second argument in the constructor call.
 
-    participant_qos << Discovery().multicast_receive_addresses(StringSeq(0))
-        << discoveryConfig.participant_liveliness_assert_period(Duration(10))
-        << discoveryConfig.participant_liveliness_lease_duration(Duration(12));
+    // DomainParticipantQos participant_qos = QosProvider::Default()
+    //    .participant_qos();
+    // DomainParticipantResourceLimits resource_limits_qos;
+    // resource_limits_qos.participant_user_data_max_length(1024);
+    // participant_qos << resource_limits_qos;
 
-    // To create participant with default QoS use the one-argument constructor
-    DomainParticipant participant (domain_id, participant_qos);
+    // Create a DomainParticipant with default Qos.
+    DomainParticipant participant(domain_id);
 
-    // ## Start changes for Builtin_Topics ##
     // Installing listeners for the builtin topics requires several steps
-
     // First get the builtin subscriber
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
@@ -210,8 +167,8 @@ void publisher_main(int domain_id, int sample_count)
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<ParticipantBuiltinTopicData> > scoped_listener =
-        rti::core::bind_and_manage_listener(
+    rti::core::ListenerBinder< DataReader<ParticipantBuiltinTopicData> >
+        participant_listener = rti::core::bind_and_manage_listener(
             participant_reader[0],
             new BuiltinParticipantListener,
             dds::core::status::StatusMask::data_available());
@@ -224,8 +181,8 @@ void publisher_main(int domain_id, int sample_count)
         std::back_inserter(subscription_reader));
 
     // Install our listener using ListenerBinder
-    rti::core::ListenerBinder< DataReader<SubscriptionBuiltinTopicData> > scoped_sub_listener =
-        rti::core::bind_and_manage_listener(
+    rti::core::ListenerBinder< DataReader<SubscriptionBuiltinTopicData> >
+        subscriber_listener = rti::core::bind_and_manage_listener(
             subscription_reader[0],
             new BuiltinSubscriberListener,
             dds::core::status::StatusMask::data_available());
@@ -234,16 +191,11 @@ void publisher_main(int domain_id, int sample_count)
     // participant now.
     participant.enable();
 
-    // ## End changes for Builtin_Topics ##
+    // Create a Topic -- and automatically register the type.
+    Topic<msg> topic(participant, "Example msg");
 
-    // To customize publisher QoS, use participant.default_publisher_qos()
-    Publisher publisher (participant);
-
-    // To customize topic QoS, use participant.default_topic_qos()
-    Topic<msg> topic (participant, "Example msg");
-
-    // To customize topic QoS, use publisher.default_writer_qos()
-    DataWriter<msg> writer (publisher, topic);
+    // Create a DataWriter
+    DataWriter<msg> writer(Publisher(participant), topic);
 
     // Create data sample for writing
     msg instance;
@@ -256,7 +208,7 @@ void publisher_main(int domain_id, int sample_count)
     // instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (short count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (short count=0; (sample_count == 0) || (count < sample_count); ++count){
         rti::util::sleep(Duration(1));
         std::cout << "Writing msg, count " << count << std::endl;
 
@@ -277,6 +229,7 @@ int main(int argc, char* argv[])
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
     }
+
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }

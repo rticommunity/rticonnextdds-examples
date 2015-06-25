@@ -44,14 +44,21 @@ public:
 };
 
 void subscriber_main(int domain_id, int sample_count,
-    std::string participant_auth, std::string reader_auth)
+    std::string participant_auth)
 {
     // Set user_data qos field for participant
-    DomainParticipantQos participant_qos = QosProvider::Default().participant_qos();
-    participant_qos << Discovery().multicast_receive_addresses(StringSeq(0));
+    DomainParticipantQos participant_qos = QosProvider::Default()
+        .participant_qos();
+    DomainParticipantResourceLimits resource_limits_qos =
+        participant_qos.policy<DomainParticipantResourceLimits>();
 
-    unsigned int max_participant_user_data =
-        participant_qos.policy<DomainParticipantResourceLimits>()
+    // If you want to change the Participant's QoS programmatically rather
+    // than using the XML file, you will need to comment out these lines.
+
+    // resource_limits_qos.participant_user_data_max_length(1024);
+    // participant_qos << resource_limits_qos;
+
+    unsigned int max_participant_user_data = resource_limits_qos
         .participant_user_data_max_length();
     if (participant_auth.size() > max_participant_user_data) {
         std::cout << "error, participant user_data exceeds resource limits"
@@ -61,40 +68,27 @@ void subscriber_main(int domain_id, int sample_count,
             ByteSeq(participant_auth.begin(), participant_auth.end()));
     }
 
-    // To create participant with default QoS use the one-argument constructor
-    DomainParticipant participant (domain_id, participant_qos);
+    // Create a DomainParticipant.
+    DomainParticipant participant(domain_id, participant_qos);
 
     // Participant is disabled by default in USER_QOS_PROFILES. We enable it now
     participant.enable();
 
-    // To customize topic QoS, use participant.default_topic_qos()
-    Topic<msg> topic (participant, "Example msg");
+    // Create a Topic -- and automatically register the type.
+    Topic<msg> topic(participant, "Example msg");
 
-    // Set user_data for field for datareader
-    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+    // Create a DataReader
+    DataReader<msg> reader(Subscriber(participant), topic);
 
-    unsigned int max_reader_user_data =
-        participant_qos.policy<DomainParticipantResourceLimits>()
-        .reader_user_data_max_length();
-    if (reader_auth.size() > max_reader_user_data) {
-        std::cout << "error, datareader user_data exceeds resource limits"
-                  << std::endl;
-    } else {
-        reader_qos << UserData(ByteSeq(reader_auth.begin(), reader_auth.end()));
-    }
-
-    // To create datareader with default QoS use the one-argument constructor
-    DataReader<msg> reader (Subscriber(participant), topic, reader_qos);
-
-    // Create a data reader listener using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    ListenerBinder< DataReader<msg> > scoped_listener = bind_and_manage_listener(
+    // Create a data reader listener using ListenerBinder, a RAII utility that
+    // will take care of reseting it from the reader and deleting it.
+    ListenerBinder<DataReader<msg> > scoped_listener = bind_and_manage_listener(
         reader,
         new MsgListener,
         dds::core::status::StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
         // Each "sample_count" is one second.
         rti::util::sleep(Duration(1));
     }
@@ -103,12 +97,11 @@ void subscriber_main(int domain_id, int sample_count,
 int main(int argc, char* argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
+    int sample_count = 0; // Infinite loop
 
     // Changes for Builtin_Topics
     // Get arguments for auth strings and pass to subscriber_main()
     std::string participant_auth = "password";
-    std::string reader_auth = "Reader_Auth";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -122,16 +115,13 @@ int main(int argc, char* argv[])
         participant_auth = argv[3];
     }
 
-    if (argc >= 5) {
-        reader_auth = argv[4];
-    }
 
     // To turn on additional logging, include <rti/config/Logger.hpp> and
     // uncomment the following line:
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        subscriber_main(domain_id, sample_count, participant_auth, reader_auth);
+        subscriber_main(domain_id, sample_count, participant_auth);
     } catch (std::exception ex) {
         std::cout << "Exception caught: " << ex.what() << std::endl;
         return -1;
