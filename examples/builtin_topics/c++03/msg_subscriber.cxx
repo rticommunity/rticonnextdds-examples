@@ -46,7 +46,7 @@ public:
 void subscriber_main(int domain_id, int sample_count,
     std::string participant_auth)
 {
-    // Set user_data qos field for participant
+    // Retrieve the default participant QoS, from USER_QOS_PROFILES.xml
     DomainParticipantQos participant_qos = QosProvider::Default()
         .participant_qos();
     DomainParticipantResourceLimits resource_limits_qos =
