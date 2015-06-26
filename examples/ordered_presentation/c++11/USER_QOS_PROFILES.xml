@@ -42,10 +42,10 @@ xsi:noNamespaceSchemaLocation to point to
             </datawriter_qos>
 
             <publisher_qos>
-            <presentation>
-                <access_scope>TOPIC_PRESENTATION_QOS</access_scope>
-                <ordered_access>true</ordered_access>
-            </presentation>
+                <presentation>
+                    <access_scope>TOPIC_PRESENTATION_QOS</access_scope>
+                    <ordered_access>true</ordered_access>
+                </presentation>
             </publisher_qos>
 
             <!-- QoS used to configure the data reader created in the example
