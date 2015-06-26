@@ -238,6 +238,8 @@ sub process_all_files {
                 $LANGUAGE = "C++";
             } elsif ($register eq "c++03") {
                 $LANGUAGE = "C++03";
+            } elsif ($register eq "c++11") {
+                $LANGUAGE = "C++11";
             } elsif ($register eq "java") {
                 $LANGUAGE = "Java";
             }
