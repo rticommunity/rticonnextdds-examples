@@ -71,7 +71,7 @@ xsi:noNamespaceSchemaLocation to point to
                      the RTI tools, making it easier for you to tell one
                      application from another when you're debugging. -->
                 <participant_name>
-                    <name>Orderer presentation C++03 example</name>
+                    <name>Orderer presentation C++11 example</name>
                 </participant_name>
             </participant_qos>
         </qos_profile>
@@ -104,7 +104,7 @@ xsi:noNamespaceSchemaLocation to point to
                      the RTI tools, making it easier for you to tell one
                      application from another when you're debugging. -->
                 <participant_name>
-                    <name>Orderer presentation C++03 example</name>
+                    <name>Orderer presentation C++11 example</name>
                 </participant_name>
             </participant_qos>
         </qos_profile>
