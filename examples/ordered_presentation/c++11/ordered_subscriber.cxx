@@ -24,6 +24,8 @@ using namespace dds::sub::cond;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
+// Instead of using listeners, we are polling the readers to be able to see
+// the order of a set of received samples.
 void poll_readers(std::vector< DataReader<ordered> >& readers)
 {
     for (std::vector<int>::size_type i = 0; i < readers.size(); i++) {
@@ -41,10 +43,13 @@ void poll_readers(std::vector< DataReader<ordered> >& readers)
 
 void subscriber_main(int domain_id, int sample_count)
 {
+    // Create a DomainParticipant.
     DomainParticipant participant(domain_id);
 
+    // Create a Topic -- and automatically register the type.
     Topic<ordered> topic(participant, "Example ordered");
 
+    // Create a reader per QoS profile: ordering by topic and instance modes.
     std::vector<std::string> profile_names = {
         "ordered_Library::ordered_Profile_subscriber_instance",
         "ordered_Library::ordered_Profile_subscriber_topic" };
@@ -54,8 +59,13 @@ void subscriber_main(int domain_id, int sample_count)
         std::cout << "Subscriber " << i << " using " << profile_names[i]
                   << std::endl;
 
+        // Retrieve the subscriber QoS from USER_QOS_PROFILES.xml
         SubscriberQos subscriber_qos = QosProvider::Default().subscriber_qos(
             profile_names[i]);
+
+        // If you want to change the Subscriber's QoS programmatically rather
+        // than using the XML file, you will need to comment out the previous
+        // subscriber_qos assignment and uncomment these files.
 
         // SubscriberQos subscriber_qos;
         // if (i == 0) {
@@ -64,15 +74,22 @@ void subscriber_main(int domain_id, int sample_count)
         //     subscriber_qos << Presentation::TopicAccessScope(false, true);
         // }
 
+        // Create a subscriber with the custom QoS.
         Subscriber subscriber(participant, subscriber_qos);
 
+        // Retrieve the DataReader QoS from USER_QOS_PROFILES.xml
         DataReaderQos reader_qos = QosProvider::Default().datareader_qos(
             profile_names[i]);
+
+        // If you want to change the DataReader's QoS programmatically rather
+        // than using the XML file, you will need to comment out the previous
+        // reader_qos assignment and uncomment these files.
 
         // DataReaderQos reader_qos;
         // reader_qos << History::KeepLast(10)
         //            << Reliability::Reliable();
 
+        // Create a DataReader with the custom QoS.
         DataReader<ordered> reader(subscriber, topic, reader_qos);
         readers.push_back(reader);
     }
