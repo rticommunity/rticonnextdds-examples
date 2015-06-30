@@ -29,7 +29,7 @@ using namespace dds::sub;
 using namespace dds::pub;
 
 // Authorization string
-const std::string Auth = "password";
+const std::string expected_password = "password";
 
 // The builtin subscriber sets participant_qos.user_data, so we set up listeners
 // for the builtin DataReaders to access these fields.
@@ -54,10 +54,6 @@ public:
 
             const ByteSeq& user_data = sampleIt->data().user_data().value();
             std::string user_auth (user_data.begin(), user_data.end());
-            bool is_auth = false;
-
-            // Check if the password match.
-            is_auth = (Auth.compare(user_auth) == 0);
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
@@ -72,17 +68,18 @@ public:
 
             std::cout.flags(default_format);
 
-            if (!is_auth) {
+            // Check if the password match. Otherwise, ignore the participant.
+            if (user_auth != expected_password) {
                 std::cout << "Bad authorization, ignoring participant"
                           << std::endl;
 
                 // Get the associated participant...
-                const DomainParticipant& participant =
+                DomainParticipant participant =
                     reader.subscriber().participant();
 
                 // Ignore the remote participant
                 dds::domain::ignore(
-                    const_cast<DomainParticipant&>(participant),
+                    participant,
                     sampleIt->info().instance_handle());
             }
         }
