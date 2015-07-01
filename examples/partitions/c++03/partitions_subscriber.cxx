@@ -53,7 +53,13 @@ void subscriber_main(int domain_id, int sample_count)
     Partition partition = subscriber_qos.policy<Partition>();
     std::vector<std::string> partition_names = partition.name();
 
-    // TODO: Set qos with code
+    // If you want to change the Subscriber QoS programmatically rather
+    // than using the XML file, you will need to comment out these lines.
+
+    // partition_names[0] = "ABC";
+    // partition_names[1] = "X*Z";
+    // partition.name(partition_names);
+    // subscriber_qos << partition;
 
     std::cout << "Setting partition to "
               << "'" << partition_names[0] << "', "
@@ -68,10 +74,15 @@ void subscriber_main(int domain_id, int sample_count)
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
-    // TODO: Set qos with code
+    // If you want to change the Subscriber QoS programmatically rather
+    // than using the XML file, you will need to comment out these lines.
+
+    // reader_qos << Reliability::Reliable()
+    //            << History::KeepAll()
+    //            << Durability::TransientLocal();
 
     // Create a DataReader.
-    DataReader<partitions> reader(subscriber, topic);
+    DataReader<partitions> reader(subscriber, topic, reader_qos);
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
