@@ -28,11 +28,16 @@ void publisher_main(int domain_id, int sample_count)
 
     // Retrieve the default Publisher QoS, from USER_QOS_PROFILES.xml
     PublisherQos publisher_qos = QosProvider::Default().publisher_qos();
+    Partition partition = publisher_qos.policy<Partition>();
+    std::vector<std::string> partition_names = partition.name();
 
-    Partition partition;
-    std::vector<std::string> partition_names(2);
+    // If you want to change the Publisher QoS programmatically rather
+    // than using the XML file, you will need to comment out these lines.
 
-    // TODO: Set QoS programmatically
+    // partition_names[0] = "ABC";
+    // partition_names[1] = "foo";
+    // partition.name(partition_names);
+    // publisher_qos << partition;
 
     // Create a Publisher.
     Publisher publisher(participant, publisher_qos);
@@ -43,10 +48,15 @@ void publisher_main(int domain_id, int sample_count)
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
 
-    // TODO: Set QoS prorammatically
+    // If you want to change the DataWriter QoS programmatically rather
+    // than using the XML file, you will need to comment out these lines.
+
+    // writer_qos << Reliability::Reliable()
+    //            << History::KeepLast(3)
+    //            << Durability::TransientLocal();
 
     // Create a Datawriter.
-    DataWriter<partitions> writer(publisher, topic);
+    DataWriter<partitions> writer(publisher, topic, writer_qos);
 
     // Create a data sample for writing.
     partitions instance;
