@@ -23,10 +23,11 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
+using namespace dds::sub::status;
 using namespace rti::core;
 
 class PartitionsListener : public NoOpDataReaderListener<partitions> {
-  public:
+public:
     void on_data_available(DataReader<partitions>& reader)
     {
         // Take all samples
@@ -36,6 +37,13 @@ class PartitionsListener : public NoOpDataReaderListener<partitions> {
             sample_it != samples.end(); sample_it++) {
 
             if (sample_it->info().valid()) {
+                // After partition mismatch unpair,
+                // it detects the instance as new.
+                ViewState view_state = sample_it->info().state().view_state();
+                if (view_state == ViewState::new_view()) {
+                    std::cout << "Found new instance" << std::endl;
+                }
+
                 std::cout << sample_it->data() << std::endl;
             }
         }
