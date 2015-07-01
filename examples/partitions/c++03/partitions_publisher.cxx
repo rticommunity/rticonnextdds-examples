@@ -39,6 +39,10 @@ void publisher_main(int domain_id, int sample_count)
     // partition.name(partition_names);
     // publisher_qos << partition;
 
+    std::cout << "Setting partition to "
+              << "'" << partition_names[0] << "', "
+              << "'" << partition_names[1] << "'..." << std::endl;
+
     // Create a Publisher.
     Publisher publisher(participant, publisher_qos);
 
