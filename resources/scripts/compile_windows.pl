@@ -21,29 +21,56 @@ use Cwd;
 
 # The first command prompt argument is the directory to check
 $FOLDER_TO_CHECK = $ARGV[0];
+# $NDDS_VERSION is the version introduced by command line
+$NDDS_VERSION = $ARGV[1];
+# This variable is the architecture name
+$ARCH = $ARGV[2];
+
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
+# Check whether the version is greater or equal than 5.2.0, where the new
+# directory structure is used
+$IS_NEW_DIR_STRUCTURE = 0;
+if ($NDDS_VERSION ge "5.2.0") {
+    $IS_NEW_DIR_STRUCTURE = 1;
+}
+
+$NDDS_HOME = "";
 # This variable is the NDDSHOME environment variable
 # If NDDSHOME is defined, leave it as is, else it is defined by default
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
 else {
-    $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." .
-                        $ARGV[1];
+    if ($IS_NEW_DIR_STRUCTURE) {
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." .
+                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" .
+                            $NDDS_VERSION;
+    } else {
+
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." .
+                            $NDDS_VERSION;
+    }
     print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" .
-          "%RTI_TOOLDRIVE%/local/preship/ndds/ndds.{VERSION}\n";
+        "$NDDS_HOME\n";
 }
 
-# This variable is the architecture name
-$ARCH = $ARGV[2];
+# check wheter NDDS_HOME directoy exists
+if (!-d $NDDS_HOME) {
+    print "ERROR: The default NDDSHOME directory doesn't exists: $NDDS_HOME";
+    exit (1);
+}
 
 # set NDDSHOME
 $ENV{'NDDSHOME'} = unix_path($NDDS_HOME);
 
 # set the scripts folder to the PATH
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
+if ($IS_NEW_DIR_STRUCTURE) {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/bin;" . $ENV{'PATH'};
+} else {
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/scripts;" . $ENV{'PATH'};
+}
 
 # If OS_ARCH is not defined, we take it from the input architecture
 if (!defined $ENV{'OS_ARCH'}) {
@@ -55,18 +82,26 @@ if (!defined $ENV{'OS_ARCH'}) {
 $ARCHITECTURE_NUMBER_OF_BITS = $ENV{'OS_ARCH'};
 
 # set PATH
-# C/C++/C# architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
-# Java Architecture
-$ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" .
+if ($IS_NEW_DIR_STRUCTURE) {
+    # C/C++/C# architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+    # Java Architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/java;" . $ENV{'PATH'};
+} else {
+    # C/C++/C# architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
+    # Java Architecture
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" .
                 $ENV{'PATH'};
+}
+
 # including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
     $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" .
         "PLATFORMSDK/win32/jdk1.7.0_04";
     print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" .
-      "%RTI_TOOLDRIVE%/local/applications/Java/PLATFORMSDK/win32/jdk1.7.0_04\n";
+        "$ENV{'JAVAHOME'}\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
@@ -74,6 +109,9 @@ $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
 # Global variable to save the language to compile, will be modified with every
 # compile string we launch
 $LANGUAGE = "";
+
+# This is the dot net version
+$DOT_NET_VERSION = "dotnet4.0";
 
 ################################################################################
 ######################### AUXILIAR FUNCTIONS ###################################
@@ -105,10 +143,24 @@ sub unix_path {
 sub call_rtiddsgen {
     my ($language, $architecture, $idl_filename) = @_;
 
+    # if the compilation language is Java, we have to add jdk at the final of
+    # the $ARCH
+    if ($language eq "Java") {
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $architecture = $ARCH;
+        } else {
+            $architecture = $ARCHITECTURE_NUMBER_OF_BITS . "jdk";
+        }
+    }
     # if the compilation language is C#, we have to add the dot net version
     # and disable the preprocessor
-    if ($LANGUAGE eq "C#") {
-        $architecture .= " -ppDisable ";
+    elsif ($language eq "C#") {
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $architecture = $ARCH;
+        } else {
+            $architecture = $ARCHITECTURE_NUMBER_OF_BITS . $DOT_NET_VERSION .
+                        " -ppDisable ";
+        }
     }
     my ($call_string) = "";
 
@@ -144,14 +196,21 @@ sub call_compiler {
 
     # we create the compile string for visual studio projects, which is the same
     # one for C and C++ languages
-    if ($LANGUAGE eq "C" or $LANGUAGE eq "C++" or $LANGUAGE eq "C++03") {
+    if ($LANGUAGE eq "C" or $LANGUAGE eq "C++" or $LANGUAGE eq "C++03" or
+        $LANGUAGE eq "C++11") {
+
         $compile_string = "msbuild " . $data_type . "-vs" .
                 $visual_studio_year . ".sln";
     }
     # if the language is Java, all the files will be compiled with *.java
     elsif ($LANGUAGE eq "Java") {
-        $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" .
-                          "nddsjava.jar *.java";
+        if ($IS_NEW_DIR_STRUCTURE) {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" .
+                              "nddsjava.jar *.java";
+        } else {
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" .
+                              "nddsjava.jar *.java";
+        }
         print $compile_string . "\n";
     }
     # if the language is C# we create the compile string for visual studio C#
@@ -220,6 +279,8 @@ sub process_all_files {
                 $LANGUAGE = "C++";
             } elsif ($register eq "c++03") {
                 $LANGUAGE = "C++03";
+            } elsif ($register eq "c++11") {
+                $LANGUAGE = "C++11";
             } elsif ($register eq "cs") {
                 $LANGUAGE = "C#";
             } elsif ($register eq "java") {
