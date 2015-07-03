@@ -39,9 +39,11 @@ void publisher_main(int domain_id, int sample_count)
     // partition.name(partition_names);
     // publisher_qos << partition;
 
-    std::cout << "Setting partition to "
-              << "'" << partition_names[0] << "', "
-              << "'" << partition_names[1] << "'..." << std::endl;
+    std::cout << "Setting partition to";
+    for (int i = 0; i < partition_names.size(); i++) {
+        std::cout << " '" << partition_names[i] << "'";
+    }
+    std::cout << std::endl;
 
     // Create a Publisher.
     Publisher publisher(participant, publisher_qos);
@@ -80,6 +82,7 @@ void publisher_main(int domain_id, int sample_count)
         if ((count + 1) % 25 == 0) {
             // Matches "ABC", name[1] here can match name[0] there,
             // as long as there is some overlapping name.
+            partition_names.resize(2);
             partition_names[0] = "zzz";
             partition_names[1] = "A*C";
             update_qos = true;
@@ -98,15 +101,19 @@ void publisher_main(int domain_id, int sample_count)
             update_qos = true;
         } else if ((count + 1) % 5 == 0) {
             // No literal match for "bar".
+            partition_names.resize(1);
             partition_names[0] = "bar";
             update_qos = true;
         }
 
         // Set the new partition names to the publisher QoS.
         if (update_qos) {
-            std::cout << "Setting partition to "
-                      << "'" << partition_names[0] << "', "
-                      << "'" << partition_names[1] << "'..." << std::endl;
+            std::cout << "Setting partition to";
+            for (int i = 0; i < partition_names.size(); i++) {
+                std::cout << " '" << partition_names[i] << "'";
+            }
+            std::cout << std::endl;
+
             partition.name(partition_names);
             publisher.qos(publisher_qos << partition);
             update_qos = false;
