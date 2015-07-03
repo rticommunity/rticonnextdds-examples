@@ -167,7 +167,7 @@ sub call_rtiddsgen {
     # create the string to call rtiddsgen
     $call_string =  "rtiddsgen -language " . $language . " -example " .
                     $architecture . " " . $idl_filename; 
-      
+    
     system $call_string;
     # if the system call has errors, the program exits with the error code 1
     if ( $? != 0 ) {
@@ -196,7 +196,7 @@ sub call_compiler {
     
     # we create the compile string for visual studio projects, which is the same
     # one for C and C++ languages
-    if ($LANGUAGE eq "C" or $LANGUAGE eq "C++") {
+    if ($LANGUAGE eq "C" or $LANGUAGE eq "C++" or $LANGUAGE eq "C++03") {
         $compile_string = "msbuild " . $data_type . "-vs" . 
                 $visual_studio_year . ".sln";
     } 
@@ -275,6 +275,8 @@ sub process_all_files {
                 $LANGUAGE = "C";
             } elsif ($register eq "c++") {
                 $LANGUAGE = "C++";
+            } elsif ($register eq "c++03") {
+                $LANGUAGE = "C++03";
             } elsif ($register eq "cs") {
                 $LANGUAGE = "C#";
             } elsif ($register eq "java") {
