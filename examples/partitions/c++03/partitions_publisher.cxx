@@ -86,20 +86,20 @@ void publisher_main(int domain_id, int sample_count)
             partition_names[0] = "zzz";
             partition_names[1] = "A*C";
             update_qos = true;
-        } else if ((count + 1) % 20 == 0) {
+        } else if ((count + 1) % 25 == 20) {
             // Strings that are regular expressions aren't tested for
             // literal matches, so this won't match "X*Z".
             partition_names[0] = "X*Z";
             update_qos = true;
-        } else if ((count + 1) % 15 == 0) {
+        } else if ((count + 1) % 25 == 15) {
             // Matches "ABC".
             partition_names[0] = "A?C";
             update_qos = true;
-        } else if ((count + 1) % 10 == 0) {
+        } else if ((count + 1) % 25 == 10) {
             // Matches "ABC".
             partition_names[0] = "A*";
             update_qos = true;
-        } else if ((count + 1) % 5 == 0) {
+        } else if ((count + 1) % 25 == 5) {
             // No literal match for "bar".
             partition_names.resize(1);
             partition_names[0] = "bar";
