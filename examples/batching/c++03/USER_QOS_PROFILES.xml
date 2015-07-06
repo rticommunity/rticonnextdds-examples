@@ -1,0 +1,183 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<!--
+Description
+XML QoS Profile for equities
+
+The QoS configuration of the DDS entities in the generated example is loaded
+from this file.
+
+This file is used only when it is in the current working directory or when the
+environment variable NDDS_QOS_PROFILES is defined and points to this file.
+
+The profile in this file inherits from the builtin QoS profile
+BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the
+other built-in QoS profiles can be found in the
+BuiltinProfiles.documentationONLY.xml file located in the
+$NDDSHOME/resource/xml/ directory.
+
+You may use any of these QoS configurations in your application simply by
+referring to them by the name shown in the
+BuiltinProfiles.documentationONLY.xml file and listed below:
+
+* In library "BuiltinQosLib":
+** Baseline
+** Baseline.5.0.0
+** Baseline.5.1.0
+** Generic.Common
+** Generic.Monitoring.Common
+** Generic.ConnextMicroCompatibility
+** Generic.OtherDDSVendorCompatibility
+
+* In library "BuiltinQosLibExp":
+** Generic.StrictReliable
+** Generic.KeepLastReliable
+** Generic.BestEffort
+** Generic.StrictReliable.HighThroughput
+** Generic.StrictReliable.LowLatency
+** Generic.Participant.LargeData
+** Generic.Participant.LargeData.Monitoring
+** Generic.StrictReliable.LargeData
+** Generic.KeepLastReliable.LargeData
+** Generic.StrictReliable.LargeData.FastFlow
+** Generic.StrictReliable.LargeData.MediumFlow
+** Generic.StrictReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.LargeData.FastFlow
+** Generic.KeepLastReliable.LargeData.MediumFlow
+** Generic.KeepLastReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.TransientLocal
+** Generic.KeepLastReliable.Transient
+** Generic.KeepLastReliable.Persistent
+** Generic.AutoTuning
+** Pattern.PeriodicData
+** Pattern.Streaming
+** Pattern.ReliableStreaming
+** Pattern.Event
+** Pattern.AlarmEvent
+** Pattern.Status
+** Pattern.AlarmStatus
+** Pattern.LastValueCache
+
+You should not edit the file BuiltinProfiles.documentationONLY.xml directly.
+However, if you wish to modify any of the values in a built-in profile, the
+recommendation is to create a profile of your own and inherit from the built-in
+profile you wish to modify. The NDDS_QOS_PROFILES.example.xml file (contained in
+the same directory as the BuiltinProfiles.documentationONLY.xml file) shows how
+to inherit from the built-in profiles.
+
+For more information about XML QoS Profiles see Chapter 15 in the
+RTI Connext user manual.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="batching_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="turbo_mode_profile" base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <!-- QoS used to configure the data writer created in the example code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>turbo_mode_dataDataWriter</name>
+                </publication_name>
+
+                <property>
+                    <value>
+                        <element>
+                            <name>dds.data_writer.enable_turbo_mode</name>
+                            <value>true</value>
+                        </element>
+                    </value>
+                </property>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>turbo_mode_dataDataReader</name>
+                </subscription_name>
+            </datareader_qos>
+
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>turbo_mode_dataParticipant</name>
+                    <role_name>turbo_mode_dataParticipantRole</role_name>
+                </participant_name>
+                <transport_builtin>
+                    <mask>UDPv4</mask>
+                </transport_builtin>
+            </participant_qos>
+        </qos_profile>
+
+        <qos_profile name="batch_profile" base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <!-- QoS used to configure the data writer created in the example code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>batch_dataDataWriter</name>
+                </publication_name>
+
+                <!--
+                The default max_data_bytes is 1024 bytes, so if your data_type
+                size or your max_samples are bigger, the batch could be sent
+                because the max_data_bytes is reached
+                -->
+                <batch>
+                    <enable>true</enable>
+                    <max_samples>10</max_samples>
+                    <max_data_bytes>1024</max_data_bytes>
+                </batch>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>batch_dataDataReader</name>
+                </subscription_name>
+                <!--
+                If you are going to use a batch bigger than 80 samples,
+                you have to modify this QoS, or the DataReader will not
+                store more samples than the resource_limits.max_samples
+                 -->
+                <resource_limits>
+                    <max_samples>80</max_samples>
+                </resource_limits>
+            </datareader_qos>
+
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>batch_dataParticipant</name>
+                    <role_name>batch_dataParticipantRole</role_name>
+                </participant_name>
+
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
