@@ -18,14 +18,16 @@ using namespace rti::core::xtypes;
 
 DynamicType get_typecode_inner_struct()
 {
-    // Create the type code for a struct using an initializer_list of Members
-    // C++11 only. For C++03 see outer_struct creation.
-    return StructType(
-        "InnerStruct", {
-            Member("x", PrimitiveType<double>()), // Doubled named x
-            Member("y", PrimitiveType<double>())  // Doubled named y
-        }
-    );
+    // First create the type code for a struct
+    StructType inner_struct("InnerStruct");
+
+    // Member 1 will be a double named x
+    inner_struct.add_member(Member("x", primitive_type<double>()));
+
+    // Member 2 will be a double named y
+    inner_struct.add_member(Member("y", primitive_type<double>()));
+
+    return inner_struct;
 }
 
 DynamicType get_typecode_outer_struct()
