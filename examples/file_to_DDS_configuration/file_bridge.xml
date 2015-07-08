@@ -1,0 +1,186 @@
+<!--
+*********************************************************************************************
+(c) 2005-2014  Copyright, Real-Time Innovations, Inc.  All rights reserved.            
+Permission to modify and use for internal purposes granted.           
+This software is provided "as is", without warranty, express or implied.                                                                            
+**********************************************************************************************
+-->
+
+
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../resource/schema/rti_routing_service.xsd">
+
+    <!--
+    ******************************************************************      
+    RTI Routing Service file adapter example                                                   
+    ******************************************************************      
+    File adapter configuration example                                      
+                                                                             
+    It contains two configurations: dds_to_file and file_to_dds             
+    ******************************************************************      
+    -->
+    <!-- adapter entry points are defined here -->
+
+    <adapter_library name="adapters">
+        <adapter_plugin name="file">
+            <dll>fileadapter</dll>
+            <create_function>RTI_RoutingServiceFileAdapterPlugin_create</create_function>
+        </adapter_plugin>
+    </adapter_library>
+
+    <!-- ****************************************************************** -->
+    <!-- ****************************************************************** -->
+
+    <routing_service name="dds_to_file">
+
+        <annotation>
+            <documentation>
+                Get shapes from DDS and write them into files
+            </documentation>
+        </annotation>
+
+
+        <domain_route name="ddsfile">
+
+            <participant_1>
+                <domain_id>0</domain_id>
+            </participant_1>
+
+            <connection_2 plugin_name="adapters::file">
+                <!-- No configuration needed in this connection -->
+            </connection_2>
+
+
+            <session name="s">
+
+                <!-- This auto route will instantiate a route for every topic of type ShapeType
+		     which in RTI Shapes Demo are Square, Circle and Triangle. Each of this routes
+		     will write to a file named after this topic name (see <output>) -->
+                <auto_route name="shapes">
+
+                    <dds_input participant="1">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </dds_input>
+
+                    <output>
+                        <property>
+                            <value>
+                                <!-- The output file. We can use (stream_name) to 
+				     refer to the stream name that the actual routes
+				     created from this auto route have. We would
+				     get names like MySquare.txt, MyCircle.txt or MyTriangle.txt -->
+                                <element>
+                                    <name>FileName</name>
+                                    <value>My(stream_name).txt</value>
+                                </element>
+                                <!-- The write mode can be:
+				       - overwrite (write in the file deleting previous content)
+				       - append (write at then end of the file)
+				       - keep (fail if the file already exists and don't modify it) -->
+                                <element>
+                                    <name>WriteMode</name>
+                                    <value>overwrite</value>
+                                </element>
+                                <!-- Whether to flush the file after every sample
+				     is written. -->
+                                <element>
+                                    <name>Flush</name>
+                                    <value>1</value>
+                                </element>
+                            </value>
+                        </property>
+                    </output>
+
+                </auto_route>
+
+            </session>
+
+        </domain_route>
+
+    </routing_service>
+
+    <!-- ****************************************************************** -->
+    <!-- ****************************************************************** -->
+
+    <routing_service name="file_to_dds">
+
+        <annotation>
+            <documentation>
+                Read shapes from a file and publish them into DDS
+            </documentation>
+        </annotation>
+
+
+        <domain_route name="filedds">
+
+            <connection_1 plugin_name="adapters::file">
+                <!-- No configuration needed in this connection -->
+            </connection_1>
+
+            <participant_2>
+                <domain_id>0</domain_id>
+            </participant_2>
+
+            <session name="s">
+
+                <!-- This route gets ShapeType samples from the file MySquare.txt
+		     and publishes them in DDS -->
+				<auto_route name="shapes_file">
+                    <input connection="1">
+                        <!-- We only start reading when the output
+			     is ready to write -->
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+						<allow_stream_name_filter>*</allow_stream_name_filter>
+                        <registered_type_name>ShapeType</registered_type_name>
+						<!--<allow_registered_type_name_filter>*</allow_registered_type_name_filter>-->
+                        <property>
+                            <value>
+                                <!-- The file from which to read -->
+                                <element>
+                                    <name>FileName</name>
+                                    <value>D:\MyShape.txt</value>
+                                </element>
+                                <!-- How often we read samples from the file (ms) -->
+                                <element>
+                                    <name>ReadPeriod</name>
+                                    <value>500</value>
+                                </element>
+                                <!-- How many samples we will take from the
+				     file every ReadPeriod -->
+                                <element>
+                                    <name>SamplesPerRead</name>
+                                    <value>1</value>
+                                </element>
+                                <!-- Whether to start over from the beginning
+				     of the file when the EOF is reached -->
+                                <element>
+                                    <name>Loop</name>
+                                    <value>1</value>
+                                </element>
+                                <!-- The maximum size in bytes of 
+				     a portion of file representing a sample -->
+                                <element>
+                                    <name>MaxSampleSize</name>
+                                    <value>1024</value>
+                                </element>
+                            </value>
+                        </property>
+                    </input>
+
+                    <dds_output>
+                        <!-- We only start writing when we have a DDS data reader
+			     expecting our topic -->
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+						<allow_topic_name_filter>*</allow_topic_name_filter>
+                        <registered_type_name>ShapeType</registered_type_name>
+						<!--<allow_registered_type_name_filter>*</allow_registered_type_name_filter>-->
+                    </dds_output>
+
+                </auto_route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+</dds>
+
