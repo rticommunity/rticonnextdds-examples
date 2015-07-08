@@ -101,6 +101,7 @@ void publisher_main(int domain_id, int sample_count)
             update_qos = true;
         } else if ((count + 1) % 25 == 5) {
             // No literal match for "bar".
+            // For the next iterations we are using only one partition.
             partition_names.resize(1);
             partition_names[0] = "bar";
             update_qos = true;
