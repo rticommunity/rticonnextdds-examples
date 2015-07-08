@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
 *********************************************************************************************
 (c) 2005-2014  Copyright, Real-Time Innovations, Inc.  All rights reserved.            
@@ -5,11 +6,9 @@ Permission to modify and use for internal purposes granted.
 This software is provided "as is", without warranty, express or implied.                                                                            
 **********************************************************************************************
 -->
-
-
-<?xml version="1.0"?>
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="../../resource/schema/rti_routing_service.xsd">
-
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.1.0/rti_routing_service.xsd"
+     version="5.1.0">
     <!--
     ******************************************************************      
     RTI Routing Service file adapter example                                                   
@@ -139,7 +138,7 @@ This software is provided "as is", without warranty, express or implied.
                                 <!-- The file from which to read -->
                                 <element>
                                     <name>FileName</name>
-                                    <value>D:\MyShape.txt</value>
+                                    <value>MyShape.txt</value>
                                 </element>
                                 <!-- How often we read samples from the file (ms) -->
                                 <element>
