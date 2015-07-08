@@ -125,17 +125,16 @@
             </participant_2>
 
             <session name="s">
-
                 <!-- This route gets ShapeType samples from the file MySquare.txt
 		     and publishes them in DDS -->
-				<auto_route name="shapes_file">
+		<auto_route name="shapes_file">
                     <input connection="1">
                         <!-- We only start reading when the output
 			     is ready to write -->
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
-						<allow_stream_name_filter>*</allow_stream_name_filter>
-                        <registered_type_name>ShapeType</registered_type_name>
-						<!--<allow_registered_type_name_filter>*</allow_registered_type_name_filter>-->
+			<allow_stream_name_filter>*</allow_stream_name_filter>
+                        <!-- <registered_type_name>ShapeType</registered_type_name> -->
+			<allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <property>
                             <value>
                                 <!-- The file from which to read -->
@@ -174,9 +173,9 @@
                         <!-- We only start writing when we have a DDS data reader
 			     expecting our topic -->
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
-						<allow_topic_name_filter>*</allow_topic_name_filter>
-                        <registered_type_name>ShapeType</registered_type_name>
-						<!--<allow_registered_type_name_filter>*</allow_registered_type_name_filter>-->
+			<allow_topic_name_filter>*</allow_topic_name_filter>
+			<!-- <registered_type_name>ShapeType</registered_type_name> -->
+			<allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                     </dds_output>
 
                 </auto_route>
