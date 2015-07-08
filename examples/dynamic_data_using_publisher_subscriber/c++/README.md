@@ -1,35 +1,35 @@
 # Example code: Using Dynamic Data to publish and subscribe
 
-## Building C++11 Example
+## Building C++ Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
 
 Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2013* or *i86Linux3gcc4.8.2*). The *RTI Connext Core
+choice (e.g., *i86Win32VS2010* or *i86Linux2.6gcc4.4.5*). The *RTI Connext Core
 Libraries and Utilities Getting Started Guide* describes this process in detail.
 Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2013* run:
+*i86Win32VS2010* run:
 ```
-rtiddsgen -language C++11 -example i86Win32VS2013 Shapes.idl
+rtiddsgen -language C++ -example i86Win32VS2010 Shapes.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\QoS_Profiles\c++11\Shapes_subscriber.cxx already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
-File C:\local\QoS_Profiles\c++11\Shapes_publisher.cxx already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
+File C:\local\QoS_Profiles\c++\Shapes_subscriber.cxx already exists and will not
+be replaced with updated content. If you would like to get a new file with the
+new content, either remove this file or supply -replace option.
+File C:\local\QoS_Profiles\c++\Shapes_publisher.cxx already exists and will not
+be replaced with updated content. If you would like to get a new file with the
+new content, either remove this file or supply -replace option.
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-## Running C++11 Example
+## Running C++ Example
 ### Publisher/Subscriber in command prompt
 In two separate command prompt windows for the publisher and subscriber.
 

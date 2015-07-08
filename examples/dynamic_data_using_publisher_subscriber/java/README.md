@@ -1,48 +1,62 @@
 # Example code: Using Dynamic Data to publish and subscribe
 
-## Building C++11 Example
+## Building Java Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
 
 Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2013* or *i86Linux3gcc4.8.2*). The *RTI Connext Core
-Libraries and Utilities Getting Started Guide* describes this process in detail.
-Follow the same procedure to generate the code and build the examples. **Do not
-use the `-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2013* run:
+choice (e.g., *i86Win32VS2010*). The *RTI Connext Core Libraries and Utilities
+Getting Started Guide* describes this process in detail. Follow the same
+procedure to generate the code and build the examples. **Do not use the
+`-replace` option.** Assuming you want to generate an example for
+*i86Win32VS2010* run:
 ```
-rtiddsgen -language C++11 -example i86Win32VS2013 Shapes.idl
+rtiddsgen -language Java -example i86Win32VS2010 Shapes.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\QoS_Profiles\c++11\Shapes_subscriber.cxx already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
-File C:\local\QoS_Profiles\c++11\Shapes_publisher.cxx already exists and will
-not be replaced with updated content. If you would like to get a new file with
-the new content, either remove this file or supply -replace option.
+File C:\...\java\ShapesSubscriber.java already exists and will not
+be replaced with updated content. If you would like to get a new file with the
+new content, either remove this file or supply -replace option.
+File C:\...\java\ShapesPublisher.java already exists and will not
+be replaced with updated content. If you would like to get a new file with the
+new content, either remove this file or supply -replace option.
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-## Running C++11 Example
-### Publisher/Subscriber in command prompt
-In two separate command prompt windows for the publisher and subscriber.
+Before compiling in Java, make sure that the desired version of the *javac*
+compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\Shapes_publisher.exe <domain_id> <sample #>
-objs\<arch_name>\Shapes_subscriber.exe <domain_id> <sample #>
+javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
+```
+
+On *UNIX* systems (including Linux and MacOS X):
+```
+javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
+```
+
+## Running Java Example
+### Publisher/Subscriber in command prompt
+In two separate command prompt windows for the publisher and subscriber.
+Run the following commands from the example directory:
+
+On *Windows* systems run:
+```
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ShapeTypePublisher <domain_id> <sample #>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ShapeTypeSubscriber <domain_id> <sample #>
 ```
 
 On *UNIX* systems run:
 ```
-./objs/<arch_name>/Shapes_publisher  <domain_id> <sample #>
-./objs/<arch_name>/Shapes_subscriber <domain_id> <sample #>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar ShapeTypePublisher <domain_id> <sample #>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber <domain_id> <sample #>
 ```
 
 The applications accept up to two arguments:
