@@ -34,7 +34,6 @@ The following files are necessary:
 1. [lib]fileadapter.{dll,so,dylib} - A built example of the file adapter.
 2. file_bridge.xml - The Routing Service Route configuration that includes the file adapter (We'll be using the file_to_dds route).
 3. MyShape.txt - An example text file that will be read by the input file adapter.
-4. Routing Service Adapter File to DDS.mp4 - A video clip showing the result (also integrating with Microsoft Excel).
 
 Before Running the Example
 ==========================
