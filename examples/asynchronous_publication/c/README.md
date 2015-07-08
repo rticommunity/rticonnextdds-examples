@@ -1,6 +1,6 @@
-# Example Code: Asynchronous Publishing
+# Example Code: Asynchronous Publication
 
-## Building C++03 Example
+## Building C Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -12,24 +12,24 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C++03 -example i86Win32VS2010 async.idl
+rtiddsgen -language C -example i86Win32VS2010 async.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\asynchronous_publication\c++03\async_subscriber.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
-File C:\local\asynchronous_publication\c++03\async_publisher.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
+File C:\local\asynchronous_publication\c\async_subscriber.c already exists and
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
+File C:\local\asynchronous_publication\c\async_publisher.c already exists and
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-## Running C++03 Example
+## Running C Example
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
