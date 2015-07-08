@@ -12,22 +12,22 @@
 		<link>
 			<name>CONTRIBUTING.md</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/CONTRIBUTING.md</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/CONTRIBUTING.md</locationURI>
 		</link>
 		<link>
 			<name>README.md</name>
 			<type>1</type>
-			<locationURI>PARENT-3-PROJECT_LOC/README.md</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/README.md</locationURI>
 		</link>
 		<link>
 			<name>examples</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/examples</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/examples</locationURI>
 		</link>
 		<link>
 			<name>resources</name>
 			<type>2</type>
-			<locationURI>PARENT-3-PROJECT_LOC/resources</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/resources</locationURI>
 		</link>
 	</linkedResources>
 </projectDescription>
