@@ -10,7 +10,6 @@
  ******************************************************************************/
 
 #include <iostream>
-#include <algorithm>
 #include <dds/dds.hpp>
 
 using namespace dds::core::xtypes;
