@@ -1,6 +1,6 @@
 # Example Code: Nested Struct in Dynamic Data
 
-## Building the C++11 example
+## Building the C++03 example
 The example is contained in the *dynamic_data_nested_struct_example.cxx* file.
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where you installed *RTI Connext DDS*.
@@ -12,16 +12,9 @@ for *i86Linux3gcc4.8.2* and *x64Linux3gcc4.8.2*, respectively.
 To generate a makefile for any other architecture, you can search and
 replace the architecture on the makefile, or use *rtiddsgen* to generate
 a makefile specific for it. To use *rtiddsgen* to generate a makefile,
-create a sample idl file called *Foo.idl*, with the following contents:
+create a temporal idl file called *Foo.idl* (it can be empty) and run:
 ```
-struct foo {
-    long a;
-};
-```
-
-and run
-```
-rtiddsgen -example <platform_name> -language C++11 Foo.idl
+rtiddsgen -platform <platform_name> -language C++03 -create makefiles Foo.idl
 ```
 
 Once you have run the application, modify the generated makefile and
@@ -36,16 +29,11 @@ Remove `Foo.hpp` from `objs/$(TARGET_ARCH)/%.o`:
 objs/$(TARGET_ARCH)/%.o : %.cxx
 ```
 
-Finally, remove all generated files you will not need.
-```
-rm Foo* USER_QOS_PROFILES.xml
-```
-
 If you are running *Windows*, follow the same process to generate a *Visual
 Studio Project*.
 
 Now that you have a makefile compatible with your platform
-(e.g., *i86Linux3gcc4.8.2*) , run make to build your example.
+(e.g., *i86Linux3gcc4.8.2*), run `make` to build your example.
 ```
 make -f makefile_Foo_i86Linux3gcc4.8.2
 ```
