@@ -35,7 +35,7 @@ DynamicType create_typecode_outer_struct()
     StructType outer_struct("OuterStruct");
 
     // Member 1 of outer struct will be a struct of type InnerStruct
-    outer_struct.add_member(Member("inner", get_typecode_inner_struct()));
+    outer_struct.add_member(Member("inner", create_typecode_inner_struct()));
 
     return outer_struct;
 }
@@ -43,8 +43,8 @@ DynamicType create_typecode_outer_struct()
 int main()
 {
     // Create the type code of the InnerStruct and OuterStruct
-    DynamicType inner_type = get_typecode_inner_struct();
-    DynamicType outer_type = get_typecode_outer_struct();
+    DynamicType inner_type = create_typecode_inner_struct();
+    DynamicType outer_type = create_typecode_outer_struct();
 
     // Create a DynamicData instance for each type
     DynamicData outer_data(outer_type);
