@@ -11,8 +11,8 @@ for *i86Linux3gcc4.8.2* and *x64Linux3gcc4.8.2*, respectively.
 
 To generate a makefile for any other architecture, you can search and
 replace the architecture on the makefile, or use *rtiddsgen* to generate
-a makefile specific for it. To use *rtiddsgen* to generate a makefile,
-create a temporal idl file called *Foo.idl* (it can be empty) and run:
+a makefile specific for it. Regarding the latter, create a temporal IDL file
+named *Foo.idl* (it can be empty) and run:
 ```
 rtiddsgen -platform <platform_name> -language C++03 -create makefiles Foo.idl
 ```
