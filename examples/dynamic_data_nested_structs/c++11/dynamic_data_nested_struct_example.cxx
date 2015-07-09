@@ -15,7 +15,7 @@
 using namespace dds::core::xtypes;
 using namespace rti::core::xtypes;
 
-DynamicType get_typecode_inner_struct()
+DynamicType create_typecode_inner_struct()
 {
     // First create the type code for a struct
     StructType inner_struct("InnerStruct");
@@ -29,7 +29,7 @@ DynamicType get_typecode_inner_struct()
     return inner_struct;
 }
 
-DynamicType get_typecode_outer_struct()
+DynamicType create_typecode_outer_struct()
 {
     // First create the type code for a struct
     StructType outer_struct("OuterStruct");
@@ -87,7 +87,7 @@ int main()
               << " + current outer_data value " << std::endl
               << outer_data << std::endl << std::endl;
 
-    // Using loand_value, we do not copy inner, but bind it.
+    // Using loan_value, we do not copy inner, but bind it.
     // So, if we modify loaned_inner, the inner member inside outer_data WILL
     // also be modified.
     std::cout << " loan/unloan API"  << std::endl
