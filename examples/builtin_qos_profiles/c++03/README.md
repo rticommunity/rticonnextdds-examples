@@ -40,7 +40,7 @@ or *Release DLL* build target. Make sure that RTI's libraries are in the system
 
 To dynamically link with the RTI libraries on *Linux*, modify the makefile to
 remove the 'z' from the end of the RTI library names, such as:
-`-lnddscpp -lnddsc -lnddscore`
+`-lnddscpp2 -lnddsc -lnddscore`
 
 Also, make sure that RTI's libraries are in the system `LD_LIBRARY_PATH`
 environment variable, such as:
