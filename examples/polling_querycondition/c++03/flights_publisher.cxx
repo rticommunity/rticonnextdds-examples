@@ -11,7 +11,7 @@
 
 #include <iostream>
 #include <dds/dds.hpp>
-#include "querycondition.hpp"
+#include "flights.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;

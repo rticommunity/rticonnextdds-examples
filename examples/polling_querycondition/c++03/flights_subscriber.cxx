@@ -9,8 +9,9 @@
  use the software.
  ******************************************************************************/
 
-#include "querycondition.hpp"
+#include <iostream>
 #include <dds/dds.hpp>
+#include "flights.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
