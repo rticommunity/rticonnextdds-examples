@@ -11,5 +11,5 @@
 struct Flight {
     long trackId; //@key
     string<255> company;
-    double latitude;
+    long altitude;
 };

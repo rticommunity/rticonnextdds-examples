@@ -34,34 +34,52 @@ void subscriber_main(int domain_id, int sample_count)
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
-    // reader_qos << Reliability::Reliable()
-    //            << History::KeepLast(6);
+    // reader_qos << Reliability::Reliable();
 
     // Create a DataReader.
-    DataReader<Flight> reader(
-        Subscriber(participant),
-        topic,
-        reader_qos);
+    DataReader<Flight> reader(Subscriber(participant), topic, reader_qos);
 
-    // Query for 'GUID2'. This query parameter can be changed at runtime
-    // allowing an application to selectively look at subsets of data
-    // at different times.
+    // Query for company named 'CompanyA' and for flights in cruise
+    // (about 30,000ft). The company parameter will be changed in run-time.
     // NOTE: There must be single-quotes in the query parameters around-any
     // strings! The single-quote do NOT go in the query condition itself.
     std::vector<std::string> query_parameters(2);
     query_parameters[0] = "'CompanyA'";
-    query_parameters[1] = "80";
+    query_parameters[1] = "30000";
+    std::cout << "Setting parameters to company: " << query_parameters[0]
+              << " and altitude bigger or equals to " << query_parameters[1]
+              << std::endl;
 
     // Create the query condition with an expession to MATCH the id field in
-    // the structure.
+    // the structure and a numeric comparison.
     QueryCondition query_condition(
-        Query(reader, "company MATCH %0 AND latitude > %1", query_parameters),
+        Query(reader, "company MATCH %0 AND altitude >= %1", query_parameters),
         DataState::any_data());
 
     // Main loop
+    bool update = false;
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
-        // Poll for new samples every 5 seconds
-        rti::util::sleep(Duration(5));
+        // Poll for new samples every second.
+        rti::util::sleep(Duration(1));
+
+        // Change the filter parameter after 5 seconds.
+        if ((count + 1) % 10 == 5) {
+            query_parameters[0] = "'CompanyB'";
+            update = true;
+        } else if ((count + 1) % 10 == 0) {
+            query_parameters[0] = "'CompanyA'";
+            update = true;
+        }
+
+        // Set new parameters.
+        if (update) {
+            std::cout << "Changing parameter to " << query_parameters[0]
+                      << std::endl;
+            query_condition.parameters(
+                query_parameters.begin(),
+                query_parameters.end());
+            update = false;
+        }
 
         // Get new samples selecting them with a condition.
         LoanedSamples<Flight> samples = reader.select()
@@ -75,7 +93,7 @@ void subscriber_main(int domain_id, int sample_count)
             if (!sampleIt->info().valid())
                 continue;
 
-            std::cout << sampleIt->data() << std::endl;
+            std::cout << "\t" << sampleIt->data() << std::endl;
         }
     }
 }

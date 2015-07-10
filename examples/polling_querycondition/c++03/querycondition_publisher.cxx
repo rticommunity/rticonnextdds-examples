@@ -10,11 +10,8 @@
  ******************************************************************************/
 
 #include <iostream>
-#include <cstdlib>   // For rand
-#include <ctime>
-
-#include "querycondition.hpp"
 #include <dds/dds.hpp>
+#include "querycondition.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -36,39 +33,31 @@ void publisher_main(int domain_id, int sample_count)
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
-    // writer_qos << Reliability::Reliable()
-    //            << History::KeepAll();
+    // writer_qos << Reliability::Reliable();
 
     // Create a DataWriter.
-    DataWriter<Flight> writer(
-        Publisher(participant),
-        topic,
-        writer_qos);
+    DataWriter<Flight> writer(Publisher(participant), topic, writer_qos);
 
-    Flight instance;
-
-    // Initialize random seed before entering the loop.
-    srand(time(NULL));
-
-    std::vector<std::string> companies(2);
-    companies[0] = "CompanyA";
-    companies[1] = "CompanyB";
+    // Create the flight info samples.
+    std::vector<Flight> flights_info(4);
+    flights_info[0] = Flight(1111, "CompanyA", 15000);
+    flights_info[1] = Flight(2222, "CompanyB", 20000);
+    flights_info[2] = Flight(3333, "CompanyA", 30000);
+    flights_info[3] = Flight(4444, "CompanyB", 25000);
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
-        instance.trackId(count % 3);
+        // Update flight info latitude
+        std::cout << "Updating and sending values" << std::endl;
 
-        // Set company to be one of the three options
-        instance.company(companies[count % companies.size()]);
+        for (std::vector<int>::size_type f = 0; f < flights_info.size(); f++) {
+            // Set the plane altitude lineally (usually the max is at 41,000ft).
+            int altitude = flights_info[f].altitude() + count * 100;
+            flights_info[f].altitude(altitude >= 41000 ? 41000 : altitude);
+            std::cout << "\t" << flights_info[f] << std::endl;
+        }
 
-        // Set value to a random number between 0 and 9
-        instance.latitude(std::rand() / (RAND_MAX / 100.0));
-
-        std::cout << "Writing flight info: [ID=" << instance.trackId()
-                  << ", Company="  << instance.company()
-                  << ", Latitude=" << instance.latitude() << "]" << std::endl;
-
-        writer.write(instance);
+        writer.write(flights_info.begin(), flights_info.end());
         rti::util::sleep(Duration(1));
     }
 }
