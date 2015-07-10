@@ -27,7 +27,7 @@ void subscriber_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<querycondition> topic(participant, "Example querycondition");
+    Topic<Flight> topic(participant, "Example Flight");
 
      // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -38,7 +38,7 @@ void subscriber_main(int domain_id, int sample_count)
     //            << History::KeepLast(6);
 
     // Create a DataReader.
-    DataReader<querycondition> reader(
+    DataReader<Flight> reader(
         Subscriber(participant),
         topic,
         reader_qos);
@@ -48,13 +48,14 @@ void subscriber_main(int domain_id, int sample_count)
     // at different times.
     // NOTE: There must be single-quotes in the query parameters around-any
     // strings! The single-quote do NOT go in the query condition itself.
-    std::vector<std::string> query_parameters(1);
-    query_parameters[0] = "'GUID2'";
+    std::vector<std::string> query_parameters(2);
+    query_parameters[0] = "'CompanyA'";
+    query_parameters[1] = "80";
 
     // Create the query condition with an expession to MATCH the id field in
     // the structure.
     QueryCondition query_condition(
-        Query(reader, "id MATCH %0", query_parameters),
+        Query(reader, "company MATCH %0 AND latitude > %1", query_parameters),
         DataState::any_data());
 
     // Main loop
@@ -63,31 +64,19 @@ void subscriber_main(int domain_id, int sample_count)
         rti::util::sleep(Duration(5));
 
         // Get new samples selecting them with a condition.
-        LoanedSamples<querycondition> samples = reader.select()
+        LoanedSamples<Flight> samples = reader.select()
             .condition(query_condition)
             .read();
 
-        int len = 0;
-        double sum = 0;
-
-        // Iterate through the samples read accessing only the samples of GUID2.
-        // Then, show the number of samples received and, adding the value
-        // on each of them to calculate the average afterwards.
-        for (LoanedSamples<querycondition>::iterator sampleIt = samples.begin();
+        for (LoanedSamples<Flight>::iterator sampleIt = samples.begin();
                 sampleIt != samples.end();
                 ++sampleIt) {
 
             if (!sampleIt->info().valid())
                 continue;
 
-            len++;
-            sum += sampleIt->data().value();
-            std::cout << "Guid = " << sampleIt->data().id() << std::endl;
+            std::cout << sampleIt->data() << std::endl;
         }
-
-        if (len > 0)
-            std::cout << "Got " << len << " samples. Avg = "
-                      << sum / len << std::endl;
     }
 }
 

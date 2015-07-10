@@ -9,6 +9,7 @@
  use the software.
  ******************************************************************************/
 
+#include <iostream>
 #include <cstdlib>   // For rand
 #include <ctime>
 
@@ -28,7 +29,7 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant (domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<querycondition> topic (participant, "Example querycondition");
+    Topic<Flight> topic (participant, "Example Flight");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -39,30 +40,33 @@ void publisher_main(int domain_id, int sample_count)
     //            << History::KeepAll();
 
     // Create a DataWriter.
-    DataWriter<querycondition> writer(
+    DataWriter<Flight> writer(
         Publisher(participant),
         topic,
         writer_qos);
 
-    querycondition instance;
+    Flight instance;
 
     // Initialize random seed before entering the loop.
     srand(time(NULL));
 
-    // TODO: Something with time
-    std::string my_ids[] = {"GUID1", "GUID2", "GUID3"};
+    std::vector<std::string> companies(2);
+    companies[0] = "CompanyA";
+    companies[1] = "CompanyB";
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
-        // Set id to be one of the three options
-        instance.id(my_ids[count % 3]);
+        instance.trackId(count % 3);
+
+        // Set company to be one of the three options
+        instance.company(companies[count % companies.size()]);
 
         // Set value to a random number between 0 and 9
-        instance.value((int)(std::rand() / (RAND_MAX / 10.0)));
+        instance.latitude(std::rand() / (RAND_MAX / 100.0));
 
-        std::cout << "Writing querycondition, count " << count
-                  << ", id = " << instance.id() << ", value = "
-                  << instance.value() << std::endl;
+        std::cout << "Writing flight info: [ID=" << instance.trackId()
+                  << ", Company="  << instance.company()
+                  << ", Latitude=" << instance.latitude() << "]" << std::endl;
 
         writer.write(instance);
         rti::util::sleep(Duration(1));
