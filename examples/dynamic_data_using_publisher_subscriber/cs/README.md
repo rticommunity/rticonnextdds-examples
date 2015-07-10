@@ -65,7 +65,7 @@ First of all, remember that you have to work in the same domain both in
     1. Open a new *Shapes Demo* window.
     2. Create a new Square subscriber with default options.
     3. Run the publisher in a new command prompt like explained before (use the
-    <sample #> = 0 option to run an indefinitely).
+    `<sample #>` = 0 option to run an indefinitely).
 
     You will see a Square moving from left to right. Also, its size will
     increase until it reaches a maximum size. When the max size or the end of
