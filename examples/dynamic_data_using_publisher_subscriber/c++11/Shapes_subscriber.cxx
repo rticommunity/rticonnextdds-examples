@@ -78,7 +78,7 @@ void subscriber_main(int domain_id, int sample_count)
     while (count < sample_count || sample_count == 0) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
-        std::cout << "ShapeType subslcriber sleeping for 1 sec..." << std::endl;
+        std::cout << "ShapeType subscriber sleeping for 1 sec..." << std::endl;
         waitset.dispatch(dds::core::Duration(1)); // Wait up to 1s each time
     }
 }
