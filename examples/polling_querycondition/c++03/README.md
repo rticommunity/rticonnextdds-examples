@@ -12,16 +12,16 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C++03 -example i86Win32VS2010 querycondition.idl
+rtiddsgen -language C++03 -example i86Win32VS2010 flights.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\polling_query_conditiond\c++03\querycondition_subscriber.cxx
+File C:\local\polling_query_conditiond\c++03\flights_subscriber.cxx
 already exists and will not be replaced with updated content. If you would like
 to get a new file with the new content, either remove this file or supply
 -replace option.
-File C:\local\ polling_query_conditiond\c++03\querycondition_publisher.cxx
+File C:\local\ polling_query_conditiond\c++03\flights_publisher.cxx
 already exists and will not be replaced with updated content. If you would like
 to get a new file with the new content, either remove this file or supply
 -replace option.
@@ -38,14 +38,14 @@ the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\querycondition_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\querycondition_subscriber.exe <domain_id> <sleep_periods>
+objs\<arch_name>\flights_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\flights_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 On *Unix* systems run:
 ```
-./objs/<arch_name>/querycondition_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/querycondition_subscriber <domain_id> <sleep_periods>
+./objs/<arch_name>/flights_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/flights_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept two arguments:
