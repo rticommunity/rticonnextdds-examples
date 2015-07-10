@@ -10,17 +10,37 @@
  ******************************************************************************/
 
 #include <iostream>
+
 #include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 #include "profiles.hpp"
 
 using namespace dds::core;
+using namespace dds::core::status;
 using namespace dds::domain;
 using namespace dds::domain::qos;
 using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
+using namespace dds::sub;
+using namespace dds::sub::qos;
 
-void publisher_main(int domain_id, int sample_count)
+class ProfilesListener : public NoOpDataReaderListener<profiles> {
+public:
+    void on_data_available(DataReader<profiles>& reader)
+    {
+        // Take all samples
+        LoanedSamples<profiles> samples = reader.take();
+
+        for (LoanedSamples<profiles>::iterator sample_it = samples.begin();
+            sample_it != samples.end(); sample_it++) {
+
+            if (sample_it->info().valid()) {
+                std::cout << sample_it->data() << std::endl;
+            }
+        }
+    }
+};
+
+void subscriber_main(int domain_id, int sample_count)
 {
     // Retrieve the Participant QoS from USER_QOS_PROFILES.xml
     DomainParticipantQos participant_qos = QosProvider::Default()
@@ -38,27 +58,29 @@ void publisher_main(int domain_id, int sample_count)
     // Create a Topic -- and automatically register the type.
     Topic<profiles> topic(participant, "Example profiles");
 
-    // Retrieve the DataWriter QoS from USER_QOS_PROFILES.xml
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    // Retrieve the DataReader QoS from USER_QOS_PROFILES.xml
+    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
     // This example uses a built-in QoS profile to tune QoS for reliable
     // streaming data. To enable it programmatically uncomment these lines.
 
-    // writer_qos = QosProvider::Default().datawriter_qos(
+    // reader_qos = QosProvider::Default().datareader_qos(
     //     "BuiltinQosLibExp::Pattern.ReliableStreaming");
 
-    // Create a Datawriter.
-    DataWriter<profiles> writer(Publisher(participant), topic, writer_qos);
+    // Create a DataReader.
+    DataReader<profiles> reader(Subscriber(participant), topic, reader_qos);
 
-    // Create a data sample for writing.
-    profiles instance;
+    // Create a DataReader listener using ListenerBinder, a RAII utility that
+    // will take care of reseting it from the reader and deleting it.
+    rti::core::ListenerBinder< DataReader<profiles> > scoped_listener =
+        rti::core::bind_and_manage_listener(
+            reader,
+            new ProfilesListener,
+            StatusMask::data_available());
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
-        std::cout << "Writing profiles, count " << count << std::endl;
-
-        instance.msg("Hello World!");
-        writer.write(instance);
+        std::cout << "profiles subscriber sleeping for 4 sec..." << std::endl;
         rti::util::sleep(Duration(4));
     }
 }
@@ -81,9 +103,10 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
+        subscriber_main(domain_id, sample_count);
+    } catch (const std::exception& ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
         return -1;
     }
 
