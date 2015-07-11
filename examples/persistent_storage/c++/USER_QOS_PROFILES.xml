@@ -15,7 +15,7 @@
     environment variable NDDS_QOS_PROFILES is defined and points to this file. 
     The profile in this file inherits from the builtin QoS profile BuiltinQosLib::Generic.StrictReliable. 
     That profile, along with all of the other built-in QoS profiles can be found 
-    in the BuiltinProfiles.documentationONLY.xml file located in the $NDDSHOME/resource/qos_profiles_5.1.0/xml/ 
+    in the BuiltinProfiles.documentationONLY.xml file located in the $NDDSHOME/resource/qos_profiles_5.2.0/xml/ 
     directory. For more information about XML QoS Profiles see Chapter 15 in 
     the RTI Connext user manual. -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"

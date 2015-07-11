@@ -23,7 +23,7 @@ The profile in this file inherits from the builtin QoS profile
 BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the 
 other built-in QoS profiles can be found in the 
 BuiltinProfiles.documentationONLY.xml file located in the 
-$NDDSHOME/resource/qos_profiles_5.1.0/xml/ directory.
+$NDDSHOME/resource/qos_profiles_5.2.0/xml/ directory.
 
 You may use any of these QoS configurations in your application simply by 
 referring to them by the name shown in the 
