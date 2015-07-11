@@ -10,8 +10,8 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.1.0/rti_routing_service.xsd"
-     version="5.1.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_routing_service.xsd"
+     version="5.2.0">
   <!-- make sure this path is correctly set into your system, otherwise it 
        wouldn't affect the execution, but autocompletion wouldn't work -->
   

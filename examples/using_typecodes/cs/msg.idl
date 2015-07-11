@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -9,14 +9,12 @@
  use the software.
  ******************************************************************************/
 enum enumeration {
-  a = 65, 
-  b, 
+  a = 65,
+  b,
   c
-}; //@top-level false
+};
 
 struct nested2 {
-  short short_bitfield : 4;
-  long long_bitfield : 8;
   float float_var;
   double double_var;
   boolean boolean_var;
@@ -37,9 +35,9 @@ typedef union alias_target switch (long) {
    long long long_long_uvar;
  default:
    short short_uvar;
-} alias_one; //@top-level false
+} alias_one;
 
-typedef alias_one alias_two; //@top-level false
+typedef alias_one alias_two;
 
 struct msg {
   long id; //@key

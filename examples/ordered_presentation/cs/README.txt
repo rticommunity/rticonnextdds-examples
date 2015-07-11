@@ -8,20 +8,20 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32dotnet4.0). The RTI Connext Core 
+choice (e.g., i86Win32VS2010). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems (assuming you want to generate an example for 
-i86Win32dotnet4.0) run:
+i86Win32VS2010) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -ppDisable ordered.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable ordered.idl
 
 Note: If you are using Visual Studio Express add the -express option to the 
 command, i.e.,
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 -express -ppDisable ordered.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable ordered.idl
 
 ...you will see messages that look like this:
 
@@ -55,8 +55,8 @@ the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-    bin\<build_type>-VS2010\async_publisher.exe  <domain_id> <samples_to_send>
-    bin\<build_type>-VS2010\async_subscriber.exe <domain_id> <sleep_periods>
+    bin\<build_type>-VS2010\ordered_publisher.exe  <domain_id> <samples_to_send>
+    bin\<build_type>-VS2010\ordered_subscriber.exe <domain_id> <sleep_periods>
 
 The applications accept up to two arguments:
 

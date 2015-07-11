@@ -8,9 +8,11 @@ The example is contained in the dynamic_data_sequences.cs file. Before
 compiling or running the example, make sure the environment variable NDDSHOME is
 set to the directory where you installed RTI Connext DDS.
 
-The accompanying Visual Studio project called :
-    dynamic_data_sequences-i86Win32VS2010.dotnet4.0.sln
-can be used to compile the application for Visual Studio 2010 using dotnet4.0.
+The accompanying Visual Studio projects called :
+    Hello-i86Win32dotnet4.0.sln and Hello-i86Win32VS2010.sln
+can be used to compile the application for Visual Studio 2010. Whether the NDDS
+version is higher or equal than 5.2.0, you have to use Hello-i86Win32VS2010.sln,
+else you have to use Hello-i86Win32dotnet4.0.sln.
 
 If you are using this method, build the solution in Visual Studio 2010 and 
 continue reading "Running C# Example" paragraph.

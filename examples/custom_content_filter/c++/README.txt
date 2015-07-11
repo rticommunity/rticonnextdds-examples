@@ -41,7 +41,7 @@ Running C++ Example
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory. 
 
-n Windows systems run:
+On Windows systems run:
 
 objs\<arch_name>\ccf_publisher.exe  <domain_id> <samples_to_send>
 objs\<arch_name>\ccf_subscriber.exe <domain_id>  <sleep_periods> 

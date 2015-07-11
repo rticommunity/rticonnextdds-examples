@@ -72,7 +72,7 @@ documents for further details.
     Persistence Service Scenario
     1) Run persistence service (in the same folder that there are 
     persistence_service_configuration.xml): 
-        %NDDSHOME%\scripts\rtipersistenceservice.bat -cfgFile persistence_service_configuration.xml 
+        %NDDSHOME%\bin\rtipersistenceservice.bat -cfgFile persistence_service_configuration.xml 
             -cfgName <persistence_service_database|persistence_service_filesystem>
 
     2) objs\<arch_name>\hello_world_subscriber.exe
@@ -97,7 +97,7 @@ documents for further details.
     Persistence Service Scenario
     1) Run persistence service (in the same folder that there are 
     persistence_service_configuration.xml): 
-        %NDDSHOME%\scripts\rtipersistenceservice -cfgFile persistence_service_configuration.xml 
+        %NDDSHOME%\bin\rtipersistenceservice -cfgFile persistence_service_configuration.xml 
             -cfgName <persistence_service_database|persistence_service_filesystem>
 
     2) ./objs/<arch_name>/hello_world_subscriber

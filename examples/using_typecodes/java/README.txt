@@ -15,12 +15,12 @@ use the -replace option.
 
 On Windows systems run:
 
-rtiddsgen -language Java -example i86Win32jdk msg.idl
+rtiddsgen -language Java -example i86Win32VS2010 msg.idl
 
 On UNIX systems (assuming you want to generate an example for 
 i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language Java -example i86Linux2.6gcc4.4.3jdk msg.idl
+rtiddsgen -language Java -example i86Linux2.6gcc4.4.3 msg.idl
 
 You will see messages that look like this:
 
@@ -39,40 +39,27 @@ Before compiling in Java, make sure that the desired version of the javac
 compiler is in your PATH environment variable.
 
 On Windows systems run:
-javac -classpath .;%NDDSHOME%\class\nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
+javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
 
 On Unix systems (including Linux and MacOS X):
 
-javac -classpath .:$NDDSHOME/class/nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
+javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar enumeration.java enumerationSeq.java enumerationTypeSupport.java enumerationTypeCode.java nested2.java nested2Seq.java nested2TypeSupport.java nested2TypeCode.java alias_target.java alias_targetSeq.java alias_targetTypeSupport.java alias_targetTypeCode.java alias_oneTypeCode.java alias_twoTypeCode.java msg.java msgSeq.java msgTypeSupport.java msgTypeCode.java msgDataReader.java msgDataWriter.java msgSubscriber.java msgPublisher.java
 
 Running Java Example
 ====================
-Before running, make sure that the native Java libraries on which RTI Connext
-depends are in your environment path (or library path). To add Java libraries 
-to your environment...
-
-On Windows systems run: 
-set PATH=%NDDSHOME%\lib\i86Win32jdk;%PATH%
-
-On Unix systems except MacOS X (assuming you are using Bash) run:
-export LD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$LD_LIBRARY_PATH
-
-On MacOSX (assuming your are using Bash) run:
-export DYLD_LIBRARY_PATH=$NDDSHOME/lib/<platform_name>jdk:$DYLD_LIBRARY_PATH
-
-Then, in two separate command prompt windows for the publisher and subscriber. 
+In two separate command prompt windows for the publisher and subscriber. 
 Run the following commands from the example directory (this is necessary to 
 ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
-java -cp .;%NDDSHOME%\class\nddsjava.jar msgPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\class\nddsjava.jar msgSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar msgPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar msgSubscriber <domain_id> <sleep_periods>
 
 On Unix systems (including Linux and MacOS X) run:
 
-java -cp .:$NDDSHOME/class/nddsjava.jar msgPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/class/nddsjava.jar msgSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar msgPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar msgSubscriber <domain_id> <sleep_periods>
 
 
 The applications accept two arguments:

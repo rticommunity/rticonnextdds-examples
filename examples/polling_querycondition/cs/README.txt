@@ -8,15 +8,15 @@ Before compiling or running the example, make sure the environment variable
 NDDSHOME is set to the directory where your version of RTI Connext is installed.
 
 Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32dotnet4.0). The RTI Connext Core 
+choice (e.g., i86Win32VS2010). The RTI Connext Core 
 Libraries and Utilities Getting Started Guide describes this process in detail. 
 Follow the same procedure to generate the code and build the examples. Do not 
 use the -replace option.
 
 On Windows systems (assuming you want to generate an example for 
-i86Win32VSdotnet4.0) run:
+i86Win32VSVS2010) run:
 
-rtiddsgen -language C# -example i86Win32dotnet4.0 querycondition.idl
+rtiddsgen -language C# -example i86Win32VS2010 querycondition.idl
 
 File C:\local\polling_querycondition\cs\querycondition_subscriber.cs already 
 exists and will not be replaced with updated content. If you would like to get a 
