@@ -11,7 +11,7 @@
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_routing_service.xsd"
-     version="5.1.0">
+     version="5.2.0">
     <!--
     ******************************************************************      
     RTI Routing Service file adapter example                                                   
