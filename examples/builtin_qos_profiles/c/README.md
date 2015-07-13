@@ -1,6 +1,6 @@
 # Example Code: Built-in QoS Profiles
 
-## Building C++03 Example
+## Building C Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -12,17 +12,17 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C++03 -example i86Win32VS2010 profiles.idl
+rtiddsgen -language C -example i86Win32VS2010 profiles.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\builtin_qos_profiles\c++03\profiles_subscriber.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
-File C:\local\ builtin_qos_profiles\c++03\profiles_publisher.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
+File C:\local\builtin_qos_profiles\c\profiles_subscriber.c already exists and
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
+File C:\local\ builtin_qos_profiles\c\profiles_publisher.c already exists and
+will not be replaced with updated content. If you would like to get a new file
+with the new content, either remove this file or supply -replace option.
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
@@ -40,13 +40,13 @@ or *Release DLL* build target. Make sure that RTI's libraries are in the system
 
 To dynamically link with the RTI libraries on *Linux*, modify the makefile to
 remove the 'z' from the end of the RTI library names, such as:
-`-lnddscpp2 -lnddsc -lnddscore`
+`-lnddscpp -lnddsc -lnddscore`
 
 Also, make sure that RTI's libraries are in the system `LD_LIBRARY_PATH`
 environment variable, such as:
 `export LD_LIBRARY_PATH=~/rti_connext_dds-5.2.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH`
 
-## Running C++03 Example
+## Running C Example
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
