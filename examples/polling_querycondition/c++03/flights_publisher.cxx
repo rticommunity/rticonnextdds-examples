@@ -46,7 +46,10 @@ void publisher_main(int domain_id, int sample_count)
     flights_info[3] = Flight(4444, "CompanyB", 25000);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0;
+        (sample_count == 0) || (count < sample_count);
+        count += flights_info.size()){
+
         // Update flight info latitude
         std::cout << "Updating and sending values" << std::endl;
 
