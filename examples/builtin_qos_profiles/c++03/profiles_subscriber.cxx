@@ -23,14 +23,14 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class ProfilesListener : public NoOpDataReaderListener<profiles> {
+class ProfilesListener : public NoOpDataReaderListener<HelloWorld> {
 public:
-    void on_data_available(DataReader<profiles>& reader)
+    void on_data_available(DataReader<HelloWorld>& reader)
     {
         // Take all samples
-        LoanedSamples<profiles> samples = reader.take();
+        LoanedSamples<HelloWorld> samples = reader.take();
 
-        for (LoanedSamples<profiles>::iterator sample_it = samples.begin();
+        for (LoanedSamples<HelloWorld>::iterator sample_it = samples.begin();
             sample_it != samples.end(); sample_it++) {
 
             if (sample_it->info().valid()) {
@@ -47,7 +47,8 @@ void subscriber_main(int domain_id, int sample_count)
         .participant_qos();
 
     // This example uses a built-in QoS profile to enable monitoring on the
-    // DomainParticipant. To enable it programmatically uncomment these lines.
+    // DomainParticipant. This profile is specified in USER_QOS_PROFILES.xml.
+    // To enable it programmatically uncomment these lines.
 
     // participant_qos = QosProvider::Default().participant_qos(
     //     "BuiltinQosLib::Generic.Monitoring.Common");
@@ -56,7 +57,7 @@ void subscriber_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id, participant_qos);
 
     // Create a Topic -- and automatically register the type.
-    Topic<profiles> topic(participant, "Example profiles");
+    Topic<HelloWorld> topic(participant, "Example profiles");
 
     // Retrieve the DataReader QoS from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -68,11 +69,11 @@ void subscriber_main(int domain_id, int sample_count)
     //     "BuiltinQosLibExp::Pattern.ReliableStreaming");
 
     // Create a DataReader.
-    DataReader<profiles> reader(Subscriber(participant), topic, reader_qos);
+    DataReader<HelloWorld> reader(Subscriber(participant), topic, reader_qos);
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    rti::core::ListenerBinder< DataReader<profiles> > scoped_listener =
+    rti::core::ListenerBinder< DataReader<HelloWorld> > scoped_listener =
         rti::core::bind_and_manage_listener(
             reader,
             new ProfilesListener,

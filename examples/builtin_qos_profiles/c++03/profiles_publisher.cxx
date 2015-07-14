@@ -27,7 +27,8 @@ void publisher_main(int domain_id, int sample_count)
         .participant_qos();
 
     // This example uses a built-in QoS profile to enable monitoring on the
-    // DomainParticipant. To enable it programmatically uncomment these lines.
+    // DomainParticipant. This profile is specified in USER_QOS_PROFILES.xml.
+    // To enable it programmatically uncomment these lines.
 
     // participant_qos = QosProvider::Default().participant_qos(
     //     "BuiltinQosLib::Generic.Monitoring.Common");
@@ -36,7 +37,7 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id, participant_qos);
 
     // Create a Topic -- and automatically register the type.
-    Topic<profiles> topic(participant, "Example profiles");
+    Topic<HelloWorld> topic(participant, "Example profiles");
 
     // Retrieve the DataWriter QoS from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -48,10 +49,10 @@ void publisher_main(int domain_id, int sample_count)
     //     "BuiltinQosLibExp::Pattern.ReliableStreaming");
 
     // Create a Datawriter.
-    DataWriter<profiles> writer(Publisher(participant), topic, writer_qos);
+    DataWriter<HelloWorld> writer(Publisher(participant), topic, writer_qos);
 
     // Create a data sample for writing.
-    profiles instance;
+    HelloWorld instance;
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
