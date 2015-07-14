@@ -13,6 +13,7 @@
 #include <iostream>
 
 #include <dds/dds.hpp>
+#include <rti/core/xtypes/DynamicDataTuples.hpp>
 #include "Shapes.hpp"
 
 using namespace dds::core;
@@ -23,6 +24,28 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::cond;
 using namespace dds::sub::status;
+
+void print_shape_data(const DynamicData& data)
+{
+    // First method: using C++ tuples (C++11 only).
+    auto shape_tuple_data = rti::core::xtypes::get_tuple<
+        std::string, int32_t, int32_t, int32_t>(data);
+
+    std::cout << "\tcolor: "     << std::get<0>(shape_tuple_data) << std::endl
+              << "\tx: "         << std::get<1>(shape_tuple_data) << std::endl
+              << "\ty: "         << std::get<2>(shape_tuple_data) << std::endl
+              << "\tshapesize: " << std::get<3>(shape_tuple_data) << std::endl;
+
+    // Second method: using DynamicData getters.
+    // std::cout << "\tcolor: " << data.value<std::string>("color") << std::endl
+    //           << "\tx: "     << data.value<int32_t>("x") << std::endl
+    //           << "\ty: "     << data.value<int32_t>("y") << std::endl
+    //           << "\tshapesize: " << data.value<int32_t>("shapesize")
+    //           << std::endl;
+
+    // Third method: automatic with the '<<' operator overload.
+    // std::cout << data << std::endl;
+}
 
 void subscriber_main(int domain_id, int sample_count)
 {
@@ -65,7 +88,9 @@ void subscriber_main(int domain_id, int sample_count)
         for (auto sample : samples){
             if (sample.info().valid()){
                 count++;
-                std::cout << sample.data() << std::endl;
+
+                // Print sample with different methods.
+                print_shape_data(sample.data());
             }
         }
     }

@@ -92,7 +92,7 @@ void publisher_main(int domain_id, int sample_count)
             direction = 1;
         }
 
-        rti::util::sleep(Duration(0, 100000000));
+        rti::util::sleep(Duration::from_millisecs(100));
     }
 }
 
