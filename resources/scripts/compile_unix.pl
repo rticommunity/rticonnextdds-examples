@@ -31,8 +31,6 @@ $IS_CPP11_SUPPORTED = 0;
 if ($PLATF_OS_NAME eq "Darwin" || $PLATF_VERSION eq "Linux3gcc4.8.2") {
     $IS_CPP11_SUPPORTED = 1;
 }
-print $IS_CPP11_SUPPORTED;
-exit;
 
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
