@@ -28,7 +28,7 @@ $ARCH = $ARGV[2];
 
 # Check if C++11 is supported in this platform
 $PLATFORM_VERSION   = substr $ARCH, 10, 4;
-$IS_CPP11_SUPPORTED = ($PLATFORM_VERSION >= 2013) ? 1 : 0;
+$IS_CPP11_SUPPORTED = ($PLATFORM_VERSION >= 2012) ? 1 : 0;
 
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
