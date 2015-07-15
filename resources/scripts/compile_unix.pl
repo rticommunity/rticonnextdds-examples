@@ -223,6 +223,9 @@ sub process_all_files {
         # cs subdirectory
         next if $register eq "."  or  $register eq ".." or $register eq "cs";
 
+        # Skip C++11 if the platform does not support it.
+        next if $register eq "c++11" and !$IS_CPP11_SUPPORTED;
+
         my $file = "$folder/$register";
         $file = unix_path($file);
 
@@ -246,7 +249,7 @@ sub process_all_files {
                 $LANGUAGE = "C++";
             } elsif ($register eq "c++03") {
                 $LANGUAGE = "C++03";
-            } elsif ($register eq "c++11" && $IS_CPP11_SUPPORTED) {
+            } elsif ($register eq "c++11") {
                 $LANGUAGE = "C++11";
             } elsif ($register eq "java") {
                 $LANGUAGE = "Java";
