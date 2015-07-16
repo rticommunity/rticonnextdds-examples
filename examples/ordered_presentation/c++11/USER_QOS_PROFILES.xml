@@ -1,0 +1,112 @@
+<?xml version="1.0"?>
+<!--
+(c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the Software.  Licensee has the right to distribute object form only
+for use with RTI products.  The Software is provided "as is", with no warranty
+of any type, including any warranty for fitness for any purpose. RTI is under
+no obligation to maintain or support the Software.  RTI shall not be liable for
+any incidental or consequential damages arising out of the use or inability to
+use the software.
+-->
+<!-- Description XML QoS Profile for async The QoS configuration of the DDS
+entities in the generated example is loaded from this file. This file is
+used only when it is in the current working directory or when the
+environment variable NDDS_QOS_PROFILES is defined and points to this file.
+For more information about XML QoS Profiles see Chapter 15 in the RTI
+Connext user manual. -->
+<!-- If you want to modify the .xml file, remember to modify
+xsi:noNamespaceSchemaLocation to point to
+"NDDSHOME"/scripts/../resource/rtiddsgen/../qos_profiles_5.0.0/schema/ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+     A QoS library is a named set of QoS profiles. -->
+    <qos_library name="ordered_Library">
+
+        <!-- QoS profile used to configure reliable communication between the
+         DataWriter and DataReader created in the example code. A QoS profile
+         groups a set of related QoS. -->
+        <qos_profile name="ordered_Profile_subscriber_instance"
+                 base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <!-- QoS used to configure the data writer created in the example
+             code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>orderedDataWriter</name>
+                </publication_name>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+            </datawriter_qos>
+
+            <publisher_qos>
+                <presentation>
+                    <access_scope>TOPIC_PRESENTATION_QOS</access_scope>
+                    <ordered_access>true</ordered_access>
+                </presentation>
+            </publisher_qos>
+
+            <!-- QoS used to configure the data reader created in the example
+             code -->
+            <datareader_qos>
+                <history>
+                    <depth>10</depth>
+                </history>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+            </datareader_qos>
+
+            <subscriber_qos>
+                <presentation>
+                    <access_scope>INSTANCE_PRESENTATION_QOS</access_scope>
+                    <ordered_access>true</ordered_access>
+                </presentation>
+            </subscriber_qos>
+
+            <participant_qos>
+                <!-- The participant name, if it is set, will be displayed in
+                     the RTI tools, making it easier for you to tell one
+                     application from another when you're debugging. -->
+                <participant_name>
+                    <name>Orderer presentation C++11 example</name>
+                </participant_name>
+            </participant_qos>
+        </qos_profile>
+
+        <qos_profile name="ordered_Profile_subscriber_topic"
+                 base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <!-- QoS used to configure the data writer created in the example
+             code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>orderedDataReader</name>
+                </subscription_name>
+                <history>
+                    <depth>10</depth>
+                </history>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+            </datareader_qos>
+
+            <subscriber_qos>
+                <presentation>
+                    <access_scope>TOPIC_PRESENTATION_QOS</access_scope>
+                    <ordered_access>true</ordered_access>
+                </presentation>
+            </subscriber_qos>
+
+            <participant_qos>
+                <!-- The participant name, if it is set, will be displayed in
+                     the RTI tools, making it easier for you to tell one
+                     application from another when you're debugging. -->
+                <participant_name>
+                    <name>Orderer presentation C++11 example</name>
+                </participant_name>
+            </participant_qos>
+        </qos_profile>
+    </qos_library>
+</dds>
