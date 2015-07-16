@@ -36,17 +36,14 @@ the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\Foo_publisher.exe <domain_id> <samples_to_send>
+objs\<arch_name>\Foo_publisher.exe <domain_id>
 ```
 
 On *UNIX* systems run:
 ```
-./objs/<arch_name>/Foo_publisher <domain_id> <samples_to_send>
+./objs/<arch_name>/Foo_publisher <domain_id>
 ```
-The applications accept up to three arguments:
+The applications accept one argument:
 
 1. The `<domain_id>`. Both applications must use the same domain ID in order to
 communicate. The default is 0.
-2. How long the examples should run, measured in samples for the publisher
-and sleep periods for the subscriber. A value of '0' instructs the
-application to run forever; this is the default.
