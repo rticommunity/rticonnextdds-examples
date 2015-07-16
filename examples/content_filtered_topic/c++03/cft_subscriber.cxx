@@ -8,6 +8,7 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
+
 #include "cft.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
@@ -66,13 +67,11 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
     // If you want to set the reliability and history QoS settings
-    // programmatically rather than using the XML, you will need to add
-    // the following lines to your code and comment out the reader_qos
-    // constructor call above.
-    //DataReaderQos reader_qos;
-    //reader_qos << Reliability::Reliable();
-    //reader_qos << Durability::TransientLocal();
-    //reader_qos << History::KeepLast(20);
+    // programmatically rather than using the XML, you will need to comment out
+    // the following lines of code.
+    // reader_qos << Reliability::Reliable()
+    //            << Durability::TransientLocal()
+    //            << History::KeepLast(20);
 
     // Create the content filtered topic in the case sel_cft is true
     // The Content Filter Expresion has two parameters:
@@ -105,10 +104,10 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
         rti::core::bind_and_manage_listener(
             reader,
             new CftListener,
-            dds::core::status::StatusMask::data_available());
+            StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
         // Receive period of 1 second.
         rti::util::sleep(Duration(1));
 

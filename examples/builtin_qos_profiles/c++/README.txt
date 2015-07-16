@@ -53,7 +53,7 @@ remove the 'z' from the end of the RTI library names, such as:
 
 Also, make sure that RTI's libraries are in the system LD_LIBRARY_PATH 
 environment variable, such as:
-export LD_LIBRARY_PATH=~/rti/ndds.5.1.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=~/rti/ndds.5.2.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH
 
 Running C++ Example
 ===================

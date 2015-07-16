@@ -29,7 +29,7 @@ using namespace dds::sub;
 using namespace dds::pub;
 
 // Authorization string
-const std::string Auth = "password";
+const std::string expected_password = "password";
 
 // The builtin subscriber sets participant_qos.user_data, so we set up listeners
 // for the builtin DataReaders to access these fields.
@@ -54,10 +54,6 @@ public:
 
             const ByteSeq& user_data = sampleIt->data().user_data().value();
             std::string user_auth (user_data.begin(), user_data.end());
-            bool is_auth = false;
-
-            // Check if the password match.
-            is_auth = (Auth.compare(user_auth) == 0);
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
@@ -72,17 +68,18 @@ public:
 
             std::cout.flags(default_format);
 
-            if (!is_auth) {
+            // Check if the password match. Otherwise, ignore the participant.
+            if (user_auth != expected_password) {
                 std::cout << "Bad authorization, ignoring participant"
                           << std::endl;
 
                 // Get the associated participant...
-                const DomainParticipant& participant =
+                DomainParticipant participant =
                     reader.subscriber().participant();
 
                 // Ignore the remote participant
                 dds::domain::ignore(
-                    const_cast<DomainParticipant&>(participant),
+                    participant,
                     sampleIt->info().instance_handle());
             }
         }
@@ -155,7 +152,7 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Installing listeners for the builtin topics requires several steps
-    // First get the builtin subscriber
+    // First get the builtin subscriber.
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
     // Then get builtin subscriber's datareader for participants.
@@ -166,21 +163,21 @@ void publisher_main(int domain_id, int sample_count)
         std::back_inserter(participant_reader));
 
     // Install our listener using ListenerBinder, a RAII that will take care
-    // of setting it to NULL on destruction.
+    // of setting it to NULL and deleting it.
     rti::core::ListenerBinder< DataReader<ParticipantBuiltinTopicData> >
         participant_listener = rti::core::bind_and_manage_listener(
             participant_reader[0],
             new BuiltinParticipantListener,
             dds::core::status::StatusMask::data_available());
 
-    // Get builtin subscriber's datareader for subscribers
+    // Get builtin subscriber's datareader for subscribers.
     std::vector< DataReader<SubscriptionBuiltinTopicData> > subscription_reader;
     find< DataReader<SubscriptionBuiltinTopicData> >(
         builtin_subscriber,
         dds::topic::subscription_topic_name(),
         std::back_inserter(subscription_reader));
 
-    // Install our listener using ListenerBinder
+    // Install our listener using ListenerBinder.
     rti::core::ListenerBinder< DataReader<SubscriptionBuiltinTopicData> >
         subscriber_listener = rti::core::bind_and_manage_listener(
             subscription_reader[0],

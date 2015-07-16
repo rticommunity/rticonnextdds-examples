@@ -12,8 +12,8 @@
 RTI Data Distribution Service Deployment
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.1.0/rti_dds_profiles.xsd" 
-     version="5.1.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_profiles.xsd" 
+     version="5.2.0">
 
     <qos_library name="RTIExampleQosLibrary">
         <qos_profile name="SensorData">
