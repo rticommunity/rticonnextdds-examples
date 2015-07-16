@@ -31,20 +31,20 @@ void print_shape_data(const DynamicData& data)
     auto shape_tuple_data = rti::core::xtypes::get_tuple<
         std::string, int32_t, int32_t, int32_t>(data);
 
-    std::cout << "\tcolor: "     << std::get<0>(shape_tuple_data) << std::endl
-              << "\tx: "         << std::get<1>(shape_tuple_data) << std::endl
-              << "\ty: "         << std::get<2>(shape_tuple_data) << std::endl
-              << "\tshapesize: " << std::get<3>(shape_tuple_data) << std::endl;
+    std::cout << "\t color: "     << std::get<0>(shape_tuple_data) << std::endl
+              << "\t x: "         << std::get<1>(shape_tuple_data) << std::endl
+              << "\t y: "         << std::get<2>(shape_tuple_data) << std::endl
+              << "\t shapesize: " << std::get<3>(shape_tuple_data) << std::endl;
 
     // Second method: using DynamicData getters.
-    // std::cout << "\tcolor: " << data.value<std::string>("color") << std::endl
-    //           << "\tx: "     << data.value<int32_t>("x") << std::endl
-    //           << "\ty: "     << data.value<int32_t>("y") << std::endl
-    //           << "\tshapesize: " << data.value<int32_t>("shapesize")
-    //           << std::endl;
+    std::cout << "\t color: " << data.value<std::string>("color") << std::endl
+              << "\t x: "     << data.value<int32_t>("x") << std::endl
+              << "\t y: "     << data.value<int32_t>("y") << std::endl
+              << "\t shapesize: " << data.value<int32_t>("shapesize")
+              << std::endl;
 
     // Third method: automatic with the '<<' operator overload.
-    // std::cout << data << std::endl;
+    std::cout << data << std::endl;
 }
 
 void subscriber_main(int domain_id, int sample_count)
