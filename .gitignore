@@ -23,6 +23,7 @@ build.xml
 *DataReader.java
 *DataWriter.java
 *Seq.java
+*Type.java
 *TypeCode.java
 *TypeSupport.java
 
