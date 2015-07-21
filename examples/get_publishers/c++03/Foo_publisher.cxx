@@ -19,30 +19,44 @@ using namespace dds::core;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
+using namespace dds::pub::qos;
+using namespace rti::core::policy;
 
 void publisher_main(int domain_id)
 {
     // Create a DomainParticipant with default QoS.
     DomainParticipant participant(domain_id);
 
-    Publisher publisher1(participant);
-    std::cout << "The first  publisher is " << publisher1.instance_handle()
+    // Retrieve publisher QoS to set names.
+    PublisherQos publisher_qos = QosProvider::Default().publisher_qos();
+
+    // Create the first publisher.
+    publisher_qos << EntityName("Foo");
+    Publisher publisher1(participant, publisher_qos);
+    std::cout << "The first  publisher name is "
+              << publisher1.qos().policy<EntityName>().name().get()
               << std::endl;
 
-    Publisher publisher2(participant);
-    std::cout << "The second publisher is " << publisher2.instance_handle()
+    // Create the second publisher.
+    publisher_qos << EntityName("Bar");
+    Publisher publisher2(participant, publisher_qos);
+    std::cout << "The second publisher name is "
+              << publisher2.qos().policy<EntityName>().name().get()
               << std::endl;
 
+    // Find the publishers.
     std::cout << std::endl << "Calling to find_publishers()..." << std::endl
               << std::endl;
     std::vector<Publisher> publishers;
     rti::pub::find_publishers(participant, std::back_inserter(publishers));
 
+    // Iterate over the publishers and print the name.
     std::cout << "Found " << publishers.size()
               << " publishers on this participant" << std::endl;
     for (std::vector<int>::size_type i = 0; i < publishers.size(); i++) {
-        std::cout << "The " << i << " publisher is "
-                  << publishers[i].instance_handle() << std::endl;
+        std::cout << "The " << i << " publisher name is "
+                  << publishers[i].qos().policy<EntityName>().name().get()
+                  << std::endl;
     }
 }
 
