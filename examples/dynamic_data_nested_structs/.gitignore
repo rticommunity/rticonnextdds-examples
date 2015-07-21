@@ -2,3 +2,6 @@
 !*.sln
 !*.vcxproj
 !makefile*
+
+# Ignore temp IDL file
+Foo.idl
