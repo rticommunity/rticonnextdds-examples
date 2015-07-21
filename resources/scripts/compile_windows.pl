@@ -26,6 +26,10 @@ $NDDS_VERSION = $ARGV[1];
 # This variable is the architecture name
 $ARCH = $ARGV[2];
 
+# Check if C++11 is supported in this platform
+$PLATFORM_VERSION   = substr $ARCH, 10, 4;
+$IS_CPP11_SUPPORTED = ($PLATFORM_VERSION >= 2012) ? 1 : 0;
+
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
@@ -255,6 +259,9 @@ sub process_all_files {
 
     foreach $register (@files) {
         next if $register eq "."  or  $register eq "..";
+
+        # Skip C++11 if the platform does not support it.
+        next if $register eq "c++11" and !$IS_CPP11_SUPPORTED;
 
         my $file = "$folder/$register";
         $file = unix_path($file);

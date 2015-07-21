@@ -100,6 +100,7 @@ sub process_all_files {
         next if $register eq "."  or  $register eq ".." or 
                 $register eq "persistent_storage" or 
                 $register eq "routing_service_file_adapter" or
+                $register eq "routing_service_file_to_dds_configuration" or
                 $register eq "writing_data_lua";
                 
         my $file = "$folder/$register";
@@ -168,6 +169,9 @@ print "*********************************************************" .
 
 validate_xml ("./examples/routing_service_file_adapter/c/file_bridge.xml", 
                 $PATH_RTI_ROUTING_SERVICE);
+validate_xml ("./examples/routing_service_file_to_dds_configuration/file_bridge.xml", 
+                $PATH_RTI_ROUTING_SERVICE);
+
 
 # This example is commented because the rti_dds_profiles.xsd fails with older
 # versions of xmllint                    

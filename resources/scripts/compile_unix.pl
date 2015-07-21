@@ -24,6 +24,14 @@ $NDDS_VERSION = $ARGV[1];
 # This variable is the architecture name
 $ARCH = $ARGV[2];
 
+# Check if C++11 is supported in this platform
+$PLATF_OS_NAME = substr $ARCH, 3, 6;
+$PLATF_VERSION =  substr $ARCH, 3;
+$IS_CPP11_SUPPORTED = 0;
+if ($PLATF_OS_NAME eq "Darwin" || $PLATF_VERSION eq "Linux3gcc4.8.2") {
+    $IS_CPP11_SUPPORTED = 1;
+}
+
 # $TOP_DIRECTORY is the directory where you have executed the script
 $TOP_DIRECTORY = cwd();
 
@@ -215,6 +223,9 @@ sub process_all_files {
         # cs subdirectory
         next if $register eq "."  or  $register eq ".." or $register eq "cs";
 
+        # Skip C++11 if the platform does not support it.
+        next if $register eq "c++11" and !$IS_CPP11_SUPPORTED;
+
         my $file = "$folder/$register";
         $file = unix_path($file);
 
@@ -238,6 +249,8 @@ sub process_all_files {
                 $LANGUAGE = "C++";
             } elsif ($register eq "c++03") {
                 $LANGUAGE = "C++03";
+            } elsif ($register eq "c++11") {
+                $LANGUAGE = "C++11";
             } elsif ($register eq "java") {
                 $LANGUAGE = "Java";
             }

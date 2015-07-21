@@ -1,3 +1,6 @@
+# Temp files
+.DS_Store
+
 # Visual Studio files and output files
 objs/
 *.vcxproj.filters
