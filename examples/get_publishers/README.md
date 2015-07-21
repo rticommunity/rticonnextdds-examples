@@ -5,7 +5,7 @@ The *get_publishers()* API allow the application to access all the publishers
 the participant has.
 
 ## Example Description
-In this example we illustrate how call the *get_publishers()* API on a
+In this example we illustrate how to call the *get_publishers()* API on a
 participant and how to iterate on the returned sequence and enumerate all the
 publishers.
 

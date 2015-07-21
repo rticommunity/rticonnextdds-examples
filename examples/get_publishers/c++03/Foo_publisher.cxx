@@ -35,15 +35,12 @@ void publisher_main(int domain_id)
 
     std::cout << std::endl << "Calling to find_publishers()..." << std::endl
               << std::endl;
-    std::vector<Publisher> publishers(10, dds::core::null);
-    int num_publishers = rti::pub::find_publishers(
-        participant,
-        publishers.begin(),
-        10);
+    std::vector<Publisher> publishers;
+    rti::pub::find_publishers(participant, std::back_inserter(publishers));
 
-    std::cout << "Found " << num_publishers << " publishers on this participant"
-              << std::endl;
-    for (int i = 0; i < num_publishers; i++) {
+    std::cout << "Found " << publishers.size()
+              << " publishers on this participant" << std::endl;
+    for (std::vector<int>::size_type i = 0; i < publishers.size(); i++) {
         std::cout << "The " << i << " publisher is "
                   << publishers[i].instance_handle() << std::endl;
     }
