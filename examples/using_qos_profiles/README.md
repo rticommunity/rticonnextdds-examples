@@ -45,28 +45,24 @@ some of the different ways in which the *DomainParticipantFactory* may load
 XML-specified QoS into your application.
 
 * *USER_QOS_PROFILES.xml* includes the definition of *volatile_profile*, which
-  enables `VOLATILE_DURABILITY` QoS for both *DataWriters* and *DataWriters*.
-  The
-*DomainParticipantFactory* loads this file automatically if it exists in the
-working directoy, i.e., if we run the application from the directory where
-*USER_QOS_PROFILES.xml* is. In the definition of *volatile_profile*, we set
-`is_default_qos="true"` to enable its policies as the default QoS. As a result,
-when we create an entity using `DDS_<ENTITY_NAME>_QOS_DEFAULT` in our example,
-we implicitly using the *volatile_profile*.
+  enables `VOLATILE_DURABILITY` QoS for both *DataWriter* and *DataReader*.
+  The *DomainParticipantFactory* loads this file automatically if it exists in
+  the working directoy, i.e., if we run the application from the directory where
+  *USER_QOS_PROFILES.xml* is. In the definition of *volatile_profile*, we set
+  `is_default_qos="true"` to enable its policies as the default QoS. As a
+  result, when we create an entity using `DDS_<ENTITY_NAME>_QOS_DEFAULT` in our
+  example, we implicitly using the *volatile_profile*.
 
 * *my_custom_qos_profiles.xml* includes the definition of
-*transient_local_profile*,
-which enables `TRANSIENT_LOCAL_DURABILITY` QoS for both *DataWriters* and
-*DataReaders*. We also include a profile called *transient_profile*. Although
-this profile is not used throughout the example, we use it to illustrate how an
-individual QoS or profile can inherit values from other QoSs or profiles
-described in the XML file. Unlike *USER_QOS_PROFILES.xml*, the XML-specified
-QoSs defined in *my_custom_qos_profiles.xml* are not loaded automatically by the
-*DomainParticipantFactory*. We need to modify the *DDSTheParticipantFactory
-Profile* QoSPolicy so it can find the QoS policies defined in different XML
-files.
+  *transient_local_profile*, which enables `TRANSIENT_LOCAL_DURABILITY` QoS for
+  both *DataWriter* and *DataReader*. We also include a profile called
+  *transient_profile*. Unlike *USER_QOS_PROFILES.xml*, the XML-specified QoSs
+  defined in *my_custom_qos_profiles.xml* are not loaded automatically by the
+  *DomainParticipantFactory*. We need to modify the *DDSTheParticipantFactory
+  Profile* QoSPolicy so it can find the QoS policies defined in different XML
+  files.
 
-```
+``` c
     factory_qos.profile.url_profile[0] =
             DDS_String_dup("my_custom_qos_profiles.xml");
 ```
