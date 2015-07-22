@@ -68,7 +68,7 @@ void publisher_main(int domain_id, int sample_count)
         std::cout << "Writing profile_name = transient_local_profile,\t x = "
                   << count << std::endl << std::endl;
         instance.profile_name("transient_local_profile");
-        writer_volatile.write(instance);
+        writer_transient_local.write(instance);
 
         // Send the sample every second.
         rti::util::sleep(Duration(1));
