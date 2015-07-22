@@ -24,7 +24,7 @@ using namespace dds::pub::qos;
 
 void publisher_main(int domain_id, int sample_count)
 {
-    // Create a DomainParticipant with default Qos.
+    // Create a DomainParticipant with default QoS.
     DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
