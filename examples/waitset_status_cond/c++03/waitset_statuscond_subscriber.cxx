@@ -35,8 +35,12 @@ void subscriber_main(int domain_id, int sample_count)
     // Retrieve the subscriber QoS from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
-    reader_qos << Reliability::Reliable()
-               << History::KeepAll();
+    // If you want to change the DataReader's QoS programmatically rather
+    // than using the XML file, you will need to comment out the previous
+    // publisher_qos assignment and uncomment these files.
+
+    // reader_qos << Reliability::Reliable()
+    //            << History::KeepAll();
 
     // Create a DataReader.
     DataReader<waitset_statuscond> reader(

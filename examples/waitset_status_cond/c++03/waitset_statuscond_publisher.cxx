@@ -33,12 +33,12 @@ void publisher_main(int domain_id, int sample_count)
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml.
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
 
-    // If you want to change the Publisher's QoS programmatically rather
+    // If you want to change the DataWriter's QoS programmatically rather
     // than using the XML file, you will need to comment out the previous
     // publisher_qos assignment and uncomment these files.
 
-    writer_qos << Reliability::Reliable()
-               << History::KeepAll();
+    // writer_qos << Reliability::Reliable()
+    //            << History::KeepAll();
 
     // Create a DataWriter.
     DataWriter<waitset_statuscond> writer(
