@@ -57,6 +57,10 @@ void subscriber_main(int domain_id, int sample_count)
         DataState::any_data(),
         [&reader]()
         {
+            // Using only 'take()' method will read all received samples.
+            // To read only samples that triggered the QueryCondition
+            // use 'select().condition().read()' as it's done in
+            // the "polling_querycondition" example.
             LoanedSamples<waitset_query_cond> samples = reader.take();
             for (auto sample : samples) {
                 if (!sample.info().valid()) {
