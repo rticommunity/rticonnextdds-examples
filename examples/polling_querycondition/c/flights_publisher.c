@@ -15,8 +15,6 @@
 #include "flights.h"
 #include "flightsSupport.h"
 
-#include <time.h>
-
 /* Delete all entities */
 static int publisher_shutdown(
     DDS_DomainParticipant *participant)
@@ -54,29 +52,33 @@ static int publisher_shutdown(
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count)
+static int publisher_main(int domain_id, int sample_count)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
     DDS_DataWriter *writer = NULL;
     FlightDataWriter *flight_writer = NULL;
-    Flight *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
+
     /* Send a new sample every second */
     struct DDS_Duration_t send_period = {1,0};
 
-    /* Set up some unique IDs that can be used for the data type */
-    char *myIds[] = {"GUID1", "GUID2", "GUID3"};
+    /* Create the flight info samples. */
+    const int num_flights = 4;
+    Flight flights_info[4] = {
+            { .trackId = 1111, .company = "CompanyA", .altitude = 15000 },
+            { .trackId = 2222, .company = "CompanyB", .altitude = 20000 },
+            { .trackId = 3333, .company = "CompanyA", .altitude = 30000 },
+            { .trackId = 4444, .company = "CompanyB", .altitude = 25000 }
+    };
 
-
-    /* To customize participant QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Participant. */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
+        DDS_TheParticipantFactory, domain_id, &DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -84,8 +86,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize publisher QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Publisher. */
     publisher = DDS_DomainParticipant_create_publisher(
         participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
@@ -95,7 +96,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Register type before creating topic */
+    /* Register type before creating the topic. */
     type_name = FlightTypeSupport_get_type_name();
     retcode = FlightTypeSupport_register_type(
         participant, type_name);
@@ -105,8 +106,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize topic QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Topic. */
     topic = DDS_DomainParticipant_create_topic(
         participant, "Example Flight",
         type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
@@ -117,8 +117,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize data writer QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a DataWriter. */
     writer = DDS_Publisher_create_datawriter(
         publisher, topic,
         &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -134,88 +133,48 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Create data sample for writing */
-
-    instance = FlightTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-
-    if (instance == NULL) {
-        printf("FlightTypeSupport_create_data error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-
-    /* For a data type that has a key, if the same instance is going to be
-       written multiple times, initialize the key here
-       and register the keyed instance prior to writing */
-/*
-    instance_handle = FlightDataWriter_register_instance(
-        Flight_writer, instance);
-*/
-    /* Initialize random seed before entering the loop */
-    srand(time(NULL));
-
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count=0; (sample_count==0)||(count<sample_count); count+=num_flights) {
+        /* Update flight info latitude and write */
+        printf("Updating and sending values\n");
 
+        for (int i = 0; i < num_flights; i++) {
+            /* Set the plane altitude lineally
+             * (usually the max is at 41,000ft).
+             */
+            flights_info[i].altitude += count * 100;
+            if (flights_info[i].altitude >= 41000) {
+                flights_info[i].altitude = 41000;
+            }
 
-        /* Write data */
-        retcode = FlightDataWriter_write(
-            flight_writer, instance, &instance_handle);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("write error %d\n", retcode);
+            printf("\t[trackId: %d, company: %s, altitude: %d]\n",
+                flights_info[i].trackId, flights_info[i].company,
+                flights_info[i].altitude);
+
+            /* Write the instance */
+            retcode = FlightDataWriter_write(
+                flight_writer, &flights_info[i], &instance_handle);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("write error %d\n", retcode);
+            }
         }
 
         NDDS_Utility_sleep(&send_period);
-    }
-
-/*
-    retcode = FlightDataWriter_unregister_instance(
-        Flight_writer, instance, &instance_handle);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("unregister instance error %d\n", retcode);
-    }
-*/
-
-    /* Delete data sample */
-    retcode = FlightTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("FlightTypeSupport_delete_data error %d\n", retcode);
     }
 
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant);
 }
 
-#if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
-{
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
 
-    if (argc >= 2) {
-        domainId = _wtoi(argv[1]);
-    }
-    if (argc >= 3) {
-        sample_count = _wtoi(argv[2]);
-    }
-
-    /* Uncomment this to turn on additional logging
-    NDDS_Config_Logger_set_verbosity_by_category(
-        NDDS_Config_Logger_get_instance(),
-        NDDS_CONFIG_LOG_CATEGORY_API,
-        NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return publisher_main(domainId, sample_count);
-}
-#elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
+#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
+    int domain_id = 0;
+    int sample_count = 0; /* Infinite loop */
 
     if (argc >= 2) {
-        domainId = atoi(argv[1]);
+        domain_id = atoi(argv[1]);
     }
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
@@ -228,7 +187,7 @@ int main(int argc, char *argv[])
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
-    return publisher_main(domainId, sample_count);
+    return publisher_main(domain_id, sample_count);
 }
 #endif
 
