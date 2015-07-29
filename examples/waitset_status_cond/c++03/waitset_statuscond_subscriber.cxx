@@ -48,6 +48,8 @@ void subscriber_main(int domain_id, int sample_count)
     // Get status conditions.
     // Each entity may have an attached Status Condition. To modify the
     // statuses we need to get the reader's Status Conditions first.
+    // By instantiating a StatusCondition we are obtaining a reference to this
+    // reader's StatusCondition
     StatusCondition status_condition(reader);
 
     // Set enabled statuses.
@@ -63,6 +65,8 @@ void subscriber_main(int domain_id, int sample_count)
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
         // 'wait()' blocks execution of the thread until one or more attached
         // Conditions become true, or until a user-specified timeout expires.
+        // Another way would be to use 'dispatch()' to wait and dispatch the
+        // events as it's done in the "waitset_query_cond" example.
         WaitSet::ConditionSeq active_conditions = waitset.wait(
             Duration::from_millisecs(1500));
 
