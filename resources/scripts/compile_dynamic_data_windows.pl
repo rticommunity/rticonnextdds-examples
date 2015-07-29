@@ -4,8 +4,8 @@
 # works of the Software.  Licensee has the right to distribute object form only
 # for use with RTI products.  The Software is provided "as is", with no warranty
 # of any type, including any warranty for fitness for any purpose. RTI is under
-# no obligation to maintain or support the Software.  RTI shall not be liable 
-# for any incidental or consequential damages arising out of the use or 
+# no obligation to maintain or support the Software.  RTI shall not be liable
+# for any incidental or consequential damages arising out of the use or
 # inability to use the software.
 ################################################################################
 
@@ -25,7 +25,7 @@ $NDDS_HOME = "";
 $IS_NEW_DIR_STRUCTURE = 0;
 if ($NDDS_VERSION ge "5.2.0") {
     $IS_NEW_DIR_STRUCTURE = 1;
-} 
+}
 
 
 # This variable is the NDDSHOME environment variable
@@ -33,16 +33,16 @@ if ($NDDS_VERSION ge "5.2.0") {
 if (defined $ENV{'NDDSHOME'}) {
     $NDDS_HOME = $ENV{'NDDSHOME'};
 }
-else { 
+else {
     if ($IS_NEW_DIR_STRUCTURE) {
-        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
-                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" . 
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." .
+                            $NDDS_VERSION . "/unlicensed/rti_connext_dds-" .
                             $NDDS_VERSION;
     } else {
-        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." . 
+        $NDDS_HOME = $ENV{'RTI_TOOLSDRIVE'} . "/local/preship/ndds/ndds." .
                             $NDDS_VERSION;
     }
-    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" . 
+    print "CAUTION: NDDSHOME is not defined, by default we set to\n\t" .
         "$NDDS_HOME\n";
 }
 
@@ -67,26 +67,26 @@ if ($IS_NEW_DIR_STRUCTURE) {
      # C/C++/C# architecture
     $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
     # Java Architecture
-    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/java;" . $ENV{'PATH'};  
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/java;" . $ENV{'PATH'};
 } else {
     #C/C++/C# architecture
     $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ARCH . ";" . $ENV{'PATH'};
     #Java Architecture
-    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" . 
-               $ENV{'PATH'}; 
+    $ENV{'PATH'} = $ENV{'NDDSHOME'} . "/lib/" . $ENV{'OS_ARCH'} . "jdk;" .
+               $ENV{'PATH'};
 }
 
 # including Java compiler (Javac) in the path
 # If JAVAHOME is not defined we defined it by default
 if (!defined $ENV{'JAVAHOME'}) {
-    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" . 
+    $ENV{'JAVAHOME'} = $ENV{'RTI_TOOLSDRIVE'} . "/local/applications/Java/" .
         "PLATFORMSDK/win32/jdk1.7.0_04";
-    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" . 
+    print "CAUTION: JAVAHOME is not defined, by default we set to\n\t" .
         "$ENV{'JAVAHOME'}\n";
 }
 
 $ENV{'PATH'} = $ENV{'JAVAHOME'} . "/bin;" . $ENV{'PATH'};
-            
+
 # This solution name is the same one for all dynamic data C/C++ examples
 $VS_SOLUTION_NAME_C = "Hello-i86Win32VS2010.sln";
 
@@ -112,11 +112,11 @@ sub unix_path {
 #       none
 sub call_compiler {
     my ($language, $path) = @_;
-    
+
     print_example_name ($path);
-    
+
     my ($compile_string) = "";
-    
+
     # we create the compile string using msbuild compiler and the name of the
     # projects we have defined at the first of the file
     if ($language eq "C" or $language eq "C++") {
@@ -124,12 +124,12 @@ sub call_compiler {
     }
     elsif ($language eq "Java") {
         if ($IS_NEW_DIR_STRUCTURE) {
-            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" . 
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\lib\\java\\" .
                               "nddsjava.jar *.java";
         } else {
-            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" . 
+            $compile_string = "javac -classpath .;\"%NDDSHOME%\"\\class\\" .
                               "nddsjava.jar *.java";
-            
+
         }
         print $compile_string . "\n";
     } elsif ($language eq "C#") {
@@ -143,14 +143,14 @@ sub call_compiler {
 
     # we need to swap the directory where the makefile is
     chdir $path;
-    
+
     system $compile_string;
     if ( $? != 0 ) {
         # return to the top directory again
         chdir $TOP_DIRECTORY;
         exit(1);
     }
-    
+
     # return to the top directory again
     chdir $TOP_DIRECTORY;
 }
@@ -158,30 +158,32 @@ sub call_compiler {
 #This function prints the name of the example which is going to be compiled
 sub print_example_name {
     my ($folder) = @_;
-    print "\n*******************************************************" . 
+    print "\n*******************************************************" .
           "****************\n";
     print "***** EXAMPLE: $folder\n";
-    print "*********************************************************" . 
+    print "*********************************************************" .
           "**************\n";
 }
- 
+
 #dynamic data access union discriminator example
-call_compiler ("C", 
+call_compiler ("C",
     $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c");
 
 call_compiler ("C++", $FOLDER_TO_CHECK .
     "./dynamic_data_access_union_discriminator/c++");
 
-call_compiler ("C#", 
+call_compiler ("C#",
     $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/cs");
 
-call_compiler ("Java", 
+call_compiler ("Java",
     $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/Java");
-        
-#dynamic data nested structs example       
+
+#dynamic data nested structs example
 call_compiler ("C", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c");
 
 call_compiler ("C++", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c++");
+
+call_compiler("C++03", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c++03");
 
 call_compiler ("C#", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/cs");
 
