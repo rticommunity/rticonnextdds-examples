@@ -30,7 +30,7 @@ void subscriber_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<waitset_statuscond> topic(participant, "Example waitset_statuscond");
+    Topic<Foo> topic(participant, "Example waitset_statuscond");
 
     // Retrieve the subscriber QoS from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -43,10 +43,7 @@ void subscriber_main(int domain_id, int sample_count)
     //            << History::KeepAll();
 
     // Create a DataReader.
-    DataReader<waitset_statuscond> reader(
-        Subscriber(participant),
-        topic,
-        reader_qos);
+    DataReader<Foo> reader(Subscriber(participant), topic, reader_qos);
 
     // Get status conditions.
     // Each entity may have an attached Status Condition. To modify the
@@ -93,9 +90,8 @@ void subscriber_main(int domain_id, int sample_count)
                     // Current conditions match our conditions to read data, so
                     // we can read data just like we would do in any other
                     // example.
-                    LoanedSamples<waitset_statuscond> samples = reader.take();
-                    for (LoanedSamples<waitset_statuscond>::iterator
-                                                       sampleIt=samples.begin();
+                    LoanedSamples<Foo> samples = reader.take();
+                    for (LoanedSamples<Foo>::iterator sampleIt=samples.begin();
                         sampleIt != samples.end();
                         ++sampleIt) {
 

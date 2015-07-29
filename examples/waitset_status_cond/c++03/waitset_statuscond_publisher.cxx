@@ -28,7 +28,7 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<waitset_statuscond> topic(participant, "Example waitset_statuscond");
+    Topic<Foo> topic(participant, "Example waitset_statuscond");
 
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml.
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -41,13 +41,10 @@ void publisher_main(int domain_id, int sample_count)
     //            << History::KeepAll();
 
     // Create a DataWriter.
-    DataWriter<waitset_statuscond> writer(
-        Publisher(participant),
-        topic,
-        writer_qos);
+    DataWriter<Foo> writer(Publisher(participant), topic, writer_qos);
 
     // Create a sample for writing.
-    waitset_statuscond instance;
+    Foo instance;
 
     for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
         std::cout << "Writing waitset_statuscond, count " << count << std::endl;
