@@ -119,7 +119,7 @@ sub call_compiler {
 
     # we create the compile string using msbuild compiler and the name of the
     # projects we have defined at the first of the file
-    if ($language eq "C" or $language eq "C++") {
+    if ($language eq "C" or $language eq "C++" or $language eq "C++03") {
         $compile_string = "msbuild " . $VS_SOLUTION_NAME_C;
     }
     elsif ($language eq "Java") {
