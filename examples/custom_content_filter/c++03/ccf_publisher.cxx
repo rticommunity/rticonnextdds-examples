@@ -30,16 +30,18 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Register the custom filter type. It must be registered in both sides.
-    participant->register_contentfilter(CustomFilterType(), "CustomFilter");
+    participant->register_contentfilter(
+        CustomFilter<CustomFilterType>(new CustomFilterType()),
+        "CustomFilter");
 
     // Create a Topic -- and automatically register the type.
-    Topic<ccf> topic(participant, "Example ccf");
+    Topic<Foo> topic(participant, "Example ccf");
 
     // Create a DataWriter.
-    DataWriter<ccf> writer(Publisher(participant), topic);
+    DataWriter<Foo> writer(Publisher(participant), topic);
 
     // Create an instance for writing.
-    ccf instance;
+    Foo instance;
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){

@@ -31,7 +31,7 @@ bool gt_test(long sample_data, long p) {
     return (p > sample_data);
 }
 
-class CustomFilterType: public ContentFilter<ccf, cdata> {
+class CustomFilterType: public ContentFilter<Foo, cdata> {
 public:
     // Called when Custom Filter is created, or when parameters are changed.
     virtual cdata& compile(const std::string& expression,
@@ -81,7 +81,7 @@ public:
     }
 
     // Called to evaluated each sample.
-    virtual bool evaluate(cdata& compile_data, const ccf& sample,
+    virtual bool evaluate(cdata& compile_data, const Foo& sample,
             const FilterSampleInfo& meta_data)
     {
         return compile_data.eval_func(sample.x(), compile_data.param);
