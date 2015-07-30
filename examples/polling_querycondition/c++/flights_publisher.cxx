@@ -60,16 +60,16 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    FlightDataWriter * querycondition_writer = NULL;
+    FlightDataWriter * flights_writer = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
+
     /* Send a new sample every second */
     DDS_Duration_t send_period = {1,0};
 
-    /* To customize participant QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Participant. */
     participant = DDSTheParticipantFactory->create_participant(
         domainId, DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -79,8 +79,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize publisher QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Publisher. */
     publisher = participant->create_publisher(
         DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
@@ -89,7 +88,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Register type before creating topic */
+    /* Register type before creating topic. */
     type_name = FlightTypeSupport::get_type_name();
     retcode = FlightTypeSupport::register_type(
         participant, type_name);
@@ -99,10 +98,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize topic QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create the Topic. */
     topic = participant->create_topic(
-        "Example querycondition",
+        "Example Flight",
         type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
@@ -111,8 +109,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize data writer QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a DataWriter. */
     writer = publisher->create_datawriter(
         topic, DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
@@ -121,19 +118,45 @@ extern "C" int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant);
         return -1;
     }
-    querycondition_writer = FlightDataWriter::narrow(writer);
-    if (querycondition_writer == NULL) {
+    flights_writer = FlightDataWriter::narrow(writer);
+    if (flights_writer == NULL) {
         printf("DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    /* Create the flight info samples. */
+    const int num_flights = 4;
+    Flight flights_info[4] = {
+            { .trackId = 1111, .company = "CompanyA", .altitude = 15000 },
+            { .trackId = 2222, .company = "CompanyB", .altitude = 20000 },
+            { .trackId = 3333, .company = "CompanyA", .altitude = 30000 },
+            { .trackId = 4444, .company = "CompanyB", .altitude = 25000 }
+    };
 
-        retcode = querycondition_writer->write(*instance, instance_handle);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("write error %d\n", retcode);
+    /* Main loop */
+    for (count=0; (sample_count==0)||(count<sample_count); count+=num_flights) {
+        /* Update flight info latitude and write. */
+        printf("Updating and sending values\n");
+
+        for (int i = 0; i < num_flights; i++) {
+            /* Set the plane altitude lineally
+             * (usually the max is at 41,000ft). */
+            flights_info[i].altitude += count * 100;
+            if (flights_info[i].altitude >= 41000) {
+                flights_info[i].altitude = 41000;
+            }
+
+            printf("\t[trackId: %d, company: %s, altitude: %d]\n",
+                flights_info[i].trackId, flights_info[i].company,
+                flights_info[i].altitude);
+
+            /* Write the instance */
+            retcode = flights_writer->write(
+                flights_info[i], instance_handle);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("write error %d\n", retcode);
+            }
         }
 
         NDDSUtility::sleep(send_period);
