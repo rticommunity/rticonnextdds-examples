@@ -64,12 +64,12 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    /* Poll for new samples every 5 seconds */
-    DDS_Duration_t receive_period = {5,0};
+
+    /* Poll for new samples every second. */
+    DDS_Duration_t receive_period = {1,0};
     int status = 0;
 
-    /* To customize the participant QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create the Participant. */
     participant = DDSTheParticipantFactory->create_participant(
         domainId, DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -79,8 +79,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize the subscriber QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Subscriber. */
     subscriber = participant->create_subscriber(
         DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
@@ -89,7 +88,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Register the type before creating the topic */
+    /* Register the type before creating the topic. */
     type_name = FlightTypeSupport::get_type_name();
     retcode = FlightTypeSupport::register_type(
         participant, type_name);
@@ -99,10 +98,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize the topic QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Topic. */
     topic = participant->create_topic(
-        "Example querycondition",
+        "Example Flight",
         type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
@@ -111,7 +109,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Call create_datareader passing NULL in the listener parameter */
+    /* Call create_datareader passing NULL in the listener parameter. */
     reader = subscriber->create_datareader(
         topic, DDS_DATAREADER_QOS_DEFAULT, NULL,
         DDS_STATUS_MASK_ALL);
@@ -128,47 +126,70 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* NOTE: There must be single-quotes in the query parameters around
-     * any strings!  The single-quotes do NOT go in the query condition
-     * itself.
-     */
-    DDSQueryCondition *query_for_guid2;
-
-    /* Query for 'GUID2'  This query parameter can be changed at runtime,
-     * allowing an application to selectively look at subsets of data
-     * at different times. */
+    /* Query for company named 'CompanyA' and for flights in cruise
+     * (about 30,000ft). The company parameter will be changed in run-time.
+     * NOTE: There must be single-quotes in the query parameters around-any
+     * strings! The single-quote do NOT go in the query condition itself. */
     DDS_StringSeq query_parameters;
-    query_parameters.ensure_length(1,1);
-    query_parameters[0] = DDS_String_dup("'GUID2'");
+    query_parameters.ensure_length(2, 2);
+    query_parameters[0] = "'CompanyA'";
+    query_parameters[1] = "30000";
+    printf("Setting parameter to company %s, altitude bigger or equals to %s\n",
+        query_parameters[0], query_parameters[1]);
 
     /* Create the query condition with an expession to MATCH the id field in
-     * the structure. Note that you should make a copy of the expression string
-     * when creating the query condition - beware it going out of scope! */
-    query_for_guid2 = flight_reader->create_querycondition(
-                            DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
-                            DDS_ALIVE_INSTANCE_STATE,
-                            DDS_String_dup("id MATCH %0"),
-                            query_parameters);
-
+     * the structure and a numeric comparison. Note that you should make a copy
+     * of the expression string when creating the query condition - beware it
+     * going out of scope! */
+    DDSQueryCondition *query_condition = flight_reader->create_querycondition(
+        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+        DDS_ALIVE_INSTANCE_STATE,
+        DDS_String_dup("company MATCH %0 AND altitude >= %1"),
+        query_parameters);
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+        /* Poll for a new samples every second. */
         NDDSUtility::sleep(receive_period);
+
+        /* Change the filter parameter after 5 seconds. */
+        bool update = false;
+        if ((count + 1) % 10 == 5) {
+            query_parameters[0] = "'CompanyB'";
+            update = true;
+        } else if ((count + 1) % 10 == 0) {
+            query_parameters[0] = "'CompanyA'";
+            update = true;
+        }
+
+        /* Set new parameters. */
+        if (update) {
+            printf("Changing parameter to %s\n", query_parameters[0]);
+            query_condition->set_query_parameters(query_parameters);
+            update = false;
+        }
 
         DDS_SampleInfoSeq info_seq;
         FlightSeq data_seq;
 
-        /* Check for new data calling the DataReader's read_w_condition()
-           method */
+        /* Iterate through the samples read using the read_w_condition method */
         retcode = flight_reader->read_w_condition(data_seq, info_seq,
-                        DDS_LENGTH_UNLIMITED, query_for_guid2);
+                        DDS_LENGTH_UNLIMITED, query_condition);
         if (retcode == DDS_RETCODE_NO_DATA) {
-            /// Not an error
+            // Not an error
             continue;
         } else if (retcode != DDS_RETCODE_OK) {
             // Is an error
             printf("take error: %d\n", retcode);
             break;
+        }
+
+        for (int i = 0; i < data_seq.length(); ++i) {
+            if (info_seq[i].valid_data) {
+                printf("\t[trackId: %d, company: %s, altitude: %d]\n",
+                    data_seq[i].trackId, data_seq[i].company,
+                    data_seq[i].altitude);
+            }
         }
 
         retcode = flight_reader->return_loan(data_seq, info_seq);
