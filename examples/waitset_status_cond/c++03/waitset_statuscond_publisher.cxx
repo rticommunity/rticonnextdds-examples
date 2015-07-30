@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include <dds/dds.hpp>
-#include <waitset_statuscond.hpp>
+#include "waitset_statuscond.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
