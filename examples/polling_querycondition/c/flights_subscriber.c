@@ -9,7 +9,6 @@
  use the software.
  ******************************************************************************/
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
@@ -60,32 +59,21 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
-    struct DDS_DataReaderListener reader_listener =
-        DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     FlightDataReader *flight_reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    /* Poll for new samples every 5 seconds */
-    struct DDS_Duration_t poll_period = {5,0};
-    /* We need to change the datareader_qos for this example.
-     * If you want to do it programmatically, you will need to declare to
-     * use the following struct.*/
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
 
-	/* Query Condition-specific types */
-	/* NOTE: There must be single-quotes in the query parameters around
-     * any strings!  The single-quotes do NOT go in the query condition
-     * itself.
-     */
-    DDS_QueryCondition *query_for_guid2;
+    /* Poll for new samples every second. */
+    struct DDS_Duration_t poll_period = {1,0};
+
+    /* Query Condition-specific types */
+    DDS_QueryCondition *query_condition;
     struct DDS_StringSeq query_parameters;
-	const char* param_list[] = {"'GUID2'"};
+    const char* param_list[] = { "'CompanyA'", "30000" };
 
-
-    /* To customize participant QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Participant. */
     participant = DDS_DomainParticipantFactory_create_participant(
         DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -95,8 +83,7 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize subscriber QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Createa a Subscriber. */
     subscriber = DDS_DomainParticipant_create_subscriber(
         participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
@@ -106,7 +93,7 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Register the type before creating the topic */
+    /* Register the type before creating the topic. */
     type_name = FlightTypeSupport_get_type_name();
     retcode = FlightTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
@@ -115,10 +102,9 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* To customize topic QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    /* Create a Topic. */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example flight",
+        participant, "Example Flight",
         type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
@@ -127,7 +113,7 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Call create_datareader passing NULL in the listener parameter */
+    /* Call create_datareader passing NULL in the listener parameter. */
     reader = DDS_Subscriber_create_datareader(
         subscriber, DDS_Topic_as_topicdescription(topic),
         &DDS_DATAREADER_QOS_DEFAULT, NULL, DDS_STATUS_MASK_ALL);
@@ -137,74 +123,74 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* If you want to change datareader_qos.history programmatically rather
-     * than using the XML file, you will need to add the following lines to your
-     * code and comment out the create_datareader call above. */
-
-    /*
-    retcode = DDS_Subscriber_get_default_datareader_qos(subscriber,
-            &datareader_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_datareader_qos error\n");
-        return -1;
-    }
-
-    datareader_qos.history.kind = DDS_KEEP_LAST_HISTORY_QOS;
-	datareader_qos.history.depth = 6;
-
-    reader = DDS_Subscriber_create_datareader(
-            subscriber, DDS_Topic_as_topicdescription(topic),
-            &datareader_qos, NULL, DDS_STATUS_MASK_NONE);
-    if (reader == NULL) {
-        printf("create_datareader error\n");
-        subscriber_shutdown(participant);
-        return -1;
-    }
-    */
-
     flight_reader = FlightDataReader_narrow(reader);
     if (flight_reader == NULL) {
         printf("DataReader narrow error\n");
         return -1;
     }
 
-    /* Query for 'GUID2'  This query paramater can be changed at runtime,
-     * allowing an application to selectively look at subsets of data
-     * at different times. */
-    DDS_StringSeq_ensure_length(&query_parameters,1,1);
-    DDS_StringSeq_from_array(&query_parameters, param_list, 1);
+    /* Query for company named 'CompanyA' and for flights in cruise
+     * (about 30,000ft). The company parameter will be changed in run-time.
+     * NOTE: There must be single-quotes in the query parameters around-any
+     * strings! The single-quote do NOT go in the query condition itself. */
+    DDS_StringSeq_ensure_length(&query_parameters, 2, 2);
+    DDS_StringSeq_from_array(&query_parameters, param_list, 2);
+    printf("Setting parameter to company %s, altitude bigger or equals to %s\n",
+        DDS_StringSeq_get(&query_parameters, 0),
+        DDS_StringSeq_get(&query_parameters, 1));
 
     /* Create the query condition with an expession to MATCH the id field in
-     * the structure. Note that you should make a copy of the expression string
-     * when creating the query condition - beware it going out of scope! */
-    query_for_guid2 =
-		DDS_DataReader_create_querycondition(
-                            reader,
-                            DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
-                            DDS_ALIVE_INSTANCE_STATE,
-                            DDS_String_dup("id MATCH %0"),
-                            &query_parameters);
-
+     * the structure and a numeric comparison. Note that you should make a copy
+     * of the expression string when creating the query condition - beware it
+     * going out of scope! */
+    query_condition = DDS_DataReader_create_querycondition(
+        reader,
+        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+        DDS_ALIVE_INSTANCE_STATE,
+        DDS_String_dup("company MATCH %0 AND altitude >= %1"),
+        &query_parameters);
 
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         struct DDS_SampleInfoSeq info_seq;
         struct FlightSeq data_seq;
-        int i, len;
-        double sum;
         DDS_ReturnCode_t retcode;
+        int update = 0;
+        int i = 0;
 
+        /* Poll for new samples every second. */
         NDDS_Utility_sleep(&poll_period);
 
-        /* Iterate through the samples read using the read_w_condition() method,
-         * accessing only the samples of GUID2.  Then, show the number of samples
-         * received and, adding the value of x on each of them to calculate the
-         * average afterwards. */
-		retcode = FlightDataReader_read_w_condition(
+        /* Change the filter parameter after 5 seconds. */
+        if ((count + 1) % 10 == 5) {
+            *DDS_StringSeq_get_reference(&query_parameters, 0) =
+                DDS_String_dup("'CompanyB'");
+            update = 1;
+        } else if ((count + 1) % 10 == 0) {
+            *DDS_StringSeq_get_reference(&query_parameters, 0) =
+                DDS_String_dup("'CompanyA'");
+            update = 1;
+        }
+
+        /* Set new parameters. */
+        if (update) {
+            update = 0;
+            printf("Changing parameter to %s\n",
+                DDS_StringSeq_get(&query_parameters, 0));
+            retcode = DDS_QueryCondition_set_query_parameters(
+                query_condition,
+                &query_parameters);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("Error setting new parameters: %d\n", retcode);
+            }
+        }
+
+        /* Iterate through the samples read using the read_w_condition method */
+        retcode = FlightDataReader_read_w_condition(
                     flight_reader,
                     &data_seq, &info_seq,
                     DDS_LENGTH_UNLIMITED,
-					DDS_QueryCondition_as_readcondition(query_for_guid2));
+                    DDS_QueryCondition_as_readcondition(query_condition));
         if (retcode == DDS_RETCODE_NO_DATA) {
             /* Not an error */
             continue;
@@ -214,20 +200,12 @@ static int subscriber_main(int domainId, int sample_count)
             break;
         }
 
-        sum = 0;
-        len = 0;
-
-        /* Iterate through the samples read using the take() method, getting
-         * the number of samples got and, adding the value of x on each of
-         * them to calculate the average afterwards. */
         for (i = 0; i < FlightSeq_get_length(&data_seq); ++i) {
             if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
-                len++;
+                FlightTypeSupport_print_data(
+                    FlightSeq_get_reference(&data_seq, i));
             }
         }
-
-        if (len > 0)
-            printf("Got %d samples.  Avg = %.1f\n", len, sum/len);
 
         retcode = FlightDataReader_return_loan(
             flight_reader, &data_seq, &info_seq);
@@ -240,33 +218,11 @@ static int subscriber_main(int domainId, int sample_count)
     return subscriber_shutdown(participant);
 }
 
-#if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
-{
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domainId = _wtoi(argv[1]);
-    }
-    if (argc >= 3) {
-        sample_count = _wtoi(argv[2]);
-    }
-
-    /* Uncomment this to turn on additional logging
-    NDDS_Config_Logger_set_verbosity_by_category(
-        NDDS_Config_Logger_get_instance(),
-        NDDS_CONFIG_LOG_CATEGORY_API,
-        NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return subscriber_main(domainId, sample_count);
-}
-#elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
+#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[])
 {
     int domainId = 0;
-    int sample_count = 0; /* infinite loop */
+    int sample_count = 0; /* Infinite loop */
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);
