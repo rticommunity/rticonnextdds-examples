@@ -24,8 +24,6 @@ import com.rti.dds.subscription.Subscriber;
 import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
 
-// ===========================================================================
-
 public class FlightSubscriber {
     // -----------------------------------------------------------------------
     // Public Methods
@@ -44,7 +42,6 @@ public class FlightSubscriber {
             sampleCount = Integer.valueOf(args[1]).intValue();
         }
 
-
         /* Uncomment this to turn on additional logging
         Logger.get_instance().set_verbosity_by_category(
             LogCategory.NDDS_CONFIG_LOG_CATEGORY_API,
@@ -56,20 +53,11 @@ public class FlightSubscriber {
     }
 
     private static void subscriberMain(int domainId, int sampleCount) {
-
         DomainParticipant participant = null;
-        Subscriber subscriber = null;
-        Topic topic = null;
-        FlightDataReader reader = null;
 
         try {
 
             // --- Create participant --- //
-
-            /* To customize participant QoS, use
-               the configuration file
-               USER_QOS_PROFILES.xml */
-
             participant = DomainParticipantFactory.TheParticipantFactory.
                 create_participant(
                     domainId, DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
@@ -80,11 +68,7 @@ public class FlightSubscriber {
             }
 
             // --- Create subscriber --- //
-
-            /* To customize subscriber QoS, use
-               the configuration file USER_QOS_PROFILES.xml */
-
-            subscriber = participant.create_subscriber(
+            Subscriber subscriber = participant.create_subscriber(
                 DomainParticipant.SUBSCRIBER_QOS_DEFAULT, null /* listener */,
                 StatusKind.STATUS_MASK_NONE);
             if (subscriber == null) {
@@ -93,16 +77,12 @@ public class FlightSubscriber {
             }
 
             // --- Create topic --- //
-
-            /* Register type before creating topic */
+            // Register type before creating topic.
             String typeName = FlightTypeSupport.get_type_name();
             FlightTypeSupport.register_type(participant, typeName);
 
-            /* To customize topic QoS, use
-               the configuration file USER_QOS_PROFILES.xml */
-
-            topic = participant.create_topic(
-                "Example querycondition",
+            Topic topic = participant.create_topic(
+                "Example Flight",
                 typeName, DomainParticipant.TOPIC_QOS_DEFAULT,
                 null /* listener */, StatusKind.STATUS_MASK_NONE);
             if (topic == null) {
@@ -111,31 +91,7 @@ public class FlightSubscriber {
             }
 
             // --- Create reader --- //
-
-
-
-            /* If you want to change datareader_qos.history programmatically
-             * rather than using the XML file, you will need to add the
-             * following lines to your code and comment out the
-             * create_datareader call above. */
-
-            /*
-            DataReaderQos reader_qos = new DataReaderQos();
-            subscriber.get_default_datareader_qos(reader_qos);
-
-            reader_qos.history.kind =
-                HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
-            reader_qos.history.depth = 6;
-            reader = (queryconditionDataReader)
-            subscriber.create_datareader(
-                topic, reader_qos, null,
-                StatusKind.STATUS_MASK_NONE);
-            */
-
-            /* To customize data reader QoS, use
-               the configuration file USER_QOS_PROFILES.xml */
-
-            reader = (FlightDataReader)
+            FlightDataReader reader = (FlightDataReader)
                 subscriber.create_datareader(
                     topic, Subscriber.DATAREADER_QOS_DEFAULT, null,
                     StatusKind.STATUS_MASK_ALL);
@@ -144,84 +100,87 @@ public class FlightSubscriber {
                 return;
             }
 
-            /* NOTE: There must be single-quotes in the query parameters around
-             * any strings!  The single-quotes do NOT go in the query condition
-             * itself.
-             */
+            // Query for company named 'CompanyA' and for flights in cruise
+            // (about 30,000ft). The company parameter will be changed in
+            // run-time. NOTE: There must be single-quotes in the query
+            // parameters around-any strings! The single-quote do NOT go in the
+            // query condition itself.
+            StringSeq queryParameters = new StringSeq(2);
+            queryParameters.add("'CompanyA'");
+            queryParameters.add("30000");
+            System.out.format(
+                "Setting parameters to company: %s and altitude >= %s\n",
+                queryParameters.get(0), queryParameters.get(1));
 
-            /* Query for 'GUID2'  This query parameter can be changed at runtime,
-             * allowing an application to selectively look at subsets of data
-             * at different times. */
-            StringSeq query_parameters = new StringSeq(1);
-            query_parameters.add("'GUID2'");
-
-            /* Create the QueryCondition */
-            QueryCondition query_for_guid2 =
+            // Create the query condition with an expession to MATCH the id
+            // field in the structure and a numeric comparison.
+            QueryCondition queryCondition =
                 reader.create_querycondition(
                         SampleStateKind.ANY_SAMPLE_STATE,
                         ViewStateKind.ANY_VIEW_STATE,
                         InstanceStateKind.ALIVE_INSTANCE_STATE,
-                        "id MATCH %0",
-                        query_parameters);
+                        "company MATCH %0 AND altitude >= %1",
+                        queryParameters);
 
             // --- Wait for data --- //
-
-            final long receivePeriodSec = 4;
-
+            final long receivePeriodSec = 1;
+            Boolean update = false;
             for (int count = 0;
                  (sampleCount == 0) || (count < sampleCount);
-                 ++count) {
-
-
-            	SampleInfoSeq infoSeq = new SampleInfoSeq();
-            	FlightSeq dataSeq = new FlightSeq();
-
-            	try {
-            		reader.read_w_condition(dataSeq,
-            				infoSeq,
-                            ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                            query_for_guid2);
-
-
-                    int len = 0;
-                    double sum = 0;
-
-                    /* Iterate through the samples read using the
-                     * read_w_condition() method, accessing only the samples of
-                     * GUID2.  Then, show the number of samples received and,
-                     * adding the value of x on each of them to calculate the
-                     * average afterwards. */
-                    for (int i = 0; i < dataSeq.size(); ++i) {
-                        if (false == ((SampleInfo)infoSeq.get(i)).valid_data) {
-                            continue;
-                        }
-                        len++;
-                    }
-
-                    if (len > 0)
-                        System.out.println("Got " + len + " samples.  Avg = " +
-                                sum/len);
-
-                    reader.return_loan(dataSeq, infoSeq);
-
-
-            	} catch (RETCODE_NO_DATA noData) {
-            		System.out.println("No data");
-            	}
-
-                System.out.println("querycondition subscriber sleeping for "
-                                   + receivePeriodSec + " sec...");
+                 ++count)
+            {
+                // Poll for new samples every second.
                 try {
                     Thread.sleep(receivePeriodSec * 1000);  // in millisec
                 } catch (InterruptedException ix) {
                     System.err.println("INTERRUPTED");
                     break;
                 }
+
+                // Change the filter parameter after 5 seconds.
+                if ((count + 1) % 10 == 5) {
+                    queryParameters.set(0, "'CompanyB'");
+                    update = true;
+                } else if ((count + 1) % 10 == 0) {
+                    queryParameters.set(0, "'CompanyA'");
+                    update = true;
+                }
+
+                // Set new parameters.
+                if (update) {
+                    System.out.println("Changing parameter to " +
+                        queryParameters.get(0));
+                    queryCondition.set_query_parameters(queryParameters);
+                    update = false;
+                }
+
+                // Iterate through the samples using read_w_condition.
+                SampleInfoSeq infoSeq = new SampleInfoSeq();
+                FlightSeq dataSeq = new FlightSeq();
+                try {
+                    reader.read_w_condition(dataSeq,
+                            infoSeq,
+                            ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                            queryCondition);
+
+                    for (int i = 0; i < dataSeq.size(); i++) {
+                        SampleInfo info = (SampleInfo)infoSeq.get(i);
+                        if (info.valid_data) {
+                            Flight flight_info = (Flight)dataSeq.get(i);
+                            System.out.format(
+                                "\t[trackId: %d, company: %s, altitude: %d]\n",
+                                flight_info.trackId,
+                                flight_info.company,
+                                flight_info.altitude);
+                        }
+                    }
+
+                    reader.return_loan(dataSeq, infoSeq);
+                } catch (RETCODE_NO_DATA noData) {
+                }
             }
         } finally {
-
             // --- Shutdown --- //
-
             if(participant != null) {
                 participant.delete_contained_entities();
 
@@ -236,12 +195,4 @@ public class FlightSubscriber {
             //DomainParticipantFactory.finalize_instance();
         }
     }
-
-    // -----------------------------------------------------------------------
-    // Private Types
-    // -----------------------------------------------------------------------
-
-    // =======================================================================
-
-
 }
