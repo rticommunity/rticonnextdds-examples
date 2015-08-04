@@ -3,11 +3,15 @@
 
 # Visual Studio files and output files
 objs/
+bin/
+obj/
+*.csproj
 *.vcxproj.filters
 *.vcxproj.user
 *.sdf
 *.opensdf
 *.suo
+*.userprefs
 
 # C output files of Code Generator
 *Impl.*
