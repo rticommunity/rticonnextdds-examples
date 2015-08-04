@@ -135,10 +135,12 @@ static int publisher_main(int domain_id, int sample_count)
 
     /* Main loop */
     for (count=0; (sample_count==0)||(count<sample_count); count+=num_flights) {
+        int i;
+
         /* Update flight info latitude and write */
         printf("Updating and sending values\n");
 
-        for (int i = 0; i < num_flights; i++) {
+        for (i = 0; i < num_flights; i++) {
             /* Set the plane altitude lineally
              * (usually the max is at 41,000ft).
              */
