@@ -1,5 +1,5 @@
 ﻿/*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -12,9 +12,9 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Flights
+namespace FlightExample
 {
-    public class FlightsPublisher
+    public class FlightPublisher
     {
         public static void Main(string[] args)
         {
@@ -32,7 +32,7 @@ namespace Flights
 
             /* Uncomment this to turn on additional logging
             NDDS.ConfigLogger.get_instance().set_verbosity_by_category(
-                NDDS.LogCategory.NDDS_CONFIG_LOG_CATEGORY_API, 
+                NDDS.LogCategory.NDDS_CONFIG_LOG_CATEGORY_API,
                 NDDS.LogVerbosity.NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
             */
 
@@ -50,7 +50,7 @@ namespace Flights
             DDS.DomainParticipant participant =
                 DDS.DomainParticipantFactory.get_instance().create_participant(
                     domainId,
-                    DDS.DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT, 
+                    DDS.DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                     null /* listener */,
                     DDS.StatusMask.STATUS_MASK_NONE);
             if (participant == null) {
