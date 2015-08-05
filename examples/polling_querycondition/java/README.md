@@ -1,4 +1,4 @@
-# Example Code -- Polling with Query Condition
+# Example Code: Polling with Query Condition
 
 ## Building Java Example
 Before compiling or running the example, make sure the environment variable
@@ -12,15 +12,15 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language Java -example i86Win32VS2010 querycondition.idl
+rtiddsgen -language Java -example i86Win32VS2010 Flight.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\polling_query_condition\java\queryconditionSubscriber.java already
+File C:\local\polling_querycondition\java\FlightSubscriber.java already
 exists and will not be replaced with updated content. If you would like to get a
 new file with the new content, either remove this file or supply -replace option.
-File C:\local\polling_query_condition\java\queryconditionPublisher.java already
+File C:\local\polling_querycondition\java\FlightPublisher.java already
 exists and will not be replaced with updated content. If you would like to get a
 new file with the new content, either remove this file or supply -replace option.
 ```
@@ -34,12 +34,12 @@ compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 ```
-javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar querycondition.java queryconditionSeq.java queryconditionTypeSupport.java queryconditionTypeCode.java queryconditionDataReader.java queryconditionDataWriter.java queryconditionSubscriber.java queryconditionPublisher.java
+javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 ```
 
 On *UNIX* systems run:
 ```
-javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar querycondition.java queryconditionSeq.java queryconditionTypeSupport.java queryconditionTypeCode.java queryconditionDataReader.java queryconditionDataWriter.java queryconditionSubscriber.java queryconditionPublisher.java
+javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 ```
 
 ## Running Java Example
@@ -49,14 +49,14 @@ ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar queryconditionPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar queryconditionSubscriber <domain_id> <sleep_periods>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar FlightPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar FlightSubscriber <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
 ```
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar queryconditionPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar queryconditionSubscriber <domain_id> <sleep_periods>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar FlightPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar FlightSubscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept two arguments:
