@@ -54,16 +54,16 @@ public:
 
         // Check form.
         if (expression.compare(0, 6, "%0 %1 ") != 0) {
-            throw new std::invalid_argument("Invalid filter expression");
+            throw std::invalid_argument("Invalid filter expression");
         }
 
         if (expression.size() < 7) {
-            throw new std::invalid_argument("Invalid filter expression size");
+            throw std::invalid_argument("Invalid filter expression size");
         }
 
         /* Check that we have params */
         if (parameters.size() < 2) {
-            throw new std::invalid_argument("Invalid filter parameters number");
+            throw std::invalid_argument("Invalid filter parameters number");
         }
 
         cdata* cd = new cdata();
@@ -74,7 +74,7 @@ public:
         } else if (parameters[1] == "divides") {
             cd->eval_func = &divide_test;
         } else {
-            throw new std::invalid_argument("Invad filter operation");
+            throw std::invalid_argument("Invad filter operation");
         }
 
         return *cd;
