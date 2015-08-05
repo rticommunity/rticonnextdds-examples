@@ -12,20 +12,20 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C# -example i86Win32VS2010 -ppDisable querycondition.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable Flights.idl
 ```
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
 ```
-rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable cft.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable Flights.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\polling_querycondition\cs\querycondition_subscriber.cs already
+File C:\local\polling_querycondition\cs\flights_subscriber.cs already
 exists and will not be replaced with updated content. If you would like to get a
 new file with the new content, either remove this file or supply -replace option.
-File C:\local\polling_querycondition\cs\querycondition_publisher.cs already
+File C:\local\polling_querycondition\cs\flights_publisher.cs already
 exists and will not be replaced with updated content. If you would like to get a
 new file with the new content, either remove this file or supply -replace option.
 ```
@@ -36,8 +36,8 @@ already provided.
 
 *rtiddsgen* generates two solutions for *Visual Studio C++* and *C#*, that you
 will use to build the types and the C# example, respectively. First open  
-*querycondition_type-dotnet4.0.sln* and build the solution. Once you've done that, open
-*querycondition_example-csharp.sln* and build the C# example.
+*Flights_type-dotnet4.0.sln* and build the solution. Once you've done that, open
+*Flights-csharp.sln* and build the C# example.
 
 ## Running C# Example
 In two separate command prompt windows for the publisher and subscriber. Run
@@ -46,8 +46,8 @@ the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-bin\<build_type>-VS2010\querycondition_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\querycondition_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\flights_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\flights_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept two arguments:

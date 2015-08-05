@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software.  Licensee has the right to distribute object form only
  for use with RTI products.  The Software is provided "as is", with no warranty
@@ -8,7 +8,8 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-struct querycondition {
-	string<255> id; //@key
-	long value;
+struct Flight {
+    long trackId; //@key
+    string<255> company;
+    long altitude;
 };

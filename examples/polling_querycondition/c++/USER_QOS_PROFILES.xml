@@ -19,40 +19,24 @@
     -->
     <qos_library name="querycondition_Library">
 
-        <!-- QoS profile used to configure reliable communication between the DataWriter 
+        <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
         <qos_profile name="querycondition_Profile" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->                
+            <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
-                </reliability>                
-
-                <history>
-                    <kind>KEEP_ALL_HISTORY_QOS</kind>
-                </history>		
+                </reliability>
             </datawriter_qos>
 
-            <!-- QoS used to configure the data reader created in the example code -->                
+            <!-- QoS used to configure the data reader created in the example code -->
             <datareader_qos>
-
                 <reliability>
                     <kind>RELIABLE_RELIABILITY_QOS</kind>
                 </reliability>
-    
-               <!-- By default, the DataReaders's history is set to keep the
-                   latest sample of each instance. We need to change the
-                   history depth to 6 in this example to be able to read 
-                   more than one sample of each instance and calculate the
-                   average. -->
-                <history>
-                    <kind>KEEP_LAST_HISTORY_QOS</kind>
-                    <depth>6</depth>
-                </history>
-			
             </datareader_qos>
 
             <participant_qos>

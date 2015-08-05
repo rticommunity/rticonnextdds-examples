@@ -12,17 +12,19 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 ```
-rtiddsgen -language C++ -example i86Win32VS2010 querycondition.idl
+rtiddsgen -language C++ -example i86Win32VS2010 flights.idl
 ```
 
 You will see messages that look like this:
 ```
-File C:\local\polling_query_conditiond\c++\querycondition_subscriber.cxx already
+File C:\local\polling_querycondition\c++\flights_subscriber.cxx already
 exists and will not be replaced with updated content. If you would like to get a
-new file with the new content, either remove this file or supply -replace option.
-File C:\local\ polling_query_conditiond\c++\querycondition_publisher.cxx already
+new file with the new content, either remove this file or supply -replace
+option.
+File C:\local\polling_querycondition\c++\flights_publisher.cxx already
 exists and will not be replaced with updated content. If you would like to get a
-new file with the new content, either remove this file or supply -replace option.
+new file with the new content, either remove this file or supply -replace
+option.
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
@@ -36,14 +38,14 @@ the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\querycondition_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\querycondition_subscriber.exe <domain_id> <sleep_periods>
+objs\<arch_name>\flights_publisher.exe  <domain_id> <samples_to_send>
+objs\<arch_name>\flights_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
 ```
-./objs/<arch_name>/querycondition_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/querycondition_subscriber <domain_id> <sleep_periods>
+./objs/<arch_name>/flights_publisher  <domain_id> <samples_to_send>
+./objs/<arch_name>/flights_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept two arguments:
