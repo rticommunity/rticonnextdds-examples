@@ -15,7 +15,7 @@ use the `-replace` option.** Assuming you want to generate an example for
 rtiddsgen -language {{language}} -example {{archwindows}} {{idlname}}.idl
 ```
 
-You will see messages that look like this:
+You will see messages that look like:
 ```
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/{{idlname}}_subscriber.cxx
@@ -35,16 +35,10 @@ In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-On *Windows* systems run:
-```
-objs\<arch_name>\{{idlname}}_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\{{idlname}}_subscriber.exe <domain_id> <sleep_periods>
-```
-
-On *UNIX* systems run:
-```
-./objs/<arch_name>/{{idlname}}_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/{{idlname}}_subscriber <domain_id> <sleep_periods>
+```sh
+# Do not forget to replace the path separator to "\" on Windows.
+objs/<arch_name>/{{idlname}}_publisher.exe  <domain_id> <samples_to_send>
+objs/<arch_name>/{{idlname}}_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:
