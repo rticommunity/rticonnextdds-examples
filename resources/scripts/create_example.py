@@ -121,6 +121,10 @@ def which(program):
 
 
 def create_template(template_name, outpath, info):
+    # Do not overwrite
+    if path.exists(outpath):
+        return
+
     # Get template file inside "resources" folder.
     template_path = path.join(info["repopath"], "resources", template_name)
     with open(template_path, "r") as template_file:
