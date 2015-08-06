@@ -24,6 +24,10 @@ struct Foo {
 };
 """
 
+# Programming languages. C++11 is also supported but usually is only
+# implemented on C++03. Pass the --language argument to select C++11.
+LANGUAGES = ["c", "c++", "c++03", "c#", "java"]
+
 
 def copy_file(src, dst, overwrite=False):
     dstfile = dst
@@ -154,35 +158,11 @@ def create_templates(info):
     create_template(template_name, template_path, info)
 
 
-if __name__ == "__main__":
-    # Parse arguments
-    parser = ArgumentParser(description='Create structure for new examples.')
-    parser.add_argument('name', help='Example short name. This is the name ' +
-                        'of the folder that contains it.')
-    parser.add_argument('fullname', help='Example long name.')
-    parser.add_argument('language', help='Programming language.')
-    parser.add_argument('arch', help='Architecture to compile example.')
-    parser.add_argument('--idlname', help='The name of the IDL file. ' +
-                        'If not specified, "name" will be used.')
-    parser.add_argument('files', help='Extra files to copy like IDL. ' +
-                        'A Foo IDL file will be created if it is not passed',
-                        nargs='*')
-    args = parser.parse_args()
-
-    # Create info dictionary with the argument info-
-    info = {}
-    info["name"] = args.name
-    info["fullname"] = args.fullname
-    info["language"] = args.language
-    info["files"] = args.files
-    info["idlname"] = args.idlname
-    info["arch"] = args.arch    # Used for rtiddsgen
-    info["archwindows"] = "x64Win64VS2013"   # It works for all languages.
-    info["archlinux"] = "x64Linux3gcc4.8.2"  # It works for all languages.
-    info["scriptpath"] = path.dirname(path.realpath(__file__))
-    info["repopath"] = path.join(info["scriptpath"], pardir, pardir)
-    info["expath"] = path.join(info["repopath"], "examples", args.name,
-                               args.language)
+def create_example(info, language):
+    # Create language specific fields of info dict.
+    info["language"] = language
+    info["expath"] = path.join(info["repopath"], "examples", info["name"],
+                               language)
 
     # Create example directory if it does not exists
     if not path.exists(info["expath"]):
@@ -196,3 +176,41 @@ if __name__ == "__main__":
 
     # Call rtiddsgen to generate files
     call_rtiddsgen(info)
+
+
+if __name__ == "__main__":
+    # Parse arguments
+    parser = ArgumentParser(description='Create structure for new examples.')
+    parser.add_argument('name', help='Example short name. This is the name ' +
+                        'of the folder that contains it.')
+    parser.add_argument('fullname', help='Example long name.')
+    parser.add_argument('arch', help='Architecture to compile example.')
+    parser.add_argument('--language', help='Programming language.')
+    parser.add_argument('--idlname', help='The name of the IDL file. ' +
+                        'If not specified, "name" will be used.')
+    parser.add_argument('files', help='Extra files to copy like IDL. ' +
+                        'A Foo IDL file will be created if it is not passed',
+                        nargs='*')
+    args = parser.parse_args()
+
+    # Create info dictionary with the argument info-
+    info = {}
+    info["name"] = args.name
+    info["fullname"] = args.fullname
+    info["files"] = args.files
+    info["idlname"] = args.idlname
+    info["arch"] = args.arch    # Used for rtiddsgen
+    info["archwindows"] = "x64Win64VS2013"   # It works for all languages.
+    info["archlinux"] = "x64Linux3gcc4.8.2"  # It works for all languages.
+    info["scriptpath"] = path.dirname(path.realpath(__file__))
+    info["repopath"] = path.join(info["scriptpath"], pardir, pardir)
+
+    # If no language, do for all of them
+    if args.language is None:
+        languages = LANGUAGES
+    else:
+        languages = [args.language]
+
+    # Create example for each language
+    for lang in languages:
+        create_example(info, lang)
