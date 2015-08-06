@@ -120,15 +120,9 @@ def which(program):
     return None
 
 
-def create_template(info):
-    # Get template language.
-    template_style = info["language"]
-    if template_style in ["c++", "c++03", "c++11"]:
-        template_style = "c"
-
-    # Get template file inside "resources" folder with name "readme_x_style.md"
-    template_path = path.join(info["repopath"], "resources",
-                              "readme_" + template_style + "_style.md")
+def create_template(template_name, outpath, info):
+    # Get template file inside "resources" folder.
+    template_path = path.join(info["repopath"], "resources", template_name)
     with open(template_path, "r") as template_file:
         template_text = template_file.read()
 
@@ -136,8 +130,25 @@ def create_template(info):
     template = Template(template_text)
 
     # Write to file the rendered text
-    with open(path.join(info["expath"], "README.md"), "w") as readme:
+    with open(outpath, "w") as readme:
         readme.write(template.render(info))
+
+
+def create_templates(info):
+    # Get template language for name "readme_x_style.md"
+    template_lang = info["language"]
+    if template_lang in ["c++", "c++03", "c++11"]:
+        template_lang = "c"
+
+    template_name = "readme_" + template_lang + "_style.md"
+    template_path = path.join(info["expath"], "README.md")
+    create_template(template_name, template_path, info)
+
+    # Create template for example description in parent folder
+    template_name = "readme_description.md"
+    template_path = path.join(info["expath"], pardir, "README.md")
+    create_template(template_name, template_path, info)
+
 
 if __name__ == "__main__":
     # Parse arguments
@@ -177,7 +188,7 @@ if __name__ == "__main__":
     copy_files(info)
 
     # Create README templates
-    create_template(info)
+    create_templates(info)
 
     # Call rtiddsgen to generate files
     call_rtiddsgen(info)
