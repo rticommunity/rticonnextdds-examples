@@ -46,26 +46,29 @@ def copy_file(src, dst, overwrite=False):
 
 
 def copy_files(info):
-    # Get IDL file
+    # Get IDL file from files to copy.
     regex = compile('.*\.idl')
     info["idlfile"] = [file for file in info["files"] if match(regex, file)]
     info["idlfile"] = info["idlfile"][0] if len(info["idlfile"]) > 0 else None
 
     # Try to get IDL name if no "--idlname" has been passed
     if info["idlname"] is None:
+        # Get the name from the IDL file.
         if info["idlfile"] is not None:
             info["idlname"] = path.splitext(path.basename(info["idlfile"]))[0]
+        # Set the name from example short name.
         else:
             info["idlname"] = info["name"]
 
-    # Copy files
+    # Copy files without overwriting.
     for f in info["files"]:
         copy_file(f, info["expath"])
 
-    # Update IDL file to take from our example path
+    # Update IDL file path to take from our example folder.
+    # Used later by rtiddsgen to generate the examples files.
     info["idlfile"] = path.join(info["expath"], info["idlname"] + ".idl")
 
-    # Check if IDL file exists and otherwise generate a Foo structure
+    # Create a Foo IDL if it does not exist.
     if not path.exists(info["idlfile"]):
         with open(info["idlfile"], "w") as idlfile:
             idlfile.write(FOO_IDL)
@@ -187,16 +190,24 @@ def create_example(info, language):
 
 if __name__ == "__main__":
     # Parse arguments
-    parser = ArgumentParser(description='Create structure for new examples.')
+    parser = ArgumentParser(description='Create common files for examples.')
     parser.add_argument('name', help='Example short name. This is the name ' +
                         'of the folder that contains it.')
-    parser.add_argument('fullname', help='Example long name.')
+    parser.add_argument('fullname', help='Example long name. It is used ' +
+                        'on the README templates.')
     parser.add_argument('arch', help='Architecture to compile example.')
-    parser.add_argument('--language', help='Programming language.')
+    parser.add_argument('--language', help='Programming language. If the ' +
+                        'argumment is ommited it will run for all languages ' +
+                        'except C++11. Supported languages are: C, C++, ' +
+                        'C++03, C++11, C# and Java. C# is only supported on ' +
+                        'Windows.')
     parser.add_argument('--idlname', help='The name of the IDL file. ' +
-                        'If not specified, "name" will be used.')
-    parser.add_argument('files', help='Extra files to copy like IDL. ' +
-                        'A Foo IDL file will be created if it is not passed',
+                        'If ommited it will be the name of any *.idl to be ' +
+                        'copied from "files" arguments. If there is no file,' +
+                        ' the value will be the short name of the example.')
+    parser.add_argument('files', help='Extra files to copy like IDL and ' +
+                        'USER_QOS_PROFILES.xml. If there is no IDL to copy, '
+                        'a Foo type will be created.',
                         nargs='*')
     args = parser.parse_args()
 
