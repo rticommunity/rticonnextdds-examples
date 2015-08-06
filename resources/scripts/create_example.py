@@ -12,7 +12,7 @@
 
 from jinja2 import Template  # It is not compatible with Python3 yet.
 from argparse import ArgumentParser
-from os import path, makedirs, pardir
+from os import path, makedirs, pardir, environ
 from subprocess import check_call, CalledProcessError
 from re import match, compile
 from shutil import copy
@@ -81,11 +81,43 @@ def copy_files(info):
 
 def call_rtiddsgen(info):
     try:
-        # TODO: Check that rtiddsgen is on path or get NDDSHOME env var
-        check_call(["rtiddsgen", "-language", info["language"],
+        rtiddsgen_path = "rtiddsgen"
+        if which(rtiddsgen_path) is None:
+            # Get NDDSHOME and build path
+            nddshome = environ.get("NDDSHOME")
+            if nddshome is "":
+                print("Cannot find 'rtiddsgen' on PATH and NDDSHOME variable" +
+                      " is not defined. Aborting.")
+                raise SystemExit(-1)
+
+            rtiddsgen_path = path.join(nddshome, "bin", "rtiddsgen")
+
+        check_call([rtiddsgen_path, "-language", info["language"],
                    "-example", info["arch"], info["idlfile"]])
     except CalledProcessError:
         print("Error calling rtiddsgen")
+        raise SystemExit(-1)
+
+
+# Implementation from: http://stackoverflow.com/a/377028
+def which(program):
+    import os
+
+    def is_exe(fpath):
+        return os.path.isfile(fpath) and os.access(fpath, os.X_OK)
+
+    fpath, fname = os.path.split(program)
+    if fpath:
+        if is_exe(program):
+            return program
+    else:
+        for path in os.environ["PATH"].split(os.pathsep):
+            path = path.strip('"')
+            exe_file = os.path.join(path, program)
+            if is_exe(exe_file):
+                return exe_file
+
+    return None
 
 
 def create_template(info):
