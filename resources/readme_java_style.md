@@ -12,7 +12,7 @@ Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *{{archwindows}}* run:
 ```
-rtiddsgen -language Java -example {{archwindows}} {{idlname}}.idl
+rtiddsgen -language java -example {{archwindows}} {{idlname}}.idl
 ```
 
 You will see messages that look like:

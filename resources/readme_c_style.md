@@ -1,6 +1,6 @@
 # Example Code: {{fullname}}
 
-## Building {{language}} Example
+## Building {{language.upper()}} Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -18,9 +18,9 @@ rtiddsgen -language {{language}} -example {{archwindows}} {{idlname}}.idl
 You will see messages that look like:
 ```
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/{{idlname}}_subscriber.cxx
+overwritten : /some/path/{{idlname}}_subscriber.{{"c" if language == "c" else  "cxx"}}
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/{{idlname}}_publisher.cxx
+overwritten : /some/path/{{idlname}}_publisher.{{"c" if language == "c" else  "cxx"}}
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
@@ -30,7 +30,7 @@ already provided.
 Use the generated makefile of *Visual Studio* project to compile your
 application.
 
-## Running {{language}} Example
+## Running {{language.upper()}} Example
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):

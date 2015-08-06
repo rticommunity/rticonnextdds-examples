@@ -12,13 +12,13 @@ procedure to generate the code and build the examples. **Do not use the
 `-replace` option.** Assuming you want to generate an example for
 *{{archwindows}}* run:
 ```
-rtiddsgen -language C# -example {{archwindows}} -ppDisable {{idlname}}.idl
+rtiddsgen -language c# -example {{archwindows}} -ppDisable {{idlname}}.idl
 ```
 
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
 ```
-rtiddsgen -language C# -example {{archwindows}} -express -ppDisable {{idlname}}.idl
+rtiddsgen -language c# -example {{archwindows}} -express -ppDisable {{idlname}}.idc
 ```
 
 You will see messages that look like:
