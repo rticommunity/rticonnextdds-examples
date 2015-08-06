@@ -184,6 +184,10 @@ def create_example(info, language):
     # Create README templates
     create_templates(info)
 
+    # If we are not in windows, remove c# support (cannot run rtiddsgen).
+    if language == "c#" and system() != "windows":
+        return
+
     # Call rtiddsgen to generate files
     call_rtiddsgen(info)
 
@@ -228,10 +232,6 @@ if __name__ == "__main__":
         languages = LANGUAGES
     else:
         languages = [args.language.lower()]
-
-    # If we are not in windows, remove c# support
-    if "c#" in languages and system() != "windows":
-        languages.remove("c#")
 
     # Create example for each language
     for lang in languages:
