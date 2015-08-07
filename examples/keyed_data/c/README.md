@@ -18,9 +18,9 @@ rtiddsgen -language c -example x64Win64VS2013 keys.idl
 You will see messages that look like:
 ```
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/keys_subscriber.cxx
+overwritten : /some/path/keys_subscriber.c
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/keys_publisher.cxx
+overwritten : /some/path/keys_publisher.c
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
