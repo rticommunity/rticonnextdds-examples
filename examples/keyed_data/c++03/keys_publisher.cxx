@@ -16,9 +16,11 @@
 #include "keys.hpp"
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
+using namespace dds::pub::qos;
 
 void publisher_main(int domain_id, int sample_count)
 {
@@ -28,10 +30,17 @@ void publisher_main(int domain_id, int sample_count)
     // Create a Topic -- and automatically register the type.
     Topic<keys> topic (participant, "Example keys");
 
-    // TODO: QoS.
+    // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml
+    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+
+    // If you want to change the DataWriter's QoS programmatically rather
+    // than using the XML file, you will need to comment out the previous
+    // writer_qos assignment and uncomment this line.
+
+    //writer_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances();
 
     // Create a DataWriter with default Qos (Publisher created in-line).
-    DataWriter<keys> writer(Publisher(participant), topic);
+    DataWriter<keys> writer(Publisher(participant), topic, writer_qos);
 
     std::vector<keys> samples;
     std::vector<InstanceHandle> instance_handles;
