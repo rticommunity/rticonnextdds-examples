@@ -37,7 +37,7 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the Publisher's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
 
-    publisher_qos << Presentation::TopicAccessScope(true, false);
+    // publisher_qos << Presentation::TopicAccessScope(true, false);
 
     Publisher publisher(participant, publisher_qos);
 
@@ -47,10 +47,10 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
 
-    writer_qos << Reliability::Reliable()
-               << History::KeepLast(10)
-               << DataWriterProtocol().rtps_reliable_writer(
-                    RtpsReliableWriterProtocol().heartbeats_per_max_samples(0));
+    // writer_qos << Reliability::Reliable()
+    //            << History::KeepLast(10)
+    //            << DataWriterProtocol().rtps_reliable_writer(
+    //                 RtpsReliableWriterProtocol().heartbeats_per_max_samples(0));
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     DataWriter<coherent> writer(publisher, topic, writer_qos);
