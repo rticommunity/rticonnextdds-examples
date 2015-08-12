@@ -37,7 +37,7 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the Publisher's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
 
-    // publisher_qos << Presentation::TopicAccessScope(true, false);
+    publisher_qos << Presentation::TopicAccessScope(true, false);
 
     Publisher publisher(participant, publisher_qos);
 
@@ -47,10 +47,10 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
 
-    // writer_qos << Reliability::Reliable()
-    //            << History::KeepLast(10)
-    //            << DataWriterProtocol().rtps_reliable_writer(
-    //                 RtpsReliableWriterProtocol().heartbeats_per_max_samples(0));
+    writer_qos << Reliability::Reliable()
+               << History::KeepLast(10)
+               << DataWriterProtocol().rtps_reliable_writer(
+                    RtpsReliableWriterProtocol().heartbeats_per_max_samples(0));
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     DataWriter<coherent> writer(publisher, topic, writer_qos);
@@ -59,28 +59,24 @@ void publisher_main(int domain_id, int sample_count)
     sample.id(0);
     InstanceHandle handle = writer.register_instance(sample);
 
-    CoherentSet coherent_set(publisher);
-    std::cout << "Begin Coherent Changes" << std::endl;
+    int num_samples = 7;
+    for (int count = 0; count < sample_count || sample_count == 0; ) {
 
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        rti::util::sleep(Duration(1));
+        CoherentSet coherent_set(publisher);
+        std::cout << "Begin Coherent Changes" << std::endl;
 
-        int mod = count % 7;
-        if (mod == 6) {
-            coherent_set = CoherentSet(publisher);
-            std::cout << "Begin Coherent Changes" << std::endl;
+        for (int i = 0; i < num_samples; i++, count++) {
+            rti::util::sleep(Duration(1));
+
+            sample.field('a' + i);
+            sample.value((int)(rand() / (RAND_MAX / 10.0)));
+            std::cout << "\tUpdating instance, " << sample.field() << "->"
+                      << sample.value() << std::endl;
+            writer.write(sample, handle);
         }
 
-        sample.field('a' + mod);
-        sample.value((int)(rand() / (RAND_MAX / 10.0)));
-        std::cout << "\tUpdating instance, " << sample.field() << "->"
-                  << sample.value() << std::endl;
-        writer.write(sample, handle);
-
-        if (mod == 5) {
-            coherent_set.end();
-            std::cout << "End Coherent Changes" << std::endl << std::endl;
-        }
+        coherent_set.end();
+        std::cout << "End Coherent Changes" << std::endl << std::endl;
     }
 
     writer.unregister_instance(handle);
