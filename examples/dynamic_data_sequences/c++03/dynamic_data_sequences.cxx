@@ -34,7 +34,7 @@ DynamicType create_typecode_simple_struct()
     StructType simple_struct("SimpleStruct");
 
     // The member will be a integer named "a_member".
-    simple_struct.add_member(Member("a_member", primitive_type<int>()));
+    simple_struct.add_member(Member("a_member", primitive_type<int32_t>()));
 
     return simple_struct;
 }
@@ -56,14 +56,20 @@ DynamicType create_typecode_sequence_struct()
 void write_data(DynamicData& sample)
 {
     DynamicType simple_struct_typecode = create_typecode_simple_struct();
-    std::vector<DynamicData> sequence_data;
+
+    // Get the sequence member to set its elements.
+    DynamicData sequence_member = sample.value<DynamicData>("sequence_member");
     for (int i = 0; i < MAX_SEQ_LEN; i++) {
         // To access the elements of a sequence it is necessary
-        // to use their name. There are two ways of doing this: bind/loan API
-        // and get API. See the "dynamic_data_nested_struct" for further details
-        // about the differences between these two APIs.
+        // to use their id. This parameter allows accessing to every element
+        // of the sequence using a 1-based index.
+        // There are two ways of doing this: bind/loan API and get API.
+        // See the dynamic_data_nested_structs for further details about the
+        // differences between these two APIs.
 
-        // TODO: Using loan
+        LoanedDynamicData loaned_data = sequence_member.loan_value(i + 1);
+        loaned_data.get().value("a_member", i);
+        loaned_data.return_loan();
 
         // Get/Set:
         // Create a simple_struct for this sequence element.
@@ -71,13 +77,12 @@ void write_data(DynamicData& sample)
         simple_struct_element.value("a_member", i);
 
         // Add to the sequence.
-        std::cout << "Writing sequence element #" << i << " : "
-                  << std::endl << simple_struct_element << std::endl;
-        sequence_data.push_back(simple_struct_element);
+        std::cout << "Writing sequence element #" << (i + 1) << " : "
+                  << std::endl << simple_struct_element;
+        sequence_member.value(i + 1, simple_struct_element);
     }
 
-    // Set the sequence value.
-    sample.set_values("sequence_member", sequence_data);
+    sample.value("sequence_member", sequence_member);
 }
 
 void read_data(const DynamicData& sample)
@@ -87,15 +92,21 @@ void read_data(const DynamicData& sample)
 
 int main()
 {
-    // Create the struct with the sequence member.
-    DynamicType struct_sequence_type = create_typecode_sequence_struct();
-    DynamicData struct_sequence_data(struct_sequence_type);
+    try {
+        // Create the struct with the sequence member.
+        DynamicType struct_sequence_type = create_typecode_sequence_struct();
+        DynamicData struct_sequence_data(struct_sequence_type);
 
-    std::cout << "***** Writing a sample *****" << std::endl;
-    write_data(struct_sequence_data);
+        std::cout << "***** Writing a sample *****" << std::endl;
+        write_data(struct_sequence_data);
 
-    std::cout << "***** Reading a sample *****" << std::endl;
-    read_data(struct_sequence_data);
+        std::cout << "***** Reading a sample *****" << std::endl;
+        read_data(struct_sequence_data);
+    } catch (const std::exception& ex) {
+        // This will catch DDS exceptions.
+        std::cerr << "Exception: " << ex.what() << std::endl;
+        return -1;
+    }
 
     return 0;
 }
