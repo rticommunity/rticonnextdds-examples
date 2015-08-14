@@ -25,6 +25,12 @@ using namespace dds::sub;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 using namespace rti::core;
+using namespace rti::sub;
+
+// Transform a DDS sample into a pair value for a dictionary.
+std::pair<char, int> sample2map(const LoanedSample<coherent>& sample) {
+    return std::pair<char, int>(sample->data().field(), sample->data().value());
+}
 
 class CoherentListener : public NoOpDataReaderListener<coherent> {
 public:
@@ -35,14 +41,11 @@ public:
 
         // Process samples and add to a dictionary
         std::map<char, int> values;
-        for (LoanedSamples<coherent>::iterator sample_it = samples.begin();
-            sample_it != samples.end(); sample_it++) {
-
-            if (sample_it->info().valid()) {
-                const coherent& sample = sample_it->data();
-                values[sample.field()] = sample.value();
-            }
-        }
+        std::transform(
+            samples.begin(),
+            samples.end(),
+            std::inserter(values, values.begin()),
+            sample2map);
 
         // Print the results
         if (values.size() > 0) {

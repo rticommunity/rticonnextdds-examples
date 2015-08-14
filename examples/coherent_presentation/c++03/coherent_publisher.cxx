@@ -75,7 +75,7 @@ void publisher_main(int domain_id, int sample_count)
             writer.write(sample, handle);
         }
 
-        coherent_set.end();
+        // `coherent_set::end()` will be called by the destructor.
         std::cout << "End Coherent Changes" << std::endl << std::endl;
     }
 
