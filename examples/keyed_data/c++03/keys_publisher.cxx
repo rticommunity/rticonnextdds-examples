@@ -106,7 +106,7 @@ void publisher_main(int domain_id, int sample_count)
                 std::cout << "Writing instance " << samples[i].code()
                           << ", x: " << samples[i].x()
                           << ", y: " << samples[i].y() << std::endl;
-                writer.write(samples[i]);
+                writer.write(samples[i], instance_handles[i]);
             }
         }
     }
