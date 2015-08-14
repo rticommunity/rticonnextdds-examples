@@ -35,7 +35,7 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
              sample_it++) {
 
             const SampleInfo& info = sample_it->info();
-            if (sample_it->info().valid()) {
+            if (info.valid()) {
                 ViewState view_state = info.state().view_state();
                 if (view_state == ViewState::new_view()) {
                     std::cout << "Found new instance; code = "
@@ -50,7 +50,8 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
                 keys sample;
                 reader.key_value(sample, info.instance_handle());
 
-                // Here we print a message if the instance state is.
+                // Here we print a message if the instance state is
+                // 'not_alive_no_writers' or 'not_alive_disposed'.
                 const InstanceState& state = info.state().instance_state();
                 if (state == InstanceState::not_alive_no_writers()) {
                     std::cout << "Instance " << sample.code()
