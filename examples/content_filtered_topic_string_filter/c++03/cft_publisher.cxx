@@ -9,6 +9,7 @@
  use the software.
  ******************************************************************************/
 
+#include <cstdlib>
 #include <iostream>
 
 #include <dds/dds.hpp>
@@ -20,7 +21,6 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
-using namespace dds::sub;
 
 void publisher_main(int domain_id, int sample_count)
 {
