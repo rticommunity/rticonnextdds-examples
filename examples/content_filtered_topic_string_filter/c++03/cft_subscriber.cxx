@@ -43,6 +43,58 @@ class cftReaderListener : public NoOpDataReaderListener<cft> {
     }
 };
 
+const char ParameterSeparator = ',';
+
+template <typename T>
+void append_to_expression_parameter(ContentFilteredTopic<T>& cft,
+    std::vector<int>::size_type index, std::string value)
+{
+    // Get parameters.
+    StringSeq parameters = cft.filter_parameters();
+    if (index >= parameters.size())
+        throw std::invalid_argument("Out of range argument index");
+
+    // If the parameter was set previously, remove automatically added quotes.
+    if (parameters[index].size() > 0) {
+        parameters[index].erase(0, 1);
+        parameters[index].erase(parameters[index].size() - 1, 1);
+    }
+
+    // Append the value and a separator.
+    parameters[index].append(1, ParameterSeparator);
+    parameters[index].append(value);
+
+    // Set parameters.
+    cft.filter_parameters(parameters.begin(), parameters.end());
+}
+
+template <typename T>
+void remove_from_expression_parameter(ContentFilteredTopic<T>& cft,
+    std::vector<int>::size_type index, std::string value)
+{
+    // Get parameters.
+    StringSeq parameters = cft.filter_parameters();
+    if (index >= parameters.size())
+        throw std::invalid_argument("Out of range argument index");
+
+    // Search any coincidence of the value in the string.
+    int pos = parameters[index].find(value);
+    while (pos != -1) {
+        // Remove the value and the separator if any (ie: beginning).
+        if (parameters[index][pos] == ParameterSeparator) {
+            parameters[index].erase(pos, 1 + value.size());
+        } else {
+            parameters[index].erase(pos, value.size());
+        }
+
+        // Search for next coincidence.
+        pos = parameters[index].find(value, pos);
+    }
+
+    // Set parameters.
+    cft.filter_parameters(parameters.begin(), parameters.end());
+}
+
 void subscriber_main(int domain_id, int sample_count, bool is_cft)
 {
     // Create a DomainParticipant with default Qos
@@ -51,17 +103,23 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     // Create a Topic -- and automatically register the type
     Topic<cft> topic(participant, "Example cft");
 
+    // Define the default parameter of the filter.
     std::vector<std::string> parameters(1);
     parameters[0] = "SOME_STRING";
 
-    ContentFilteredTopic<cft> cft_topic = dds::core::null;
-    DataReader<cft> reader = dds::core::null;
-
+    // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
-    reader_qos << Reliability::Reliable()
-               << Durability::TransientLocal()
-               << History::KeepLast(20);
+    // If you want to change the DataReader's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+
+    // reader_qos << Reliability::Reliable()
+    //            << Durability::TransientLocal()
+    //            << History::KeepLast(20);
+
+    // Create the ContentFilteredTopic and DataReader.
+    ContentFilteredTopic<cft> cft_topic = dds::core::null;
+    DataReader<cft> reader = dds::core::null;
 
     if (is_cft) {
         std::cout << "Using ContentFiltered Topic" << std::endl;
@@ -91,24 +149,28 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     if (is_cft) {
         std::cout << "Now setting a new filter: 'name MATCH \"EVEN\"'"
                   << std::endl;
-        // TODO: Append parameter.
+        append_to_expression_parameter(cft_topic, 0, "EVEN");
     }
 
+    // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
         rti::util::sleep(dds::core::Duration(1));
+        if (!is_cft) {
+            continue;
+        }
 
-        if (count == 9) {
+        if (count == 10) {
             std::cout << std::endl << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Append 'ODD' filter" << std::endl
                       << "===========================" << std::endl;
-            // TODO: Append parameter
-        } else if (count == 19) {
+            append_to_expression_parameter(cft_topic, 0, "ODD");
+        } else if (count == 20) {
             std::cout << std::endl << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Removing 'EVEN' filter" << std::endl
                       << "===========================" << std::endl;
-            // TODO: Remove parameter
+            remove_from_expression_parameter(cft_topic, 0, "EVEN");
         }
     }
 }
