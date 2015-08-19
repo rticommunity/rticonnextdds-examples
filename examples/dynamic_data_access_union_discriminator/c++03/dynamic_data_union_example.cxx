@@ -17,17 +17,17 @@
 using namespace dds::core::xtypes;
 using namespace rti::core::xtypes;
 
-DynamicType create_type_code() {
+UnionType create_type_code() {
     // First, we create the TypeCode for a union.
     UnionType union_type("Foo", primitive_type<int32_t>());
 
     // Case 1 will be a short named aShort.
     union_type.add_member(UnionMember(
-        "aShort", primitive_type<short>(), UnionMember::DEFAULT_LABEL));
+        "aShort", primitive_type<short>(), 0));
 
     // Case 2 will be a long named aLong.
     union_type.add_member(UnionMember(
-        "aLong", primitive_type<int>(), 2));
+        "aLong", primitive_type<int>(), UnionMember::DEFAULT_LABEL));
 
     // Case 3 will be a double named aDouble.
     union_type.add_member(UnionMember(
@@ -38,29 +38,28 @@ DynamicType create_type_code() {
 
 void example() {
     // Create the type of the union
-    DynamicType union_type = create_type_code();
+    UnionType union_type = create_type_code();
 
     // Create the DynamicData.
     DynamicData union_data(union_type);
 
     // Get the current member, it will be the default one.
-    union_data.value<double>("aDouble", 88.2);
+    union_data.value<int>("aLong", 0);  // Avoid discriminator value -1.
     DynamicDataMemberInfo info =
         union_data.member_info(union_data.discriminator_value());
     std::cout << "The member selected is " << info.member_name() << std::endl;
 
     // When we set a value in one of the members of the union,
     // the discriminator updates automatically to point that member.
-    union_data.value("aShort", (short)42);
+    union_data.value<short>("aShort", 42);
 
     // The discriminator should now reflect the new situation.
     info = union_data.member_info(union_data.discriminator_value());
-    std::cout << "The member selected is " << info.member_name() << std::endl;
+    std::cout << "The member selected is " << info.member_name();
 
     // Getting the value of the target member.
     short aShort = union_data.value<short>(union_data.discriminator_value());
-    std::cout << "The member selected is " << info.member_name()
-              << " with value: " << aShort << std::endl;
+    std::cout << " with value " << aShort << std::endl;
 }
 
 int main(int argc, char *argv[]) {
