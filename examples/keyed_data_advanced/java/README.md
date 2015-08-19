@@ -1,69 +1,85 @@
-===========================================
- Example Code -- Keyed data: Advanced
-===========================================
+# Example Code: Keyed Data -- Advanced
 
-Building C# Example
-====================
-Before compiling or running the example, make sure the environment variable 
-NDDSHOME is set to the directory where your version of RTI Connext is installed.
+## Building Java Example
+Before compiling or running the example, make sure the environment variable
+`NDDSHOME` is set to the directory where your version of *RTI Connext* is
+installed.
 
-Run rtiddsgen with the -example option and the target architecture of your 
-choice (e.g., i86Win32VS2010). The RTI Connext Core 
-Libraries and Utilities Getting Started Guide describes this process in detail. 
-Follow the same procedure to generate the code and build the examples. Do not 
-use the -replace option.
+Run *rtiddsgen* with the `-example` option and the target architecture of your
+choice (e.g., *x64Win64VS2013* or *x64Linux3gcc4.8.2*). The *RTI Connext Core
+Libraries and Utilities Getting Started Guide* describes this process in detail.
+Follow the same procedure to generate the code and build the examples. **Do not
+use the `-replace` option.** Assuming you want to generate an example for
+*x64Win64VS2013* run:
+```
+rtiddsgen -language java -example x64Win64VS2013 keys.idl
+```
 
-On Windows systems (assuming you want to generate an example for 
-i86Win32VS2010) run:
-
-rtiddsgen -language C# -example i86Win32VS2010 -ppDisable keys.idl
-
-Note: If you are using Visual Studio Express add the -express option to the 
-command, i.e.,
-
-rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable keys.idl
-
-File C:\local\keyed_data_advanced\cs\keys_subscriber.cs already 
-exists and will not be replaced with updated content. If you would like to get a 
-new file with the new content, either remove this file or supply -replace option.
-File C:\local\keyed_data_advanced\cs\keys_publisher.cs already 
-exists and will not be replaced with updated content. If you would like to get a 
-new file with the new content, either remove this file or supply -replace option.
+You will see messages that look like:
+```
+WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
+overwritten : /some/path/keysSubscriber.java
+WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
+overwritten : /some/path/keysPublisher.java
+```
 
 This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-Rtiddsgen generates two solutions for Visual Studio C++ and C#, that you will use to
-build the types and the C# example, respectively:
- 1) First open  keys_type-dotnet4.0.sln and build the solution. 
- 2) Once you've done that, open keys_example-csharp.sln and build the C# example.
+Before compiling in Java, make sure that the desired version of the *javac*
+compiler is in your `PATH` environment variable.
 
-Running C# Example
-===================
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
+To compile on *Windows* and *UNIX* you can use the generated makefile with
+`make`, run `ant` or run `javac`:
+``` sh
+# Compile using make or gmake
+make -f makefile_keys_x64Linux3gcc4.8.2
 
-On Windows systems run:
+# or using ant
+ant
 
-bin\<build_type>-VS2010\keys_publisher.exe  <domain_id> 18
-bin\<build_type>-VS2010\keys_subscriber.exe <domain_id> 20
+# or using javac. On UNIX use:
+javac -cp .:$NDDSHOME/lib/java/nddsjava.jar *.java
+# javac on Windows:
+javac -cp .;%NDDSHOME%\lib\java\nddsjava.jar *.java
+```
+
+## Running Java Example
+In two separate command prompt windows for the publisher and subscriber.
+Run the following commands from the example directory (this is necessary to
+ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+
+To run the application in *Windows* and *UNIX* you can either use the makefile
+with `make`, run `ant` or run `java` command:
+``` sh
+# Run with make and the generated makefile
+make ARGS="<domain_id> <samples_to_send>" -f makefile_keys_x64Linux3gcc4.8.2 keysPublisher
+make ARGS="<domain_id> <sleep_periods>" -f makefile_keys_x64Linux3gcc4.8.2 keysSubscriber
+
+# or using ant (it will run with default arguments, domain 0 and forever)
+ant keysPublisher
+ant keysSubscriber
+
+# or using java. On UNIX use:
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar keysPublisher <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar keysSubscriber <domain_id> <sleep_periods>
+# java on Windows:
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar keysPublisher <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar keysSubscriber <domain_id> <sleep_periods>
+```
+
+The applications accept up to two arguments:
+
+1. The `<domain_id>`. Both applications must use the same domain ID in order to
+communicate. The default is 0.
+2. How long the examples should run, measured in samples for the publisher
+and sleep periods for the subscriber. A value of '0' instructs the
+application to run forever; this is the default.
 
 
-
-The applications accept two arguments:
-   1. The <domain_id>. Both applications must use the same domain id in order 
-   to communicate. The default is 0.
-   2. How long the examples should run, measured in samples for the publisher 
-   and sleep periods for the subscriber. A value of '0' instructs the 
-   application to run forever; this is the default.
-   While generating the output below, we used values that would capture the most 
-   interesting behavior.
-
-
-Publisher Output
-============
+## Publisher Output
+```
 ----DW1 registering instance 0
 DW1 write; code: 0, x: 1, y: 0
 DW2 write; code: 1, x: 2, y: -1000
@@ -127,9 +143,10 @@ DW1 write; code: 2, x: 1, y: 2016
 DW1 write; code: 0, x: 1, y: 17
 DW1 write; code: 1, x: 1, y: 1017
 DW1 write; code: 2, x: 1, y: 2017
+```
 
-Subscriber Output
-=============
+## Subscriber Output
+```
 New instance found; code = 0
 New instance found; code = 1
 code: 1, x: 2, y: -1000
@@ -166,3 +183,4 @@ code: 2, x: 1, y: 2017
 Instance has no writers; code = 0
 Instance has no writers; code = 2
 Instance has no writers; code = 1
+```
