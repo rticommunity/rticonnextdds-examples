@@ -43,58 +43,6 @@ class cftReaderListener : public NoOpDataReaderListener<cft> {
     }
 };
 
-const char ParameterSeparator = ',';
-
-template <typename T>
-void append_to_expression_parameter(ContentFilteredTopic<T>& cft,
-    std::vector<int>::size_type index, std::string value)
-{
-    // Get parameters.
-    StringSeq parameters = cft.filter_parameters();
-    if (index >= parameters.size())
-        throw std::invalid_argument("Out of range argument index");
-
-    // If the parameter was set previously, remove automatically added quotes.
-    if (parameters[index].size() > 0) {
-        parameters[index].erase(0, 1);
-        parameters[index].erase(parameters[index].size() - 1, 1);
-    }
-
-    // Append the value and a separator.
-    parameters[index].append(1, ParameterSeparator);
-    parameters[index].append(value);
-
-    // Set parameters.
-    cft.filter_parameters(parameters.begin(), parameters.end());
-}
-
-template <typename T>
-void remove_from_expression_parameter(ContentFilteredTopic<T>& cft,
-    std::vector<int>::size_type index, std::string value)
-{
-    // Get parameters.
-    StringSeq parameters = cft.filter_parameters();
-    if (index >= parameters.size())
-        throw std::invalid_argument("Out of range argument index");
-
-    // Search any coincidence of the value in the string.
-    int pos = parameters[index].find(value);
-    while (pos != -1) {
-        // Remove the value and the separator if any (ie: beginning).
-        if (parameters[index][pos] == ParameterSeparator) {
-            parameters[index].erase(pos, 1 + value.size());
-        } else {
-            parameters[index].erase(pos, value.size());
-        }
-
-        // Search for next coincidence.
-        pos = parameters[index].find(value, pos);
-    }
-
-    // Set parameters.
-    cft.filter_parameters(parameters.begin(), parameters.end());
-}
-
 void subscriber_main(int domain_id, int sample_count, bool is_cft)
 {
     // Create a DomainParticipant with default Qos
@@ -149,7 +97,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     if (is_cft) {
         std::cout << "Now setting a new filter: 'name MATCH \"EVEN\"'"
                   << std::endl;
-        append_to_expression_parameter(cft_topic, 0, "EVEN");
+        cft_topic->append_to_expression_parameter(0, "EVEN");
     }
 
     // Main loop
@@ -164,13 +112,13 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
                       << "Changing filter parameters" << std::endl
                       << "Append 'ODD' filter" << std::endl
                       << "===========================" << std::endl;
-            append_to_expression_parameter(cft_topic, 0, "ODD");
+            cft_topic->append_to_expression_parameter(0, "ODD");
         } else if (count == 20) {
             std::cout << std::endl << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Removing 'EVEN' filter" << std::endl
                       << "===========================" << std::endl;
-            remove_from_expression_parameter(cft_topic, 0, "EVEN");
+            cft_topic->remove_from_expression_parameter(0, "EVEN");
         }
     }
 }
