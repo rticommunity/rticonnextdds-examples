@@ -44,7 +44,7 @@ void example() {
     DynamicData union_data(union_type);
 
     // Get the current member, it will be the default one.
-    union_data.value<int>("aLong", 0);  // Avoid discriminator value -1.
+    union_data.value<int>("aLong", 0);
     DynamicDataMemberInfo info =
         union_data.member_info(union_data.discriminator_value());
     std::cout << "The member selected is " << info.member_name() << std::endl;
@@ -67,6 +67,7 @@ int main(int argc, char *argv[]) {
         example();
     } catch (const std::exception& ex) {
         std::cerr << "Caught excetion: " << ex.what() << std::endl;
+        return -1;
     }
 
     return 0;
