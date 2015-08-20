@@ -63,6 +63,7 @@ void publisher_main(int domain_id, int sample_count)
 
     std::vector<keys> samples1;
     std::vector<InstanceHandle> instance_handles1;
+    std::vector<bool> samples1_active;
 
     // RTI Connext could examine the key fields each time it needs to determine
     // which data-instance is being modified. However, for performance and
@@ -83,8 +84,10 @@ void publisher_main(int domain_id, int sample_count)
             std::cout << "----DW1 registering instance " << k.code()
                       << std::endl;
             instance_handles1.push_back(writer1.register_instance(k));
+            samples1_active.push_back(true);
         } else {
             instance_handles1.push_back(InstanceHandle::nil());
+            samples1_active.push_back(false);
         }
 
         // Finally, we modify the data to be sent.
@@ -95,6 +98,7 @@ void publisher_main(int domain_id, int sample_count)
     keys sample2(samples1[1].code(), 2, 0);
     std::cout << "----DW2 registering instance " << sample2.code() << std::endl;
     InstanceHandle instance_handle2 = writer2.register_instance(sample2);
+    bool sample2_active = true;
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         rti::util::sleep(Duration(1));
@@ -108,36 +112,45 @@ void publisher_main(int domain_id, int sample_count)
                       << std::endl;
             instance_handles1[1] = writer1.register_instance(samples1[1]);
             instance_handles1[2] = writer1.register_instance(samples1[2]);
+            samples1_active[1] = true;
+            samples1_active[2] = true;
+
         } else if (count == 8) {
             // Dispose the second instance.
             std::cout << "----DW1 disposing instance " << samples1[1].code()
                       << std::endl;
             writer1.dispose_instance(instance_handles1[1]);
+            samples1_active[1] = false;
+
         } else if (count == 10) {
             // Unregister the second instance.
             std::cout << "----DW1 unregistering instance " << samples1[1].code()
                       << std::endl;
             writer1.unregister_instance(instance_handles1[1]);
-            instance_handles1[1] = InstanceHandle::nil();
+            samples1_active[1] = false;
+
         } else if (count == 12) {
             // Unregister the third instance.
             std::cout << "----DW1 unregistering instance " << samples1[2].code()
                       << std::endl;
             writer1.unregister_instance(instance_handles1[2]);
-            instance_handles1[2] = InstanceHandle::nil();
+            samples1_active[2] = false;
 
             std::cout << "----DW1 re-registering instance "
                       << samples1[1].code() << std::endl;
             instance_handles1[1] = writer1.register_instance(samples1[1]);
+            samples1_active[1] = true;
+
         } else if (count == 16) {
             std::cout << "----DW1 re-registering instance "
                       << samples1[2].code() << std::endl;
             instance_handles1[2] = writer1.register_instance(samples1[2]);
+            samples1_active[2] = true;
         }
 
         // Send samples for writer 1
         for (int i = 0; i < num_samples; i++) {
-            if (!instance_handles1[i].is_nil()) {
+            if (samples1_active[i]) {
                 samples1[i].y(count + i * 1000);
                 std::cout << "DW1 write; code: " << samples1[i].code()
                           << ", x: " << samples1[i].x() << ", y: "
@@ -153,12 +166,12 @@ void publisher_main(int domain_id, int sample_count)
             std::cout << "----DW2 disposing instance " << sample2.code()
                       << std::endl;
             writer2.dispose_instance(instance_handle2);
-            instance_handle2 = InstanceHandle::nil();
+            sample2_active = false;
         }
 
         // Send sample for writer 2
         sample2.y(-count - 1000);
-        if (!instance_handle2.is_nil()) {
+        if (sample2_active) {
             std::cout << "DW2 write; code: " << sample2.code() << ", x: "
                       << sample2.x() << ", y: " << sample2.y() << std::endl;
             writer2.write(sample2, instance_handle2);
