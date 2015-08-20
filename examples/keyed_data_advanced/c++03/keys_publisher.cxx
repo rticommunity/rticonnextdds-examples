@@ -40,9 +40,9 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
-    writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
-                << Ownership::Exclusive()
-                << OwnershipStrength(5);
+    // writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+    //             << Ownership::Exclusive()
+    //             << OwnershipStrength(5);
 
     // Create a DataWriter with default Qos.
     DataWriter<keys> writer1(publisher, topic, writer1_qos);
@@ -55,9 +55,9 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
-    writer2_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
-                << Ownership::Exclusive()
-                << OwnershipStrength(10);
+    // writer2_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+    //             << Ownership::Exclusive()
+    //             << OwnershipStrength(10);
 
     DataWriter<keys> writer2(publisher, topic, writer2_qos);
 
