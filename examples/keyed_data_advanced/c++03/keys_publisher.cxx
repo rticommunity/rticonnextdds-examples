@@ -30,15 +30,36 @@ void publisher_main(int domain_id, int sample_count)
     // Create a Topic -- and automatically register the type
     Topic<keys> topic (participant, "Example keys");
 
+    // Create a publisher for both DataWriters.
     Publisher publisher(participant);
 
-    // Create a DataWriter with default Qos.
-    DataWriter<keys> writer1(publisher, topic);
+    // Retrieve the default DataWriter QoS profile from USER_QOS_PROFILES.xml
+    // for the first writer.
+    DataWriterQos writer1_qos = QosProvider::Default().datawriter_qos();
 
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos(
+    // If you want to change the DataWriter's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+
+    writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+                << Ownership::Exclusive()
+                << OwnershipStrength(5);
+
+    // Create a DataWriter with default Qos.
+    DataWriter<keys> writer1(publisher, topic, writer1_qos);
+
+    // Retrieve the keys_Profile_dw2 QoS profile from USER_QOS_PROFILES.xml
+    // for the second writer.
+    DataWriterQos writer2_qos = QosProvider::Default().datawriter_qos(
         "keys_Library::keys_Profile_dw2");
 
-    DataWriter<keys> writer2(publisher, topic, writer_qos);
+    // If you want to change the DataWriter's QoS programmatically rather than
+    // using the XML file, uncomment the following lines.
+
+    writer2_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+                << Ownership::Exclusive()
+                << OwnershipStrength(10);
+
+    DataWriter<keys> writer2(publisher, topic, writer2_qos);
 
     std::vector<keys> samples1;
     std::vector<InstanceHandle> instance_handles1;
