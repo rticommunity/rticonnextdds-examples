@@ -190,7 +190,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Main loop.
     for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(Duration(2));
     }
 }
 

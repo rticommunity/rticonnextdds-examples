@@ -42,7 +42,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
     //             << Ownership::Exclusive()
-    //             << OwnershipStrength(5);
+    //             << OwnershipStrength(10);
 
     // Create a DataWriter with default Qos.
     DataWriter<keys> writer1(publisher, topic, writer1_qos);
@@ -57,7 +57,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // writer2_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
     //             << Ownership::Exclusive()
-    //             << OwnershipStrength(10);
+    //             << OwnershipStrength(5);
 
     DataWriter<keys> writer2(publisher, topic, writer2_qos);
 
@@ -101,7 +101,7 @@ void publisher_main(int domain_id, int sample_count)
     bool sample2_active = true;
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(Duration(2));
 
         // Control first DataWriter.
         if (count == 4) {
