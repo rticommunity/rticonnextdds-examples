@@ -15,8 +15,10 @@
 #include "ordered_group.hpp"
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::pub;
+using namespace dds::pub::qos;
 using namespace dds::topic;
 
 void publisher_main(int domain_id, int sample_count)
@@ -24,8 +26,16 @@ void publisher_main(int domain_id, int sample_count)
     // Create a DomainParticipant with default Qos
     DomainParticipant participant(domain_id);
 
+    // Retrieve the default Publisher QoS, from USER_QOS_PROFILES.xml
+    PublisherQos publisher_qos = QosProvider::Default().publisher_qos();
+
+    // If you want to change the Publisher's QoS programmatically rather than
+    // using the XML file, uncomment the following line.
+
+    // publisher_qos << Presentation::GroupAccessScope(false, true);
+
     // Create a single Publisher for all DataWriters.
-    Publisher publisher(participant);
+    Publisher publisher(participant, publisher_qos);
 
     // Create three Topic, once for each DataWriter.
     Topic<ordered_group> topic1(participant, "Topic1");

@@ -16,10 +16,12 @@
 #include "ordered_group.hpp"
 
 using namespace dds::core;
+using namespace dds::core::policy;
 using namespace rti::core;
 using namespace dds::core::status;
 using namespace dds::domain;
 using namespace dds::sub;
+using namespace dds::sub::qos;
 using namespace rti::sub;
 using namespace dds::topic;
 
@@ -62,8 +64,16 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a DomainParticipant with default Qos
     DomainParticipant participant(domain_id);
 
+    // Retrieve the default Subscriber QoS, from USER_QOS_PROFILES.xml
+    SubscriberQos subscriber_qos = QosProvider::Default().subscriber_qos();
+
+    // If you want to change the Subscriber's QoS programmatically rather than
+    // using the XML file, uncomment the following line.
+
+    // subscriber_qos << Presentation::GroupAccessScope(false, true);
+
     // Create a Subscriber.
-    Subscriber subscriber(participant);
+    Subscriber subscriber(participant, subscriber_qos);
 
     // Associate a listener to the subscriber using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
