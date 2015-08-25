@@ -35,7 +35,8 @@ class cfcReaderListener : public NoOpDataReaderListener<cfc> {
         LoanedSamples<cfc> samples = reader.take();
 
         for (LoanedSamples<cfc>::iterator sample_it = samples.begin();
-        sample_it != samples.end(); sample_it++) {
+            sample_it != samples.end();
+            sample_it++) {
 
             if (sample_it->info().valid()){
                 // Print the time we get each sample.

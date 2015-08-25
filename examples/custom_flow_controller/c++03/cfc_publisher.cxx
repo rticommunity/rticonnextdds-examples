@@ -26,7 +26,7 @@ using namespace dds::pub;
 using namespace rti::pub;
 using namespace dds::pub::qos;
 
-const std::string FlowController_name = "custom_flowcontroller";
+const std::string flow_controller_name = "custom_flowcontroller";
 
 FlowControllerProperty define_flowcontroller(DomainParticipant& participant)
 {
@@ -77,11 +77,12 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id, participant_qos);
 
     // Create the FlowController by code instead of from USER_QOS_PROFILES.xml.
-    FlowControllerProperty fw_property = define_flowcontroller(participant);
+    FlowControllerProperty flow_controller_property =
+        define_flowcontroller(participant);
     FlowController flowcontroller(
         participant,
-        FlowController_name,
-        fw_property);
+        flow_controller_name,
+        flow_controller_property);
 
     // Create a Topic -- and automatically register the type
     Topic<cfc> topic(participant, "Example cfc");
@@ -93,14 +94,14 @@ void publisher_main(int domain_id, int sample_count)
     // using the XML file, uncomment the following lines.
 
     // writer_qos << History::KeepAll()
-    //            << PublishMode::Asynchronous(FlowController_name);
+    //            << PublishMode::Asynchronous(flow_controller_name);
 
     // Create a DataWriter (Publisher created in-line)
     DataWriter<cfc> writer(Publisher(participant), topic, writer_qos);
 
     // Create a sample to write with a long payload.
     cfc sample;
-    sample.str(std::string(999, (char)1));
+    sample.str(std::string(999, 'A'));
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         // Simulate bursty writer.
@@ -114,8 +115,7 @@ void publisher_main(int domain_id, int sample_count)
         }
     }
 
-    // This new sleep it is for let time to the subscriber to read all the
-    // sent samples.
+    // This new sleep is to give the subscriber time to read all the samples.
     rti::util::sleep(Duration(4));
 }
 
