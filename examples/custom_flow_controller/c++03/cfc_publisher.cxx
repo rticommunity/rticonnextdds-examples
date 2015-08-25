@@ -73,7 +73,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // participant_qos << TransportBuiltin::UDPv4();
 
-    // Create a DomainParticipant with default Qos
+    // Create a DomainParticipant.
     DomainParticipant participant(domain_id, participant_qos);
 
     // Create the FlowController by code instead of from USER_QOS_PROFILES.xml.
