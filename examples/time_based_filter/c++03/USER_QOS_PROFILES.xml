@@ -1,0 +1,82 @@
+<?xml version="1.0"?>
+
+<!--
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="tbf_Library">
+
+        <!-- QoS profile used to configure reliable communication between the
+             DataWriter and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="tbf_Profile" is_default_qos="true">
+            <!-- QoS used to configure the data reader created in the example
+                 code
+            -->
+            <datareader_qos>
+
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+
+                <!--  Here we set a time-based filter with a minimum separation
+                      of 2 seconds. That is, samples for every single instance
+                      will be separated in time at least 2 seconds.
+                -->
+                <time_based_filter>
+                    <minimum_separation>
+                        <sec>2</sec>
+                        <nanosec>0</nanosec>
+                    </minimum_separation>
+                </time_based_filter>
+
+            </datareader_qos>
+
+            <!-- QoS used to configure the data writer created in the example
+            code -->
+            <datawriter_qos>
+
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+
+            </datawriter_qos>
+
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI Analyzer tool, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>RTI Time-Based Filter C++03 Example</name>
+                </participant_name>
+
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
