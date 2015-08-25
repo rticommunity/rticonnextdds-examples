@@ -48,3 +48,71 @@ communicate. The default is 0.
 2. How long the examples should run, measured in samples for the publisher
 and sleep periods for the subscriber. A value of '0' instructs the
 application to run forever; this is the default.
+
+## Publisher Output
+```
+Writing cfc, sample 0
+Writing cfc, sample 1
+Writing cfc, sample 2
+Writing cfc, sample 3
+Writing cfc, sample 4
+Writing cfc, sample 5
+Writing cfc, sample 6
+Writing cfc, sample 7
+Writing cfc, sample 8
+Writing cfc, sample 9
+Writing cfc, sample 10
+Writing cfc, sample 11
+Writing cfc, sample 12
+Writing cfc, sample 13
+Writing cfc, sample 14
+Writing cfc, sample 15
+Writing cfc, sample 16
+Writing cfc, sample 17
+Writing cfc, sample 18
+Writing cfc, sample 19
+Writing cfc, sample 20
+Writing cfc, sample 21
+Writing cfc, sample 22
+Writing cfc, sample 23
+Writing cfc, sample 24
+Writing cfc, sample 25
+Writing cfc, sample 26
+Writing cfc, sample 27
+Writing cfc, sample 28
+Writing cfc, sample 29
+```
+
+## Subscriber Output
+```
+@ t=0.032710s, got x = 0
+@ t=0.032841s, got x = 1
+@ t=0.033193s, got x = 2
+@ t=0.033250s, got x = 3
+@ t=0.033609s, got x = 4
+@ t=0.033661s, got x = 5
+@ t=0.033793s, got x = 6
+@ t=0.033848s, got x = 7
+@ t=0.034092s, got x = 8
+@ t=0.034146s, got x = 9
+@ t=0.035744s, got x = 10
+@ t=0.035796s, got x = 11
+@ t=0.036038s, got x = 12
+@ t=0.036092s, got x = 13
+@ t=0.036389s, got x = 14
+@ t=0.036464s, got x = 15
+@ t=0.036760s, got x = 16
+@ t=0.036837s, got x = 17
+@ t=0.037029s, got x = 18
+@ t=0.037117s, got x = 19
+@ t=0.038716s, got x = 20
+@ t=0.038770s, got x = 21
+@ t=0.038981s, got x = 22
+@ t=0.039077s, got x = 23
+@ t=0.039297s, got x = 24
+@ t=0.039404s, got x = 25
+@ t=0.039906s, got x = 26
+@ t=0.039999s, got x = 27
+@ t=0.040254s, got x = 28
+@ t=0.040313s, got x = 29
+```
