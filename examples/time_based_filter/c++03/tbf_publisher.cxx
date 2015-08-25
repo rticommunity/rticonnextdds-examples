@@ -13,15 +13,12 @@
 #include <iostream>
 
 #include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
 #include "tbf.hpp"
 
 using namespace dds::core;
-using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
-using namespace dds::pub::qos;
 
 void publisher_main(int domain_id, int sample_count)
 {
@@ -34,6 +31,7 @@ void publisher_main(int domain_id, int sample_count)
     // Create a DataWriter with default Qos (Publisher created in-line)
     DataWriter<tbf> writer(Publisher(participant), topic);
 
+    // Create a sample to write
     tbf sample;
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
