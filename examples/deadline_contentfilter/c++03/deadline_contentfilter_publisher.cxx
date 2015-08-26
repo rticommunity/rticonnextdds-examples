@@ -26,12 +26,17 @@ using namespace dds::pub::qos;
 class deadline_contentfilterListener :
     public NoOpDataWriterListener<deadline_contentfilter> {
 public:
-    void on_offered_deadline_missed(DataWriter<deadline_contentfilter>& writer,
-        const RequestedDeadlineMissedStatus& status)
+    void on_offered_deadline_missed(
+        DataWriter<deadline_contentfilter> &writer,
+        const OfferedDeadlineMissedStatus &status)
     {
+        // Creates a temporary object in order to find out which instance
+        // missed its deadline period. The 'key_value' call only fills in the
+        // values of the key fields inside the object.
         deadline_contentfilter affected_sample;
         writer.key_value(affected_sample, status.last_instance_handle());
 
+        // Print out which instance missed its deadline.
         std::cout << "Offered deadline missed on instance code = "
                   << affected_sample.code() << std::endl;
     }
@@ -52,9 +57,9 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
-    writer_qos << Deadline(Duration::from_millisecs(1500));
+    // writer_qos << Deadline(Duration::from_millisecs(1500));
 
-    // Create a DataWriter with default Qos (Publisher created in-line)
+    // Create a DataWriter (Publisher created in-line)
     DataWriter<deadline_contentfilter> writer(Publisher(participant), topic);
 
     // Associate a listener to the DataWriter using ListenerBinder, a RAII that
@@ -85,12 +90,12 @@ void publisher_main(int domain_id, int sample_count)
 
         std::cout << "Writing instance0, x = " << sample0.x() << ", y = "
                   << sample0.y() << std::endl;
-        writer.write(sample0);
+        writer.write(sample0, handle0);
 
         if (count < 15) {
             std::cout << "Writing instance1, x = " << sample1.x() << ", y = "
                       << sample1.y() << std::endl;
-            writer.write(sample1);
+            writer.write(sample1, handle1);
         } else if (count == 15) {
             std::cout << "Stopping writes to instance1" << std::endl;
         }
