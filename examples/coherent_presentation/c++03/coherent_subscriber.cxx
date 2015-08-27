@@ -45,8 +45,8 @@ public:
         std::cout << "Received updates:" << std::endl;
         std::map<char, int> values;
         std::transform(
-            samples.begin(),
-            samples.end(),
+            rti::sub::valid_samples(samples.begin()),
+            rti::sub::valid_samples(samples.end()),
             std::inserter(values, values.begin()),
             sample2map);
         std::cout << std::endl;

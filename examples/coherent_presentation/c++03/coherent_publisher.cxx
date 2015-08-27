@@ -52,7 +52,7 @@ void publisher_main(int domain_id, int sample_count)
     //            << DataWriterProtocol().rtps_reliable_writer(
     //                 RtpsReliableWriterProtocol().heartbeats_per_max_samples(0));
 
-    // Create a DataWriter with default Qos (Publisher created in-line)
+    // Create a DataWriter with default Qos
     DataWriter<coherent> writer(publisher, topic, writer_qos);
 
     coherent sample;
