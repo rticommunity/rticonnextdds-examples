@@ -1,0 +1,133 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the different persistent
+        storage scenarios -->
+    <qos_library name="persistence_example_Library">
+        <!-- QoS profile used to configure the Persistent Service scenario -->
+        <qos_profile name="persistence_service_Profile"
+            base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <datawriter_qos>
+                <durability>
+                    <kind>PERSISTENT_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
+
+            <datareader_qos>
+                <durability>
+                    <kind>PERSISTENT_DURABILITY_QOS</kind>
+                    <direct_communication>1</direct_communication>
+                </durability>
+                <!-- If you want to modify the virtual GUID uncomment this
+                    lines and write the value in the <value> tag -->
+                <protocol>
+                    <virtual_guid>
+                        <value>1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</value>
+                    </virtual_guid>
+                </protocol>
+
+            </datareader_qos>
+            <participant_qos>
+                <participant_name>
+                    <name>Persistent Storage C++03 example</name>
+                    <role_name>persistence_serviceParticipantRole</role_name>
+                </participant_name>
+
+            </participant_qos>
+        </qos_profile>
+
+        <!-- QoS profile used to configure the Durable Writer History scenario -->
+        <qos_profile name="durable_writer_history_Profile"
+            base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <participant_qos>
+                <participant_name>
+                    <name>Durable Writer History C++03 example</name>
+                </participant_name>
+            </participant_qos>
+
+            <datawriter_qos name="writer_dwh"
+                base_name="BuiltinQosLibExp::Generic.StrictReliable">
+                <durability>
+                    <kind>PERSISTENT_DURABILITY_QOS</kind>
+                    <direct_communication>1</direct_communication>
+                </durability>
+                <protocol>
+                    <virtual_guid>
+                        <value>1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0</value>
+                    </virtual_guid>
+                </protocol>
+                <!-- There are another properties, you can see them in the
+                    user manual table: Durable Writer History Properties -->
+                <property>
+                    <value>
+                        <element>
+                            <name>dds.data_writer.history.plugin_name</name>
+                            <value>dds.data_writer.history.odbc_plugin.builtin</value>
+                        </element>
+                        <element>
+                            <name>dds.data_writer.history.odbc_plugin.dsn</name>
+                            <value>test_dsn</value>
+                        </element>
+                        <!-- TIMESTEN: Use this driver if you are going to
+                            use TimesTen. For MySql let it commented out -->
+                        <!-- <element> <name>dds.data_writer.history.odbc_plugin.driver</name>
+                            <value>ttdv1121.dll</value> </element> -->
+                    </value>
+                </property>
+            </datawriter_qos>
+        </qos_profile>
+
+        <!-- QoS profile used to configure the Durable Reader State scenario -->
+        <qos_profile name="durable_reader_state_Profile"
+            base_name="BuiltinQosLibExp::Generic.StrictReliable">
+            <participant_qos>
+                <participant_name>
+                    <name>Durable Reader State C++03 example</name>
+                </participant_name>
+            </participant_qos>
+
+            <datareader_qos name="reader_drs"
+                base_name="BuiltinQosLibExp::Generic.StrictReliable">
+                <durability>
+                    <kind>PERSISTENT_DURABILITY_QOS</kind>
+
+                </durability>
+                <!-- If you want to modify the virtual GUID uncomment this
+                    lines and write the value in the <value> tag -->
+                <protocol>
+                    <virtual_guid>
+                        <value>0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1</value>
+                    </virtual_guid>
+                </protocol>
+
+                <property>
+                    <value>
+                        <element>
+                            <name>dds.data_reader.state.odbc.dsn</name>
+                            <value>test_dsn</value>
+                        </element>
+                        <element>
+                            <name>dds.data_reader.state.filter_redundant_samples</name>
+                            <value>1</value>
+                        </element>
+                        <!-- TIMESTEN: Use this driver if you are going to
+                            use TimesTen. For MySql let it commented out -->
+                        <!-- <element> <name>dds.data_reader.state.odbc.driver</name>
+                            <value>ttdv1121.dll</value> </element> -->
+                    </value>
+                </property>
+            </datareader_qos>
+        </qos_profile>
+    </qos_library>
+</dds>
