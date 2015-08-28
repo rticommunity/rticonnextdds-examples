@@ -28,10 +28,8 @@ using namespace rti::core;
 using namespace rti::sub;
 
 // Transform a DDS sample into a pair value for a dictionary.
-std::pair<char, int> sample2map(const LoanedSample<coherent>& sample) {
-    const coherent& data = sample->data();
-    std::cout << " " << data.field() << " = " << data.value() << ";";
-    return std::pair<char, int>(data.field(), data.value());
+std::pair<char, int> sample2map(const coherent& data) {
+    return std::make_pair(data.field(), data.value());
 }
 
 class CoherentListener : public NoOpDataReaderListener<coherent> {
@@ -42,13 +40,20 @@ public:
         LoanedSamples<coherent> samples = reader.take();
 
         // Process samples and add to a dictionary
-        std::cout << "Received updates:" << std::endl;
         std::map<char, int> values;
         std::transform(
             rti::sub::valid_samples(samples.begin()),
             rti::sub::valid_samples(samples.end()),
             std::inserter(values, values.begin()),
             sample2map);
+        std::cout << std::endl;
+
+        // Print result
+        std::cout << "Received updates:" << std::endl;
+        typedef std::map<char, int>::const_iterator MapIterator;
+        for (MapIterator iter = values.begin(); iter != values.end(); iter++) {
+            std::cout << " " << iter->first << " = " << iter->second << ";";
+        }
         std::cout << std::endl;
     }
 };
