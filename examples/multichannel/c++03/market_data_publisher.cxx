@@ -22,6 +22,98 @@ using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
 
+MultiChannel create_multichannel_qos()
+{
+    // We set the publish as multichannel using the different
+    // channels to send different symbols. Every channel have a IP to send the
+    // data.
+
+    // Create 8 channels based on Symbol.
+    std::vector<ChannelSettings> channels;
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(), // All the transports available
+                "239.255.0.2",
+                0)),                        // Port determined automatically
+        "Symbol MATCH '[A-C]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.3",
+                0)),
+        "Symbol MATCH '[D-F]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.4",
+                0)),
+        "Symbol MATCH '[G-I]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.5",
+                0)),
+        "Symbol MATCH '[J-L]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.6",
+                0)),
+        "Symbol MATCH '[M-O]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.7",
+                0)),
+        "Symbol MATCH '[P-S]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.8",
+                0)),
+        "Symbol MATCH '[T-V]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    channels.push_back(ChannelSettings(
+        std::vector<TransportMulticastSettings>(
+            1,
+            TransportMulticastSettings(
+                std::vector<std::string>(),
+                "239.255.0.9",
+                0)),
+        "Symbol MATCH '[W-Z]*'",
+        PUBLICATION_PRIORITY_UNDEFINED));
+
+    // Set the MultiChannel QoS.
+    return MultiChannel(channels, rti::topic::stringmatch_filter_name());
+}
+
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
@@ -34,96 +126,8 @@ void publisher_main(int domain_id, int sample_count)
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
 
     // If you want to change the DataWriter's QoS programmatically rather than
-    // using the XML file, uncomment the following lines.
-    //
-    // In this case, we set the publish as multichannel using the differents
-    // channel to send differents symbol. Every channel have a IP to send the
-    // data.
-
-    // Create 8 channels based on Symbol.
-    // std::vector<ChannelSettings> channels;
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(), // All the transports available
-    //             "239.255.0.2",
-    //             0)),                        // Port determined automatically
-    //     "Symbol MATCH '[A-C]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.3",
-    //             0)),
-    //     "Symbol MATCH '[D-F]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.4",
-    //             0)),
-    //     "Symbol MATCH '[G-I]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.5",
-    //             0)),
-    //     "Symbol MATCH '[J-L]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.6",
-    //             0)),
-    //     "Symbol MATCH '[M-O]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.7",
-    //             0)),
-    //     "Symbol MATCH '[P-S]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.8",
-    //             0)),
-    //     "Symbol MATCH '[T-V]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // channels.push_back(ChannelSettings(
-    //     std::vector<TransportMulticastSettings>(
-    //         1,
-    //         TransportMulticastSettings(
-    //             std::vector<std::string>(),
-    //             "239.255.0.9",
-    //             0)),
-    //     "Symbol MATCH '[W-Z]*'",
-    //     PUBLICATION_PRIORITY_UNDEFINED));
-    //
-    // Set the MultiChannel QoS.
-    // writer_qos << MultiChannel(channels, rti::topic::stringmatch_filter_name());
+    // using the XML file, uncomment the following line.
+    // writer_qos << create_multichannel_qos();
 
     // Create a DataWriter (Publisher created in-line)
     DataWriter<market_data> writer(Publisher(participant), topic, writer_qos);
