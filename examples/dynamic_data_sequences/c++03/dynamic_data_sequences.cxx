@@ -28,7 +28,7 @@ using namespace rti::core::xtypes;
 
 const int MAX_SEQ_LEN = 5;
 
-DynamicType create_typecode_simple_struct()
+DynamicType create_dynamictype_simple_struct()
 {
     // First create the type code for a struct.
     StructType simple_struct("SimpleStruct");
@@ -39,13 +39,13 @@ DynamicType create_typecode_simple_struct()
     return simple_struct;
 }
 
-DynamicType create_typecode_sequence_struct()
+DynamicType create_dynamictype_sequence_struct()
 {
     // First create the type code for a struct.
     StructType type_with_sequence("TypeWithSequence");
 
     // Add a sequence of type SimpleStruct
-    DynamicType simple_struct = create_typecode_simple_struct();
+    DynamicType simple_struct = create_dynamictype_simple_struct();
     type_with_sequence.add_member(Member(
         "sequence_member",
         SequenceType(simple_struct, MAX_SEQ_LEN)));
@@ -55,7 +55,7 @@ DynamicType create_typecode_sequence_struct()
 
 void write_data(DynamicData& sample)
 {
-    DynamicType simple_struct_typecode = create_typecode_simple_struct();
+    DynamicType simple_struct_dynamic_type = create_dynamictype_simple_struct();
 
     // Get the sequence member to set its elements.
     DynamicData sequence_member = sample.value<DynamicData>("sequence_member");
@@ -63,19 +63,27 @@ void write_data(DynamicData& sample)
         // To access the elements of a sequence it is necessary
         // to use their id. This parameter allows accessing to every element
         // of the sequence using a 1-based index.
-        // There are two ways of doing this: bind/loan API and get API.
+        // There are two ways of doing this: loan API and value API.
         // See the dynamic_data_nested_structs for further details about the
         // differences between these two APIs.
 
-        // Bind/Loan:
-        // The destructor will unloan the member.
+        // **Loan**:
+        // Get a reference to the i+1 element (1-based index).
         LoanedDynamicData loaned_data = sequence_member.loan_value(i + 1);
+
+        // We're setting "a_member" whose type is int32_t, the same type as i.
+        // If the value had a different type (e.g. short) a cast or a explicit
+        // use of the template parameter would be required to avoid a runtime
+        // error.
         loaned_data.get().value("a_member", i);
+
+         // We're returning the loan explicitly; the destructor
+         // of loaned_data would do it too.
         loaned_data.return_loan();
 
-        // Set:
+        // **Value**:
         // Create a simple_struct for this sequence element.
-        DynamicData simple_struct_element(simple_struct_typecode);
+        DynamicData simple_struct_element(simple_struct_dynamic_type);
         simple_struct_element.value("a_member", i);
 
         // Add to the sequence.
@@ -100,19 +108,18 @@ void read_data(const DynamicData& sample)
     std::cout << "* Sequence contains " << seq_len << " elements" << std::endl;
 
     for (int i = 0; i < seq_len; i++) {
-        // The same results can be obtained using bind/loan method.
+        // Value:
+        DynamicData struct_element = sequence_member.value<DynamicData>(i + 1);
+
+        // Loan:
+        // The same results can be obtained using 'loan_value' method.
         // The main difference, is that in that case the members are not copied,
-        // just referenced.
-
-        // Bind/Loan:
+        // just referenced. To access to the member value call 'get()' method.
         // The destructor will unloan the member.
-        DynamicData struct_element = sequence_member.loan_value(i + 1).get();
-
-        // Get:
-        struct_element = sequence_member.value<DynamicData>(i + 1);
+        LoanedDynamicData loaned_struct = sequence_member.loan_value(i + 1);
 
         std::cout << "Reading sequence element #" << (i + 1) << " :"
-                  << std::endl << struct_element;
+                  << std::endl << struct_element; // or loaned_struct.get();
     }
 }
 
@@ -120,7 +127,7 @@ int main()
 {
     try {
         // Create the struct with the sequence member.
-        DynamicType struct_sequence_type = create_typecode_sequence_struct();
+        DynamicType struct_sequence_type = create_dynamictype_sequence_struct();
         DynamicData struct_sequence_data(struct_sequence_type);
 
         std::cout << "***** Writing a sample *****" << std::endl;
