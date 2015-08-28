@@ -23,7 +23,7 @@ using namespace dds::domain;
 using namespace dds::sub;
 using namespace dds::topic;
 
-class market_dataReaderListener : public NoOpDataReaderListener<market_data> {
+class MarketDataReaderListener : public NoOpDataReaderListener<market_data> {
   public:
     void on_data_available(DataReader<market_data>& reader)
     {
@@ -49,7 +49,10 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a Topic -- and automatically register the type
     Topic<market_data> topic(participant, "Example market_data");
 
-    // Create a ContentFiltered Topic.
+    // Create a ContentFiltered Topic and specify the STRINGMATCH filter name
+    // to use a built-in filter for matching multiple strings.
+    // More information can be found in the example
+    // 'content_filtered_topic_string_filter'.
     Filter filter("Symbol MATCH 'A'", std::vector<std::string>());
     filter->name(rti::topic::stringmatch_filter_name());
     std::cout << "filter is " << filter.expression() << std::endl;
@@ -67,15 +70,19 @@ void subscriber_main(int domain_id, int sample_count)
     rti::core::ListenerBinder< DataReader<market_data> > scoped_listener =
         rti::core::bind_and_manage_listener(
             reader,
-            new market_dataReaderListener,
+            new MarketDataReaderListener,
             StatusMask::data_available());
 
     // Main loop.
     for (int count = 0; sample_count == 0 || count < sample_count; count++) {
         if (count == 3) {
+            // On t=3 we add the symbol 'D' to the filter parameter
+            // to match 'A' and 'D'.
             cft_topic->append_to_expression_parameter(0, "D");
             std::cout << "changed filter to Symbol MATCH 'AD'" << std::endl;
         } else if (count == 6) {
+            // On t=6 we remove the symbol 'A' to the filter paramter
+            // to match only 'D'.
             cft_topic->remove_from_expression_parameter(0, "A");
             std::cout << "changed filter to Symbol MATCH 'D'" << std::endl;
         }
