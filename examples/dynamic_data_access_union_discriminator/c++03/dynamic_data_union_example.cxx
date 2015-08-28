@@ -17,8 +17,8 @@
 using namespace dds::core::xtypes;
 using namespace rti::core::xtypes;
 
-UnionType create_type_code() {
-    // First, we create the TypeCode for a union.
+UnionType create_union_type() {
+    // First, we create a DynamicType for a union.
     UnionType union_type("Foo", primitive_type<int32_t>());
 
     // Case 1 will be a short named aShort.
@@ -38,7 +38,7 @@ UnionType create_type_code() {
 
 void example() {
     // Create the type of the union
-    UnionType union_type = create_type_code();
+    UnionType union_type = create_union_type();
 
     // Create the DynamicData.
     DynamicData union_data(union_type);
