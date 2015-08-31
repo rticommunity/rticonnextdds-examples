@@ -55,10 +55,14 @@ DynamicType create_dynamictype_sequence_struct()
 
 void write_data(DynamicData& sample)
 {
-    DynamicType simple_struct_dynamic_type = create_dynamictype_simple_struct();
-
     // Get the sequence member to set its elements.
     DynamicData sequence_member = sample.value<DynamicData>("sequence_member");
+
+    // Get the type of the sequence members.
+    DynamicType simple_struct_dynamic_type = static_cast<const SequenceType&>(
+        sequence_member.type()).content_type();
+
+    // Write a new struct for each member of the sequence.
     for (int i = 0; i < MAX_SEQ_LEN; i++) {
         // To access the elements of a sequence it is necessary
         // to use their id. This parameter allows accessing to every element
@@ -108,7 +112,7 @@ void read_data(const DynamicData& sample)
     std::cout << "* Sequence contains " << seq_len << " elements" << std::endl;
 
     for (int i = 0; i < seq_len; i++) {
-        // Value:
+        // Value getter:
         DynamicData struct_element = sequence_member.value<DynamicData>(i + 1);
 
         // Loan:
