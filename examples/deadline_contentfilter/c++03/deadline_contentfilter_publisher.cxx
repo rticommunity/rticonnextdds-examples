@@ -23,7 +23,7 @@ using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
 
-class deadline_contentfilterListener :
+class DeadlineWriterListener :
     public NoOpDataWriterListener<deadline_contentfilter> {
 public:
     void on_offered_deadline_missed(
@@ -67,7 +67,7 @@ void publisher_main(int domain_id, int sample_count)
     rti::core::ListenerBinder<DataWriter<deadline_contentfilter> > listener =
         rti::core::bind_and_manage_listener(
             writer,
-            new deadline_contentfilterListener,
+            new DeadlineWriterListener,
             StatusMask::all());
 
     // Create two instances for writing and register them in order to be able
@@ -82,7 +82,7 @@ void publisher_main(int domain_id, int sample_count)
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         rti::util::sleep(Duration(1));
 
-        // Update samples fields.
+        // Update non-key fields.
         sample0.x(count);
         sample0.y(count);
         sample1.x(count);
