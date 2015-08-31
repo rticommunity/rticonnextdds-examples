@@ -19,18 +19,13 @@ using namespace dds::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
+using namespace rti::sub;
 using namespace dds::sub::cond;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
 class KeysReaderListener : public NoOpDataReaderListener<keys> {
   public:
-    KeysReaderListener()
-    {
-        for (int i = 0; i < NumSamples; i++)
-            states[i] = Inactive;
-    }
-
     virtual void on_data_available(DataReader<keys>& reader)
     {
         // To read the first instance the handle must be InstanceHandle::nil()
@@ -53,10 +48,10 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
                 const SampleInfo& info = sampleIt->info();
                 if (info.valid()) {
                     if (info.state().view_state() == ViewState::new_view()) {
-                        new_instance_found(reader, info, sampleIt->data());
+                        new_instance_found(sampleIt->data());
                     }
 
-                    handle_data(reader, info, sampleIt->data());
+                    handle_data(sampleIt->data());
                 } else {
                     // Since there is not valid data, it may include metadata.
                     keys key_sample;
@@ -66,17 +61,16 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
                     // if the instance state is
                     InstanceState inst_state = info.state().instance_state();
                     if (inst_state == InstanceState::not_alive_no_writers()) {
-                        instance_lost_writers(reader, info, key_sample);
+                        instance_lost_writers(key_sample);
                     } else if (inst_state==InstanceState::not_alive_disposed()){
-                        instance_disposed(reader, info, key_sample);
+                        instance_disposed(key_sample);
                     }
                 }
             }
         } while (samples.length() > 0);
     }
 
-    void new_instance_found(DataReader<keys>& reader, const SampleInfo& info,
-        const keys& msg)
+    void new_instance_found(const keys& msg)
     {
         // There are three cases here:
         // 1.) truly new instance.
@@ -98,65 +92,46 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
         // occur due to lost liveliness or missed deadlines, so those
         // listeners would also need to update the instance state.
 
-        switch (states[msg.code()]) {
-        case Inactive:
-            std::cout << "New instance found; code = " << msg.code()
-                      << std::endl;
-            break;
+        int code = msg.code();
 
-        case Active:
+        // If we don't have any information about it, it's a new instance.
+        if (sampleState.count(code) == 0) {
+            std::cout << "New instance found; code = " << code << std::endl;
+        } else if (sampleState[code] == InstanceState::alive()) {
             std::cout << "Error, 'new' already-active instance found; code = "
-                      << msg.code() << std::endl;
-            break;
-
-        case NoWriters:
-            std::cout << "Found writer for instance; code = " << msg.code()
+                      << code << std::endl;
+        } else if (sampleState[code] == InstanceState::not_alive_no_writers()) {
+            std::cout << "Found writer for instance; code = " << code
                       << std::endl;
-            break;
-
-        case Disposed:
-            std::cout << "Found reborn instance; code = " << msg.code()
-                      << std::endl;
-            break;
+        } else if (sampleState[code] == InstanceState::not_alive_disposed()) {
+            std::cout << "Found reborn instance; code = " << code << std::endl;
         }
 
-        states[msg.code()] = Active;
+        sampleState[code] = InstanceState::alive();
     }
 
-    void instance_lost_writers(DataReader<keys>& reader, const SampleInfo& info,
-        const keys& msg)
+    void instance_lost_writers(const keys& msg)
     {
         std::cout << "Instance has no writers; code = " << msg.code()
                   << std::endl;
-        states[msg.code()] = NoWriters;
+        sampleState[msg.code()] = InstanceState::not_alive_no_writers();
 
     }
 
-    void instance_disposed(DataReader<keys>& reader, const SampleInfo& info,
-        const keys& msg)
+    void instance_disposed(const keys& msg)
     {
         std::cout << "Instance disposed; code = " << msg.code() << std::endl;
-        states[msg.code()] = Disposed;
+        sampleState[msg.code()] = InstanceState::not_alive_disposed();
     }
 
-    void handle_data(DataReader<keys>& reader, const SampleInfo& info,
-        const keys& msg)
+    void handle_data(const keys& msg)
     {
         std::cout << "code: " << msg.code() << ", x: " << msg.x()
                   << ", y: " << msg.y() << std::endl;
     }
 
 private:
-    // Track instance state
-    enum InstanceStatus {
-        Inactive,
-        Active,
-        NoWriters,
-        Disposed
-    };
-
-    static const int NumSamples = 3;
-    InstanceStatus states[NumSamples];
+    std::map<int, InstanceState> sampleState;
 };
 
 void subscriber_main(int domain_id, int sample_count)
