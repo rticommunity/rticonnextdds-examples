@@ -98,10 +98,10 @@ void subscriber_main(int domain_id, int sample_count)
             if (active_conditions[i] == status_condition) {
                 // Get the status changes so we can check witch status condition
                 // triggered.
-                StatusMask triggeredmask = reader.status_changes();
+                StatusMask status_mask = reader.status_changes();
 
                 // Liveliness changed
-                if ((triggeredmask & StatusMask::liveliness_changed()).any()) {
+                if ((status_mask & StatusMask::liveliness_changed()).any()) {
                     LivelinessChangedStatus st =
                         reader.liveliness_changed_status();
                     std::cout << "Liveliness changed => Active writers = "
@@ -109,7 +109,7 @@ void subscriber_main(int domain_id, int sample_count)
                 }
 
                 // Subscription matched
-                if ((triggeredmask & StatusMask::subscription_matched()).any()){
+                if ((status_mask & StatusMask::subscription_matched()).any()) {
                     SubscriptionMatchedStatus st =
                         reader.subscription_matched_status();
                     std::cout << "Subscription matched => Cumulative matches = "
