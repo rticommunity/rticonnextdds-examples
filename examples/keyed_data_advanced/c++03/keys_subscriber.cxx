@@ -23,9 +23,9 @@ using namespace dds::sub::cond;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
-class keysReaderListener : public NoOpDataReaderListener<keys> {
+class KeysReaderListener : public NoOpDataReaderListener<keys> {
   public:
-    keysReaderListener()
+    KeysReaderListener()
     {
         for (int i = 0; i < NumSamples; i++)
             states[i] = Inactive;
@@ -47,13 +47,12 @@ class keysReaderListener : public NoOpDataReaderListener<keys> {
             }
 
             for (LoanedSamples<keys>::iterator sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
-                const SampleInfo& info = sampleIt->info();
+                sampleIt != samples.end();
+                ++sampleIt) {
 
-                if (sampleIt->info().valid()) {
-                    const ViewState& view_state = info.state().view_state();
-                    if (view_state == ViewState::new_view()) {
+                const SampleInfo& info = sampleIt->info();
+                if (info.valid()) {
+                    if (info.state().view_state() == ViewState::new_view()) {
                         new_instance_found(reader, info, sampleIt->data());
                     }
 
@@ -65,8 +64,7 @@ class keysReaderListener : public NoOpDataReaderListener<keys> {
 
                     // Here we print a message and change the instance state
                     // if the instance state is
-                    const InstanceState& inst_state = info.state()
-                        .instance_state();
+                    InstanceState inst_state = info.state().instance_state();
                     if (inst_state == InstanceState::not_alive_no_writers()) {
                         instance_lost_writers(reader, info, key_sample);
                     } else if (inst_state==InstanceState::not_alive_disposed()){
@@ -185,7 +183,7 @@ void subscriber_main(int domain_id, int sample_count)
     rti::core::ListenerBinder< DataReader<keys> > reader_listener =
         rti::core::bind_and_manage_listener(
             reader,
-            new keysReaderListener,
+            new KeysReaderListener,
             dds::core::status::StatusMask::all());
 
     // Main loop.
