@@ -17,6 +17,7 @@
 
 using namespace dds::core;
 using namespace dds::core::policy;
+using namespace rti::core::policy;
 using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::pub;
@@ -42,7 +43,13 @@ void publisher_main(int domain_id, int sample_count)
 
     // writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
     //             << Ownership::Exclusive()
-    //             << OwnershipStrength(10);
+    //             << OwnershipStrength(10)
+    //             << Reliability::Reliable(Duration(60))
+    //             << History::KeepAll()
+    //             << DataWriterProtocol().rtps_reliable_writer(
+    //                 RtpsReliableWriterProtocol()
+    //                 .min_send_window_size(50)
+    //                 .max_send_window_size(50));
 
     // Create a DataWriter with default Qos.
     DataWriter<keys> writer1(publisher, topic, writer1_qos);
