@@ -26,7 +26,7 @@ using namespace dds::sub::status;
 
 class KeysReaderListener : public NoOpDataReaderListener<keys> {
   public:
-    virtual void on_data_available(DataReader<keys>& reader)
+    void on_data_available(DataReader<keys>& reader)
     {
         // To read the first instance the handle must be InstanceHandle::nil()
         InstanceHandle previous_handle = InstanceHandle::nil();
