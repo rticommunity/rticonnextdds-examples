@@ -1,0 +1,62 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<!-- Description XML QoS Profile for profiles The QoS configuration of the
+    DDS entities in the generated example is loaded from this file. This file
+    is used only when it is in the current working directory or when the enviroment
+    variable NDDS_QOS_PROFILES is defined and points to this file. For more information
+    about XML QoS Profiles see Chapter 15 in the RTI Connext user manual. -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+        A QoS library is a named set of QoS profiles. -->
+    <qos_library name="profiles_Library">
+
+        <!-- A QoS profile groups a set of related QoS. This QoS profile used to
+            configure reliable communication between the DataWriter and
+            DataReader created in the example code. Durability is set to
+            Volatile (default configuration), so late-joiner subscribers won't
+            get samples sent by DataWriters in the past. -->
+        <qos_profile name="volatile_profile" is_default_qos="true">
+            <participant_qos>
+                <participant_name>
+                    <name>RTI Profiles Example C++03</name>
+                </participant_name>
+            </participant_qos>
+
+            <datawriter_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+            </datawriter_qos>
+
+            <datareader_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <durability>
+                    <kind>VOLATILE_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+            </datareader_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>

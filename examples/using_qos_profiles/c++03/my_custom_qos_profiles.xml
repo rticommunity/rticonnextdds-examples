@@ -1,0 +1,84 @@
+<?xml version="1.0"?>
+
+<!--
+ (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+        A QoS library is a named set of QoS profiles. -->
+    <qos_library name="profiles_Library">
+
+        <!-- QoS profile used to configure reliable communication between the
+        DataWriter and DataReader created in the example code. Durability is
+        set to Transient Local so that late-joiner subscribers may be able to
+        get the last 10 samples of each instance from DataWriters using this
+        profile. -->
+        <qos_profile name="transient_local_profile">
+            <participant_qos>
+                <participant_name>
+                    <name>RTI Profiles Example -- Transient Local Profile</name>
+                </participant_name>
+            </participant_qos>
+
+            <datawriter_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+            </datawriter_qos>
+
+            <datareader_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <history>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                    <depth>10</depth>
+                </history>
+            </datareader_qos>
+        </qos_profile>
+
+        <!--  An individual QoS or profile can inherit values from other QoSs
+        or profiles described in the XML file by using the attribute, base_name.
+        In this case, transient_profile inherits the QoS policies defined in
+        transient_local_profile, and changes the participant_name and the
+        durability of the DataReader and DataWriter to TRANSIENT_DURABILITY. -->
+        <qos_profile name="transient_profile" base_name="transient_local_profile">
+            <participant_qos>
+                <participant_name>
+                    <name>RTI Profiles Example -- Transient Profile</name>
+                </participant_name>
+            </participant_qos>
+
+            <datawriter_qos>
+                <durability>
+                    <kind>TRANSIENT_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
+
+            <datareader_qos>
+                <durability>
+                    <kind>TRANSIENT_DURABILITY_QOS</kind>
+                </durability>
+            </datareader_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
