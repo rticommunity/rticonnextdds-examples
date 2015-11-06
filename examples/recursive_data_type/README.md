@@ -8,6 +8,8 @@ A Tree is traditionally defined as a type that contains a Node (data) and a
 list of children who themselves can be Tree structures. A simple example
 in C would be:
 
+```
+/* C definition of a Tree structure */
 struct Node {
     long data;
 };
@@ -16,6 +18,7 @@ struct Tree {
     Node node;
     struct Tree *children; // NULL terminated list of children
 };
+```
 
 Representing these kinds of *recursive data-types* in IDL such that they can
 be sent using DDS presents challenges.
@@ -32,7 +35,7 @@ features of `rtiddsgen`. This example illustrates the approach.
 The simplest mapping of the above Tree to IDL would be to define a Tree as:
 
 ```
-// IDL definition of a Tree structure. This will not compile problems
+// IDL definition of a Tree structure. This will not compile...
 struct Node {
     long data;
 };
@@ -87,9 +90,9 @@ struct Tree {
 };
 ```
 
-And the rtiddsgen command called to generate the data-types and marshaling code is:
+And the `rtiddsgen` command called to generate the data-types and marshaling code is:
 ```
-    rtiddsgen RecursiveType.idl -ppDisable -language C++ -update typefiles -notypecode -unboundedSupport
+rtiddsgen RecursiveType.idl -ppDisable -language C++ -update typefiles -notypecode -unboundedSupport
 ```
 As mentioned in Connext DDS 5.2 this techniques are only usable in C and C++.
 
