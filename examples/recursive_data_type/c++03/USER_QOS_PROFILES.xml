@@ -1,0 +1,139 @@
+<?xml version="1.0"?>
+<!-- 
+Description
+XML QoS Profile for RecursiveType
+
+The QoS configuration of the DDS entities in the generated example is loaded 
+from this file.
+
+This file is used only when it is in the current working directory or when the
+environment variable NDDS_QOS_PROFILES is defined and points to this file.
+
+The profile in this file inherits from the builtin QoS profile 
+BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the 
+other built-in QoS profiles can be found in the 
+BuiltinProfiles.documentationONLY.xml file located in the 
+$NDDSHOME/resource/qos_profiles_5.2.0/xml/ directory.
+
+You may use any of these QoS configurations in your application simply by 
+referring to them by the name shown in the 
+BuiltinProfiles.documentationONLY.xml file and listed below: 
+
+* In library "BuiltinQosLib":
+** Baseline
+** Baseline.5.0.0
+** Baseline.5.1.0
+** Generic.Common
+** Generic.Monitoring.Common
+** Generic.ConnextMicroCompatibility
+** Generic.OtherDDSVendorCompatibility
+
+* In library "BuiltinQosLibExp":
+** Generic.StrictReliable
+** Generic.KeepLastReliable
+** Generic.BestEffort
+** Generic.StrictReliable.HighThroughput
+** Generic.StrictReliable.LowLatency
+** Generic.Participant.LargeData
+** Generic.Participant.LargeData.Monitoring
+** Generic.StrictReliable.LargeData
+** Generic.KeepLastReliable.LargeData
+** Generic.StrictReliable.LargeData.FastFlow
+** Generic.StrictReliable.LargeData.MediumFlow
+** Generic.StrictReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.LargeData.FastFlow
+** Generic.KeepLastReliable.LargeData.MediumFlow
+** Generic.KeepLastReliable.LargeData.SlowFlow
+** Generic.KeepLastReliable.TransientLocal
+** Generic.KeepLastReliable.Transient
+** Generic.KeepLastReliable.Persistent
+** Generic.AutoTuning
+** Pattern.PeriodicData
+** Pattern.Streaming
+** Pattern.ReliableStreaming
+** Pattern.Event
+** Pattern.AlarmEvent
+** Pattern.Status
+** Pattern.AlarmStatus
+** Pattern.LastValueCache
+
+You should not edit the file BuiltinProfiles.documentationONLY.xml directly.
+However, if you wish to modify any of the values in a built-in profile, the
+recommendation is to create a profile of your own and inherit from the built-in
+profile you wish to modify. The NDDS_QOS_PROFILES.example.xml file (contained in 
+the same directory as the BuiltinProfiles.documentationONLY.xml file) shows how
+to inherit from the built-in profiles. 
+
+For more information about XML QoS Profiles see Chapter 15 in the 
+RTI Connext user manual.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="/Applications/rti_connext_dds-5.2.0/resource/schema/rti_dds_qos_profiles.xsd"
+     version="5.2.0">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="RecursiveType_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter 
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="RecursiveType_Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example code -->                
+            <datawriter_qos>
+                <publication_name>
+                    <name>RecursiveTypeDataWriter</name>
+                </publication_name>
+                <!-- This property is needed when using -unboundedSupport command-line option
+                 in order to configure the memory allocation policy for the buffers that are
+                 used to serialize the samples -->                
+                <property>
+                    <value>
+                        <element>
+                           <name>
+                           dds.data_writer.history.memory_manager.fast_pool.pool_buffer_max_size
+                           </name>
+                           <value>4096</value>
+                        </element>
+                    </value>
+                </property>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->                
+            <datareader_qos>
+                <subscription_name>
+                    <name>RecursiveTypeDataReader</name>
+                </subscription_name>
+ 			    <!-- This property is needed when using -unboundedSupport command-line option
+ 			    in order to configure the memory allocation policy for the buffers that are 
+ 			    used to keep the serialized keys for the instances -->        
+                <property>
+                    <value>
+                        <element>
+                            <name>
+                            dds.data_reader.history.memory_manager.fast_pool.pool_buffer_max_size
+                            </name>
+                            <value>4096</value>
+                        </element>
+                    </value>
+               </property>
+            </datareader_qos>
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>RecursiveTypeParticipant</name>
+                    <role_name>RecursiveTypeParticipantRole</role_name>
+                </participant_name>
+
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>

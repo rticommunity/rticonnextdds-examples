@@ -18,9 +18,9 @@
 #define NDDS_TRANSPORT_FILE_CLASS_NAME         "FileTransport"
 
 /* Indicates the number of bits that are significant to the FIFO
-   transport. In other words the size of the FileTransport adresses.
+   transport. In other words the size of the FileTransport addresses.
 
-   We make the FiteTrasport use 4-byte addresses like IPv4.
+   We make the FileTrasport use 4-byte addresses like IPv4.
    This means that we leave the remaining 96 bits configurable for
    a "network" address
 */
