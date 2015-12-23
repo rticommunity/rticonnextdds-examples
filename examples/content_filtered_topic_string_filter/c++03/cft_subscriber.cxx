@@ -72,6 +72,8 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     if (is_cft) {
         std::cout << "Using ContentFiltered Topic" << std::endl;
         Filter filter("name MATCH %0", parameters);
+
+        // If there is no filter name, the regular SQL filter will be used.
         filter->name(rti::topic::stringmatch_filter_name());
 
         cft_topic = ContentFilteredTopic<cft>(
