@@ -88,17 +88,16 @@ void subscriber_main(int domain_id, int sample_count)
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
     // Then get builtin subscriber's DataReader for DataWriters.
-    std::vector< DataReader<PublicationBuiltinTopicData> > publication_reader;
-    find< DataReader<PublicationBuiltinTopicData> >(
-        builtin_subscriber,
-        dds::topic::publication_topic_name(),
-        std::back_inserter(publication_reader));
+    DataReader<PublicationBuiltinTopicData> publication_reader =
+        rti::sub::find_datareader_by_topic_name< DataReader<PublicationBuiltinTopicData> >(
+            builtin_subscriber, 
+            dds::topic::publication_topic_name());
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL and deleting it.
     rti::core::ListenerBinder< DataReader<PublicationBuiltinTopicData> >
         publication_listener = rti::core::bind_and_manage_listener(
-            publication_reader[0],
+            publication_reader,
             new BuiltinPublicationListener,
             dds::core::status::StatusMask::data_available());
 
