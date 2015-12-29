@@ -13,18 +13,15 @@ filter* main advantage is its ease of use and flexibility. However it is prone
 to runtime errors—*Connext DDS* detects syntactic or semantic errors in the
 expression when it parses it—and relatively inefficient.
 
-The lambda filter we provide in this example provides the same ease of use—a
-lambda function—and even greater flexibility—the lambda function can run
-arbitrary code. But that’s not the best part. The lambda filter is defined by
-actual C++ code, so the compiler will detect errors and it will be more
-efficient.
+The lambda filter in this example provides the same ease of use and even greater
+flexibility—the lambda function can run arbitrary code. Even better, the lambda
+filter is defined by actual C++ code, so the compiler will detect errors and it
+can be more efficient.
 
 ## Example description
 - `LambdaFilter.hpp` implements the generic `LambdaFilter` class
 (an implementation of `CustomFilter`) and two helper functions:
 `create_lambda_filter` and `create_lambda_cft`.
-
-<CODE>
 
 - `LambdaFilterExample_subscriber.cxx` implements a subscribing application
 that creates a `DataReader` with a `ContentFilteredTopic` for the `Stock` type.
