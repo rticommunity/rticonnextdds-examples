@@ -13,7 +13,7 @@
 #include <rti/topic/ContentFilter.hpp>
 
 //
-// A generic ContentFilter that works with a lambda functions.
+// A generic ContentFilter that works with a lambda function.
 //
 // Since this filter is fully defined at compile time, it doesn't expect
 // any expression or parameters.

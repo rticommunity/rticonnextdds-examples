@@ -59,9 +59,12 @@ void publisher_main(int domain_id, int sample_count)
         sample.symbol(symbols[distribution(random_device)]);
         sample.value(distribution(random_device) * 1.1);
 
+        // Print the sample we're writting
         std::cout << "Writing " << sample << std::endl;
         writer.write(sample);
 
+        // Print whether the sample was pushed on the network (to the DataReader)
+        // or not (for example, because it was locally filtered out)
         auto pushed_samples =
             writer->datawriter_protocol_status().pushed_sample_count().change();
         std::cout << "Sample was "
