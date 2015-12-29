@@ -22,8 +22,11 @@ template <typename T>
 class LambdaFilter : public rti::topic::ContentFilter<T> {
 public:
 
+    // The expected function signature: takes a sample of type T and decides
+    // whether it passes the filter (return true) or not (return false).
     typedef std::function<bool(const T&)> LambdaType;
 
+    // Creates a LambdaFilter with the given filter function
     LambdaFilter(LambdaType f) : filter_(f) {}
 
     rti::topic::no_compile_data_t& compile(
@@ -33,6 +36,7 @@ public:
        const std::string& type_class_name,
        rti::topic::no_compile_data_t* old_compile_data) override
     {
+        // Nothing to compile, the lambda function does everything!
         return rti::topic::no_compile_data;
     }
 
@@ -41,15 +45,17 @@ public:
        const T& sample,
        const rti::topic::FilterSampleInfo& meta_data) override
     {
+        // Run the function
         return filter_(sample);
     }
 
     void finalize(rti::topic::no_compile_data_t& compile_data) override
     {
+        // Nothing to finalize
     }
 
 private:
-    LambdaType filter_;
+    LambdaType filter_; // The function used to filter
 };
 
 // Creates and register in the participant with the given name

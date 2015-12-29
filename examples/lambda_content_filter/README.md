@@ -1,8 +1,8 @@
 # Example Code: C++11 lambda content filter
 
-With this example you’ll learn how to implement a `CustomFilter` <LINK>, that is,
-a user-defined filter that can be used to create a `ContentFilteredTopic` or a
-`QueryCondition`. The code is completely generic and you can use it to easily
+With this example you’ll learn how to implement a [`ContentFilter`](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/classrti_1_1topic_1_1ContentFilter.html),
+that is, a user-defined filter that can be used to create a [`ContentFilteredTopic`](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/classdds_1_1topic_1_1ContentFilteredTopic.html) or a
+[`QueryCondition`](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/classdds_1_1sub_1_1cond_1_1QueryCondition.html). The code is completely generic and you can use it to easily
 create efficient lambda content filters.
 
 ## Concept
@@ -20,7 +20,7 @@ can be more efficient.
 
 ## Example description
 - `LambdaFilter.hpp` implements the generic `LambdaFilter` class
-(an implementation of `CustomFilter`) and two helper functions:
+(an implementation of `ContentFilter`) and two helper functions:
 `create_lambda_filter` and `create_lambda_cft`.
 
 - `LambdaFilterExample_subscriber.cxx` implements a subscribing application
