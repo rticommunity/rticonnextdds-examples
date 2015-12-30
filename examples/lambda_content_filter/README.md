@@ -17,9 +17,9 @@ when it parses it—and relatively inefficient.
 The lambda filter in this example provides similar ease of use and even greater
 flexibility—the lambda function can run arbitrary code. Even better, the lambda
 filter is defined by actual C++ code, so the compiler will detect errors and it
-can be more efficient. It has one disadvantage, though. `DataWriter`s can discover
+can be more efficient. It has one disadvantage, though. `DataWriters` can discover
 the SQL filter expression used by a `DataReader` and automatically filter
-samples before delivering them. With the lambda fßilter we need to explicitly
+samples before delivering them. With the lambda filter we need to explicitly
 register the same filter on the publication side if we want writer-side
 filtering.
 
@@ -30,26 +30,24 @@ filtering.
 
 - `LambdaFilterExample_subscriber.cxx` implements a subscribing application
 that creates a `DataReader` with a `ContentFilteredTopic` for the `Stock` type.
-
 This is how you create a `DataReader` with a lambda-based `ContentFilteredTopic`:
+    ```
+    dds::domain::DomainParticipant participant(domain_id);
 
-```
-dds::domain::DomainParticipant participant(domain_id);
+    dds::topic::Topic<Stock> topic(participant, "Example Stock");
 
-dds::topic::Topic<Stock> topic(participant, "Example Stock");
+    auto lambda_cft = create_lambda_cft<Stock>(
+        "stock_cft",
+        topic,
+        [](const Stock& stock)
+        {
+            return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
+        }
+    );
 
-auto lambda_cft = create_lambda_cft<Stock>(
-    "stock_cft",
-    topic,
-    [](const Stock& stock)
-    {
-        return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
-    }
-);
-
-dds::sub::DataReader<Stock> reader(
-    dds::sub::Subscriber(participant), lambda_cft);
-```
+    dds::sub::DataReader<Stock> reader(
+        dds::sub::Subscriber(participant), lambda_cft);
+    ```
 
 - `LambdaFilterExample_publisher.cxx` implements an application that publishes
 `Stock` samples each with one of four random symbols (two of which pass the
