@@ -1,26 +1,26 @@
-# Example Code: {{fullname}}
+# Example Code: Using TypeCodes
 
-## Building {{language.upper()}} Example
+## Building C Example
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
 
 Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *{{archwindows}}* or *{{archlinux}}*). The *RTI Connext Core
+choice (e.g., *x64Win64VS2013* or *x64Linux3gcc4.8.2*). The *RTI Connext Core
 Libraries and Utilities Getting Started Guide* describes this process in detail.
 Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
-*{{archwindows}}* run:
+*x64Win64VS2013* run:
 ```
-rtiddsgen -language {{language}} -example {{archwindows}} {{idlname}}.idl
+rtiddsgen -language c -example x64Win64VS2013 msg.idl
 ```
 
 You will see messages that look like:
 ```
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/{{idlname}}_subscriber.{{"c" if language == "c" else  "cxx"}}
+overwritten : /some/path/msg_subscriber.c
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/{{idlname}}_publisher.{{"c" if language == "c" else  "cxx"}}
+overwritten : /some/path/msg_publisher.c
 ```
 
 This is normal and is only informing you that the subscriber/publisher code has
@@ -30,15 +30,15 @@ already provided.
 Use the generated makefile of *Visual Studio* project to compile your
 application.
 
-## Running {{language.upper()}} Example
+## Running C Example
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
 # Do not forget to replace the path separator to "\" on Windows.
-objs/<arch_name>/{{idlname}}_publisher.exe  <domain_id> <samples_to_send>
-objs/<arch_name>/{{idlname}}_subscriber.exe <domain_id> <sleep_periods>
+objs/<arch_name>/msg_publisher.exe  <domain_id> <samples_to_send>
+objs/<arch_name>/msg_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
