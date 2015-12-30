@@ -93,7 +93,7 @@ def call_rtiddsgen(info):
         if which(rtiddsgen_path) is None:
             # Get NDDSHOME and build path
             nddshome = environ.get("NDDSHOME")
-            if nddshome is "":
+            if nddshome is None:
                 print("Cannot find 'rtiddsgen' on PATH and NDDSHOME variable" +
                       " is not defined. Aborting.")
                 raise SystemExit(-1)
