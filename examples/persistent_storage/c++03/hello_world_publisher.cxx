@@ -22,7 +22,7 @@ using namespace dds::pub;
 using namespace dds::pub::qos;
 
 void publisher_main(int domain_id, int sample_count, int initial_value,
-    bool dwh, int sleep)
+    bool use_durable_writer_history, int sleep)
 {
     // Create a DomainParticipant with default Qos
     DomainParticipant participant(domain_id);
@@ -35,7 +35,7 @@ void publisher_main(int domain_id, int sample_count, int initial_value,
     // "durable_writer_history_Profile" profile. See that file for further
     // details.
     std::string qos_libname = "persistence_example_Library";
-    DataWriterQos writer_qos = dwh ?
+    DataWriterQos writer_qos = use_durable_writer_history ?
         QosProvider::Default().datawriter_qos(
             qos_libname + "::durable_writer_history_Profile") :
         QosProvider::Default().datawriter_qos(
@@ -64,7 +64,7 @@ int main(int argc, char *argv[])
     int domain_id = 0;
     int sample_count = 0; // Infinite loop
     int initial_value = 0;
-    bool dwh = false;
+    bool use_durable_writer_history = false;
     int sleep = 0;
 
     for (int i = 1; i < argc; ) {
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
         } else if (param == "-initial_value" && i < argc) {
             initial_value = atoi(argv[i++]);
         } else if (param == "-dwh" && i < argc) {
-            dwh = (atoi(argv[i++]) == 1);
+            use_durable_writer_history = (atoi(argv[i++]) == 1);
         } else {
             std::cout << argv[0] << " [options]" << std::endl
                       << "\t-domain_id <domain ID> (default: 0)" << std::endl
@@ -100,7 +100,8 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisher_main(domain_id, sample_count, initial_value, dwh, sleep);
+        publisher_main(domain_id, sample_count, initial_value,
+            use_durable_writer_history, sleep);
     } catch (const std::exception& ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
