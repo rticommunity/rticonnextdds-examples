@@ -176,7 +176,7 @@ call_compiler ("C#",
     $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/cs");
 
 call_compiler ("Java",
-    $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/Java");
+    $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/java");
 
 #dynamic data nested structs example
 call_compiler ("C", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c");

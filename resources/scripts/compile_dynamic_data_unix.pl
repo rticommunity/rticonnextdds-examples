@@ -148,7 +148,7 @@ call_makefile ($ARCH, "C++",
         $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/c++");
 
 call_makefile ($ARCH, "Java",
-        $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/Java");
+        $FOLDER_TO_CHECK . "/dynamic_data_access_union_discriminator/java");
 
 #dynamic data nested structs example
 call_makefile ($ARCH, "C", $FOLDER_TO_CHECK . "/dynamic_data_nested_structs/c");
