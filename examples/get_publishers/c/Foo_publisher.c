@@ -128,7 +128,7 @@ static int publisher_main(int domainId, int sample_count) {
     publisher2 = DDS_DomainParticipant_create_publisher(participant,
             &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
             DDS_STATUS_MASK_NONE);
-    if (publisher == NULL) {
+    if (publisher2 == NULL) {
         printf("create_publisher2 error\n");
         publisher_shutdown(participant, publisherSeq);
         return -1;
