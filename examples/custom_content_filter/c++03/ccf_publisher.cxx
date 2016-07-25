@@ -14,7 +14,7 @@
 
 #include <dds/dds.hpp>
 #include "ccf.hpp"
-#include "filter.cxx"
+#include "filter.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
