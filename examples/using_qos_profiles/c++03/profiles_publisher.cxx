@@ -38,7 +38,7 @@ void publisher_main(int domain_id, int sample_count)
         qos_provider.topic_qos());
 
     // Create a DataWriter with the QoS profile "transient_local_profile" that
-    // it is inside the QoS library "profiles_Library".
+    // is inside the QoS library "profiles_Library".
     DataWriter<profiles> writer_transient_local(publisher, topic,
         qos_provider.datawriter_qos(
             "profiles_Library::transient_local_profile"));
@@ -94,7 +94,7 @@ int main(int argc, char* argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
+    } catch (std::exception& ex) {
         std::cout << "Exception caught: " << ex.what() << std::endl;
         return -1;
     }
