@@ -222,9 +222,9 @@ public class waitset_statuscondSubscriber {
             }
             for (int i = 0; i < active_conditions.length; ++i) {
                 /* In this case, we have only a single condition, but
-		     	if we had multiple, we would need to iterate over
-		       	them and check which one is true.  Leaving the logic
-		       	for the more complex case. */
+                   if we had multiple, we would need to iterate over
+                   them and check which one is true.  Leaving the logic
+                   for the more complex case. */
                 if (active_conditions.get_at(i) == status_condition) {
                     DDS.StatusMask triggeredmask =
                         waitset_reader.get_status_changes();
@@ -258,7 +258,7 @@ public class waitset_statuscondSubscriber {
                                     DDS.InstanceStateKind.ANY_INSTANCE_STATE);
 
                                 System.Int32 data_length = data_seq.length;
-                                for (int j = 0; i < data_length; ++i) {
+                                for (int j = 0; j < data_length; ++j) {
                                     if (!info_seq.get_at(j).valid_data) {
                                         Console.WriteLine("Got metadata");
                                         continue;
