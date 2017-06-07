@@ -22,8 +22,8 @@ application-triggered events. There are two applications supplied in this
 example: Publisher and Subscriber applications.
 
 The interaction between them is simple. The Publisher sends samples (type is 
-defined in aws.idl) and the subscriber reads the receive samples and print their 
-content in the standard output.
+defined in AwsExample.idl) and the subscriber reads the receive samples and 
+print their content in the standard output.
 
 Both applications use an *AsyncWaitSet* to send and receive data accordingly.
 
@@ -33,7 +33,7 @@ The publisher application shows how to use an *AsyncWaitSet* to send data
 asynchronously in a single separate thread. The application controls when to
 send samples by means of a *GuardCondition*.
 
-The publisher sends `aws` samples **periodically**, increasing the  member 
+The publisher sends `AwsExample` samples **periodically**, increasing the member 
 `count` in one unit for each sample sent. The samples are sent in the context of 
 a single-threaded *AsyncWaitSet*, to which the application attaches a 
 *GuardCondition* to drive the publication rate.

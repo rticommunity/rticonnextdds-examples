@@ -1,8 +1,8 @@
 # Example Code: Asynchronous WaitSet
 
 There are two files in this example:
- - aws_publisher: publisher application
- - aws_subscriber: subscriber application
+ - AwsExample_publisher: publisher application
+ - AwsExample_subscriber: subscriber application
 
 You will use *rtiddsgen* to generate the additional files required to build
 and run the example. The *RTI Connext Core Libraries and Utilities Getting 
@@ -22,10 +22,10 @@ For example, for the *i86Linux2.6gcc4.4.5* architecture run:
 
 You will see messages that look like this:
 
-    File <WORKING_DIR>/aws_publisher.cxx already exists and will not be 
+    File <WORKING_DIR>/AwsExample_publisher.cxx already exists and will not be 
     replaced with updated content. If you would like to get a new file with the 
     new content, either remove this file or supply -replace option.
-    File <WORKING_DIR>/aws_subscriber.cxx already exists and will not be 
+    File <WORKING_DIR>/AwsExample_subscriber.cxx already exists and will not be 
     replaced with updated content. If you would like to get a new file with the 
     new content, either remove this file or supply -replace option.
 
@@ -35,7 +35,7 @@ as expected.
 Build the example accordingly to the target platform. For example, for the 
 *i86Linux2.6gcc4.4.5* architecture run:
 
-    make -f makefile_aws_i86Linux2.6gcc4.4.5
+    make -f makefile_AwsExample_i86Linux2.6gcc4.4.5
 
 
 ## Running C++03 Example
@@ -47,7 +47,7 @@ the QoS defined in *USER_QOS_PROFILES.xml*).
 
 For i86Linux2.6gcc4.4.5, run:
 
-    ./objs/i86Linux2.6gcc4.4.5/aws_publisher [options]
+    ./objs/i86Linux2.6gcc4.4.5/AwsExample_publisher [options]
 
 where the publisher options are:
 
@@ -63,7 +63,7 @@ where the publisher options are:
 
 For i86Linux2.6gcc4.4.5, run:
 
-    ./objs/<arch_name>/aws_subscriber
+    ./objs/<arch_name>/AwsExample_subscriber
 
 where the subscriber options are:
 
