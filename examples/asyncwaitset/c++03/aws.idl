@@ -1,0 +1,4 @@
+struct aws {
+    long key; //@key
+    long number;
+};
