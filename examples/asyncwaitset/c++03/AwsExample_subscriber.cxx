@@ -18,7 +18,7 @@
 #include <rti/util/util.hpp> // for sleep()
 #include <rti/config/Logger.hpp>
 
-#include "aws.hpp"
+#include "AwsExample.hpp"
 
 class AwsSubscriber {
     
@@ -28,7 +28,7 @@ public:
     
     AwsSubscriber(
             DDS_DomainId_t domain_id,
-            rti::core::cond::AsyncWaitSet& aws);
+            rti::core::cond::AsyncWaitSet async_waitset);
 
     void process_received_samples();
     
@@ -39,9 +39,9 @@ public:
 public:    
         
     // Entities to receive data
-    dds::sub::DataReader<aws> receiver_;
+    dds::sub::DataReader<AwsExample> receiver_;
     // Reference to the AWS used for processing the events
-    rti::core::cond::AsyncWaitSet& async_waitset_;
+    rti::core::cond::AsyncWaitSet async_waitset_;
 };
 
 class DataAvailableHandler {
@@ -66,11 +66,11 @@ private:
 
 // AwsSubscriberPlayer implementation
 
-const std::string AwsSubscriber::TOPIC_NAME = "aws Example";
+const std::string AwsSubscriber::TOPIC_NAME = "AwsExample Example";
 
 AwsSubscriber::AwsSubscriber(
         DDS_DomainId_t domain_id,
-        rti::core::cond::AsyncWaitSet& async_waitset)
+        rti::core::cond::AsyncWaitSet async_waitset)
     : receiver_(dds::core::null),
       async_waitset_(async_waitset)
 {
@@ -78,10 +78,10 @@ AwsSubscriber::AwsSubscriber(
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    dds::topic::Topic<aws> topic(participant, TOPIC_NAME);
+    dds::topic::Topic<AwsExample> topic(participant, TOPIC_NAME);
 
     // Create a DataReader with default Qos (Subscriber created in-line)
-    receiver_ = dds::sub::DataReader<aws>(
+    receiver_ = dds::sub::DataReader<AwsExample>(
             dds::sub::Subscriber(participant),
             topic);
 
@@ -96,14 +96,14 @@ AwsSubscriber::AwsSubscriber(
 void AwsSubscriber::process_received_samples()
 {
     // Take all samples This will reset the StatusCondition
-    dds::sub::LoanedSamples<aws> samples = receiver_.take();
+    dds::sub::LoanedSamples<AwsExample> samples = receiver_.take();
     
     // Release status condition in case other threads can process outstanding
     // samples
     async_waitset_.unlock_condition(dds::core::cond::StatusCondition(receiver_));
 
     // Process sample 
-    for (dds::sub::LoanedSamples<aws>::iterator sample_it = samples.begin();
+    for (dds::sub::LoanedSamples<AwsExample>::iterator sample_it = samples.begin();
          sample_it != samples.end();
          sample_it++) {
         if (sample_it->info().valid()) {

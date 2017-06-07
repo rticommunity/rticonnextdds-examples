@@ -17,7 +17,7 @@
 #include <rti/core/cond/AsyncWaitSet.hpp>
 #include <rti/util/util.hpp> // for sleep()
 
-#include "aws.hpp"
+#include "AwsExample.hpp"
 
 class AwsPublisher {
     
@@ -28,7 +28,7 @@ public:
     AwsPublisher(
             DDS_DomainId_t domain_id,
             int publisher_id,
-            rti::core::cond::AsyncWaitSet& async_waitset);
+            rti::core::cond::AsyncWaitSet async_waitset);
     
     void generate_send_event();
 
@@ -39,13 +39,13 @@ public:
 private:    
         
     // A writer to send data
-    dds::pub::DataWriter<aws> sender_;
+    dds::pub::DataWriter<AwsExample> sender_;
     // Sample buffer
-    aws sample_;
+    AwsExample sample_;
     // A GuardCondition to generate app-driven sends
     dds::core::cond::GuardCondition sendCondition_;
     // Reference to the AWS used for writing the samples
-    rti::core::cond::AsyncWaitSet& async_waitset_;
+    rti::core::cond::AsyncWaitSet async_waitset_;
 };
 
 
@@ -59,8 +59,8 @@ public:
         // condition is the same than sendCondition_ so it is safe to
         // perform the downcast. It is important to reset the condition trigger
         // to avoid continuous wakeup and dispatch
-        dds::core::cond::GuardCondition& guard_condition =
-                (dds::core::cond::GuardCondition&) (condition);
+        dds::core::cond::GuardCondition guard_condition =
+                dds::core::polymorphic_cast<dds::core::cond::GuardCondition>(condition);
         guard_condition.trigger_value(false); 
         publisher_.send_sample();
     }
@@ -77,12 +77,12 @@ private:
 
 // AwsPublisher implementation
 
-const std::string AwsPublisher::TOPIC_NAME = "aws Example";
+const std::string AwsPublisher::TOPIC_NAME = "AwsExample Example";
 
 AwsPublisher::AwsPublisher(
         DDS_DomainId_t domain_id,
         int publisher_id,
-        rti::core::cond::AsyncWaitSet& async_waitset)
+        rti::core::cond::AsyncWaitSet async_waitset)
     : sender_(dds::core::null),
       async_waitset_(async_waitset)
 {
@@ -90,10 +90,10 @@ AwsPublisher::AwsPublisher(
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    dds::topic::Topic<aws> topic(participant, TOPIC_NAME);
+    dds::topic::Topic<AwsExample> topic(participant, TOPIC_NAME);
 
     // Create a DataWriter with default Qos (Publisher created in-line)
-    sender_ = dds::pub::DataWriter<aws>(
+    sender_ = dds::pub::DataWriter<AwsExample>(
             dds::pub::Publisher(participant),
             topic);
     // set sample key value:
