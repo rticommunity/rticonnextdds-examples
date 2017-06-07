@@ -43,7 +43,7 @@ private:
     // Sample buffer
     AwsExample sample_;
     // A GuardCondition to generate app-driven sends
-    dds::core::cond::GuardCondition sendCondition_;
+    dds::core::cond::GuardCondition send_condition_;
     // Reference to the AWS used for writing the samples
     rti::core::cond::AsyncWaitSet async_waitset_;
 };
@@ -101,14 +101,14 @@ AwsPublisher::AwsPublisher(
     
 
     // Send condition: to generate application-driven events to send samples
-    sendCondition_.handler(SendRequestHandler(*this));
-    async_waitset_.attach_condition(sendCondition_);
+    send_condition_.handler(SendRequestHandler(*this));
+    async_waitset_.attach_condition(send_condition_);
   
 }
 
 void AwsPublisher::generate_send_event()
 {
-    sendCondition_.trigger_value(true);
+    send_condition_.trigger_value(true);
 }
 
 void AwsPublisher::send_sample()
@@ -120,7 +120,7 @@ void AwsPublisher::send_sample()
 
 AwsPublisher::~AwsPublisher()
 {
-    async_waitset_.detach_condition(sendCondition_);
+    async_waitset_.detach_condition(send_condition_);
 }
 
 
