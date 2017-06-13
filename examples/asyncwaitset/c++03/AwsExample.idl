@@ -1,0 +1,4 @@
+struct AwsExample {
+    long key; //@key
+    long number;
+};
