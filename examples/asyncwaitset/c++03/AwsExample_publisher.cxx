@@ -114,7 +114,7 @@ void AwsPublisher::generate_send_event()
 void AwsPublisher::send_sample()
 {
     std::cout << "Send Sample: " << sample_.number() << std::endl;
-    sample_.number()++;
+    sample_.number(sample_.number() + 1);
     sender_.write(sample_);    
 }
 
