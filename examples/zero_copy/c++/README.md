@@ -49,13 +49,13 @@ For x64Linux3gcc4.8.2, run:
 
 Where [options]:  
 	-h                  Shows this page    
-	-d  [domain_id]     Sets the domain id [default = 0]  
-	-fc [frame count]   Sets the total number of frames to be mapped in the shared memory queue [default = frame rate]  
-	-fr [frame rate]    Sets the rate at which frames are written [default = 60fps]  
-	-sc [sample count]  Sets the number of frames to send [default = 1200]  
-	-k  [key]	           Sets the key for shared memory segment [default = obtained automatically]   
-	-s  [buffer size]   Sets payload size of the frame in bytes [default = 1048576 (1MB)]  
-	-rc [dr count]      Expected number of DataReaders that will receive frames [default = 1]  
+	-d  [domain_id]     Sets the domain id **Default**: 0  
+	-fc [frame count]   Sets the total number of frames to be mapped in the shared memory queue **Default**: frame rate  
+	-fr [frame rate]    Sets the rate at which frames are written **Default**: 60fps  
+	-sc [sample count]  Sets the number of frames to send **Default**: 1200  
+	-k  [key]	           Sets the key for shared memory segment **Default**: obtained automatically   
+	-s  [buffer size]   Sets payload size of the frame in bytes **Default**: 1048576 (1MB)  
+	-rc [dr count]      Expected number of DataReaders that will receive frames **Default**: 1  
 	-v                  Displays the checksum for each frame 
 
 ### Subscriber application
@@ -66,9 +66,9 @@ For x64Linux3gcc4.8.2, run:
    
 Where [options]:  
     -h                  Shows this page  
-    -d  [domain_id]     Sets the domain id [default = 0]
-    -sc [sample count]  Sets the number of frames to receive [default = 1200]  
-    -s  [buffer size]   Sets the payload size of the frame in bytes [default = 1048576 (1MB)]  
+    -d  [domain_id]     Sets the domain id **Default**: 0  
+    -sc [sample count]  Sets the number of frames to receive **Default**: 1200  
+    -s  [buffer size]   Sets the payload size of the frame in bytes **Default**: 1048576 (1MB)  
     -v                  Displays checksum and computed latency of each received frame 
   
 ## Publisher Output
