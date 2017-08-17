@@ -19,7 +19,7 @@ available from the shared memory segment, populates it, and writes a reference
 to that frame with a DDS DataWriter. In this example a reference is a combination
 of an index (in the shared memory segment) and a CRC code for the frame.
 
-The type defining the shared memory reference is defined in ZeroCopy.idl.
+The type defining the shared memory reference is defined in zero_copy.idl.
 
 ## zero_copy_subscriber 
 A subscriber application which creates a DataReader to
