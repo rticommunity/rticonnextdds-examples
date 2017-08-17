@@ -1,6 +1,5 @@
-#=============================================================================
 # Example Code to demonstrate the usage of zero copy
-#=============================================================================
+
 
 This example is a modified version of the helloWorld example that can
 be generated using rtiddsgen with the -example command-line option.
