@@ -47,7 +47,14 @@ struct CommandLineArguments {
     }
 };
 
-void add_shmem_key_property(DDS::PropertyQosPolicy& property, int key)
+static void get_current_time(RTIClock *clock, RTINtpTime *current_time)
+{
+    if ((clock != NULL) && (current_time != NULL)) {
+        clock->getTime(clock, current_time);
+    }
+}
+
+static void add_shmem_key_property(DDS::PropertyQosPolicy& property, int key)
 {
     std::ostringstream key_to_str;
     key_to_str << key;
@@ -59,11 +66,12 @@ void add_shmem_key_property(DDS::PropertyQosPolicy& property, int key)
             true);
 }
 
-void fill_frame_data(Frame* frame)
+static void fill_frame_data(Frame* frame)
 {
     char *buffer = frame->get_buffer();
     int random_number = RTIOsapiUtility_rand();
     memcpy(buffer, &random_number, sizeof(random_number));
+
     // We dont compute CRC for the whole frame because it would add
     // a latency component not due to the middleware. Real
     // application may compute CRC differently
@@ -84,7 +92,6 @@ static int publisher_shutdown(
                     << std::endl;
             status = -1;
         }
-
         retcode = TheParticipantFactory->delete_participant(participant);
         if (retcode != RETCODE_OK) {
             std::cout << "delete_participant error " << retcode << std::endl;
@@ -108,18 +115,6 @@ static int publisher_shutdown(
 
 extern "C" int publisher_main(CommandLineArguments arg)
 {
-    DomainParticipant *participant = NULL;
-    Publisher *publisher = NULL;
-    Topic *topic = NULL;
-    DataWriter *writer = NULL;
-    ZeroCopyDataWriter * ZeroCopy_writer = NULL;
-    ZeroCopy *instance = NULL;
-    ReturnCode_t retcode;
-    const char *type_name = NULL;
-    int count = 0;  
-    DDS_WriteParams_t write_params = DDS_WRITEPARAMS_DEFAULT;
-    DDS_Time_t source_timestamp;
-
     // Creates a frame set in shared memory with the user provided settings
     FrameSet frame_set(
             arg.key, //shared memory key
@@ -129,7 +124,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
     // To customize participant QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    participant = TheParticipantFactory->create_participant(
+    DomainParticipant *participant = TheParticipantFactory->create_participant(
         arg.domain_id, PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, STATUS_MASK_NONE);
     if (participant == NULL) {
@@ -140,7 +135,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
     // To customize publisher QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    publisher = participant->create_publisher(
+    Publisher *publisher = participant->create_publisher(
         PUBLISHER_QOS_DEFAULT, NULL /* listener */, STATUS_MASK_NONE);
     if (publisher == NULL) {
         std::cout << "create_publisher error" << std::endl;
@@ -149,8 +144,8 @@ extern "C" int publisher_main(CommandLineArguments arg)
     }
 
     // Register type before creating topic
-    type_name = ZeroCopyTypeSupport::get_type_name();
-    retcode = ZeroCopyTypeSupport::register_type(
+    const char *type_name = ZeroCopyTypeSupport::get_type_name();
+    ReturnCode_t retcode = ZeroCopyTypeSupport::register_type(
         participant, type_name);
     if (retcode != RETCODE_OK) {
         std::cout << "register_type error " << retcode << std::endl;
@@ -160,7 +155,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
     // To customize topic QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    topic = participant->create_topic(
+    Topic *topic = participant->create_topic(
         "Example ZeroCopy",
         type_name, TOPIC_QOS_DEFAULT, NULL /* listener */,
         STATUS_MASK_NONE);
@@ -179,7 +174,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
     // is sent to the Subscriber app so that it can attcah to it
     add_shmem_key_property(writer_qos.property, arg.key);
 
-    writer = publisher->create_datawriter(
+    DataWriter *writer = publisher->create_datawriter(
         topic, writer_qos, NULL /* listener */,
         STATUS_MASK_NONE);
     if (writer == NULL) {
@@ -187,7 +182,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
         publisher_shutdown(participant);
         return -1;
     }
-    ZeroCopy_writer = ZeroCopyDataWriter::narrow(writer);
+    ZeroCopyDataWriter *ZeroCopy_writer = ZeroCopyDataWriter::narrow(writer);
     if (ZeroCopy_writer == NULL) {
         std::cout << "DataWriter narrow error" << std::endl;
         publisher_shutdown(participant);
@@ -195,7 +190,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
     }
 
     // Create data sample for writing
-    instance = ZeroCopyTypeSupport::create_data();
+    ZeroCopy *instance = ZeroCopyTypeSupport::create_data();
     if (instance == NULL) {
         std::cout << "ZeroCopyTypeSupport::create_data error" << std::endl;
         publisher_shutdown(participant);
@@ -208,15 +203,13 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
     DDS_PublicationMatchedStatus matchedStatus;
 
-    while (1) {
+    do {
         writer->get_publication_matched_status(matchedStatus);
 
         if (matchedStatus.total_count == arg.dr_count) {
             break;
         }
-    }
-
-    int index = 0;
+    } while(1);
 
     // Configuring the send period with frame rate
     Duration_t send_period = {0, 0};
@@ -224,7 +217,8 @@ extern "C" int publisher_main(CommandLineArguments arg)
     send_period.nanosec = 1000000000 / arg.frame_rate;
 
     // Create a clock to get the write timestamp
-    struct RTINtpTime current_time = RTI_NTP_TIME_ZERO;
+    RTINtpTime current_time = RTI_NTP_TIME_ZERO;
+    DDS_Time_t source_timestamp = DDS_TIME_ZERO;
     RTIClock *clock = RTIHighResolutionClock_new();
     if (clock == NULL) {
         std::cout << "Failed to create the System clock" << std::endl;
@@ -237,12 +231,14 @@ extern "C" int publisher_main(CommandLineArguments arg)
     std::cout << "Going to send " << arg.sample_count << " frames at "
             << arg.frame_rate << " fps" << std::endl;
 
-    for (count = 0; count < arg.sample_count; ++count) {
+    DDS_WriteParams_t write_params = DDS_WRITEPARAMS_DEFAULT;
+    int index = 0;
+    for (int count = 0; count < arg.sample_count; ++count) {
         index = count % arg.frame_count;
 
         // Setting the source_timestamp before the shared memory segment is
         // updated
-        clock->getTime(clock, &current_time);
+        get_current_time(clock, &current_time);
         RTINtpTime_unpackToNanosec(
                 source_timestamp.sec,
                 source_timestamp.nanosec,

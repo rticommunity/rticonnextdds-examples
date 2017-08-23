@@ -24,11 +24,19 @@
 //
 class FrameSupport {
 public:
-    explicit FrameSupport(int payload_size, int count = 0);
+    explicit FrameSupport(int payload_size);
 
-    // Shared memory handle
-    struct RTIOsapiSharedMemorySegmentHandle handle;
+    // Gets the adress of the Frame Header located at given offset
+    Frame* get_frame(int index);
+    const Frame* get_const_frame(int index) const;
 
+    // Sets the base address of the frame
+    void set_frame_base_address(RTIOsapiSharedMemorySegmentHandle *handle);
+
+    // Gets the frame size
+    int get_frame_size();
+
+private:
     // Points to the begining of a Frame header
     char *frame_base_address;
 
@@ -37,14 +45,6 @@ public:
 
     // Size of Frame including Frame header, payload and alignment
     int frame_size;
-
-    // Number of frames being mapped into shared memory
-    int frame_count;
-
-    // Gets the adress of the Frame Header located at given offset
-    Frame* get_frame(int index);
-
-    const Frame* get_const_frame(int index) const;
 };
 
 //
@@ -62,11 +62,21 @@ public:
     // Obtains a frame in the specified position
     Frame* operator[](int index)
     {
-        return frame_support.get_frame(index);
+        if ((index >= 0) && (index < frame_count)) {
+            return frame_support.get_frame(index);
+        } else {
+            return NULL;
+        }
     }
 
 private:
     FrameSupport frame_support;
+
+    // Shared memory handle
+    RTIOsapiSharedMemorySegmentHandle handle;
+
+    // Number of frames being mapped into shared memory
+    int frame_count;
 };
 
 //
@@ -74,8 +84,6 @@ private:
 //
 class FrameSetView {
 public:
-    int key;
-
     // Attaches to a shared memory segment that contains frames of a fixed-size
     // payload, identified by a key.
     //
@@ -87,19 +95,37 @@ public:
     // Obtains a read-only frame in the specified position
     const Frame* operator[](int index) const
     {
-        return frame_support.get_const_frame(index);
+        if ((index >= 0) && (index < frame_count)) {
+            return frame_support.get_const_frame(index);
+        } else {
+            return NULL;
+        }
+    }
+
+    // Returns the key used to attach to the shared memory segment
+    int get_key()
+    {
+        return key;
     }
 
 private:
     FrameSupport frame_support;
+
+    // Shared memory handle
+    RTIOsapiSharedMemorySegmentHandle handle;
+
+    // Number of frames being mapped into shared memory
+    int frame_count;
+
+    // Key used for attaching to shared memory segments
+    int key;
 };
 
 // --- FrameSupport: ----------------------------------------------------------
 
-FrameSupport::FrameSupport(int payload_size, int count)
+FrameSupport::FrameSupport(int payload_size)
     : frame_base_address(NULL),
-      buffer_size(payload_size),
-      frame_count(count)
+      buffer_size(payload_size)
 {
     struct FrameOffset { char c; class Frame member; };
     int alignment = offsetof (FrameOffset, member);
@@ -119,16 +145,26 @@ const Frame* FrameSupport::get_const_frame(int index) const
     return (const Frame *)((char *)frame_base_address + (index * frame_size));
 }
 
+void FrameSupport::set_frame_base_address(
+        RTIOsapiSharedMemorySegmentHandle *handle) {
+    frame_base_address = (char *)RTIOsapiSharedMemorySegment_getAddress(handle);
+}
+
+int FrameSupport::get_frame_size() {
+    return frame_size;
+}
+
 // --- FrameSet: --------------------------------------------------------------
 
 FrameSet::FrameSet(int key, int frame_count, int payload_size)
-        : frame_support(payload_size, frame_count)
+    : frame_support(payload_size), frame_count(frame_count)
 {
-    int total_size = frame_support.frame_size * frame_count;
+    int frame_size = frame_support.get_frame_size();
+    int total_size = frame_size * frame_count;
     RTI_UINT64 pid = RTIOsapiProcess_getId();
     int status = 0;
     RTIBool result = RTIOsapiSharedMemorySegment_createOrAttach(
-        &frame_support.handle,
+        &handle,
         &status,
         key,
         total_size,
@@ -142,10 +178,10 @@ FrameSet::FrameSet(int key, int frame_count, int payload_size)
     if (status == RTI_OSAPI_SHARED_MEMORY_ATTACHED) {
         // The shared memory segement already exists. Because the settings
         // maybe different we have to destroy it a recreate it
-        RTIOsapiSharedMemorySegment_delete(&frame_support.handle);
+        RTIOsapiSharedMemorySegment_delete(&handle);
 
         result = RTIOsapiSharedMemorySegment_create(
-            &frame_support.handle,
+            &handle,
             &status,
             key,
             total_size,
@@ -156,13 +192,13 @@ FrameSet::FrameSet(int key, int frame_count, int payload_size)
             throw std::runtime_error(status_to_str.str().c_str());
         }
     }
-    frame_support.frame_base_address =
-        (char *)RTIOsapiSharedMemorySegment_getAddress(&frame_support.handle);
+
+    frame_support.set_frame_base_address(&handle);
 }
 
 FrameSet::~FrameSet()
 {
-    if (!RTIOsapiSharedMemorySegment_delete(&frame_support.handle)) {
+    if (!RTIOsapiSharedMemorySegment_delete(&handle)) {
         std::cout << "delete shared memory segments error" << std::endl;
     }
 }
@@ -170,31 +206,29 @@ FrameSet::~FrameSet()
 // --- FrameSetView: ----------------------------------------------------------
 
 FrameSetView::FrameSetView(int key, int payload_size)
-        : frame_support(payload_size)
+        : frame_support(payload_size), key(key)
 {
     int status = 0;
     RTIBool result = RTIOsapiSharedMemorySegment_attach(
-            &frame_support.handle,
+            &handle,
             &status,
             key);
 
     if (!result) {
         std::ostringstream status_to_str;
-        status_to_str << "create shared memory segments error " << status;
+        status_to_str << "attach to shared memory segments error " << status;
         throw std::runtime_error(status_to_str.str().c_str());
     }
 
-    this->key = key;
-    int total_size =
-            RTIOsapiSharedMemorySegment_getSize(&frame_support.handle);
-    frame_support.frame_count = total_size/frame_support.frame_size;
-    frame_support.frame_base_address =
-            (char *)RTIOsapiSharedMemorySegment_getAddress(&frame_support.handle);
+    frame_support.set_frame_base_address(&handle);
+    int total_size = RTIOsapiSharedMemorySegment_getSize(&handle);
+    int frame_size = frame_support.get_frame_size();
+    frame_count = total_size/frame_size;
 }
 
 FrameSetView::~FrameSetView()
 {
-    if (!RTIOsapiSharedMemorySegment_detach(&frame_support.handle)) {
+    if (!RTIOsapiSharedMemorySegment_detach(&handle)) {
         std::cout << "detach shared memory segments error" << std::endl;
     }
 }

@@ -41,11 +41,19 @@ public:
 };
 CommandLineArguments arg;
 
-// Get the shared memory key from the publication data property
-int lookup_shmem_key_property(DDS::PropertyQosPolicy& property)
+static void get_current_time(RTIClock *clock, RTINtpTime *current_time)
 {
-    const DDS::Property_t *p =
-            DDS::PropertyQosPolicyHelper::lookup_property(property, "shmem_key");
+    if ((clock != NULL) && (current_time != NULL)) {
+        clock->getTime(clock, current_time);
+    }
+}
+
+// Get the shared memory key from the publication data property
+static int lookup_shmem_key_property(DDS::PropertyQosPolicy& property)
+{
+    const DDS::Property_t *p = DDS::PropertyQosPolicyHelper::lookup_property(
+            property,
+            "shmem_key");
     if (p == NULL) {
         return -1;
     }
@@ -106,6 +114,7 @@ private:
     {
         try {
             DDS::PublicationBuiltinTopicData publication_data;
+
             if (reader->get_matched_publication_data(
                     publication_data,
                     status.last_publication_handle) != DDS_RETCODE_OK) {
@@ -118,16 +127,20 @@ private:
                 return;
             }
 
-            // Create the frame_set_view with the key and size. This frame set
-            // view attaches to the shared memory segment created by the frame
-            // set managed by the matched DataWriter
-            FrameSetView *frame_set_view = new FrameSetView(key, arg.size);
             DDS::GUID_t publication_guid;
             DDS_BuiltinTopicKey_to_guid(
                     &publication_data.key,
                     &publication_guid);
-
-            frame_set_views[publication_guid] = frame_set_view;
+            if (frame_set_views.find(publication_guid)
+                    == frame_set_views.end()){
+                // Create the frame_set_view with the key and size. This frame
+                // set view attaches to the shared memory segment created by the
+                // frame set managed by the matched DataWriter
+                FrameSetView *frame_set_view = new FrameSetView(key, arg.size);
+                frame_set_views[publication_guid] = frame_set_view;
+            } else {
+                std::cout << "Unable to track the key " << key << std::endl;
+            }
         } catch (...) {
             std::cout << "Exception in on_subscription_matched. " << std::endl;
         }
@@ -181,7 +194,7 @@ class ZeroCopyListener : public ShmemKeyTrackingReaderListener {
     int received_frames;
     // Used for getting system time
     RTIClock *clock;
-    struct RTINtpTime previous_print_time;
+    RTINtpTime previous_print_time;
     bool shutdown_application;
 
     // Prints average latency in micro seconds
@@ -196,23 +209,14 @@ class ZeroCopyListener : public ShmemKeyTrackingReaderListener {
 
 void ZeroCopyListener::on_data_available(DataReader* reader)
 {
-    ZeroCopyDataReader *ZeroCopy_reader = NULL;
-    ZeroCopySeq data_seq;
-    SampleInfoSeq info_seq;
-    ReturnCode_t retcode;
-    int i;
-    unsigned int received_checksum = 0, computed_checksum = 0;
-    struct RTINtpTime current_time = RTI_NTP_TIME_ZERO;
-    struct RTINtpTime latency_time = RTI_NTP_TIME_ZERO;
-    struct RTINtpTime source_time = RTI_NTP_TIME_ZERO;
-
-    struct DDS_Duration_t latency;
-    ZeroCopy_reader = ZeroCopyDataReader::narrow(reader);
+    ZeroCopyDataReader *ZeroCopy_reader = ZeroCopyDataReader::narrow(reader);
     if (ZeroCopy_reader == NULL) {
         std::cout << "DataReader narrow error" << std::endl;
         return;
     }
-
+    ZeroCopySeq data_seq;
+    SampleInfoSeq info_seq;
+    ReturnCode_t retcode;
     retcode = ZeroCopy_reader->take(
         data_seq, info_seq, LENGTH_UNLIMITED,
         ANY_SAMPLE_STATE, ANY_VIEW_STATE, ANY_INSTANCE_STATE);
@@ -224,7 +228,13 @@ void ZeroCopyListener::on_data_available(DataReader* reader)
         return;
     }
 
-    for (i = 0; i < data_seq.length(); ++i) {
+    unsigned int received_checksum = 0, computed_checksum = 0;
+    RTINtpTime current_time = RTI_NTP_TIME_ZERO;
+    RTINtpTime latency_time = RTI_NTP_TIME_ZERO;
+    RTINtpTime source_time = RTI_NTP_TIME_ZERO;
+    DDS_Duration_t latency;
+
+    for (int i = 0; i < data_seq.length(); ++i) {
         if (info_seq[i].valid_data) {
 
             // Get the frame_set_view associated with the virtual guid
@@ -235,76 +245,75 @@ void ZeroCopyListener::on_data_available(DataReader* reader)
             FrameSetView *frame_set_view = get_frame_set_view(
                     info_seq[i].publication_virtual_guid);
 
-            if (frame_set_view != NULL) {
-                // Get the frame checksum from the sample
-                received_checksum = data_seq[i].checksum;
-
-                // Get the frame from the shared memory segment
-                // at the provided index
-                const Frame *frame = (*frame_set_view)[data_seq[i].index];
-
-                // Compute the checksum of the frame
-                // We only compute the checksum of the first 4 bytes. These
-                // are the bytes that we change in each frame for this example
-
-                // We dont compute CRC for the whole frame because it would add
-                // a latency component not due to the middleware. Real
-                // application may compute CRC differently
-                computed_checksum = RTIOsapiUtility_crc32(
-                        frame->get_buffer(),
-                        sizeof(int),
-                        0);
-
-                // Validate the computed checksum with the checksum sent by the
-                // DataWriter
-                if (computed_checksum != received_checksum) {
-                    std::cout << "Checksum NOT OK" << std::endl;
-                }
-
-                // Get the current time for computing latency
-                clock->getTime(clock, &current_time);
-
-                // Set the source timestamp as the time when the shared memory
-                // segment was updated
-                RTINtpTime_packFromNanosec(
-                        source_time,
-                        info_seq[i].source_timestamp.sec,
-                        info_seq[i].source_timestamp.nanosec);
-
-                // Compute the difference and store in current_time
-                latency_time = current_time;
-                RTINtpTime_decrement(latency_time, source_time);
-
-                // Keep track of total latency for computing averages
-                RTINtpTime_unpackToNanosec(
-                        latency.sec,
-                        latency.nanosec,
-                        latency_time);
-                total_latency = total_latency + latency;
-                received_frames++;
-
-                if (arg.verbose) {
-                    std::cout << "Received frame " << received_frames
-                            << " from DataWriter with key "
-                            << frame_set_view->key << " with checksum: "
-                            << frame->checksum << std::endl;
-                }
-
-                if (received_frames == 1) {
-                    previous_print_time = current_time;
-                }
-
-                if (((current_time.sec - previous_print_time.sec) >= 1)
-                        || (received_frames == arg.sample_count)) {
-                    previous_print_time = current_time;
-                    print_average_latency();
-                }
-
-            } else {
+            if (frame_set_view == NULL) {
                 std::cout << "Received data from an un recognized frame "
                         "writer" << std::endl;
+                continue;
             }
 
+            // Get the frame checksum from the sample
+            received_checksum = data_seq[i].checksum;
+
+            // Get the frame from the shared memory segment
+            // at the provided index
+            const Frame *frame = (*frame_set_view)[data_seq[i].index];
+
+            // Compute the checksum of the frame
+            // We only compute the checksum of the first 4 bytes. These
+            // are the bytes that we change in each frame for this example
+
+            // We dont compute CRC for the whole frame because it would add
+            // a latency component not due to the middleware. Real
+            // application may compute CRC differently
+            computed_checksum = RTIOsapiUtility_crc32(
+                    frame->get_buffer(),
+                    sizeof(int),
+                    0);
+
+            // Validate the computed checksum with the checksum sent by the
+            // DataWriter
+            if (computed_checksum != received_checksum) {
+                std::cout << "Checksum NOT OK" << std::endl;
+            }
+
+            // Get the current time for computing latency
+            get_current_time(clock, &current_time);
+
+            // Set the source timestamp as the time when the shared memory
+            // segment was updated
+            RTINtpTime_packFromNanosec(
+                    source_time,
+                    info_seq[i].source_timestamp.sec,
+                    info_seq[i].source_timestamp.nanosec);
+
+            // Compute the difference and store in current_time
+            latency_time = current_time;
+            RTINtpTime_decrement(latency_time, source_time);
+
+            // Keep track of total latency for computing averages
+            RTINtpTime_unpackToNanosec(
+                    latency.sec,
+                    latency.nanosec,
+                    latency_time);
+            total_latency = total_latency + latency;
+            received_frames++;
+
+            if (arg.verbose) {
+                std::cout << "Received frame " << received_frames
+                        << " from DataWriter with key "
+                        << frame_set_view->get_key() << " with checksum: "
+                        << frame->checksum << std::endl;
+            }
+
+            if (received_frames == 1) {
+                previous_print_time = current_time;
+            }
+
+            if (((current_time.sec - previous_print_time.sec) >= 1)
+                    || (received_frames == arg.sample_count)) {
+                previous_print_time = current_time;
+                print_average_latency();
+            }
         }
     }
 
@@ -357,19 +366,9 @@ static int subscriber_shutdown(
 
 extern "C" int subscriber_main()
 {
-    DomainParticipant *participant = NULL;
-    Subscriber *subscriber = NULL;
-    Topic *topic = NULL;
-    ZeroCopyListener *reader_listener = NULL; 
-    DataReader *reader = NULL;
-    ReturnCode_t retcode;
-    const char *type_name = NULL;
-    Duration_t receive_period = {4,0};
-    int status = 0;
-
     // To customize the participant QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    participant = TheParticipantFactory->create_participant(
+    DomainParticipant *participant = TheParticipantFactory->create_participant(
         arg.domain_id, PARTICIPANT_QOS_DEFAULT,
         NULL /* listener */, STATUS_MASK_NONE);
     if (participant == NULL) {
@@ -380,7 +379,7 @@ extern "C" int subscriber_main()
 
     // To customize the subscriber QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    subscriber = participant->create_subscriber(
+    Subscriber *subscriber = participant->create_subscriber(
         SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, STATUS_MASK_NONE);
     if (subscriber == NULL) {
         std::cout << "create_subscriber error" << std::endl;
@@ -389,8 +388,8 @@ extern "C" int subscriber_main()
     }
 
     // Register the type before creating the topic
-    type_name = ZeroCopyTypeSupport::get_type_name();
-    retcode = ZeroCopyTypeSupport::register_type(
+    const char *type_name = ZeroCopyTypeSupport::get_type_name();
+    ReturnCode_t retcode = ZeroCopyTypeSupport::register_type(
         participant, type_name);
     if (retcode != RETCODE_OK) {
         std::cout << "register_type error " << retcode << std::endl;
@@ -400,7 +399,7 @@ extern "C" int subscriber_main()
 
     // To customize the topic QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    topic = participant->create_topic(
+    Topic *topic = participant->create_topic(
         "Example ZeroCopy",
         type_name, TOPIC_QOS_DEFAULT, NULL /* listener */,
         STATUS_MASK_NONE);
@@ -411,11 +410,11 @@ extern "C" int subscriber_main()
     }
 
     // Create a data reader listener
-    reader_listener = new ZeroCopyListener();
+    ZeroCopyListener *reader_listener = new ZeroCopyListener();
 
     // To customize the data reader QoS, use
     // the configuration file USER_QOS_PROFILES.xml
-    reader = subscriber->create_datareader(
+    DataReader *reader = subscriber->create_datareader(
         topic, DATAREADER_QOS_DEFAULT, reader_listener,
         STATUS_MASK_ALL);
     if (reader == NULL) {
@@ -426,17 +425,19 @@ extern "C" int subscriber_main()
     }
 
     // Main loop
-    std::cout << "ZeroCopy subscriber waiting to receive samples..." << std::endl;
-    while (1) {
+    std::cout << "ZeroCopy subscriber waiting to receive samples..."
+            << std::endl;
+    Duration_t receive_period = {4,0};
+    do {
         if (reader_listener->start_shutdown()) {
             std::cout << "Subscriber application shutting down" << std::endl;
             break;
         }
         NDDSUtility::sleep(receive_period);
-    }
+    } while(1);
 
     // Delete all entities
-    status = subscriber_shutdown(participant);
+    int status = subscriber_shutdown(participant);
     delete reader_listener;
 
     return status;
