@@ -47,11 +47,18 @@ struct CommandLineArguments {
     }
 };
 
-static void get_current_time(RTIClock *clock, RTINtpTime *current_time)
+static void set_current_timestamp(RTIClock *clock, DDS_Time_t &timestamp)
 {
-    if ((clock != NULL) && (current_time != NULL)) {
-        clock->getTime(clock, current_time);
+    if (clock == NULL) {
+        std::cout << "Clock not available" << std::endl;
+        return;
     }
+    RTINtpTime current_time = RTI_NTP_TIME_ZERO;
+    clock->getTime(clock, &current_time);
+    RTINtpTime_unpackToNanosec(
+            timestamp.sec,
+            timestamp.nanosec,
+            current_time);
 }
 
 static void add_shmem_key_property(DDS::PropertyQosPolicy& property, int key)
@@ -205,11 +212,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
     do {
         writer->get_publication_matched_status(matchedStatus);
-
-        if (matchedStatus.total_count == arg.dr_count) {
-            break;
-        }
-    } while(1);
+    } while (matchedStatus.total_count < arg.dr_count);
 
     // Configuring the send period with frame rate
     Duration_t send_period = {0, 0};
@@ -217,8 +220,6 @@ extern "C" int publisher_main(CommandLineArguments arg)
     send_period.nanosec = 1000000000 / arg.frame_rate;
 
     // Create a clock to get the write timestamp
-    RTINtpTime current_time = RTI_NTP_TIME_ZERO;
-    DDS_Time_t source_timestamp = DDS_TIME_ZERO;
     RTIClock *clock = RTIHighResolutionClock_new();
     if (clock == NULL) {
         std::cout << "Failed to create the System clock" << std::endl;
@@ -238,12 +239,7 @@ extern "C" int publisher_main(CommandLineArguments arg)
 
         // Setting the source_timestamp before the shared memory segment is
         // updated
-        get_current_time(clock, &current_time);
-        RTINtpTime_unpackToNanosec(
-                source_timestamp.sec,
-                source_timestamp.nanosec,
-                current_time);
-        write_params.source_timestamp = source_timestamp;
+        set_current_timestamp(clock, write_params.source_timestamp);
 
         // Getting the frame at the desired index
         Frame *frame = frame_set[index];

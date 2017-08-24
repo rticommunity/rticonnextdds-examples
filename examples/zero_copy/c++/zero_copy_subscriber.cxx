@@ -41,11 +41,25 @@ public:
 };
 CommandLineArguments arg;
 
-static void get_current_time(RTIClock *clock, RTINtpTime *current_time)
+// Compute the latency with the given current_time and source_timestamp
+static void compute_latency(
+        DDS_Duration_t &latency,
+        RTINtpTime current_time,
+        const DDS_Time_t &source_timestamp)
 {
-    if ((clock != NULL) && (current_time != NULL)) {
-        clock->getTime(clock, current_time);
-    }
+    RTINtpTime source_time = RTI_NTP_TIME_ZERO;
+
+    // Convert DDS_Time_t format to RTINtpTime format
+    RTINtpTime_packFromNanosec(
+            source_time,
+            source_timestamp.sec,
+            source_timestamp.nanosec);
+
+    // Compute the difference and store in current_time
+    RTINtpTime_decrement(current_time, source_time);
+
+    // Convert RTINtpTime format to DDS_Duration_t format
+    RTINtpTime_unpackToNanosec(latency.sec, latency.nanosec, current_time);
 }
 
 // Get the shared memory key from the publication data property
@@ -230,8 +244,6 @@ void ZeroCopyListener::on_data_available(DataReader* reader)
 
     unsigned int received_checksum = 0, computed_checksum = 0;
     RTINtpTime current_time = RTI_NTP_TIME_ZERO;
-    RTINtpTime latency_time = RTI_NTP_TIME_ZERO;
-    RTINtpTime source_time = RTI_NTP_TIME_ZERO;
     DDS_Duration_t latency;
 
     for (int i = 0; i < data_seq.length(); ++i) {
@@ -276,25 +288,11 @@ void ZeroCopyListener::on_data_available(DataReader* reader)
                 std::cout << "Checksum NOT OK" << std::endl;
             }
 
-            // Get the current time for computing latency
-            get_current_time(clock, &current_time);
-
-            // Set the source timestamp as the time when the shared memory
-            // segment was updated
-            RTINtpTime_packFromNanosec(
-                    source_time,
-                    info_seq[i].source_timestamp.sec,
-                    info_seq[i].source_timestamp.nanosec);
-
-            // Compute the difference and store in current_time
-            latency_time = current_time;
-            RTINtpTime_decrement(latency_time, source_time);
+            // Compute the latency from the source time
+            clock->getTime(clock, &current_time);
+            compute_latency(latency, current_time, info_seq[i].source_timestamp);
 
             // Keep track of total latency for computing averages
-            RTINtpTime_unpackToNanosec(
-                    latency.sec,
-                    latency.nanosec,
-                    latency_time);
             total_latency = total_latency + latency;
             received_frames++;
 
@@ -428,14 +426,10 @@ extern "C" int subscriber_main()
     std::cout << "ZeroCopy subscriber waiting to receive samples..."
             << std::endl;
     Duration_t receive_period = {4,0};
-    do {
-        if (reader_listener->start_shutdown()) {
-            std::cout << "Subscriber application shutting down" << std::endl;
-            break;
-        }
+    while (!reader_listener->start_shutdown()) {
         NDDSUtility::sleep(receive_period);
-    } while(1);
-
+    };
+    std::cout << "Subscriber application shutting down" << std::endl;
     // Delete all entities
     int status = subscriber_shutdown(participant);
     delete reader_listener;
