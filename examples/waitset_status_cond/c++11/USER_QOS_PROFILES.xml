@@ -16,7 +16,7 @@
     about XML QoS Profiles see Chapter 15 in the RTI Connext user manual. -->
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="C:/RTI/rti-connext-dds/rti_connext_dds-5.3.0/bin/../resource/schema/rti_dds_qos_profiles.xsd"
+     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/5.3.0/rti_dds_qos_profiles.xsd"
      version="5.3.0">
     <!-- QoS Library containing the QoS profile used in the generated example
         A QoS library is a named set of QoS profiles.
@@ -54,7 +54,7 @@
                     Analyzer tool, making it easier for you to tell one application from another
                     when you're debugging. -->
                 <participant_name>
-                    <name>RTI Waitsets C++03 Example</name>
+                    <name>RTI Waitsets C++11 Example</name>
                 </participant_name>
 
             </participant_qos>

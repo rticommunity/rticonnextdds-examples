@@ -29,29 +29,30 @@ int subscriber_main(int domain_id, int sample_count)
     // Create a DataReader with default Qos (Subscriber created in-line)
     dds::sub::DataReader<Foo> reader(dds::sub::Subscriber(participant), topic);
 
-	  // Create a Status Condition for the reader
-	  dds::core::cond::StatusCondition status_condition(reader);
+	// Create a Status Condition for the reader
+	dds::core::cond::StatusCondition status_condition(reader);
 
-	  // Lambda function for the status_condition.
-	  // Handler register a custom handler with the condition.
-	  status_condition->handler([&reader]() {
+	// Lambda function for the status_condition
+	// Handler register a custom handler with the condition
+	status_condition->handler([&reader]() {
 
-        // Get the status changes so we can check witch status condition triggered.
-        dds::core::status::StatusMask status_mask = reader.status_changes();
+    // Get the status changes so we can check witch status condition triggered
+    dds::core::status::StatusMask status_mask = reader.status_changes();
 
-  		  // In Case of Liveliness changed
-  		  if ((status_mask &	dds::core::status::StatusMask::liveliness_changed()).any()) {
+		// In Case of Liveliness changed
+		if ((status_mask &	dds::core::status::StatusMask::liveliness_changed()).any()) {
 
-  			dds::core::status::LivelinessChangedStatus st =
-  		          reader.liveliness_changed_status();
+			dds::core::status::LivelinessChangedStatus st =
+			reader.liveliness_changed_status();
 
-  			std::cout << "Liveliness changed => Active writers = "
-  			        << st.alive_count() << std::endl;
-		    }
-	  }
+			std::cout << "Liveliness changed => Active writers = "
+  		            << st.alive_count() << std::endl;
+		}
+	}
     ); // Create a ReadCondition for any data on this reader and associate a handler
 
     int count = 0;
+	
     dds::sub::cond::ReadCondition read_condition(
             reader,
             dds::sub::status::DataState::any(),
@@ -68,15 +69,16 @@ int subscriber_main(int domain_id, int sample_count)
     } // The LoanedSamples destructor returns the loan
     );
 
-    // Create a WaitSet and attach the ReadCondition
+    // Create a WaitSet and attach both ReadCondition and StatusCondition
     dds::core::cond::WaitSet waitset;
+	
     waitset += read_condition;
-	  waitset += status_condition;
+	waitset += status_condition;
 
     while (count < sample_count || sample_count == 0) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
-        waitset.dispatch(dds::core::Duration(1)); // Wait up to 4s each time
+        waitset.dispatch(dds::core::Duration(4)); // Wait up to 4s each time
     }
     return 1;
 }

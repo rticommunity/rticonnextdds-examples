@@ -29,11 +29,9 @@ void publisher_main(int domain_id, int sample_count)
     dds::pub::DataWriter<Foo> writer(dds::pub::Publisher(participant), topic);
 
     Foo sample;
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        // Modify the data to be written here
-		    sample.x(count);
-
-        std::cout << "Writing Foo, count " << count << std::endl;
+    for (int count = 0; count < sample_count || sample_count == 0; count++) {       
+		std::cout << "Writing Foo, count " << count << std::endl;
+		sample.x(count);        
         writer.write(sample);
 
         rti::util::sleep(dds::core::Duration(1));
