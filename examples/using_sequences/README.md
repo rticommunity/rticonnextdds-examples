@@ -33,22 +33,25 @@ A sequence may be declared as *bounded* or *unbounded*. A sequence's bound is th
 maximum number of elements that the sequence can contain at any one time.
 The bound is very important because it allows Connext to preallocate buffers to
 hold serialized and deserialized samples of your types; these buffers are used
-when communicating with other nodes in your distributed system. If a sequence
-had no bound, Connext would not know how large to allocate its buffers and
-would therefore have to allocate them on the fly as individual samples were
-read and written -- severely impacting the latency and determinism of your
-application. Therefore, Connext supports only bounded sequences; any unbounded
-sequences found in an IDL file will be given a default bound of 100 elements.
+when communicating with other nodes in your distributed system.
+Unbounded sequences severely impact the latency and determinism of your
+application, since Connext needs to allocate memory on the fly as individual
+samples are read and written. Therefore, any unbounded sequences found in an IDL
+file will be given a default bound of 100 elements, unless `-unboundedSupport`
+option is specified.
+
+*Note*: `-unboundedSupport` option is not supported in ADA.
+
 
 ## Example description
 In this example, we define a data type containing a sequence of `short`s in an
 IDL. Using this IDL file we generate a publisher and a subscriber application
 that manage two instances of that data type.
 
-Our goal is to illustrate how sequences can "own" the memory associated with it,
-or "borrow" that memory. The sequence of the first instance, `owner_instance`,
-owns its own memory, whereas in the second instance, `borrower_instance`, we use
-`loan_contiguous()` to loan a buffer of shorts previously allocated. We also
-illustrate how to use the sequences created, changing the sequence's length
-every time we send a sample of each instance, assigning a random value to each
-sequence's elements.
+Our goal is to illustrate how sequences can *own* the memory associated with them,
+or *borrow* that memory.
+1. The sequence of the first instance, `owner_instance`, owns its own memory.
+2. In contrast, in the sequence of the second instance, `borrower_instance`, we use
+`loan_contiguous()` to loan a buffer of `short`s previously allocated.
+We also illustrate how to change the length of the created sequences, and how to
+assign random values to each of their components.
