@@ -141,6 +141,14 @@ void ShapesSplitter::on_data_available(
             route.output<DynamicData>(1).write(
                     output_data_.get(),
                     sample.info());
+        } else {
+            // propagate dispose 
+            route.output<DynamicData>(0).write(
+                    output_data_.get(),
+                    sample.info());
+            route.output<DynamicData>(1).write(
+                    output_data_.get(),
+                    sample.info());
         }
     }
 }

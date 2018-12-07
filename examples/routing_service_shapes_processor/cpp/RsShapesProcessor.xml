@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="/Users/asanchez/rti/release/rti_connext_dds-6.0.0/resource/schema/rti_routing_service.xsd">
+     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/current/rti_routing_service.xsd">
 
     <qos_library name="RsShapesQosLib">
         <qos_profile name="RsShapesQosProfile">
@@ -12,6 +12,7 @@
             </datareader_qos>
         </qos_profile>
     </qos_library>
+    
     <plugin_library name="ShapesPluginLib">
         <processor_plugin name="ShapesProcessor">
             <dll>shapesprocessor</dll>
@@ -107,13 +108,20 @@
             </participant>
 
             <session>
-
+                <auto_topic_route>
+                    <input participant="domain0">
+                        <deny_topic_name_filter>Triangle</deny_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
+                    </input>
+                    <output participant="domain1"/>
+                </auto_topic_route>
+                
                 <topic_route name="SquaresToCirclesAndTriangles">
                     <processor plugin_name="ShapesPluginLib::ShapesProcessor"/>
                     <input name="Square" participant="domain0">
                         <registered_type_name>ShapeType</registered_type_name>
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
-                        <datareader_qos base_name="RsShapesQosLib"/>
                     </input>
                     <output name="Circle" participant="domain1">
                         <registered_type_name>ShapeType</registered_type_name>
