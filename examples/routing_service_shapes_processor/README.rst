@@ -1,7 +1,7 @@
 Example Code: Routing Service Processor
 ***************************************
 
-.. |RS| replace:: *RS*
+.. |RS| replace:: *RoutingService*
 .. |PROCESSOR| replace:: *Processor*
 
 Concept

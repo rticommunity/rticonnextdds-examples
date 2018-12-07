@@ -1,9 +1,9 @@
 Example Code: Routing Service Processor
 ***************************************
 
-.. |RS| replace:: *RS*
+.. |RS| replace:: *RoutingService*
 .. |PROCESSOR| replace:: *Processor*
-.. |SP| replace:: *ShapesDemo*.
+.. |SD| replace:: *ShapesDemo*.
 
 Below there are the instructions to build and run this example. All the commands
 and syntax used assume a Unix-based system. If you run this example in a different
@@ -65,10 +65,10 @@ build the example in the previous step.
 Aggregation
 -----------
 
-#. Run one instance of |SP| on domain 0. This will be the publisher application.
+#. Run one instance of |SD| on domain 0. This will be the publisher application.
    Publish a blue squares and blue circles.
 
-#. Run the other instance of |SP| on domain 1. This will be the subscriber
+#. Run the other instance of |SD| on domain 1. This will be the subscriber
    application.
    Subscribe to squares, circles and triangles and observe how no data is received.
 
@@ -98,10 +98,10 @@ Aggregation
 Splitter
 --------
 
-#. Run one instance of |SP| on domain 0. This will be the publisher application.
+#. Run one instance of |SD| on domain 0. This will be the publisher application.
    Publish a blue squares.
 
-#. Run the other instance of |SP| on domain 1. This will be the subscriber
+#. Run the other instance of |SD| on domain 1. This will be the subscriber
    application.
    Subscribe to squares, circles and triangles and observe how no data is
    received.
