@@ -25,13 +25,14 @@ using namespace rti::routing;
 using namespace rti::routing::processor;
 using namespace rti::routing::adapter;
 using namespace dds::core::xtypes;
+using namespace dds::sub::status;
 
 /*
  * --- ShapesAggregator -------------------------------------------------------
  */
 
-ShapesAggregrator::ShapesAggregrator()
-    :output_data_(dds::core::xtypes::StructType("dummy"))
+ShapesAggregrator::ShapesAggregrator(int32_t leading_input_index)
+    : leading_input_index_(leading_input_index)
 {
 }
 
@@ -44,45 +45,56 @@ void ShapesAggregrator::on_output_enabled(
         rti::routing::processor::Output& output)
 {
     // initialize the output_data buffer using the type from the output
-    output_data_ = TypedOutput<DynamicData>(&output).create_data();
-}
-
-void ShapesAggregrator::get_circles_data(
-    rti::routing::processor::LoanedSamples<DynamicData>& circles,
-    const dds::core::InstanceHandle& handle)
-{
-    for (auto circle_sample : circles) {       
-        if (circle_sample.info().instance_handle() == handle
-                && circle_sample.info().state().instance_state() == dds::sub::status::InstanceState::alive()) {
-            output_data_.value<int32_t>(
-                    "y",
-                    circle_sample.data().value<int32_t>("y"));
-            break;
-        }
-    }
+    output_data_ = output.get<DynamicData>().create_data();
 }
 
 void ShapesAggregrator::on_data_available(
         rti::routing::processor::Route& route)
 {
-    // Use squares as 'driver' input. For each Square instance, get the
-    // equivalent instance from the Circle topic
-    auto squares = route.input<DynamicData>("Square").read();
-    auto circles = route.input<DynamicData>("Circle").read();
-    for (auto square_sample : squares) {
-        if (square_sample.info().valid()) {
-            output_data_ = square_sample.data();
-            // find and existing existing instance in the Circles stream
-            get_circles_data(circles, square_sample.info().instance_handle());
-            // Write aggregated sample intro Triangles
-            route.output<DynamicData>("Triangle").write(output_data_);
+    // Read all data from leading input, then select equivalent instance from
+    // other inputs
+    DataState new_data = DataState(
+            SampleState::not_read(),
+            ViewState::any(),
+            InstanceState::any());
+    auto leading_samples = route.input<DynamicData>(leading_input_index_)
+            .select().state(new_data).read();
+    for (auto leading : leading_samples) {
+        std::pair<int, int> output_xy(0, 0);
+
+        if (leading.info().valid()) {
+            output_data_ = leading.data();
+
+            output_xy.first += leading.data().value<int32_t>("x");
+            output_xy.second += leading.data().value<int32_t>("y");
+            for (int32_t i = 0; i < route.input_count(); i++) {
+                if (i == leading_input_index_) {
+                    continue;
+                }
+
+                auto aggregated_samples = route.input<DynamicData>(i).select()
+                        .instance(leading.info().instance_handle()).read();
+                if (aggregated_samples.length() != 0) {
+                    //use last value cached
+                    output_xy.first += aggregated_samples[0].data().value<int32_t>("x");
+                    output_xy.second +=  aggregated_samples[0].data().value<int32_t>("y");
+                }
+            }
+            output_xy.first /= route.input_count();
+            output_xy.second /= route.input_count();
+            output_data_.get().value<int32_t>(
+                    "x",
+                    output_xy.first);
+            output_data_.get().value<int32_t>(
+                    "y",
+                    output_xy.second);
+             // Write aggregated sample into single output
+            route.output<DynamicData>(0).write(output_data_.get());
         } else {
-            route.output<DynamicData>("Triangle").write(
-                    output_data_,
-                    square_sample.info());
-            //clear instance instance
-            route.input<DynamicData>("Square").select()
-                    .instance(square_sample.info().instance_handle()).take();
+            // propagate the dispose
+            route.output<DynamicData>(0).write(
+                    output_data_.get(),
+                    leading.info());
         }
     }
 }
@@ -93,8 +105,6 @@ void ShapesAggregrator::on_data_available(
  */
 
 ShapesSplitter::ShapesSplitter()
-    :output_circle_(dds::core::xtypes::StructType("dummy")),
-     output_triangle_(dds::core::xtypes::StructType("dummy"))
 {
 }
 
@@ -102,41 +112,38 @@ ShapesSplitter::~ShapesSplitter()
 {
 }
 
-void ShapesSplitter::on_output_enabled(
+void ShapesSplitter::on_input_enabled(
         rti::routing::processor::Route& route,
-        rti::routing::processor::Output& output)
+        rti::routing::processor::Input& input)
 {
-    // initialize the output_data buffer using the type from the output
-    if (output.stream_info().stream_name() == "Circle") {
-        output_circle_ = TypedOutput<DynamicData>(&output).create_data();
-    } else if (output.stream_info().stream_name() == "Triangle") {
-        output_triangle_ = TypedOutput<DynamicData>(&output).create_data();
-    }
+    // The type this processor works with is the ShapeType, which shall
+    // be the type the input as well as the two outputs. Hence we can use
+    // the input type to initialize the output data buffer
+    output_data_ = input.get<DynamicData>().create_data();
 }
 
 void ShapesSplitter::on_data_available(
         rti::routing::processor::Route& route)
 {
-    // Split squares into monodimensional circles and triangles
-    auto squares = route.input<DynamicData>("Square").take();
-    for (auto square_sample : squares) {
-        if (square_sample.info().valid()) {
-            output_circle_ = square_sample.data();
-            output_circle_.value<int32_t>("y", 0);
-            output_triangle_ = square_sample.data();
-            output_triangle_.value<int32_t>("x", 0);
+    // Split input shapes  into mono-dimensional output shapes
+    auto input_samples = route.input<DynamicData>(0).take();
+    for (auto sample : input_samples) {
+        if (sample.info().valid()) {
+            // split into first output
+            output_data_ = sample.data();
+            output_data_.get().value<int32_t>("y", 0);
+            route.output<DynamicData>(0).write(
+                    output_data_.get(),
+                    sample.info());
+            // split into second output
+            output_data_ = sample.data();
+            output_data_.get().value<int32_t>("x", 0);
+            route.output<DynamicData>(1).write(
+                    output_data_.get(),
+                    sample.info());
         }
-
-        route.output<DynamicData>("Circle").write(
-                output_circle_,
-                square_sample.info());
-        route.output<DynamicData>("Triangle").write(
-                output_triangle_,
-                square_sample.info());
     }
 }
-
-
 
 /*
  * --- ShapesProcessorPlugin --------------------------------------------------
@@ -144,6 +151,9 @@ void ShapesSplitter::on_data_available(
 
 const std::string ShapesProcessorPlugin::PROCESSOR_KIND_PROPERTY_NAME =
         "shapes_processor.kind";
+
+const std::string ShapesProcessorPlugin::PROCESSOR_LEADING_INPUT_PROPERTY_NAME =
+        "shapes_processor.leading_input_index";
 
 const std::string ShapesProcessorPlugin::PROCESSOR_AGGREGATOR_NAME =
         "aggregator";
@@ -155,7 +165,6 @@ ShapesProcessorPlugin::ShapesProcessorPlugin(
 }
 
 
-
 rti::routing::processor::Processor* ShapesProcessorPlugin::create_processor(
         rti::routing::processor::Route&,
         const rti::routing::PropertySet& properties)
@@ -163,7 +172,17 @@ rti::routing::processor::Processor* ShapesProcessorPlugin::create_processor(
     PropertySet::const_iterator it = properties.find(PROCESSOR_KIND_PROPERTY_NAME);
     if (it != properties.end()
             && it->second == PROCESSOR_AGGREGATOR_NAME) {
-        return new ShapesAggregrator();
+        int32_t leading_input_index = 0;
+        
+        it = properties.find(PROCESSOR_LEADING_INPUT_PROPERTY_NAME);
+        if (it != properties.end()) {
+            std::stringstream stream;
+
+            stream << it->second;
+            stream >> leading_input_index;
+        }
+        
+        return new ShapesAggregrator(leading_input_index);
     }
 
     return new ShapesSplitter();

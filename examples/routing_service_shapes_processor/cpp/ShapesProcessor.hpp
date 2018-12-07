@@ -18,6 +18,7 @@
 #include <rti/routing/processor/Processor.hpp>
 #include <dds/core/xtypes/DynamicData.hpp>
 #include <dds/core/xtypes/StructType.hpp>
+#include <dds/core/Optional.hpp>
 
 class ShapesAggregrator :
         public rti::routing::processor::NoOpProcessor {
@@ -29,36 +30,38 @@ public:
             rti::routing::processor::Route& route,
             rti::routing::processor::Output& output);
 
-    ShapesAggregrator();
+    ShapesAggregrator(int32_t leading_input_index);
 
     ~ShapesAggregrator();
     
 private:
-    void get_circles_data(
-            rti::routing::processor::LoanedSamples<
-                    dds::core::xtypes::DynamicData>& circles,
-            const dds::core::InstanceHandle& handle);
-    
-    dds::core::xtypes::DynamicData output_data_;
+    // Optional member for deferred initialization: this object can be created
+    // only when the output is enabled.
+    // You can use std::optional if supported in your platform
+    dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
+    // index of leading input from which data is read first
+    int32_t leading_input_index_;
 };
 
 class ShapesSplitter :
         public rti::routing::processor::NoOpProcessor {
 
 public:
-    void on_data_available(rti::routing::processor::Route&);
+    void on_data_available(rti::routing::processor::Route&) override;
 
-    void on_output_enabled(
+    void on_input_enabled(
             rti::routing::processor::Route& route,
-            rti::routing::processor::Output& output);
+            rti::routing::processor::Input& input) override;
 
     ShapesSplitter();
 
     ~ShapesSplitter();
 
 private:
-    dds::core::xtypes::DynamicData output_circle_;
-    dds::core::xtypes::DynamicData output_triangle_;
+    // Optional member for deferred initialization: this object can be created
+    // only when the output is enabled.
+    // You can use std::optional if supported in your platform
+    dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
 };
 
 class ShapesProcessorPlugin :
@@ -66,15 +69,16 @@ class ShapesProcessorPlugin :
                   
 public:        
     static const std::string PROCESSOR_KIND_PROPERTY_NAME;
+    static const std::string PROCESSOR_LEADING_INPUT_PROPERTY_NAME;
     static const std::string PROCESSOR_AGGREGATOR_NAME;
     
     rti::routing::processor::Processor* create_processor(
             rti::routing::processor::Route& route,
-            const rti::routing::PropertySet& properties) RTI_OVERRIDE;
+            const rti::routing::PropertySet& properties) override;
 
     void delete_processor(
-        rti::routing::processor::Route& route,
-        rti::routing::processor::Processor *processor) RTI_OVERRIDE; 
+            rti::routing::processor::Route& route,
+            rti::routing::processor::Processor *processor) override;
     
     ShapesProcessorPlugin(
             const rti::routing::PropertySet& properties);

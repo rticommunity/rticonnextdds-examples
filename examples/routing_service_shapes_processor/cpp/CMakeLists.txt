@@ -14,7 +14,7 @@ find_package(
     )
 
 # Define the library that will provide the  Processor plugin
-add_library(shapesprocessor SHARED ShapesProcessor.cxx)
+add_library(shapesprocessor SHARED ${CMAKE_SOURCE_DIR}/ShapesProcessor.cxx)
 
 target_include_directories(shapesprocessor
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
@@ -24,7 +24,7 @@ target_compile_definitions(shapesprocessor
     PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
 
 target_link_libraries(shapesprocessor
-    ${rtirsinfrastructure_library}
+    RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS})

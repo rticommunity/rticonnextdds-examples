@@ -34,11 +34,21 @@
             <participant name="domain0">
                 <domain_id>0</domain_id>
             </participant>
+            
             <participant name="domain1">
                 <domain_id>1</domain_id>
             </participant>
 
             <session>
+                
+                <auto_topic_route>
+                    <input participant="domain0">
+                        <deny_topic_name_filter>Triangle</deny_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
+                    </input>
+                    <output participant="domain1"/>
+                </auto_topic_route>
                 
                 <topic_route name="SquaresAndCirclestoTriangles">
                     <processor plugin_name="ShapesPluginLib::ShapesProcessor">
@@ -48,18 +58,22 @@
                                     <name>shapes_processor.kind</name>
                                     <value>aggregator</value>
                                 </element>
+                                <element>
+                                    <name>shapes_processor.leading_input_index</name>
+                                    <value>1</value>
+                                </element>
                             </value>
                         </property>
                     </processor>
                     <input name="Square" participant="domain0">
                         <registered_type_name>ShapeType</registered_type_name>
                         <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
-                        <datareader_qos base_name="RsShapesQosLib"/>
+                        <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
                     </input>
                     <input name="Circle" participant="domain0">
                         <registered_type_name>ShapeType</registered_type_name>
                         <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
-                        <datareader_qos base_name="RsShapesQosLib"/>
+                        <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
                     </input>
                     <output name="Triangle" participant="domain1">
                         <registered_type_name>ShapeType</registered_type_name>
@@ -87,6 +101,7 @@
             <participant name="domain0">
                 <domain_id>0</domain_id>
             </participant>
+            
             <participant name="domain1">
                 <domain_id>1</domain_id>
             </participant>
