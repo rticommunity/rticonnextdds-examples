@@ -14,6 +14,6 @@ The examples contained in the [master](https://github.com/rticommunity/rticonnex
 branches of this repository have been built and tested against RTI Connext DDS
 5.3.0. If you need examples that have been built and tested against older
 versions of RTI Connext DDS, please check out the appropriate branch:
-* [BRANCH_CONNEXT_5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/BRANCH_CONNEXT_5.2.0)
-* [BRANCH_CONNEXT_5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/BRANCH_CONNEXT_5.1.0)
-* [BRANCH_CONNEXT_5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/BRANCH_CONNEXT_5.0.0)
+* [releases/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/releases/5.2.0)
+* [releases/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/releases/5.1.0)
+* [releases/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/releases/5.0.0)
