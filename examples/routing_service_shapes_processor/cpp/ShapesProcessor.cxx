@@ -204,6 +204,4 @@ void ShapesProcessorPlugin::delete_processor(
 }
 
 
-
-
 RTI_PROCESSOR_PLUGIN_CREATE_FUNCTION_DEF(ShapesProcessorPlugin);

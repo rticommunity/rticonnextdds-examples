@@ -8,6 +8,9 @@
  * This code contains trade secrets of Real-Time Innovations, Inc.
  */
 
+#ifndef SHAPES_PROCESSOR_HPP_
+#define SHAPES_PROCESSOR_HPP_
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <iterator>
@@ -97,3 +100,5 @@ public:
  * \endcode
  */
 RTI_PROCESSOR_PLUGIN_CREATE_FUNCTION_DECL(ShapesProcessorPlugin);
+
+#endif
