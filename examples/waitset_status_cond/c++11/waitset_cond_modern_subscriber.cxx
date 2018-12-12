@@ -31,6 +31,9 @@ int subscriber_main(int domain_id, int sample_count)
 
     // Create a Status Condition for the reader
     dds::core::cond::StatusCondition status_condition(reader);
+ 
+    //Enable statuses configuration for the status that it is desired
+    status_condition.enabled_statuses(dds::core::status::StatusMask::liveliness_changed());
 
     // Lambda function for the status_condition
     // Handler register a custom handler with the condition
