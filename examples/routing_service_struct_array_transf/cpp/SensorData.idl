@@ -1,0 +1,19 @@
+
+const long SENSOR_DATA_ARRAY_LENGTH = 4;
+
+@nested
+struct SensorAttributes {
+    uint32 id;
+    float value;
+    boolean is_active;
+};
+ 
+struct SensorAttributesCollection {
+    SensorAttributes sensor_array[SENSOR_DATA_ARRAY_LENGTH];
+};
+
+struct SensorData {
+    uint32 id[SENSOR_DATA_ARRAY_LENGTH];
+    float value[SENSOR_DATA_ARRAY_LENGTH];
+    boolean is_active[SENSOR_DATA_ARRAY_LENGTH];
+};

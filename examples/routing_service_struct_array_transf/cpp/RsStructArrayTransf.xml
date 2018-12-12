@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_routing_service.xsd">
+
+    <!--
+    **********************************************************************
+    RTI Router example                                                     
+    ********************************************************************** 
+    This example reads SensorDataExample on domain 0 and transforms them           
+    into TransformedSensorDataExample. See idl in this example                                          
+    ********************************************************************** 
+    -->
+
+
+    <!-- 
+    Here we're loading our custom transformation class
+    -->
+    <plugin_library name="MyPluginLib">
+        <transformation_plugin name="SensorDataTransformation">
+            <!--
+            By specifing this value, RTI Router will search for
+            libstructarraytransf.so in Unix systems and structarraytransf.dll on
+            Windows systems. RTI Routing Service will attempt to load this
+            library from:
+                - Working directory or plugin_search_path
+                - Executable directory
+                - Environment library path
+            -->
+            <dll>structarraytransf</dll>
+            <create_function>
+                StructArrayTransformationPlugin_create_transformation_plugin
+            </create_function>
+        </transformation_plugin>
+    </plugin_library>
+
+
+    <routing_service name="RsStructArrayTransf">
+        <annotation>
+            <documentation>
+                Uses a transformation to convert samples from a struct array.
+            </documentation>
+        </annotation>
+
+        <domain_route>
+            <participant name="myDomain">
+                <domain_id>0</domain_id>
+            </participant>
+                     
+            <session name="Session">
+                <!--
+                Reading SensorAttributesCollection topic
+                -->
+                <topic_route name="SensorData">
+                    <input participant="myDomain">
+                        <registered_type_name>SensorAttributesCollection</registered_type_name>
+                        <topic_name>Example SensorAttributesCollection</topic_name>
+                    </input>
+                    <output participant="myDomain">
+                        <topic_name>Example SensorData</topic_name>
+                        <registered_type_name>SensorData</registered_type_name>
+                        <transformation plugin_name="MyPluginLib::SensorDataTransformation"/>
+                    </output>
+                </topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>
