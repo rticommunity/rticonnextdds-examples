@@ -50,7 +50,7 @@ which upon success it will create a shared library file in the build directory.
 Running
 =======
 
-To run this example you will two instances of *RTI Shapes Demo* and a single
+To run this example you will need two instances of *RTI Shapes Demo* and a single
 instance of |RS|.
 
 To run |RS|, you will need first to set up your environment as follows:

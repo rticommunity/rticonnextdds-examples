@@ -33,6 +33,14 @@ In the example, these processors are instantiated as part of a *TopicRoute*,
 in which all its inputs and outputs represent instantiations of the
 *Connext DDS Adapter StreamReader* and *StreamWriter*, respectively.
 
+In this example you will find files for the following elements:
+
+- ``ShapesProcessor``: the custom |PROCESSOR| plug-in, generated as a
+  shared library, that contains the implementation for both aggregation
+  and split processors.
+- Configuration for the |RS| that loads the custom |PROCESSOR| and provides
+  the communication between publisher and subscriber applications.
+
 *ShapesAggregator*
 ------------------
 The data processing is tied to a *leading input*, that represents
@@ -81,8 +89,8 @@ The splitting algorithm consists of assigning:
 
 This |PROCESSOR| implementation does not receive any configuration properties.
 
-Example Description
-===================
+Requirements
+============
 
 To run this example you will need:
 
