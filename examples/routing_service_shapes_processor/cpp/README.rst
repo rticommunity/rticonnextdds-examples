@@ -19,25 +19,32 @@ From the directory containing the example sources:
 
     mkdir build
     cd build
-    cmake .. -DCONNEXTDDS_DIR=$NDDSHOME\
+    cmake .. -DCONNEXTDDS_DIR=<Connext directory> \
              -DCONNEXTDDS_ARCH=<ARCH> \
              -DBUILD_SHARED_LIBS=ON
-             -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 
 where:
 
-- the environment variable ``$NDDSHOME`` shall point to the installation
-  directory of RTI Connext.
+- ``<Connext directory>`` shall be replaced with the path to the installation
+  directory of *RTI Connext*.
 - ``<ARCH>`` shall be replaced with the target architecture where you are
   running the example (e.g., x64Darwin15clang7.0).
 
+.. note::
+
+    Certain CMake generators may require specific value for the target platform
+    through the ``-DCMAKE_GENERATOR_PLATFORM``. For example on Windows system,
+    you can specify the values ``x86`` or ``x64``.
+
 On successful execution of CMake, you will find different new files in your
-build directory, including a file with name ``Makefile``. This file represents
+build directory that will perform the build of the sources into a shared library.
+
+In Unix, you will find a file with name ``Makefile``. This file represents
 a Unix makefile that contains the rules to build a shared library containing
 the |PROCESSOR| plug-in implementation.
 
-Now run:
+To perform the build run:
 
 ::
 
@@ -57,7 +64,7 @@ To run |RS|, you will need first to set up your environment as follows:
 
 ::
 
-    export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<ARCH>
+    export RTI_LD_LIBRARY_PATH=<Connext directory>/lib/<ARCH>
 
 where ``<ARCH>`` shall be replaced with the target architecture you used to
 build the example in the previous step.
@@ -78,7 +85,7 @@ Aggregation
 
    ::
 
-        $NDDSHOME/bin/rtiroutingservice \
+        <Connext directory>/bin/rtiroutingservice \
                 -cfgFile ../RsShapesProcessor.xml \
                 -cfgName RsShapesAggregator
 
@@ -112,7 +119,7 @@ Splitter
 
    ::
 
-        $NDDSHOME/bin/rtiroutingservice \
+        <Connext directory>/bin/rtiroutingservice \
                 -cfgFile ../RsShapesProcessor.xml \
                 -cfgName RsShapesSplitter
 
