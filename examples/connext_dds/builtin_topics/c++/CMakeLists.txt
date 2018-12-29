@@ -95,16 +95,16 @@ target_include_directories(msg_publisher
 
 # Add the target for the subscriber
 add_executable(msg_subscriber
-"${CMAKE_SOURCE_DIR}/msg_subscriber.cxx"
-${msg_CXX_SOURCES})
+    "${CMAKE_SOURCE_DIR}/msg_subscriber.cxx"
+    ${msg_CXX_SOURCES})
 
 add_dependencies(msg_subscriber
-qos_profiles)
+    qos_profiles)
 
 target_link_libraries(msg_subscriber
-PUBLIC
-    RTIConnextDDS::cpp_api)
+    PUBLIC
+        RTIConnextDDS::cpp_api)
 
 target_include_directories(msg_subscriber
-PRIVATE
-    "${CMAKE_BINARY_DIR}/src")
+    PRIVATE
+        "${CMAKE_BINARY_DIR}/src")

@@ -95,16 +95,16 @@ target_include_directories(cft_publisher
 
 # Add the target for the subscriber
 add_executable(cft_subscriber
-"${CMAKE_SOURCE_DIR}/cft_subscriber.cxx"
-${cft_CXX_SOURCES})
+    "${CMAKE_SOURCE_DIR}/cft_subscriber.cxx"
+    ${cft_CXX_SOURCES})
 
 add_dependencies(cft_subscriber
-qos_profiles)
+    qos_profiles)
 
 target_link_libraries(cft_subscriber
-PUBLIC
-    RTIConnextDDS::cpp_api)
+    PUBLIC
+        RTIConnextDDS::cpp_api)
 
 target_include_directories(cft_subscriber
-PRIVATE
-    "${CMAKE_BINARY_DIR}/src")
+    PRIVATE
+        "${CMAKE_BINARY_DIR}/src")

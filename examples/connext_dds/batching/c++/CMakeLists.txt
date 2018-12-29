@@ -95,16 +95,16 @@ target_include_directories(batch_data_publisher
 
 # Add the target for the subscriber
 add_executable(batch_data_subscriber
-"${CMAKE_SOURCE_DIR}/batch_data_subscriber.cxx"
-${batch_data_CXX_SOURCES})
+    "${CMAKE_SOURCE_DIR}/batch_data_subscriber.cxx"
+    ${batch_data_CXX_SOURCES})
 
 add_dependencies(batch_data_subscriber
-qos_profiles)
+    qos_profiles)
 
 target_link_libraries(batch_data_subscriber
-PUBLIC
-    RTIConnextDDS::cpp_api)
+    PUBLIC
+        RTIConnextDDS::cpp_api)
 
 target_include_directories(batch_data_subscriber
-PRIVATE
-    "${CMAKE_BINARY_DIR}/src")
+    PRIVATE
+        "${CMAKE_BINARY_DIR}/src")

@@ -95,16 +95,16 @@ target_include_directories(coherent_publisher
 
 # Add the target for the subscriber
 add_executable(coherent_subscriber
-"${CMAKE_SOURCE_DIR}/coherent_subscriber.cxx"
-${coherent_CXX_SOURCES})
+    "${CMAKE_SOURCE_DIR}/coherent_subscriber.cxx"
+    ${coherent_CXX_SOURCES})
 
 add_dependencies(coherent_subscriber
-qos_profiles)
+    qos_profiles)
 
 target_link_libraries(coherent_subscriber
-PUBLIC
-    RTIConnextDDS::cpp_api)
+    PUBLIC
+        RTIConnextDDS::cpp_api)
 
 target_include_directories(coherent_subscriber
-PRIVATE
-    "${CMAKE_BINARY_DIR}/src")
+    PRIVATE
+        "${CMAKE_BINARY_DIR}/src")

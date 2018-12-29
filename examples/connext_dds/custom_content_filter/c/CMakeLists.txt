@@ -4,11 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.5)
-project(rtiexamples-builtin-qos)
-
-if(NOT ${BUILD_SHARED_LIBS})
-    message(FATAL_ERROR "Static linking is not supported for this example")
-endif()
+project(rtiexamples-custom-content-filter)
 
 find_package(Git REQUIRED)
 
@@ -59,56 +55,39 @@ include(ConnextDdsCodegen)
 
 connextdds_rtiddsgen_run(
     IDL_FILE
-        "${CMAKE_SOURCE_DIR}/profiles.idl"
+        "${CMAKE_SOURCE_DIR}/ccf.idl"
     OUTPUT_DIRECTORY
         "${CMAKE_BINARY_DIR}/src"
-    LANG C++)
-
-# Copy the USER_QOS_PROFILES.xml file
-add_custom_target(qos_profiles
-    DEPENDS
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml")
-
-add_custom_command(
-    OUTPUT
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml"
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-            "${CMAKE_BINARY_DIR}"
-    COMMENT "Copying USER_QOS_PROFILES.xml"
-    DEPENDS
-        "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-    VERBATIM)
+    LANG C)
 
 # Add the target for the publisher
-add_executable(profiles_publisher
-    "${CMAKE_SOURCE_DIR}/profiles_publisher.cxx"
-    ${profiles_CXX_SOURCES})
+add_executable(ccf_publisher
+    "${CMAKE_SOURCE_DIR}/ccf_publisher.c"
+    ${ccf_C_SOURCES})
 
-add_dependencies(profiles_publisher
+add_dependencies(ccf_publisher
     qos_profiles)
 
-target_link_libraries(profiles_publisher
+target_link_libraries(ccf_publisher
     PUBLIC
-        RTIConnextDDS::cpp_api)
+        RTIConnextDDS::c_api)
 
-target_include_directories(profiles_publisher
+target_include_directories(ccf_publisher
     PRIVATE
         "${CMAKE_BINARY_DIR}/src")
 
 # Add the target for the subscriber
-add_executable(profiles_subscriber
-    "${CMAKE_SOURCE_DIR}/profiles_subscriber.cxx"
-    ${profiles_CXX_SOURCES})
+add_executable(ccf_subscriber
+    "${CMAKE_SOURCE_DIR}/ccf_subscriber.c"
+    ${ccf_C_SOURCES})
 
-add_dependencies(profiles_subscriber
+add_dependencies(ccf_subscriber
     qos_profiles)
 
-target_link_libraries(profiles_subscriber
+target_link_libraries(ccf_subscriber
     PUBLIC
-        RTIConnextDDS::cpp_api)
+        RTIConnextDDS::c_api)
 
-target_include_directories(profiles_subscriber
+target_include_directories(ccf_subscriber
     PRIVATE
         "${CMAKE_BINARY_DIR}/src")
