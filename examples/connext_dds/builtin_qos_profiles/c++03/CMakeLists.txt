@@ -10,11 +10,9 @@ if(NOT ${BUILD_SHARED_LIBS})
     message(FATAL_ERROR "Static linking is not supported for this example")
 endif()
 
-
-find_package(Git REQUIRED)
-
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
+    find_package(Git REQUIRED)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
         OUTPUT_VARIABLE repository_root
@@ -46,71 +44,14 @@ endif()
 
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
-    "${RTI_CMAKE_RESOURCES}")
+    "${RTI_CMAKE_RESOURCES}"
+)
 
-# Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+include(ConnextDdsAddExample)
 
-# Generate source code from the IDL file
-include(ConnextDdsCodegen)
-
-connextdds_rtiddsgen_run(
-    IDL_FILE
-        "${CMAKE_SOURCE_DIR}/profiles.idl"
-    OUTPUT_DIRECTORY
-        "${CMAKE_BINARY_DIR}/src"
+connextdds_add_example(
+    IDL "profiles"
     LANG "C++03"
-    LEGACY_PLUGIN)
-
-# Copy the USER_QOS_PROFILES.xml file
-add_custom_target(qos_profiles
-    DEPENDS
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml")
-
-add_custom_command(
-    OUTPUT
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml"
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-            "${CMAKE_BINARY_DIR}"
-    COMMENT "Copying USER_QOS_PROFILES.xml"
-    DEPENDS
-        "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-    VERBATIM)
-
-# Add the target for the publisher
-add_executable(profiles_publisher
-    "${CMAKE_SOURCE_DIR}/profiles_publisher.cxx"
-    ${profiles_CXX03_SOURCES})
-
-add_dependencies(profiles_publisher
-    qos_profiles)
-
-target_link_libraries(profiles_publisher
-    PUBLIC
-        RTIConnextDDS::cpp2_api)
-
-target_include_directories(profiles_publisher
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
-
-# Add the target for the subscriber
-add_executable(profiles_subscriber
-    "${CMAKE_SOURCE_DIR}/profiles_subscriber.cxx"
-    ${profiles_CXX03_SOURCES})
-
-add_dependencies(profiles_subscriber
-    qos_profiles)
-
-target_link_libraries(profiles_subscriber
-    PUBLIC
-        RTIConnextDDS::cpp2_api)
-
-target_include_directories(profiles_subscriber
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
+    CODEGEN_ARGS
+        LEGACY_PLUGIN
+)

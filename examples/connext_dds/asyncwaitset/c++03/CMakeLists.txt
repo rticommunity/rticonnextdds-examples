@@ -6,10 +6,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(rtiexamples-asyncwaitset)
 
-find_package(Git REQUIRED)
-
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
+    find_package(Git REQUIRED)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
         OUTPUT_VARIABLE repository_root
@@ -41,48 +40,14 @@ endif()
 
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
-    "${RTI_CMAKE_RESOURCES}")
+    "${RTI_CMAKE_RESOURCES}"
+)
 
-# Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+include(ConnextDdsAddExample)
 
-# Generate source code from the IDL file
-include(ConnextDdsCodegen)
-
-connextdds_rtiddsgen_run(
-    IDL_FILE
-        "${CMAKE_SOURCE_DIR}/AwsExample.idl"
-    OUTPUT_DIRECTORY
-        "${CMAKE_BINARY_DIR}/src"
+connextdds_add_example(
+    IDL "AwsExample"
     LANG "C++03"
-    LEGACY_PLUGIN)
-
-# Add the target for the publisher
-add_executable(AwsExample_publisher
-    "${CMAKE_SOURCE_DIR}/AwsExample_publisher.cxx"
-    ${AwsExample_CXX03_SOURCES})
-
-target_link_libraries(AwsExample_publisher
-    PUBLIC
-        RTIConnextDDS::cpp2_api)
-
-target_include_directories(AwsExample_publisher
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
-
-# Add the target for the subscriber
-add_executable(AwsExample_subscriber
-    "${CMAKE_SOURCE_DIR}/AwsExample_subscriber.cxx"
-    ${AwsExample_CXX03_SOURCES})
-
-target_link_libraries(AwsExample_subscriber
-    PUBLIC
-        RTIConnextDDS::cpp2_api)
-
-target_include_directories(AwsExample_subscriber
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
+    CODEGEN_ARGS
+        LEGACY_PLUGIN
+)

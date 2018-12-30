@@ -6,10 +6,9 @@
 cmake_minimum_required(VERSION 3.5)
 project(rtiexamples-builtin-topics)
 
-find_package(Git REQUIRED)
-
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
+    find_package(Git REQUIRED)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
         OUTPUT_VARIABLE repository_root
@@ -43,68 +42,9 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${RTI_CMAKE_RESOURCES}")
 
-# Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+include(ConnextDdsAddExample)
 
-# Generate source code from the IDL file
-include(ConnextDdsCodegen)
-
-connextdds_rtiddsgen_run(
-    IDL_FILE
-        "${CMAKE_SOURCE_DIR}/msg.idl"
-    OUTPUT_DIRECTORY
-        "${CMAKE_BINARY_DIR}/src"
-    LANG C)
-
-# Copy the USER_QOS_PROFILES.xml file
-add_custom_target(qos_profiles
-    DEPENDS
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml")
-
-add_custom_command(
-    OUTPUT
-        "${CMAKE_BINARY_DIR}/USER_QOS_PROFILES.xml"
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-            "${CMAKE_BINARY_DIR}"
-    COMMENT "Copying USER_QOS_PROFILES.xml"
-    DEPENDS
-        "${CMAKE_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-    VERBATIM)
-
-# Add the target for the publisher
-add_executable(msg_publisher
-    "${CMAKE_SOURCE_DIR}/msg_publisher.c"
-    ${msg_C_SOURCES})
-
-add_dependencies(msg_publisher
-    qos_profiles)
-
-target_link_libraries(msg_publisher
-    PUBLIC
-        RTIConnextDDS::c_api)
-
-target_include_directories(msg_publisher
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
-
-# Add the target for the subscriber
-add_executable(msg_subscriber
-    "${CMAKE_SOURCE_DIR}/msg_subscriber.c"
-    ${msg_C_SOURCES})
-
-add_dependencies(msg_subscriber
-    qos_profiles)
-
-target_link_libraries(msg_subscriber
-    PUBLIC
-        RTIConnextDDS::c_api)
-
-target_include_directories(msg_subscriber
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
+connextdds_add_example(
+    IDL "msg"
+    LANG "C"
+)

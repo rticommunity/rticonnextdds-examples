@@ -4,12 +4,11 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.5)
-project(rtiexamples-custom-content-filter)
-
-find_package(Git REQUIRED)
+project(rtiexamples-custom-content-filtered)
 
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
+    find_package(Git REQUIRED)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
         OUTPUT_VARIABLE repository_root
@@ -41,53 +40,12 @@ endif()
 
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
-    "${RTI_CMAKE_RESOURCES}")
+    "${RTI_CMAKE_RESOURCES}"
+)
 
-# Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+include(ConnextDdsAddExample)
 
-# Generate source code from the IDL file
-include(ConnextDdsCodegen)
-
-connextdds_rtiddsgen_run(
-    IDL_FILE
-        "${CMAKE_SOURCE_DIR}/ccf.idl"
-    OUTPUT_DIRECTORY
-        "${CMAKE_BINARY_DIR}/src"
-    LANG C)
-
-# Add the target for the publisher
-add_executable(ccf_publisher
-    "${CMAKE_SOURCE_DIR}/ccf_publisher.c"
-    ${ccf_C_SOURCES})
-
-add_dependencies(ccf_publisher
-    qos_profiles)
-
-target_link_libraries(ccf_publisher
-    PUBLIC
-        RTIConnextDDS::c_api)
-
-target_include_directories(ccf_publisher
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
-
-# Add the target for the subscriber
-add_executable(ccf_subscriber
-    "${CMAKE_SOURCE_DIR}/ccf_subscriber.c"
-    ${ccf_C_SOURCES})
-
-add_dependencies(ccf_subscriber
-    qos_profiles)
-
-target_link_libraries(ccf_subscriber
-    PUBLIC
-        RTIConnextDDS::c_api)
-
-target_include_directories(ccf_subscriber
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src")
+connextdds_add_example(
+    IDL "ccf"
+    LANG "C"
+)
