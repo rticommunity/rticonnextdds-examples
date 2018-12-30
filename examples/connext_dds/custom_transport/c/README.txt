@@ -42,7 +42,7 @@ On UNIX systems (assuming you want to generate an example for i86Linux2.6gcc4.1.
 
 makefile_custom_transport_plugins_i86Linux2.6gcc4.1.1i86Linux2.6gcc4.4.3) run:
 
-rtiddsgen -language C -example i86Linux2.6gcc4.1.1 custom_transport.
+rtiddsgen -language C -example i86Linux2.6gcc4.1.1 custom_transport.idl
 
 
 You will see some messages that indicate that the USER_QOS_PROFILES.xml was 

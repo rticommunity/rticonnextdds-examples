@@ -39,6 +39,7 @@ Generate a source files using RTI Codegen::
         [STANDALONE]
         [EXTRA_ARGS ...]
         [USE_CODEGEN1]
+        [GENERATE_EXAMPLE]
     )
 
 This function calls ``codegen`` (rtiddsgen) to generates source files for the
@@ -103,6 +104,9 @@ Arguments:
 
 ``USE_CODEGEN1`` (optional)
     Use rtiddsgen1.
+
+``GENERATE_EXAMPLE`` (optional)
+    Generate the source code for the publisher and subscriber.
 
 Output values:
 The language variable is sanitized according to
@@ -300,7 +304,7 @@ endmacro()
 # Helper function to determine the generated files based on the language
 # Supported languages are: C C++ Java C++/CLI C++03 C++11 C#
 function(_connextdds_codegen_get_generated_file_list)
-    set(options LEGACY_PLUGIN STANDALONE DEBUG NO_CODE_GENERATION)
+    set(options LEGACY_PLUGIN STANDALONE DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE)
     set(single_value_args VAR LANG PACKAGE IDL_BASENAME OUTPUT_DIR)
     set(multi_value_args "")
     cmake_parse_arguments(_CODEGEN
@@ -322,12 +326,30 @@ function(_connextdds_codegen_get_generated_file_list)
         endif()
 
         # Set in the parent scope
-        set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
         set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
+
+        if(_CODEGEN_GENERATE_EXAMPLE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+                "${path_base}_publisher.c"
+                ${sources}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+                "${path_base}_subscriber.c"
+                ${sources}
+                PARENT_SCOPE)
+                set(${_CODEGEN_VAR}_SOURCES 
+                    ${sources}
+                    "${path_base}_publisher.c"
+                    "${path_base}_subscriber.c"
+                    PARENT_SCOPE)
+        else()
+            set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
+        endif()
 
     elseif("${_CODEGEN_LANG}" STREQUAL "C++")
         set(sources "${path_base}.cxx")
         set(headers "${path_base}.h")
+
         if(NOT _CODEGEN_STANDALONE)
             list(APPEND sources "${path_base}Plugin.cxx" "${path_base}Support.cxx")
             list(APPEND headers "${path_base}Plugin.h" "${path_base}Support.h")
@@ -349,6 +371,22 @@ function(_connextdds_codegen_get_generated_file_list)
             "${path_base}Plugin.h"
             "${path_base}Support.h"
             PARENT_SCOPE)
+
+        if(_CODEGEN_GENERATE_EXAMPLE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+                "${path_base}_publisher.cpp"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+                "${path_base}_subscriber.cpp"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SOURCES
+                ${${_CODEGEN_VAR}_SOURCES}
+                "${path_base}_publisher.cpp"
+                "${path_base}_subscriber.cpp"
+                PARENT_SCOPE)
+        endif()
     elseif("${_CODEGEN_LANG}" STREQUAL "C++03"
             OR "${_CODEGEN_LANG}" STREQUAL "C++11")
         if(_CODEGEN_LEGACY_PLUGIN)
@@ -370,6 +408,21 @@ function(_connextdds_codegen_get_generated_file_list)
             set(${_CODEGEN_VAR}_HEADERS
                 "${path_base}.hpp"
                 "${path_base}Plugin.hpp"
+                PARENT_SCOPE)
+        endif()
+        if(_CODEGEN_GENERATE_EXAMPLE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+                "${path_base}_publisher.cxx"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+                "${path_base}_subscriber.cxx"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SOURCES
+                ${${_CODEGEN_VAR}_SOURCES}
+                "${path_base}_publisher.cxx"
+                "${path_base}_subscriber.cxx"
                 PARENT_SCOPE)
         endif()
     elseif("${_CODEGEN_LANG}" STREQUAL "Java")
@@ -426,7 +479,7 @@ function(connextdds_rtiddsgen_run)
     set(options
         NOT_REPLACE UNBOUNDED IGNORE_ALIGNMENT USE42_ALIGNMENT
         OPTIMIZE_ALIGNMENT NO_TYPECODE DISABLE_PREPROCESSOR LEGACY_PLUGIN
-        STANDALONE USE_CODEGEN1 DEBUG NO_CODE_GENERATION
+        STANDALONE USE_CODEGEN1 DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE
     )
     set(single_value_args LANG OUTPUT_DIRECTORY IDL_FILE VAR PACKAGE)
     set(multi_value_args INCLUDE_DIRS DEFINES EXTRA_ARGS)
@@ -481,6 +534,7 @@ function(connextdds_rtiddsgen_run)
         LANG ${_CODEGEN_LANG}
         OUTPUT_DIR "${_CODEGEN_OUTPUT_DIRECTORY}"
         PACKAGE ${_CODEGEN_PACKAGE}
+        GENERATE_EXAMPLE ${_CODEGEN_GENERATE_EXAMPLE}
         ${list_extra_args}
     )
 
@@ -541,6 +595,10 @@ function(connextdds_rtiddsgen_run)
         list(APPEND extra_flags "-replace")
     endif()
 
+    if(_CODEGEN_GENERATE_EXAMPLE)
+        list(APPEND extra_flags "-example" ${CONNEXTDDS_ARCH})
+    endif()
+
     # Call CodeGen
     add_custom_command(
         OUTPUT
@@ -577,6 +635,8 @@ function(connextdds_rtiddsgen_run)
 
     # Exports the files generated by Codegen
     set(${var_prefix}_${lang_var}_SOURCES ${IDL_SOURCES} PARENT_SCOPE)
+    set(${var_prefix}_${lang_var}_PUBLISHER_SOURCES ${IDL_PUBLISHER_SOURCES} PARENT_SCOPE)
+    set(${var_prefix}_${lang_var}_SUBSCRIBER_SOURCES ${IDL_SUBSCRIBER_SOURCES} PARENT_SCOPE)
     set(${var_prefix}_${lang_var}_HEADERS ${IDL_HEADERS} PARENT_SCOPE)
     set(${var_prefix}_${lang_var}_TIMESTAMP ${TIMESTAMP} PARENT_SCOPE)
 endfunction()

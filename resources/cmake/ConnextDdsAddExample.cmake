@@ -72,7 +72,7 @@ function(connextdds_add_example)
             "${CMAKE_BINARY_DIR}/src"
         LANG ${_CONNEXT_LANG}
         ${_CONNEXT_CODEGEN_ARGS}
-        )
+    )
 
     connextdds_sanitize_language(LANG ${_CONNEXT_LANG} VAR lang_var)
 
@@ -87,10 +87,20 @@ function(connextdds_add_example)
         set(extension "cxx")
     endif()
 
+    if(GENERATE_EXAMPLE IN_LIST _CONNEXT_CODEGEN_ARGS)
+        set(publisher_src ${${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCES})
+        set(subscriber_src ${${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCES})
+    else()
+        set(publisher_src
+            "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${extension}"
+            ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+        set(subscriber_src
+            "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${extension}"
+            ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+    endif()
+
     # Add the target for the publisher
-    add_executable(${_CONNEXT_IDL}_publisher
-        "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${extension}"
-        ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+    add_executable(${_CONNEXT_IDL}_publisher ${publisher_src})
 
     target_link_libraries(${_CONNEXT_IDL}_publisher
         PUBLIC
@@ -101,9 +111,7 @@ function(connextdds_add_example)
             "${CMAKE_BINARY_DIR}/src")
 
     # Add the target for the subscriber
-    add_executable(${_CONNEXT_IDL}_subscriber
-        "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${extension}"
-        ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+    add_executable(${_CONNEXT_IDL}_subscriber ${subscriber_src})
 
     target_link_libraries(${_CONNEXT_IDL}_subscriber
         PUBLIC
