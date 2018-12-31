@@ -17,6 +17,7 @@ Function to build the examples.
     _connextdds_add_example(
         NAME name
         LANG language
+        [DISABLE_SUBSCRIBER]
         [CODEGEN_ARGS ...]
     )
 
@@ -27,6 +28,10 @@ CMake targets and set the dependencies.
     Name of the IDL file (without extension).
 ``LANG`` (required):
     Example language. Valid values are ``C``, ``C++``, ``C++03`` and ``C++11``.
+``DISABLE_SUBSCRIBER``:
+    Disable the subscriber build.
+``CODEGEN_ARGS":
+    Extra arguments for Codegen.
 
 Output targets:
 ``<name>_publisher``
@@ -51,7 +56,7 @@ include(ConnextDdsCodegen)
 
 
 function(connextdds_add_example)
-    set(optional_args "")
+    set(optional_args DISABLE_SUBSCRIBER)
     set(single_value_args IDL LANG)
     set(multi_value_args CODEGEN_ARGS)
     cmake_parse_arguments(_CONNEXT
@@ -111,15 +116,17 @@ function(connextdds_add_example)
             "${CMAKE_BINARY_DIR}/src")
 
     # Add the target for the subscriber
-    add_executable(${_CONNEXT_IDL}_subscriber ${subscriber_src})
+    if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
+        add_executable(${_CONNEXT_IDL}_subscriber ${subscriber_src})
 
-    target_link_libraries(${_CONNEXT_IDL}_subscriber
-        PUBLIC
-            RTIConnextDDS::${api}_api)
+        target_link_libraries(${_CONNEXT_IDL}_subscriber
+            PUBLIC
+                RTIConnextDDS::${api}_api)
 
-    target_include_directories(${_CONNEXT_IDL}_subscriber
-        PRIVATE
-            "${CMAKE_BINARY_DIR}/src")
+        target_include_directories(${_CONNEXT_IDL}_subscriber
+            PRIVATE
+                "${CMAKE_BINARY_DIR}/src")
+    endif()
 
     set(user_qos_profile_name "USER_QOS_PROFILES.xml")
     set(qos_file "${CMAKE_SOURCE_DIR}/${user_qos_profile_name}")
@@ -141,12 +148,14 @@ function(connextdds_add_example)
             DEPENDS
                 ${qos_file}
             VERBATIM)
-        
-        add_dependencies(${_CONNEXT_IDL}_subscriber
-            qos_profiles)
 
         add_dependencies(${_CONNEXT_IDL}_publisher
             qos_profiles)
+
+        if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
+            add_dependencies(${_CONNEXT_IDL}_subscriber
+                qos_profiles)
+        endif()
 
     endif()
 
