@@ -328,7 +328,7 @@ function(_connextdds_codegen_get_generated_file_list)
         # Set in the parent scope
         set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
 
-        if(_CODEGEN_GENERATE_EXAMPLE)
+        if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
                 "${path_base}_publisher.c"
                 ${sources}
@@ -359,6 +359,22 @@ function(_connextdds_codegen_get_generated_file_list)
         set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
         set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
 
+        if(${_CODEGEN_GENERATE_EXAMPLE})
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+                "${path_base}_publisher.cxx"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+                "${path_base}_subscriber.cxx"
+                ${${_CODEGEN_VAR}_SOURCES}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SOURCES
+                ${${_CODEGEN_VAR}_SOURCES}
+                "${path_base}_publisher.cxx"
+                "${path_base}_subscriber.cxx"
+                PARENT_SCOPE)
+        endif()
+
     elseif("${_CODEGEN_LANG}" STREQUAL "C#"
             OR "${_CODEGEN_LANG}" STREQUAL "C++/CLI")
         set(${_CODEGEN_VAR}_SOURCES
@@ -372,7 +388,7 @@ function(_connextdds_codegen_get_generated_file_list)
             "${path_base}Support.h"
             PARENT_SCOPE)
 
-        if(_CODEGEN_GENERATE_EXAMPLE)
+        if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
                 "${path_base}_publisher.cpp"
                 ${${_CODEGEN_VAR}_SOURCES}
@@ -410,7 +426,7 @@ function(_connextdds_codegen_get_generated_file_list)
                 "${path_base}Plugin.hpp"
                 PARENT_SCOPE)
         endif()
-        if(_CODEGEN_GENERATE_EXAMPLE)
+        if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
                 "${path_base}_publisher.cxx"
                 ${${_CODEGEN_VAR}_SOURCES}
@@ -534,7 +550,7 @@ function(connextdds_rtiddsgen_run)
         LANG ${_CODEGEN_LANG}
         OUTPUT_DIR "${_CODEGEN_OUTPUT_DIRECTORY}"
         PACKAGE ${_CODEGEN_PACKAGE}
-        GENERATE_EXAMPLE ${_CODEGEN_GENERATE_EXAMPLE}
+        ${_CODEGEN_GENERATE_EXAMPLE}
         ${list_extra_args}
     )
 

@@ -4,9 +4,9 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.5)
-project(rtiexamples-builtin-qos)
+project(rtiexamples-builtin-qos-profiles)
 
-if(NOT ${BUILD_SHARED_LIBS})
+if(NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR "Static linking is not supported for this example")
 endif()
 

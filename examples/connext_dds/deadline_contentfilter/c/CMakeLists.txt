@@ -4,11 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.5)
-project(rtiexamples-builtin-qos-profiles)
-
-if(NOT BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "Static linking is not supported for this example")
-endif()
+project(rtiexamples-deadline-contentfilter)
 
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
@@ -50,6 +46,6 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
-    IDL "profiles"
+    IDL "deadline_contentfilter"
     LANG "C"
 )

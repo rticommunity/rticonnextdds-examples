@@ -4,11 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.5)
-project(rtiexamples-builtin-qos-profiles)
-
-if(NOT BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "Static linking is not supported for this example")
-endif()
+project(rtiexamples-dynamic-data-nested_struct)
 
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
@@ -47,9 +43,23 @@ set(CMAKE_MODULE_PATH
     "${RTI_CMAKE_RESOURCES}"
 )
 
-include(ConnextDdsAddExample)
+# Find the RTI Connext DDS libraries
+find_package(RTIConnextDDS
+    "5.3.0"
+    REQUIRED
+    COMPONENTS
+        core)
 
-connextdds_add_example(
-    IDL "profiles"
-    LANG "C"
+add_executable(dynamic_data_nested_struct
+    "${CMAKE_SOURCE_DIR}/dynamic_data_nested_struct_example.cxx"
+)
+
+target_link_libraries(dynamic_data_nested_struct
+    PUBLIC
+        RTIConnextDDS::cpp_api
+)
+
+target_include_directories(dynamic_data_nested_struct
+    PRIVATE
+        "${CMAKE_BINARY_DIR}/src"
 )
