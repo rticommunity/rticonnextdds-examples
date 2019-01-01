@@ -23,9 +23,8 @@ StreamReader *FileConnection::create_stream_reader(
 
 void FileConnection::delete_stream_reader(StreamReader *reader)
 {
-    // TODO: Implement me
+    delete reader;
 }
-
 
 StreamWriter *FileConnection::create_stream_writer(
         Session *session,
@@ -37,5 +36,5 @@ StreamWriter *FileConnection::create_stream_writer(
 
 void FileConnection::delete_stream_writer(StreamWriter *writer)
 {
-    // TODO: Implement me
+    delete writer;
 }
