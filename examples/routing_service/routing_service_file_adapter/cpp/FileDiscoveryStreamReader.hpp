@@ -5,11 +5,11 @@
 /* This software is provided "as is", without warranty, express or implied.  */
 /*                                                                           */
 /*****************************************************************************/
-#ifndef FILESTREAMREADER_HPP
-#define FILESTREAMREADER_HPP
+#ifndef FILEDISCOVERYSTREAMREADER_HPP
+#define FILEDISCOVERYSTREAMREADER_HPP
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
-#include <rti/routing/adapter/StreamReader.hpp>
+#include <rti/routing/adapter/DiscoveryStreamReader.hpp>
 
 namespace rti {
 namespace community {
@@ -22,28 +22,12 @@ class FileDiscoveryStreamReader : public DiscoveryStreamReader {
 public:
     FileDiscoveryStreamReader(const PropertySet &);
 
-    void
-            read(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &);
+    void take(std::vector<rti::routing::StreamInfo*>&);
 
-    void
-            read(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &,
-                 const SelectorState &selector_state);
+    void return_loan(std::vector<rti::routing::StreamInfo*>&);
 
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &);
-
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &,
-                 const SelectorState &selector_state);
-
-    void return_loan(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &);
-
+private:
+    std::vector<rti::routing::StreamInfo> data_samples_;
 };
 
 }  // namespace examples

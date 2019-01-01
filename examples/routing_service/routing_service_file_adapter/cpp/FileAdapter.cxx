@@ -12,11 +12,15 @@
 using namespace rti::community::examples;
 
 Connection *FileAdapter::create_connection(
-        rti::routing::adapter::detail::StreamReaderListener *,
-        rti::routing::adapter::detail::StreamReaderListener *,
-        const PropertySet &)
+        rti::routing::adapter::detail::StreamReaderListener *input_stream_discovery_listener,
+        rti::routing::adapter::detail::StreamReaderListener *output_stream_discovery_listener,
+        const PropertySet &properties)
 {
-    return new FileConnection();
+    FileConnection *fc = new FileConnection(
+            input_stream_discovery_listener,
+            output_stream_discovery_listener,
+            properties);
+    return fc;
 };
 
 rti::config::LibraryVersion FileAdapter::get_version() const

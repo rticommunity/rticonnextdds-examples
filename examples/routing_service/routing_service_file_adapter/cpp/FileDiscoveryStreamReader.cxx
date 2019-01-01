@@ -13,46 +13,17 @@ using namespace rti::community::examples;
 FileDiscoveryStreamReader::FileDiscoveryStreamReader(const PropertySet &)
 {
     // TODO:: Implement me
+    std::cout << "Create Discovery Stream Reader" << std::endl;
 }
 
-void FileDiscoveryStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos)
+void FileDiscoveryStreamReader::take(std::vector<rti::routing::StreamInfo*>& stream)
 {
-    // TODO: Implement me
-    return;
+    std::cout << "Discovery take" << std::endl;
+    stream.resize(1);
+    stream[0] = new rti::routing::StreamInfo("TestTopic","TestType");
 }
 
-
-void FileDiscoveryStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos,
-        const SelectorState &selector_state)
+void FileDiscoveryStreamReader::return_loan(std::vector<rti::routing::StreamInfo*>& stream)
 {
-    // TODO: Implement me
-    return;
-}
-
-void FileDiscoveryStreamReader::take(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos)
-{
-    // TODO: Implement me
-    return;
-}
-
-void FileDiscoveryStreamReader::take(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos,
-        const SelectorState &selector_state)
-{
-    // TODO: Implement me
-    return;
-}
-
-void FileDiscoveryStreamReader::return_loan(
-        std::vector<dds::core::xtypes::DynamicData *> &,
-        std::vector<dds::sub::SampleInfo *> &)
-{
-    // TODO: Implement me
+    std::cout << "Discovery return" << std::endl;
 }
