@@ -31,6 +31,7 @@ add_library(
     MODULE
         ${CMAKE_SOURCE_DIR}/FileAdapter.cxx
         ${CMAKE_SOURCE_DIR}/FileConnection.cxx
+        ${CMAKE_SOURCE_DIR}/FileDiscoveryStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamWriter.cxx
     )
@@ -45,3 +46,7 @@ target_link_libraries(
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
     )
+
+file(GENERATE
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/RsFileAdapter.xml
+    INPUT ${CMAKE_CURRENT_SOURCE_DIR}/RsFileAdapter.xml.in)
