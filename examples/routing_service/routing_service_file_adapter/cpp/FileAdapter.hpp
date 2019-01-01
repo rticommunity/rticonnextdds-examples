@@ -32,11 +32,12 @@ public:
     rti::config::LibraryVersion get_version() const;
 };
 
-// TODO: Document the create function
-RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DECL(FileAdapter)
 
 }  // namespace examples
 }  // namespace community
 }  // namespace rti
+
+// TODO: Document the create function
+RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DECL(FileAdapter)
 
 #endif
