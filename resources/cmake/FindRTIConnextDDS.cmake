@@ -48,6 +48,8 @@
 #   The C API library for Distributed Logger if found.
 # - ``RTIConnextDDS::distributed_logger_cpp``
 #   The CPP API library for Distributed Logger if found.
+# - ``RTIConnextDDS::routing_service_infrastructure``
+#   The infrastructure library for Routing Service if found.
 # - ``RTIConnextDDS::routing_service_c``
 #   The C API library for Routing Service if found (includes rtiroutingservice
 #   and rtirsinfrastructure).
@@ -135,6 +137,8 @@
 # - ``routing_service``:
 #   - ``ROUTING_SERVICE_API``
 #     (e.g., ``ROUTING_SERVICE_API_LIBRARIES_RELEASE_STATIC``)
+#   - ``ROUTING_SERVICE_INFRASTRUCTURE``
+#     (e.g., ``ROUTING_SERVICE_INFRASTRUCTURE_LIBRARIES_RELEASE_STATIC``)
 #
 # - ``security_plugins``:
 #   - ``SECURITY_PLUGINS``
@@ -833,6 +837,15 @@ if(routing_service IN_LIST RTIConnextDDS_FIND_COMPONENTS)
     list(APPEND rti_versions_field_names_target
             "routing_service_sdk")
 
+    # Find all flavors of librtirsinfrastructure
+    set(rtirsinfrastructure_libs
+        "rtirsinfrastructure"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables(
+        "${rtirsinfrastructure_libs}"
+        "ROUTING_SERVICE_INFRASTRUCTURE")
+
     # Find all flavors of librtiroutingservice
     set(routing_service_libs
         "rtiroutingservice"
@@ -1122,16 +1135,30 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
     endif()
 
     if(RTIConnextDDS_routing_service_FOUND AND
+        NOT TARGET RTIConnextDDS::routing_service_infrastructure)
+
+        list(GET
+            ROUTING_SERVICE_INFRASTRUCTURE_LIBRARIES_${build_type}_${link_type}
+            0
+            rtirsinfrastructure_library)
+
+        add_library(
+            RTIConnextDDS::routing_service_infrastructure
+            ${link_type} IMPORTED)
+        set_target_properties(RTIConnextDDS::routing_service_infrastructure
+            PROPERTIES
+                ${location_property}
+                    "${rtirsinfrastructure_library}"
+                INTERFACE_LINK_LIBRARIES
+                    RTIConnextDDS::c_api)
+    endif()
+
+
+    if(RTIConnextDDS_routing_service_FOUND AND
         NOT TARGET RTIConnextDDS::routing_service_c)
 
         list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
             rtirroutingservice_library)
-        list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 1
-            rtirsinfrastructure_library)
-
-        set(dependencies
-            ${rtirsinfrastructure_library}
-            RTIConnextDDS::c_api)
 
         add_library(RTIConnextDDS::routing_service_c ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_c
@@ -1139,7 +1166,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
+                    RTIConnextDDS::routing_service_infrastructure)
 
         add_library(RTIConnextDDS::routing_service ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service
@@ -1147,7 +1174,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
+                    RTIConnextDDS::routing_service_infrastructure)
     endif()
 
     if(RTIConnextDDS_routing_service_FOUND AND
@@ -1156,11 +1183,9 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
 
         list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
             rtirroutingservice_library)
-        list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 1
-            rtirsinfrastructure_library)
 
         set(dependencies
-            ${rtirsinfrastructure_library}
+            RTIConnextDDS::routing_service_infrastructure
             RTIConnextDDS::cpp2_api)
 
         add_library(RTIConnextDDS::routing_service_cpp2 ${link_type} IMPORTED)
