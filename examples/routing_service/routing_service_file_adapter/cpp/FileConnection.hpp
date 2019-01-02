@@ -29,6 +29,8 @@ public:
             const PropertySet &properties) :
             discovery_reader_(properties)
     {
+        // Once the FileConnection is initialized, we trigger an event
+        // to notify that the streams are ready.
         input_stream_discovery_listener->on_data_available(&discovery_reader_);
         output_stream_discovery_listener->on_data_available(&discovery_reader_);
     };

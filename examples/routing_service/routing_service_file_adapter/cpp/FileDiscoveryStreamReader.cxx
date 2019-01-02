@@ -13,6 +13,9 @@ using namespace rti::community::examples;
 
 FileDiscoveryStreamReader::FileDiscoveryStreamReader(const PropertySet &)
 {
+    // In our example, we provide statically the stream information available.
+    // Make sure, the stream name and the stream type matches the ones described
+    // in the XML configuration file.
     this->data_samples_.resize(1, StreamInfo("TestTopic", "TestType"));
 }
 

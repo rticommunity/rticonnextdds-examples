@@ -9,7 +9,6 @@
 #  not be liable for any incidental or consequential damages arising out of the
 #  use or inability to use the software.
 #
-
 cmake_minimum_required(VERSION 3.11)
 set (CMAKE_CXX_STANDARD 11)
 project (FileAdapter)

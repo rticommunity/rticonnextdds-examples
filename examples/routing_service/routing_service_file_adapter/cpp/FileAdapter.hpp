@@ -14,7 +14,6 @@
 #include <rti/routing/RoutingService.hpp>
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 
-// TODO: Documentation
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 
@@ -40,7 +39,16 @@ public:
 }  // namespace community
 }  // namespace rti
 
-// TODO: Document the create function
+/**
+ * This macro defines a C-linkage symbol that can be used as create function
+ * for plug-in registration through XML.
+ *
+ * The generated symbol has the name:
+ *
+ * \code
+ * FileAdapterPlugin_create_adapter_plugin
+ * \endcode
+ */
 RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DECL(FileAdapter)
 
 #endif

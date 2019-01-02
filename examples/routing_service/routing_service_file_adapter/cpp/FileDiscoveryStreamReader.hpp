@@ -18,6 +18,9 @@ namespace examples {
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 
+// This class implements a DiscoveryStreamReader, a special kind of StreamReader
+// that provide discovery information about the available streams and their
+// types.
 class FileDiscoveryStreamReader : public DiscoveryStreamReader {
 public:
     FileDiscoveryStreamReader(const PropertySet &);
