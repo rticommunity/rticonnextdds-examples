@@ -8,6 +8,9 @@
 #ifndef FILESTREAMWRITER_HPP
 #define FILESTREAMWRITER_HPP
 
+#include <iostream>
+#include <fstream>
+
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamWriter.hpp>
 
@@ -25,6 +28,8 @@ public:
     int
             write(const std::vector<dds::core::xtypes::DynamicData *> &samples,
                   const std::vector<dds::sub::SampleInfo *> &infos);
+private:
+    std::ofstream outputfile_;
 };
 
 }  // namespace examples

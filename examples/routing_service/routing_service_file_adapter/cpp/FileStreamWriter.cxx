@@ -14,7 +14,8 @@ using namespace rti::community::examples;
 
 FileStreamWriter::FileStreamWriter(const PropertySet &)
 {
-        //TODO: Implement
+        // TODO: parametrize
+        outputfile_.open("samples_out.data");
 };
 
 int FileStreamWriter::write(
@@ -28,6 +29,7 @@ int FileStreamWriter::write(
         std::string str = rti::topic::to_string(
                 (**it), rti::topic::PrintFormatProperty::Json());
         std::cout << "Received Sample (JSON):" << std::endl << str << std::endl;
+        outputfile_ << str << std::endl;
     }
     return 0;
 }
