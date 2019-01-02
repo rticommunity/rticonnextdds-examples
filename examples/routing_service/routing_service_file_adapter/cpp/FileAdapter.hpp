@@ -24,11 +24,14 @@ namespace examples {
 class FileAdapter : public rti::routing::adapter::AdapterPlugin {
 public:
     FileAdapter(rti::routing::PropertySet &){};
+
     Connection *create_connection(
             rti::routing::adapter::detail::StreamReaderListener *,
             rti::routing::adapter::detail::StreamReaderListener *,
             const PropertySet &);
+
     void delete_connection(Connection *connection){};
+
     rti::config::LibraryVersion get_version() const;
 };
 

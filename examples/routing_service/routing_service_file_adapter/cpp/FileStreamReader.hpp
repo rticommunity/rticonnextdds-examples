@@ -28,23 +28,24 @@ public:
             const StreamInfo &info,
             const PropertySet &,
             StreamReaderListener *listener);
-    void
-            read(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &);
 
-    void
-            read(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &,
-                 const SelectorState &selector_state);
+    void read(
+            std::vector<dds::core::xtypes::DynamicData *> &,
+            std::vector<dds::sub::SampleInfo *> &);
 
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &);
+    void read(
+            std::vector<dds::core::xtypes::DynamicData *> &,
+            std::vector<dds::sub::SampleInfo *> &,
+            const SelectorState &selector_state);
 
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &,
-                 const SelectorState &selector_state);
+    void take(
+            std::vector<dds::core::xtypes::DynamicData *> &,
+            std::vector<dds::sub::SampleInfo *> &);
+
+    void take(
+            std::vector<dds::core::xtypes::DynamicData *> &,
+            std::vector<dds::sub::SampleInfo *> &,
+            const SelectorState &selector_state);
 
     void return_loan(
             std::vector<dds::core::xtypes::DynamicData *> &,

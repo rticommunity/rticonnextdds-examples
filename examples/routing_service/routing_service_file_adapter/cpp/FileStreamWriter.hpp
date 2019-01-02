@@ -25,11 +25,12 @@ class FileStreamWriter : public DynamicDataStreamWriter {
 public:
     FileStreamWriter(const PropertySet &);
 
-    int
-            write(const std::vector<dds::core::xtypes::DynamicData *> &samples,
-                  const std::vector<dds::sub::SampleInfo *> &infos);
+    int write(
+            const std::vector<dds::core::xtypes::DynamicData *> &samples,
+            const std::vector<dds::sub::SampleInfo *> &infos);
 
-    ~FileStreamWriter() {
+    ~FileStreamWriter()
+    {
         outputfile_.close();
     };
 

@@ -24,14 +24,14 @@ class FileConnection : public Connection {
 public:
 
     FileConnection(
-        StreamReaderListener *input_stream_discovery_listener,
-        StreamReaderListener *output_stream_discovery_listener,
-        const PropertySet &properties) :
+            StreamReaderListener *input_stream_discovery_listener,
+            StreamReaderListener *output_stream_discovery_listener,
+            const PropertySet &properties) :
             discovery_reader_(properties)
-        {
-            input_stream_discovery_listener->on_data_available(&discovery_reader_);
-            output_stream_discovery_listener->on_data_available(&discovery_reader_);
-        };
+    {
+        input_stream_discovery_listener->on_data_available(&discovery_reader_);
+        output_stream_discovery_listener->on_data_available(&discovery_reader_);
+    };
 
     StreamReader *create_stream_reader(
             Session *session,
