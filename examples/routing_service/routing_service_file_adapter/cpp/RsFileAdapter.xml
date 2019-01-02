@@ -41,7 +41,7 @@
                             <value>
                                 <element>
                                     <name>example.adapter.input_file</name>
-                                    <value>samples_in.data</value>
+                                    <value>samples_in.csv</value>
                                 </element>
                             </value>
                         </property>

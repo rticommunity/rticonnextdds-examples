@@ -23,7 +23,7 @@ find_package(
     COMPONENTS
         core
         routing_service
-    )
+)
 
 # Define the library that will provide the adapter plugin
 add_library(
@@ -34,10 +34,7 @@ add_library(
         ${CMAKE_SOURCE_DIR}/FileDiscoveryStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamWriter.cxx
-    )
-
-target_include_directories(fileadapter PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
-target_compile_definitions(fileadapter PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
+)
 
 target_link_libraries(
     fileadapter
@@ -45,8 +42,10 @@ target_link_libraries(
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
-    )
+)
 
-file(GENERATE
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/RsFileAdapter.xml
-    INPUT ${CMAKE_CURRENT_SOURCE_DIR}/RsFileAdapter.xml.in)
+# Copy the sample data file into the binary directory
+configure_file(
+    ${CMAKE_SOURCE_DIR}/samples_in.csv
+    ${CMAKE_BINARY_DIR}/samples_in.csv
+)
