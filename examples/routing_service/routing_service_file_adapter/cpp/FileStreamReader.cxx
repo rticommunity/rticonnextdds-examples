@@ -6,15 +6,16 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <thread>
 #include <sstream>
+#include <thread>
 
 #include "FileStreamReader.hpp"
 
 using namespace rti::community::examples;
 using namespace dds::core::xtypes;
 
-void FileStreamReader::ProcessThread() {
+void FileStreamReader::ProcessThread()
+{
     std::cout << "Process thread started" << std::endl;
     stop_thread_ = false;
 
@@ -26,7 +27,7 @@ void FileStreamReader::ProcessThread() {
         // on the StreamReader, triggering a call to take().
         reader_listener_->on_data_available(this);
 
-        //TODO: Configure sleep period
+        // TODO: Configure sleep period
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
@@ -34,11 +35,12 @@ void FileStreamReader::ProcessThread() {
 FileStreamReader::FileStreamReader(
         const StreamInfo &info,
         const PropertySet &property,
-        StreamReaderListener *listener) :
-                filereader_thread_(&FileStreamReader::ProcessThread, this)
+        StreamReaderListener *listener)
+        : filereader_thread_(&FileStreamReader::ProcessThread, this)
 {
     reader_listener_ = listener;
-    adapter_type_ = static_cast<DynamicType *>(info.type_info().type_representation());
+    adapter_type_ = static_cast<DynamicType *>(
+            info.type_info().type_representation());
 
     // TODO: Parametrize file name from property
     inputfile_.open("samples_in.data");
@@ -103,12 +105,12 @@ void FileStreamReader::return_loan(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
-    for(int i=0; i < samples.size(); ++i) {
+    for (int i = 0; i < samples.size(); ++i) {
         delete samples[i];
         delete infos[i];
     }
     samples.clear();
-    infos.clear();
+    samples.clear();
 }
 
 void *FileStreamReader::create_content_query(void *, const dds::topic::Filter &)

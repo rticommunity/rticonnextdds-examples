@@ -12,8 +12,10 @@
 using namespace rti::community::examples;
 
 Connection *FileAdapter::create_connection(
-        rti::routing::adapter::detail::StreamReaderListener *input_stream_discovery_listener,
-        rti::routing::adapter::detail::StreamReaderListener *output_stream_discovery_listener,
+        rti::routing::adapter::detail::StreamReaderListener
+                *input_stream_discovery_listener,
+        rti::routing::adapter::detail::StreamReaderListener
+                *output_stream_discovery_listener,
         const PropertySet &properties)
 {
     FileConnection *fc = new FileConnection(

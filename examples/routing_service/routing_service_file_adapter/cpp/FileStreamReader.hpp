@@ -8,8 +8,8 @@
 #ifndef FILESTREAMREADER_HPP
 #define FILESTREAMREADER_HPP
 
-#include <iostream>
 #include <fstream>
+#include <iostream>
 #include <thread>
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
@@ -24,7 +24,10 @@ using namespace rti::routing::adapter;
 
 class FileStreamReader : public DynamicDataStreamReader {
 public:
-    FileStreamReader(const StreamInfo &info, const PropertySet &, StreamReaderListener *listener);
+    FileStreamReader(
+            const StreamInfo &info,
+            const PropertySet &,
+            StreamReaderListener *listener);
     void
             read(std::vector<dds::core::xtypes::DynamicData *> &,
                  std::vector<dds::sub::SampleInfo *> &);
@@ -53,9 +56,10 @@ public:
 
     void ProcessThread();
 
-    ~FileStreamReader() {
-            stop_thread_ = true;
-            filereader_thread_.join();
+    ~FileStreamReader()
+    {
+        stop_thread_ = true;
+        filereader_thread_.join();
     }
 
 private:
