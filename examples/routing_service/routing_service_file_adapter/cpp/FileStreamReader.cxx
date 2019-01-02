@@ -27,7 +27,9 @@ void FileStreamReader::ProcessThread()
 
             // Here we notify routing service, that there is data available
             // on the StreamReader, triggering a call to take().
-            reader_listener_->on_data_available(this);
+            if (!inputfile_.eof()) {
+                reader_listener_->on_data_available(this);
+            }
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));

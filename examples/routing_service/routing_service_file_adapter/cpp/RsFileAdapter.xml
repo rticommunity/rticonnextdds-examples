@@ -57,7 +57,7 @@
                             <value>
                                 <element>
                                     <name>example.adapter.output_file</name>
-                                    <value>mytest_output.data</value>
+                                    <value>samples_out.json</value>
                                 </element>
                             </value>
                         </property>
