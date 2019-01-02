@@ -14,6 +14,8 @@
 using namespace rti::community::examples;
 using namespace dds::core::xtypes;
 
+const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME = "example.adapter.input_file";
+
 void FileStreamReader::ProcessThread()
 {
     std::cout << "Process thread started" << std::endl;
@@ -42,8 +44,13 @@ FileStreamReader::FileStreamReader(
     adapter_type_ = static_cast<DynamicType *>(
             info.type_info().type_representation());
 
-    // TODO: Parametrize file name from property
-    inputfile_.open("samples_in.data");
+    const auto &it = property.find(INPUT_FILE_PROPERTY_NAME);
+    if (it != property.end()) {
+        inputfile_.open(it->second);
+    } else {
+        //TODO: error
+    }
+
 }
 
 void FileStreamReader::read(

@@ -9,13 +9,19 @@
 #include "FileStreamWriter.hpp"
 #include <rti/topic/to_string.hpp>
 
-
 using namespace rti::community::examples;
 
-FileStreamWriter::FileStreamWriter(const PropertySet &)
+const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter.output_file";
+
+FileStreamWriter::FileStreamWriter(const PropertySet &property)
 {
-        // TODO: parametrize
-        outputfile_.open("samples_out.data");
+    // TODO: parametrize
+    const auto &it = property.find(OUTPUT_FILE_PROPERTY_NAME);
+    if ( it != property.end()) {
+        std::string outfilepath = it->second;
+        std::cout << "FilePath: " << outfilepath << std::endl;
+    }
+    outputfile_.open("samples_out.data");
 };
 
 int FileStreamWriter::write(

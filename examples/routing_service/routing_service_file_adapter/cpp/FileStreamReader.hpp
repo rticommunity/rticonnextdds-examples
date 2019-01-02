@@ -54,15 +54,20 @@ public:
 
     void delete_content_query(void *);
 
-    void ProcessThread();
 
     ~FileStreamReader()
     {
         stop_thread_ = true;
         filereader_thread_.join();
+        inputfile_.close();
     }
 
 private:
+
+    static const std::string INPUT_FILE_PROPERTY_NAME;
+
+    void ProcessThread();
+
     StreamReaderListener *reader_listener_;
     std::thread filereader_thread_;
     bool stop_thread_;
