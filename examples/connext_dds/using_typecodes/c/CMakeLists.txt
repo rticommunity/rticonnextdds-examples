@@ -8,7 +8,7 @@ project(rtiexamples-using-typecodes)
 
 # Add the resources folder to the CMAKE_MODULE_PATH
 if(NOT RTI_CMAKE_RESOURCES)
-    find_package(Git REQUIRED)
+    find_package(Git)
     execute_process(
         COMMAND ${GIT_EXECUTABLE} rev-parse --show-toplevel
         OUTPUT_VARIABLE repository_root
