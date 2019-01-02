@@ -38,7 +38,7 @@ FileStreamReader::FileStreamReader(
         const StreamInfo &info,
         const PropertySet &property,
         StreamReaderListener *listener)
-        : filereader_thread_(&FileStreamReader::ProcessThread, this),
+        : filereader_thread_(),
         sampling_period_(1)
 {
     reader_listener_ = listener;
@@ -55,8 +55,10 @@ FileStreamReader::FileStreamReader(
     }
 
     if (!inputfile_.is_open()) {
-        throw std::logic_error("Input file not provided");
+        throw std::logic_error("Input file not provided or unable to open");
     }
+
+    filereader_thread_ = std::thread(&FileStreamReader::ProcessThread, this);
 }
 
 void FileStreamReader::read(
@@ -122,15 +124,4 @@ void FileStreamReader::return_loan(
     }
     samples.clear();
     samples.clear();
-}
-
-void *FileStreamReader::create_content_query(void *, const dds::topic::Filter &)
-{
-    // TODO: Implement me
-    return NULL;
-}
-
-void FileStreamReader::delete_content_query(void *)
-{
-    // TODO: Implement me
 }

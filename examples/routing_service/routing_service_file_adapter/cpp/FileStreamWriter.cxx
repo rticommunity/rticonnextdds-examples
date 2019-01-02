@@ -15,13 +15,18 @@ const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter
 
 FileStreamWriter::FileStreamWriter(const PropertySet &property)
 {
-    // TODO: parametrize
+
     const auto &it = property.find(OUTPUT_FILE_PROPERTY_NAME);
     if ( it != property.end()) {
         std::string outfilepath = it->second;
         std::cout << "FilePath: " << outfilepath << std::endl;
+        outputfile_.open(outfilepath);
     }
-    outputfile_.open("samples_out.data");
+
+    if (!outputfile_.is_open()) {
+        throw std::logic_error("Open output file");
+    }
+
 };
 
 int FileStreamWriter::write(

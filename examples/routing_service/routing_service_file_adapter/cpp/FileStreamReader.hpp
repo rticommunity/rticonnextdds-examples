@@ -51,11 +51,6 @@ public:
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &);
 
-    void *create_content_query(void *, const dds::topic::Filter &);
-
-    void delete_content_query(void *);
-
-
     ~FileStreamReader()
     {
         stop_thread_ = true;
