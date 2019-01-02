@@ -19,7 +19,6 @@ FileDiscoveryStreamReader::FileDiscoveryStreamReader(const PropertySet &)
 void FileDiscoveryStreamReader::take(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
-    std::cout << "Discovery take" << std::endl;
     stream.resize(this->data_samples_.size());
     stream[0] = &(this->data_samples_[0]);
 }
@@ -27,6 +26,5 @@ void FileDiscoveryStreamReader::take(
 void FileDiscoveryStreamReader::return_loan(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
-    std::cout << "Discovery return" << std::endl;
     stream.clear();
 }

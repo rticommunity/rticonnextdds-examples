@@ -66,12 +66,14 @@ public:
 private:
 
     static const std::string INPUT_FILE_PROPERTY_NAME;
+    static const std::string SAMPLE_PERIOD_PROPERTY_NAME;
 
     void ProcessThread();
 
     StreamReaderListener *reader_listener_;
     std::thread filereader_thread_;
     bool stop_thread_;
+    uint16_t sampling_period_;
 
     std::ifstream inputfile_;
     std::string buffer_;

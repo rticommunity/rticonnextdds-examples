@@ -32,7 +32,6 @@
             </connection>
             <session name="session">
                 <route>
-                    <route_types>false</route_types>
                     <input connection="FileConnection">
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>TestType</registered_type_name>
@@ -42,6 +41,10 @@
                                 <element>
                                     <name>example.adapter.input_file</name>
                                     <value>samples_in.csv</value>
+                                </element>
+                                <element>
+                                    <name>example.adapter.sample_period_sec</name>
+                                    <value>1</value>
                                 </element>
                             </value>
                         </property>

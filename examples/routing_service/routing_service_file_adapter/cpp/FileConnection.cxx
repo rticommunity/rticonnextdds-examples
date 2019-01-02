@@ -18,7 +18,16 @@ StreamReader *FileConnection::create_stream_reader(
         const PropertySet &properties,
         StreamReaderListener *listener)
 {
-    return new FileStreamReader(info, properties, listener);
+    FileStreamReader * fsr = NULL;
+
+    try {
+        fsr = new FileStreamReader(info, properties, listener);
+    } catch (std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return NULL;
+    }
+
+    return fsr;
 };
 
 void FileConnection::delete_stream_reader(StreamReader *reader)

@@ -15,22 +15,22 @@ using namespace rti::community::examples;
 using namespace dds::core::xtypes;
 
 const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME = "example.adapter.input_file";
+const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME = "example.adapter.sample_period_sec";
 
 void FileStreamReader::ProcessThread()
 {
-    std::cout << "Process thread started" << std::endl;
     stop_thread_ = false;
 
     while (!stop_thread_) {
-        std::cout << "Process" << std::endl;
+        if (inputfile_.is_open()) {
+            std::getline(inputfile_, buffer_);
 
-        std::getline(inputfile_, buffer_);
-        // Here we notify routing service, that there is data available
-        // on the StreamReader, triggering a call to take().
-        reader_listener_->on_data_available(this);
+            // Here we notify routing service, that there is data available
+            // on the StreamReader, triggering a call to take().
+            reader_listener_->on_data_available(this);
+        }
 
-        // TODO: Configure sleep period
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
 }
 
@@ -38,19 +38,25 @@ FileStreamReader::FileStreamReader(
         const StreamInfo &info,
         const PropertySet &property,
         StreamReaderListener *listener)
-        : filereader_thread_(&FileStreamReader::ProcessThread, this)
+        : filereader_thread_(&FileStreamReader::ProcessThread, this),
+        sampling_period_(1)
 {
     reader_listener_ = listener;
     adapter_type_ = static_cast<DynamicType *>(
             info.type_info().type_representation());
 
-    const auto &it = property.find(INPUT_FILE_PROPERTY_NAME);
-    if (it != property.end()) {
-        inputfile_.open(it->second);
-    } else {
-        //TODO: error
+    // Parse the properties provided in the xml configuration file
+    for (const auto &it : property) {
+        if (it.first == INPUT_FILE_PROPERTY_NAME) {
+            inputfile_.open(it.second);
+        } else if (it.first == SAMPLE_PERIOD_PROPERTY_NAME) {
+            sampling_period_ = std::stoi(it.second);
+        }
     }
 
+    if (!inputfile_.is_open()) {
+        throw std::logic_error("Input file not provided");
+    }
 }
 
 void FileStreamReader::read(
@@ -75,8 +81,6 @@ void FileStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
-    std::cout << "Calling take()" << std::endl;
-
     std::istringstream s(buffer_);
     std::string id;
     std::string message;
