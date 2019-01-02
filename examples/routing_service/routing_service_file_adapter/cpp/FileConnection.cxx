@@ -18,7 +18,7 @@ StreamReader *FileConnection::create_stream_reader(
         const PropertySet &properties,
         StreamReaderListener *listener)
 {
-    return new FileStreamReader(properties);
+    return new FileStreamReader(info, properties, listener);
 };
 
 void FileConnection::delete_stream_reader(StreamReader *reader)

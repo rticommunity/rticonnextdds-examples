@@ -27,7 +27,7 @@ public:
         StreamReaderListener *input_stream_discovery_listener,
         StreamReaderListener *output_stream_discovery_listener,
         const PropertySet &properties) :
-        discovery_reader_(properties)
+            discovery_reader_(properties)
         {
             input_stream_discovery_listener->on_data_available(&discovery_reader_);
             output_stream_discovery_listener->on_data_available(&discovery_reader_);
