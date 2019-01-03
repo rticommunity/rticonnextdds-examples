@@ -42,13 +42,17 @@ Output targets:
     Target to copy the USER_QOS_PROFILES.xml (if exists).
 #]]
 
+include_guard(DIRECTORY)
 
 # Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "5.3.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
 
 include(CMakeParseArguments)
 include(ConnextDdsArgumentChecks)
@@ -70,11 +74,17 @@ function(connextdds_add_example)
         _CONNEXT_LANG
     )
 
+    get_filename_component(folder_name
+        "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
+        get_filename_component(folder_name
+        "${folder_name}" NAME
+    )
+
     connextdds_rtiddsgen_run(
         IDL_FILE
-            "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}.idl"
+            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}.idl"
         OUTPUT_DIRECTORY
-            "${CMAKE_BINARY_DIR}/src"
+            "${CMAKE_CURRENT_BINARY_DIR}/src"
         LANG ${_CONNEXT_LANG}
         ${_CONNEXT_CODEGEN_ARGS}
     )
@@ -97,45 +107,62 @@ function(connextdds_add_example)
         set(subscriber_src ${${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCES})
     else()
         set(publisher_src
-            "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${extension}"
-            ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${extension}"
+            ${${_CONNEXT_IDL}_${lang_var}_SOURCES}
+        )
         set(subscriber_src
-            "${CMAKE_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${extension}"
-            ${${_CONNEXT_IDL}_${lang_var}_SOURCES})
+            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${extension}"
+            ${${_CONNEXT_IDL}_${lang_var}_SOURCES}
+        )
     endif()
 
     # Add the target for the publisher
-    add_executable(${_CONNEXT_IDL}_publisher ${publisher_src})
+    add_executable(${folder_name}_publisher_${api} ${publisher_src})
 
-    target_link_libraries(${_CONNEXT_IDL}_publisher
+    target_link_libraries(${folder_name}_publisher_${api}
         PUBLIC
-            RTIConnextDDS::${api}_api)
+            RTIConnextDDS::${api}_api
+    )
 
-    target_include_directories(${_CONNEXT_IDL}_publisher
+    target_include_directories(${folder_name}_publisher_${api}
         PRIVATE
-            "${CMAKE_BINARY_DIR}/src")
+            "${CMAKE_CURRENT_BINARY_DIR}/src"
+    )
+
+    set_target_properties(${folder_name}_publisher_${api}
+        PROPERTIES
+            OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
+    )
 
     # Add the target for the subscriber
     if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-        add_executable(${_CONNEXT_IDL}_subscriber ${subscriber_src})
+        add_executable(${folder_name}_subscriber_${api} ${subscriber_src})
 
-        target_link_libraries(${_CONNEXT_IDL}_subscriber
+        target_link_libraries(${folder_name}_subscriber_${api}
             PUBLIC
-                RTIConnextDDS::${api}_api)
+                RTIConnextDDS::${api}_api
+        )
 
-        target_include_directories(${_CONNEXT_IDL}_subscriber
+        target_include_directories(${folder_name}_subscriber_${api}
             PRIVATE
-                "${CMAKE_BINARY_DIR}/src")
+                "${CMAKE_CURRENT_BINARY_DIR}/src"
+        )
+
+        set_target_properties(${folder_name}_subscriber_${api}
+            PROPERTIES
+                OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
+        )
     endif()
 
     set(user_qos_profile_name "USER_QOS_PROFILES.xml")
-    set(qos_file "${CMAKE_SOURCE_DIR}/${user_qos_profile_name}")
+    set(qos_file "${CMAKE_CURRENT_SOURCE_DIR}/${user_qos_profile_name}")
     if(EXISTS ${qos_file})
-        set(output_qos "${CMAKE_BINARY_DIR}/${user_qos_profile_name}")
+        set(output_qos "${CMAKE_CURRENT_BINARY_DIR}/${user_qos_profile_name}")
 
-        add_custom_target(qos_profiles
+        add_custom_target(${folder_name}_qos_profiles_${api}
             DEPENDS
-                ${output_qos})
+                ${output_qos}
+        )
 
         add_custom_command(
             OUTPUT
@@ -143,20 +170,21 @@ function(connextdds_add_example)
             COMMAND
                 ${CMAKE_COMMAND} -E copy_if_different
                     ${qos_file}
-                    "${CMAKE_BINARY_DIR}"
+                    "${CMAKE_CURRENT_BINARY_DIR}"
             COMMENT "Copying USER_QOS_PROFILES.xml"
             DEPENDS
                 ${qos_file}
-            VERBATIM)
+            VERBATIM
+        )
 
-        add_dependencies(${_CONNEXT_IDL}_publisher
-            qos_profiles)
+        add_dependencies(${folder_name}_publisher_${api}
+            ${folder_name}_qos_profiles_${api}
+        )
 
         if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-            add_dependencies(${_CONNEXT_IDL}_subscriber
-                qos_profiles)
+            add_dependencies(${folder_name}_subscriber_${api}
+                ${folder_name}_qos_profiles_${api}
+            )
         endif()
-
     endif()
-
 endfunction()
