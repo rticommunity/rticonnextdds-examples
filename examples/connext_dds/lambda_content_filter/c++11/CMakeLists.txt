@@ -53,10 +53,10 @@ connextdds_add_example(
 )
 
 # To include the LambdaFilter.hpp file
-target_include_directories(LambdaFilterExample_publisher
+target_include_directories(lambda_content_filter_publisher_cpp2
     PRIVATE
-        "${CMAKE_SOURCE_DIR}")
+        "${CMAKE_CURRENT_SOURCE_DIR}")
 
-target_include_directories(LambdaFilterExample_subscriber
+target_include_directories(lambda_content_filter_subscriber_cpp2
     PRIVATE
-        "${CMAKE_SOURCE_DIR}")
+        "${CMAKE_CURRENT_SOURCE_DIR}")

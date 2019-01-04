@@ -54,7 +54,7 @@ connextdds_add_example(
 
 # This library must be built dynamically always
 add_library(rti_custom_transports SHARED
-    "${CMAKE_SOURCE_DIR}/FileTransport.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileTransport.c"
 )
 
 target_link_libraries(rti_custom_transports

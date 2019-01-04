@@ -50,10 +50,10 @@ connextdds_add_example(
     LANG "C++"
 )
 
-target_include_directories(numbers_publisher
+target_include_directories(property_qos_publisher_cpp
     PRIVATE
-        "${CMAKE_SOURCE_DIR}")
+        "${CMAKE_CURRENT_SOURCE_DIR}")
 
-target_include_directories(numbers_subscriber
+target_include_directories(property_qos_subscriber_cpp
     PRIVATE
-        "${CMAKE_SOURCE_DIR}")
+        "${CMAKE_CURRENT_SOURCE_DIR}")

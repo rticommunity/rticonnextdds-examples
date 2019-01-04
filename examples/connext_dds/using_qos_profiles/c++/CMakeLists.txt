@@ -52,19 +52,21 @@ connextdds_add_example(
 
 add_custom_command(
     OUTPUT
-        "${CMAKE_BINARY_DIR}/my_custom_qos_profiles.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/my_custom_qos_profiles.xml"
     COMMAND
         ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_SOURCE_DIR}/my_custom_qos_profiles.xml"
-            "${CMAKE_BINARY_DIR}"
+            "${CMAKE_CURRENT_SOURCE_DIR}/my_custom_qos_profiles.xml"
+            "${CMAKE_CURRENT_BINARY_DIR}"
     COMMENT "Copying my_custom_qos_profiles.xml"
     DEPENDS
-        "${CMAKE_SOURCE_DIR}/my_custom_qos_profiles.xml"
+        "${CMAKE_CURRENT_SOURCE_DIR}/my_custom_qos_profiles.xml"
     VERBATIM)
 
-add_custom_target(custom_qos
+add_custom_target(using_qos_profiles_custom_qos_cpp
     DEPENDS
-        "${CMAKE_BINARY_DIR}/my_custom_qos_profiles.xml")
+        "${CMAKE_CURRENT_BINARY_DIR}/my_custom_qos_profiles.xml")
 
-add_dependencies(profiles_publisher custom_qos)
-add_dependencies(profiles_subscriber custom_qos)
+add_dependencies(using_qos_profiles_publisher_cpp
+    using_qos_profiles_custom_qos_cpp)
+add_dependencies(using_qos_profiles_subscriber_cpp
+    using_qos_profiles_custom_qos_cpp)

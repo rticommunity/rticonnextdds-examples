@@ -28,17 +28,19 @@ CMake targets and set the dependencies.
     Name of the IDL file (without extension).
 ``LANG`` (required):
     Example language. Valid values are ``C``, ``C++``, ``C++03`` and ``C++11``.
+``PREFIX``:
+    Prefix name for the targets.
 ``DISABLE_SUBSCRIBER``:
     Disable the subscriber build.
 ``CODEGEN_ARGS":
     Extra arguments for Codegen.
 
 Output targets:
-``<name>_publisher``
+``folder name><_publisher_<lang>``
     Target for the publisher application.
-``<name>_subscriber``
+``<folder name>_subscriber_<lang>``
     Target for the subscriber application.
-``qos_profile``
+``<folder name>_qos_profile_<lang>``
     Target to copy the USER_QOS_PROFILES.xml (if exists).
 #]]
 
@@ -61,7 +63,7 @@ include(ConnextDdsCodegen)
 
 function(connextdds_add_example)
     set(optional_args DISABLE_SUBSCRIBER)
-    set(single_value_args IDL LANG)
+    set(single_value_args IDL LANG PREFIX)
     set(multi_value_args CODEGEN_ARGS)
     cmake_parse_arguments(_CONNEXT
         "${optional_args}"
@@ -116,41 +118,53 @@ function(connextdds_add_example)
         )
     endif()
 
-    # Add the target for the publisher
-    add_executable(${folder_name}_publisher_${api} ${publisher_src})
+    if(_CONNEXT_PREFIX)
+        set(target_publisher ${_CONNEXT_PREFIX}_publisher_${api})
+        set(target_subscriber ${_CONNEXT_PREFIX}_subscriber_${api})
+        set(target_qos ${_CONNEXT_PREFIX}_qos_${api})
+    else()
+        set(target_publisher ${folder_name}_publisher_${api})
+        set(target_subscriber ${folder_name}_subscriber_${api})
+        set(target_qos ${folder_name}_qos_${api})
+    endif()
 
-    target_link_libraries(${folder_name}_publisher_${api}
-        PUBLIC
+
+
+    # Add the target for the publisher
+    add_executable(${target_publisher} ${publisher_src})
+
+    target_link_libraries(${target_publisher}
+        PRIVATE
             RTIConnextDDS::${api}_api
     )
 
-    target_include_directories(${folder_name}_publisher_${api}
+    target_include_directories(${target_publisher}
         PRIVATE
             "${CMAKE_CURRENT_BINARY_DIR}/src"
     )
 
-    set_target_properties(${folder_name}_publisher_${api}
+    set_target_properties(${target_publisher}
         PROPERTIES
             OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
     )
 
     # Add the target for the subscriber
     if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-        add_executable(${folder_name}_subscriber_${api} ${subscriber_src})
+        add_executable(${target_subscriber} ${subscriber_src})
 
-        target_link_libraries(${folder_name}_subscriber_${api}
-            PUBLIC
+        target_link_libraries(${target_subscriber}
+            PRIVATE
                 RTIConnextDDS::${api}_api
         )
 
-        target_include_directories(${folder_name}_subscriber_${api}
+        target_include_directories(${target_subscriber}
             PRIVATE
                 "${CMAKE_CURRENT_BINARY_DIR}/src"
         )
 
-        set_target_properties(${folder_name}_subscriber_${api}
+        set_target_properties(${target_subscriber}
             PROPERTIES
-                OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
+                OUTPUT_NAME "${_CONNEXT_IDL}_subscriber"
         )
     endif()
 
@@ -159,7 +173,7 @@ function(connextdds_add_example)
     if(EXISTS ${qos_file})
         set(output_qos "${CMAKE_CURRENT_BINARY_DIR}/${user_qos_profile_name}")
 
-        add_custom_target(${folder_name}_qos_profiles_${api}
+        add_custom_target(${target_qos}
             DEPENDS
                 ${output_qos}
         )
@@ -177,13 +191,13 @@ function(connextdds_add_example)
             VERBATIM
         )
 
-        add_dependencies(${folder_name}_publisher_${api}
-            ${folder_name}_qos_profiles_${api}
+        add_dependencies(${target_publisher}
+            ${target_qos}
         )
 
         if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-            add_dependencies(${folder_name}_subscriber_${api}
-                ${folder_name}_qos_profiles_${api}
+            add_dependencies(${target_subscriber}
+                ${target_qos}
             )
         endif()
     endif()

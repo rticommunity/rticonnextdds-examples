@@ -44,22 +44,30 @@ set(CMAKE_MODULE_PATH
 )
 
 # Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "5.3.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
 
-add_executable(dynamic_data_nested_struct
-    "${CMAKE_SOURCE_DIR}/dynamic_data_nested_struct_example.c"
+add_executable(dynamic_data_nested_struct_c
+    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_struct_example.c"
 )
 
-target_link_libraries(dynamic_data_nested_struct
-    PUBLIC
+target_link_libraries(dynamic_data_nested_struct_c
+    PRIVATE
         RTIConnextDDS::c_api
 )
 
-target_include_directories(dynamic_data_nested_struct
+target_include_directories(dynamic_data_nested_struct_c
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/src"
+)
+
+set_target_properties(dynamic_data_nested_struct_c
+    PROPERTIES
+        OUTPUT_NAME "dynamic_data_nested_struct"
 )

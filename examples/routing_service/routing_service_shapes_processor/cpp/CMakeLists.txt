@@ -26,7 +26,9 @@ find_package(
     )
 
 # Define the library that will provide the  Processor plugin
-add_library(shapesprocessor SHARED ${CMAKE_SOURCE_DIR}/ShapesProcessor.cxx)
+add_library(shapesprocessor SHARED
+    ${CMAKE_CURRENT_SOURCE_DIR}/ShapesProcessor.cxx
+)
 
 target_include_directories(shapesprocessor
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})

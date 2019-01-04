@@ -544,6 +544,10 @@ function(connextdds_rtiddsgen_run)
         list(APPEND list_extra_args NO_CODE_GENERATION)
     endif()
 
+    if(_CODEGEN_GENERATE_EXAMPLE)
+        set(_CODEGEN_GENERATE_EXAMPLE GENERATE_EXAMPLE)
+    endif()
+
     _connextdds_codegen_get_generated_file_list(
         VAR IDL
         IDL_BASENAME ${idl_basename}

@@ -44,22 +44,29 @@ set(CMAKE_MODULE_PATH
 )
 
 # Find the RTI Connext DDS libraries
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core)
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "5.3.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
 
-add_executable(dynamic_data_union_example
-    "${CMAKE_SOURCE_DIR}/dynamic_data_union_example.cxx"
+add_executable(dynamic_data_union_example_cxx
+    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_union_example.cxx"
 )
 
-target_link_libraries(dynamic_data_union_example
-    PUBLIC
+target_link_libraries(dynamic_data_union_example_cxx
+    PRIVATE
         RTIConnextDDS::cpp_api
 )
 
-target_include_directories(dynamic_data_union_example
+target_include_directories(dynamic_data_union_example_cxx
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
+
+set_target_properties(dynamic_data_union_example_cxx
+    PROPERTIES
+        OUTPUT_NAME "dynamic_data_union_example")

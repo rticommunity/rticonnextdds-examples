@@ -50,12 +50,12 @@ connextdds_add_example(
     LANG "C++"
 )
 
-target_include_directories(zero_copy_publisher
+target_include_directories(zero_copy_publisher_cpp
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
-target_include_directories(zero_copy_subscriber
+target_include_directories(zero_copy_publisher_cpp
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+        "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
