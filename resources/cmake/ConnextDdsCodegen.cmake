@@ -297,7 +297,8 @@ macro(_connextdds_codegen_find_codegen use_codegen1)
             "CMake built-in macro for the RTIConnextDDS package"
         )
     elseif(NOT EXISTS ${RTICODEGEN_DIR})
-        message(FATAL_ERROR "RTICODEGEN_DIR dir doesn't exist: ${RTICODEGEN_DIR}")
+        message(FATAL_ERROR
+            "RTICODEGEN_DIR dir doesn't exist: ${RTICODEGEN_DIR}")
     endif()
 endmacro()
 
@@ -355,24 +356,24 @@ function(_connextdds_codegen_get_generated_file_list)
             list(APPEND headers "${path_base}Plugin.h" "${path_base}Support.h")
         endif()
 
-        # Set in the parent scope
-        set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
-        set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
-
         if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
                 "${path_base}_publisher.cxx"
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
                 "${path_base}_subscriber.cxx"
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SOURCES
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 "${path_base}_publisher.cxx"
                 "${path_base}_subscriber.cxx"
                 PARENT_SCOPE)
+        else()
+            # Set in the parent scope
+            set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
         endif()
 
     elseif("${_CODEGEN_LANG}" STREQUAL "C#"
@@ -406,40 +407,45 @@ function(_connextdds_codegen_get_generated_file_list)
     elseif("${_CODEGEN_LANG}" STREQUAL "C++03"
             OR "${_CODEGEN_LANG}" STREQUAL "C++11")
         if(_CODEGEN_LEGACY_PLUGIN)
-            set(${_CODEGEN_VAR}_SOURCES
+            set(sources
                 "${path_base}.cxx"
                 "${path_base}Impl.cxx"
                 "${path_base}ImplPlugin.cxx"
-                PARENT_SCOPE)
+            )
             set(${_CODEGEN_VAR}_HEADERS
                 "${path_base}.hpp"
                 "${path_base}Impl.h"
                 "${path_base}ImplPlugin.h"
                 PARENT_SCOPE)
         else()
-            set(${_CODEGEN_VAR}_SOURCES
+            set(sources
                 "${path_base}.cxx"
                 "${path_base}Plugin.cxx"
-                PARENT_SCOPE)
+            )
             set(${_CODEGEN_VAR}_HEADERS
                 "${path_base}.hpp"
                 "${path_base}Plugin.hpp"
                 PARENT_SCOPE)
         endif()
+
         if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
                 "${path_base}_publisher.cxx"
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
                 "${path_base}_subscriber.cxx"
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SOURCES
-                ${${_CODEGEN_VAR}_SOURCES}
+                ${sources}
                 "${path_base}_publisher.cxx"
                 "${path_base}_subscriber.cxx"
                 PARENT_SCOPE)
+        else()
+            # Set in the parent scope
+            set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
         endif()
     elseif("${_CODEGEN_LANG}" STREQUAL "Java")
         # Avoid conflicts generating the same IDL but different package flag.
@@ -459,21 +465,14 @@ function(_connextdds_codegen_get_generated_file_list)
     set(TIMESTAMP_DIR ${timestamp_dir} PARENT_SCOPE)
     set(TIMESTAMP
         "${timestamp_dir}/${_CODEGEN_IDL_BASENAME}_timestamp.cmake"
-        PARENT_SCOPE
-    )
-
-    if(_CODEGEN_NO_CODE_GENERATION)
-        set(${_CODEGEN_VAR}_SOURCES "" PARENT_SCOPE)
-        set(${_CODEGEN_VAR}_HEADERS "" PARENT_SCOPE)
-    endif()
-
+        PARENT_SCOPE)
+ 
     if(_CODEGEN_DEBUG)
         set(${_CODEGEN_VAR}_SOURCES
             ${${_CODEGEN_VAR}_SOURCES}
             "${path_base}.idl.rawxml"
             "${path_base}.idl.simplifiedxml"
-            PARENT_SCOPE
-        )
+            PARENT_SCOPE)
     endif()
 endfunction()
 

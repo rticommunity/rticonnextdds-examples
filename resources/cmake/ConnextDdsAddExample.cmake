@@ -32,6 +32,8 @@ CMake targets and set the dependencies.
     Prefix name for the targets.
 ``DISABLE_SUBSCRIBER``:
     Disable the subscriber build.
+``DEPENDENCIES``:
+    Other target dependencies.
 ``CODEGEN_ARGS":
     Extra arguments for Codegen.
 
@@ -64,7 +66,7 @@ include(ConnextDdsCodegen)
 function(connextdds_add_example)
     set(optional_args DISABLE_SUBSCRIBER)
     set(single_value_args IDL LANG PREFIX)
-    set(multi_value_args CODEGEN_ARGS)
+    set(multi_value_args CODEGEN_ARGS DEPENDENCIES)
     cmake_parse_arguments(_CONNEXT
         "${optional_args}"
         "${single_value_args}"
@@ -76,11 +78,8 @@ function(connextdds_add_example)
         _CONNEXT_LANG
     )
 
-    get_filename_component(folder_name
-        "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
-        get_filename_component(folder_name
-        "${folder_name}" NAME
-    )
+    get_filename_component(folder_name "${CMAKE_CURRENT_SOURCE_DIR}" DIRECTORY)
+    get_filename_component(folder_name "${folder_name}" NAME)
 
     connextdds_rtiddsgen_run(
         IDL_FILE
@@ -95,6 +94,7 @@ function(connextdds_add_example)
 
     set(api "c")
     set(extension "c")
+
     if("${_CONNEXT_LANG}" STREQUAL "C++")
         set(api "cpp")
         set(extension "cxx")
@@ -102,6 +102,7 @@ function(connextdds_add_example)
         "${_CONNEXT_LANG}" STREQUAL "C++11")
         set(api "cpp2")
         set(extension "cxx")
+        set(cxx_standard CXX_STANDARD 11)
     endif()
 
     if(GENERATE_EXAMPLE IN_LIST _CONNEXT_CODEGEN_ARGS)
@@ -129,12 +130,12 @@ function(connextdds_add_example)
     endif()
 
 
-
     # Add the target for the publisher
     add_executable(${target_publisher} ${publisher_src})
 
     target_link_libraries(${target_publisher}
         PRIVATE
+            ${_CONNEXT_DEPENDENCIES}
             RTIConnextDDS::${api}_api
     )
 
@@ -146,6 +147,7 @@ function(connextdds_add_example)
     set_target_properties(${target_publisher}
         PROPERTIES
             OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
+            ${cxx_standard}
     )
 
     # Add the target for the subscriber
@@ -154,6 +156,7 @@ function(connextdds_add_example)
 
         target_link_libraries(${target_subscriber}
             PRIVATE
+                ${_CONNEXT_DEPENDENCIES}
                 RTIConnextDDS::${api}_api
         )
 
@@ -165,7 +168,9 @@ function(connextdds_add_example)
         set_target_properties(${target_subscriber}
             PROPERTIES
                 OUTPUT_NAME "${_CONNEXT_IDL}_subscriber"
+                ${cxx_standard}
         )
+
     endif()
 
     set(user_qos_profile_name "USER_QOS_PROFILES.xml")
