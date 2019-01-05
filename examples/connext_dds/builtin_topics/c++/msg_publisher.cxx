@@ -100,7 +100,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
     DDS_SampleInfoSeq info_seq;
     DDS_ReturnCode_t retcode;
 
-    char *participant_data;
+    const char *participant_data;
 
     /* We only process newly seen participants */
     retcode = builtin_reader->take(data_seq, info_seq, DDS_LENGTH_UNLIMITED,

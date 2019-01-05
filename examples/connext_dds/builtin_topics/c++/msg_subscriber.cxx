@@ -171,7 +171,7 @@ static int subscriber_shutdown(
 }
 
 extern "C" int subscriber_main(int domain_id, int sample_count,
-                               char *participant_auth)
+                               const char *participant_auth)
 {
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
@@ -298,7 +298,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
-    char *participant_auth = "password";
+    const char *participant_auth = "password";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
