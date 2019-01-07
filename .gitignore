@@ -38,6 +38,13 @@ makefile*
 *.sln
 *.vcxproj
 
+# Cake projects
+tools/*dll
+*exe
+*md5sum
+src
+Cake/
+
 # IDE tools files
 .clang_complete
 .linter-clang-flags
