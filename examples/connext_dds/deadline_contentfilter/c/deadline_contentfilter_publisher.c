@@ -268,8 +268,7 @@ static int publisher_main(int domainId, int sample_count)
     instance0->x = instance0->y = instance1->x = instance1->y = 0;
 
     /* Main loop */
-/*  for (count=0; (sample_count == 0) || (count < sample_count); ++count) { */
-    for (count=0; (count < sample_count); ++count) {
+    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         NDDS_Utility_sleep(&send_period);
 
         instance0->x++;
