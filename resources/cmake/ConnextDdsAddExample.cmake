@@ -21,7 +21,7 @@ Function to build the examples.
         [CODEGEN_ARGS ...]
     )
 
-Add a new example to be built. This method will call Codegen, create the 
+Add a new example to be built. This method will call Codegen, create the
 CMake targets and set the dependencies.
 
 ``IDL`` (required):
