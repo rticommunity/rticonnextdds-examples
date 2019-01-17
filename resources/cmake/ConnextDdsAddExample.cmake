@@ -64,7 +64,7 @@ include(ConnextDdsCodegen)
 
 
 function(connextdds_add_example)
-    set(optional_args DISABLE_SUBSCRIBER REQUIRE_QOS)
+    set(optional_args DISABLE_SUBSCRIBER NO_REQUIRE_QOS)
     set(single_value_args IDL LANG PREFIX)
     set(multi_value_args CODEGEN_ARGS DEPENDENCIES)
     cmake_parse_arguments(_CONNEXT
@@ -81,6 +81,113 @@ function(connextdds_add_example)
 
     # First, we call Codegen to generate the header and source files from the
     # IDL
+    if(_CONNEXT_CODEGEN_ARGS)
+        set(codegen_args CODEGEN_ARGS ${_CONNEXT_CODEGEN_ARGS})
+    else()
+        set(codegen_args)
+    endif()
+
+    if(_CONNEXT_PREFIX)
+        set(prefix "${_CONNEXT_PREFIX}")
+    else()
+        # If no prefix was given, the name of the example folder name is used
+        # as prefix
+        get_filename_component(
+            folder_name
+            "${CMAKE_CURRENT_SOURCE_DIR}"
+            DIRECTORY)
+        get_filename_component(
+            folder_name
+            "${folder_name}"
+            NAME)
+        set(prefix "${folder_name}")
+    endif()
+
+    connextdds_call_codegen(
+        IDL "${_CONNEXT_IDL}"
+        LANG "${_CONNEXT_LANG}"
+        PREFIX "${prefix}"
+        ${codegen_args}
+    )
+
+    if(_CONNEXT_NO_REQUIRE_QOS)
+        set(no_require_qos NO_REQUIRE_QOS)
+    else()
+        set(no_require_qos)
+    endif()
+
+
+    # If the GENERATE_EXAMPLE option was provided, Codegen will generate the
+    # source code for the publisher and the subscriber applications
+    # If we don't provide that parameter, we will use the source code provided
+    # in the repository for the publisher and the subscriber
+    connextdds_sanitize_language(LANG ${_CONNEXT_LANG} VAR lang_var)
+    if(GENERATE_EXAMPLE IN_LIST _CONNEXT_CODEGEN_ARGS)
+        set(publisher_src ${${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCE})
+        set(subscriber_src ${${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCE})
+    else()
+        set(ex "c")
+        if("${_CONNEXT_LANG}" STREQUAL "C++" OR
+            "${_CONNEXT_LANG}" STREQUAL "C++03" OR
+            "${_CONNEXT_LANG}" STREQUAL "C++11")
+            set(ex "cxx")
+        endif()
+
+        set(publisher_src
+            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${ex}"
+        )
+        set(subscriber_src
+            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${ex}"
+        )
+    endif()
+
+    # Add the target for the publisher
+    connextdds_add_application(
+        TARGET "publisher"
+        LANG ${_CONNEXT_LANG}
+        SOURCES ${publisher_src}
+        PREFIX ${prefix}
+        OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
+        ${no_require_qos}
+        SOURCES
+            $<TARGET_OBJECTS:${prefix}_${lang_var}_obj>
+            "${publisher_src}"
+    )
+
+    if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
+        # Add the target for the subscribers
+        connextdds_add_application(
+            TARGET "subscriber"
+            LANG ${_CONNEXT_LANG}
+            SOURCES ${subscriber_src}
+            PREFIX ${prefix}
+            OUTPUT_NAME "${_CONNEXT_IDL}_subscriber"
+            ${no_require_qos}
+            SOURCES
+                $<TARGET_OBJECTS:${prefix}_${lang_var}_obj>
+                "${subscriber_src}"
+        )
+    endif()
+endfunction()
+
+
+function(connextdds_call_codegen)
+    set(optional_args)
+    set(single_value_args IDL LANG PREFIX)
+    set(multi_value_args CODEGEN_ARGS)
+    cmake_parse_arguments(_CONNEXT
+        "${optional_args}"
+        "${single_value_args}"
+        "${multi_value_args}"
+        ${ARGN}
+    )
+    connextdds_check_required_arguments(
+        _CONNEXT_IDL
+        _CONNEXT_LANG
+        _CONNEXT_PREFIX
+    )
+
+
     connextdds_rtiddsgen_run(
         IDL_FILE
             "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}.idl"
@@ -90,66 +197,58 @@ function(connextdds_add_example)
         ${_CONNEXT_CODEGEN_ARGS}
     )
 
-    # If the GENERATE_EXAMPLE option was provided, Codegen will generate the
-    # source code for the publisher and the subscriber applications
-    # If we don't provide that parameter, we will use the source code provided
-    # in the repository for the publisher and the subscriber
+
     connextdds_sanitize_language(LANG ${_CONNEXT_LANG} VAR lang_var)
-    if(GENERATE_EXAMPLE IN_LIST _CONNEXT_CODEGEN_ARGS)
-        set(publisher_src ${${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCES})
-        set(subscriber_src ${${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCES})
-    else()
-
-        set(extension "c")
-        if("${_CONNEXT_LANG}" STREQUAL "C++" OR
-            "${_CONNEXT_LANG}" STREQUAL "C++03" OR
-            "${_CONNEXT_LANG}" STREQUAL "C++11")
-            set(extension "cxx")
-        endif()
-
-        set(publisher_src
-            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_publisher.${extension}"
-            ${${_CONNEXT_IDL}_${lang_var}_SOURCES}
-        )
-        set(subscriber_src
-            "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}_subscriber.${extension}"
-            ${${_CONNEXT_IDL}_${lang_var}_SOURCES}
-        )
-    endif()
-
-    if(_CONNEXT_NO_REQUIRE_QOS)
-        set(no_require_qos NO_REQUIRE_QOS)
-    else()
-        set(no_require_qos)
-    endif()
-
-    # Add the target for the publisher
-    connextdds_add_application(
-        TARGET "publisher"
-        LANG ${_CONNEXT_LANG}
-        SOURCES ${publisher_src}
-        PREFIX ${_CONNEXT_PREFIX}
-        OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
-        ${no_require_qos}
+    set(${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCE
+        "${${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCE}"
+        PARENT_SCOPE
+    )
+    set(${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCE
+        "${${_CONNEXT_IDL}_${lang_var}_SUBSCRIBER_SOURCE}"
+        PARENT_SCOPE
     )
 
-    if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-        # Add the target for the publisher
-        connextdds_add_application(
-            TARGET "subscriber"
-            LANG ${_CONNEXT_LANG}
-            SOURCES ${subscriber_src}
-            PREFIX ${_CONNEXT_PREFIX}
-            OUTPUT_NAME "${_CONNEXT_IDL}_subscriber"
-            ${${no_require_qos}}
-        )
+    # This will help to ensure that all the files generated by codegen are
+    # created
+    add_custom_target(${_CONNEXT_PREFIX}_${lang_var}_sources
+        DEPENDS
+            ${${_CONNEXT_IDL}_${lang_var}_GENERATED_SOURCES}
+    )
+
+    set(obj_library ${_CONNEXT_PREFIX}_${lang_var}_obj)
+    add_library(${obj_library}
+        OBJECT
+        ${${_CONNEXT_IDL}_${lang_var}_SOURCES}
+    )
+
+    set(api "c")
+    if("${_CONNEXT_LANG}" STREQUAL "C++")
+        set(api "cpp")
+    elseif("${_CONNEXT_LANG}" STREQUAL "C++03" OR
+        "${_CONNEXT_LANG}" STREQUAL "C++11")
+        set(api "cpp2")
     endif()
+
+    target_compile_definitions(
+        ${obj_library}
+        PRIVATE
+        $<TARGET_PROPERTY:RTIConnextDDS::${api}_api,INTERFACE_COMPILE_DEFINITIONS>)
+
+    target_include_directories(
+        ${obj_library}
+        PRIVATE
+        $<TARGET_PROPERTY:RTIConnextDDS::${api}_api,INTERFACE_INCLUDE_DIRECTORIES>)
+
+    add_dependencies(${obj_library}
+        ${_CONNEXT_PREFIX}_${lang_var}_sources
+    )
+
 endfunction()
 
 
 function(connextdds_copy_qos_profile)
-    set(optional_args TARGET_PREFIX)
-    set(single_value_args DEPENDANT_TARGET)
+    set(optional_args)
+    set(single_value_args TARGET_PREFIX DEPENDANT_TARGET)
     set(multi_value_args)
 
     cmake_parse_arguments(_EXAMPLE_QOS
@@ -168,7 +267,7 @@ function(connextdds_copy_qos_profile)
 
     set(output_qos "${CMAKE_CURRENT_BINARY_DIR}/${user_qos_profile_name}")
 
-    set(target_qos "${TARGET_PREFIX}qos")
+    set(target_qos "${_EXAMPLE_QOS_TARGET_PREFIX}qos")
 
     if(NOT TARGET ${target_qos})
         add_custom_target(${target_qos}
@@ -226,21 +325,13 @@ function(connextdds_add_application)
     endif()
 
     if(_CONNEXT_PREFIX)
-        set(target_name ${_CONNEXT_PREFIX}_${_CONNEXT_TARGET}_${api})
-        set(qos_target ${_CONNEXT_PREFIX}_qos_${api})
+        set(target_name "${_CONNEXT_PREFIX}_${_CONNEXT_TARGET}_${api}")
+        set(qos_target "${_CONNEXT_PREFIX}_qos_${api}")
+        set(qos_prefix "${_CONNEXT_PREFIX}_${api}")
     else()
-        # If no prefix was given, the name of the example folder name is used
-        # as prefix
-        get_filename_component(
-            folder_name
-            "${CMAKE_CURRENT_SOURCE_DIR}"
-            DIRECTORY)
-        get_filename_component(
-            folder_name
-            "${folder_name}"
-            NAME)
-        set(target_name ${folder_name}_${_CONNEXT_TARGET}_${api})
-        set(qos_target ${folder_name}_qos_${api})
+        set(target_name "${_CONNEXT_TARGET}_${api}")
+        set(qos_target "qos_${api}")
+        set(qos_prefix "${api}")
     endif()
 
     # Create the target
@@ -268,7 +359,7 @@ function(connextdds_add_application)
 
     if(NOT _CONNEXT_NO_REQUIRE_QOS)
         connextdds_copy_qos_profile(
-            TARGET_PREFIX "${_CONNEXT_IDL}_"
+            TARGET_PREFIX "${qos_prefix}_"
             DEPENDANT_TARGET "${target_name}"
         )
     endif()

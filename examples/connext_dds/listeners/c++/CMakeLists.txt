@@ -15,4 +15,5 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "listeners"
     LANG "C++"
+    NO_REQUIRE_QOS
 )

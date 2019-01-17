@@ -16,4 +16,5 @@ connextdds_add_example(
     IDL "Foo"
     LANG "C++"
     DISABLE_SUBSCRIBER
+    NO_REQUIRE_QOS
 )

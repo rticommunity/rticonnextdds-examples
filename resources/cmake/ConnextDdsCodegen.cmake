@@ -255,7 +255,7 @@ macro(_connextdds_codegen_find_codegen use_codegen1)
         BASE_DIR "${CMAKE_BINARY_DIR}"
     )
 
-    # We assume that external RTICODEGEN_DIR provides their own JRE because. 
+    # We assume that external RTICODEGEN_DIR provides their own JRE because.
     # The same for the JNI JVM libraries: a Codegen staging
     # allows to rticommon.sh to find and update the path with the library.
     set(additional_env)
@@ -329,22 +329,26 @@ function(_connextdds_codegen_get_generated_file_list)
         # Set in the parent scope
         set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
 
-        if(${_CODEGEN_GENERATE_EXAMPLE})
-            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+        if(_CODEGEN_GENERATE_EXAMPLE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE
                 "${path_base}_publisher.c"
-                ${sources}
                 PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE
                 "${path_base}_subscriber.c"
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SOURCES
                 ${sources}
                 PARENT_SCOPE)
-                set(${_CODEGEN_VAR}_SOURCES 
-                    ${sources}
-                    "${path_base}_publisher.c"
-                    "${path_base}_subscriber.c"
-                    PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES
+                ${sources}
+                "${path_base}_publisher.c"
+                "${path_base}_subscriber.c"
+                PARENT_SCOPE)
         else()
             set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES ${sources} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE PARENT_SCOPE)
         endif()
 
     elseif("${_CODEGEN_LANG}" STREQUAL "C++")
@@ -357,15 +361,18 @@ function(_connextdds_codegen_get_generated_file_list)
         endif()
 
         if(${_CODEGEN_GENERATE_EXAMPLE})
-            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE
                 "${path_base}_publisher.cxx"
                 ${sources}
                 PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE
                 "${path_base}_subscriber.cxx"
                 ${sources}
                 PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SOURCES
+                ${sources}
+                PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES
                 ${sources}
                 "${path_base}_publisher.cxx"
                 "${path_base}_subscriber.cxx"
@@ -390,15 +397,13 @@ function(_connextdds_codegen_get_generated_file_list)
             PARENT_SCOPE)
 
         if(${_CODEGEN_GENERATE_EXAMPLE})
-            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE
                 "${path_base}_publisher.cpp"
-                ${${_CODEGEN_VAR}_SOURCES}
                 PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE
                 "${path_base}_subscriber.cpp"
-                ${${_CODEGEN_VAR}_SOURCES}
                 PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SOURCES
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES
                 ${${_CODEGEN_VAR}_SOURCES}
                 "${path_base}_publisher.cpp"
                 "${path_base}_subscriber.cpp"
@@ -429,23 +434,21 @@ function(_connextdds_codegen_get_generated_file_list)
         endif()
 
         if(${_CODEGEN_GENERATE_EXAMPLE})
-            set(${_CODEGEN_VAR}_PUBLISHER_SOURCES
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE
                 "${path_base}_publisher.cxx"
-                ${sources}
                 PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCES
-                "${path_base}_subscriber.cxx"
-                ${sources}
-                PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_SOURCES
-                ${sources}
-                "${path_base}_publisher.cxx"
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE
                 "${path_base}_subscriber.cxx"
                 PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES ${sources} PARENT_SCOPE)
         else()
             # Set in the parent scope
+            set(${_CODEGEN_VAR}_GENERATED_SOURCES ${sources} PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
             set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_PUBLISHER_SOURCE PARENT_SCOPE)
+            set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE PARENT_SCOPE)
         endif()
     elseif("${_CODEGEN_LANG}" STREQUAL "Java")
         # Avoid conflicts generating the same IDL but different package flag.
@@ -466,7 +469,7 @@ function(_connextdds_codegen_get_generated_file_list)
     set(TIMESTAMP
         "${timestamp_dir}/${_CODEGEN_IDL_BASENAME}_timestamp.cmake"
         PARENT_SCOPE)
- 
+
     if(_CODEGEN_DEBUG)
         set(${_CODEGEN_VAR}_SOURCES
             ${${_CODEGEN_VAR}_SOURCES}
@@ -544,7 +547,7 @@ function(connextdds_rtiddsgen_run)
     endif()
 
     if(_CODEGEN_GENERATE_EXAMPLE)
-        set(_CODEGEN_GENERATE_EXAMPLE GENERATE_EXAMPLE)
+        set(generate_example GENERATE_EXAMPLE)
     endif()
 
     _connextdds_codegen_get_generated_file_list(
@@ -553,7 +556,7 @@ function(connextdds_rtiddsgen_run)
         LANG ${_CODEGEN_LANG}
         OUTPUT_DIR "${_CODEGEN_OUTPUT_DIRECTORY}"
         PACKAGE ${_CODEGEN_PACKAGE}
-        ${_CODEGEN_GENERATE_EXAMPLE}
+        ${generate_example}
         ${list_extra_args}
     )
 
@@ -624,6 +627,8 @@ function(connextdds_rtiddsgen_run)
             ${IDL_SOURCES}
             ${IDL_HEADERS}
             ${TIMESTAMP}
+            ${IDL_PUBLISHER_SOURCE}
+            ${IDL_SUBSCRIBER_SOURCE}
         COMMAND
             ${CMAKE_COMMAND} -E make_directory ${_CODEGEN_OUTPUT_DIRECTORY}
         COMMAND
@@ -654,8 +659,9 @@ function(connextdds_rtiddsgen_run)
 
     # Exports the files generated by Codegen
     set(${var_prefix}_${lang_var}_SOURCES ${IDL_SOURCES} PARENT_SCOPE)
-    set(${var_prefix}_${lang_var}_PUBLISHER_SOURCES ${IDL_PUBLISHER_SOURCES} PARENT_SCOPE)
-    set(${var_prefix}_${lang_var}_SUBSCRIBER_SOURCES ${IDL_SUBSCRIBER_SOURCES} PARENT_SCOPE)
+    set(${var_prefix}_${lang_var}_GENERATED_SOURCES ${IDL_GENERATED_SOURCES} PARENT_SCOPE)
+    set(${var_prefix}_${lang_var}_PUBLISHER_SOURCE ${IDL_PUBLISHER_SOURCE} PARENT_SCOPE)
+    set(${var_prefix}_${lang_var}_SUBSCRIBER_SOURCE ${IDL_SUBSCRIBER_SOURCE} PARENT_SCOPE)
     set(${var_prefix}_${lang_var}_HEADERS ${IDL_HEADERS} PARENT_SCOPE)
     set(${var_prefix}_${lang_var}_TIMESTAMP ${TIMESTAMP} PARENT_SCOPE)
 endfunction()

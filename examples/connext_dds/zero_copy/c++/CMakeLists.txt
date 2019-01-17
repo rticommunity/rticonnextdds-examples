@@ -15,6 +15,7 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "zero_copy"
     LANG "C++"
+    NO_REQUIRE_QOS
 )
 
 target_include_directories(zero_copy_publisher_cpp

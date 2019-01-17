@@ -34,6 +34,6 @@ add_custom_target(custom_qos
         "${CMAKE_CURRENT_BINARY_DIR}/my_custom_qos_profiles.xml")
 
 add_dependencies(using_qos_profiles_publisher_c
-    using_qos_profiles_qos_c)
+    using_qos_profiles_c_qos)
 add_dependencies(using_qos_profiles_subscriber_c
-    using_qos_profiles_qos_c)
+    using_qos_profiles_c_qos)

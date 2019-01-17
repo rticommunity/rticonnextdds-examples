@@ -15,4 +15,5 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "Shapes"
     LANG "C"
+    NO_REQUIRE_QOS
 )

@@ -18,4 +18,5 @@ connextdds_add_example(
     DISABLE_SUBSCRIBER
     CODEGEN_ARGS
         LEGACY_PLUGIN
+    NO_REQUIRE_QOS
 )
