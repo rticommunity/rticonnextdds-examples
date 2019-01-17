@@ -8,15 +8,19 @@
 #  RTI is under no obligation to maintain or support the Software.  RTI shall
 #  not be liable for any incidental or consequential damages arising out of the
 #  use or inability to use the software.
-#
 
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 11)
-project (ShapesProcessor)
+project(ShapesProcessor)
 
+if(NOT BUILD_SHARED_LIBS)
+    set(msg
+        "Static linking is not supported for this example. You can build it "
+        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+    message(FATAL_ERROR ${msg})
+endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{NDDSHOME}/resource/cmake")
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
@@ -26,17 +30,27 @@ find_package(
     )
 
 # Define the library that will provide the  Processor plugin
-add_library(shapesprocessor SHARED ${CMAKE_SOURCE_DIR}/ShapesProcessor.cxx)
+add_library(shapesprocessor
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShapesProcessor.cxx")
 
-target_include_directories(shapesprocessor
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
 
-target_compile_definitions(shapesprocessor
-    PUBLIC
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
+set(cxx_standard CXX_STANDARD 11)
+if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" AND
+    CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8.2)
+        set(cxx_standard CXX_STANDARD 98)
+endif()
 
 target_link_libraries(shapesprocessor
-    RTIConnextDDS::routing_service_infrastructure
+    ${CONNEXTDDS_EXTERNAL_LIBS}
     RTIConnextDDS::cpp2_api
-    RTIConnextDDS::c_api
-    ${CONNEXTDDS_EXTERNAL_LIBS})
+    RTIConnextDDS::routing_service_infrastructure)
+
+target_include_directories(shapesprocessor
+    PUBLIC
+        "${CMAKE_CURRENT_SOURCE_DIR}")
+
+set_target_properties(${target_name}
+    PROPERTIES
+        OUTPUT_NAME "${_CONNEXT_OUTPUT_NAME}"
+        ${cxx_standard}
+)
