@@ -33,13 +33,6 @@ find_package(
 add_library(shapesprocessor
     "${CMAKE_CURRENT_SOURCE_DIR}/ShapesProcessor.cxx")
 
-
-set(cxx_standard CXX_STANDARD 11)
-if(CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux" AND
-    CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8.2)
-        set(cxx_standard CXX_STANDARD 98)
-endif()
-
 target_link_libraries(shapesprocessor
     ${CONNEXTDDS_EXTERNAL_LIBS}
     RTIConnextDDS::cpp2_api
@@ -51,6 +44,5 @@ target_include_directories(shapesprocessor
 
 set_target_properties(${target_name}
     PROPERTIES
-        OUTPUT_NAME "${_CONNEXT_OUTPUT_NAME}"
-        ${cxx_standard}
+        CXX_STANDARD 11
 )
