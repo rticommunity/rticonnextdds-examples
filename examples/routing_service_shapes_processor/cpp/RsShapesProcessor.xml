@@ -23,7 +23,7 @@
             </datareader_qos>
         </qos_profile>
     </qos_library>
-    
+
     <plugin_library name="ShapesPluginLib">
         <processor_plugin name="ShapesProcessor">
             <dll>shapesprocessor</dll>
@@ -68,11 +68,11 @@
                             <value>
                                 <element>
                                     <name>shapes_processor.kind</name>
-                                    <value>aggregator</value>
+                                    <value>$(SHAPES_PROC_KIND)</value>
                                 </element>
                                 <element>
                                     <name>shapes_processor.leading_input_index</name>
-                                    <value>1</value>
+                                    <value>0</value>
                                 </element>
                             </value>
                         </property>
