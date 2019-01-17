@@ -25,7 +25,7 @@
 #include <dds/core/xtypes/StructType.hpp>
 #include <dds/core/Optional.hpp>
 
-class ShapesAggregrator :
+class ShapesAggregatorSimple :
         public rti::routing::processor::NoOpProcessor {
 
 public:
@@ -35,9 +35,31 @@ public:
             rti::routing::processor::Route& route,
             rti::routing::processor::Output& output);
 
-    ShapesAggregrator(int32_t leading_input_index);
+    ShapesAggregatorSimple();
 
-    ~ShapesAggregrator();
+    ~ShapesAggregatorSimple();
+
+private:
+    // Optional member for deferred initialization: this object can be created
+    // only when the output is enabled.
+    // You can use std::optional if supported in your platform
+    dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
+};
+
+
+class ShapesAggregatorAdv :
+        public rti::routing::processor::NoOpProcessor {
+
+public:
+    void on_data_available(rti::routing::processor::Route&);
+
+    void on_output_enabled(
+            rti::routing::processor::Route& route,
+            rti::routing::processor::Output& output);
+
+    ShapesAggregatorAdv(int32_t leading_input_index);
+
+    ~ShapesAggregatorAdv();
     
 private:
     // Optional member for deferred initialization: this object can be created
@@ -75,7 +97,9 @@ class ShapesProcessorPlugin :
 public:        
     static const std::string PROCESSOR_KIND_PROPERTY_NAME;
     static const std::string PROCESSOR_LEADING_INPUT_PROPERTY_NAME;
-    static const std::string PROCESSOR_AGGREGATOR_NAME;
+    static const std::string PROCESSOR_AGGREGATOR_SIMPLE_NAME;
+    static const std::string PROCESSOR_AGGREGATOR_ADV_NAME;
+    static const std::string PROCESSOR_SPLITTER_NAME;
     
     rti::routing::processor::Processor* create_processor(
             rti::routing::processor::Route& route,
