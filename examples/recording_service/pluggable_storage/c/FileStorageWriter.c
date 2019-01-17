@@ -13,7 +13,7 @@
 #include <time.h>
 
 #include "ndds/ndds_c.h"
-#include "recordingservice_storagewriter.h"
+#include "recordingservice/recordingservice_storagewriter.h"
 
 #include "FileStorageWriter.h"
 

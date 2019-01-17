@@ -15,7 +15,7 @@
 
 #include "ndds/ndds_c.h"
 #include "routingservice/routingservice_infrastructure.h"
-#include "recordingservice_storagereader.h"
+#include "recordingservice/recordingservice_storagereader.h"
 
 #include "HelloMsg.h"
 #include "FileStorageReader.h"
