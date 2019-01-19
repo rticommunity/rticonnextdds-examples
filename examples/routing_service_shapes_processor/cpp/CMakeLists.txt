@@ -20,7 +20,7 @@ if(NOT BUILD_SHARED_LIBS)
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "$ENV{NDDSHOME}/resource/cmake")
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
