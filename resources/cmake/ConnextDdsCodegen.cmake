@@ -127,10 +127,22 @@ The language variable is sanitized according to
 If ``VAR`` is passed as a parameter, the variable name will be named like this:
 
 ``<VAR>_<LANG>_SOURCES``
-    The list of generated source files. Empty for Java (see note below).
+    The list of the generated source files for the types. Empty for Java (see
+    note below).
 
 ``<VAR>_<LANG>_HEADERS``
     The list of generated header files. Empty for Java (see note below).
+
+``<VAR>_<LANG>_GENERATED_SOURCES``
+    The list of generated source files. Empty for Java (see note below).
+
+``<VAR>_<LANG>_PUBLISHER_SOURCE``
+    Source code for the publisher if the example code was generated (see note
+    below).
+
+``<VAR>_<LANG>_SUBSCRIBER_SOURCE``
+    Source code for the subscriber if the example code was generated (see note
+    below).
 
 ``<VAR>_<LANG>_TIMESTAMP``
     Only used when generating code for Java. This is a dummy empty file that

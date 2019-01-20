@@ -17,7 +17,10 @@ Function to build the examples.
     _connextdds_add_example(
         NAME name
         LANG language
+        [PREFIX prefix]
         [DISABLE_SUBSCRIBER]
+        [NO_REQUIRE_QOS]
+        [DEPENDENCIES ...]
         [CODEGEN_ARGS ...]
     )
 
@@ -29,21 +32,119 @@ CMake targets and set the dependencies.
 ``LANG`` (required):
     Example language. Valid values are ``C``, ``C++``, ``C++03`` and ``C++11``.
 ``PREFIX``:
-    Prefix name for the targets.
+    Prefix name for the targets. If not present, the folder of the example name
+    will be used as prefix.
 ``DISABLE_SUBSCRIBER``:
-    Disable the subscriber build.
+    Disable the subscriber build. The target for the subcriber will not be
+    created.
+``NO_REQUIRE_QOS``:
+    If present, the function will copy the USER_QOS_PROFILES.xml file from the
+    source directory to the binary directory.
 ``DEPENDENCIES``:
     Other target dependencies.
 ``CODEGEN_ARGS":
     Extra arguments for Codegen.
 
 Output targets:
-``folder name><_publisher_<lang>``
+``<prefix>_publisher_<lang>``
     Target for the publisher application.
-``<folder name>_subscriber_<lang>``
+``<prefix>_subscriber_<lang>``
     Target for the subscriber application.
-``<folder name>_qos_profile_<lang>``
+``<prefix>_<lang>_sources``
+    Target to call Codegen to generate the source files for the types and the
+    publisher and the subscriber (if they were generated).
+``<prefix>_<lang>_obj``
+    Target for the object library with all the objects created with the source
+    code for the types.
+``<prefix>_<lang>_qos``
     Target to copy the USER_QOS_PROFILES.xml (if exists).
+
+
+connextdds_call_codegen
+--------------------
+
+Function to generate the source code from codegen.
+
+::
+
+    connextdds_call_codegen(
+        IDL name
+        LANG language
+        [PREFIX prefix]
+        [CODEGEN_ARGS ...]
+    )
+
+Add a new example to be built. This method will call Codegen, create the
+CMake targets and set the dependencies.
+
+``IDL`` (required):
+    Name of the IDL file (without extension).
+``LANG`` (required):
+    Example language. Valid values are ``C``, ``C++``, ``C++03`` and ``C++11``.
+``PREFIX``:
+    Prefix name for the targets. If not present, the folder of the example name
+    will be used as prefix.
+``CODEGEN_ARGS":
+    Extra arguments for Codegen.
+
+
+connextdds_copy_qos_profile
+---------------------------
+
+Function to copy the USER_QOS_PROFILES.xml file.
+
+::
+
+    connextdds_copy_qos_profile(
+        TARGET_PREFIX prefix
+        DEPENDANT_TARGET dependant_target
+    )
+
+Copy the USER_QOS_PROFILES.xml file It will create the ``<prefix>_<lang>_qos``
+target. It will make the given target dependant of the target for the QoS.
+
+``TARGET_PREFIX (required)``:
+    Prefix name for the target.
+``DEPENDANT_TARGET":
+    This target will depends of the created QoS target. So, when the dependant
+    target is build, the QoS file will be copied.
+
+
+connextdds_add_application
+--------------------------
+
+Function to copy the USER_QOS_PROFILES.xml file.
+
+::
+
+    connextdds_add_application(
+        TARGET target
+        LANG language
+        SOURCES ...
+        [PREFIX prefix]
+        [OUTPUT_NAME output_name]
+        [NO_REQUIRE_QOS]
+        [DEPENDENCIES ...]
+    )
+
+Copy the USER_QOS_PROFILES.xml file It will create the ``<prefix>_<lang>_qos``
+target. It will make the given target dependant of the target for the QoS.
+
+``TARGET`` (required):
+    Name of the target for the application.
+``LANG`` (required):
+    Example language. Valid values are ``C``, ``C++``, ``C++03`` and ``C++11``.
+``PREFIX``:
+    Prefix name for the targets. If not present, the folder of the example name
+    will be used as prefix.
+``OUTPUT_NAME":
+    Output name for the application. If not present, the target name will be
+    used.
+``NO_REQUIRE_QOS``:
+    If present, the USER_QOS_PROFILES.xml will not be copied to the binary dir.
+``DEPENDENCIES``:
+    Other libraries to link.
+
 #]]
 
 include_guard(DIRECTORY)
@@ -78,7 +179,6 @@ function(connextdds_add_example)
         _CONNEXT_LANG
     )
 
-
     # First, we call Codegen to generate the header and source files from the
     # IDL
     if(_CONNEXT_CODEGEN_ARGS)
@@ -103,6 +203,7 @@ function(connextdds_add_example)
         set(prefix "${folder_name}")
     endif()
 
+    # Generate the sources for the types
     connextdds_call_codegen(
         IDL "${_CONNEXT_IDL}"
         LANG "${_CONNEXT_LANG}"
@@ -110,6 +211,7 @@ function(connextdds_add_example)
         ${codegen_args}
     )
 
+    # Copy the USER_QOS_PROFILES.xml file if required
     if(_CONNEXT_NO_REQUIRE_QOS)
         set(no_require_qos NO_REQUIRE_QOS)
     else()
@@ -141,7 +243,7 @@ function(connextdds_add_example)
         )
     endif()
 
-    # Add the target for the publisher
+    # Add the target for the publisher application
     connextdds_add_application(
         TARGET "publisher"
         LANG ${_CONNEXT_LANG}
@@ -155,7 +257,7 @@ function(connextdds_add_example)
     )
 
     if(NOT _CONNEXT_DISABLE_SUBSCRIBER)
-        # Add the target for the subscribers
+        # Add the target for the subscriber application
         connextdds_add_application(
             TARGET "subscriber"
             LANG ${_CONNEXT_LANG}
@@ -188,6 +290,8 @@ function(connextdds_call_codegen)
     )
 
 
+    # Get the list of the source files to genrate and configure the command
+    # to cal Codegen
     connextdds_rtiddsgen_run(
         IDL_FILE
             "${CMAKE_CURRENT_SOURCE_DIR}/${_CONNEXT_IDL}.idl"
@@ -197,7 +301,7 @@ function(connextdds_call_codegen)
         ${_CONNEXT_CODEGEN_ARGS}
     )
 
-
+    # Get the path to the generated publisher and subscriber source code
     connextdds_sanitize_language(LANG ${_CONNEXT_LANG} VAR lang_var)
     set(${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCE
         "${${_CONNEXT_IDL}_${lang_var}_PUBLISHER_SOURCE}"
@@ -215,6 +319,19 @@ function(connextdds_call_codegen)
             ${${_CONNEXT_IDL}_${lang_var}_GENERATED_SOURCES}
     )
 
+    # If we don't use a object library to generate our publisher and subsciber
+    # applications and we are building using more than one job, could happen
+    # the following situation:
+    # 1. The publisher and subscriber applications will be build in two
+    #   different jobs (A and B)
+    # 2. The source code for the types is not generated
+    # 3. The job A will call Codegen
+    # 4. The job A starts to build the application
+    # 4. The job B calls Codegen
+    # 5. The build performer by the job A is broken because the job B is
+    #   replacing code generated by the job A.
+    # Using the object library, we can depend of it and call the Codegen only
+    # one time.
     set(obj_library ${_CONNEXT_PREFIX}_${lang_var}_obj)
     add_library(${obj_library}
         OBJECT
@@ -270,11 +387,13 @@ function(connextdds_copy_qos_profile)
     set(target_qos "${_EXAMPLE_QOS_TARGET_PREFIX}qos")
 
     if(NOT TARGET ${target_qos})
+        # We created a target and it depends of the output file
         add_custom_target(${target_qos}
             DEPENDS
                 ${output_qos}
         )
 
+        # Add the command to copy the USER_QOS_PROFILES.xml
         add_custom_command(
             OUTPUT
                 ${output_qos}
@@ -294,7 +413,6 @@ function(connextdds_copy_qos_profile)
     )
 
 endfunction()
-
 
 
 function(connextdds_add_application)
