@@ -83,7 +83,6 @@ add_executable(
     HelloMsg_publisher
     ${CMAKE_SOURCE_DIR}/HelloMsg.cxx
     ${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsgSupport.cxx
     ${CMAKE_SOURCE_DIR}/HelloMsg_publisher.cxx
 )
 
@@ -100,7 +99,7 @@ target_compile_definitions(
 
 target_link_libraries(
     HelloMsg_publisher
-    RTIConnextDDS::c_api
+    RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
@@ -109,7 +108,6 @@ add_executable(
     HelloMsg_subscriber
     ${CMAKE_SOURCE_DIR}/HelloMsg.cxx
     ${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsgSupport.cxx
     ${CMAKE_SOURCE_DIR}/HelloMsg_subscriber.cxx
 )
 
