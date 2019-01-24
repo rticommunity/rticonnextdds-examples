@@ -2,7 +2,7 @@
 
 This example shows how to implement a custom *RTI Recording Service* Storage 
 plug-in, build it into a shared library and load it with *RTI Recording Service* 
-and/or *RTI Replay Service*.
+*RTI Replay Service* or *RTI Converter*.
 
 In this concrete example, we show how a simple storage plug-in written in C. The 
 example is composed of two parts: the writing side (that can be plugged into 
@@ -77,6 +77,7 @@ folder (where the storage writer plugin shared library has been created).
 cd build
 <connext dir>/bin/rtirecordingservice -cfgFile pluggable_storage_example.xml -cfgName C_StorageExample -domainIdBase <your domain ID>
 ```
+
 After running this command, you will see the following output:
 
 ```bash
@@ -84,12 +85,12 @@ RTI Recording Service (Recorder) 6.0.0 starting...
 RTI Recording Service started
 ```
 
-*Recorder* will create two files, `C_PluggableStorage.dat` and 
-`C_PluggableStorage.dat.info`. The `HelloMsg` recorded samples are in the 
+*Recorder* will create two files, `Cpp_PluggableStorage.dat` and 
+`Cpp_PluggableStorage.dat.info`. The `HelloMsg` recorded samples are in the 
 *.dat* file. The *.dat.info* file contains information about when the service 
 started and finished.
 
-## Running the C example (Replay storage reader)
+## Running the C++ example (Replay storage reader)
 
 For *Replay* to have some data to replay, we assume that you have run the 
 storage writer example and recorded some data. We also assume that you correctly 
@@ -111,7 +112,7 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName C_ReaderExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName CppFileReaderExample -domainIdBase <your domain ID>
 ```
 
 You should see the samples in the file being published and received by the 
