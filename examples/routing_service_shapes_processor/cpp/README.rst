@@ -19,9 +19,9 @@ From the directory containing the example sources:
 
     mkdir build
     cd build
-    cmake-DCONNEXTDDS_DIR=<Connext directory> \
-             -DCONNEXTDDS_ARCH=<ARCH> \
-             -DBUILD_SHARED_LIBS=ON ..
+    cmake -DCONNEXTDDS_DIR=<Connext directory> \
+            -DCONNEXTDDS_ARCH=<ARCH> \
+            -DBUILD_SHARED_LIBS=ON ..
     cmake --build .
 
 
