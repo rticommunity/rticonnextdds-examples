@@ -10,8 +10,12 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (PluggableStorage)
 
+set(CMAKE_SYSTEM_NAME "Windows")
+set(CMAKE_SYSTEM_PROCESSOR x86)
+
+project (PluggableStorage)
+set(CONNEXTDDS_DISABLE_VERSION_CHECK TRUE)
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
@@ -41,7 +45,8 @@ add_custom_command(
 # Define the library that will provide the storage writer plugin
 add_library(
     FileStorageWriter MODULE
-    ${CMAKE_SOURCE_DIR}/FileStorageWriter.c
+        ${CMAKE_SOURCE_DIR}/HelloMsg.c 
+        ${CMAKE_SOURCE_DIR}/FileStorageWriter.c
     ${CMAKE_SOURCE_DIR}/FileStorageWriter.h
 )
 
@@ -62,6 +67,7 @@ target_include_directories(
 # Define the library that will provide the storage reader plugin
 add_library(
     FileStorageReader MODULE
+    ${CMAKE_SOURCE_DIR}/HelloMsg.c 
     ${CMAKE_SOURCE_DIR}/FileStorageReader.c
     ${CMAKE_SOURCE_DIR}/FileStorageReader.h
 )
