@@ -31,18 +31,18 @@ find_package(
 # Generate type plug-in files for the storage type
 add_custom_command(
     OUTPUT 
-        ${CMAKE_SOURCE_DIR}/HelloMsg.cxx
-        ${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx
-        ${CMAKE_SOURCE_DIR}/HelloMsgSupport.cxx
-    MAIN_DEPENDENCY ${CMAKE_SOURCE_DIR}/HelloMsg.idl
-    COMMAND ${RTICODEGEN} -language C++03 -replace -d ${CMAKE_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/HelloMsg.idl
+        "${CMAKE_SOURCE_DIR}/HelloMsg.cxx"
+        "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx"
+        "${CMAKE_SOURCE_DIR}/HelloMsgSupport.cxx"
+    MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/HelloMsg.idl"
+    COMMAND ${RTICODEGEN} -language C++03 -replace -d "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/HelloMsg.idl"
 )
 
 # Define the library that will provide the storage writer plugin
 add_library(
     FileStorageWriter MODULE
-    ${CMAKE_SOURCE_DIR}/FileStorageWriter.cxx
-    ${CMAKE_SOURCE_DIR}/FileStorageWriter.hpp
+    "${CMAKE_SOURCE_DIR}/FileStorageWriter.cxx"
+    "${CMAKE_SOURCE_DIR}/FileStorageWriter.hpp"
 )
 
 target_link_libraries(
@@ -54,15 +54,15 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageWriter
-    PUBLIC ${CMAKE_BINARY_DIR}
+    PUBLIC "${CMAKE_BINARY_DIR}"
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
 )
 
 # Define the library that will provide the storage reader plugin
 add_library(
     FileStorageReader MODULE
-    ${CMAKE_SOURCE_DIR}/FileStorageReader.cxx
-    ${CMAKE_SOURCE_DIR}/FileStorageReader.hpp
+    "${CMAKE_SOURCE_DIR}/FileStorageReader.cxx"
+    "${CMAKE_SOURCE_DIR}/FileStorageReader.hpp"
 )
 
 target_link_libraries(
@@ -74,21 +74,21 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageReader
-    PUBLIC ${CMAKE_BINARY_DIR}
+    PUBLIC "${CMAKE_BINARY_DIR}"
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
 )
 
 # Define the publisher application
 add_executable(
     HelloMsg_publisher
-    ${CMAKE_SOURCE_DIR}/HelloMsg.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsg_publisher.cxx
+    "${CMAKE_SOURCE_DIR}/HelloMsg.cxx"
+    "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx"
+    "${CMAKE_SOURCE_DIR}/HelloMsg_publisher.cxx"
 )
 
 target_include_directories(
     HelloMsg_publisher
-    PUBLIC ${CMAKE_BINARY_DIR}
+    PUBLIC "${CMAKE_BINARY_DIR}"
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
 )
 
@@ -106,14 +106,14 @@ target_link_libraries(
 # Define the subscriber application
 add_executable(
     HelloMsg_subscriber
-    ${CMAKE_SOURCE_DIR}/HelloMsg.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx
-    ${CMAKE_SOURCE_DIR}/HelloMsg_subscriber.cxx
+    "${CMAKE_SOURCE_DIR}/HelloMsg.cxx"
+    "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.cxx"
+    "${CMAKE_SOURCE_DIR}/HelloMsg_subscriber.cxx"
 )
 
 target_include_directories(
     HelloMsg_subscriber
-    PUBLIC ${CMAKE_BINARY_DIR}
+    PUBLIC "${CMAKE_BINARY_DIR}"
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
 )
 
@@ -127,4 +127,3 @@ target_link_libraries(
     RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
-

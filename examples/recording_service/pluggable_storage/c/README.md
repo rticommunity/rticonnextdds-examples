@@ -53,6 +53,7 @@ Build the example code by running the following command:
 
 ```bash
 mkdir build
+cd build
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
 cmake --build .
 ```
