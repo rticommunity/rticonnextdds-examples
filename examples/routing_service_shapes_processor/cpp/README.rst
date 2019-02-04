@@ -21,6 +21,7 @@ From the directory containing the example sources:
     cd build
     cmake -DCONNEXTDDS_DIR=<Connext directory> \
             -DCONNEXTDDS_ARCH=<ARCH> \
+            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY
             -DBUILD_SHARED_LIBS=ON ..
     cmake --build .
 
@@ -31,6 +32,12 @@ where:
   directory of *RTI Connext*.
 - ``<ARCH>`` shall be replaced with the target architecture where you are
   running the example (e.g., x64Darwin15clang7.0).
+
+.. note::
+
+    For certain CMake generators you may need to provide the target platform
+    through the ``-A`` command-line option. For example on Windows systems, you
+    can provide the values ``Win32`` or ``x64``
 
 .. note::
 
@@ -58,6 +65,15 @@ To run |RS|, you will need first to set up your environment as follows:
 
 where ``<ARCH>`` shall be replaced with the target architecture you used to
 build the example in the previous step.
+
+If the shared library of this example, generated in the previous build phase,
+is placed in a different directory other than your current working directory,
+you will need to add the path to your environment. For example:
+
+::
+
+    export RTI_LD_LIBRARY_PATH=$RTI_LD_LIBRARY_PATH:$PWD/Debug/x64
+
 
 Aggregation (Simple)
 --------------------

@@ -31,7 +31,7 @@
                 ShapesProcessorPlugin_create_processor_plugin
             </create_function>
         </processor_plugin>
-    </plugin_library>   
+    </plugin_library>
     
     <routing_service name="RsShapesAggregator">
 
@@ -40,6 +40,10 @@
                 Aggregates Squares And Circles from domain 0 into Triangles on domain 1
             </documentation>
         </annotation>
+
+        <administration>
+            <domain_id>0</domain_id>
+        </administration>
 
         <domain_route>
             
@@ -55,11 +59,13 @@
                 
                 <auto_topic_route>
                     <input participant="domain0">
-                        <deny_topic_name_filter>Triangle</deny_topic_name_filter>
+                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
                         <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
                         <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
                     </input>
-                    <output participant="domain1"/>
+                    <output participant="domain1">
+                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
+                    </output>
                 </auto_topic_route>
                 
                 <topic_route name="SquaresAndCirclestoTriangles">
@@ -108,6 +114,10 @@
             </documentation>
         </annotation>
 
+        <administration>
+            <domain_id>0</domain_id>
+        </administration>
+        
         <domain_route>
 
             <participant name="domain0">
@@ -121,11 +131,13 @@
             <session>
                 <auto_topic_route>
                     <input participant="domain0">
-                        <deny_topic_name_filter>Triangle</deny_topic_name_filter>
+                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
                         <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
                         <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
                     </input>
-                    <output participant="domain1"/>
+                    <output participant="domain1">
+                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
+                    </output>
                 </auto_topic_route>
                 
                 <topic_route name="SquaresToCirclesAndTriangles">
