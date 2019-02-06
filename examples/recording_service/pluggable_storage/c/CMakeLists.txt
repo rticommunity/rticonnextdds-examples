@@ -11,11 +11,8 @@
 #
 cmake_minimum_required(VERSION 3.11)
 
-set(CMAKE_SYSTEM_NAME "Windows")
-set(CMAKE_SYSTEM_PROCESSOR x86)
-
 project (PluggableStorage)
-set(CONNEXTDDS_DISABLE_VERSION_CHECK TRUE)
+
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
@@ -47,7 +44,7 @@ add_library(
     FileStorageWriter MODULE
         ${CMAKE_SOURCE_DIR}/HelloMsg.c 
         ${CMAKE_SOURCE_DIR}/FileStorageWriter.c
-    ${CMAKE_SOURCE_DIR}/FileStorageWriter.h
+        ${CMAKE_SOURCE_DIR}/FileStorageWriter.h
 )
 
 target_link_libraries(
