@@ -21,7 +21,7 @@ From the directory containing the example sources:
     cd build
     cmake -DCONNEXTDDS_DIR=<Connext directory> \
             -DCONNEXTDDS_ARCH=<ARCH> \
-            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY
+            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=. \
             -DBUILD_SHARED_LIBS=ON ..
     cmake --build .
 
