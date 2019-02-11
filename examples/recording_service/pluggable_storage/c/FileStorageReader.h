@@ -9,12 +9,6 @@
 
 #include "routingservice/routingservice_infrastructure.h"
 
-#ifdef _WIN32
-#define DLLExport __declspec(dllexport)
-#else
-#define DLLExport 
-#endif
-
 /**
  * Entry-point function to the C reader plugin. This function will create an
  * instance of the StorageReader example. This example opens a file passed in by
@@ -23,7 +17,7 @@
  * This example works exclusively with the type defined in the provided IDL
  * file, HelloMsg.idl.
  */
-DLLExport
+RTI_USER_DLL_EXPORT
 struct RTI_RecordingServiceStorageReader * FileStorageReader_create(
         const struct RTI_RoutingServiceProperties *properties);
 
@@ -33,6 +27,6 @@ struct RTI_RecordingServiceStorageReader * FileStorageReader_create(
  * This function should return any resources allocated by the creation function
  * and exit cleanly.
  */
-DLLExport
+RTI_USER_DLL_EXPORT
 void FileStorageReader_delete_instance(
         struct RTI_RecordingServiceStorageReader *storage_reader);
