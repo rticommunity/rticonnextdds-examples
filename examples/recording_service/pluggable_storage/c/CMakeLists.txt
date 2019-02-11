@@ -10,6 +10,7 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
+
 project (PluggableStorage)
 
 # Find RTI Connext dependencies
@@ -41,8 +42,9 @@ add_custom_command(
 # Define the library that will provide the storage writer plugin
 add_library(
     FileStorageWriter MODULE
-    "${CMAKE_SOURCE_DIR}/FileStorageWriter.c"
-    "${CMAKE_SOURCE_DIR}/FileStorageWriter.h"
+        "${CMAKE_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_SOURCE_DIR}/FileStorageWriter.c"
+        "${CMAKE_SOURCE_DIR}/FileStorageWriter.h"
 )
 
 target_link_libraries(
@@ -62,8 +64,9 @@ target_include_directories(
 # Define the library that will provide the storage reader plugin
 add_library(
     FileStorageReader MODULE
-    "${CMAKE_SOURCE_DIR}/FileStorageReader.c"
-    "${CMAKE_SOURCE_DIR}/FileStorageReader.h"
+        "${CMAKE_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_SOURCE_DIR}/FileStorageReader.c"
+        "${CMAKE_SOURCE_DIR}/FileStorageReader.h"
 )
 
 target_link_libraries(
