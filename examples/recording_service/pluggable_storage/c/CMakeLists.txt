@@ -57,7 +57,6 @@ target_link_libraries(
 target_include_directories(
     FileStorageWriter
     PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}/recordingservice
 )
 
@@ -79,7 +78,6 @@ target_link_libraries(
 target_include_directories(
     FileStorageReader
     PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}/recordingservice
 )
 
@@ -95,12 +93,6 @@ add_executable(
 target_include_directories(
     HelloMsg_publisher
     PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
-)
-
-target_compile_definitions(
-    HelloMsg_publisher
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS}
 )
 
 target_link_libraries(
@@ -121,12 +113,6 @@ add_executable(
 target_include_directories(
     HelloMsg_subscriber
     PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}
-)
-
-target_compile_definitions(
-    HelloMsg_subscriber
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS}
 )
 
 target_link_libraries(
