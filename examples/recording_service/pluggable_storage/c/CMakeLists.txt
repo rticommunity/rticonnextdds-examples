@@ -32,19 +32,19 @@ find_package(
 # Generate type plug-in files for the storage type
 add_custom_command(
     OUTPUT 
-        "${CMAKE_SOURCE_DIR}/HelloMsg.c" 
-        "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.c"
-        "${CMAKE_SOURCE_DIR}/HelloMsgSupport.c"
-    MAIN_DEPENDENCY "${CMAKE_SOURCE_DIR}/HelloMsg.idl"
-    COMMAND ${RTICODEGEN} -language C -replace -d "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/HelloMsg.idl"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
+    COMMAND ${RTICODEGEN} -language C -replace -d "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )
 
 # Define the library that will provide the storage writer plugin
 add_library(
     FileStorageWriter MODULE
-        "${CMAKE_SOURCE_DIR}/HelloMsg.c" 
-        "${CMAKE_SOURCE_DIR}/FileStorageWriter.c"
-        "${CMAKE_SOURCE_DIR}/FileStorageWriter.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.h"
 )
 
 target_link_libraries(
@@ -64,9 +64,9 @@ target_include_directories(
 # Define the library that will provide the storage reader plugin
 add_library(
     FileStorageReader MODULE
-        "${CMAKE_SOURCE_DIR}/HelloMsg.c" 
-        "${CMAKE_SOURCE_DIR}/FileStorageReader.c"
-        "${CMAKE_SOURCE_DIR}/FileStorageReader.h"
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.h"
 )
 
 target_link_libraries(
@@ -86,10 +86,10 @@ target_include_directories(
 # Define the publisher application
 add_executable(
     HelloMsg_publisher
-    "${CMAKE_SOURCE_DIR}/HelloMsg.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsgSupport.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsg_publisher.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.c"
 )
 
 target_include_directories(
@@ -112,10 +112,10 @@ target_link_libraries(
 # Define the subscriber application
 add_executable(
     HelloMsg_subscriber
-    "${CMAKE_SOURCE_DIR}/HelloMsg.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsgPlugin.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsgSupport.c"
-    "${CMAKE_SOURCE_DIR}/HelloMsg_subscriber.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.c"
 )
 
 target_include_directories(
