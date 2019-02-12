@@ -28,15 +28,24 @@ find_package(
     REQUIRED
 )
 
+set(GENERATED_CODE
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.cxx"
+)
+
 # Generate type plug-in files for the storage type
 add_custom_command(
-    OUTPUT 
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.cxx"
+    OUTPUT ${GENERATED_CODE}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
-    COMMAND ${RTICODEGEN} -language C++03 -replace -d "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
+    COMMAND ${RTICODEGEN} -language C++03 -update typefiles -create examplefiles
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )
+
+add_custom_target(
+    generated_code DEPENDS ${GENERATED_CODE})
 
 # Define the library that will provide the storage writer plugin
 add_library(
@@ -84,6 +93,8 @@ add_executable(
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.cxx"
 )
 
+add_dependencies(HelloMsg_publisher generated_code)
+
 target_include_directories(
     HelloMsg_publisher
     PUBLIC "${CMAKE_BINARY_DIR}"
@@ -102,6 +113,8 @@ add_executable(
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.cxx"
 )
+
+add_dependencies(HelloMsg_subscriber generated_code)
 
 target_include_directories(
     HelloMsg_subscriber
