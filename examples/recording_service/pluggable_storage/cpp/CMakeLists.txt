@@ -31,7 +31,6 @@ find_package(
 set(GENERATED_CODE
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.cxx"
 )
 
 # Generate type plug-in files for the storage type
@@ -88,8 +87,7 @@ target_include_directories(
 # Define the publisher application
 add_executable(
     HelloMsg_publisher
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
+    ${GENERATED_CODE}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.cxx"
 )
 
@@ -109,8 +107,7 @@ target_link_libraries(
 # Define the subscriber application
 add_executable(
     HelloMsg_subscriber
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.cxx"
+    ${GENERATED_CODE}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.cxx"
 )
 
