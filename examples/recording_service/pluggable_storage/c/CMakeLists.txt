@@ -29,14 +29,23 @@ find_package(
     REQUIRED
 )
 
+set(GENERATED_CODE
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+)
+
 # Generate type plug-in files for the storage type
 add_custom_command(
-    OUTPUT 
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    OUTPUT ${GENERATED_CODE}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
-    COMMAND ${RTICODEGEN} -language C -replace -d "${CMAKE_CURRENT_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
+    COMMAND ${RTICODEGEN} -language C -update typefiles
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
+)
+
+add_custom_target(
+    generated_code DEPENDS ${GENERATED_CODE}
 )
 
 # Define the library that will provide the storage writer plugin
@@ -46,6 +55,8 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.h"
 )
+
+add_dependencies(FileStorageWriter generated_code)
 
 target_link_libraries(
     FileStorageWriter
@@ -68,6 +79,8 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.h"
 )
 
+add_dependencies(FileStorageReader generated_code)
+
 target_link_libraries(
     FileStorageReader
     RTIConnextDDS::routing_service_infrastructure
@@ -84,11 +97,11 @@ target_include_directories(
 # Define the publisher application
 add_executable(
     HelloMsg_publisher
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    ${GENERATED_CODE}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.c"
 )
+
+add_dependencies(HelloMsg_publisher generated_code)
 
 target_include_directories(
     HelloMsg_publisher
@@ -104,11 +117,11 @@ target_link_libraries(
 # Define the subscriber application
 add_executable(
     HelloMsg_subscriber
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+    ${GENERATED_CODE}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.c"
 )
+
+add_dependencies(HelloMsg_subscriber generated_code)
 
 target_include_directories(
     HelloMsg_subscriber
