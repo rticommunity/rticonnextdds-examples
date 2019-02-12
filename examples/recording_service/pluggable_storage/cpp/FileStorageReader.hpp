@@ -28,20 +28,20 @@ class FileStorageReader :
         public rti::recording::storage::StorageReader {
 public:
     FileStorageReader(const rti::routing::PropertySet& properties);
-    virtual ~FileStorageReader();
+    ~FileStorageReader();
 
-    virtual rti::recording::storage::StorageStreamInfoReader *
+    rti::recording::storage::StorageStreamInfoReader *
             create_stream_info_reader(
                     const rti::routing::PropertySet& properties);
 
-    virtual void delete_stream_info_reader(
+    void delete_stream_info_reader(
             rti::recording::storage::StorageStreamInfoReader *stream_info_reader);
 
-    virtual rti::recording::storage::StorageStreamReader * create_stream_reader(
+    rti::recording::storage::StorageStreamReader * create_stream_reader(
             const rti::routing::StreamInfo& stream_info,
             const rti::routing::PropertySet& properties);
 
-    virtual void delete_stream_reader(
+    void delete_stream_reader(
             rti::recording::storage::StorageStreamReader *stream_reader);
 private:
     std::ifstream info_file_;
@@ -95,17 +95,11 @@ public:
 private:
 
     std::ifstream *data_file_;
-
     int64_t current_timestamp_;
-
     int current_valid_data_;
-
     DDS_Long current_data_id_;
-
     std::string current_data_msg_;
-
     dds::core::xtypes::StructType type_;
-
     /*
      * Read one single sample from the data file. This method deserializes the
      * textual format of the sample into a dynamic data object that is going to
