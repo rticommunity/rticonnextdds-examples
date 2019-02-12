@@ -83,8 +83,8 @@ FileStorageWriter::~FileStorageWriter()
 
 rti::recording::storage::StorageStreamWriter *
 FileStorageWriter::create_stream_writer(
-            const rti::routing::StreamInfo& stream_info,
-            const rti::routing::PropertySet&)
+        const rti::routing::StreamInfo& stream_info,
+        const rti::routing::PropertySet&)
 {
     return new FileStreamWriter(data_file_, stream_info.stream_name());
 }
