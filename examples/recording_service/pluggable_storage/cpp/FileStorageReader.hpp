@@ -161,11 +161,8 @@ public:
 private:
 
     std::ifstream *info_file_;
-
     bool stream_info_taken_;
-
     rti::routing::StreamInfo example_stream_info_;
-
     dds::core::xtypes::StructType example_type_;
 };
 
