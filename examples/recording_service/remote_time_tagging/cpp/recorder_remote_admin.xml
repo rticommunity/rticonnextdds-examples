@@ -8,6 +8,7 @@
         <!-- Enable remote administration -->
         <administration>
             <domain_id>0</domain_id>
+            <!--  -->
             <datareader_qos base_name="ServiceAdministrationProfiles::ServiceAdminReplierProfile" />
             <datawriter_qos base_name="ServiceAdministrationProfiles::ServiceAdminReplierProfile" />
         </administration>
