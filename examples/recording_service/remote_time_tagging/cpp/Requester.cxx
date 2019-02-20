@@ -198,7 +198,8 @@ Application::Application(ArgumentsParser& args_parser) :
 {
     /*
      * Prepare the requester params: we need topic names for the request and
-     * reply types
+     * reply types. These are defined in the ServiceAdmin.idl file and generated
+     * when RTI DDS Code Generator is run.
      */
     requester_params_.request_topic_name(COMMAND_REQUEST_TOPIC_NAME);
     requester_params_.reply_topic_name(COMMAND_REPLY_TOPIC_NAME);
@@ -222,21 +223,21 @@ Application::Application(ArgumentsParser& args_parser) :
             new ServiceAdminRequester(requester_params_));
 
     CommandRequest command_request;
-//    command_request.application_name(std::string("default"));
     command_request.action(args_parser.command_kind());
     command_request.resource_identifier(args_parser.resource_identifier());
     command_request.string_body(args_parser.command_params());
     std::cout << "Command request about to be sent:" << std::endl
             << command_request << std::endl;
+    /*
+     * Send the request, obtaining this request's ID. We will use it later to
+     * correlate the replies with the request.
+     */
     rti::core::SampleIdentity request_id =
             command_requester_->send_request(command_request);
-//    if (!command_requester_->wait_for_replies(
-//            1,
-//            dds::core::Duration::from_secs(60),
-//            request_id)) {
-//        throw std::runtime_error("Error: no reply received for request "
-//                "(60 seconds timeout)");
-//    }
+    /*
+     * Wait for replies. This version of the method waits for the first reply
+     * directed to the request we produced, a maximum of 60 seconds.
+     */
     if (!command_requester_->wait_for_replies(
             1,
             dds::core::Duration::from_secs(60),
@@ -244,7 +245,7 @@ Application::Application(ArgumentsParser& args_parser) :
         throw std::runtime_error("Error: no reply received for request "
                 "(60 seconds timeout)");
     }
-    // Getting to this point means we have received replie(s) for our request
+    // Getting to this point means we have received reply(ies) for our request
     dds::sub::LoanedSamples<CommandReply> replies =
             command_requester_->take_replies(request_id);
     std::cout << "Received " << replies.length() << " replies from service"
@@ -272,6 +273,14 @@ Application::~Application()
 int main(int argc, char *argv[])
 {
     try {
+        /*
+         * The main method is quite simple. We have a class that is a
+         * command-line interpreter (ArgumentsParser) for the main application
+         * class (Application). This class will produce a command request with
+         * the given command-line parameters and wait for any replies. It will
+         * then exit. This can be understand as a one-shot application,
+         * producing just one service administration request.
+         */
         ArgumentsParser args_parser(argc, argv);
         Application requester_app(args_parser);
     } catch (std::runtime_error& ex) {

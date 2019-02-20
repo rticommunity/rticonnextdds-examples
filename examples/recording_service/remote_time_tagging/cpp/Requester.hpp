@@ -18,7 +18,10 @@
 #include "ServiceAdmin.hpp"
 #include "RecordingServiceTypes.hpp"
 
-
+/*
+ * This class acts as an interpreter between the command-line arguments provided
+ * to the executable call and the main application (class Application).
+ */
 class ArgumentsParser {
 public:
     ArgumentsParser(int argc, char *argv[]);
@@ -59,9 +62,20 @@ private:
 
 };
 
+/*
+ * The main application class. This application can be understood as a one-shot
+ * application. It will use the ArgumentsParser facade to access the parameters
+ * necessary to generate a service administration command request, and then send
+ * that request. It will wait to receive replies for the sent command and print
+ * those out. Then it will exit.
+ */
 class Application {
 public:
 
+    /*
+     * A requester type that can send command requests and receive replies to
+     * those requests.
+     */
     typedef rti::request::Requester<
             RTI::Service::Admin::CommandRequest,
             RTI::Service::Admin::CommandReply> ServiceAdminRequester;
@@ -79,7 +93,7 @@ private:
 
     /*
      * This is the main Request/Reply type that will be used to ask the
-     * Recording Service instance for timestamp tagging.
+     * service administration to execute commands.
      *
      */
     dds::core::external<ServiceAdminRequester>::shared_ptr command_requester_;
