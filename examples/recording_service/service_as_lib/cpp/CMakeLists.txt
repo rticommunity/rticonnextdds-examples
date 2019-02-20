@@ -36,7 +36,7 @@ find_library(
 # Define the subscriber application
 add_executable(
     ServiceAsLibExample
-    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAsLib.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAsLibExample.cxx"
 )
 
 target_include_directories(
@@ -49,6 +49,6 @@ target_include_directories(
 target_link_libraries(
     ServiceAsLibExample
     RTIConnextDDS::cpp2_api
-    "{recordingservicelib}"
+    "${recordingservicelib}"
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
