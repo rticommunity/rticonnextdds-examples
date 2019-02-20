@@ -26,13 +26,13 @@ CommandActionKind ArgumentsParser::parse_command_kind(char *arg)
     CommandActionKind command_kind;
 
     if (arg_str.compare("CREATE") == 0) {
-        command_kind = CommandActionKind::CREATE;
+        command_kind = CommandActionKind::CREATE_ACTION;
     } else if (arg_str.compare("GET") == 0) {
-        command_kind = CommandActionKind::GET;
+        command_kind = CommandActionKind::GET_ACTION;
     } else if (arg_str.compare("UPDATE") == 0) {
-        command_kind = CommandActionKind::UPDATE;
+        command_kind = CommandActionKind::UPDATE_ACTION;
     } else if (arg_str.compare("DELETE") == 0) {
-        command_kind = CommandActionKind::DELETE;
+        command_kind = CommandActionKind::DELETE_ACTION;
     } else {
         std::string ex_what("Invalid command action kind: ");
         ex_what += arg;
@@ -45,7 +45,14 @@ uint32_t ArgumentsParser::parse_domain_id(char *arg)
 {
     std::stringstream stream(arg);
     uint32_t domain_id;
-
+    stream >> domain_id;
+    if (stream.bad()) {
+        std::stringstream error_stream;
+        error_stream << "Error: could not parse uint32 value provided, '"
+                << arg << "'";
+        throw std::runtime_error(error_stream.str());
+    }
+    return domain_id;
 }
 
 void ArgumentsParser::print_usage(const std::string& program_name)
@@ -201,12 +208,12 @@ Application::Application(ArgumentsParser& args_parser) :
      * Recall that the profile must be augmented with the properties needed
      * for unbounded support in the Data Writer QoS.
      */
-//    requester_params_.datareader_qos(
-//            dds::core::QosProvider::Default().datareader_qos(
-//                    "RequestReplyExampleProfiles::RequesterExampleProfile"));
-//    requester_params_.datawriter_qos(
-//            dds::core::QosProvider::Default().datawriter_qos(
-//                    "RequestReplyExampleProfiles::RequesterExampleProfile"));
+    requester_params_.datareader_qos(
+            dds::core::QosProvider::Default().datareader_qos(
+                    "ServiceAdministrationProfiles::ServiceAdminRequesterProfile"));
+    requester_params_.datawriter_qos(
+            dds::core::QosProvider::Default().datawriter_qos(
+                    "ServiceAdministrationProfiles::ServiceAdminRequesterProfile"));
     /*
      * Now that we have set up all the parameters for the requester instance, we
      * can create it.
@@ -215,16 +222,45 @@ Application::Application(ArgumentsParser& args_parser) :
             new ServiceAdminRequester(requester_params_));
 
     CommandRequest command_request;
+//    command_request.application_name(std::string("default"));
     command_request.action(args_parser.command_kind());
     command_request.resource_identifier(args_parser.resource_identifier());
     command_request.string_body(args_parser.command_params());
+    std::cout << "Command request about to be sent:" << std::endl
+            << command_request << std::endl;
     rti::core::SampleIdentity request_id =
             command_requester_->send_request(command_request);
+//    if (!command_requester_->wait_for_replies(
+//            1,
+//            dds::core::Duration::from_secs(60),
+//            request_id)) {
+//        throw std::runtime_error("Error: no reply received for request "
+//                "(60 seconds timeout)");
+//    }
     if (!command_requester_->wait_for_replies(
             1,
             dds::core::Duration::from_secs(60),
             request_id)) {
-        throw std::runtime_error("Error: no reply received for request");
+        throw std::runtime_error("Error: no reply received for request "
+                "(60 seconds timeout)");
+    }
+    // Getting to this point means we have received replie(s) for our request
+    dds::sub::LoanedSamples<CommandReply> replies =
+            command_requester_->take_replies(request_id);
+    std::cout << "Received " << replies.length() << " replies from service"
+            << std::endl;
+    for (unsigned int i = 0; i < replies.length(); ++i) {
+        std::cout << "    Reply " << i + 1 << ":" << std::endl;
+        if (replies[i].info().valid()) {
+            std::cout << "        Retcode        = "
+                    << replies[i].data().retcode() << std::endl;
+            std::cout << "        Native retcode = "
+                    << replies[i].data().native_retcode() << std::endl;
+            std::cout << "        String body    = "
+                    << replies[i].data().string_body() << std::endl;
+        } else {
+            std::cout << "        Sample Invalid" << std::endl;
+        }
     }
 }
 

@@ -14,3 +14,5 @@ RecordingServiceTypesPlugin.cxx
 makefile_ServiceCommon_*
 makefile_ServiceAdmin_*
 makefile_RecordingServiceTypes_*
+
+build/

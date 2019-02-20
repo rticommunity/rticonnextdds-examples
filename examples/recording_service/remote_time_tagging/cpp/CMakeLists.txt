@@ -47,7 +47,7 @@ set(RECORDER_TYPES_GENERATED_CODE
 add_custom_command(
     OUTPUT ${SERVICE_COMMON_GENERATED_CODE}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
-    COMMAND ${RTICODEGEN} -language C++11 -update typefiles
+    COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
             -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
 )
@@ -55,7 +55,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT ${SERVICE_ADMIN_GENERATED_CODE}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
-    COMMAND ${RTICODEGEN} -language C++11 -update typefiles
+    COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
             -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
 )
@@ -63,7 +63,7 @@ add_custom_command(
 add_custom_command(
     OUTPUT ${RECORDER_TYPES_GENERATED_CODE}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
-    COMMAND ${RTICODEGEN} -language C++11 -update typefiles
+    COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
             -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
             "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
 )
