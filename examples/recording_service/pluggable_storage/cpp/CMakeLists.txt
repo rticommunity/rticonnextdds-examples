@@ -48,39 +48,39 @@ add_custom_target(
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    FileStorageWriter MODULE
+    FileStorageWriterCpp MODULE
     "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.hpp"
 )
 
 target_link_libraries(
-    FileStorageWriter
+    FileStorageWriterCpp
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
-    FileStorageWriter
+    FileStorageWriterCpp
     PUBLIC "${CMAKE_BINARY_DIR}"
 )
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    FileStorageReader MODULE
+    FileStorageReaderCpp MODULE
     "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.hpp"
 )
 
 target_link_libraries(
-    FileStorageReader
+    FileStorageReaderCpp
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
-    FileStorageReader
+    FileStorageReaderCpp
     PUBLIC "${CMAKE_BINARY_DIR}"
 )
 
