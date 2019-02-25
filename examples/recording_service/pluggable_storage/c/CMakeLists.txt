@@ -29,31 +29,37 @@ find_package(
     REQUIRED
 )
 
-set(GENERATED_CODE
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgPlugin.c"
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsgSupport.c"
+add_custom_target(
+    generated_code_dir ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/generated")
+
+set(HELLOMSG_C_SOURCES
+    "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
+    "${CMAKE_BINARY_DIR}/generated/HelloMsgPlugin.c"
+    "${CMAKE_BINARY_DIR}/generated/HelloMsgSupport.c"
 )
 
 # Generate type plug-in files for the storage type
 add_custom_command(
-    OUTPUT ${GENERATED_CODE}
+    OUTPUT ${HELLOMSG_C_SOURCES}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
     COMMAND ${RTICODEGEN} -language C -update typefiles
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
             "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )
 
 add_custom_target(
-    generated_code DEPENDS ${GENERATED_CODE}
+    generated_code 
+    DEPENDS 
+        generated_code_dir
+        ${HELLOMSG_C_SOURCES}
 )
 
 # Define the library that will provide the storage writer plugin
 add_library(
     FileStorageWriter MODULE
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_BINARY_DIR}/generated/HelloMsg.c" 
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.h"
 )
 
 add_dependencies(FileStorageWriter generated_code)
@@ -67,16 +73,17 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageWriter
-    PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}/recordingservice
+    PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_BINARY_DIR}/generated"
+        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the library that will provide the storage reader plugin
 add_library(
     FileStorageReader MODULE
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.c" 
+        "${CMAKE_BINARY_DIR}/generated/HelloMsg.c" 
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.h"
 )
 
 add_dependencies(FileStorageReader generated_code)
@@ -90,14 +97,16 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageReader
-    PUBLIC "${CMAKE_BINARY_DIR}"
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS}/recordingservice
+    PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_BINARY_DIR}/generated"
+        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the publisher application
 add_executable(
     HelloMsg_publisher
-    ${GENERATED_CODE}
+    ${HELLOMSG_C_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.c"
 )
 
@@ -105,7 +114,9 @@ add_dependencies(HelloMsg_publisher generated_code)
 
 target_include_directories(
     HelloMsg_publisher
-    PUBLIC "${CMAKE_BINARY_DIR}"
+    PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_BINARY_DIR}/generated"
 )
 
 target_link_libraries(
@@ -117,7 +128,7 @@ target_link_libraries(
 # Define the subscriber application
 add_executable(
     HelloMsg_subscriber
-    ${GENERATED_CODE}
+    ${HELLOMSG_C_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.c"
 )
 
@@ -125,7 +136,9 @@ add_dependencies(HelloMsg_subscriber generated_code)
 
 target_include_directories(
     HelloMsg_subscriber
-    PUBLIC "${CMAKE_BINARY_DIR}"
+    PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_BINARY_DIR}/generated"
 )
 
 target_link_libraries(
