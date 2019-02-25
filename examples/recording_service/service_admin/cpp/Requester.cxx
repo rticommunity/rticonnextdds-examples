@@ -18,6 +18,7 @@
 #include "Requester.hpp"
 
 using namespace RTI::Service::Admin;
+using namespace RTI::RecordingService;
 
 
 CommandActionKind ArgumentsParser::parse_command_kind(char *arg)
@@ -223,9 +224,23 @@ Application::Application(ArgumentsParser& args_parser) :
             new ServiceAdminRequester(requester_params_));
 
     CommandRequest command_request;
-    command_request.action(args_parser.command_kind());
-    command_request.resource_identifier(args_parser.resource_identifier());
-    command_request.string_body(args_parser.command_params());
+
+    // Check if we have time tag parameters
+    const ArgumentsParser::TimeTagParams& time_tag_params =
+            args_parser_.time_tag_params();
+    if (!time_tag_params.name.empty()) {
+        DataTagParams data_tag_params;
+        data_tag_params.tag_name(time_tag_params.name);
+        data_tag_params.tag_description(time_tag_params.description);
+        data_tag_params.timestamp_offset(0);
+        dds::topic::topic_type_support<DataTagParams>::to_cdr_buffer(
+                static_cast<std::vector<char>&>(command_request.octet_body()),
+                data_tag_params);
+    }
+
+    command_request.action(args_parser_.command_kind());
+    command_request.resource_identifier(args_parser_.resource_identifier());
+    command_request.string_body(args_parser_.command_params());
     std::cout << "Command request about to be sent:" << std::endl
             << command_request << std::endl;
     /*
