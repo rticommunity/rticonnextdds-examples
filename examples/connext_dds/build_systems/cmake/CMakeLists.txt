@@ -32,6 +32,11 @@ connextdds_rtiddsgen_run(
     LANG C
 )
 
+add_custom_target(codegen_sources
+    DEPENDS
+        ${HelloWorld_C_GENERATED_SOURCES}
+)
+
 # Create the target for the publisher executable
 add_executable(HelloWorld_publisher
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
@@ -89,12 +94,16 @@ add_custom_command(
     VERBATIM
 )
 
-# Copy the USER_QOS_PROFILES.XML when the publisher is built
+# Copy the USER_QOS_PROFILES.XML when the publisher is built and ensure
+# Codegen is called
 add_dependencies(HelloWorld_publisher
     copy_qos
+    codegen_sources
 )
 
-# Copy the USER_QOS_PROFILES.XML when the subscriber is built
+# Copy the USER_QOS_PROFILES.XML when the subscriber is built and ensure
+# Codegen is called
 add_dependencies(HelloWorld_subscriber
     copy_qos
+    codegen_sources
 )
