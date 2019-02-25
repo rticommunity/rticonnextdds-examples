@@ -29,6 +29,7 @@ find_package(
     REQUIRED
 )
 
+# Create the directory that's going to contain the generated code files
 add_custom_target(
     generated_code_dir ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/generated")
