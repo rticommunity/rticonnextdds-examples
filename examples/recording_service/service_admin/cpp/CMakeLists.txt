@@ -28,63 +28,98 @@ find_package(
     REQUIRED
 )
 
-set(SERVICE_COMMON_GENERATED_CODE
-    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceCommon.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceCommonPlugin.cxx"
+# Create the directory that's going to contain the generated code files
+add_custom_target(
+    generated_code_dir ALL
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/generated"
 )
 
-set(SERVICE_ADMIN_GENERATED_CODE
-    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAdmin.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAdminPlugin.cxx"
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
 )
 
-set(RECORDER_TYPES_GENERATED_CODE
-    "${CMAKE_CURRENT_SOURCE_DIR}/RecordingServiceTypes.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/RecordingServiceTypesPlugin.cxx"
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        "${CMAKE_CURRENT_SOURCE_DIR}/recorder_remote_admin.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/recorder_remote_admin.xml"
+)
+
+add_custom_target(
+    copy_config_files
+    DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
+)
+
+set(SERVICE_COMMON_CPP_SOURCES
+    "${CMAKE_BINARY_DIR}/generated/ServiceCommon.cxx"
+    "${CMAKE_BINARY_DIR}/generated/ServiceCommonPlugin.cxx"
+)
+
+set(SERVICE_ADMIN_CPP_SOURCES
+    "${CMAKE_BINARY_DIR}/generated/ServiceAdmin.cxx"
+    "${CMAKE_BINARY_DIR}/generated/ServiceAdminPlugin.cxx"
+)
+
+set(RECORDER_TYPES_CPP_SOURCES
+    "${CMAKE_BINARY_DIR}/generated/RecordingServiceTypes.cxx"
+    "${CMAKE_BINARY_DIR}/generated/RecordingServiceTypesPlugin.cxx"
 )
 
 # Generate type plug-in files for the remote service administration
 add_custom_command(
-    OUTPUT ${SERVICE_COMMON_GENERATED_CODE}
+    OUTPUT ${SERVICE_COMMON_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
 )
 
 add_custom_command(
-    OUTPUT ${SERVICE_ADMIN_GENERATED_CODE}
+    OUTPUT ${SERVICE_ADMIN_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
 )
 
 add_custom_command(
-    OUTPUT ${RECORDER_TYPES_GENERATED_CODE}
+    OUTPUT ${RECORDER_TYPES_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_SOURCE_DIR}" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
 )
 
 add_custom_target(
     generated_code 
-    DEPENDS ${SERVICE_COMMON_GENERATED_CODE} 
-            ${SERVICE_ADMIN_GENERATED_CODE}
-            ${RECORDER_TYPES_GENERATED_CODE}
+    DEPENDS ${SERVICE_COMMON_CPP_SOURCES} 
+            ${SERVICE_ADMIN_CPP_SOURCES}
+            ${RECORDER_TYPES_CPP_SOURCES}
+            generated_code_dir
 )
 
 # Main application
 add_executable(
     Requester
     "${CMAKE_CURRENT_SOURCE_DIR}/Requester.cxx"
-    ${SERVICE_COMMON_GENERATED_CODE}
-    ${SERVICE_ADMIN_GENERATED_CODE}
-    ${RECORDER_TYPES_GENERATED_CODE}
+    ${SERVICE_COMMON_CPP_SOURCES}
+    ${SERVICE_ADMIN_CPP_SOURCES}
+    ${RECORDER_TYPES_CPP_SOURCES}
 )
 
-add_dependencies(Requester generated_code)
+add_dependencies(Requester copy_config_files generated_code)
+
+target_include_directories(
+    Requester
+    PUBLIC "${CMAKE_BINARY_DIR}/generated"
+)
 
 target_link_libraries(
     Requester
