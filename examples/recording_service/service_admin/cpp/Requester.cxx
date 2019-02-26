@@ -76,7 +76,8 @@ void ArgumentsParser::print_usage(const std::string& program_name)
             "                         required" << std::endl;
     std::cout <<
             "        COMMAND_PARAMS = additional parameters needed by the " << std::endl <<
-            "                         command action, e.g. 'pause'; required" << std::endl;
+            "                         command action, e.g. 'pause'; optional " << std::endl <<
+            "                         (some command kinds need no parameters)" << std::endl;
     std::cout <<
             "    The following is a list of additional arguments that can "  << std::endl <<
             "    be provided to the application:" << std::endl;
@@ -91,8 +92,7 @@ void ArgumentsParser::print_usage(const std::string& program_name)
     std::cout <<
             "        --time-tag:" << std::endl;
     std::cout <<
-            "            Format: --time-tag <name> [<description>]"
-            << std::endl;
+            "            Format: --time-tag <name> [<description>]" << std::endl;
     std::cout <<
             "            Description: have Recorder create a symbolic " << std::endl <<
             "                time-stamp with the given name and description " << std::endl <<
@@ -103,6 +103,10 @@ void ArgumentsParser::print_usage(const std::string& program_name)
 ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
     admin_domain_id_(0)
 {
+    const std::string DOMAIN_ID_ARG_NAME("--domain-id");
+    const std::string TIME_TAG_ARG_NAME("--time-tag");
+
+    int current_arg = 0;
     // Parse mandatory arguments, we at least need 4 (includes program name)
     if (argc < 4) {
         print_usage(argv[0]);
@@ -112,52 +116,57 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
     command_kind_ = parse_command_kind(argv[1]);
     // Resource identifier
     resource_id_ = argv[2];
-    // Command parameters
-    command_params_ = argv[3];
-    // Optional arguments
-    if (argc > 4) {
-        int current_arg = 4;
-        const std::string DOMAIN_ID_ARG_NAME("--domain-id");
-        const std::string TIME_TAG_ARG_NAME("--time-tag");
-        while (current_arg < argc) {
-            if (DOMAIN_ID_ARG_NAME.compare(argv[current_arg]) == 0) {
-                // This parameter needs one argument
-                if (current_arg + 1 >= argc) {
-                    print_usage(argv[0]);
-                    std::stringstream error_stream;
-                    error_stream << "Error: no uint32 value provided for "
-                            << DOMAIN_ID_ARG_NAME << " parameter";
-                    throw std::runtime_error(error_stream.str());
-                }
-                admin_domain_id_ = parse_domain_id(argv[current_arg + 1]);
-                current_arg += 2;
-            } else if (TIME_TAG_ARG_NAME.compare(argv[current_arg]) == 0) {
-                // This parameter may use one or two arguments
-                if (current_arg + 1 < argc) {
-                    time_tag_params_.name = argv[current_arg + 1];
-                    // Check if a description has been provided
-                    if (current_arg + 2 < argc) {
-                        time_tag_params_.description = argv[current_arg + 2];
-                        current_arg += 3;
-                    } else {
-                        current_arg += 2;
-                    }
-                } else {
-                    // No name provided for the time tag
-                    print_usage(argv[0]);
-                    std::stringstream error_stream;
-                    error_stream << "Error: no name provided for "
-                            << TIME_TAG_ARG_NAME << " parameter";
-                    throw std::runtime_error(error_stream.str());
-                }
-            } else {
-                // Unrecognised parameter
+    // Command parameters; it's optional
+    if (DOMAIN_ID_ARG_NAME.compare(argv[3]) != 0
+            && TIME_TAG_ARG_NAME.compare(argv[3]) != 0) {
+        /*
+         * If this parameter is not one of the extra arguments, it has to be the
+         * optional command parameters string
+         */
+        command_params_ = argv[3];
+        current_arg = 4;
+    } else {
+        current_arg = 3;
+    }
+    // Extra arguments
+    while (current_arg < argc) {
+        if (DOMAIN_ID_ARG_NAME.compare(argv[current_arg]) == 0) {
+            // This parameter needs one argument
+            if (current_arg + 1 >= argc) {
                 print_usage(argv[0]);
                 std::stringstream error_stream;
-                error_stream << "Error: unrecognized parameter, '"
-                        << argv[current_arg] << "'";
+                error_stream << "Error: no uint32 value provided for "
+                        << DOMAIN_ID_ARG_NAME << " parameter";
                 throw std::runtime_error(error_stream.str());
             }
+            admin_domain_id_ = parse_domain_id(argv[current_arg + 1]);
+            current_arg += 2;
+        } else if (TIME_TAG_ARG_NAME.compare(argv[current_arg]) == 0) {
+            // This parameter may use one or two arguments
+            if (current_arg + 1 < argc) {
+                time_tag_params_.name = argv[current_arg + 1];
+                // Check if a description has been provided
+                if (current_arg + 2 < argc) {
+                    time_tag_params_.description = argv[current_arg + 2];
+                    current_arg += 3;
+                } else {
+                    current_arg += 2;
+                }
+            } else {
+                // No name provided for the time tag
+                print_usage(argv[0]);
+                std::stringstream error_stream;
+                error_stream << "Error: no name provided for "
+                        << TIME_TAG_ARG_NAME << " parameter";
+                throw std::runtime_error(error_stream.str());
+            }
+        } else {
+            // Unrecognised parameter
+            print_usage(argv[0]);
+            std::stringstream error_stream;
+            error_stream << "Error: unrecognized parameter, '"
+                    << argv[current_arg] << "'";
+            throw std::runtime_error(error_stream.str());
         }
     }
 }
