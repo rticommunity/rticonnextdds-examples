@@ -234,15 +234,53 @@ Application::Application(ArgumentsParser& args_parser) :
         data_tag_params.tag_description(time_tag_params.description);
         data_tag_params.timestamp_offset(0);
         dds::topic::topic_type_support<DataTagParams>::to_cdr_buffer(
-                static_cast<std::vector<char>&>(command_request.octet_body()),
+                reinterpret_cast<std::vector<char>&>(
+                        command_request.octet_body()),
                 data_tag_params);
     }
 
     command_request.action(args_parser_.command_kind());
     command_request.resource_identifier(args_parser_.resource_identifier());
     command_request.string_body(args_parser_.command_params());
+
+    /*
+     * Wait until the command requester's request data writer has matched at
+     * least one publication.
+     */
+    int32_t current_pub_matches = command_requester_->request_datawriter()
+            .publication_matched_status().current_count();
+    int32_t wait_cycles = 1200;
+    while (current_pub_matches < 1 && wait_cycles > 0) {
+        rti::util::sleep(dds::core::Duration::from_millisecs(50));
+        current_pub_matches = command_requester_->request_datawriter()
+                .publication_matched_status().current_count();
+        wait_cycles--;
+    }
+    if (wait_cycles == 0) {
+        throw std::runtime_error("Error: command requester's request data "
+                "writer matched no subscriptions");
+    }
+    /*
+     * Wait until the command requester's reply data reader has matched at least
+     * one subscription.
+     */
+    int32_t current_sub_matches = command_requester_->reply_datareader()
+            .subscription_matched_status().current_count();
+    wait_cycles = 1200;
+    while (current_sub_matches < 1 && wait_cycles > 0) {
+        rti::util::sleep(dds::core::Duration::from_millisecs(50));
+        current_sub_matches = command_requester_->reply_datareader()
+                .subscription_matched_status().current_count();
+        wait_cycles--;
+    }
+    if (wait_cycles == 0) {
+        throw std::runtime_error("Error: command requester's reply data "
+                "reader matched no publications");
+    }
+
     std::cout << "Command request about to be sent:" << std::endl
             << command_request << std::endl;
+
     /*
      * Send the request, obtaining this request's ID. We will use it later to
      * correlate the replies with the request.
