@@ -50,7 +50,9 @@ In order to build this example, you need to provide the following variables to
 - ``CONNEXTDDS_ARCH``: the RTI Connext DDS Target architecture to be used in 
   your system.
 
-Build the example code by running the following command::
+Build the example code by running the following command:
+
+.. code-block:: text
 
     mkdir build
     cd build
@@ -74,6 +76,62 @@ Running the Example
 ===================
 
 First of all, we need a running |RS| instance with remote administration enabled.
+We will use the |RS| configuration shipped with the example, called 
+``recorder_remote_admin.xml``:
+
+.. code-block:: text
+
+    cd <binary directory>
+    $(CONNEXTDDS_DIR)/bin/rtirecordingservice -cfgFile recorder_remote_admin.xml -cfgName remote_admin
+
+Note: you can run from other directory, just make sure the 
+``recorder_remote_admin.xml`` and ``USER_QOS_PROFILES.xml``
+
+Once the |RS| instance is running, it is ready to receive remote command requests.
+The administration app receives the following command-line parameters:
+
+- The kind of command to be sent, following a *CRUD* pattern (CREATE, READ, 
+  UPDATE, DELETE).
+- The identifier of the resource we're accessing, 
+  e.g. ``recording_services/remote_admin/state``
+- [Optional] The arguments that the command kind needs for performing the action,
+  e.g. ``paused`` (if the objective state of the service is *paused*)
+- [Optional] ``--domain-id``: this parameter should be used when the |RS| 
+  instance is running admninistration on a DDS domain different than 0 (this can
+  be achieved by modifying the XML configuration or using the 
+  ``-remoteAdministrationDomainId`` parameter in the invocation). The domain
+  specified for this command-line parameter and the one used for remote 
+  administration of the service should be the same, otherwise the application
+  won't be able to connect to the service.
+- [Optional] ``--time-tag``: there are commands that are service-specific. This
+  command-line parameter allows the user to define a timestamp tag for |RS| to
+  store. These tags can later be used to easily, symbolically define time ranges
+  to be replayed or converted. This command requires a name parameter and 
+  optionally, a description (remember to use quotes for multi-word descriptions).
+
+To run the administration app, you should go to the binary directory, or if you
+run from other directories, make sure the ``USER_QOS_PROFILES.xml`` file is
+present in the directory. We'll now show you some examples on how to send
+different commands to the service.
+
+1. Sending a pause command:
+
+.. code-block:: text
+
+    Requester UPDATE /recording_services/remote_admin/state paused
+
+2. Sending a timestamp tag command to a service with administration running on
+DDS domain ID 54:
+
+.. code-block:: text
+
+    Requester UPDATE /recording_services/remote_admin/storage/sqlite:tag_timestamp --domain-id 54 --time-tag "A timestamp tag" "A timestamp tag description"
+
+3. Sending a shutdown command
+
+.. code-block:: text
+
+    Requester DELETE /recording_services/remote_admin
  
 
 Requirements
