@@ -10,8 +10,7 @@
 #  use or inability to use the software.
 
 
-cmake_minimum_required(VERSION 3.10)
-set (CMAKE_CXX_STANDARD 11)
+cmake_minimum_required(VERSION 3.5)
 project (ShapesProcessor)
 
 if(NOT BUILD_SHARED_LIBS)
@@ -19,6 +18,16 @@ if(NOT BUILD_SHARED_LIBS)
         "Static linking is not supported for this example. You can build it "
         "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
     message(FATAL_ERROR ${msg})
+endif()
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+
+if(CMAKE_BUILD_TYPE STREQUAL "debug")
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Routing Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
 endif()
 
 # Find RTI Connext dependencies
@@ -35,8 +44,23 @@ find_package(
 add_library(shapesprocessor
     "${CMAKE_CURRENT_SOURCE_DIR}/ShapesProcessor.cxx")
 
+# Set target properties for lang requirement output library name
+set_target_properties(shapesprocessor
+    PROPERTIES
+        CXX_STANDARD 11
+        OUTPUT_NAME_DEBUG shapesprocessord
+        LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"               
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"               
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+)
+
 target_link_libraries(shapesprocessor
-    ${CONNEXTDDS_EXTERNAL_LIBS}
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::routing_service_infrastructure)
 
@@ -44,7 +68,3 @@ target_include_directories(shapesprocessor
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}")
 
-set_target_properties(${target_name}
-    PROPERTIES
-        CXX_STANDARD 11
-)

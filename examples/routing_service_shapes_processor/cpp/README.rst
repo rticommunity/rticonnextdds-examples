@@ -21,7 +21,7 @@ From the directory containing the example sources:
     cd build
     cmake -DCONNEXTDDS_DIR=<Connext directory> \
             -DCONNEXTDDS_ARCH=<ARCH> \
-            -DCMAKE_RUNTIME_OUTPUT_DIRECTORY=. \
+            -DCMAKE_BUILD_TYPE=Release \
             -DBUILD_SHARED_LIBS=ON ..
     cmake --build .
 
@@ -42,10 +42,9 @@ where:
 .. note::
 
     Certain `CMake generators <https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html>`_
-    generate multi-configuration files that needs explicit selection of the
-    configuration through ``--config``. For example on Windows systems, by
-    default you can select ``x86-Debug``, ``x86-Release``, ``x64-Debug``,
-    and ``x64-Release``.
+    generate multi-configuration files may need explicit selection of the
+    configuration through ``--config``. For example for Visual Studio 2015, by
+    default you can select ``Release`` or ``Debug``.
 
 Upon success of the previous command it will create a shared library file in
 the build directory.
