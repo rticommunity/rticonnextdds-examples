@@ -9,7 +9,7 @@ Concept
 
 *Routing Service Processor* is a pluggable-component that allows controlling
 the forwarding process that occurs within *Routes*. Refer to the
-`SDK documentation <https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTI__RoutingServiceProcessorModule.html>`_
+`SDK documentation <https://community.rti.com/static/documentation/connext-dds/current/doc/api/routing_service/api_cpp/group__RTI__RoutingServiceProcessorModule.html>`_
 to learn more about how to implement and use custom |PROCESSOR| plug-ins.
 
 Example Description
@@ -129,5 +129,5 @@ Requirements
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- CMake version 3.5 or higher
 - A target platform supported by *RTI* |RS|.
