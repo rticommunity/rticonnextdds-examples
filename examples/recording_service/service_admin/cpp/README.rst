@@ -64,13 +64,14 @@ application can be found. The XML files in the source directory are also copied
 over to this binary directory so that |RS| can be run directly from this 
 directory as well.
 
-**Note**: in order to build, ``CMake`` will invoke *RTI DDS Code Generator* on
-the ``ServiceCommon.idl``, ``ServiceAdmin.idl`` and ``RecordingServiceTypes.idl``
-files that can be found in ``$(CONNEXTDDS_DIR)/resource/idl`` directory. These
-files define the communication interface for the remote administration platform
-and any |RS|-specific types (``RecordingServiceTypes.idl``). The resulting 
-generated C++ code will be stored in a folder called ``generated`` in
-the CMake build directory.
+.. note::
+    In order to build, ``CMake`` will invoke *RTI DDS Code Generator* on
+    the ``ServiceCommon.idl``, ``ServiceAdmin.idl`` and ``RecordingServiceTypes.idl``
+    files that can be found in ``$(CONNEXTDDS_DIR)/resource/idl`` directory. These
+    files define the communication interface for the remote administration platform
+    and any |RS|-specific types (``RecordingServiceTypes.idl``). The resulting 
+    generated C++ code will be stored in a folder called ``generated`` in
+    the CMake build directory.
 
 Running the Example
 ===================
@@ -82,7 +83,8 @@ We will use the |RS| configuration shipped with the example, called
 .. code-block:: text
 
     cd <binary directory>
-    $(CONNEXTDDS_DIR)/bin/rtirecordingservice -cfgFile recorder_remote_admin.xml -cfgName remote_admin
+    $(CONNEXTDDS_DIR)/bin/rtirecordingservice 
+            -cfgFile recorder_remote_admin.xml -cfgName remote_admin
 
 Note: you can run from other directory, just make sure the 
 ``recorder_remote_admin.xml`` and ``USER_QOS_PROFILES.xml``

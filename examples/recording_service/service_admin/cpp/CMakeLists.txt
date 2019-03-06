@@ -31,7 +31,7 @@ find_package(
 # Create the directory that's going to contain the generated code files
 add_custom_target(
     generated_code_dir ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/generated"
+    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 
 add_custom_command(
@@ -58,18 +58,18 @@ add_custom_target(
 )
 
 set(SERVICE_COMMON_CPP_SOURCES
-    "${CMAKE_BINARY_DIR}/generated/ServiceCommon.cxx"
-    "${CMAKE_BINARY_DIR}/generated/ServiceCommonPlugin.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/ServiceCommon.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/ServiceCommonPlugin.cxx"
 )
 
 set(SERVICE_ADMIN_CPP_SOURCES
-    "${CMAKE_BINARY_DIR}/generated/ServiceAdmin.cxx"
-    "${CMAKE_BINARY_DIR}/generated/ServiceAdminPlugin.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/ServiceAdmin.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/ServiceAdminPlugin.cxx"
 )
 
 set(RECORDER_TYPES_CPP_SOURCES
-    "${CMAKE_BINARY_DIR}/generated/RecordingServiceTypes.cxx"
-    "${CMAKE_BINARY_DIR}/generated/RecordingServiceTypesPlugin.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/RecordingServiceTypes.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/RecordingServiceTypesPlugin.cxx"
 )
 
 # Generate type plug-in files for the remote service administration
@@ -77,7 +77,7 @@ add_custom_command(
     OUTPUT ${SERVICE_COMMON_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
 )
 
@@ -85,7 +85,7 @@ add_custom_command(
     OUTPUT ${SERVICE_ADMIN_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
 )
 
@@ -93,7 +93,7 @@ add_custom_command(
     OUTPUT ${RECORDER_TYPES_CPP_SOURCES}
     MAIN_DEPENDENCY "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_CURRENT_BINARY_DIR}/generated" 
             "${CONNEXTDDS_DIR}/resource/idl/RecordingServiceTypes.idl"
 )
 
@@ -118,12 +118,11 @@ add_dependencies(Requester copy_config_files generated_code)
 
 target_include_directories(
     Requester
-    PUBLIC "${CMAKE_BINARY_DIR}/generated"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 
 target_link_libraries(
     Requester
-    RTIConnextDDS::cpp2_api
     RTIConnextDDS::messaging_cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
