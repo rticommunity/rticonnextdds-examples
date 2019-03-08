@@ -10,7 +10,8 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (RecorderRemoteTimeTagging)
+set (CMAKE_CXX_STANDARD 11)
+project (RecorderRemoteAdmin)
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")

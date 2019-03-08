@@ -10,7 +10,8 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (PluggableStorage)
+set (CMAKE_CXX_STANDARD 11)
+project (ServiceAsLib)
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
@@ -32,12 +33,38 @@ find_library(
     recordingservicelib
     NAMES rtirecordingservice 
     PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
+    
+# Copy recorder and replay configuration files to binary directory
+add_custom_command(
+    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
+)
+
+add_custom_command(
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
+    COMMAND ${CMAKE_COMMAND} -E copy 
+        "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
+    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
+)
+
+add_custom_target(
+    copy_config_files
+    DEPENDS
+        "${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml"
+        "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
+)
 
 # Define the subscriber application
 add_executable(
     ServiceAsLibExample
     "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAsLibExample.cxx"
 )
+
+add_dependencies(ServiceAsLibExample copy_config_files)
 
 target_include_directories(
     ServiceAsLibExample
