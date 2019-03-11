@@ -81,6 +81,12 @@ void process_role(
 
 int main(int argc, char *argv[])
 {
+    /*
+     * The ServiceProperty class defines runtime parameters for the service
+     * instance, like the configuration file, the configuration name,
+     * administration and monitoring DDS domain IDs, the DDS domain ID base
+     * (offset) for the domain participants defined in the configuration, etc
+     */
     rti::recording::ServiceProperty service_property;
     uint32_t running_seconds = 60;
     try {
@@ -96,6 +102,10 @@ int main(int argc, char *argv[])
     service_property.enable_monitoring(true);
 
     try {
+        /*
+         * Create the instance of the Recording Service. It won't start
+         * executing until we call the start() method.
+         */
         rti::recording::RecordingService embedded_service(service_property);
         embedded_service.start();
         // Wait for 'running_seconds' seconds

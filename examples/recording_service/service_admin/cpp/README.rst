@@ -142,4 +142,4 @@ Requirements
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- CMake version 3.11 or higher
