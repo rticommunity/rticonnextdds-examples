@@ -42,7 +42,7 @@ void process_role(
             service_property.application_role(
                     rti::recording::ApplicationRoleKind::RECORD_APPLICATION);
             service_property.cfg_file("recorder_config.xml");
-        } else if (recorder_role.compare(argv[1]) == 0) {
+        } else if (replay_role.compare(argv[1]) == 0) {
             service_property.application_role(
                     rti::recording::ApplicationRoleKind::REPLAY_APPLICATION);
             service_property.cfg_file("replay_config.xml");
@@ -95,12 +95,16 @@ int main(int argc, char *argv[])
     service_property.enable_administration(true);
     service_property.enable_monitoring(true);
 
-    rti::recording::RecordingService embedded_service(service_property);
-    embedded_service.start();
-
-    // Wait for 'running_seconds' seconds
-    std::this_thread::sleep_for(std::chrono::seconds(running_seconds));
-    embedded_service.stop();
+    try {
+        rti::recording::RecordingService embedded_service(service_property);
+        embedded_service.start();
+        // Wait for 'running_seconds' seconds
+        std::this_thread::sleep_for(std::chrono::seconds(running_seconds));
+        embedded_service.stop();
+    } catch (const std::exception& ex) {
+        std::cerr << "Exception: " << ex.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 
     return EXIT_SUCCESS;
 }

@@ -29,9 +29,14 @@ find_package(
     REQUIRED
 )
 
+set(recording_lib "rtirecordingservice")
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+    set(recording_lib "${recording_lib}d")
+endif()
+
 find_library(
     recordingservicelib
-    NAMES rtirecordingservice 
+    NAMES ${recording_lib} 
     PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
     
 # Copy recorder and replay configuration files to binary directory
