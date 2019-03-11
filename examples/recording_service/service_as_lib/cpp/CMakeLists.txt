@@ -29,8 +29,13 @@ find_package(
     REQUIRED
 )
 
+# Select the adequate version of the Recording Service library depending on the
+# build type
 set(recording_lib "rtirecordingservice")
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(recording_lib "${recording_lib}d")
 endif()
 
