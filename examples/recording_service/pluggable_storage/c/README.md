@@ -58,6 +58,29 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
 cmake --build .
 ```
 
+**Cross-compilation**. 
+When you need to cross-compile the example, the above
+command will not work, the assigned compiler won't be the cross-compiler and
+errors may happen when linking against the cross-compiled Connext binaries.
+To fix this, you have to create a file with the architecture name and call 
+CMake with a specific flag called ``-DCMAKE_TOOLCHAIN_FILE``.
+An example of the file to create with the toolchain settings (e.g. for an 
+ARM architectures):
+
+```cmake
+set(CMAKE_SYSTEM_NAME Linux)
+set(toolchain_path "<path to>/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian")
+set(CMAKE_C_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-gcc")
+set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
+```
+
+Then you can call CMake like this:
+
+```bash
+    cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> 
+            -DCONNEXTDDS_ARCH=<connext architecture> ..
+```
+
 ## Running the C example (Recorder storage writer)
 
 First of all, you need to make sure that the `FileStorageWriter` shared 
