@@ -10,8 +10,11 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 11)
-project (ServiceAsLib)
+project(ServiceAsLib)
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
+endif()
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
@@ -32,9 +35,6 @@ find_package(
 # Select the adequate version of the Recording Service library depending on the
 # build type
 set(recording_lib "rtirecordingservice")
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
 if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(recording_lib "${recording_lib}d")
 endif()
@@ -74,12 +74,15 @@ add_executable(
     "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAsLibExample.cxx"
 )
 
+set_target_properties(
+    ServiceAsLibExample 
+    PROPERTIES CXX_STANDARD 11)
+
 add_dependencies(ServiceAsLibExample copy_config_files)
 
 target_include_directories(
     ServiceAsLibExample
     PUBLIC 
-        "${CMAKE_BINARY_DIR}"
         ${CONNEXTDDS_INCLUDE_DIRS}
 )
 

@@ -10,7 +10,6 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 11)
 project (RecorderRemoteAdmin)
 
 # Find RTI Connext dependencies
@@ -114,6 +113,10 @@ add_executable(
     ${SERVICE_ADMIN_CPP_SOURCES}
     ${RECORDER_TYPES_CPP_SOURCES}
 )
+
+set_target_properties(
+    Requester 
+    PROPERTIES CXX_STANDARD 11)
 
 add_dependencies(Requester copy_config_files generated_code)
 
