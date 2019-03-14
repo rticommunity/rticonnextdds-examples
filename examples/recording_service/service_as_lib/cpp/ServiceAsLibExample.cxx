@@ -98,9 +98,6 @@ int main(int argc, char *argv[])
     }
     // The service configuration, regardless of the role, is always the same
     service_property.service_name("service_as_lib");
-    service_property.enable_administration(true);
-    service_property.enable_monitoring(true);
-
     try {
         /*
          * Create the instance of the Recording Service. It won't start
