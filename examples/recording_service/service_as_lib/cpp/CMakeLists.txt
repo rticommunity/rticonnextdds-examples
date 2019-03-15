@@ -12,10 +12,6 @@
 cmake_minimum_required(VERSION 3.11)
 project(ServiceAsLib)
 
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
@@ -35,14 +31,23 @@ find_package(
 # Select the adequate version of the Recording Service library depending on the
 # build type
 set(recording_lib "rtirecordingservice")
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(recording_lib "${recording_lib}d")
-endif()
+set(recording_lib_debug "${recording_lib}d")
 
 find_library(
     recordingservicelib
     NAMES ${recording_lib} 
-    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
+    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
+)
+find_library(
+    recordingservicelibd
+    NAMES ${recording_lib_debug} 
+    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
+)
+
+SET(recording_link_lib 
+    optimized "${recordingservicelib}"
+    debug "${recordingservicelibd}"
+)
     
 # Copy recorder and replay configuration files to binary directory
 add_custom_command(
@@ -76,7 +81,8 @@ add_executable(
 
 set_target_properties(
     ServiceAsLibExample 
-    PROPERTIES CXX_STANDARD 11)
+    PROPERTIES CXX_STANDARD 11
+)
 
 add_dependencies(ServiceAsLibExample copy_config_files)
 
@@ -89,6 +95,10 @@ target_include_directories(
 target_link_libraries(
     ServiceAsLibExample
     RTIConnextDDS::cpp2_api
-    "${recordingservicelib}"
     ${CONNEXTDDS_EXTERNAL_LIBS}
+)
+
+target_link_libraries(
+    ServiceAsLibExample
+    ${recording_link_lib}
 )
