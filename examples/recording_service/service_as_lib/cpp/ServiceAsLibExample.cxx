@@ -62,9 +62,11 @@ void process_role(
             throw std::runtime_error("Invalid arg value provided for domain ID");
         }
         // Set up domain ID base, admin domain ID and monitoring domain ID
-        service_property.administration_domain_id(domain_id);
         service_property.domain_id_base(domain_id);
+        service_property.administration_domain_id(domain_id);
+        service_property.enable_administration(true);
         service_property.monitoring_domain_id(domain_id);
+        service_property.enable_monitoring(true);
     } else {
         throw std::runtime_error("Domain ID arg not provided");
     }
