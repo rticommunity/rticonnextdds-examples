@@ -5,55 +5,57 @@ There are two files in this example:
  - AwsExample_subscriber: subscriber application
 
 You will use *rtiddsgen* to generate the additional files required to build
-and run the example. The *RTI Connext Core Libraries and Utilities Getting 
+and run the example. The *RTI Connext Core Libraries and Utilities Getting
 Started Guide* describes this process in detail.
 
-## Building C++03 Example
-Before compiling or running the example, make sure the environment variable
-`NDDSHOME` is set to the directory where your version of *RTI Connext* is
-installed.
+## Building the Example :wrench:
 
-Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice. **Do not use the `-replace` option so that the example files are not modified.** 
+To build this example, first run CMake to generate the corresponding build
+files. We recommend you use a separate directory to store all the generated
+files (e.g., ./build).
+```sh
+mkdir build
+cd build
+cmake ..
+```
 
-For example, for the *i86Linux2.6gcc4.4.5* architecture run:
+Once you have run CMake, you will find a number of new files in your build
+directory (the list of generated files will depend on the specific CMake
+Generator). To build the example, run CMake as follows:
+```sh
+cmake --build .
+```
 
-    rtiddsgen -language C++03 -example i86Linux2.6gcc4.4.5 cft.idl
+**Note**: if you are using a multi-configuration generator, such as Visual
+Studio solutions, you can specify the configuration mode to build as follows:
+```sh
+cmake --build . --config Release|Debug
+```
 
-You will see messages that look like this:
+Alternatively, you can use directly the generated infrastructure (e.g.,
+Makefiles or Visual Studio Solutions) to build the example. If you generated
+Makefiles in the configuration process, run make to build the example.
+Likewise, if you generated a Visual Studio solution, open the solution and
+follow the regular build process.
 
-    File <WORKING_DIR>/AwsExample_publisher.cxx already exists and will not be 
-    replaced with updated content. If you would like to get a new file with the 
-    new content, either remove this file or supply -replace option.
-    File <WORKING_DIR>/AwsExample_subscriber.cxx already exists and will not be 
-    replaced with updated content. If you would like to get a new file with the 
-    new content, either remove this file or supply -replace option.
+## Running the Example
 
-which only informs you that the subscriber/publisher code has not been replaced
-as expected.
-
-Build the example accordingly to the target platform. For example, for the 
-*i86Linux2.6gcc4.4.5* architecture run:
-
-    make -f makefile_AwsExample_i86Linux2.6gcc4.4.5
-
-
-## Running C++03 Example
 Run the publisher and subscriber applications in a different terminal each and
-from the example directory (this is necessary to ensure the application loads 
+from the example directory (this is necessary to ensure the application loads
 the QoS defined in *USER_QOS_PROFILES.xml*).
 
 ### Publisher
 
 For i86Linux2.6gcc4.4.5, run:
-
-    ./objs/i86Linux2.6gcc4.4.5/AwsExample_publisher [options]
+```
+./AwsExample_publisher [options]
+```
 
 where the publisher options are:
 
-- `-d, -domainId`: Domain ID. 
+- `-d, -domainId`: Domain ID.
     **Default**: 0.
-- `-p, -publisherId`: Key value of the samples sent. 
+- `-p, -publisherId`: Key value of the samples sent.
     **Default**: (random).
 - `-s, -samples`: Number of samples to send before the application shuts down.
      **Default**: 0 (infinite).
@@ -62,15 +64,87 @@ where the publisher options are:
 ### Subscriber
 
 For i86Linux2.6gcc4.4.5, run:
-
-    ./objs/<arch_name>/AwsExample_subscriber
+```
+./AwsExample_subscriber [options]
+```
 
 where the subscriber options are:
 
-- `-d, -domainId`: Domain ID. 
+- `-d, -domainId`: Domain ID.
     **Default**: 0.
 - `-t, -threads`: Number of threads used to process sample reception.
      **Default**: 4.
 - `-s, -samples`: Number of received samples before the application shuts down.
      **Default**: 0 (infinite).
 - `-h, -help`: Displays application usage and exits.
+
+## Customizing the Build
+
+### Configuring Build Type and Generator
+
+By default, CMake will generate build files using the most common generator for
+your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
+solution on Windows), \. You can use the following CMake variables to modify
+the default behavior:
+
+* -DCMAKE_BUILD_TYPE -- specifies the build mode. Valid values are Release and
+  Debug. See the [CMake documentation for more details.
+  (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+
+* -DBUILD_SHARED_LIBS -- specifies the link mode. Valid values are ON for
+  dynamic linking and OFF for static linking. See [CMake documentation for more
+  details.
+  (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+
+* -G -- CMake generator. The generator is the native build system to use build
+  the source code. All the valid values are described described in the CMake
+  documentation [CMake Generators
+  Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
+
+For example, to build a example in Debug/Static mode run CMake as follows:
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+```
+
+### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform.If you installed Connext DDS in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
+DDS installation folder. For example:
+```sh
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
+```
+
+Also, If you installed libraries for multiple target architecture on your
+system (i.e., you installed more than one target rtipkg), you can use the
+CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
+you want to link against. For example:
+```sh
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+```
+
+### CMake Build Infrastructure
+
+The CMakeListst.txt script that builds this example uses a generic CMake
+function called connextdds_add_example that defines all the necessary
+constructs to:
+
+1. Run RTI Code Generator to generate the serialization/deserialization code
+   for the types defined in the IDL file associated with the example.
+
+2. Build the corresponding Publisher and Subscriber applications.
+
+3. Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
+   and subscriber executables are generated.
+
+You will find the definition of connextdds_add_example, along with detailed
+documentation, in
+[rescources/cmake/ConnextDdsAddExample.cmake](../../../../rescources/cmake/ConnextDdsAddExample.cmake).
+
+For a more comprehensive example on how to build an RTI Connext DDS application
+using CMake, please refer to the
+[hello_world](../../../connext_dds/build_systems/cmake/) example, which
+includes a comprehensive CMakeLists.txt script with all the steps and
+instructions described in detail.

@@ -695,7 +695,7 @@ endif()
 # Platform-Specific Definitions
 if(CONNEXTDDS_ARCH MATCHES "Linux")
     # Linux Platforms
-    set(CONNEXTDDS_EXTERNAL_LIBS -ldl -lnsl -lm -lpthread -lrt)
+    set(CONNEXTDDS_EXTERNAL_LIBS -ldl -lm -lpthread -lrt)
     set(CONNEXTDDS_COMPILE_DEFINITIONS RTI_UNIX RTI_LINUX)
 
     if(CONNEXTDDS_ARCH MATCHES "x64Linux")
