@@ -19,6 +19,4 @@ connextdds_add_example(
         LEGACY_PLUGIN
         UNBOUNDED
         NO_TYPECODE
-    )
-
 )

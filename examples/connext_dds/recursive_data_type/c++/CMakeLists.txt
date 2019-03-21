@@ -16,6 +16,6 @@ connextdds_add_example(
     IDL "RecursiveType"
     LANG "C++"
     CODEGEN_ARGS
-      UNBOUNDED
-      NO_TYPECODE
+        UNBOUNDED
+        NO_TYPECODE
 )
