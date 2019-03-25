@@ -1,5 +1,4 @@
-Build system example
-====================
+# Build system example
 
 This folder contains examples about how to build ConnextDDS applications using
 different build systems.
