@@ -1,69 +1,71 @@
 # Example Code: Ordered Presentation
 
-## Building C++11 Example
-Before compiling or running the example, make sure the environment variable
-`NDDSHOME` is set to the directory where your version of *RTI Connext* is
-installed.
+## Building the Example :wrench:
 
-Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2010* or *i86Linux2.6gcc4.4.5*). The *RTI Connext Core
-Libraries and Utilities Getting Started Guide* describes this process in detail.
-Follow the same procedure to generate the code and build the examples. **Do not
-use the `-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2010* run:
-```
-rtiddsgen -language c++11 -example i86Win32VS2010 ordered.idl
+To build this example, first run CMake to generate the corresponding build
+files. We recommend you use a separate directory to store all the generated
+files (e.g., ./build).
+```sh
+mkdir build
+cd build
+cmake ..
 ```
 
-You will see messages that look like this:
-```
-File C:\local\Ordered_Presentation\c++11\ordered_subscriber.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
-File C:\local\Ordered_Presentation\c++11\ordered_publisher.cxx already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
-File C:\local\Ordered_Presentation\c++11\USER_QOS_PROFILES.xml already exists
-and will not be replaced with updated content. If you would like to get a new
-file with the new content, either remove this file or supply -replace option.
+Once you have run CMake, you will find a number of new files in your build
+directory (the list of generated files will depend on the specific CMake
+Generator). To build the example, run CMake as follows:
+```sh
+cmake --build .
 ```
 
-This is normal and is only informing you that the subscriber/publisher code has
-not been replaced, which is fine since all the source files for the example are
-already provided.
+**Note**: if you are using a multi-configuration generator, such as Visual
+Studio solutions, you can specify the configuration mode to build as follows:
+```sh
+cmake --build . --config Release|Debug
+```
 
-## Running C++11 Example
+Alternatively, you can use directly the generated infrastructure (e.g.,
+Makefiles or Visual Studio Solutions) to build the example. If you generated
+Makefiles in the configuration process, run make to build the example.
+Likewise, if you generated a Visual Studio solution, open the solution and
+follow the regular build process.
+
+## Running the Example
+
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 ```
-objs\<arch_name>\ordered_publisher.exe  <domain_id> <samples_to_send>
-objs\<arch_name>\ordered_subscriber.exe <domain_id> <sleep_periods>
+ordered_publisher.exe  <domain_id> <samples_to_send>
+ordered_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
 ```
-./objs/<arch_name>/ordered_publisher  <domain_id> <samples_to_send>
-./objs/<arch_name>/ordered_subscriber <domain_id> <sleep_periods>
+./ordered_publisher  <domain_id> <samples_to_send>
+./ordered_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
-    1. The `<domain_id>`. Both applications must use the same domain ID in order
-    to communicate. The default is 0.
-    2. How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+
+1. The `<domain_id>`. Both applications must use the same domain ID in order
+   to communicate. The default is 0.
+
+2. How long the examples should run, measured in samples for the publisher
+   and sleep periods for the subscriber. A value of '0' instructs the
+   application to run forever; this is the default.
 
 While generating the output below, we used values that would capture the most
 interesting behavior. This ouput it is from:
 ```
-objs\<arch_name>\ordered_publisher.exe  <domain_id> 10
-objs\<arch_name>\ordered_subscriber.exe <domain_id> 3
+ordered_publisher.exe  <domain_id> 10
+ordered_subscriber.exe <domain_id> 3
 ```
 
 ### Publisher Output
+
 ```
 writing instance0, value->0
 writing instance1, value->0
@@ -88,6 +90,7 @@ writing instance1, value->9
 ```
 
 ### Subscriber Output
+
 ```
 Subscriber 0 using Instance access scope
 Subscriber 1 using Topic access scope
@@ -141,3 +144,74 @@ Reader 0: Instance1->value = 9
     Reader 1: Instance0->value = 9
     Reader 1: Instance1->value = 9
 ```
+
+## Customizing the Build
+
+### Configuring Build Type and Generator
+
+By default, CMake will generate build files using the most common generator for
+your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
+solution on Windows), \. You can use the following CMake variables to modify
+the default behavior:
+
+* -DCMAKE_BUILD_TYPE -- specifies the build mode. Valid values are Release and
+  Debug. See the [CMake documentation for more details.
+  (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+
+* -DBUILD_SHARED_LIBS -- specifies the link mode. Valid values are ON for
+  dynamic linking and OFF for static linking. See [CMake documentation for more
+  details.
+  (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+
+* -G -- CMake generator. The generator is the native build system to use build
+  the source code. All the valid values are described described in the CMake
+  documentation [CMake Generators
+  Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
+
+For example, to build a example in Debug/Static mode run CMake as follows:
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+```
+
+### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform.If you installed Connext DDS in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
+DDS installation folder. For example:
+```sh
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
+```
+
+Also, If you installed libraries for multiple target architecture on your
+system (i.e., you installed more than one target rtipkg), you can use the
+CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
+you want to link against. For example:
+```sh
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+```
+
+### CMake Build Infrastructure
+
+The CMakeListst.txt script that builds this example uses a generic CMake
+function called connextdds_add_example that defines all the necessary
+constructs to:
+
+1. Run RTI Code Generator to generate the serialization/deserialization code
+   for the types defined in the IDL file associated with the example.
+
+2. Build the corresponding Publisher and Subscriber applications.
+
+3. Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
+   and subscriber executables are generated.
+
+You will find the definition of connextdds_add_example, along with detailed
+documentation, in
+[rescources/cmake/ConnextDdsAddExample.cmake](../../../../rescources/cmake/ConnextDdsAddExample.cmake).
+
+For a more comprehensive example on how to build an RTI Connext DDS application
+using CMake, please refer to the
+[hello_world](../../../connext_dds/build_systems/cmake/) example, which
+includes a comprehensive CMakeLists.txt script with all the steps and
+instructions described in detail.
