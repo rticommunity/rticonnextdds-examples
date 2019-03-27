@@ -1,0 +1,160 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2005-2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.3.1/rti_record.xsd">
+
+    <!-- User defined QoS for resource limits -->
+    <qos_library name="my_qos_library">
+        <datareader_qos name="my_datareader_qos">
+            <resource_limits>
+                <!-- Your DataReaders resource limits here -->
+            </resource_limits>
+        </datareader_qos>
+    </qos_library>
+
+
+    <!-- This configuration records all topics from domain ID 0. Every
+         partition is considered, being recorded at once -->
+    <recorder name="example_use_case_1">
+
+        <!-- Specify where and how to store the recorded data. -->
+        <recorder_database>
+            <database_name>example_use_case_1.dat</database_name>
+        </recorder_database>
+
+        <!-- Create a DDS DomainParticipant in domain 0 -->
+        <domain name="domain0">
+            <domain_id>0</domain_id>
+            <deserialize_mode>RTIDDS_DESERIALIZEMODE_NEVER</deserialize_mode>
+        </domain>
+
+        <!-- Create a topic_group for all topics -->
+        <topic_group name="All">
+            <topics>
+                <topic_expr>*</topic_expr>
+            </topics>
+            <field_expr>*</field_expr>
+            <!-- DataReaders will get resource limits from the user-defined QoS
+                 at the top of the file -->
+            <datareader_qos base_name="my_qos_library::my_datareader_qos">
+            </datareader_qos>
+        </topic_group>
+
+        <!-- Create a RecordGroup. A RecordGroup controls which TopicGroups
+         are recorded for a set of domains. Each recorded Topic is stored in
+         a table with the format "record_group.domain.Topic"
+         -->
+        <!-- Create a RecordGroup to record every topic in every partition -->
+        <record_group name="all_partitions">
+            <!-- Specify partition * in Subscriber QoS (this wildcard will
+                 match any partition) -->
+            <subscriber_qos>
+                <partition>
+                    <name>
+                        <element>*</element>
+                    </name>
+                </partition>
+            </subscriber_qos>
+
+            <!-- Specify which domains to record from (domain0) -->
+            <domain_ref>
+                <element>domain0</element>
+            </domain_ref>
+
+            <!-- Specify which topics to record (All of them) -->
+            <topic_ref>
+                <element>All</element>
+            </topic_ref>
+        </record_group>
+
+    </recorder>
+
+
+    <!-- This configuration records all topics from domain ID 0. Only
+         partitions A and B are considered, being recorded in different
+         RecordGroup 's -->
+    <recorder name="example_use_case_2">
+        <!-- Specify where and how to store the recorded data. -->
+        <recorder_database>
+            <database_name>example_use_case_2.dat</database_name>
+        </recorder_database>
+
+        <!-- Create a DDS DomainParticipant in domain 0 -->
+        <domain name="domain0">
+            <domain_id> 0 </domain_id>
+            <deserialize_mode>RTIDDS_DESERIALIZEMODE_NEVER</deserialize_mode>
+        </domain>
+
+        <!-- Create a topic_group for all topics -->
+        <topic_group name="All">
+            <topics>
+                <topic_expr> * </topic_expr>
+            </topics>
+            <field_expr> * </field_expr>
+            <!-- DataReaders will get resource limits from the user-defined QoS
+                 at the top of the file -->
+            <datareader_qos base_name="my_qos_library::my_datareader_qos">
+            </datareader_qos>
+        </topic_group>
+
+        <!-- Create two RecordGroups. A RecordGroup controls which TopicGroups
+         are recorded for a set of domains. Each recorded Topic is stored in
+         a table with the format "record_group.domain.Topic"
+         -->
+        <!-- Create a RecordGroup to record every topic in Partition B -->
+        <record_group name="Partition_A">
+            <!-- Specify partition A in Subscriber QoS (multiple partitions
+                 could be specified with multiple elements) -->
+            <subscriber_qos>
+                <partition>
+                    <name>
+                        <element> A </element>
+                    </name>
+                </partition>
+            </subscriber_qos>
+
+            <!-- Specify which domains to record from (domain0) -->
+            <domain_ref>
+                <element> domain0 </element>
+            </domain_ref>
+
+            <!-- Specify which topics to record (All of them) -->
+            <topic_ref>
+                <element> All </element>
+            </topic_ref>
+        </record_group>
+
+        <!-- Create a RecordGroup to record every topic in Partition B -->
+        <record_group name="Partition_B">
+            <!-- Specify partition B in Subscriber QoS (multiple partitions
+                 could be specified with multiple elements) -->
+            <subscriber_qos>
+                <partition>
+                    <name>
+                        <element> B </element>
+                    </name>
+                </partition>
+            </subscriber_qos>
+
+            <!-- Specify which domains to record from (domain0) -->
+            <domain_ref>
+                <element> domain0 </element>
+            </domain_ref>
+
+            <!-- Specify which topics to record (All of them) -->
+            <topic_ref>
+                <element> All </element>
+            </topic_ref>
+        </record_group>
+
+    </recorder>
+</dds>
