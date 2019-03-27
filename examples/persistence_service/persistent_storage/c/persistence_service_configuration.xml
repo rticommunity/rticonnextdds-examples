@@ -10,8 +10,8 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.2.0/rti_persistence_service.xsd">
-    <!-- QoS Library containing the QoS profile used in the generated example. 
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_persistence_service.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example.
         A QoS library is a named set of QoS profiles. -->
     <persistence_service name="persistence_service_filesystem">
         <persistent_storage>
@@ -21,7 +21,7 @@
         </persistent_storage>
 
         <participant name="persistence_participant">
-            <!-- Choose the same domain that the publisher/subscriber will 
+            <!-- Choose the same domain that the publisher/subscriber will
                 run <domain_id>201</domain_id> -->
             <persistence_group>
                 <filter>*</filter>
@@ -40,14 +40,14 @@
     <persistence_service name="persistence_service_database">
         <persistent_storage>
             <external_database>
-                <!-- DSN used to connect to the database using ODBC. You 
-                    should create this DSN through the ODBC settings on Windows systems, or in 
+                <!-- DSN used to connect to the database using ODBC. You
+                    should create this DSN through the ODBC settings on Windows systems, or in
                     your .odbc.ini file on UNIX/Linux systems. -->
                 <dsn>test_dsn</dsn>
-                <!-- Use this odbc_library if you are going to use TimesTen. 
+                <!-- Use this odbc_library if you are going to use TimesTen.
                     For MySql let it commented -->
                 <!-- <odbc_library>ttdv1121.dll</odbc_library> -->
-                <!-- There are additional tags like username and password, 
+                <!-- There are additional tags like username and password,
                     add them if your DataBase needs this arguments -->
             </external_database>
         </persistent_storage>
@@ -68,4 +68,3 @@
         </participant>
     </persistence_service>
 </dds>
-    
