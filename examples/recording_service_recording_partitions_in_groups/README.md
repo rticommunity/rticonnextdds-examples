@@ -62,7 +62,7 @@ partition used by a Subscriber.
 
 #### How to record
 Make sure the Shapes Demo publisher instance is running on domain 0 - it
-should be publishing data. To sart recording, run:
+should be publishing data. To start recording, run:
 
 ```
 rtirecord -cfgFile config_record.xml -cfgName example_use_case_1
@@ -96,7 +96,7 @@ will be published twice.
 
 #### How to record
 Make sure the Shapes Demo publisher instance is running on domain 0 - it
-should be publishing data. To sart recording, run:
+should be publishing data. To start recording, run:
 
 ```
 rtirecord -cfgFile config_record.xml -cfgName example_use_case_2
@@ -114,7 +114,7 @@ data, run:
 rtireplay -cfgFile config_replay.xml -cfgName example_use_case_2
 ```
 
-The Shapes Demo subscriber will only show the blue circle, the purple square
+The Shapes Demo subscriber will only show the blue circle, the purple square,
 and the red square. Note that the yellow circle and the green square are not
 shown now. The reason is that the yellow circle was published in partition C
 and the green square was published in the `{empty}` partition. In this use
