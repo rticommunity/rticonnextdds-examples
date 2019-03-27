@@ -1,22 +1,28 @@
 /*
- * (c) 2018  Copyright, Real-Time Innovations, Inc. All rights reserved.
- * Subject to Eclipse Public License v1.0; see LICENSE.md for details.
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
  */
 
 /* Common.hpp
-
-Utilities used by CameraImage_publisher.cxx and CameraImage_subscriber.cxx.
-
-*/
+ *
+ * Utilities used by CameraImage_publisher.cxx and CameraImage_subscriber.cxx.
+ */
 
 #include <dds/core/cond/GuardCondition.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/pub/DataWriterListener.hpp>
 
 
-/* 
-Wait for discovery
-*/
+/**
+ * Wait for discovery
+ */
 template <typename T>
 void wait_for_reader(dds::pub::DataWriter<T>& writer, bool match = true)
 {
@@ -34,15 +40,15 @@ void wait_for_writer(dds::sub::DataReader<T>& reader)
     }
 }
 
-/*
-DataWriterListener that implements on_sample_removed
-
-This callback allows the application writting flat-data samples to know when it
-is safe to reuse a sample that was previously written. The listener triggers
-a GuardCondition that can be attached to a Waitset.
-*/
+/**
+ * DataWriterListener that implements on_sample_removed
+ *
+ * This callback allows the application writting flat-data samples to know when
+ * it is safe to reuse a sample that was previously written. The listener
+ * triggers a GuardCondition that can be attached to a Waitset.
+ */
 template <typename TopicType>
-class FlatDataSampleRemovedListener : 
+class FlatDataSampleRemovedListener :
         public dds::pub::NoOpDataWriterListener<TopicType> {
 public:
     void on_sample_removed(
@@ -52,7 +58,7 @@ public:
         guard_condition.trigger_value(true);
     }
 
-    /*
+    /**
      * Gets the condition that can be attached to a waitset
      */
     dds::core::cond::GuardCondition get_condition()
@@ -60,10 +66,10 @@ public:
         return guard_condition;
     }
 
-    /*
+    /**
      * Sets the condition back to false
-     * 
-     * This should be called after the condition triggers a Waitset. 
+     *
+     * This should be called after the condition triggers a Waitset.
      */
     void reset_condition()
     {
@@ -83,7 +89,7 @@ void populate_flat_sample(CameraImageType& sample, int count)
     image.format(common::Format::RGB);
     image.resolution().height(4320);
     image.resolution().width(7680);
-    
+
     auto image_data = image.data();
     for (int i = 0; i < 4; i++) {
         uint8_t image_value = (48 + count) % 124;

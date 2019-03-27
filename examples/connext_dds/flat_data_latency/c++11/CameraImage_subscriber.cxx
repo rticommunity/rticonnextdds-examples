@@ -1,6 +1,13 @@
 /*
- * (c) 2018  Copyright, Real-Time Innovations, Inc. All rights reserved.
- * Subject to Eclipse Public License v1.0; see LICENSE.md for details.
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
  */
 
 #include <algorithm>
@@ -26,7 +33,7 @@ void subscriber_flat(const ApplicationOptions &options)
     using namespace dds::core::policy;
 
     std::cout << "Running subscriber_flat\n";
-    
+
     auto participant_qos = dds::core::QosProvider::Default().participant_qos();
     configure_nic(participant_qos, options.nic);
     dds::domain::DomainParticipant participant(
@@ -36,13 +43,13 @@ void subscriber_flat(const ApplicationOptions &options)
     // Create the ping DataReader
     dds::topic::Topic<CameraImage> ping_topic(participant, "CameraImagePing");
     dds::sub::DataReader<CameraImage> reader(
-            dds::sub::Subscriber(participant), 
+            dds::sub::Subscriber(participant),
             ping_topic);
-            
+
     // Create the pong DataWriter
     dds::topic::Topic<CameraImage> pong_topic(participant, "CameraImagePong");
     dds::pub::DataWriter<CameraImage> writer(
-            dds::pub::Publisher(participant), 
+            dds::pub::Publisher(participant),
             pong_topic);
 
     // Create a ReadCondition for any data on the ping reader, and attach it to
@@ -65,7 +72,7 @@ void subscriber_flat(const ApplicationOptions &options)
             std::cout << "Wait for ping: timeout\n";
             continue;
         }
-        
+
         auto ping_samples = reader.take();
         if ((ping_samples.length() > 0) && (ping_samples[0].info().valid())) {
             auto ping = ping_samples[0].data().root();
@@ -166,13 +173,13 @@ void subscriber_flat_zero_copy(const ApplicationOptions &options)
     // Create the ping DataReader
     dds::topic::Topic<CameraImage> ping_topic(participant, "CameraImagePing");
     dds::sub::DataReader<CameraImage> reader(
-            dds::sub::Subscriber(participant), 
+            dds::sub::Subscriber(participant),
             ping_topic);
 
     // Create the pong DataWriter
     dds::topic::Topic<CameraImage> pong_topic(participant, "CameraImagePong");
     dds::pub::DataWriter<CameraImage> writer(
-            dds::pub::Publisher(participant), 
+            dds::pub::Publisher(participant),
             pong_topic);
 
     // Create a ReadCondition for any data on the ping reader, and attach it to
@@ -195,7 +202,7 @@ void subscriber_flat_zero_copy(const ApplicationOptions &options)
             std::cout << "Wait for ping: timeout\n";
             continue;
         }
-        
+
         auto ping_samples = reader.take();
         if (ping_samples.length() > 0 && ping_samples[0].info().valid()) {
             if (ping_samples[0].info().valid()) {
@@ -207,7 +214,7 @@ void subscriber_flat_zero_copy(const ApplicationOptions &options)
                 if (options.display_sample){
                     display_flat_sample(ping_samples[0].data());
                 }
-                
+
                 // Write the pong sample:
                 CameraImage *pong_sample = writer.extensions().get_loan();
                 auto pong = pong_sample->root();
@@ -227,7 +234,7 @@ void subscriber_plain(const ApplicationOptions &options)
     using namespace dds::core::policy;
 
     std::cout << "Running subscriber_plain\n";
-    
+
     auto participant_qos = dds::core::QosProvider::Default().participant_qos();
     configure_nic(participant_qos, options.nic);
     dds::domain::DomainParticipant participant(
@@ -238,7 +245,7 @@ void subscriber_plain(const ApplicationOptions &options)
     dds::topic::Topic<CameraImage> ping_topic(participant, "CameraImagePing");
 
     dds::sub::DataReader<CameraImage> reader(
-            dds::sub::Subscriber(participant), 
+            dds::sub::Subscriber(participant),
             ping_topic);
 
     // Create the pong DataWriter
@@ -257,7 +264,7 @@ void subscriber_plain(const ApplicationOptions &options)
 
     // We create the sample in the heap because is to large to be in the stack
     std::unique_ptr<CameraImage> pong_sample(new CameraImage);
-    
+
     std::cout<< "Waiting for the publisher application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
@@ -271,7 +278,7 @@ void subscriber_plain(const ApplicationOptions &options)
             std::cout << "Wait for ping: timeout\n";
         }
         auto ping_samples = reader.take();
-        
+
         // Write the pong sample
         if (ping_samples.length() && ping_samples[0].info().valid()) {
             if (ping_samples[0].data().timestamp() == 0) {
@@ -340,7 +347,7 @@ int main(int argc, char *argv[])
                 break;
             case 3:
                 subscriber_flat_zero_copy(options);
-                break;            
+                break;
             case 4:
                 subscriber_plain(options);
                 break;

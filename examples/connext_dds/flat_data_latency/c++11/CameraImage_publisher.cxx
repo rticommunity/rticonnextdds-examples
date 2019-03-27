@@ -1,7 +1,15 @@
 /*
- * (c) 2018  Copyright, Real-Time Innovations, Inc. All rights reserved.
- * Subject to Eclipse Public License v1.0; see LICENSE.md for details.
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
  */
+
 
 #include <iostream>
 #include <memory> // for shared_ptr and unique_ptr
@@ -161,7 +169,7 @@ void publisher_zero_copy(const ApplicationOptions &options)
     int count = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
     while (count <= options.sample_count || options.sample_count == -1) {
-        
+
         // Create and write the ping sample:
         // The DataWriter gets a sample from its shared memory sample pool. This
         // operation does not allocate memory. Samples are returned to the sample
@@ -404,7 +412,7 @@ void publisher_copy_sample(int domain_id, int sample_count)
     using namespace plain_types;
 
     std::cout << "Running publisher_copy_sample\n";
-    
+
     dds::domain::DomainParticipant participant (domain_id);
 
     std::unique_ptr<CameraImage> ping_sample(new CameraImage);
@@ -419,14 +427,14 @@ void publisher_copy_sample(int domain_id, int sample_count)
         if (copy->data()[45345] == 3) {
             return;
         }
-        
+
         count++;
-           
+
         uint64_t latency = participant->current_time().to_microsecs()
                 - ping_sample->timestamp();
         total_latency += latency;
         if (count % 10 == 0) {
-            std::cout << "Average end-to-end latency: " 
+            std::cout << "Average end-to-end latency: "
                         << total_latency / (count * 1) << " microseconds\n";
         }
     }

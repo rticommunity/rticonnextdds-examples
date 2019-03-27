@@ -1,18 +1,25 @@
 /*
- * (c) 2018  Copyright, Real-Time Innovations, Inc. All rights reserved.
- * Subject to Eclipse Public License v1.0; see LICENSE.md for details.
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
  */
 
-//
-// Definition of CameraImage for three different use cases:
-//
-// - flat_zero_copy_types::CameraImage: zero copy + flat-data
-// - flat_types::CameraImage: flat-data
-// - plain_types::CameraImage: regular binding
-//
-// CameraImage_publisher.cxx and CameraImage_subscriber.cxx allow selecting
-// which use case to run.
-//
+/*
+ * Definition of CameraImage for three different use cases:
+ *
+ * - flat_zero_copy_types::CameraImage: zero copy + flat-data
+ * - flat_types::CameraImage: flat-data
+ * - plain_types::CameraImage: regular binding
+ *
+ * CameraImage_publisher.cxx and CameraImage_subscriber.cxx allow selecting
+ * which use case to run.
+ */
 
 // Types common to all CameraImage definitions
 module common {

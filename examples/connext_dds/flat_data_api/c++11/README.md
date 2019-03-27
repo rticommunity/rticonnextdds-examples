@@ -15,11 +15,10 @@ For information about FlatData, see the RTI Connext DDS
 
 ## Compiling the example
 
-
 1) Use rtiddsgen to generate a makefile for your machine's architecture 
 and compiler. For example:
 
-```
+```bash
 rtiddsgen -language C++11 -example x64Darwin17clang9.0 CameraImage.idl
 ```
 
@@ -31,8 +30,8 @@ are already provided.
 
 2) Compile the Publisher and Subscriber apps:
 
-```
-make -f <makefile for your platform>
+```bash
+make -f <makefile_for_your_platform>
 ```
 
 The executables *CameraImage_publisher* and *CameraImage_subscriber* are located 
