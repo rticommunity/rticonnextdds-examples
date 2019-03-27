@@ -1,0 +1,5 @@
+CameraImage.cxx
+CameraImage.hpp
+CameraImagePlugin.cxx
+CameraImagePlugin.hpp
+makefile_CameraImage*

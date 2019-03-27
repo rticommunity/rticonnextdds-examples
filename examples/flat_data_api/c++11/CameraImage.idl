@@ -1,0 +1,31 @@
+enum Format {
+    RGB,
+    HSV,
+    YUV
+};
+
+@final
+@language_binding(FLAT_DATA)
+struct Resolution {
+    long height;
+    long width;
+};
+
+@final
+@language_binding(FLAT_DATA)
+struct Pixel {
+    octet red;
+    octet green;
+    octet blue;
+};
+
+const long MAX_IMAGE_SIZE = 8294400;
+
+@mutable
+@language_binding(FLAT_DATA)
+struct CameraImage {
+    string<128> source;
+    Format format;
+    Resolution resolution;
+    sequence<Pixel, MAX_IMAGE_SIZE> pixels;
+};
