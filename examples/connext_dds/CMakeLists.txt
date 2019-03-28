@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(RTIConnextDDS
-    "5.3.0"
+    "6.0.0"
     REQUIRED
     COMPONENTS
         core
@@ -29,6 +29,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asyncwaitset/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++03")
+
+# build_systems
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build_systems/cmake")
 
 # builtin_qos_profiles
 if(BUILD_SHARED_LIBS)

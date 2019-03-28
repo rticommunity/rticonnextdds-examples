@@ -35,11 +35,11 @@ solution and add the file *dynamic_data_nested_structs.cs*. Following the next
 steps to get your solution ready to use.
 
 Modify the next file names:
-* Foo-csharp.sln -> dynamic_data_nested_structs.sln
-* Foo_publisher-csharp.csproj -> dynamic_data_nested_structs.csproj
+- Foo-csharp.sln -> dynamic_data_nested_structs.sln
+- Foo_publisher-csharp.csproj -> dynamic_data_nested_structs.csproj
 
 Modify (in text format) dynamic_data_nested_structs.sln and change
-* Foo_publisher-csharp.csproj -> dynamic_data_nested_structs.csproj
+- Foo_publisher-csharp.csproj -> dynamic_data_nested_structs.csproj
 
 Modify (in text format) dynamic_data_nested_structs.csproj and change
 these lines:

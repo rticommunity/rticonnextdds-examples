@@ -1,6 +1,7 @@
 # Example Code: WaitSet with Status Condition
 
 ## Concept
+
 *Conditions* and *WaitSets* provide another way for *Connext* to communicate
 status changes (including the arrival of data) to your application. While a
 *Listener* is used to provide a callback for asynchronous access, *Conditions*
@@ -35,6 +36,7 @@ different DomainParticipants. A WaitSet can only be in use by one application
 thread at a time.
 
 ## Example Description
+
 This example shows how to use WaitSets to efficiently take data. To initialize
 the WaitSet, we define a set of status conditions on which to wait, and attach
 them to the WaitSet.

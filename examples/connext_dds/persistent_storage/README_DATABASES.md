@@ -8,7 +8,7 @@ scenarios.
 ## MySQL & ODBC Connector Installation
 
 ### Windows-Based Systems
-1. First, verify that *MySQL 5.1* and *ODBC Connector 5.1* are installed and
+1.First, verify that *MySQL 5.1* and *ODBC Connector 5.1* are installed and
    running on your system. The installation of MySQL is beyond the scope of this
    document. Please refer to the *MySQL Reference Manual* for the process to
    install and configure MySQL. However, take into account the following
@@ -16,7 +16,7 @@ scenarios.
    - Install the correct version according to your system (32 bits vs 64 bits).
    - Make sure that the daemon is running (*mysqld.exe*).
 
-2. *RTI Persistence Service* requires the installation of the *MySQL ODBC 5.1*
+2.*RTI Persistence Service* requires the installation of the *MySQL ODBC 5.1*
    driver. The driver is not bundled with the *MySQL server* and must be
    installed separately.
 
@@ -50,7 +50,7 @@ The remaining sections of this document assume that a MySQL user named *"test"*
 with the password *"test"* has an account on the local host.
 
 ## Creating a working DSN
-1. (Only for external databases) Create a DSN for the persistence service. To
+1.(Only for external databases) Create a DSN for the persistence service. To
       add a data source, follow these steps:
 
    1. Open the ODBC Data Source Administrator:

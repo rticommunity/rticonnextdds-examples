@@ -1,6 +1,7 @@
 # Example Code: WaitSets using Query Conditions
 
 ## Building C# Example
+
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -11,17 +12,20 @@ Getting Started Guide* describes this process in detail.
 Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
-```
+
+```sh
 rtiddsgen -language C# -example i86Win32VS2010 -ppDisable waitset_query_cond.idl
 ```
 
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
-```
+
+```sh
 rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable waitset_query_cond.idl
 ```
 
 You will see messages that look like this:
+
 ```
 File C:\local\waitset_query_cond\cs\waitset_query_cond_subscriber.cs already
 exists and will not be replaced with updated content. If you would like to get a
@@ -46,20 +50,23 @@ will use to build the types and the C# example, respectively. First open
 that, *open waitset_query_cond_example-csharp.sln* and build the C# example.
 
 ## Running C# Example
+
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On Windows systems run:
-```
+
+```sh
 bin\<build_type>-VS2010\waitset_query_cond_publisher.exe  <domain_id> <samples_to_send>
 bin\<build_type>-VS2010\waitset_query_cond_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
 
-1. The `<domain_id>`. Both applications must use the same domain ID in order to
-communicate. The default is 0.
-2. How long the examples should run, measured in samples for the publisher
-and sleep periods for the subscriber. A value of '0' instructs the
-application to run forever; this is the default.
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
+    communicate. The default is 0.
+
+2.  How long the examples should run, measured in samples for the publisher
+    and sleep periods for the subscriber. A value of '0' instructs the
+    application to run forever; this is the default.

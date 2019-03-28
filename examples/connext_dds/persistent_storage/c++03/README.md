@@ -5,6 +5,7 @@
 To build this example, first run CMake to generate the corresponding build
 files. We recommend you use a separate directory to store all the generated
 files (e.g., ./build).
+
 ```sh
 mkdir build
 cd build
@@ -14,12 +15,14 @@ cmake ..
 Once you have run CMake, you will find a number of new files in your build
 directory (the list of generated files will depend on the specific CMake
 Generator). To build the example, run CMake as follows:
+
 ```sh
 cmake --build .
 ```
 
 **Note**: if you are using a multi-configuration generator, such as Visual
 Studio solutions, you can specify the configuration mode to build as follows:
+
 ```sh
 cmake --build . --config Release|Debug
 ```
@@ -44,43 +47,44 @@ as administrator. Otherwise, none of the scenarios will not run correctly.**
 correct driver (we assuming you have installed *TimesTen 11.2.1*). Refer to
 those documents for further details.
 
-* Durable Writer History scenario
+-   Durable Writer History scenario
 
-```sh
-# Do not forget to replace the path separator to "\" on Windows.
-hello_world_subscriber
-hello_world_publisher -sample_count 5 -initial_value 0 -dwh 1
-hello_world_subscriber
-hello_world_publisher -sample_count 5 -initial_value 5 -dwh 1
-```
+    ```sh
+    # Do not forget to replace the path separator to "\" on Windows.
+    hello_world_subscriber
+    hello_world_publisher -sample_count 5 -initial_value 0 -dwh 1
+    hello_world_subscriber
+    hello_world_publisher -sample_count 5 -initial_value 5 -dwh 1
+    ```
 
-* Durable Reader State Scenario
+-   Durable Reader State Scenario
 
-```sh
-# Do not forget to replace the path separator to "\" on Windows.
-hello_world_subscriber.exe -drs 1
-hello_world_publisher.exe -sample_count 5 -initial_value 0 -sleep 60
-stop hello_world_subscriber
-hello_world_subscriber.exe
-hello_world_subscriber.exe -drs 1
-```
+    ```sh
+    # Do not forget to replace the path separator to "\" on Windows.
+    hello_world_subscriber.exe -drs 1
+    hello_world_publisher.exe -sample_count 5 -initial_value 0 -sleep 60
+    stop hello_world_subscriber
+    hello_world_subscriber.exe
+    hello_world_subscriber.exe -drs 1
+    ```
 
-* Persistence Service Scenario
+-   Persistence Service Scenario
 
-```sh
-# Do not forget to replace the path separator to "\" and
-# "$NDDSHOME" by "%NDDSHOME%" on Windows.
+    ```sh
+    # Do not forget to replace the path separator to "\" and
+    # "$NDDSHOME" by "%NDDSHOME%" on Windows.
 
-# Run persistence service (in the same folder that there are
-# persistence_service_configuration.xml):
-"$NDDSHOME/bin/rtipersistenceservice" -cfgFile persistence_service_configuration.xml -cfgName <persistence_service_database|persistence_service_filesystem>
+    # Run persistence service (in the same folder that there are
+    # persistence_service_configuration.xml):
+    "$NDDSHOME/bin/rtipersistenceservice" -cfgFile persistence_service_configuration.xml -cfgName <persistence_service_database|persistence_service_filesystem>
 
-hello_world_subscriber
-hello_world_publisher -sample_count 5 -initial_value 0
-hello_world_subscriber
-```
+    hello_world_subscriber
+    hello_world_publisher -sample_count 5 -initial_value 0
+    hello_world_subscriber
+    ```
 
 The applications accepts different arguments:
+
 ```
 hello_world_subscriber:
     -domainId <domain ID> (default: 0)
@@ -104,21 +108,22 @@ your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
 solution on Windows), \. You can use the following CMake variables to modify
 the default behavior:
 
-* -DCMAKE_BUILD_TYPE -- specifies the build mode. Valid values are Release and
-  Debug. See the [CMake documentation for more details.
-  (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
-* -DBUILD_SHARED_LIBS -- specifies the link mode. Valid values are ON for
-  dynamic linking and OFF for static linking. See [CMake documentation for more
-  details.
-  (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
-* -G -- CMake generator. The generator is the native build system to use build
-  the source code. All the valid values are described described in the CMake
-  documentation [CMake Generators
-  Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
+-   `-G` -- CMake generator. The generator is the native build system to use
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
 
 For example, to build a example in Debug/Static mode run CMake as follows:
+
 ```sh
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
 ```
@@ -130,6 +135,7 @@ DDS installation and the Connext DDS architecture based on the default settings
 for your host platform.If you installed Connext DDS in a custom location, you
 can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
 DDS installation folder. For example:
+
 ```sh
 cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 ```
@@ -138,6 +144,7 @@ Also, If you installed libraries for multiple target architecture on your
 system (i.e., you installed more than one target rtipkg), you can use the
 CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
 you want to link against. For example:
+
 ```sh
 cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ```
@@ -148,13 +155,13 @@ The CMakeListst.txt script that builds this example uses a generic CMake
 function called connextdds_add_example that defines all the necessary
 constructs to:
 
-1. Run RTI Code Generator to generate the serialization/deserialization code
-   for the types defined in the IDL file associated with the example.
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+    for the types defined in the IDL file associated with the example.
 
-2. Build the corresponding Publisher and Subscriber applications.
+2.  Build the corresponding Publisher and Subscriber applications.
 
-3. Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
-   and subscriber executables are generated.
+3.  Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
+    and subscriber executables are generated.
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in

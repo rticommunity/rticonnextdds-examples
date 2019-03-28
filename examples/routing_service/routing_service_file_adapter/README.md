@@ -7,7 +7,7 @@ produce data for different data domains (e.g., DDS, JMS, Socket, etc.).
 
 By default, RTI Routing Service is distributed with a built-in DDS adapter. Any
 other adapter plugins must be provided as a set of Java classes registered
-within the <adapter_library> tag.
+within the `<adapter_library>` tag.
 
 Input adapters are used to collect data samples from different data domains,
 such as Connext or JMS. The input samples are processed by the Routing Service

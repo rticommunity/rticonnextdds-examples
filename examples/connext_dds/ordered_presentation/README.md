@@ -1,6 +1,7 @@
 # Example Code: Ordered presentation
 
 ## Concept
+
 Usually *DataReaders* will receive data in the order that it was sent by a
 *DataWriter*. In addition, data is presented to the *DataReader* as soon as the
 application receives the next value expected.
@@ -15,30 +16,31 @@ If we use *Ordered Presentation*, the *access_scope* controls the scope of the
 order in which samples are presented to the subscribing application. The
 *access_scope* may have four different values:
 
-- If *access_scope* is `INSTANCE`, the relative order of samples sent by a
-  *DataWriter* is only preserved on an per-instance basis. If two samples
-  refer to the same instance (identified by Topic and a particular value for
-  the key) then the order in which they are stored in the *DataReader’s* queue
-  is consistent with the order in which the changes occurred. However, if the
-  two samples belong to different instances, the order in which they are
-  presented may or may not match the order in which the changes occurred.
+-   If *access_scope* is `INSTANCE`, the relative order of samples sent by a
+    *DataWriter* is only preserved on an per-instance basis. If two samples
+    refer to the same instance (identified by Topic and a particular value for
+    the key) then the order in which they are stored in the *DataReader’s* queue
+    is consistent with the order in which the changes occurred. However, if the
+    two samples belong to different instances, the order in which they are
+    presented may or may not match the order in which the changes occurred.
 
-- If *access_scope* is `TOPIC`, the relative order of samples sent by a
-  *DataWriter* is preserved for all samples of all instances. The coherent
-  grouping and/or order in which samples appear in the *DataReader’s* queue is
-  consistent with the grouping/order in which the changes occurred—even if
-  the samples affect different instances.
+-   If *access_scope* is `TOPIC`, the relative order of samples sent by a
+    *DataWriter* is preserved for all samples of all instances. The coherent
+    grouping and/or order in which samples appear in the *DataReader’s* queue is
+    consistent with the grouping/order in which the changes occurred—even if
+    the samples affect different instances.
 
-- If *access_scope* is `GROUP`, the scope spans all instances belonging to
-  *DataWriter* entities within the same *Publisher*—even if they are instances
-  of different topics. Changes made to instances via *DataWriter* entities
-  attached to the same *Publisher* are made available to *Subscribers* on the
-  same order they occurred.
+-   If *access_scope* is `GROUP`, the scope spans all instances belonging to
+    *DataWriter* entities within the same *Publisher*—even if they are instances
+    of different topics. Changes made to instances via *DataWriter* entities
+    attached to the same *Publisher* are made available to *Subscribers* on the
+    same order they occurred.
 
-- If *access_scope* is `HIGHEST_OFFERED`, the Subscriber will use the access
-  scope specified by each remote *Publisher*.
+-   If *access_scope* is `HIGHEST_OFFERED`, the Subscriber will use the access
+    scope specified by each remote *Publisher*.
 
 ## Example Description
+
 In this example we illustrate how to control the scope of the order in which
 samples are presented to the subscribing application.
 

@@ -1,6 +1,7 @@
 # Example Code: Polling Read
 
 ## Building C# Example
+
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -11,17 +12,20 @@ Getting Started Guide* describes this process in detail. Follow the same
 procedure to generate the code and build the examples. **Do not use the
 `-replace` option.** Assuming you want to generate an example for
 *x64Win64VS2013* run:
-```
+
+```sh
 rtiddsgen -language c# -example x64Win64VS2013 -ppDisable poll.idl
 ```
 
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
-```
+
+```sh
 rtiddsgen -language c# -example x64Win64VS2013 -express -ppDisable poll.idc
 ```
 
 You will see messages that look like:
+
 ```
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/poll_subscriber.cs
@@ -40,19 +44,21 @@ projects contain the C# publisher and subscriber example and should be compiled
 with *Visual Studio C#*.
 
 ## Running C# Example
+
 In two separate command prompt windows for the publisher and subscriber. Run
 the following commands from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-```
+```sh
 bin\<build_type>\poll_publisher.exe  <domain_id> <samples_to_send>
 bin\<build_type>\poll_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
 
-1. The `<domain_id>`. Both applications must use the same domain ID in order to
-communicate. The default is 0.
-2. How long the examples should run, measured in samples for the publisher
-and sleep periods for the subscriber. A value of '0' instructs the
-application to run forever; this is the default.
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
+    communicate. The default is 0.
+
+2.  How long the examples should run, measured in samples for the publisher
+    and sleep periods for the subscriber. A value of '0' instructs the
+    application to run forever; this is the default.

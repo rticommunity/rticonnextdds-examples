@@ -17,11 +17,11 @@ aggregation and splitting. There is a single plug-in implementation,
 *ShapesProcessor* that is factory of two types of *Processor*\s, one for
 each pattern implementation:
 
-- *ShapesAggregator*: *Processor* implementation that performs the aggregation
-  of two *ShapeType* objects into a single *ShapeType* object.
+-   *ShapesAggregator*: *Processor* implementation that performs the aggregation
+    of two *ShapeType* objects into a single *ShapeType* object.
 
-- *ShapesSplitter*: *Processor* implementation that performs the separation
-  of a single *ShapeType* object into two  *ShapeType* objects.
+-   *ShapesSplitter*: *Processor* implementation that performs the separation of
+    a single *ShapeType* object into two  *ShapeType* objects.
 
 In the example, these processors are instantiated as part of a *TopicRoute*,
 in which all its inputs and outputs represent instantiations of the
@@ -29,12 +29,12 @@ in which all its inputs and outputs represent instantiations of the
 
 In this example you will find files for the following elements:
 
-- `ShapesProcessor`: the custom *Processor* plug-in, generated as a
-  shared library, that contains the implementation for both aggregation
-  and split processors.
+-   `ShapesProcessor`: the custom *Processor* plug-in, generated as a shared
+    library, that contains the implementation for both aggregation and split
+    processors.
 
-- Configuration for the *RoutingService* that loads the custom *Processor* and
-  provides the communication between publisher and subscriber applications.
+-   Configuration for the *RoutingService* that loads the custom *Processor* and
+    provides the communication between publisher and subscriber applications.
 
 ### ShapesAggregator
 
@@ -43,8 +43,8 @@ from which the processor reads *new* data first. For each instance found in the
 data read from the leading input, the processor reads *any* existing data for
 the equivalent instance.
 
-The aggregation algorithm consists of simply an average of the values ``x`` and
-``y`` of all inputs. The remaining elements are set equal to the values of the
+The aggregation algorithm consists of simply an average of the values `x` and
+`y` of all inputs. The remaining elements are set equal to the values of the
 data read from the leading input.
 
 Note that for the proper behavior of this *Processor* it's required for the DDS
@@ -75,15 +75,12 @@ Name                                          Value             Description
 
 : ShapesAggregator Configuration Properties
 
-
 ### ShapesSplitter
 
 The splitting algorithm consists of assigning:
 
-- Input value ``x`` to the first output, leaving ``y`` with value zero.
-
-- Input value ``y`` to the second output, leaving ``x`` with value zero.
-
+- Input value `x` to the first output, leaving `y` with value zero.
+- Input value `y` to the second output, leaving `x` with value zero.
 - Remaining values are set equally from the input values.
 
 This *Processor* implementation does not receive any configuration properties.
@@ -93,7 +90,5 @@ This *Processor* implementation does not receive any configuration properties.
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-
 - CMake version 3.10 or higher
-
 - A target platform supported by *RTI* *RoutingService*.

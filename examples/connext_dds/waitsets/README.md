@@ -1,6 +1,7 @@
 # Example Code: WaitSets
 
 ## Concept
+
 *Conditions* and *WaitSets* provide another way for *Connext* to communicate
 status changes (including the arrival of data) to your application. While a
 *Listener* is used to provide a callback for asynchronous access, *Conditions*
@@ -21,20 +22,20 @@ There are three kinds of Conditions. A Condition is a root class for all the
 conditions that may be attached to a WaitSet. This basic class is specialized
 in three classes:
 
-* **GuardConditions** are created by your application. Each *GuardCondition* has
-a single, user-settable, boolean trigger_value. Your application can manually
-trigger the GuardCondition by calling `set_trigger_value()`. *Connext* does not
-trigger or clear this type of condition -- it is completely controlled by your
-application.
+-   **GuardConditions** are created by your application. Each *GuardCondition*
+    has a single, user-settable, boolean trigger_value. Your application can
+    manually trigger the GuardCondition by calling `set_trigger_value()`.
+    *Connext* does not trigger or clear this type of condition -- it is
+    completely controlled by your application.
 
-* **ReadConditions** and **QueryConditions** are created by your application,
-but triggered by *Connext*. *ReadConditions* provide a way for you to specify
-the data samples that you want to wait for, by indicating the desired
-sample-states, view-states, and instance-states.
+-   **ReadConditions** and **QueryConditions** are created by your application,
+    but triggered by *Connext*. *ReadConditions* provide a way for you to
+    specify the data samples that you want to wait for, by indicating the
+    desired sample-states, view-states, and instance-states.
 
-* **StatusConditions** are created automatically by *Connext*, one for each
-*Entity*. A *StatusCondition* is triggered by *Connext* when there is a change
-to any of that Entity's enabled statuses.
+-   **StatusConditions** are created automatically by *Connext*, one for each
+    *Entity*. A *StatusCondition* is triggered by *Connext* when there is a
+    change to any of that Entity's enabled statuses.
 
 A WaitSet can be associated with more than one Entity (including multiple
 DomainParticipants). It can be used to wait on Conditions associated with
@@ -42,6 +43,7 @@ different DomainParticipants. A WaitSet can only be in use by one application
 thread at a time.
 
 ## Example Description
+
 This example shows how to use WaitSets to read data. To initialize the WaitSet,
 we define a set of read and status conditions on which to wait, and attach them
 to the WaitSet.
