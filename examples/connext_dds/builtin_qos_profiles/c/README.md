@@ -36,7 +36,7 @@ link with the other RTI libraries, this will fail at runtime.
 To dynamically link with the RTI libraries on *Windows*, choose the *Debug DLL*
 or *Release DLL* build target. Make sure that RTI's libraries are in the system
 `PATH` environment variable, such as:
-`PATH=c:\Program Files\rti_connext_dds-5.2.0\lib\i86Win32VS2010;...`
+`PATH=c:\Program Files\rti_connext_dds-6.0.0\lib\i86Win32VS2010;...`
 
 To dynamically link with the RTI libraries on *Linux*, modify the makefile to
 remove the 'z' from the end of the RTI library names, such as:
@@ -44,7 +44,7 @@ remove the 'z' from the end of the RTI library names, such as:
 
 Also, make sure that RTI's libraries are in the system `LD_LIBRARY_PATH`
 environment variable, such as:
-`export LD_LIBRARY_PATH=~/rti_connext_dds-5.2.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH`
+`export LD_LIBRARY_PATH=~/rti_connext_dds-6.0.0/lib/i86Linux2.6gcc4.4.5:$LD_LIBRARY_PATH`
 
 ## Running C Example
 In two separate command prompt windows for the publisher and subscriber. Run
