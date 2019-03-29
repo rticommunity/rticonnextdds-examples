@@ -155,11 +155,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++03")
 
-# persistent_storage
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c++03")
-
 # polling_querycondition
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c++")
@@ -213,6 +208,3 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++11")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
-
-# zero_copy
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/zero_copy/c++")
