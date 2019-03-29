@@ -1,0 +1,129 @@
+##############################################################
+# RTI Conding Style
+# -----------------
+# for clang-format > 5.0
+##############################################################
+
+BasedOnStyle: WebKit
+
+###############################################################
+# Formatting rules in our coding conventions
+###############################################################
+
+# CFR1-01: 80-column line
+Language: Cpp
+ColumnLimit: 80
+
+# CFR1-02: Tab character
+TabWidth: 8
+UseTab: Never
+
+# CFR1-03: Horizontal alignment
+IndentWidth: 4
+ContinuationIndentWidth: 8
+
+# CFR1-04: Nested macro definitions are nested two spaces
+# Unsupported
+
+# CFR1-05: Function parameter formatting
+AlignAfterOpenBracket: AlwaysBreak
+AllowAllParametersOfDeclarationOnNextLine: false
+AlwaysBreakAfterReturnType: None
+BinPackParameters: false
+BinPackArguments: false
+ExperimentalAutoDetectBinPacking: false
+
+# CFR1-06: Comments
+AlignTrailingComments: true
+PenaltyBreakComment: 1
+ReflowComments: true
+SpacesBeforeTrailingComments: 2
+# Many other features are unsupported
+
+# CFR1-07: End-of-line character
+# Unsupported
+
+# CFR1-08: Pointer declarations
+# CFR3-06: Pointer declaration
+DerivePointerAlignment: false
+PointerAlignment: Right
+# Note that this won't work with references in C++
+
+# CFR1-09: Casting
+SpaceAfterCStyleCast: true
+SpacesInCStyleCastParentheses: false
+
+# CFR2-03: C classes
+AlwaysBreakTemplateDeclarations: true
+SpaceAfterTemplateKeyword: true
+
+NamespaceIndentation: None
+CompactNamespaces: false
+FixNamespaceComments: true
+
+# CFR2-10: Operators
+BreakBeforeBinaryOperators: true
+BreakBeforeTernaryOperators: true
+SpaceBeforeAssignmentOperators: true
+
+# CFR2-11: Control statements
+SpaceBeforeParens: ControlStatements
+
+# CFR2-15 Switch statement
+IndentCaseLabels: false
+AllowShortCaseLabelsOnASingleLine: false
+
+# CFR3-02: Function definition
+KeepEmptyLinesAtTheStartOfBlocks: false
+
+# CFR3-05: Statements
+AllowShortBlocksOnASingleLine: false
+AllowShortFunctionsOnASingleLine: false
+
+BraceWrapping:
+    AfterControlStatement: false
+    AfterEnum: false
+    # AfterExternBlock: false
+    AfterFunction: true     # CFR3-02: Function definition
+    AfterNamespace: false   # CFR2-03: C classes
+    AfterStruct: false
+    BeforeElse: false       # CFR2-12: Else clause placement
+    AfterUnion: false
+    BeforeCatch: false
+    IndentBraces: false
+
+# These ones I don't know... I would set them to false
+#   SplitEmptyFunction: false
+#   SplitEmptyRecord: false
+#   SplitEmptyNamespace: false
+
+
+###############################################################
+# Formatting rules currently not in our coding conventions
+###############################################################
+
+AlignEscapedNewlines: Left
+AllowShortIfStatementsOnASingleLine: false
+AllowShortLoopsOnASingleLine: false
+AlwaysBreakBeforeMultilineStrings: true
+
+# C++ Inheritance and constructor initialization
+
+# Needs to be added to conding conventions
+BreakConstructorInitializers: BeforeColon
+BreakConstructorInitializersBeforeComma: false
+
+BreakBeforeInheritanceComma: false
+ConstructorInitializerAllOnOneLineOrOnePerLine: true
+ConstructorInitializerIndentWidth: 8
+
+BreakStringLiterals: true
+IndentWrappedFunctionNames: true
+
+# This one is interesting
+MaxEmptyLinesToKeep: 2
+
+Cpp11BracedListStyle: false
+#ExperimentalAutoDetectBinPacking: true
+
+
