@@ -1,6 +1,7 @@
 # Example Code: Partitions
 
 ## Concept
+
 The *PARTITION QoS* provides another way to control which *DataWriters* will
 match, and thus communicate with, which *DataReaders*. It can be used to
 prevent *DataWriters* and *DataReaders* that would have otherwise matched with
@@ -16,6 +17,7 @@ if they have more than one partition name in common in the *PARTITION
 QoS* set on their *Publishers* or *Subscribers*.
 
 ## Example description
+
 In the Publisher application, we change the Partition name list every 5
 samples. Our purpose is to show how literals and regular expressions
 can be used to match the subscriber's name list.

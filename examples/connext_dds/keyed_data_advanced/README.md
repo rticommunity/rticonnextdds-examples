@@ -24,8 +24,8 @@ the rest of the application does not need to deal with keys it doesn't care
 about.
 
 The example creates two DataWriters:
-1. DW1: It writes positive numbers. Has a `OWNERSHIP` strength of 10.
-2. DW2: It writes negative numbers. Has a `OWNERSHIP` strength of 5.
+1.DW1: It writes positive numbers. Has a `OWNERSHIP` strength of 10.
+2.DW2: It writes negative numbers. Has a `OWNERSHIP` strength of 5.
 
 These *DataWriters* have the following behavior:
 

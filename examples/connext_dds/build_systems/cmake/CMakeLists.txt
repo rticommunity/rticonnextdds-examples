@@ -13,97 +13,11 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 
-# Find the ConnextDDS libraries. This will look fo the core and API libraries
-# only
-find_package(RTIConnextDDS
-    "5.3.0"
-    REQUIRED
-    COMPONENTS
-        core
-)
+include(ConnextDdsAddExample)
 
-# Run Codegen to generate the source code files for the types
-include(ConnextDdsCodegen)
-connextdds_rtiddsgen_run(
-    IDL_FILE
-        "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld.idl"
-    OUTPUT_DIRECTORY
-        "${CMAKE_CURRENT_BINARY_DIR}/src"
-    LANG C
-)
-
-add_custom_target(codegen_sources
-    DEPENDS
-        ${HelloWorld_C_GENERATED_SOURCES}
-)
-
-# Create the target for the publisher executable
-add_executable(HelloWorld_publisher
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
-    ${HelloWorld_C_GENERATED_SOURCES}
-)
-
-# Link against the ConnextDDS libraries
-target_link_libraries(
-    HelloWorld_publisher
-    PRIVATE
-        RTIConnextDDS::c_api
-)
-
-# Include the folder with the type header files
-target_include_directories(HelloWorld_publisher
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
-)
-
-# Create the target for the publisher executable
-add_executable(HelloWorld_subscriber
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
-    ${HelloWorld_C_GENERATED_SOURCES}
-)
-
-# Link against the ConnextDDS libraries
-target_link_libraries(
-    HelloWorld_subscriber
-    PRIVATE
-        RTIConnextDDS::c_api
-)
-# Include the folder with the type header files
-target_include_directories(HelloWorld_subscriber
-    PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
-)
-
-
-# Copy the USER_QOS_PROFILES.xml
-add_custom_target(copy_qos
-    DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
-)
-
-add_custom_command(
-    OUTPUT
-        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
-    COMMAND
-        ${CMAKE_COMMAND} -E copy_if_different
-            "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-            "${CMAKE_CURRENT_BINARY_DIR}"
-    COMMENT "Copying USER_QOS_PROFILES.xml"
-    DEPENDS
-        "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-    VERBATIM
-)
-
-# Copy the USER_QOS_PROFILES.XML when the publisher is built and ensure
-# Codegen is called
-add_dependencies(HelloWorld_publisher
-    copy_qos
-    codegen_sources
-)
-
-# Copy the USER_QOS_PROFILES.XML when the subscriber is built and ensure
-# Codegen is called
-add_dependencies(HelloWorld_subscriber
-    copy_qos
-    codegen_sources
+connextdds_add_example(
+    IDL "HelloWorld"
+    LANG "C"
+    CODEGEN_ARGS
+        LEGACY_PLUGIN
 )

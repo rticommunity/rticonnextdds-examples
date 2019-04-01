@@ -49,5 +49,5 @@ bin\<Debug|Release>\Foo_publisher <domain_id>
 
 The applications accept one argument:
 
-1. The `<domain_id>`. Both applications must use the same domain ID in order
+1.The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.

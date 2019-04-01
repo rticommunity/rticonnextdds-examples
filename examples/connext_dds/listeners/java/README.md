@@ -61,8 +61,8 @@ java -cp .:$NDDSHOME/lib/java/nddsjava.jar listenersSubscriber <domain_id> <slee
 
 The applications accept two arguments:
 
-1. The `<domain_id>`. Both applications must use the same domain ID in order
+1.The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.
-2. How long the examples should run, measured in samples for the publisher
+2.How long the examples should run, measured in samples for the publisher
 and sleep periods for the subscriber. A value of '0' instructs the
 application to run forever; this is the default.

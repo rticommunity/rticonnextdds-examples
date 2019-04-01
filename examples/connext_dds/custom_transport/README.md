@@ -11,6 +11,7 @@ On the sending side the PT API gets passed from DDS full RTPS packets as an
 array of bytes along with the intended destination (address / port) for the
 packet. On the receiving side the PT API gets these packets using its own
 internal transport mechanism and gives them to the DDS-RTPS layer above.
+
 ```
 +----------------------------+
 |                            |
@@ -58,7 +59,8 @@ For example in the file below the property
 that contains the plugin implementation,
 "dds.transport.FILE.myPlugin.create_function" defines the entry function into
 the library that creates the plugin, etc.
-```
+
+```xml
 <qos_profile name="custom_transport_Profile" is_default_qos="true">
     <participant_qos>
         <!-- disable all builtin transports -->
@@ -98,7 +100,6 @@ the library that creates the plugin, etc.
     </participant_qos>
 </qos_profile>
 ```
-
 
 ## Example description
 

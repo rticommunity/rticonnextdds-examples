@@ -33,14 +33,14 @@ Once you have run the application, you will need to modify the generated
 solution and add the file *dynamic_data_sequences.cs*. Following the next
 steps to get your solution ready to use.
 
-1. Rename the next files:
+1.Rename the next files:
     + *Foo-csharp.sln* -> *dynamic_data_sequences.sln*
     + *Foo_publisher-csharp.csproj* -> *dynamic_data_sequences.csproj*
 
-2. Modify (in text format) *dynamic_data_sequences.sln* and change
+2.Modify (in text format) *dynamic_data_sequences.sln* and change
    `Foo_publisher-csharp.csproj` to `dynamic_data_sequences.csproj`.
 
-3. Modify (in text format) *dynamic_data_sequences.csproj* and change
+3.Modify (in text format) *dynamic_data_sequences.csproj* and change
    these lines:
 ```xml
 <ItemGroup>
@@ -54,10 +54,10 @@ for:
 </ItemGroup>
 ```
 
-4. Open this solution with *Visual Studio* and delete manually *Foo_type* and
+4.Open this solution with *Visual Studio* and delete manually *Foo_type* and
    *Foo_subscriber-csharp* projects.
 
-5. You can modify the name of the executable, click with the right button over
+5.You can modify the name of the executable, click with the right button over
    the project and go to properties. In the new panel, modify
    *Application/Assembly* name. This name will be you executable name.
 

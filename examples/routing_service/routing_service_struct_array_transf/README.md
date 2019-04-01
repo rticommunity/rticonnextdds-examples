@@ -36,27 +36,25 @@ data to the output topic with type `SensorData`.
 
 In this example you will find files for the following elements:
 
-- `SensorAttributesCollectionPublisher`: The monitoring collection
-  application that publishes the information described above.
+-   `SensorAttributesCollectionPublisher`: The monitoring collection
+    application that publishes the information described above.
 
-- `SensorDataSubscriber`: The subscriber application that receives the data
-  converted as described above
+-   `SensorDataSubscriber`: The subscriber application that receives the data
+    converted as described above
 
-- `StructArrayTransformation`: the custom *Transformation* plug-in, generated
-  as a shared library, that performs the data conversion.
+-   `StructArrayTransformation`: the custom *Transformation* plug-in, generated
+    as a shared library, that performs the data conversion.
 
-- Configuration for the *RoutingService* that loads the custom *Transformation*
-  and provides the communication between publisher and subscriber applications.
+-   Configuration for the *RoutingService* that loads the custom
+    *Transformation* and provides the communication between publisher and
+    subscriber applications.
 
-- IDL definition of all the required types.
-
+-   IDL definition of all the required types.
 
 ## Requirements
 
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-
 - CMake version 3.10 or higher
-
 - A target platform supported by *RTI* *RoutingService*.

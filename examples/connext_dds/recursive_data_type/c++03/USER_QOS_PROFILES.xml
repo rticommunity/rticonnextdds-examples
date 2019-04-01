@@ -1,75 +1,17 @@
 <?xml version="1.0"?>
-<!-- 
-Description
-XML QoS Profile for RecursiveType
-
-The QoS configuration of the DDS entities in the generated example is loaded 
-from this file.
-
-This file is used only when it is in the current working directory or when the
-environment variable NDDS_QOS_PROFILES is defined and points to this file.
-
-The profile in this file inherits from the builtin QoS profile 
-BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the 
-other built-in QoS profiles can be found in the 
-BuiltinProfiles.documentationONLY.xml file located in the 
-$NDDSHOME/resource/qos_profiles_5.3.0/xml/ directory.
-
-You may use any of these QoS configurations in your application simply by 
-referring to them by the name shown in the 
-BuiltinProfiles.documentationONLY.xml file and listed below: 
-
-* In library "BuiltinQosLib":
-** Baseline
-** Baseline.5.0.0
-** Baseline.5.1.0
-** Generic.Common
-** Generic.Monitoring.Common
-** Generic.ConnextMicroCompatibility
-** Generic.OtherDDSVendorCompatibility
-
-* In library "BuiltinQosLibExp":
-** Generic.StrictReliable
-** Generic.KeepLastReliable
-** Generic.BestEffort
-** Generic.StrictReliable.HighThroughput
-** Generic.StrictReliable.LowLatency
-** Generic.Participant.LargeData
-** Generic.Participant.LargeData.Monitoring
-** Generic.StrictReliable.LargeData
-** Generic.KeepLastReliable.LargeData
-** Generic.StrictReliable.LargeData.FastFlow
-** Generic.StrictReliable.LargeData.MediumFlow
-** Generic.StrictReliable.LargeData.SlowFlow
-** Generic.KeepLastReliable.LargeData.FastFlow
-** Generic.KeepLastReliable.LargeData.MediumFlow
-** Generic.KeepLastReliable.LargeData.SlowFlow
-** Generic.KeepLastReliable.TransientLocal
-** Generic.KeepLastReliable.Transient
-** Generic.KeepLastReliable.Persistent
-** Generic.AutoTuning
-** Pattern.PeriodicData
-** Pattern.Streaming
-** Pattern.ReliableStreaming
-** Pattern.Event
-** Pattern.AlarmEvent
-** Pattern.Status
-** Pattern.AlarmStatus
-** Pattern.LastValueCache
-
-You should not edit the file BuiltinProfiles.documentationONLY.xml directly.
-However, if you wish to modify any of the values in a built-in profile, the
-recommendation is to create a profile of your own and inherit from the built-in
-profile you wish to modify. The NDDS_QOS_PROFILES.example.xml file (contained in 
-the same directory as the BuiltinProfiles.documentationONLY.xml file) shows how
-to inherit from the built-in profiles. 
-
-For more information about XML QoS Profiles see Chapter 15 in the 
-RTI Connext user manual.
--->
+<!--
+ (c) 2014-2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="/Applications/rti_connext_dds-5.3.0/resource/schema/rti_dds_qos_profiles.xsd"
-     version="5.3.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
+     version="6.0.0">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.

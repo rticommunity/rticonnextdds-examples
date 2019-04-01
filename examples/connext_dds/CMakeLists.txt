@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(RTIConnextDDS
-    "5.3.0"
+    "6.0.0"
     REQUIRED
     COMPONENTS
         core
@@ -29,6 +29,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asyncwaitset/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++03")
+
+# build_systems
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build_systems/cmake")
 
 # builtin_qos_profiles
 if(BUILD_SHARED_LIBS)
@@ -105,6 +108,9 @@ add_subdirectory(
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_using_publisher_subscriber/c++11")
 
+# flat_data_api
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++11")
+
 # get_publishers
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++")
@@ -151,11 +157,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation_group/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++03")
-
-# persistent_storage
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistent_storage/c++03")
 
 # polling_querycondition
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c")
@@ -210,6 +211,3 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++11")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
-
-# zero_copy
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/zero_copy/c++")

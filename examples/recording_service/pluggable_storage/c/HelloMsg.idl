@@ -1,0 +1,4 @@
+struct HelloMsg {
+	long id; //@key
+	string<256> msg;
+};

@@ -18,5 +18,4 @@ connextdds_add_example(
     CODEGEN_ARGS
         LEGACY_PLUGIN
         UNBOUNDED
-        NO_TYPECODE
 )

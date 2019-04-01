@@ -1,6 +1,7 @@
 # Example Code: Dynamic Data: Accessing Sequence Members
 
 ## Concept
+
 *Dynamic Data* provides an easy way to access the members of a data sample.
 Such members can be primitive data types or complex data types such as arrays
 or sequences.
@@ -20,18 +21,19 @@ a 1-based index access. For this purpose the use of methods such as
 `bind_complex_member()` (`loan_value()` in C++03) are required.
 
 ## Example description
+
 This example shows how to access to elements in array/sequence based dynamic
 data types.
 
 For this example we define the following types:
 
-```
+```cpp
 struct SimpleStruct {
-    long a_member;
+  long a_member;
 };
 
 struct TypeWithSequence {
-    sequence<MAX_LEN,SimpleStruct> sequence_member;
+  sequence<MAX_LEN,SimpleStruct> sequence_member;
 };
 ```
 

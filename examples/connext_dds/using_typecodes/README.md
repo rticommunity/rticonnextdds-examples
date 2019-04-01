@@ -1,6 +1,7 @@
 # Example Code: Using TypeCodes
 
 ## Concept
+
 *Type schemas* -- the names and definitions of a type and its fields -- are
 represented by *TypeCode* objects. A type code value consists of a type code
 kind and a list of members. Type codes unambiguously match type representations
@@ -34,6 +35,7 @@ as well as some features of the middleware itself
 *TypeCode* propagation.
 
 ## Example Description
+
 The *Topic* type in this example is complex to illustrate the power of type
 codes. The default value for `resource_limits.type_code_max_serialized_length`
 is `2048` bytes -- an insufficient size to hold the type codes of a complex

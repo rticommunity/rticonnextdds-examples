@@ -35,11 +35,11 @@ solution and add the file *dynamic_data_union_example.cs*. Following the next
 steps to get your solution ready to use.
 
 Modify the next file names:
-* Foo-csharp.sln -> dynamic_data_union_example.sln
-* Foo_publisher-csharp.csproj -> dynamic_data_union_example.csproj
+- Foo-csharp.sln -> dynamic_data_union_example.sln
+- Foo_publisher-csharp.csproj -> dynamic_data_union_example.csproj
 
 Modify (in text format) dynamic_data_union_example.sln and change
-* Foo_publisher-csharp.csproj -> dynamic_data_union_example.csproj
+- Foo_publisher-csharp.csproj -> dynamic_data_union_example.csproj
 
 Modify (in text format) dynamic_data_union_example.csproj and change
 these lines:

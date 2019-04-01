@@ -1,6 +1,7 @@
 # Example Code: Custom Flowcontroller
 
 ## Concept
+
 A *FlowController* is the object responsible for shaping the network traffic by
 determining when attached asynchronous *DataWriters* are allowed to write data.
 
@@ -10,6 +11,7 @@ properties), create a custom *FlowController* by using the *DomainParticipant's*
 using the *DomainParticipant*'s `PROPERTY` QosPolicy (DDS Extension).
 
 ## Example Description
+
 This example shows how to create a custom flow controllers to manage an
 asynchronous publisher.
 

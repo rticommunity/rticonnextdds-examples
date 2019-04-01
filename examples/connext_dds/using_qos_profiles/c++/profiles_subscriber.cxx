@@ -289,9 +289,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Create Data Readers listeners */
     reader_volatile_listener =
-            new profilesListener("volatile_profile");
+            new profilesListener((char *)"volatile_profile");
     reader_transient_local_listener =
-            new profilesListener("transient_local_profile");
+            new profilesListener((char *)"transient_local_profile");
 
     /* Volatile reader -- As volatile_profile is the default qos profile
      * we don't need to specify the profile we are going to use, we can

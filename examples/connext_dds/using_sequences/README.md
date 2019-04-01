@@ -1,6 +1,7 @@
 # Example Code: Using Sequences
 
 ## Concept
+
 A *sequence* is an ordered collection of elements of the same type. The type of a
 sequence containing elements of type *Foo* (whether *Foo* is one of your types
 or a built-in Connext type) is typically called *FooSeq*.
@@ -21,19 +22,21 @@ to the length.
 A sequence may either *own* the memory associated with it, or it may *borrow*
 that memory.
 
-- If a sequence owns its own memory, then the sequence itself will allocate the
-memory and is permitted to grow and shrink that memory
-(i.e., change its maximum) dynamically.
-- You can also loan a sequence of memory using the sequence-specific operations
-`loan_contiguous()` or `loan_discontiguous()`. This is useful if you want Connext
-to copy the received data samples directly into data structures allocated in
-user space.
+-   If a sequence owns its own memory, then the sequence itself will allocate
+    the memory and is permitted to grow and shrink that memory (i.e., change its
+    maximum) dynamically.
 
-A sequence may be declared as *bounded* or *unbounded*. A sequence's bound is the
-maximum number of elements that the sequence can contain at any one time.
+-   You can also loan a sequence of memory using the sequence-specific
+    operations `loan_contiguous()` or `loan_discontiguous()`. This is useful if
+    you want Connext to copy the received data samples directly into data
+    structures allocated in user space.
+
+A sequence may be declared as *bounded* or *unbounded*. A sequence's bound is
+the maximum number of elements that the sequence can contain at any one time.
 The bound is very important because it allows Connext to preallocate buffers to
 hold serialized and deserialized samples of your types; these buffers are used
 when communicating with other nodes in your distributed system.
+
 Unbounded sequences severely impact the latency and determinism of your
 application, since Connext needs to allocate memory on the fly as individual
 samples are read and written. Therefore, any unbounded sequences found in an IDL
@@ -42,16 +45,18 @@ option is specified.
 
 *Note*: `-unboundedSupport` option is not supported in ADA.
 
-
 ## Example description
+
 In this example, we define a data type containing a sequence of `short`s in an
 IDL. Using this IDL file we generate a publisher and a subscriber application
 that manage two instances of that data type.
 
 Our goal is to illustrate how sequences can *own* the memory associated with them,
 or *borrow* that memory.
-1. The sequence of the first instance, `owner_instance`, owns its own memory.
-2. In contrast, in the sequence of the second instance, `borrower_instance`, we use
-`loan_contiguous()` to loan a buffer of `short`s previously allocated.
-We also illustrate how to change the length of the created sequences, and how to
-assign random values to each of their components.
+
+1.  The sequence of the first instance, `owner_instance`, owns its own memory.
+
+2.  In contrast, in the sequence of the second instance, `borrower_instance`, we
+    use `loan_contiguous()` to loan a buffer of `short`s previously allocated.
+    We also illustrate how to change the length of the created sequences, and
+    how to assign random values to each of their components.

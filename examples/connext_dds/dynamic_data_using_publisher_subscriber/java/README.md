@@ -61,16 +61,16 @@ java -cp .:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber <domain_id> <samp
 
 The applications accept up to two arguments:
 
-1. The `<domain_id>`. Both applications must use the same domain ID in order
+1.The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.
-2. How long the examples should run, measured in samples. A value of '0'
+2.How long the examples should run, measured in samples. A value of '0'
 instructs the application to run forever; this is the default.
 
 ### Interconnection between this example and *Shapes Demo* tool
 First of all, remember that you have to work in the same domain both in
 *Shape Demo* and your command prompt.
 
-1. Publish using this example and subscribe using *Shapes Demo*:
+1.Publish using this example and subscribe using *Shapes Demo*:
     1. Open a new *Shapes Demo* window.
     2. Create a new Square subscriber with default options.
     3. Run the publisher in a new command prompt like explained before (use the
@@ -80,7 +80,7 @@ First of all, remember that you have to work in the same domain both in
     increase until it reaches a maximum size. When the max size or the end of
     the canvas are reached, it restarts.
 
-2. Subscribe using this example and publish using *Shapes Demo*:
+2.Subscribe using this example and publish using *Shapes Demo*:
     1. Open a new command prompt and create a new subscriber like explained
     before.
     2. Create a publisher (Square) in *Shapes Demo*.
