@@ -255,7 +255,7 @@
 #
 # Supported platforms
 # ^^^^^^^^^^^^^^^^^^^
-# It is compatible with the following platforms listed in the 
+# It is compatible with the following platforms listed in the
 # RTI Connext DDS Core Libraries Platform Notes:
 # - All the Linux i86 and x64 platforms
 # - Raspbian Wheezy 7.0 (3.x kernel) on ARMv6 (armv6vfphLinux3.xgcc4.7.2)
@@ -296,16 +296,14 @@ if(NOT CONNEXTDDS_DIR)
             "/Applications/rti_connext_dds-${folder_version}")
     endif()
 
-    set(connextdds_root_hints
-        "$ENV{NDDSHOME}"
-        "${connextdds_root_hints}")
 endif()
 
 # We require having an rti_versions file under the installation directory
 # as we will use it to verify that the version is appropriate.
 find_path(CONNEXTDDS_DIR
     NAMES rti_versions.xml
-    PATHS
+    HINTS
+        ENV NDDSHOME
         ${connextdds_root_hints})
 
 if(NOT CONNEXTDDS_DIR)
@@ -319,22 +317,22 @@ message(STATUS "RTI Connext DDS installation directory: ${CONNEXTDDS_DIR}")
 
 set(codegen_name "rtiddsgen")
 if(WIN32)
-    set(codegen_name ${codegen_name}".bat")
+    set(codegen_name "${codegen_name}.bat")
 endif()
 
 find_path(RTICODEGEN_DIR
-    NAME "bin/${codegen_name}"
+    NAME "${codegen_name}"
     HINTS
-        "${CONNEXTDDS_DIR}")
+        "${CONNEXTDDS_DIR}/bin")
 
 if(NOT RTICODEGEN_DIR)
     set(warning
-        "Codegen was not found. Please, check if rtiddsgen is under your"
+        "Codegen was not found. Please, check if rtiddsgen is under your "
         "NDDSHOME/bin directory or provide it to CMake using -DRTICODEGEN_DIR")
         message(WARNING ${warning})
 else()
     set(RTICODEGEN
-        "${RTICODEGEN_DIR}/bin/${codegen_name}"
+        "${RTICODEGEN_DIR}/${codegen_name}"
         CACHE PATH
         "Path to RTI Codegen")
 
@@ -343,7 +341,7 @@ else()
         OUTPUT_VARIABLE codegen_version_string)
 
     string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-        RTICODEGEN_VERSION ${codegen_version_string})
+        RTICODEGEN_VERSION "${codegen_version_string}")
 endif()
 
 # Find RTI Connext DDS architecture if CONNEXTDDS_ARCH is unset
@@ -374,11 +372,10 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
                 "${CMAKE_HOST_SYSTEM} is not supported as host architecture")
         endif()
 
-        string(REGEX MATCH "\ [0-9][0-9][0-9][0-9]\ "
+        string(REGEX MATCH "[0-9][0-9][0-9][0-9]"
              vs_year
              "${CMAKE_GENERATOR}")
         set(guessed_architecture "${connextdds_host_arch}VS${vs_year}")
-
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         if(CMAKE_COMPILER_VERSION VERSION_EQUAL "4.6.3")
             set(kernel_version "3.x")
