@@ -1,0 +1,105 @@
+/*
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
+ */
+
+/*
+ * Definition of CameraImage for three different use cases:
+ *
+ * - flat_zero_copy_types::CameraImage: zero copy + flat-data
+ * - flat_types::CameraImage: flat-data
+ * - plain_types::CameraImage: regular binding
+ *
+ * CameraImage_publisher.cxx and CameraImage_subscriber.cxx allow selecting
+ * which use case to run.
+ */
+
+// Types common to all CameraImage definitions
+module common {
+    const long IMAGE_SIZE = 8294400 * 3;
+
+    enum Format {
+        RGB,
+        HSV,
+        YUV
+    };
+};
+
+// Types common to flat_zero_copy_types::CameraImage and flat_types::CameraImage
+module common_flat {
+    @final
+    @language_binding(FLAT_DATA)
+    struct Resolution {
+      long height;
+      long width;
+    };
+};
+
+
+// CameraImage using flat-data
+module flat_types {
+    @final
+    @language_binding(FLAT_DATA)
+    struct CameraImage {
+      long long timestamp;
+      common::Format format;
+      common_flat::Resolution resolution;
+      octet data[common::IMAGE_SIZE];
+    };
+};
+
+// CameraImage using flat-data and zero copy
+module flat_zero_copy_types {
+    @final
+    @transfer_mode(SHMEM_REF)
+    @language_binding(FLAT_DATA)
+    struct CameraImage {
+      long long timestamp;
+      common::Format format;
+      common_flat::Resolution resolution;
+      octet data[common::IMAGE_SIZE];
+    };
+};
+
+
+module zero_copy_types {
+    @final
+    struct Resolution {
+      long height;
+      long width;
+    };
+
+    @final
+    @transfer_mode(SHMEM_REF)
+    struct CameraImage {
+      long long timestamp;
+      common::Format format;
+      Resolution resolution;
+      octet data[common::IMAGE_SIZE];
+    };
+};
+
+
+// CameraImage without flat-data or zero-copy
+module plain_types {
+    @final
+    struct Resolution {
+      long height;
+      long width;
+    };
+
+    @final
+    struct CameraImage {
+      long long timestamp;
+      common::Format format;
+      Resolution resolution;
+      octet data[common::IMAGE_SIZE];
+    };
+};

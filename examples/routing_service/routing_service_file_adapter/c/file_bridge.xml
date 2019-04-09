@@ -1,0 +1,126 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2005-2014 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_routing_service.xsd"
+     version="6.0.0">
+  <!-- make sure this path is correctly set into your system, otherwise it 
+       wouldn't affect the execution, but autocompletion wouldn't work -->
+  
+  
+  <!-- adapter entry points are defined here -->
+  <adapter_library name="adapters">
+    <adapter_plugin name="file">
+      <dll>fileadapter</dll>
+      <create_function>RTI_RoutingServiceFileAdapterPlugin_create</create_function>
+    </adapter_plugin>
+  </adapter_library>
+
+  <!-- ****************************************************************** -->
+  <!-- ****************************************************************** -->
+
+  <routing_service name="file_to_file">
+    <annotation>
+      <documentation>
+	This application scan one folder in the file sistem,
+	and for every new file discovered, create a stream and copies 
+	the content of the file to the other connection
+      </documentation>
+    </annotation>
+
+    <domain_route>
+      <connection_1 plugin_name="adapters::file">
+	<property>
+	  <value>
+	    <element>
+	      <!-- this property it is to indicate whether the 
+		   connection is used as input or output connection -->
+	      <name>direction</name>
+	      <value>input</value>
+	    </element>
+	    <element>
+	      <!-- This is the path of the input directory, the directory that will 
+		   be scanned to check for file present to copy to the other side -->
+	      <name>path</name>
+	      <value>/home/username/fileread</value>
+	    </element>
+	    <!-- this property specify how often you are going to check 
+		 inside the source folder if tehre are new files -->
+	    <element>
+	      <name>sleepPeriod</name>
+	      <value>5</value>
+	    </element>
+	  </value>
+	</property>
+      </connection_1>
+      <connection_2 plugin_name="adapters::file">
+	<property>
+	  <value>
+	    <element>
+	      <name>direction</name>
+	      <value>output</value>
+	    </element>
+	    <element>
+	      <!-- This is the path of the output directoty, where the discovered 
+		   files will be copied -->
+	      <name>path</name>
+	      <value>/home/username/filewrite</value>
+	    </element>
+	  </value>
+	</property>
+      </connection_2>
+
+      <session name="ff">
+	<auto_route name="ddsdds">
+	  <input connection="1">
+	    <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+	    <property>
+	      <value>
+		<!-- How often we read samples from the file (ms) -->
+		<element>
+		  <name>ReadPeriod</name>
+		  <value>1000</value>
+		</element>
+		<!-- How many samples we will take from the file every ReadPeriod -->
+		<element>
+		  <name>SamplesPerRead</name>
+		  <value>1</value>
+		</element>
+	      </value>
+	    </property>
+	  </input>
+
+	  <output>
+	    <creation_mode>ON_ROUTE_MATCH</creation_mode>
+	    <property>
+	      <value>
+		<!-- The write mode can be: - overwrite (write in the file deleting 
+		     previous content) - append (write at then end of the file) - keep (fail if 
+		     the file already exists and don't modify it) -->
+		<element>
+		  <name>WriteMode</name>
+		  <value>overwrite</value>
+		</element>
+		<!-- Whether to flush the file after every sample is written. -->
+		<element>
+		  <name>Flush</name>
+		  <value>1</value>
+		</element>
+	      </value>
+	    </property>
+	  </output>
+
+	</auto_route>
+      </session>
+    </domain_route>
+  </routing_service>
+</dds>
+

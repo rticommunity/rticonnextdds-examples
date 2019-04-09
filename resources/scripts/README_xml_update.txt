@@ -7,8 +7,8 @@ validator, if the version is not the same one, will fail. A normal <dds> tag,
 with the default attributes, is:
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/5.3.0/rti_dds_qos_profiles.xsd"
-     version="5.3.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
+     version="6.0.0">
 
   This script checks/modifies/replaces the attributes of the <dds> tag. It 
 receives 4 arguments in the command line. The first one is the 

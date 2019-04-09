@@ -28,6 +28,6 @@ examples are going to build on.
   3. <architecture> is the architecture name which you are going to compile.
   
   A example of use is:
-   perl ./resources/scripts/compile_unix.pl ./examples 5.2.0 i86Linux2.6gcc4.4.5
+   perl ./resources/scripts/compile_unix.pl ./examples 6.0.0 i86Linux2.6gcc4.4.5
   
   You have to ensure the script runs in the top repository directory.
