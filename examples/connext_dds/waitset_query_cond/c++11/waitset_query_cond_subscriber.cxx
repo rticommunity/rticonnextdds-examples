@@ -55,13 +55,12 @@ void subscriber_main(int domain_id, int sample_count)
     QueryCondition query_condition(
         Query(reader, "name MATCH %0", query_parameters),
         DataState::any_data(),
-        [&reader]()
+        [&reader](Condition condition)
         {
-            // Using only 'take()' method will read all received samples.
-            // To read only samples that triggered the QueryCondition
-            // use 'select().condition().read()' as it's done in
-            // the "polling_querycondition" example.
-            LoanedSamples<waitset_query_cond> samples = reader.take();
+            // We take only samples that triggered the QueryCondition
+            auto condition_as_qc = polymorphic_cast<QueryCondition>(condition);
+            LoanedSamples<waitset_query_cond> samples
+                    = reader.select().condition(condition_as_qc).take();
             for (auto sample : samples) {
                 if (!sample.info().valid()) {
                     std::cout << "Got metadata" << std::endl;
