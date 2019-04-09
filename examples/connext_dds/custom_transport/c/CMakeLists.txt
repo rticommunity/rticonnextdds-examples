@@ -10,6 +10,10 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 
+if(WIN32)
+    message(FATAL_ERROR "This example is not supported in Windows.")
+endif()
+
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
