@@ -7,8 +7,8 @@ updates about a particular instance within a given period of time.
 
 This QoS is request-offered, meaning that the *DataWriter* offers a level of
 service, and the *DataReader* requests a level of service. Request-offered QoS
-are like a contract between the *DataWriter* and the *DataReader*:
-the *DataWriter* is saying that it will provide a level of service, and the
+are like a contract between the *DataWriter* and the *DataReader*: the
+*DataWriter* is saying that it will provide a level of service, and the
 *DataReader* is saying it requires a level of service. The offered level must be
 greater than or equal to the requested level, or there will be no communication
 between the *DataWriter* and the *DataReader*.

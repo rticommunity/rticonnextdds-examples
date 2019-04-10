@@ -12,8 +12,8 @@ Getting Started Guide describes this process in detail.
 Follow the same procedure to generate the code and build the examples. Do not
 use the -replace option.
 
-On Windows systems (assuming you want to generate an example for
-i86Win32VS2010) run:
+On Windows systems (assuming you want to generate an example for i86Win32VS2010)
+run:
 
 ```sh
 rtiddsgen -language Java -example i86Win32VS2010 numbers.idl
@@ -28,7 +28,7 @@ rtiddsgen -language Java -example i86Linux2.6gcc4.4.3 numbers.idl
 
 ...you will see messages that look like this:
 
-```
+```plaintext
 File C:\local\property_qos\java\numbers_subscriber.java already exists and will
 not be replaced with updated content. If you would like to get a new file with
 the new content, either remove this file or supply -replace option.
@@ -61,9 +61,9 @@ javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 
 ## Running Java Example
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
@@ -81,16 +81,16 @@ java -cp .:$NDDSHOME/lib/java/nddsjava.jar numbersSubscriber <domain_id> <sleep_
 
 The applications accept up to two arguments:
 
-1.  The <domain_id>. Both applications must use the same domain id in order
-    to communicate. The default is 0.
+1.  The <domain_id>. Both applications must use the same domain id in order to
+    communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 ## Publisher Output
 
-```
+```plaintext
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507
@@ -103,7 +103,7 @@ Writing numbers, count 3
 
 ## Subscriber Output
 
-```
+```plaintext
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507

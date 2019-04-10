@@ -2,22 +2,22 @@
 
 ## Concept
 
-A *sequence* is an ordered collection of elements of the same type. The type of a
-sequence containing elements of type *Foo* (whether *Foo* is one of your types
+A *sequence* is an ordered collection of elements of the same type. The type of
+a sequence containing elements of type *Foo* (whether *Foo* is one of your types
 or a built-in Connext type) is typically called *FooSeq*.
 
-In all APIs except Java, *FooSeq* contains deep copies of *Foo* elements; in Java,
-which does not provide direct support for deep copy semantics, *FooSeq* contains
-references to *Foo* objects. In Java, sequences implement the `java.util.List`
-interface, and thus support all of the collection APIs and idioms familiar to
-Java programmers.
+In all APIs except Java, *FooSeq* contains deep copies of *Foo* elements; in
+Java, which does not provide direct support for deep copy semantics, *FooSeq*
+contains references to *Foo* objects. In Java, sequences implement the
+`java.util.List` interface, and thus support all of the collection APIs and
+idioms familiar to Java programmers.
 
 A sequence is logically composed of three things: an array of elements, a
 maximum number of elements that the array may contain (i.e., its allocated
 size), and a logical length indicating how many of the allocated elements are
-valid. The length may vary dynamically between 0 and the maximum (inclusive);
-it is not permissible to access an element at an index greater than or equal
-to the length.
+valid. The length may vary dynamically between 0 and the maximum (inclusive); it
+is not permissible to access an element at an index greater than or equal to the
+length.
 
 A sequence may either *own* the memory associated with it, or it may *borrow*
 that memory.
@@ -51,8 +51,8 @@ In this example, we define a data type containing a sequence of `short`s in an
 IDL. Using this IDL file we generate a publisher and a subscriber application
 that manage two instances of that data type.
 
-Our goal is to illustrate how sequences can *own* the memory associated with them,
-or *borrow* that memory.
+Our goal is to illustrate how sequences can *own* the memory associated with
+them, or *borrow* that memory.
 
 1.  The sequence of the first instance, `owner_instance`, owns its own memory.
 

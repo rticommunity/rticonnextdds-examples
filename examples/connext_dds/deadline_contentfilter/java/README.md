@@ -19,7 +19,7 @@ rtiddsgen -language java -example x64Win64VS2013 deadline_contentfilter.idl
 
 You will see messages that look like:
 
-```
+```plaintext
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/deadline_contentfilterSubscriber.java
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
@@ -51,9 +51,9 @@ javac -cp .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 
 ## Running Java Example
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 To run the application in *Windows* and *UNIX* you can either use the makefile
 with `make`, run `ant` or run `java` command:
@@ -80,13 +80,13 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 ## Publisher Output
 
-```
+```plaintext
 Writing instance0, x = 1, y = 1
 Writing instance1, x = 1, y = 1
 Writing instance0, x = 2, y = 2
@@ -116,7 +116,7 @@ Writing instance0, x = 13, y = 13
 
 ## Subscriber Output
 
-```
+```plaintext
 @ t=2.59s, Instance0: <1,1>
 @ t=2.61s, Instance1: <1,1>
 @ t=3.59s, Instance0: <2,2>

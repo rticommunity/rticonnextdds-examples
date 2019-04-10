@@ -26,7 +26,7 @@ rtiddsgen -language c# -example x64Win64VS2013 -express -ppDisable hello_world.i
 
 You will see messages that look like:
 
-```
+```plaintext
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/hello_world_subscriber.cs
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
@@ -37,20 +37,20 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-*rtiddsgen* generates one solution with three *Visual Studio* projects.
-The project *hello_world_type-dotnet4.0.vcxproj* contains the types of the
-example and it should be compiled with *Visual Studio C++*. The other two
-projects contain the C# publisher and subscriber example and should be compiled
-with *Visual Studio C#*.
+*rtiddsgen* generates one solution with three *Visual Studio* projects. The
+project *hello_world_type-dotnet4.0.vcxproj* contains the types of the example
+and it should be compiled with *Visual Studio C++*. The other two projects
+contain the C# publisher and subscriber example and should be compiled with
+*Visual Studio C#*.
 
 ## Running C# Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-**Note: If you are using *TimesTen*, you may need run the command prompt
-as administrator. Otherwise, none of the scenarios will not run correctly.**
+**Note: If you are using *TimesTen*, you may need run the command prompt as
+administrator. Otherwise, none of the scenarios will not run correctly.**
 
 **For TimesTen users**: In addition, you need to uncomment some lines in the
 *USER_QOS_PROFILES.xml* and *persistence_service_configuration.xml* to load the
@@ -90,7 +90,7 @@ those documents for further details.
 
 The applications accepts different arguments:
 
-```
+```plaintext
 hello_world_subscriber:
     -domainId <domain ID> (default: 0)
     -sample_count <sample_count> (default: infinite => 0)

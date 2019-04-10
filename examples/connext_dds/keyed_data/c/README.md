@@ -29,15 +29,15 @@ cmake --build . --config Release|Debug
 
 Alternatively, you can use directly the generated infrastructure (e.g.,
 Makefiles or Visual Studio Solutions) to build the example. If you generated
-Makefiles in the configuration process, run make to build the example.
-Likewise, if you generated a Visual Studio solution, open the solution and
-follow the regular build process.
+Makefiles in the configuration process, run make to build the example. Likewise,
+if you generated a Visual Studio solution, open the solution and follow the
+regular build process.
 
 ## Running the Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
 # Do not forget to replace the path separator to "\" on Windows.
@@ -47,16 +47,16 @@ keys_subscriber.exe <domain_id> <sleep_periods>
 
 The applications accept up to three arguments:
 
-1.The `<domain_id>`. Both applications must use the same domain ID in order to
-  communicate. The default is 0.
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
+    communicate. The default is 0.
 
-2.How long the examples should run, measured in samples for the publisher
-  and sleep periods for the subscriber. A value of '0' instructs the
-  application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 ## Publisher Output
 
-```
+```plaintext
 Registering instance 0
 Writing instance 0, x: 1000, y: 0
 Writing instance 0, x: 1000, y: 1
@@ -97,7 +97,7 @@ Writing instance 0, x: 1000, y: 15
 
 ## Subscriber Output
 
-```
+```plaintext
 Found new instance; code = 0
 Instance 0: x: 1000, y: 0
 Instance 0: x: 1000, y: 1
@@ -146,19 +146,19 @@ your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
 solution on Windows), \. You can use the following CMake variables to modify
 the default behavior:
 
-- `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release and
-  Debug. See the [CMake documentation for more details.
-  (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
-- `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
-  dynamic linking and OFF for static linking. See [CMake documentation for more
-  details.
-  (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
-- `-G` -- CMake generator. The generator is the native build system to use build
-  the source code. All the valid values are described described in the CMake
-  documentation [CMake Generators
-  Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
+-   `-G` -- CMake generator. The generator is the native build system to use
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
 
 For example, to build a example in Debug/Static mode run CMake as follows:
 
@@ -193,13 +193,13 @@ The CMakeListst.txt script that builds this example uses a generic CMake
 function called connextdds_add_example that defines all the necessary
 constructs to:
 
-1.Run RTI Code Generator to generate the serialization/deserialization code for
-  the types defined in the IDL file associated with the example.
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+    for the types defined in the IDL file associated with the example.
 
-2.Build the corresponding Publisher and Subscriber applications.
+2.  Build the corresponding Publisher and Subscriber applications.
 
-3.Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
-  and subscriber executables are generated.
+3.  Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
+    and subscriber executables are generated.
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in

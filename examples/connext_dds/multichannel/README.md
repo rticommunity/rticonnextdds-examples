@@ -25,24 +25,23 @@ This example shows how to use multichannel *DataWriters*. You will learn how to:
 The Publisher application publishes round-robin instances with Symbols `A`
 through `Z` on 8 different channels of a multichannel *DataWriter*. By default,
 the XML profile is used to specify the QoS. On the `create_datawriter()` call,
-you can toggle between `writer_qos` and `DATAWRITER_QOS_DEFAULT` to
-switch between using code and using XML.
+you can toggle between `writer_qos` and `DATAWRITER_QOS_DEFAULT` to switch
+between using code and using XML.
 
 The Subscriber application uses a *Content-Filtered Topic* (CFT) with the
-`STRINGMATCH` filter, then dynamically modifies the CFT to match `A,D`,
-and later just `D`. You will notice that the *DataReader* does not have to
-specify multiple multicast receive addresses, because it learns about the
-*DataWriter's* `receive_addresses` upon endpoint discovery and then receives
-on them.
+`STRINGMATCH` filter, then dynamically modifies the CFT to match `A,D`, and
+later just `D`. You will notice that the *DataReader* does not have to specify
+multiple multicast receive addresses, because it learns about the *DataWriter's*
+`receive_addresses` upon endpoint discovery and then receives on them.
 
-The example includes also two PCAP files captured with *Wireshark* that
-show the traffic using multichannel and single channel.
+The example includes also two PCAP files captured with *Wireshark* that show the
+traffic using multichannel and single channel.
 
--   multichannel.pcap shows the wire traffic when multichannel is used.
-    Notice that data samples are only being sent on the channels that
-    are necessary for delivering samples that pass the *DataReader's* filter.
+-   multichannel.pcap shows the wire traffic when multichannel is used. Notice
+    that data samples are only being sent on the channels that are necessary for
+    delivering samples that pass the *DataReader's* filter.
 
--   singlechannel.pcap shows the wire traffic when multichannel is not
-    used and when the *DataReader* specifies a `multicast.receive_address` of
+-   singlechannel.pcap shows the wire traffic when multichannel is not used and
+    when the *DataReader* specifies a `multicast.receive_address` of
     `239.255.0.1`. Observe that all data samples are being sent on the wire
     (i.e., reader-side filtering), since there is only one channel.

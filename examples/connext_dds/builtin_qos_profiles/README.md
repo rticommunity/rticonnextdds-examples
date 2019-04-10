@@ -2,12 +2,12 @@
 
 ## Concept
 
-*RTI Connext DDS* provides *Quality of Service* (QoS) that controls the
-behavior of the different DDS entities, and allows you to configure the
-*middleware* to enable features such as monitoring. To make this process
-easier, RTI includes a set of built-in QoS profiles that provide useful
-*functionality, such as enabling monitoring or configuring *DataWriters* and
-*DataReaders* to be strictly reliable.
+*RTI Connext DDS* provides *Quality of Service* (QoS) that controls the behavior
+of the different DDS entities, and allows you to configure the *middleware* to
+enable features such as monitoring. To make this process easier, RTI includes a
+set of built-in QoS profiles that provide useful *functionality, such as
+enabling monitoring or configuring *DataWriters* and *DataReaders* to be
+strictly reliable.
 
 The full list of built-in profiles is here:
 
@@ -55,9 +55,9 @@ The full list of built-in profiles is here:
 
 ## Example Description
 
-This example shows how to use built-in profiles in both the XML QoS file and
-in the source code. In the XML, the default QoS profiles described in the
-file inherit from two different built-in profiles.
+This example shows how to use built-in profiles in both the XML QoS file and in
+the source code. In the XML, the default QoS profiles described in the file
+inherit from two different built-in profiles.
 
 1.  The overall default profile inherits from the
     `BuiltinQoSLibExp::Pattern.ReliableStreaming` profile:
@@ -79,9 +79,9 @@ file inherit from two different built-in profiles.
 In this example, the *DomainParticipant* is configured to enable monitoring out
 of the box.
 
-**Note that this will require that you link against RTI's dynamic libraries**
-so the monitoring library can be loaded correctly. See the README file within
-each directory for more details on linking dynamically.
+**Note that this will require that you link against RTI's dynamic libraries** so
+the monitoring library can be loaded correctly. See the README file within each
+directory for more details on linking dynamically.
 
 The *DataWriter* and *DataReader* are configured with a QoS profile to enable
 streaming reliable data.

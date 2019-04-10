@@ -25,8 +25,8 @@ In this example we focus on the first of these options -- **polling read**.
 
 ## Example Description
 
-The example implements a publisher application that sends a random number
-as data every second. A subscriber application polls for data once every five
+The example implements a publisher application that sends a random number as
+data every second. A subscriber application polls for data once every five
 seconds and computes the average of all examples received in that period.
 
 Note that using polling read instead of getting data via callbacks, means that

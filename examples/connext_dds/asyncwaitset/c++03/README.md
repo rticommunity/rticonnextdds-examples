@@ -5,9 +5,9 @@ There are two files in this example:
 - AwsExample_publisher: publisher application
 - AwsExample_subscriber: subscriber application
 
-You will use *rtiddsgen* to generate the additional files required to build
-and run the example. The *RTI Connext Core Libraries and Utilities Getting
-Started Guide* describes this process in detail.
+You will use *rtiddsgen* to generate the additional files required to build and
+run the example. The *RTI Connext Core Libraries and Utilities Getting Started
+Guide* describes this process in detail.
 
 ## Building the Example :wrench:
 
@@ -38,9 +38,9 @@ cmake --build . --config Release|Debug
 
 Alternatively, you can use directly the generated infrastructure (e.g.,
 Makefiles or Visual Studio Solutions) to build the example. If you generated
-Makefiles in the configuration process, run make to build the example.
-Likewise, if you generated a Visual Studio solution, open the solution and
-follow the regular build process.
+Makefiles in the configuration process, run make to build the example. Likewise,
+if you generated a Visual Studio solution, open the solution and follow the
+regular build process.
 
 ## Running the Example
 
@@ -90,7 +90,8 @@ where the subscriber options are:
 
      **Default**: 4.
 
--   `-s, -samples`: Number of received samples before the application shuts down.
+-   `-s, -samples`: Number of received samples before the application shuts
+    down.
 
      **Default**: 0 (infinite).
 
@@ -102,8 +103,8 @@ where the subscriber options are:
 
 By default, CMake will generate build files using the most common generator for
 your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
-solution on Windows), \. You can use the following CMake variables to modify
-the default behavior:
+solution on Windows), \. You can use the following CMake variables to modify the
+default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
     and Debug. See the [CMake documentation for more details.
@@ -130,15 +131,15 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
 The CMake build infrastructure will try to guess the location of your Connext
 DDS installation and the Connext DDS architecture based on the default settings
 for your host platform.If you installed Connext DDS in a custom location, you
-can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
-DDS installation folder. For example:
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+installation folder. For example:
 
 ```sh
 cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 ```
 
-Also, If you installed libraries for multiple target architecture on your
-system (i.e., you installed more than one target rtipkg), you can use the
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
 CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
 you want to link against. For example:
 
@@ -149,8 +150,8 @@ cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ### CMake Build Infrastructure
 
 The CMakeListst.txt script that builds this example uses a generic CMake
-function called connextdds_add_example that defines all the necessary
-constructs to:
+function called connextdds_add_example that defines all the necessary constructs
+to:
 
 1.  Run RTI Code Generator to generate the serialization/deserialization code
     for the types defined in the IDL file associated with the example.
@@ -166,6 +167,6 @@ documentation, in
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the
-[hello_world](../../../connext_dds/build_systems/cmake/) example, which
-includes a comprehensive CMakeLists.txt script with all the steps and
-instructions described in detail.
+[hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
+a comprehensive CMakeLists.txt script with all the steps and instructions
+described in detail.

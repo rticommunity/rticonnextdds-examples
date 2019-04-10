@@ -27,7 +27,7 @@ rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable numbers.idl
 
 ...you will see messages that look like this:
 
-```
+```plaintext
 File C:\local\property_qos\cs\numbers_subscriber.cs already
 exists and will not be replaced with updated content. If you would like to get a
 new file with the new content, either remove this file or supply -replace option.
@@ -45,9 +45,9 @@ already provided.
 
 ## Running C# Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
@@ -67,7 +67,7 @@ The applications accept two arguments:
 
 ## Publisher Output
 
-```
+```plaintext
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507
@@ -80,7 +80,7 @@ Writing numbers, count 3
 
 ## Subscriber Output
 
-```
+```plaintext
 Ok, send_socket_buffer_size....modified
 Ok, recv_socket_buffer_size....modified
 New UDPv4 send socket buffer size is: 65507

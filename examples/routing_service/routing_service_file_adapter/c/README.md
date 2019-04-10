@@ -8,18 +8,18 @@ installed.
 
 The example includes an example Makefile for the x64Linux2.6gcc4.4.5
 architecture. You can modify the makefile to match the requirements of your
-specific platform. You will find the flags to use for each specific platform
-RTI Routing Service supports in your installation under the
-"$ROUTINGHOME/adapters/file/make" directory. If you are using Visual Studio,
-you will also find example Visual Studio solutions under
+specific platform. You will find the flags to use for each specific platform RTI
+Routing Service supports in your installation under the
+"$ROUTINGHOME/adapters/file/make" directory. If you are using Visual Studio, you
+will also find example Visual Studio solutions under
 "$ROUTINGHOME/adapters/file/windows". You can modify them to point to this
 example.
 
 The example makefile copies the shared libraries that contain the adapter to
-$(ROUTINGHOME)/bin/$(ARCH). That means you will probably not need to modify
-your path to load the libraries. However, if you find problems loading the
-libraries, you will need to add that directory to your Path, if you are using
-Windows, or your LD_LIBRARY_PATH if you are using most of Unix-like systems.
+$(ROUTINGHOME)/bin/$(ARCH). That means you will probably not need to modify your
+path to load the libraries. However, if you find problems loading the libraries,
+you will need to add that directory to your Path, if you are using Windows, or
+your LD_LIBRARY_PATH if you are using most of Unix-like systems.
 
 ## Running C Example
 

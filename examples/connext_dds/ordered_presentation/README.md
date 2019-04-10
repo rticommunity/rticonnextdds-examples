@@ -27,8 +27,8 @@ order in which samples are presented to the subscribing application. The
 -   If *access_scope* is `TOPIC`, the relative order of samples sent by a
     *DataWriter* is preserved for all samples of all instances. The coherent
     grouping and/or order in which samples appear in the *DataReader’s* queue is
-    consistent with the grouping/order in which the changes occurred—even if
-    the samples affect different instances.
+    consistent with the grouping/order in which the changes occurred—even if the
+    samples affect different instances.
 
 -   If *access_scope* is `GROUP`, the scope spans all instances belonging to
     *DataWriter* entities within the same *Publisher*—even if they are instances
@@ -44,9 +44,9 @@ order in which samples are presented to the subscribing application. The
 In this example we illustrate how to control the scope of the order in which
 samples are presented to the subscribing application.
 
-The Publisher sets its presentation QoS properties to enable topic-level
-ordered access. However, note that this only enforces ordering on instances from
-a given *DataWriter*, and not from all writers of that topic. Also note that
+The Publisher sets its presentation QoS properties to enable topic-level ordered
+access. However, note that this only enforces ordering on instances from a given
+*DataWriter*, and not from all writers of that topic. Also note that
 ordered-access configuration needs to be configured in the subscription side
 makes so samples are read in an ordered manner.
 
@@ -57,9 +57,8 @@ given instance. Subscriber 1 uses topic scope, which enforces order *across*
 instances that are modified by the same *DataWriter*.
 
 Note that using instance access_scope does not guarantee that samples will be
-read or taken from the queue in a particular manner. Subscriber 0 returns all
-of Instance 0's samples, then all of Instance 1's samples. However, it would
-also be valid to return samples in the same order as Subscriber 1. To guarantee
-that samples from the same instance are return together, use the
-take/read_*instance calls. See the on-line API for *FooDataReader* for more
-information.
+read or taken from the queue in a particular manner. Subscriber 0 returns all of
+Instance 0's samples, then all of Instance 1's samples. However, it would also
+be valid to return samples in the same order as Subscriber 1. To guarantee that
+samples from the same instance are return together, use the take/read_*instance
+calls. See the on-line API for *FooDataReader* for more information.

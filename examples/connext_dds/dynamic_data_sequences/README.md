@@ -2,9 +2,9 @@
 
 ## Concept
 
-*Dynamic Data* provides an easy way to access the members of a data sample.
-Such members can be primitive data types or complex data types such as arrays
-or sequences.
+*Dynamic Data* provides an easy way to access the members of a data sample. Such
+members can be primitive data types or complex data types such as arrays or
+sequences.
 
 While the access to certain members is done using a name, the access in multiple
 cardinality data types (such as arrays or sequences) are done using a index
@@ -15,8 +15,8 @@ usually accessed using dedicated methods such as `get_<type>_array()` and
 `get_<type>_seq()`. However, such approach is not possible for non-primitive
 data (such as user defined types).
 
-*Dynamic data* allows accessing to the elements of arrays and sequences using
-a 1-based index access. For this purpose the use of methods such as
+*Dynamic data* allows accessing to the elements of arrays and sequences using a
+1-based index access. For this purpose the use of methods such as
 `get_complex_member()` (`value<DynamicData>()` in C++03) or
 `bind_complex_member()` (`loan_value()` in C++03) are required.
 

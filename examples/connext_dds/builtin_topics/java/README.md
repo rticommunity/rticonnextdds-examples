@@ -41,7 +41,6 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-
 Before compiling in Java, make sure that the desired version of the javac
 compiler is in your PATH environment variable.
 
@@ -59,9 +58,9 @@ javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 
 ## Running
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in USER_QOS_PROFILES.xml):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
@@ -79,12 +78,12 @@ java -cp .:$NDDSHOME/lib/java/nddsjava.jar msgSubscriber <domain_id> <sleep_peri
 
 The applications accept up to two arguments (four to subscriber):
 
-1.  The `<domain_id>`. Both applications must use the same domain id in order
-    to communicate. The default is 0.
+1.  The `<domain_id>`. Both applications must use the same domain id in order to
+    communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 3.  (subscriber only) The participant authorization string. This is checked
     against the authorization that the publisher is expecting. The default is
@@ -98,18 +97,18 @@ The applications accept up to two arguments (four to subscriber):
 While generating the output below, we used values that would capture the most
 interesting behavior.
 
-```
+```plaintext
 Publisher Output
 ============
 Writing msg, count 0
 Built-in Reader: found participant
-	key->'[168453134, 2044, 1, 449]'
-	user_data->'password'
+    key->'[168453134, 2044, 1, 449]'
+    user_data->'password'
 instance_handle: InstanceHandle_t[10,10,100,14,0,0,7,-4,0,0,0,1,0,0,1,-63]
 Built-in Reader: found subscriber
-	participant_key->'[168453134, 2044, 1, 449]'
-	key->'[168453134, 2044, 1, -2147483644]'
-	user_data->'foo'
+    participant_key->'[168453134, 2044, 1, 449]'
+    key->'[168453134, 2044, 1, -2147483644]'
+    user_data->'foo'
 instance_handle: InstanceHandle_t[10,10,100,14,0,0,7,-4,0,0,0,1,-128,0,0,4]
 publication_matched, current count = 1
 Writing msg, count 1

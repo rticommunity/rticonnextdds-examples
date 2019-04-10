@@ -19,8 +19,8 @@ A Condition has a trigger_value that can be TRUE or FALSE. You can retrieve the
 current value by calling the Condition's only operation, `get_trigger_value()`.
 
 There are three kinds of Conditions. A Condition is a root class for all the
-conditions that may be attached to a WaitSet. This basic class is specialized
-in three classes:
+conditions that may be attached to a WaitSet. This basic class is specialized in
+three classes:
 
 -   **GuardConditions** are created by your application. Each *GuardCondition*
     has a single, user-settable, boolean trigger_value. Your application can

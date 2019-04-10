@@ -11,8 +11,8 @@ Getting Started Guide describes this process in detail. Follow the same
 procedure to generate the code and build the examples. Do not use the -replace
 option.
 
-On Windows systems (assuming you want to generate an example for
-i86Win32VS2010) run:
+On Windows systems (assuming you want to generate an example for i86Win32VS2010)
+run:
 
 ```sh
 rtiddsgen -language C# -example i86Win32VS2010 -ppDisable ccf.idl
@@ -27,7 +27,7 @@ rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable ccf.idl
 
 You will see messages that look like this:
 
-```
+```plaintext
 File C:\local\custom_content_filter\c++\ccf_subscriber.cs already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
@@ -47,9 +47,9 @@ ccf_example-csharp.sln and build the C# example.
 
 ## Running C# Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in USER_QOS_PROFILES.xml):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in USER_QOS_PROFILES.xml):
 
 On Windows systems run:
 
@@ -60,9 +60,9 @@ bin\<build_type>-VS2010\ccf_subscriber.exe <domain_id> <sleep_periods>
 
 The applications accept up to two arguments:
 
-1.  The <domain_id>. Both applications must use the same domain id in order
-    to communicate. The default is 0.
+1.  The <domain_id>. Both applications must use the same domain id in order to
+    communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.

@@ -22,15 +22,15 @@ hundredths (0.01) or thousandths (0.001) of a second.
 
 With this QoS policy, different *DataReaders* can set their own time-based
 filters, so that data published faster than the period set by a *DataReader*
-will be dropped by the middleware and not delivered to the *DataReader*.
-Note that all filtering takes place on the reader side.
+will be dropped by the middleware and not delivered to the *DataReader*. Note
+that all filtering takes place on the reader side.
 
 ## Example Description
 
 In this example, the Publisher application publishes samples of two different
 instances: `instance0` and `instance1`. Samples of `instance0` are published
-every 0.25 seconds, whereas samples of `instance1` are published every
-0.5 seconds.
+every 0.25 seconds, whereas samples of `instance1` are published every 0.5
+seconds.
 
 The Subscriber sets a time-based filter with a minimum separation of 2 seconds.
 Samples arriving earlier than this are silently dropped. The minimum separation
