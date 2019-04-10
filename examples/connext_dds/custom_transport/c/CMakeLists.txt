@@ -3,12 +3,16 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 project(rtiexamples-custom-flow-controller)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
+
+if(WIN32)
+    message(FATAL_ERROR "This example is not supported in Windows.")
+endif()
 
 include(ConnextDdsAddExample)
 

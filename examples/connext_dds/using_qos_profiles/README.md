@@ -38,13 +38,13 @@ communicate using two different QoS profiles: *volatile_profile* and
 In the publisher application we create a *DomainParticipant* and a *Publisher*.
 With this *Publisher*, we create two *DataWriters* that use *volatile_profile*
 and *transient_local_profile* QoS, respectively. Accordingly, in the subscriber
-application, we create a *DomainParticipant* and a *Subscriber*, from which
-we create two *DataReaders* that use *volatile_profile* and
+application, we create a *DomainParticipant* and a *Subscriber*, from which we
+create two *DataReaders* that use *volatile_profile* and
 *transient_local_profile* QoS, respectively.
 
 We have defined these two QoS profiles in two different files,
-*USER_QOS_PROFILES.xml* and *my_custom_qos_profiles.xml*, to illustrate
-some of the different ways in which the *DomainParticipantFactory* may load
+*USER_QOS_PROFILES.xml* and *my_custom_qos_profiles.xml*, to illustrate some of
+the different ways in which the *DomainParticipantFactory* may load
 XML-specified QoS into your application.
 
 -   *USER_QOS_PROFILES.xml* includes the definition of *volatile_profile*, which

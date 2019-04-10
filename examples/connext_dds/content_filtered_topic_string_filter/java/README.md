@@ -19,7 +19,7 @@ rtiddsgen -language java -example x64Win64VS2013 cft.idl
 
 You will see messages that look like:
 
-```
+```plaintext
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/cftSubscriber.java
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
@@ -51,9 +51,9 @@ javac -cp .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 
 ## Running Java Example
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 To run the application in *Windows* and *UNIX* you can either use the makefile
 with `make`, run `ant` or run `java` command:
@@ -85,6 +85,6 @@ The applications accept up to three arguments:
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
 
-3.  (Subscriber only) The *select Content Filtered Topic* switch. If 1, then
-    we use a *Content Filtered Topic*. If 0, then we use a normal topic.
-    The default is 1.
+3.  (Subscriber only) The *select Content Filtered Topic* switch. If 1, then we
+    use a *Content Filtered Topic*. If 0, then we use a normal topic. The
+    default is 1.

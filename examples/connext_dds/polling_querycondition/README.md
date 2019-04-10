@@ -1,6 +1,6 @@
 # Example Code: Polling With Query Condition
 
-## Concept
+## Concept
 
 In *RTI Connext DDS*, you have the option to query for data that is already in
 the *DataReader's* queue using a *QueryCondition* object.
@@ -31,16 +31,22 @@ fields inside of that data. You do this by:
     You can update the parameters to your query by calling
     `set_query_parameters`.
 
-Note that a *QueryCondition* requires that the single quotes around a string
-are _inside the query condition parameter_. For example:
+Note that a *QueryCondition* requires that the single quotes around a string are
+_inside the query condition parameter_. For example:
 
 ```c
-DDS_StringSeq queryParameters;queryParameters.ensure_length(1,1);
+DDS_StringSeq queryParameters;
+queryParameters.ensure_length(1,1);
 
-// DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETERqueryParameters[0] = DDS_String_dup("'Initial String'");
-query_condition = _reader->create_querycondition(DDS_ANY_SAMPLE_STATE,    DDS_ANY_VIEW_STATE, DDS_ALIVE_INSTANCE_STATE,    DDS_String_dup("stringField MATCH %0"), queryParameters);
+// DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER
+queryParameters[0] = DDS_String_dup("'Initial String'");
+query_condition = _reader->create_querycondition(DDS_ANY_SAMPLE_STATE,
+    DDS_ANY_VIEW_STATE, DDS_ALIVE_INSTANCE_STATE,
+    DDS_String_dup("stringField MATCH %0"), queryParameters);
 
 // ...
 
-// DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETERqueryParameters[0] = DDS_String_dup("'Changed String'");_queryForFlights->set_query_parameters(queryParameters);
+// DON'T FORGET THE SINGLE QUOTES INSIDE THE PARAMETER
+queryParameters[0] = DDS_String_dup("'Changed String'");
+_queryForFlights->set_query_parameters(queryParameters);
 ```

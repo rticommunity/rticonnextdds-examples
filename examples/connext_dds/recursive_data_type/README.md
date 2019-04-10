@@ -2,12 +2,12 @@
 
 ## Concept
 
-Some data-types are recursive in the sense that they contain members elements
-of the same data-type as the containing structure. A classic example is a Tree.
+Some data-types are recursive in the sense that they contain members elements of
+the same data-type as the containing structure. A classic example is a Tree.
 
-A Tree is traditionally defined as a type that contains a Node (data) and a
-list of children who themselves can be Tree structures. A simple example
-in C would be:
+A Tree is traditionally defined as a type that contains a Node (data) and a list
+of children who themselves can be Tree structures. A simple example in C would
+be:
 
 ```c
 /* C definition of a Tree structure */
@@ -21,15 +21,15 @@ struct Tree {
 };
 ```
 
-Representing these kinds of *recursive data-types* in IDL such that they can
-be sent using DDS presents challenges.
+Representing these kinds of *recursive data-types* in IDL such that they can be
+sent using DDS presents challenges.
 
 While *recursive data-types* are not officially supported by RTI Connext DDS it
 is possible to use them in RTI Connext DDS 5.2, as long as you program in least
 in C or C++. In future releases the support will be expanded to Java and C#.
 
-Using *recursive data-types* requires taking advantage of some advanced
-features of `rtiddsgen`. This example illustrates the approach.
+Using *recursive data-types* requires taking advantage of some advanced features
+of `rtiddsgen`. This example illustrates the approach.
 
 ## Example Description
 
@@ -73,7 +73,8 @@ To overcome these problems use the following techniques:
 
 3.  Run `rtiddsgen` with the option `-unboundedSupport` this disables the
     computation of the max serialized size as being unlimited there would be no
-    maximum size. Note that this option is currently only available in C and C++.
+    maximum size. Note that this option is currently only available in C and
+    C++.
 
 4.  Declare the recursive type with the annotation `//@Optional` this causes
     `rtiddsgen` to generate a reference/pointer avoiding the self-reference

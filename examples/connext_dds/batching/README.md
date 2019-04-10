@@ -17,19 +17,18 @@ limited by CPU capacity and not by network bandwidth. Batching many smaller
 samples to be sent in a single large packet will increase network utilization
 and thus throughput in terms of samples per second.
 
-*Turbo Mode* is an experimental feature that uses an intelligent algorithm
-that adjusts the number of bytes in a batch at runtime according to
-current system conditions, such as write speed (or write frequency) and
-sample size. This intelligence is what gives it the ability to increase
-throughput at high message rates and avoid negatively impacting message
-latency at low message rates
+*Turbo Mode* is an experimental feature that uses an intelligent algorithm that
+adjusts the number of bytes in a batch at runtime according to current system
+conditions, such as write speed (or write frequency) and sample size. This
+intelligence is what gives it the ability to increase throughput at high message
+rates and avoid negatively impacting message latency at low message rates
 
 ## Example description
 
-This example shows the differences between *batching* and *turbo mode*.
-Both options will send batches. This means that instead of sending each sample
-out on the wire with its own header, the middleware will store the data in a
-batch until it is full and then will send the entire batch as one data packet.
+This example shows the differences between *batching* and *turbo mode*. Both
+options will send batches. This means that instead of sending each sample out on
+the wire with its own header, the middleware will store the data in a batch
+until it is full and then will send the entire batch as one data packet.
 
 The publisher application has two configurations (two different profiles):
 

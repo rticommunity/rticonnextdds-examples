@@ -115,6 +115,38 @@ void DataWriterListener_on_reliable_reader_activity_changed(
     printf("DataWriterListener: on_reliable_reader_activity_changed()\n");
 }
 
+void DataWratierListener_on_sample_removed(
+        void *listener_data,
+        DDS_DataWriter *writer,
+        const struct DDS_Cookie_t *cookie)
+{
+    printf("DataWriterListener: on_sample_removed()\n");
+}
+
+void DataWratierListener_on_instance_replaced(
+        void *listener_data,
+        DDS_DataWriter *writer,
+        const DDS_InstanceHandle_t *handle)
+{
+    printf("DataWriterListener: on_instance_replaced()\n");
+}
+
+void DataWratierListener_on_application_acknowledgment(
+        void *listener_data,
+        DDS_DataWriter *writer,
+        const struct DDS_AcknowledgmentInfo *info)
+{
+    printf("DataWriterListener: on_application_acknowledgmentd()\n");
+}
+
+void DataWratierListener_on_service_request_accepted(
+        void *listener_data,
+        DDS_DataWriter *writer,
+        const struct DDS_ServiceRequestAcceptedStatus *status)
+{
+    printf("DataWriterListener: on_service_request_accepted()\n");
+}
+
 /* Delete all entities */
 static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
@@ -320,24 +352,31 @@ static int publisher_main(int domainId, int sample_count)
      */
 
     /* Set up participant listener */
-    writer_listener.on_offered_deadline_missed =
-	DataWriterListener_on_offered_deadline_missed;
-    writer_listener.on_liveliness_lost =
-	DataWriterListener_on_liveliness_lost;
-    writer_listener.on_offered_incompatible_qos =
-	DataWriterListener_on_offered_incompatible_qos;
-    writer_listener.on_publication_matched =
-	DataWriterListener_on_publication_matched;
-    writer_listener.on_reliable_writer_cache_changed = 
-	DataWriterListener_on_reliable_writer_cache_changed;
-    writer_listener.on_reliable_reader_activity_changed = 
-	DataWriterListener_on_reliable_reader_activity_changed;
+    writer_listener.on_offered_deadline_missed
+            = DataWriterListener_on_offered_deadline_missed;
+    writer_listener.on_liveliness_lost = DataWriterListener_on_liveliness_lost;
+    writer_listener.on_offered_incompatible_qos
+            = DataWriterListener_on_offered_incompatible_qos;
+    writer_listener.on_publication_matched
+            = DataWriterListener_on_publication_matched;
+    writer_listener.on_reliable_writer_cache_changed
+            = DataWriterListener_on_reliable_writer_cache_changed;
+    writer_listener.on_reliable_reader_activity_changed
+            = DataWriterListener_on_reliable_reader_activity_changed;
+    writer_listener.on_sample_removed = DataWratierListener_on_sample_removed;
+    writer_listener.on_instance_replaced
+            = DataWratierListener_on_instance_replaced;
+    writer_listener.on_application_acknowledgment
+            = DataWratierListener_on_application_acknowledgment;
+    writer_listener.on_service_request_accepted
+            = DataWratierListener_on_service_request_accepted;
 
-    writer = DDS_Publisher_create_datawriter(publisher,
-					     topic,
-					     &DDS_DATAWRITER_QOS_DEFAULT, 
-					     &writer_listener  /* listener */, 
-					     DDS_STATUS_MASK_ALL /* enable all statuses */);
+    writer = DDS_Publisher_create_datawriter(
+            publisher,
+            topic,
+            &DDS_DATAWRITER_QOS_DEFAULT,
+            &writer_listener /* listener */,
+            DDS_STATUS_MASK_ALL /* enable all statuses */);
     if (writer == NULL) {
 	printf("create_datawriter error\n");
 	publisher_shutdown(participant);

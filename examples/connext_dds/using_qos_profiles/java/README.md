@@ -19,7 +19,7 @@ rtiddsgen -language Java -example i86Win32VS2010 profiles.idl
 
 You will see messages that look like this:
 
-```
+```plaintext
 File C:\local\using_qos_profiles\java\profilesSubscriber.java already exists
 and will not be replaced with updated content. If you would like to get a new
 file with the new content, either remove this file or supply -replace option.
@@ -87,7 +87,7 @@ The applications accept two arguments:
 
 ### Publisher Output
 
-```
+```plaintext
 Writing profiles, count 0
 Writing profile_name = volatile_profile x = 0
 Writing profile_name = transient_local_profile x = 0
@@ -108,7 +108,7 @@ Notice that the volatile *DataReader* receives both transient local and volatile
 data, because the QoS is request/offered, and volatile QoS matches with the
 higher transient local level of service.
 
-```
+```plaintext
 profiles subscriber sleeping for 4 sec...
 TransientLocalProfile listener received
 

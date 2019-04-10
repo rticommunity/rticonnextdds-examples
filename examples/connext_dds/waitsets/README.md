@@ -19,8 +19,8 @@ A Condition has a trigger_value that can be TRUE or FALSE. You can retrieve the
 current value by calling the Condition's only operation, `get_trigger_value()`.
 
 There are three kinds of Conditions. A Condition is a root class for all the
-conditions that may be attached to a WaitSet. This basic class is specialized
-in three classes:
+conditions that may be attached to a WaitSet. This basic class is specialized in
+three classes:
 
 -   **GuardConditions** are created by your application. Each *GuardCondition*
     has a single, user-settable, boolean trigger_value. Your application can
@@ -51,11 +51,11 @@ to the WaitSet.
 WaitSets are completely independent of publishers. For this example, we decrease
 the liveliness lease duration to trigger the subscriber's StatusCondition.
 
-Note that a WaitSet is a "top-level" entity, not one created by a DDS entity.
-It is only related to a reader by the contained conditions, which are created
-via DataReaders.
+Note that a WaitSet is a "top-level" entity, not one created by a DDS entity. It
+is only related to a reader by the contained conditions, which are created via
+DataReaders.
 
-Also note that WaitSets block in the context of the application rather than
-DDS threads. Thus, there are fewer constraints on processing data than if
-we're working in an on_data_available callback, since DDS housekeeping threads
+Also note that WaitSets block in the context of the application rather than DDS
+threads. Thus, there are fewer constraints on processing data than if we're
+working in an on_data_available callback, since DDS housekeeping threads
 continue to run.

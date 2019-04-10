@@ -2,20 +2,20 @@
 
 ## Concept
 
-*Routing Service Processor* is a pluggable-component that allows controlling
-the forwarding process that occurs within *Routes*. Refer to the
-`SDK documentation <https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTI__RoutingServiceProcessorModule.html>`_
+*Routing Service Processor* is a pluggable-component that allows controlling the
+forwarding process that occurs within *Routes*. Refer to the `SDK documentation
+<https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTI__RoutingServiceProcessorModule.html>`_
 to learn more about how to implement and use custom *Processor* plug-ins.
 
 ## Example Description
 
-This example shows how to implement a custom *Processor* plug-in, build it
-into a shared library and load it with *RoutingService*.
+This example shows how to implement a custom *Processor* plug-in, build it into
+a shared library and load it with *RoutingService*.
 
 This example illustrates the realization of two common enterprise patterns:
 aggregation and splitting. There is a single plug-in implementation,
-*ShapesProcessor* that is factory of two types of *Processor*\s, one for
-each pattern implementation:
+*ShapesProcessor* that is factory of two types of *Processor*\s, one for each
+pattern implementation:
 
 -   *ShapesAggregator*: *Processor* implementation that performs the aggregation
     of two *ShapeType* objects into a single *ShapeType* object.
@@ -23,9 +23,9 @@ each pattern implementation:
 -   *ShapesSplitter*: *Processor* implementation that performs the separation of
     a single *ShapeType* object into two  *ShapeType* objects.
 
-In the example, these processors are instantiated as part of a *TopicRoute*,
-in which all its inputs and outputs represent instantiations of the
-*Connext DDS Adapter StreamReader* and *StreamWriter*, respectively.
+In the example, these processors are instantiated as part of a *TopicRoute*, in
+which all its inputs and outputs represent instantiations of the *Connext DDS
+Adapter StreamReader* and *StreamWriter*, respectively.
 
 In this example you will find files for the following elements:
 
@@ -38,10 +38,10 @@ In this example you will find files for the following elements:
 
 ### ShapesAggregator
 
-The data processing is tied to a *leading input*, that represents the input
-from which the processor reads *new* data first. For each instance found in the
-data read from the leading input, the processor reads *any* existing data for
-the equivalent instance.
+The data processing is tied to a *leading input*, that represents the input from
+which the processor reads *new* data first. For each instance found in the data
+read from the leading input, the processor reads *any* existing data for the
+equivalent instance.
 
 The aggregation algorithm consists of simply an average of the values `x` and
 `y` of all inputs. The remaining elements are set equal to the values of the
@@ -53,27 +53,13 @@ sample. This guarantees that memory doesn't grow unbounded since the processor
 will never remove the samples from the StreamReader's cache.
 
 This *Processor* implementation can receive the properties in table
-`TableShapesAggregatorProperties`_.
+`TableShapesAggregatorProperties`.
 
--------------------------------------------------------------------------------------
-Name                                          Value             Description
---------------------------------------------- ----------------- ---------------------
-**shapes\_processor.kind**                    `aggregator`      Indicates the plug-in
-                                                                to instantiate a
-                                                                *ShapesAggregator*.
-                                                                If this property is
-                                                                not specified, it
-                                                                will create a
-                                                                *ShapesSplitter*.
-
-**shapes\_processor.leading\_input\_index**   `<integer>`       Indicates the index
-                                                                of the leading input.
-                                                                In this example, only
-                                                                `0` and `1` are valid
-                                                                values.
--------------------------------------------------------------------------------------
-
-: ShapesAggregator Configuration Properties
+| Name                                     | Value        | Description                                                                                                                  |
+|------------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------|
+|  **shapes_processor.kind**               | `aggregator` |  Indicates the plug-in to instantiate a *ShapesAggregator*. If property is not specified, it will create a *ShapesSplitter*. |
+| **shapes_processor.leading_input_index** | `<integer>`  |  Indicates the index of the leadig input. In this example, only `0` and `1` are valid values                                 |
+|                                          |              |                                                                                                                              |
 
 ### ShapesSplitter
 

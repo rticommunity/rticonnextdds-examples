@@ -26,7 +26,7 @@ rtiddsgen -language Java -example i86Linux2.6gcc4.4.3 ccf.idl
 
 ...you will see messages that look like this:
 
-```
+```plaintext
 File C:\local\custom_content_filter\java\cftSubscriber.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
@@ -56,8 +56,8 @@ javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 
 ## Running Java Example
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory:
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory:
 
 On Windows systems run:
 
@@ -75,9 +75,9 @@ java -cp .:$NDDSHOME/lib/java/nddsjava.jar ccfSubscriber <domain_id> <sleep_peri
 
 The applications accept up to two arguments:
 
-1.  The <domain_id>. Both applications must use the same domain id in order
-    to communicate. The default is 0.
+1.  The <domain_id>. Both applications must use the same domain id in order to
+    communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.

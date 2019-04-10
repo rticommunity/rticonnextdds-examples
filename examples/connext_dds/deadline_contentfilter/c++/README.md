@@ -29,15 +29,15 @@ cmake --build . --config Release|Debug
 
 Alternatively, you can use directly the generated infrastructure (e.g.,
 Makefiles or Visual Studio Solutions) to build the example. If you generated
-Makefiles in the configuration process, run make to build the example.
-Likewise, if you generated a Visual Studio solution, open the solution and
-follow the regular build process.
+Makefiles in the configuration process, run make to build the example. Likewise,
+if you generated a Visual Studio solution, open the solution and follow the
+regular build process.
 
 ## Running the Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
 # Do not forget to replace the path separator to "\" on Windows.
@@ -50,13 +50,13 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 ## Publisher Output
 
-```
+```plaintext
 Writing instance0, x = 1, y = 1
 Writing instance1, x = 1, y = 1
 Writing instance0, x = 2, y = 2
@@ -91,7 +91,7 @@ Writing instance0, x = 16, y = 16
 
 ## Subscriber Output
 
-```
+```plaintext
 @ t=2.84s, Instance0: <1,1>
 @ t=2.84s, Instance1: <1,1>
 @ t=3.84s, Instance0: <2,2>
@@ -131,8 +131,8 @@ Missed deadline @ t=21.88s on instance code = 1
 
 By default, CMake will generate build files using the most common generator for
 your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
-solution on Windows), \. You can use the following CMake variables to modify
-the default behavior:
+solution on Windows), \. You can use the following CMake variables to modify the
+default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
     and Debug. See the [CMake documentation for more details.
@@ -159,15 +159,15 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
 The CMake build infrastructure will try to guess the location of your Connext
 DDS installation and the Connext DDS architecture based on the default settings
 for your host platform.If you installed Connext DDS in a custom location, you
-can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
-DDS installation folder. For example:
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+installation folder. For example:
 
 ```sh
 cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 ```
 
-Also, If you installed libraries for multiple target architecture on your
-system (i.e., you installed more than one target rtipkg), you can use the
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
 CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
 you want to link against. For example:
 
@@ -178,8 +178,8 @@ cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ### CMake Build Infrastructure
 
 The CMakeListst.txt script that builds this example uses a generic CMake
-function called connextdds_add_example that defines all the necessary
-constructs to:
+function called connextdds_add_example that defines all the necessary constructs
+to:
 
 1.  Run RTI Code Generator to generate the serialization/deserialization code
     for the types defined in the IDL file associated with the example.
@@ -195,6 +195,6 @@ documentation, in
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the
-[hello_world](../../../connext_dds/build_systems/cmake/) example, which
-includes a comprehensive CMakeLists.txt script with all the steps and
-instructions described in detail.
+[hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
+a comprehensive CMakeLists.txt script with all the steps and instructions
+described in detail.

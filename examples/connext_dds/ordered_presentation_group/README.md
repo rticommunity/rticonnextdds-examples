@@ -27,8 +27,8 @@ order in which samples are presented to the subscribing application. The
 -   If *access_scope* is `TOPIC`, the relative order of samples sent by a
     *DataWriter* is preserved for all samples of all instances. The coherent
     grouping and/or order in which samples appear in the *DataReader’s* queue is
-    consistent with the grouping/order in which the changes occurred—even if
-    the samples affect different instances.
+    consistent with the grouping/order in which the changes occurred—even if the
+    samples affect different instances.
 
 -   If *access_scope* is `GROUP`, the scope spans all instances belonging to
     *DataWriter* entities within the same *Publisher*—even if they are instances
@@ -44,11 +44,10 @@ order in which samples are presented to the subscribing application. The
 In this example we illustrate how to use `GROUP` *access_scope* for the order in
 which samples are presented to the subscribing application.
 
-The Publisher sets its presentation QoS properties to enable GROUP-level
-ordered access. This enforces ordering on instances from any *DataWriters* and
-*Topics* for a given *Publisher*. Also note that ordered-access configuration
-needs to be configured in the subscription side so samples are read in an
-ordered manner.
+The Publisher sets its presentation QoS properties to enable GROUP-level ordered
+access. This enforces ordering on instances from any *DataWriters* and *Topics*
+for a given *Publisher*. Also note that ordered-access configuration needs to be
+configured in the subscription side so samples are read in an ordered manner.
 
 The subscriber application illustrates the effects of the `GROUP` *access_scope*
 presentation QoS. Changes made to instances via *DataWriter* entities attached
@@ -56,10 +55,10 @@ to the same *Publisher* are made available to *Subscribers* on the same order
 they occurred. For more information about these QoS you can see section
 "PRESENTATION QosPolicy" of the User's Manual.
 
-The example creates 3 Topics, 3 DataWriters, 3 DataReaders and 3 instances.
-Each *DataWriter* publishes two samples of the corresponding topic. This process
-is repeated once a second. The order in which the DataWriters publish the
-samples is: `{ DW1-Sample1, DW1-Sample2, DW2-Sample1, DW2-Sample2, DW3-Sample1,
+The example creates 3 Topics, 3 DataWriters, 3 DataReaders and 3 instances. Each
+*DataWriter* publishes two samples of the corresponding topic. This process is
+repeated once a second. The order in which the DataWriters publish the samples
+is: `{ DW1-Sample1, DW1-Sample2, DW2-Sample1, DW2-Sample2, DW3-Sample1,
 DW3-Sample2 }`.
 
 The key points in the example are:

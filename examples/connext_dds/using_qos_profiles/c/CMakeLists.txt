@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 project(rtiexamples-using-qos-profiles)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -29,11 +29,11 @@ add_custom_command(
         "${CMAKE_CURRENT_SOURCE_DIR}/my_custom_qos_profiles.xml"
     VERBATIM)
 
-add_custom_target(custom_qos
+add_custom_target(using_qos_profiles_custom_qos_c
     DEPENDS
         "${CMAKE_CURRENT_BINARY_DIR}/my_custom_qos_profiles.xml")
 
 add_dependencies(using_qos_profiles_publisher_c
-    using_qos_profiles_c_qos)
+    using_qos_profiles_custom_qos_c)
 add_dependencies(using_qos_profiles_subscriber_c
-    using_qos_profiles_c_qos)
+    using_qos_profiles_custom_qos_c)

@@ -26,7 +26,7 @@ rtiddsgen -language c# -example x64Win64VS2013 -express -ppDisable msg.idc
 
 You will see messages that look like:
 
-```
+```plaintext
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/msg_subscriber.cs
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
@@ -37,17 +37,17 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-*rtiddsgen* generates one solution with three *Visual Studio* projects.
-The project *msg_type-dotnet4.0.vcxproj* contains the types of the
-example and it should be compiled with *Visual Studio C++*. The other two
-projects contain the C# publisher and subscriber example and should be compiled
-with *Visual Studio C#*.
+*rtiddsgen* generates one solution with three *Visual Studio* projects. The
+project *msg_type-dotnet4.0.vcxproj* contains the types of the example and it
+should be compiled with *Visual Studio C++*. The other two projects contain the
+C# publisher and subscriber example and should be compiled with *Visual Studio
+C#*.
 
 ## Running C# Example
 
-In two separate command prompt windows for the publisher and subscriber. Run
-the following commands from the example directory (this is necessary to ensure
-the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
 bin\<build_type>\msg_publisher.exe  <domain_id> <samples_to_send>

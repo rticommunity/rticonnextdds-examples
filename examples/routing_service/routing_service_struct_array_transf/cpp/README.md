@@ -1,8 +1,8 @@
 # Example Code: Routing Service Transformation
 
-Below there are the instructions to build and run this example. All the
-commands and syntax used assume a Unix-based system. If you run this example in
-a different architecture, please adapt the commands accordingly.
+Below there are the instructions to build and run this example. All the commands
+and syntax used assume a Unix-based system. If you run this example in a
+different architecture, please adapt the commands accordingly.
 
 ## Building
 
@@ -27,9 +27,9 @@ where:
     running the example (e.g., x64Darwin15clang7.0).
 
 On successful execution of CMake, you will find different new files in your
-build directory, including a file with name `Makefile`. This file represents
-a Unix makefile that contains the rules to build a shared library containing
-the *Transformation* plug-in implementation.
+build directory, including a file with name `Makefile`. This file represents a
+Unix makefile that contains the rules to build a shared library containing the
+*Transformation* plug-in implementation.
 
 Now run:
 
@@ -58,8 +58,8 @@ follows:
 export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<ARCH>
 ```
 
-where `<ARCH>` shall be replaced with the target architecture you used to
-build the example in the previous step.
+where `<ARCH>` shall be replaced with the target architecture you used to build
+the example in the previous step.
 
 1.  Run the publisher application on domain 0. You should observe the following
     output:

@@ -22,22 +22,22 @@ type `SensorAttributes`, which contains just primitive members. Then a
 monitoring collection application publishes the information of all the sensors
 represented in the form of an array of sensor attributes, contained in the the
 type `SensorAttributesCollection`. However due to some limitations of the type
-system in subscriber applications, the information needs to be converted so
-that instead of providing the array of structs, it provides a single struct
-that contains individual arrays for each primitive attribute. This type is
+system in subscriber applications, the information needs to be converted so that
+instead of providing the array of structs, it provides a single struct that
+contains individual arrays for each primitive attribute. This type is
 represented with `SensorData`.
 
 To perform the communication between the publisher and subscriber applications,
 a *RoutingService* instance is placed to perform the conversion between the two
 different types. The *RoutingService* is configured with a single *Route* to
-reads data from the input topic with type `SensorAttributesCollection`,
-performs the conversion with a custom *Transformation* and writes the converted
-data to the output topic with type `SensorData`.
+reads data from the input topic with type `SensorAttributesCollection`, performs
+the conversion with a custom *Transformation* and writes the converted data to
+the output topic with type `SensorData`.
 
 In this example you will find files for the following elements:
 
--   `SensorAttributesCollectionPublisher`: The monitoring collection
-    application that publishes the information described above.
+-   `SensorAttributesCollectionPublisher`: The monitoring collection application
+    that publishes the information described above.
 
 -   `SensorDataSubscriber`: The subscriber application that receives the data
     converted as described above

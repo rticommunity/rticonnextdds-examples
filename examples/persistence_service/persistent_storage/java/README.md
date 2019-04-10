@@ -19,7 +19,7 @@ rtiddsgen -language java -example x64Win64VS2013 hello_world.idl
 
 You will see messages that look like:
 
-```
+```plaintext
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
 overwritten : /some/path/hello_worldSubscriber.java
 WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
@@ -51,12 +51,12 @@ javac -cp .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 
 ## Running Java Example
 
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-**Note: If you are using *TimesTen*, you may need run the command prompt
-as administrator. Otherwise, none of the scenarios will not run correctly.**
+**Note: If you are using *TimesTen*, you may need run the command prompt as
+administrator. Otherwise, none of the scenarios will not run correctly.**
 
 **For TimesTen users**: In addition, you need to uncomment some lines in the
 *USER_QOS_PROFILES.xml* and *persistence_service_configuration.xml* to load the
@@ -68,17 +68,22 @@ those documents for further details.
     -   *Durable Writer History scenario*:
 
         1.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber`
-        2.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0 -dwh 1`
+        2.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0 -dwh 1`
         3.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber`
-        4.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 5 -dwh 1`
+        4.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 5 -dwh 1`
 
     -   *Durable Reader State Scenario*:
 
-        1.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber -drs 1`
-        2.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0 -sleep 60`
+        1.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber
+            -drs 1`
+        2.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0 -sleep 60`
         3.  stop *hello_worldSubscriber*
         4.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber`
-        5.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber -drs 1`
+        5.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber
+            -drs 1`
 
     -   *Persistence Service Scenario*:
 
@@ -90,7 +95,8 @@ those documents for further details.
             ```
 
         2.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber`
-        3.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0`
+        3.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0`
         4.  `java -cp .;%NDDSHOME%\lib\java\nddsjava.jar hello_worldSubscriber`
 
 -   On *UNIX* systems run:
@@ -98,17 +104,22 @@ those documents for further details.
     -   *Durable Writer History scenario*:
 
         1.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber`
-        2.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0 -dwh 1`
+        2.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0 -dwh 1`
         3.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber`
-        4.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 5 -dwh 1`
+        4.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 5 -dwh 1`
 
     -   *Durable Reader State Scenario*:
 
-        1.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber -drs 1`
-        2.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0 -sleep 60`
+        1.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber
+            -drs 1`
+        2.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0 -sleep 60`
         3.  stop *hello_worldSubscriber*
         4.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber`
-        5.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber -drs 1`
+        5.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber
+            -drs 1`
 
     -   *Persistence Service Scenario*:
 
@@ -120,12 +131,13 @@ those documents for further details.
             ```
 
         2.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber`
-        3.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher -sample_count 5 -initial_value 0`
+        3.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldPublisher
+            -sample_count 5 -initial_value 0`
         4.  `java -cp .:$NDDSHOME/lib/java/nddsjava.jar hello_worldSubscriber`
 
 The applications accepts different arguments:
 
-```
+```plaintext
 hello_world_subscriber:
     -domainId <domain ID> (default: 0)
     -sample_count <sample_count> (default: infinite => 0)

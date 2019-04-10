@@ -30,11 +30,11 @@ repeats. The last twenty samples are saved for late joiners.
 After this topic is created, a *Content Filtered Topic* is created based on the
 normal topic. In this case, the filter expression is parameterized: `(x >= %0
 and x <= %1)`, but it could be a static string as well, such as `x = 3`. The
-filter parameters, represented by `%k` (where `k = 0 to 99`), are passed in as
-a *DDS_StringSeq* when the *Content Filtered Topic* is created.
+filter parameters, represented by `%k` (where `k = 0 to 99`), are passed in as a
+*DDS_StringSeq* when the *Content Filtered Topic* is created.
 
-These parameters can be changed at runtime via `set_expression_parameters()`.
-In the example, we modify the expression parameters to three different values.
+These parameters can be changed at runtime via `set_expression_parameters()`. In
+the example, we modify the expression parameters to three different values.
 
 -   When the application starts, the expression parameters are set to `%0=1 and
     %1=4` (i.e., we will only receive samples where `1 <= x <=4`).

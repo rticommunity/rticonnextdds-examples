@@ -27,9 +27,9 @@ properties consist of an expression and a set of parameters.
 After this *Topic* is created, a *Content Filtered Topic* is created based on
 the normal *Topic*. In this case, we will use a parameterized `STRINGMATCH`
 filter expression: `name MATCH %0`, but it could be a static string as well,
-such as `name MATCH 'RTI'`. The filter parameters, represented by `%k`
-(where k = 0 to 99), are passed in as a `DDS_StringSeq` when the *Content
-Filtered Topic* is created.
+such as `name MATCH 'RTI'`. The filter parameters, represented by `%k` (where k
+= 0 to 99), are passed in as a `DDS_StringSeq` when the *Content Filtered Topic*
+is created.
 
 To create this kind of topic, we need to use
 `create_contentfilteredtopic_with_filter` as follows:
@@ -40,16 +40,16 @@ create_contentfilteredtopic_with_filter(
             DDS_STRINGMATCHFILTER_NAME);
 ```
 
-Parameters can be changed at runtime via `append_to_expression_parameter()`
-and `remove_from_expression_parameter()`. In the example, we modify the
-expression parameters to three different values.
+Parameters can be changed at runtime via `append_to_expression_parameter()` and
+`remove_from_expression_parameter()`. In the example, we modify the expression
+parameters to three different values.
 
 -   When the application starts, the expression parameters are set to
     `%0="SOME_STRING"`. After that, we will append to expression the parameter
     `EVEN`.
 
 -   After 10 seconds, we will append again the parameter `ODD`. So the
-   *DataReader* will receive the *EVEN* and *ODD* numbers (all).
+    *DataReader* will receive the *EVEN* and *ODD* numbers (all).
 
 -   Finally, after 20 seconds, we will remove the parameter `EVEN` and the
     *DataReader* will receive just the *ODD* numbers.

@@ -15,9 +15,9 @@
 #include <dds/dds.hpp>
 
 using namespace dds::core::xtypes;
-using namespace rti::core::xtypes;
 
-UnionType create_union_type() {
+UnionType create_union_type() 
+{
     // First, we create a DynamicType for a union.
     UnionType union_type("Foo", primitive_type<int32_t>());
 
@@ -36,7 +36,10 @@ UnionType create_union_type() {
     return union_type;
 }
 
-void example() {
+void example() 
+{
+    using rti::core::xtypes::DynamicDataMemberInfo;
+
     // Create the type of the union
     UnionType union_type = create_union_type();
 
@@ -62,11 +65,12 @@ void example() {
     std::cout << " with value " << aShort << std::endl;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[]) 
+{
     try {
         example();
     } catch (const std::exception& ex) {
-        std::cerr << "Caught excetion: " << ex.what() << std::endl;
+        std::cerr << "Caught exception: " << ex.what() << std::endl;
         return -1;
     }
 

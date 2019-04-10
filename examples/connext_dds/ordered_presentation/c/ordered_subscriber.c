@@ -66,11 +66,12 @@
 
 /* No listener is needed; we poll readers in this function*/
 void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
-    struct DDS_SampleInfoSeq info_seq;
-    struct orderedSeq data_seq = DDS_SEQUENCE_INITIALIZER;
+
     DDS_ReturnCode_t retcode = DDS_RETCODE_OK;
     int r, i, ident;
     for (r = 0; r < numreaders; ++r) {
+        struct DDS_SampleInfoSeq info_seq;
+        struct orderedSeq data_seq = DDS_SEQUENCE_INITIALIZER;
         retcode = orderedDataReader_take(ordered_reader[r], &data_seq,
                 &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
                 DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
@@ -102,9 +103,6 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
         if (retcode != DDS_RETCODE_OK) {
             printf("return loan error %d\n", retcode);
         }
-
-        DDS_SampleInfoSeq_set_maximum(&info_seq, 0);
-        orderedSeq_set_maximum(&data_seq, 0);
     }
 }
 
@@ -175,7 +173,7 @@ static int subscriber_main(int domainId, int sample_count) {
     char* profile_name[] = { "ordered_Profile_subscriber_instance",
             "ordered_Profile_subscriber_topic" };
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
             DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
@@ -195,7 +193,7 @@ static int subscriber_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(participant, "Example ordered",
             type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
@@ -208,7 +206,7 @@ static int subscriber_main(int domainId, int sample_count) {
 
     /* Start changes for ordered_presentation */
     /* Create two subscriber to illustrate different presentation QoS
-     * This is a publisher/subscriber level QoS, so we have to do it 
+     * This is a publisher/subscriber level QoS, so we have to do it
      * here instead of just making two datareaders
      */
     /* Subscriber[0], reader[0] and ordered_reader[0] is getting

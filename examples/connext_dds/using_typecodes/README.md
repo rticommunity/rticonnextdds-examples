@@ -27,12 +27,11 @@ not available from the built-in data returned by the *DataWriter's*
 
 If your data type has an especially complex type code, you may need to increase
 the value of the `type_code_max_serialized_length` field in the
-*DomainParticipant's* `DOMAIN_PARTICIPANT_RESOURCE_LIMITS` QoS policy
-(DDS Extension). Or, to prevent the propagation of type codes altogether, you
-can set this value to zero `0`. Be aware that some features of monitoring tools,
-as well as some features of the middleware itself
-(such as *ContentFilteredTopics*) will not work correctly if you disable
-*TypeCode* propagation.
+*DomainParticipant's* `DOMAIN_PARTICIPANT_RESOURCE_LIMITS` QoS policy (DDS
+Extension). Or, to prevent the propagation of type codes altogether, you can set
+this value to zero `0`. Be aware that some features of monitoring tools, as well
+as some features of the middleware itself (such as *ContentFilteredTopics*) will
+not work correctly if you disable *TypeCode* propagation.
 
 ## Example Description
 
