@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 project(rtiexamples-hello-world)
 
 # Add the folder where the FindRTIConnextDDS.cmake file is placed to the

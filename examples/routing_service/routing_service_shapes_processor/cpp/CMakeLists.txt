@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 project (ShapesProcessor)
 
 if(NOT BUILD_SHARED_LIBS)
