@@ -3,11 +3,11 @@
 ## Concept
 
 *RoutingService* *Transformation* is a pluggable-component that allows
-*performing modifications on the input samples received in *Route* and provide
-*such modifications as output samples.
+performing modifications on the input samples received in *Route* and provide
+such modifications as output samples.
 
-Refer to the `SDK documentation
-<https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTI__RoutingServiceTransformationModule.html>`_
+Refer to the [SDK
+documentation](https://community.rti.com/static/documentation/connext-dds/current/doc/api/routing_service/api_cpp/group__RTI__RoutingServiceTransformationModule.html)
 to learn more about how to implement and use custom *Transformation* plug-ins.
 
 ## Example Description
@@ -56,5 +56,5 @@ In this example you will find files for the following elements:
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- CMake version 3.7 or higher
 - A target platform supported by *RTI* *RoutingService*.
