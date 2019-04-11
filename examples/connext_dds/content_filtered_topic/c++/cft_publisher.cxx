@@ -225,8 +225,6 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-        printf("Writing cft, count %d\n", count);
-
         /* Modify the data to be sent here */
 
         /* Our purpose is to increment x every time we send a sample and to

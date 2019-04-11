@@ -1,6 +1,7 @@
 # Dynamic Data API: access to complex member example
 
 ## Concept
+
 *Dynamic Data API* allows to create topic samples in a programmatically manner
 without defining an IDL in compile time. Analogously to the IDL based approach,
 the *Dynamic Data API* provide methods to get/set complex members in dynamic
@@ -10,6 +11,7 @@ In this example, we show how to access structs nested in a dynamic data object
 to get/set their values.
 
 ## Example description
+
 In this example, we use the two *Dynamic Data APIs* provided by *RTI Connext* to
 access to sample members that are not one of the primitive types.
 
@@ -23,13 +25,14 @@ nested member, so any modification on this object will affect the original
 member.
 
 The data types used for our examples are the following ones:
-```
+
+```cpp
 struct InnerStruct {
-   double x;
-   double y;
+  double x;
+  double y;
 };
 
 struct OuterStruct {
-   InnerStruct inner;
+  InnerStruct inner;
 };
 ```

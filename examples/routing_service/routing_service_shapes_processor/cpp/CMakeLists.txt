@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.7)
 project (ShapesProcessor)
 
 if(NOT BUILD_SHARED_LIBS)
@@ -20,7 +20,7 @@ if(NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR ${msg})
 endif()
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+string(TOLOWER "${CMAKE_BUILD_TYPE}" CMAKE_BUILD_TYPE)
 
 if(CMAKE_BUILD_TYPE STREQUAL "debug")
     set(msg
@@ -31,14 +31,17 @@ if(CMAKE_BUILD_TYPE STREQUAL "debug")
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
-    )
+)
 
 # Define the library that will provide the  Processor plugin
 add_library(shapesprocessor
@@ -55,8 +58,8 @@ set_target_properties(shapesprocessor
         ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
         ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
         ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"               
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"               
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
         RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
 )
 
@@ -67,4 +70,3 @@ target_link_libraries(shapesprocessor
 target_include_directories(shapesprocessor
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}")
-
