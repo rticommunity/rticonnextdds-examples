@@ -3,8 +3,8 @@
 ## Concept
 
 *Routing Service Processor* is a pluggable-component that allows controlling the
-forwarding process that occurs within *Routes*. Refer to the `SDK documentation
-<https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTI__RoutingServiceProcessorModule.html>`_
+forwarding process that occurs within *Routes*. Refer to the [SDK
+documentation](https://community.rti.com/static/documentation/connext-dds/current/doc/api/routing_service/api_cpp/group__RTI__RoutingServiceProcessorModule.html)
 to learn more about how to implement and use custom *Processor* plug-ins.
 
 ## Example Description
@@ -14,11 +14,11 @@ a shared library and load it with *RoutingService*.
 
 This example illustrates the realization of two common enterprise patterns:
 aggregation and splitting. There is a single plug-in implementation,
-*ShapesProcessor* that is factory of two types of *Processor*\s, one for each
-pattern implementation:
+*ShapesProcessor* that is factory of three types of *Processor*\s:
 
--   *ShapesAggregator*: *Processor* implementation that performs the aggregation
-    of two *ShapeType* objects into a single *ShapeType* object.
+-   *ShapesAggregatorSimple* and *ShapesAggregatorAdv*: *Processor*
+    implementations that performs the aggregation of two *ShapeType* objects
+    into a single *ShapeType* object.
 
 -   *ShapesSplitter*: *Processor* implementation that performs the separation of
     a single *ShapeType* object into two  *ShapeType* objects.
@@ -36,7 +36,38 @@ In this example you will find files for the following elements:
 -   Configuration for the *RoutingService* that loads the custom *Processor* and
     provides the communication between publisher and subscriber applications.
 
+This *Processor* implementation can receive the properties in the following
+table.
+
+| Name                                     | Value       | Description                                                                                                                                                                     |
+|------------------------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| **shapes_processor.kind**                |  `<enum>`   | - *aggregator_simple*: Indicates the plug-in to instantiate a ShapesAggregatoSimpler.                                                                                           |
+|                                          |             | - *aggregator_adv*: Indicates the plug-in to instantiate a ShapesAggregatorAdv.                                                                                                 |
+|                                          |             | - *splittler*: Indicates the plug-in to instantiate a ShapesSplitter.                                                                                                           |
+|                                          |             | If a different value other than the ones above is specified, the creation of the will throw an exception. If this property is not specified, it will create a *ShapesSplitter*. |
+| **shapes_processor.leading_input_index** | `<integer>` | Only applicable to *ShapesAggregatorAdv*. Indicates the index of the leading input. In this example, only 0 and 1 are valid values.                                             |
+
 ### ShapesAggregator
+
+There are two implementations of aggregation intended to show different
+approaches to access and manipulate data.
+
+#### ShapesAggregatorSimple
+
+This implementation shows very basic usage of the capabilities *Processor* where
+inputs and outputs are accessed by their configuration names (which also match
+the *Topic* names, and the aggregation pattern is very simple: it produces
+`Triangle` samples whose position is obtained from `Square` samples, and the
+size is obtained from the `y` coordinate obtained from `Circle` samples.
+
+The aggregation logic relies on the reception samples from the `Square`input to
+trigger data forwarding, and merge available data from the `Circle` input. Note
+that for the purpose of this example, the names of the inputs and outputs are
+hardcoded into the plug-in implementation. A recommended approach is to make
+this value as arguments to the *Processor* creation, or use an algorithm
+independent of these values, as shown in *ShapesAggregatorAdv*.
+
+#### ShapesAggregatorAdv
 
 The data processing is tied to a *leading input*, that represents the input from
 which the processor reads *new* data first. For each instance found in the data
@@ -47,19 +78,12 @@ The aggregation algorithm consists of simply an average of the values `x` and
 `y` of all inputs. The remaining elements are set equal to the values of the
 data read from the leading input.
 
-Note that for the proper behavior of this *Processor* it's required for the DDS
-inputs to be configured with a history policy that preserves only the last
-sample. This guarantees that memory doesn't grow unbounded since the processor
-will never remove the samples from the StreamReader's cache.
+**Note**
 
-This *Processor* implementation can receive the properties in table
-`TableShapesAggregatorProperties`.
-
-| Name                                     | Value        | Description                                                                                                                  |
-|------------------------------------------|--------------|------------------------------------------------------------------------------------------------------------------------------|
-|  **shapes_processor.kind**               | `aggregator` |  Indicates the plug-in to instantiate a *ShapesAggregator*. If property is not specified, it will create a *ShapesSplitter*. |
-| **shapes_processor.leading_input_index** | `<integer>`  |  Indicates the index of the leadig input. In this example, only `0` and `1` are valid values                                 |
-|                                          |              |                                                                                                                              |
+> For the proper behavior of both *Processor*\s it's required for the DDS inputs
+> to be configured with a history policy that preserves only the last sample.
+> This guarantees that memory doesn't grow unbounded since the processor will
+> never remove the samples from the StreamReader's cache.
 
 ### ShapesSplitter
 
@@ -71,10 +95,10 @@ The splitting algorithm consists of assigning:
 
 This *Processor* implementation does not receive any configuration properties.
 
-### Requirements
+## Requirements
 
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- CMake version 3.7 or higher
 - A target platform supported by *RTI* *RoutingService*.
