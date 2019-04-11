@@ -129,7 +129,7 @@ to:
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in
-[rescources/cmake/ConnextDdsAddExample.cmake](../../../../rescources/cmake/ConnextDdsAddExample.cmake).
+[resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the
