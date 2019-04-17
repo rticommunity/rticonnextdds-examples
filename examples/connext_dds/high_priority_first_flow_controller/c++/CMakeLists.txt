@@ -15,5 +15,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "hpf"
     LANG "C++"
-    DISABLE_SUBSCRIBER
 )
