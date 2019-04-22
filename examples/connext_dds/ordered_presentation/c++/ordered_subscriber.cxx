@@ -72,7 +72,7 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
     DDS_ReturnCode_t retcode = DDS_RETCODE_OK;
     for (int r = 0; r < numreaders; ++r) {
         DDS_SampleInfoSeq info_seq;
-        orderedSeq data_seq = DDS_SEQUENCE_INITIALIZER;
+        orderedSeq data_seq;
         retcode = ordered_reader[r]->take(data_seq, info_seq,
                 DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
                 DDS_ANY_INSTANCE_STATE);
@@ -148,8 +148,8 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
     int i = 0;
-    char* profile_name[] = { "ordered_Profile_subscriber_instance",
-            "ordered_Profile_subscriber_topic" };
+    char* profile_name[] = { (char*)"ordered_Profile_subscriber_instance",
+            (char*) "ordered_Profile_subscriber_topic" };
 
     /* To customize the participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
