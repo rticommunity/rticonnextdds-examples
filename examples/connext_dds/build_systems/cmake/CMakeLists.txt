@@ -18,6 +18,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "HelloWorld"
     LANG "C"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )
