@@ -607,7 +607,13 @@ function(get_all_library_variables
                     NAMES
                         ${name}
                     PATHS
-                        "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
+                        "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
+                    NO_DEFAULT_PATH
+                    NO_CMAKE_PATH
+                    NO_CMAKE_ENVIRONMENT_PATH
+                    NO_SYSTEM_ENVIRONMENT_PATH
+                    NO_CMAKE_SYSTEM_PATH
+                )
 
                 if(lib${library_name}_${build_mode}_${link_mode}-NOTFOUND)
                     set(mode_library_found FALSE)
