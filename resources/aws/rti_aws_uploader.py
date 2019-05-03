@@ -58,13 +58,14 @@ def bucket_exists(s3_resource: s3.ServiceResource, bucket_name: str) -> bool:
     try:
         s3_resource.meta.client.head_bucket(Bucket=bucket_name)
     except ClientError as e:
-        if e.response['Error']['Code'] == '404':
+        if e.response["Error"]["Code"] == "404":
             exists = False
     return exists
 
 
-def list_bucket_objects(s3_resource: s3.ServiceResource,
-                        bucket_name: str) -> None:
+def list_bucket_objects(
+    s3_resource: s3.ServiceResource, bucket_name: str
+) -> None:
     """Lists objects inside a bucket.
 
     Args:
@@ -74,18 +75,19 @@ def list_bucket_objects(s3_resource: s3.ServiceResource,
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     obj_list: List[s3.Object] = [
         s3_resource.Object(bucket_name, obj_summary.key)
-        for obj_summary in bucket.objects.all()]
+        for obj_summary in bucket.objects.all()
+    ]
     if obj_list:
-        print('Listing bucket Objects:')
+        print("Listing bucket Objects:")
         for obj in obj_list:
-            print(f'Obj ({obj.last_modified}) {obj.key}')
+            print(f"Obj ({obj.last_modified}) {obj.key}")
     else:
-        print('The bucket is empty.')
+        print("The bucket is empty.")
 
 
 def _get_directory_tree_file_path_list(
-        top_dir: Path,
-        filtered_out_subdirs: Set[str] = None) -> List[Path]:
+    top_dir: Path, filtered_out_subdirs: Set[str] = None
+) -> List[Path]:
     """Obtains directory tree structure.
 
     Args:
@@ -98,8 +100,9 @@ def _get_directory_tree_file_path_list(
     file_list: List[Path] = []
     for curr_path, _, files in os.walk(top_dir):
         dir_path = Path(curr_path).resolve()
-        if (filtered_out_subdirs and
-                filtered_out_subdirs.intersection(dir_path.parts)):
+        if filtered_out_subdirs and filtered_out_subdirs.intersection(
+            dir_path.parts
+        ):
             continue
         for curr_file in files:
             file_list.append(dir_path.joinpath(curr_file).resolve())
@@ -107,9 +110,10 @@ def _get_directory_tree_file_path_list(
 
 
 def _get_filtered_file_list(
-        top_dir: Path,
-        selected_top_items: Set[str] = None,
-        filtered_out_subdirs: Set[str] = None) -> List[Path]:
+    top_dir: Path,
+    selected_top_items: Set[str] = None,
+    filtered_out_subdirs: Set[str] = None,
+) -> List[Path]:
     """Obtains a list of files under top_dir with their own paths.
 
     Args:
@@ -126,18 +130,22 @@ def _get_filtered_file_list(
             continue
         if child.is_dir():
             file_list.extend(
-                _get_directory_tree_file_path_list(child.resolve(),
-                                                   filtered_out_subdirs))
+                _get_directory_tree_file_path_list(
+                    child.resolve(), filtered_out_subdirs
+                )
+            )
         else:
             file_list.append(child.resolve())
     return sorted(file_list)
 
 
-def upload_directory(s3_resource: s3.ServiceResource,
-                     bucket_name: str,
-                     local_dir_path: Path,
-                     selected_top_items: Set[str],
-                     filtered_out_subdirs: Set[str]) -> None:
+def upload_directory(
+    s3_resource: s3.ServiceResource,
+    bucket_name: str,
+    local_dir_path: Path,
+    selected_top_items: Set[str],
+    filtered_out_subdirs: Set[str],
+) -> None:
     """Uploads local directory tree to the bucket.
 
     Args:
@@ -149,23 +157,22 @@ def upload_directory(s3_resource: s3.ServiceResource,
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_path_filtered_list = _get_filtered_file_list(
-        local_dir_path, selected_top_items, filtered_out_subdirs)
-    print('The following files will be uploaded:')
-    print(*file_path_filtered_list, sep='\n')
-    if input('Are you sure? (yes/no): ').strip() != 'yes':
+        local_dir_path, selected_top_items, filtered_out_subdirs
+    )
+    print("The following files will be uploaded:")
+    print(*file_path_filtered_list, sep="\n")
+    if input("Are you sure? (yes/no): ").strip() != "yes":
         return
     for file_path in file_path_filtered_list:
         source: Path = file_path
         target: Path = file_path.relative_to(local_dir_path.parent)
-        print('',
-              f'source: {str(source)}',
-              f'target: {str(target)}', sep='\n')
+        print("", f"source: {str(source)}", f"target: {str(target)}", sep="\n")
         bucket.upload_file(Filename=str(source), Key=str(target))
 
 
-def remove_directory(s3_resource: s3.ServiceResource,
-                     bucket_name: str,
-                     remote_dir_name: str) -> None:
+def remove_directory(
+    s3_resource: s3.ServiceResource, bucket_name: str, remote_dir_name: str
+) -> None:
     """Deletes directory in bucket.
 
     Args:
@@ -175,15 +182,16 @@ def remove_directory(s3_resource: s3.ServiceResource,
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_key_list: List[Dict[str, str]] = [
-        {'Key': obj_summary.key}
+        {"Key": obj_summary.key}
         for obj_summary in bucket.objects.all()
-        if obj_summary.key.startswith(remote_dir_name)]
+        if obj_summary.key.startswith(remote_dir_name)
+    ]
     if file_key_list:
-        print('The following files will be removed:')
-        print(*file_key_list, sep='\n')
-        if input('Are you sure? (yes/no): ').strip() != 'yes':
+        print("The following files will be removed:")
+        print(*file_key_list, sep="\n")
+        if input("Are you sure? (yes/no): ").strip() != "yes":
             return
-        bucket.delete_objects(Delete={'Objects': file_key_list})
+        bucket.delete_objects(Delete={"Objects": file_key_list})
     else:
         print(f'Error: Folder "{remote_dir_name}" not found.')
 
@@ -192,52 +200,73 @@ def main():
     parser = argparse.ArgumentParser(
         description=__doc__,
         allow_abbrev=False,
-        formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('-b',  type=str,
-                        required=True,
-                        metavar='bucket_name',
-                        dest='bucket_name',
-                        help='sets bucket name')
-    parser.add_argument('-c',  type=Path,
-                        metavar='cfg_path',
-                        dest='cfg_path',
-                        help='sets custom config file path')
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+    )
+    parser.add_argument(
+        "-b",
+        type=str,
+        required=True,
+        metavar="bucket_name",
+        dest="bucket_name",
+        help="sets bucket name",
+    )
+    parser.add_argument(
+        "-c",
+        type=Path,
+        metavar="cfg_path",
+        dest="cfg_path",
+        help="sets custom config file path",
+    )
     mutual = parser.add_mutually_exclusive_group(required=True)
-    mutual.add_argument('-d',  type=Path,
-                        metavar='directory_path',
-                        dest='local_dir',
-                        help='uploads local directory')
-    parser.add_argument('-t',  nargs='+',
-                        metavar='item',
-                        dest='selected_top_items',
-                        help='selects top dirs and top files')
-    parser.add_argument('-f',  nargs='+',
-                        metavar='item',
-                        dest='filtered_out_subdirs',
-                        help='filters out every path which contains any of '
-                             'this items')
-    mutual.add_argument('-r',  type=str,
-                        metavar='remove_dir',
-                        dest='remote_dir_name',
-                        help='removes remote directory')
-    mutual.add_argument('-l',  action='store_true',
-                        dest='list_bucket_objects',
-                        help='list objects in the bucket')
+    mutual.add_argument(
+        "-d",
+        type=Path,
+        metavar="directory_path",
+        dest="local_dir",
+        help="uploads local directory",
+    )
+    parser.add_argument(
+        "-t",
+        nargs="+",
+        metavar="item",
+        dest="selected_top_items",
+        help="selects top dirs and top files",
+    )
+    parser.add_argument(
+        "-f",
+        nargs="+",
+        metavar="item",
+        dest="filtered_out_subdirs",
+        help="filters out every path which contains any of " "this items",
+    )
+    mutual.add_argument(
+        "-r",
+        type=str,
+        metavar="remove_dir",
+        dest="remote_dir_name",
+        help="removes remote directory",
+    )
+    mutual.add_argument(
+        "-l",
+        action="store_true",
+        dest="list_bucket_objects",
+        help="list objects in the bucket",
+    )
     args = parser.parse_args()
 
     if args.cfg_path:
         cfg_path: Path = args.cfg_path.resolve()
         if not cfg_path.is_file():
             sys.exit(f'Error: Path "{cfg_path}" does not exist.')
-        os.environ['AWS_SHARED_CREDENTIALS_FILE'] = str(cfg_path)
+        os.environ["AWS_SHARED_CREDENTIALS_FILE"] = str(cfg_path)
 
-    s3_resource: s3.ServiceResource = boto3.resource('s3')
+    s3_resource: s3.ServiceResource = boto3.resource("s3")
 
     try:
         if not bucket_exists(s3_resource, args.bucket_name):
             sys.exit(f'Error: Bucket "{args.bucket_name}" does not exist.')
     except NoCredentialsError:
-        sys.exit('Error: Credentials not found.')
+        sys.exit("Error: Credentials not found.")
 
     if args.list_bucket_objects:
         list_bucket_objects(s3_resource, args.bucket_name)
@@ -255,12 +284,16 @@ def main():
         if args.filtered_out_subdirs:
             filtered_out_subdirs = set(args.filtered_out_subdirs)
 
-        upload_directory(s3_resource, args.bucket_name, local_dir,
-                         selected_top_items,
-                         filtered_out_subdirs)
+        upload_directory(
+            s3_resource,
+            args.bucket_name,
+            local_dir,
+            selected_top_items,
+            filtered_out_subdirs,
+        )
     else:
         remove_directory(s3_resource, args.bucket_name, args.remote_dir_name)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
