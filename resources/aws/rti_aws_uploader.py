@@ -161,8 +161,6 @@ def upload_directory(
     )
     print("The following files will be uploaded:")
     print(*file_path_filtered_list, sep="\n")
-    if input("Are you sure? (yes/no): ").strip() != "yes":
-        return
     for file_path in file_path_filtered_list:
         source: Path = file_path
         target: Path = file_path.relative_to(local_dir_path.parent)
