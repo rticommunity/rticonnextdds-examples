@@ -35,43 +35,46 @@ import boto3
 import argparse
 
 from pathlib import Path
-from typing import List, Set
+from typing import List, Set, Dict
+from boto3_type_annotations import s3
 from botocore.client import ClientError
 from botocore.exceptions import NoCredentialsError
 
 
-def bucket_exists(s3, bucket_name: str):
+def bucket_exists(s3_resource: s3.ServiceResource, bucket_name: str) -> bool:
     """Checks if bucket exists.
 
     Args:
-        s3 (boto3.resource('s3')): s3 resource to check the bucket from.
-        bucket_name (str): Selected bucket name to check.
+        s3_resource: s3 resource to check the bucket from.
+        bucket_name: Selected bucket name to check.
 
     Returns:
-        exists (bool): True if the bucket exists.
+        exists: True if the bucket exists.
 
     Raises:
         NoCredentialsError: If credentials are not found.
     """
     exists: bool = True
     try:
-        s3.meta.client.head_bucket(Bucket=bucket_name)
+        s3_resource.meta.client.head_bucket(Bucket=bucket_name)
     except ClientError as e:
         if e.response['Error']['Code'] == '404':
             exists = False
     return exists
 
 
-def list_bucket_objects(s3, bucket_name: str) -> None:
+def list_bucket_objects(s3_resource: s3.ServiceResource,
+                        bucket_name: str) -> None:
     """Lists objects inside a bucket.
 
     Args:
-        s3 (boto3.resource('s3')): s3 resource.
-        bucket_name (str): bucket name from which objects will be listed.
+        s3_resource: s3 resource.
+        bucket_name: bucket name from which objects will be listed.
     """
-    bucket = s3.Bucket(bucket_name)
-    obj_list = [s3.Object(bucket_name, obj_summary.key)
-                for obj_summary in bucket.objects.all()]
+    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
+    obj_list: List[s3.Object] = [
+        s3_resource.Object(bucket_name, obj_summary.key)
+        for obj_summary in bucket.objects.all()]
     if obj_list:
         print('Listing bucket Objects:')
         for obj in obj_list:
@@ -81,16 +84,16 @@ def list_bucket_objects(s3, bucket_name: str) -> None:
 
 
 def _get_directory_tree_file_path_list(
-        top_dir: Path, filtered_out_subdirs: Set[str] = None) -> List[Path]:
+        top_dir: Path,
+        filtered_out_subdirs: Set[str] = None) -> List[Path]:
     """Obtains directory tree structure.
 
     Args:
-        top_dir (Path): top directory path.
-        filtered_out_subdirs (Set[str]): filtered out subdir list
-            (default=None).
+        top_dir: top directory path.
+        filtered_out_subdirs: filtered out subdir list (default=None).
 
     Returns:
-        file_list (List[Path]): all file paths of the tree.
+        file_list: all file paths of the tree.
     """
     file_list: List[Path] = []
     for curr_path, _, files in os.walk(top_dir):
@@ -110,10 +113,9 @@ def _get_filtered_file_list(
     """Obtains a list of files under top_dir with their own paths.
 
     Args:
-        top_dir (Path): top directory path.
-        selected_top_items (Set[Path]): selected top items list (default=None).
-        filtered_out_subdirs (Set[Path]): filtered out subdir list
-            (default=None).
+        top_dir: top directory path.
+        selected_top_items: selected top items list (default=None).
+        filtered_out_subdirs: filtered out subdir list (default=None).
 
     Returns:
         Sorted file path list.
@@ -131,7 +133,7 @@ def _get_filtered_file_list(
     return sorted(file_list)
 
 
-def upload_directory(s3,
+def upload_directory(s3_resource: s3.ServiceResource,
                      bucket_name: str,
                      local_dir_path: Path,
                      selected_top_items: Set[str],
@@ -139,14 +141,13 @@ def upload_directory(s3,
     """Uploads local directory tree to the bucket.
 
     Args:
-        s3 (boto3.resource('s3')): s3 resource.
-        bucket_name (str): bucket name.
-        local_dir_path (Path): directory path to upload.
-        selected_top_items (Set[Path]): selected top items list (default=None).
-        filtered_out_subdirs (Set[Path]): filtered out subdir list
-            (default=None).
+        s3_resource: s3 resource.
+        bucket_name: bucket name.
+        local_dir_path: directory path to upload.
+        selected_top_items: selected top items list (default=None).
+        filtered_out_subdirs: filtered out subdir list (default=None).
     """
-    bucket = s3.Bucket(bucket_name)
+    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_path_filtered_list = _get_filtered_file_list(
         local_dir_path, selected_top_items, filtered_out_subdirs)
     print('The following files will be uploaded:')
@@ -154,28 +155,29 @@ def upload_directory(s3,
     if input('Are you sure? (yes/no): ').strip() != 'yes':
         return
     for file_path in file_path_filtered_list:
-        source = file_path
-        target = file_path.relative_to(local_dir_path.parent)
+        source: Path = file_path
+        target: Path = file_path.relative_to(local_dir_path.parent)
         print('',
               f'source: {str(source)}',
               f'target: {str(target)}', sep='\n')
         bucket.upload_file(Filename=str(source), Key=str(target))
 
 
-def remove_directory(s3,
+def remove_directory(s3_resource: s3.ServiceResource,
                      bucket_name: str,
                      remote_dir_name: str) -> None:
     """Deletes directory in bucket.
 
     Args:
-        s3 (boto3.resource('s3')): s3 resource.
-        bucket_name (str): bucket name.
-        remote_dir_name (str): remote directory name to delete.
+        s3_resource: s3 resource.
+        bucket_name: bucket name.
+        remote_dir_name: remote directory name to delete.
     """
-    bucket = s3.Bucket(bucket_name)
-    file_key_list = [{'Key': obj_summary.key}
-                     for obj_summary in bucket.objects.all()
-                     if obj_summary.key.startswith(remote_dir_name)]
+    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
+    file_key_list: List[Dict[str, str]] = [
+        {'Key': obj_summary.key}
+        for obj_summary in bucket.objects.all()
+        if obj_summary.key.startswith(remote_dir_name)]
     if file_key_list:
         print('The following files will be removed:')
         print(*file_key_list, sep='\n')
@@ -224,23 +226,23 @@ def main():
     args = parser.parse_args()
 
     if args.cfg_path:
-        cfg_path = args.cfg_path.resolve()
+        cfg_path: Path = args.cfg_path.resolve()
         if not cfg_path.is_file():
             sys.exit(f'Error: Path "{cfg_path}" does not exist.')
         os.environ['AWS_SHARED_CREDENTIALS_FILE'] = str(cfg_path)
 
-    s3 = boto3.resource('s3')
+    s3_resource: s3.ServiceResource = boto3.resource('s3')
 
     try:
-        if not bucket_exists(s3, args.bucket_name):
+        if not bucket_exists(s3_resource, args.bucket_name):
             sys.exit(f'Error: Bucket "{args.bucket_name}" does not exist.')
     except NoCredentialsError:
         sys.exit('Error: Credentials not found.')
 
     if args.list_bucket_objects:
-        list_bucket_objects(s3, args.bucket_name)
+        list_bucket_objects(s3_resource, args.bucket_name)
     elif args.local_dir:
-        local_dir = args.local_dir.resolve()
+        local_dir: Path = args.local_dir.resolve()
 
         if not local_dir.exists():
             sys.exit(f'Error: Path "{local_dir}" does not exist.')
@@ -253,11 +255,11 @@ def main():
         if args.filtered_out_subdirs:
             filtered_out_subdirs = set(args.filtered_out_subdirs)
 
-        upload_directory(s3, args.bucket_name, local_dir,
+        upload_directory(s3_resource, args.bucket_name, local_dir,
                          selected_top_items,
                          filtered_out_subdirs)
     else:
-        remove_directory(s3, args.bucket_name, args.remote_dir_name)
+        remove_directory(s3_resource, args.bucket_name, args.remote_dir_name)
 
 
 if __name__ == '__main__':
