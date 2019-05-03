@@ -86,13 +86,13 @@ def list_bucket_objects(
 
 
 def _get_directory_tree_file_path_list(
-    top_dir: Path, filtered_out_subdirs: Set[str] = None
+    top_dir: Path, filtered_out_items: Set[str] = None
 ) -> List[Path]:
     """Obtains directory tree structure.
 
     Args:
         top_dir: top directory path.
-        filtered_out_subdirs: filtered out subdir list (default=None).
+        filtered_out_items: filtered out subdir list (default=None).
 
     Returns:
         file_list: all file paths of the tree.
@@ -100,7 +100,7 @@ def _get_directory_tree_file_path_list(
     file_list: List[Path] = []
     for curr_path, _, files in os.walk(top_dir):
         dir_path = Path(curr_path).resolve()
-        if filtered_out_subdirs and filtered_out_subdirs.intersection(
+        if filtered_out_items and filtered_out_items.intersection(
             dir_path.parts
         ):
             continue
@@ -112,14 +112,14 @@ def _get_directory_tree_file_path_list(
 def _get_filtered_file_list(
     top_dir: Path,
     selected_top_items: Set[str] = None,
-    filtered_out_subdirs: Set[str] = None,
+    filtered_out_items: Set[str] = None,
 ) -> List[Path]:
     """Obtains a list of files under top_dir with their own paths.
 
     Args:
         top_dir: top directory path.
         selected_top_items: selected top items list (default=None).
-        filtered_out_subdirs: filtered out subdir list (default=None).
+        filtered_out_items: filtered out subdir list (default=None).
 
     Returns:
         Sorted file path list.
@@ -131,7 +131,7 @@ def _get_filtered_file_list(
         if child.is_dir():
             file_list.extend(
                 _get_directory_tree_file_path_list(
-                    child.resolve(), filtered_out_subdirs
+                    child.resolve(), filtered_out_items
                 )
             )
         else:
@@ -144,7 +144,7 @@ def upload_directory(
     bucket_name: str,
     local_dir_path: Path,
     selected_top_items: Set[str],
-    filtered_out_subdirs: Set[str],
+    filtered_out_items: Set[str],
 ) -> None:
     """Uploads local directory tree to the bucket.
 
@@ -153,11 +153,11 @@ def upload_directory(
         bucket_name: bucket name.
         local_dir_path: directory path to upload.
         selected_top_items: selected top items list (default=None).
-        filtered_out_subdirs: filtered out subdir list (default=None).
+        filtered_out_items: filtered out subdir list (default=None).
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_path_filtered_list = _get_filtered_file_list(
-        local_dir_path, selected_top_items, filtered_out_subdirs
+        local_dir_path, selected_top_items, filtered_out_items
     )
     print("The following files will be uploaded:")
     print(*file_path_filtered_list, sep="\n")
@@ -204,61 +204,68 @@ def main():
     )
     parser.add_argument(
         "-b",
+        "--bucket",
         type=str,
         required=True,
-        metavar="bucket_name",
+        metavar="name",
         dest="bucket_name",
         help="sets bucket name",
     )
     parser.add_argument(
         "-c",
+        "--config",
         type=Path,
-        metavar="cfg_path",
-        dest="cfg_path",
+        metavar="path",
+        dest="config_path",
         help="sets custom config file path",
     )
     mutual = parser.add_mutually_exclusive_group(required=True)
     mutual.add_argument(
-        "-d",
+        "-u",
+        "--upload-directory",
         type=Path,
-        metavar="directory_path",
+        metavar="path",
         dest="local_dir",
         help="uploads local directory",
     )
     parser.add_argument(
         "-t",
+        "--selected-top-items",
         nargs="+",
         metavar="item",
         dest="selected_top_items",
-        help="selects top dirs and top files",
+        help="selects top dirs and files",
     )
     parser.add_argument(
         "-f",
+        "--filtered-out-items",
         nargs="+",
         metavar="item",
-        dest="filtered_out_subdirs",
-        help="filters out every path which contains any of " "this items",
+        dest="filtered_out_items",
+        help="filters out every path which contains any of this items",
     )
     mutual.add_argument(
         "-r",
+        "--remove-directory",
         type=str,
-        metavar="remove_dir",
+        metavar="name",
         dest="remote_dir_name",
         help="removes remote directory",
     )
     mutual.add_argument(
         "-l",
+        "--list-objects",
         action="store_true",
         dest="list_bucket_objects",
         help="list objects in the bucket",
     )
     args = parser.parse_args()
 
-    if args.cfg_path:
-        cfg_path: Path = args.cfg_path.resolve()
-        if not cfg_path.is_file():
-            sys.exit(f'Error: Path "{cfg_path}" does not exist.')
-        os.environ["AWS_SHARED_CREDENTIALS_FILE"] = str(cfg_path)
+    if args.config_path:
+        config_path: Path = args.config_path.resolve()
+        if not config_path.is_file():
+            sys.exit(f'Error: Path "{config_path}" does not exist.')
+        os.environ["AWS_SHARED_CREDENTIALS_FILE"] = str(config_path)
 
     s3_resource: s3.ServiceResource = boto3.resource("s3")
 
@@ -280,16 +287,16 @@ def main():
         if args.selected_top_items:
             selected_top_items = set(args.selected_top_items)
 
-        filtered_out_subdirs: Set[str] = None
-        if args.filtered_out_subdirs:
-            filtered_out_subdirs = set(args.filtered_out_subdirs)
+        filtered_out_items: Set[str] = None
+        if args.filtered_out_items:
+            filtered_out_items = set(args.filtered_out_items)
 
         upload_directory(
             s3_resource,
             args.bucket_name,
             local_dir,
             selected_top_items,
-            filtered_out_subdirs,
+            filtered_out_items,
         )
     else:
         remove_directory(s3_resource, args.bucket_name, args.remote_dir_name)
