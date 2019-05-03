@@ -32,11 +32,12 @@ Examples:
 import os
 import sys
 import boto3
-import botocore
 import argparse
 
 from pathlib import Path
 from typing import List, Set
+from botocore.client import ClientError
+from botocore.exceptions import NoCredentialsError
 
 
 def bucket_exists(s3, bucket_name: str):
@@ -48,20 +49,17 @@ def bucket_exists(s3, bucket_name: str):
 
     Returns:
         exists (bool): True if the bucket exists.
-        error (str): Error message
+
+    Raises:
+        NoCredentialsError: If credentials are not found.
     """
     exists: bool = True
-    error: str = ''
     try:
         s3.meta.client.head_bucket(Bucket=bucket_name)
-    except botocore.client.ClientError as e:
+    except ClientError as e:
         if e.response['Error']['Code'] == '404':
             exists = False
-            error = f'Bucket {bucket_name} not found.'
-    except botocore.exceptions.NoCredentialsError:
-        exists = False
-        error = 'Credentials not found.'
-    return exists, error
+    return exists
 
 
 def list_bucket_objects(s3, bucket_name: str) -> None:
@@ -233,9 +231,11 @@ def main():
 
     s3 = boto3.resource('s3')
 
-    exists, error = bucket_exists(s3, args.bucket_name)
-    if not exists:
-        sys.exit(f'Error: {error}')
+    try:
+        if not bucket_exists(s3, args.bucket_name):
+            sys.exit(f'Error: Bucket "{args.bucket_name}" does not exist.')
+    except NoCredentialsError:
+        sys.exit('Error: Credentials not found.')
 
     if args.list_bucket_objects:
         list_bucket_objects(s3, args.bucket_name)
