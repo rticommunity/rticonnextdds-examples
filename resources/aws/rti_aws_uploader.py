@@ -32,6 +32,7 @@ Examples:
 import os
 import sys
 import boto3
+import logging
 import argparse
 
 from pathlib import Path
@@ -41,25 +42,78 @@ from botocore.client import ClientError
 from botocore.exceptions import NoCredentialsError
 
 
+SCRIPT_PATH: Path = Path(__file__).resolve()
+error_logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}_error")
+error_logger.setLevel(logging.ERROR)
+
+general_logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}")
+general_logger.setLevel(logging.DEBUG)
+
+fh = logging.FileHandler(filename=SCRIPT_PATH.with_suffix(".log"))
+fh.setLevel(logging.DEBUG)
+fh.setFormatter(
+    logging.Formatter(
+        "[%(asctime)s] [%(levelname)s]: %(message)s", "%y/%m/%d-%H:%M"
+    )
+)
+error_logger.addHandler(fh)
+general_logger.addHandler(fh)
+
+sh = logging.StreamHandler()
+sh.setLevel(logging.INFO)
+sh.setFormatter(
+    logging.Formatter("[%(levelname)s]: %(message)s", "%y/%m/%d-%H:%M")
+)
+general_logger.addHandler(sh)
+
+
+class BucketNotFoundError(Exception):
+    """Raised when the bucket does not exists."""
+
+    pass
+
+
+class BucketForbiddenError(Exception):
+    """Raised when does not have permissions to access the bucket."""
+
+    pass
+
+
 def bucket_exists(s3_resource: s3.ServiceResource, bucket_name: str) -> bool:
     """Checks if bucket exists.
 
     Args:
-        s3_resource: s3 resource to check the bucket from.
+        s3_resource: S3 resource to check the bucket from.
         bucket_name: Selected bucket name to check.
 
     Returns:
         exists: True if the bucket exists.
 
     Raises:
+        BucketNotFoundError: If the bucket does not exist.
+        BucketForbiddenError: If do not have permissions to access the bucket.
         NoCredentialsError: If credentials are not found.
     """
     exists: bool = True
     try:
         s3_resource.meta.client.head_bucket(Bucket=bucket_name)
     except ClientError as e:
-        if e.response["Error"]["Code"] == "404":
-            exists = False
+        error_code = e.response["Error"]["Code"]
+        if error_code == "403":
+            forbidden_error = BucketForbiddenError(
+                f'Do not have permissions to access "{bucket_name}" bucket.'
+            )
+            error_logger.exception(e)
+            raise forbidden_error
+        elif error_code == "404":
+            notfound_error = BucketNotFoundError(
+                f'Bucket "{bucket_name}" does not exisṫ.'
+            )
+            error_logger.exception(e)
+            raise notfound_error
+    except NoCredentialsError as e:
+        error_logger.exception(e)
+        raise
     return exists
 
 
@@ -69,8 +123,8 @@ def list_bucket_objects(
     """Lists objects inside a bucket.
 
     Args:
-        s3_resource: s3 resource.
-        bucket_name: bucket name from which objects will be listed.
+        s3_resource: S3 resource.
+        bucket_name: Bucket name from which objects will be listed.
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     obj_list: List[s3.Object] = [
@@ -78,11 +132,11 @@ def list_bucket_objects(
         for obj_summary in bucket.objects.all()
     ]
     if obj_list:
-        print("Listing bucket Objects:")
+        general_logger.info("Listing bucket Objects:")
         for obj in obj_list:
-            print(f"Obj ({obj.last_modified}) {obj.key}")
+            general_logger.info(f"Obj ({obj.last_modified}) {obj.key}")
     else:
-        print("The bucket is empty.")
+        general_logger.info("The bucket is empty.")
 
 
 def _get_directory_tree_file_path_list(
@@ -91,11 +145,11 @@ def _get_directory_tree_file_path_list(
     """Obtains directory tree structure.
 
     Args:
-        top_dir: top directory path.
-        filtered_out_items: filtered out subdir list (default=None).
+        top_dir: Top directory path.
+        filtered_out_items: Filtered out subdir list (default=None).
 
     Returns:
-        file_list: all file paths of the tree.
+        file_list: All file paths of the tree.
     """
     file_list: List[Path] = []
     for curr_path, _, files in os.walk(top_dir):
@@ -117,9 +171,9 @@ def _get_filtered_file_list(
     """Obtains a list of files under top_dir with their own paths.
 
     Args:
-        top_dir: top directory path.
-        selected_top_items: selected top items list (default=None).
-        filtered_out_items: filtered out subdir list (default=None).
+        top_dir: Top directory path.
+        selected_top_items: Selected top items list (default=None).
+        filtered_out_items: Filtered out subdir list (default=None).
 
     Returns:
         Sorted file path list.
@@ -149,23 +203,27 @@ def upload_directory(
     """Uploads local directory tree to the bucket.
 
     Args:
-        s3_resource: s3 resource.
-        bucket_name: bucket name.
-        local_dir_path: directory path to upload.
-        selected_top_items: selected top items list (default=None).
-        filtered_out_items: filtered out subdir list (default=None).
+        s3_resource: S3 resource.
+        bucket_name: Bucket name.
+        local_dir_path: Directory path to upload.
+        selected_top_items: Selected top items list (default=None).
+        filtered_out_items: Filtered out subdir list (default=None).
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_path_filtered_list = _get_filtered_file_list(
         local_dir_path, selected_top_items, filtered_out_items
     )
-    print("The following files will be uploaded:")
-    print(*file_path_filtered_list, sep="\n")
+    general_logger.info("Starting upload...")
+    general_logger.debug("The following files will be uploaded:")
+    for path in file_path_filtered_list:
+        general_logger.debug(path)
     for file_path in file_path_filtered_list:
         source: Path = file_path
         target: Path = file_path.relative_to(local_dir_path.parent)
-        print("", f"source: {str(source)}", f"target: {str(target)}", sep="\n")
+        general_logger.debug(f"source: {str(source)}")
+        general_logger.debug(f"target: {str(target)}")
         bucket.upload_file(Filename=str(source), Key=str(target))
+    general_logger.info("Finished.")
 
 
 def remove_directory(
@@ -174,9 +232,9 @@ def remove_directory(
     """Deletes directory in bucket.
 
     Args:
-        s3_resource: s3 resource.
-        bucket_name: bucket name.
-        remote_dir_name: remote directory name to delete.
+        s3_resource: S3 resource.
+        bucket_name: Bucket name.
+        remote_dir_name: Remote directory name to delete.
     """
     bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
     file_key_list: List[Dict[str, str]] = [
@@ -185,13 +243,16 @@ def remove_directory(
         if obj_summary.key.startswith(remote_dir_name)
     ]
     if file_key_list:
-        print("The following files will be removed:")
-        print(*file_key_list, sep="\n")
+        general_logger.info("Removing selected folder...")
+        general_logger.warning("The following files will be removed:")
+        for obj in file_key_list:
+            general_logger.warning(obj["Key"])
         if input("Are you sure? (yes/no): ").strip() != "yes":
             return
         bucket.delete_objects(Delete={"Objects": file_key_list})
+        general_logger.info("Finished.")
     else:
-        print(f'Error: Folder "{remote_dir_name}" not found.')
+        general_logger.error(f'Error: Folder "{remote_dir_name}" not found.')
 
 
 def main():
@@ -270,8 +331,12 @@ def main():
     try:
         if not bucket_exists(s3_resource, args.bucket_name):
             sys.exit(f'Error: Bucket "{args.bucket_name}" does not exist.')
-    except NoCredentialsError:
-        sys.exit("Error: Credentials not found.")
+    except BucketNotFoundError as e:
+        sys.exit(f"Error: {e}")
+    except BucketForbiddenError as e:
+        sys.exit(f"Error: {e}")
+    except NoCredentialsError as e:
+        sys.exit(f"Error: {e}")
 
     if args.list_bucket_objects:
         list_bucket_objects(s3_resource, args.bucket_name)
