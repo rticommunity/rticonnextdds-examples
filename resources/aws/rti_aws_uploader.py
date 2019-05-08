@@ -43,11 +43,9 @@ from botocore.exceptions import NoCredentialsError
 
 
 SCRIPT_PATH: Path = Path(__file__).resolve()
-error_logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}_error")
-error_logger.setLevel(logging.ERROR)
 
-general_logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}")
-general_logger.setLevel(logging.DEBUG)
+logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}")
+logger.setLevel(logging.DEBUG)
 
 fh = logging.FileHandler(filename=SCRIPT_PATH.with_suffix(".log"))
 fh.setLevel(logging.DEBUG)
@@ -56,15 +54,14 @@ fh.setFormatter(
         "[%(asctime)s] [%(levelname)s]: %(message)s", "%y/%m/%d-%H:%M"
     )
 )
-error_logger.addHandler(fh)
-general_logger.addHandler(fh)
+logger.addHandler(fh)
 
 sh = logging.StreamHandler()
 sh.setLevel(logging.INFO)
 sh.setFormatter(
     logging.Formatter("[%(levelname)s]: %(message)s", "%y/%m/%d-%H:%M")
 )
-general_logger.addHandler(sh)
+logger.addHandler(sh)
 
 
 class BucketNotFoundError(Exception):
@@ -103,16 +100,16 @@ def bucket_exists(s3_resource: s3.ServiceResource, bucket_name: str) -> bool:
             forbidden_error = BucketForbiddenError(
                 f'Do not have permissions to access "{bucket_name}" bucket.'
             )
-            error_logger.exception(e)
+            logger.debug(e, exc_info=True)
             raise forbidden_error
         elif error_code == "404":
             notfound_error = BucketNotFoundError(
                 f'Bucket "{bucket_name}" does not exisṫ.'
             )
-            error_logger.exception(e)
+            logger.debug(e, exc_info=True)
             raise notfound_error
     except NoCredentialsError as e:
-        error_logger.exception(e)
+        logger.debug(e, exc_info=True)
         raise
     return exists
 
@@ -132,11 +129,11 @@ def list_bucket_objects(
         for obj_summary in bucket.objects.all()
     ]
     if obj_list:
-        general_logger.info("Listing bucket Objects:")
+        logger.info("Listing bucket Objects:")
         for obj in obj_list:
-            general_logger.info(f"Obj ({obj.last_modified}) {obj.key}")
+            logger.info(f"Obj ({obj.last_modified}) {obj.key}")
     else:
-        general_logger.info("The bucket is empty.")
+        logger.info("The bucket is empty.")
 
 
 def _get_directory_tree_file_path_list(
@@ -213,17 +210,17 @@ def upload_directory(
     file_path_filtered_list = _get_filtered_file_list(
         local_dir_path, selected_top_items, filtered_out_items
     )
-    general_logger.info("Starting upload...")
-    general_logger.debug("The following files will be uploaded:")
+    logger.info("Starting upload...")
+    logger.debug("The following files will be uploaded:")
     for path in file_path_filtered_list:
-        general_logger.debug(path)
+        logger.debug(path)
     for file_path in file_path_filtered_list:
         source: Path = file_path
         target: Path = file_path.relative_to(local_dir_path.parent)
-        general_logger.debug(f"source: {str(source)}")
-        general_logger.debug(f"target: {str(target)}")
+        logger.debug(f"source: {str(source)}")
+        logger.debug(f"target: {str(target)}")
         bucket.upload_file(Filename=str(source), Key=str(target))
-    general_logger.info("Finished.")
+    logger.info("Finished.")
 
 
 def remove_directory(
@@ -243,16 +240,16 @@ def remove_directory(
         if obj_summary.key.startswith(remote_dir_name)
     ]
     if file_key_list:
-        general_logger.info("Removing selected folder...")
-        general_logger.warning("The following files will be removed:")
+        logger.info("Removing selected folder...")
+        logger.warning("The following files will be removed:")
         for obj in file_key_list:
-            general_logger.warning(obj["Key"])
+            logger.warning(obj["Key"])
         if input("Are you sure? (yes/no): ").strip() != "yes":
             return
         bucket.delete_objects(Delete={"Objects": file_key_list})
-        general_logger.info("Finished.")
+        logger.info("Finished.")
     else:
-        general_logger.error(f'Error: Folder "{remote_dir_name}" not found.')
+        logger.error(f'Error: Folder "{remote_dir_name}" not found.')
 
 
 def main():
