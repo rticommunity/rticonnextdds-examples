@@ -69,10 +69,10 @@
 
 /* No listener is needed; we poll readers in this function */
 void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
-    DDS_SampleInfoSeq info_seq;
-    orderedSeq data_seq;
     DDS_ReturnCode_t retcode = DDS_RETCODE_OK;
     for (int r = 0; r < numreaders; ++r) {
+        DDS_SampleInfoSeq info_seq;
+        orderedSeq data_seq;
         retcode = ordered_reader[r]->take(data_seq, info_seq,
                 DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
                 DDS_ANY_INSTANCE_STATE);
@@ -101,9 +101,6 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
         if (retcode != DDS_RETCODE_OK) {
             printf("return loan error %d\n", retcode);
         }
-
-        info_seq.length(0);
-        data_seq.length(0);
     }
 }
 
@@ -151,10 +148,10 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
     int i = 0;
-    char* profile_name[] = { "ordered_Profile_subscriber_instance",
-            "ordered_Profile_subscriber_topic" };
+    char* profile_name[] = { (char*)"ordered_Profile_subscriber_instance",
+            (char*) "ordered_Profile_subscriber_topic" };
 
-    /* To customize the participant QoS, use 
+    /* To customize the participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(domainId,
             DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
@@ -174,7 +171,7 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize the topic QoS, use 
+    /* To customize the topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     topic = participant->create_topic("Example ordered", type_name,
             DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
@@ -299,7 +296,7 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
                 receive_period.sec);
         NDDSUtility::sleep(receive_period);
 
-        poll_data(ordered_reader, 2);
+        poll_data(ordered_reader, MAX_SUBSCRIBERS);
     }
 
     /* Delete all entities */
@@ -367,4 +364,3 @@ extern "C" void usrAppInit ()
 
 }
 #endif
-

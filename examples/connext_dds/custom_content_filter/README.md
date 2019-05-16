@@ -1,6 +1,7 @@
 # Example Code: Custom Content Filter
 
 ## Concept
+
 *Custom Content Filters* are similar to the *Content Filtered Topic* (see
 example. The main difference is that Custom Content Filters allow the use of
 non-relational operations between topic members, i.e. a computation involving
@@ -11,29 +12,31 @@ fulfill an expression.
 When creating your custom content filter, you can use two kinds of filter
 expressions:
 
-- **SQL sentence**: see the User Manual's section *SQL Filter Expression
-  Notation* for further details.
-- **String-match filter**: see the User Manual's section *STRINGMATCH Filter
-  Expression Notation* for further details.
+-   **SQL sentence**: see the User Manual's section *SQL Filter Expression
+    Notation* for further details.
+
+-   **String-match filter**: see the User Manual's section *STRINGMATCH Filter
+    Expression Notation* for further details.
 
 To create a Custom Content Filter we need to create three functions for the
 three stages that it needs.
 
-- **Compile function**: compiles a filter expression and parameters. *Connext*
-  will call this function when a *ContentFilteredTopic* is created and when
-  the filter parameters are changed. This parameter cannot be NULL.
-  See *Compile Function* section in the User's Manual.
+-   **Compile function**: compiles a filter expression and parameters. *Connext*
+    will call this function when a *ContentFilteredTopic* is created and when
+    the filter parameters are changed. This parameter cannot be NULL. See
+    *Compile Function* section in the User's Manual.
 
-- **Evaluate function**: will be called by *Connext* each time a sample is
-  received. Its purpose is to evaluate the sample based on the filter. Its
-  parameter cannot be NULL. See *Evaluate Function* section in the User's
-  Manual.
+-   **Evaluate function**: will be called by *Connext* each time a sample is
+    received. Its purpose is to evaluate the sample based on the filter. Its
+    parameter cannot be NULL. See *Evaluate Function* section in the User's
+    Manual.
 
-- **Finalize function**: will be called by *Connext* when an instance of the
-  custom content filter is no longer needed. Its parameter may be NULL. See
-  *Finalize Function* section in the User's Manual.
+-   **Finalize function**: will be called by *Connext* when an instance of the
+    custom content filter is no longer needed. Its parameter may be NULL. See
+    *Finalize Function* section in the User's Manual.
 
 ## Example Description
+
 Our Custom Content Filter uses a *STRINGMATCH-based* filter. It takes the
 expression `%0 %1 x`, where `%0` is an integer, `%1` is `divides` or
 `greater-than`, and `x` is the field we are comparing in the sample. The Filter

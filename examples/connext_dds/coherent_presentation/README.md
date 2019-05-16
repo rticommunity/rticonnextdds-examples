@@ -1,6 +1,7 @@
 # Example Code: Coherent Presentation
 
 ## Concept
+
 A publishing application can request that a set of data-sample changes be
 propagated in such a way that they are interpreted at the receivers' side as a
 cohesive set of modifications. In this case, the receiver will only be able to
@@ -14,6 +15,7 @@ reader see both together (otherwise, it may erroneously interpret that the
 aircraft is on a collision course).
 
 ## Example Description
+
 This example illustrates how to use coherency QoS to force writes to be grouped
 on the receiving side. Suppose the reader is tracking the state of an object
 with many fields. If changes to fields occur relatively infrequently, it is
