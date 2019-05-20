@@ -1,0 +1,146 @@
+#!/usr/bin/env python3
+#
+# (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
+# grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no
+# warranty of any type, including any warranty for fitness for any purpose. RTI
+# is under no obligation to maintain or support the Software.  RTI shall not be
+# liable for any incidental or consequential damages arising out of the use or
+# inability to use the software.
+"""Ensure correct format of commited files.
+
+This module performs linting for staged files and exit on error if any linter
+fail. Currently supporting ``clang-format`` and ``markdownlint``.
+"""
+import sys
+import subprocess
+
+from typing import List, Set
+from pathlib import Path
+from subprocess import CalledProcessError, CompletedProcess
+
+
+class FormatError(Exception):
+    pass
+
+
+def get_staged_files(repo_root: Path) -> List[str]:
+    """Obtains staged files.
+
+    Args:
+        repo_root: Repository top folder.
+
+    Returns:
+        List of staged files.
+    """
+    cached_files_cmd: List[str] = [
+        "git",
+        "diff-index",
+        "--name-only",
+        "--cached",
+        "HEAD",
+    ]
+    changed_files_proc: CompletedProcess = subprocess.run(
+        cached_files_cmd, capture_output=True, text=True, cwd=repo_root
+    )
+    changed_files_proc.stdout.split("\n")[:-1]
+
+    return changed_files_proc.stdout.split("\n")[:-1]
+
+
+def filter_files(
+    file_list: List[str], extensions: Set[str] = set()
+) -> List[str]:
+    """Filter files with selected extensions.
+
+    Args:
+        file_list: List of files.
+        extensions: Set of extensions.
+
+    Returns:
+        Filtered list of files.
+    """
+    return list(filter(lambda x: Path(x).suffix in extensions, file_list))
+
+
+def perform_linting(
+    repo_root: Path, command: List[str], file_list: List[str]
+) -> int:
+    """Performs ``command`` linter to ``files``.
+
+    Args:
+        repo_root: Repository top folder.
+        command: List of commands to run the linter.
+        file_list: List of files that will be lintered.
+
+    Returns:
+        Return code of the lint.
+
+    Raises:
+        FormatError: When the linter outputs format errors.
+    """
+    cmd: List[str] = command + file_list
+    lint_output: CompletedProcess = subprocess.run(
+        cmd,
+        text=True,
+        cwd=repo_root,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.STDOUT,
+    )
+
+    if lint_output.returncode != 0 or len(lint_output.stdout.split("\n")) > 1:
+        error_output = lint_output.stdout.rstrip()
+        raise FormatError("Wrong format:\n{}".format(error_output))
+
+    return lint_output.returncode
+
+
+if __name__ == "__main__":
+    script_path = Path(__file__).resolve()
+
+    if script_path.parent.parts[-2:] != (".git", "hooks"):
+        sys.exit("Please, copy this script in .git/hooks/ folder.")
+
+    repo_root_cmd = ["git", "rev-parse", "--show-toplevel"]
+    try:
+        project_top_level = subprocess.run(
+            repo_root_cmd,
+            capture_output=True,
+            cwd=script_path.parent,
+            check=True,
+            text=True,
+        ).stdout
+        repo_root = Path(project_top_level).resolve()
+    except CalledProcessError:
+        sys.exit("Not a git repository.")
+
+    exit_error = False
+    file_list = get_staged_files(repo_root)
+
+    if not file_list:
+        sys.exit(0)
+
+    # Markdownlint
+    markdownlint_suffix = {".md"}
+    markdownlint_cmd = ["markdownlint"]
+    filtered_file_list = filter_files(file_list, markdownlint_suffix)
+
+    try:
+        perform_linting(repo_root, markdownlint_cmd, filtered_file_list)
+    except FormatError as err:
+        exit_error = True
+        print(err, file=sys.stderr)
+
+    # Clang-format
+    clang_format_suffix = {".c", ".cxx"}
+    clang_format_cmd = ["git", "clang-format", "--diff"]
+    filtered_file_list = filter_files(file_list, clang_format_suffix)
+
+    try:
+        perform_linting(repo_root, clang_format_cmd, filtered_file_list)
+    except FormatError as err:
+        exit_error = True
+        print(err, file=sys.stderr)
+
+    sys.exit(exit_error)
