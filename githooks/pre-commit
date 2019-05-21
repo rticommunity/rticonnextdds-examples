@@ -91,16 +91,13 @@ def perform_linting(
 
     if lint_output.returncode != 0 or len(lint_output.stdout.split("\n")) > 1:
         error_output = lint_output.stdout.rstrip()
-        raise FormatError("Wrong format:\n{}".format(error_output))
+        raise FormatError("Format error:\n{}".format(error_output))
 
     return lint_output.returncode
 
 
 if __name__ == "__main__":
     script_path = Path(__file__).resolve()
-
-    if script_path.parent.parts[-2:] != (".git", "hooks"):
-        sys.exit("Please, copy this script in .git/hooks/ folder.")
 
     repo_root_cmd = ["git", "rev-parse", "--show-toplevel"]
     try:
@@ -110,7 +107,7 @@ if __name__ == "__main__":
             cwd=script_path.parent,
             check=True,
             text=True,
-        ).stdout
+        ).stdout.split("\n")[0]
         repo_root = Path(project_top_level).resolve()
     except CalledProcessError:
         sys.exit("Not a git repository.")
@@ -130,7 +127,7 @@ if __name__ == "__main__":
         perform_linting(repo_root, markdownlint_cmd, filtered_file_list)
     except FormatError as err:
         exit_error = True
-        print(err, file=sys.stderr)
+        print("Markdownlint - {}".format(err), file=sys.stderr)
 
     # Clang-format
     clang_format_suffix = {".c", ".cxx"}
@@ -141,6 +138,6 @@ if __name__ == "__main__":
         perform_linting(repo_root, clang_format_cmd, filtered_file_list)
     except FormatError as err:
         exit_error = True
-        print(err, file=sys.stderr)
+        print("\nclang-format - {}".format(err), file=sys.stderr)
 
     sys.exit(exit_error)
