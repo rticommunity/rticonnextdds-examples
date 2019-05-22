@@ -89,10 +89,10 @@ of their fields) from partitions A and B. For every topic, data from different
 partitions will be stored in a separate table, so they can be replayed in
 different partitions afterward.
 
-**REPLAY** - Publish all the recorded data (from every topic) to a specific domain
-(domainId = 0).  Data will be published in the same partition it was recorded
-from (either A or B). Note that data matching both partitions when recording
-will be published twice.
+**REPLAY** - Publish all the recorded data (from every topic) to a specific
+domain (domainId = 0). Data will be published in the same partition it was
+recorded from (either A or B). Note that data matching both partitions when
+recording will be published twice.
 
 #### How to record
 Make sure the Shapes Demo publisher instance is running on domain 0 - it
@@ -120,3 +120,38 @@ shown now. The reason is that the yellow circle was published in partition C
 and the green square was published in the `{empty}` partition. In this use
 case, we didn't configured Recording service to get data from these partitions.
 
+
+### Use Case 3
+**RECORD** - Given a specific domain (domainId = 0), record every topic (with
+all of their fields) from every partition. Metadata will be recorded as well,
+so RTI Replay can distinguish the partitions afterwards.
+
+**REPLAY** - Publish all the recorded data (from every topic) to a specific
+domain (domainId = 0). Data will be published in the same partition it was
+recorded from. Data will be replayed according to the metadata in the database,
+so no duplicate samples will exist.
+
+#### How to record
+Make sure the Shapes Demo publisher instance is running on domain 0 - it
+should be publishing data. To start recording, run:
+
+```
+rtirecord -cfgFile config_record.xml -cfgName example_use_case_3
+```
+
+Data will be recorded in *example_use_case_3.dat_0_0* file. After a few
+seconds, stop the recording service with Ctrl+C.
+
+
+#### How to replay
+Before replaying, _Pause Publishing_ in the Shapes Demo publisher. To replay
+data, run:
+
+```
+rtireplay -cfgFile config_replay.xml -cfgName example_use_case_3
+```
+
+The Shapes Demo subscriber will show the same shapes that were displayed when
+the Demo publisher was running. Data is now being replayed on the same
+partitions it was recorded. This is achieved by recording the metadata and
+replaying with the <use_original_partitions> policy.
