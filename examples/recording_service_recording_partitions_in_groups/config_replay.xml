@@ -65,6 +65,7 @@
         </replay_database>
     </replay_service>
 
+
     <!-- This configuration replays all topics in the DB on domain 0. Data
          in Partition_A RecordGroup will be published in Partition A.
          Similarly, Data in Partition_B RecordGroup will be published in
