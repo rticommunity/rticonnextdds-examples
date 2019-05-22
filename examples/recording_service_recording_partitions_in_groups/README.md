@@ -1,20 +1,21 @@
 # Recording/Replay Service Configuration Example: Recording partitions in groups
 
 ## Concept
-This example illustrates the use of Recording/Replay Service in the two
-use cases described below. We use Shapes Demo to explain both use cases.
+This example illustrates the use of Recording/Replay Service in the three
+use cases described below. We use RTI Shapes Demo to explain all the use cases.
 
-*Note*: Domain 0 is used in this example. You need to configure Shapes Demo
+*Note*: Domain 0 is used in this example. You need to configure RTI Shapes Demo
 accordingly.
 
 ## Example description
-In order to run this example, you will 2 instances of Shapes Demo. We will use
-one of them as a publisher and the other one as a subscriber.
+In order to run this example, you will need 2 instances of Shapes Demo. We will
+use one of them as a publisher and the other one as a subscriber.
 
 *Note*: to better visualize this example, you can _Hide history_ from Controls
-menu.
+menu. Another option is to set the history to 1 on the subscriber, so you can
+pause the publisher and see the results.
 
-### Shapes Demo / Publisher
+### RTI Shapes Demo / Publisher
 On the publisher instance, publish the following shapes with default QoS.
 
 Shape   | Color   | Partition
@@ -27,7 +28,7 @@ Square  | BLUE    | B
 Circle  | BLUE    | B
 Circle  | YELLOW  | C
 
-### Shapes Demo / Subscriber
+### RTI Shapes Demo / Subscriber
 On the subscriber instance, subscribe to the following shapes with default QoS.
 
 Shape   | Partition
@@ -51,14 +52,14 @@ Circle  | YELLOW
 
 
 ### Use Case 1
-**RECORD** - Given a specific domain (domainId = 0), record every topic (with all
-of their fields) from every partition. For every topic, data from different
+**RECORD** - Given a specific domain (domainId = 0), record every topic (with
+all of their fields) from every partition. For every topic, data from different
 partitions will be stored in a single table, so there's no way to distinguish
 partitions afterward.
 
-**REPLAY** - Publish all the recorded data (from every topic) to a specific domain
-(domainId = 0) using the "asterisk" ( * ) partition. This will match every
-partition used by a Subscriber.
+**REPLAY** - Publish all the recorded data (from every topic) to a specific
+domain (domainId = 0) using the "asterisk" ( * ) partition. This will match
+every partition used by a Subscriber.
 
 #### How to record
 Make sure the Shapes Demo publisher instance is running on domain 0 - it
@@ -70,6 +71,7 @@ rtirecord -cfgFile config_record.xml -cfgName example_use_case_1
 
 Data will be recorded in *example_use_case_1.dat_0_0* file. After a few
 seconds, stop the recording service with Ctrl+C.
+
 
 #### How to replay
 Before replaying, _Pause Publishing_ in the Shapes Demo publisher. To replay
@@ -124,7 +126,7 @@ case, we didn't configured Recording service to get data from these partitions.
 ### Use Case 3
 **RECORD** - Given a specific domain (domainId = 0), record every topic (with
 all of their fields) from every partition. Metadata will be recorded as well,
-so RTI Replay can distinguish the partitions afterwards.
+so RTI Replay can distinguish the partitions afterward.
 
 **REPLAY** - Publish all the recorded data (from every topic) to a specific
 domain (domainId = 0). Data will be published in the same partition it was
@@ -152,6 +154,21 @@ rtireplay -cfgFile config_replay.xml -cfgName example_use_case_3
 ```
 
 The Shapes Demo subscriber will show the same shapes that were displayed when
-the Demo publisher was running. Data is now being replayed on the same
-partitions it was recorded. This is achieved by recording the metadata and
+the Demo publisher was running. Data is now being replayed in the same
+partitions it was recorded from. This is achieved by recording the metadata and
 replaying with the <use_original_partitions> policy.
+
+
+## Running the example from the RTI Launcher
+
+You may want to use RTI Recording Service's launcher to run this example. In
+this case, you will need to specify the configuration file in the "Custom"
+area, and select "example_use_case_<x> - from CUSTOM" in the "Configuration"
+area.
+
+![RTI Recording Service - launcher](RecordingServiceLauncher.png)
+
+
+The same configuration should be specified to RTI Replay Service's launcher.
+
+![RTI Replay Service - launcher](ReplayServiceLauncher.png)
