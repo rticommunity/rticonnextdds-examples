@@ -29,6 +29,9 @@
         <!-- Specify where and how to store the recorded data. -->
         <recorder_database>
             <database_name>example_use_case_1.dat</database_name>
+            <set_number>0</set_number>
+            <segment_number>0</segment_number>
+            <overwrite>true</overwrite>
         </recorder_database>
 
         <!-- Create a DDS DomainParticipant in domain 0 -->
@@ -86,20 +89,23 @@
         <!-- Specify where and how to store the recorded data. -->
         <recorder_database>
             <database_name>example_use_case_2.dat</database_name>
+            <set_number>0</set_number>
+            <segment_number>0</segment_number>
+            <overwrite>true</overwrite>
         </recorder_database>
 
         <!-- Create a DDS DomainParticipant in domain 0 -->
         <domain name="domain0">
-            <domain_id> 0 </domain_id>
+            <domain_id>0</domain_id>
             <deserialize_mode>RTIDDS_DESERIALIZEMODE_NEVER</deserialize_mode>
         </domain>
 
         <!-- Create a topic_group for all topics -->
         <topic_group name="All">
             <topics>
-                <topic_expr> * </topic_expr>
+                <topic_expr>*</topic_expr>
             </topics>
-            <field_expr> * </field_expr>
+            <field_expr>*</field_expr>
             <!-- DataReaders will get resource limits from the user-defined QoS
                  at the top of the file -->
             <datareader_qos base_name="my_qos_library::my_datareader_qos">
@@ -110,26 +116,26 @@
          are recorded for a set of domains. Each recorded Topic is stored in
          a table with the format "record_group.domain.Topic"
          -->
-        <!-- Create a RecordGroup to record every topic in Partition B -->
+        <!-- Create a RecordGroup to record every topic in Partition A -->
         <record_group name="Partition_A">
             <!-- Specify partition A in Subscriber QoS (multiple partitions
                  could be specified with multiple elements) -->
             <subscriber_qos>
                 <partition>
                     <name>
-                        <element> A </element>
+                        <element>A</element>
                     </name>
                 </partition>
             </subscriber_qos>
 
             <!-- Specify which domains to record from (domain0) -->
             <domain_ref>
-                <element> domain0 </element>
+                <element>domain0</element>
             </domain_ref>
 
             <!-- Specify which topics to record (All of them) -->
             <topic_ref>
-                <element> All </element>
+                <element>All</element>
             </topic_ref>
         </record_group>
 
@@ -140,19 +146,91 @@
             <subscriber_qos>
                 <partition>
                     <name>
-                        <element> B </element>
+                        <element>B</element>
                     </name>
                 </partition>
             </subscriber_qos>
 
             <!-- Specify which domains to record from (domain0) -->
             <domain_ref>
-                <element> domain0 </element>
+                <element>domain0</element>
             </domain_ref>
 
             <!-- Specify which topics to record (All of them) -->
             <topic_ref>
-                <element> All </element>
+                <element>All</element>
+            </topic_ref>
+        </record_group>
+    </recorder>
+
+
+    <!-- This configuration records all topics from domain ID 0. All the
+         partitions are considered, being recorded in different
+         RecordGroup 's -->
+    <recorder name="example_use_case_3">
+        <!-- Specify where and how to store the recorded data. -->
+        <replay_compatibility>true</replay_compatibility>
+        <recorder_database>
+            <database_name>example_use_case_3.dat</database_name>
+            <set_number>0</set_number>
+            <segment_number>0</segment_number>
+            <overwrite>true</overwrite>
+            <!-- Record metadata to the database, so RTI Replay will have a way
+                 to distinguish between partitions afterwards -->
+            <builtin_topic_metadata_fields>
+                <DCPSPublication_topic>
+                    <included>
+                        <field>SampleInfo_reception_timestamp</field>
+                        <field>PublicationData_key_*</field>
+                        <field>PublicationData_publisher_key_*</field>
+                        <field>PublicationData_partition</field>
+                    </included>
+                </DCPSPublication_topic>
+            </builtin_topic_metadata_fields>
+            <user_topic_metadata_fields>
+                <included>
+                    <field>SampleInfo_publication_handle</field>
+                </included>
+            </user_topic_metadata_fields>
+        </recorder_database>
+
+        <!-- Create a DDS DomainParticipant in domain 0 -->
+        <domain name="domain0">
+            <domain_id>0</domain_id>
+            <deserialize_mode>RTIDDS_DESERIALIZEMODE_NEVER</deserialize_mode>
+        </domain>
+
+        <!-- Create a topic_group for all topics -->
+        <topic_group name="All">
+            <topics>
+                <topic_expr>*</topic_expr>
+            </topics>
+            <field_expr>*</field_expr>
+            <!-- DataReaders will get resource limits from the user-defined QoS
+                 at the top of the file -->
+            <datareader_qos base_name="my_qos_library::my_datareader_qos">
+            </datareader_qos>
+        </topic_group>
+
+        <!-- Create a RecordGroup for every topic in every partition. -->
+        <record_group name="all_partitions">
+            <!-- Select all the partitions -->
+            <subscriber_qos>
+                <partition>
+                    <name>
+                        <element>*</element>
+                    </name>
+                </partition>
+            </subscriber_qos>
+
+            <!-- Specify which domains to record from (domain0) -->
+            <domain_ref>
+                <element>domain0</element>
+            </domain_ref>
+
+            <!-- Specify which topics to record (All of them) -->
+            <topic_ref>
+                <element>All</element>
             </topic_ref>
         </record_group>
 

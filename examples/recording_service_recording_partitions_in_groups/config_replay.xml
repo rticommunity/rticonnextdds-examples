@@ -65,6 +65,7 @@
         </replay_database>
     </replay_service>
 
+
     <!-- This configuration replays all topics in the DB on domain 0. Data
          in Partition_A RecordGroup will be published in Partition A.
          Similarly, Data in Partition_B RecordGroup will be published in
@@ -138,6 +139,55 @@
                         <topic_name>*</topic_name>
                         <type_name>*</type_name>
                         <record_group_name>Partition_B</record_group_name>
+                        <domain_name>*</domain_name>
+                    </input>
+                </replay_topic>
+            </session>
+
+        </replay_database>
+    </replay_service>
+
+
+    <!-- This configuration replays all topics in the DB on domain 0. Data
+         will be replayed in the same partition it was recorded, thanks to the
+         option <use_original_partitions> -->
+    <replay_service name="example_use_case_3">
+
+        <!-- Time control settings: normal replay rate and automatically start
+             replaying upon start of the service -->
+        <time_control>
+            <rate>1</rate>
+            <start_mode>AUTOMATIC</start_mode>
+        </time_control>
+
+        <!-- Replay samples on the same partition they were recorded. We will
+             consider every partition in this use case -->
+        <use_original_partitions>true</use_original_partitions>
+
+        <!-- Database, participant and session information -->
+        <replay_database>
+            <!-- The name of the file to be replayed -->
+            <filename>example_use_case_3.dat_0_0</filename>
+            <!-- Set the database file as writable. This is necessary when the
+                 SQLite indexes of the database haven't been created yet -->
+            <readonly>false</readonly>
+            <!-- Configuration for the output participant -->
+            <participant>
+                <!-- Replay everything on domain 0 -->
+                <domain_id>0</domain_id>
+            </participant>
+
+            <!-- Replay all the topics recorded in Partition_A RecordGroup -->
+            <session name="session_for_all_partitions">
+                <!-- Create a Replay topic entity for every topic or type and
+                     any domain name. Data from all the recorded partitions
+                     will be correctly published thanks to
+                     <use_original_partitions>  -->
+                <replay_topic>
+                    <input>
+                        <topic_name>*</topic_name>
+                        <type_name>*</type_name>
+                        <record_group_name>*</record_group_name>
                         <domain_name>*</domain_name>
                     </input>
                 </replay_topic>
