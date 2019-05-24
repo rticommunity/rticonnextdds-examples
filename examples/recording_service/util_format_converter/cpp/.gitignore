@@ -1,0 +1,7 @@
+/build/
+/HelloMsg.cxx
+/HelloMsg.hpp
+/HelloMsgPlugin.cxx
+/HelloMsgPlugin.hpp
+makefile_HelloMsg_*
+USER_QOS_PROFILES.xml
