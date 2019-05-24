@@ -23,8 +23,9 @@ integration.
 
 ## markdownlint
 
+Version 6 of [NodeJS](https://nodejs.org/) is needed to use this linter.
 To install last version of `markdownlint`:
 
 ```bash
-npm install -g markdownlint-cli --save-dev
+npm install -g markdownlint-cli
 ```
