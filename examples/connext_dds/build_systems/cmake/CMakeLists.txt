@@ -54,7 +54,7 @@ target_link_libraries(
 # Include the folder with the type header files
 target_include_directories(HelloWorld_publisher
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+    "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
 # Create the target for the publisher executable
@@ -72,7 +72,7 @@ target_link_libraries(
 # Include the folder with the type header files
 target_include_directories(HelloWorld_subscriber
     PRIVATE
-        "${CMAKE_BINARY_DIR}/src"
+    "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
 
