@@ -42,7 +42,7 @@ CMake targets and set the dependencies.
     source directory to the binary directory.
 ``DEPENDENCIES``:
     Other target dependencies.
-``CODEGEN_ARGS":
+``CODEGEN_ARGS``:
     Extra arguments for Codegen.
 
 Output targets:
@@ -84,7 +84,7 @@ CMake targets and set the dependencies.
 ``PREFIX``:
     Prefix name for the targets. If not present, the folder of the example name
     will be used as prefix.
-``CODEGEN_ARGS":
+``CODEGEN_ARGS``:
     Extra arguments for Codegen.
 
 
@@ -105,7 +105,7 @@ target. It will make the given target dependant of the target for the QoS.
 
 ``TARGET_PREFIX (required)``:
     Prefix name for the target.
-``DEPENDANT_TARGET":
+``DEPENDANT_TARGET``:
     This target will depends of the created QoS target. So, when the dependant
     target is build, the QoS file will be copied.
 
@@ -137,7 +137,7 @@ target. It will make the given target dependant of the target for the QoS.
 ``PREFIX``:
     Prefix name for the targets. If not present, the folder of the example name
     will be used as prefix.
-``OUTPUT_NAME":
+``OUTPUT_NAME``:
     Output name for the application. If not present, the target name will be
     used.
 ``NO_REQUIRE_QOS``:
