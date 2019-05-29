@@ -14,8 +14,8 @@ Function to build the examples.
 
 ::
 
-    _connextdds_add_example(
-        NAME name
+    connextdds_add_example(
+        IDL name
         LANG language
         [PREFIX prefix]
         [DISABLE_SUBSCRIBER]
