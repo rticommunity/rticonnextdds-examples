@@ -17,6 +17,20 @@ find_package(RTIConnextDDS
         core
 )
 
+if(CLANG_TIDY)
+    find_program(
+        CLANG_TIDY_EXE
+        NAMES "clang-tidy"
+        DOC "Path to clang-tidy executable")
+    if(NOT CLANG_TIDY_EXE)
+        message(STATUS "clang-tidy not found.")
+    else()
+        message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
+        set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_EXE})
+        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
+    endif()
+endif()
+
 # asynchronous_publication
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c++")
