@@ -113,7 +113,7 @@ target. It will make the given target dependant of the target for the QoS.
 connextdds_add_application
 --------------------------
 
-Function to copy the USER_QOS_PROFILES.xml file.
+Function to build an example.
 
 ::
 
@@ -127,8 +127,7 @@ Function to copy the USER_QOS_PROFILES.xml file.
         [DEPENDENCIES ...]
     )
 
-Copy the USER_QOS_PROFILES.xml file It will create the ``<prefix>_<lang>_qos``
-target. It will make the given target dependant of the target for the QoS.
+This method will create the executables from chosen sources.
 
 ``TARGET`` (required):
     Name of the target for the application.
