@@ -14,6 +14,10 @@ if(NOT build_dir_name)
     set(build_dir_name "build")
 endif()
 
+if(CLANG_TIDY)
+    set(CLANG_TIDY_ARG "-DCLANG_TIDY=ON")
+endif()
+
 foreach(build_type IN LISTS build_types)
     foreach(link_type IN LISTS link_types)
 
@@ -34,6 +38,7 @@ foreach(build_type IN LISTS build_types)
             COMMAND ${CMAKE_COMMAND}
                 -DCMAKE_BUILD_TYPE=${build_type}
                 -DBUILD_SHARED_LIBS=${link_type}
+                ${CLANG_TIDY_ARG}
                 ${CMAKE_CURRENT_SOURCE_DIR}
             WORKING_DIRECTORY "${BINARY_DIR_PATH}")
         execute_process(
