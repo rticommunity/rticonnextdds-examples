@@ -1,5 +1,7 @@
 # Example Code to demonstrate the usage of zero copy
 
+*Warning: This example is outdated since RTI Connext 6.0. See [FlatData and ZeroCopy Example](https://github.com/rticommunity/rticonnextdds-examples/tree/master/examples/connext_dds/flat_data_latency).*
+
 ## Building C++ Example
 
 Before compiling or running the example, make sure the environment variable 
