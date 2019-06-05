@@ -1,5 +1,6 @@
 # Example Code to demonstrate the usage of zero copy
 
+*Warning: This example is outdated since RTI Connext 6.0. See [FlatData and ZeroCopy Example](https://github.com/rticommunity/rticonnextdds-examples/tree/master/examples/connext_dds/flat_data_latency).*
 
 This example is a modified version of the helloWorld example that can
 be generated using rtiddsgen with the -example command-line option.
