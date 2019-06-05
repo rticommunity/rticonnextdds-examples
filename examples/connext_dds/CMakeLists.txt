@@ -17,19 +17,25 @@ find_package(RTIConnextDDS
         core
 )
 
-if(CLANG_TIDY)
-    find_program(
-        CLANG_TIDY_EXE
-        NAMES "clang-tidy"
-        DOC "Path to clang-tidy executable")
-    if(NOT CLANG_TIDY_EXE)
-        message(STATUS "clang-tidy not found.")
-    else()
-        message(STATUS "clang-tidy found: ${CLANG_TIDY_EXE}")
-        set(CMAKE_C_CLANG_TIDY ${CLANG_TIDY_EXE})
-        set(CMAKE_CXX_CLANG_TIDY ${CLANG_TIDY_EXE})
-    endif()
-endif()
+set(static_analysis_script
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/static_analysis/run_static_analysis.py")
+
+
+add_custom_target(static_analysis
+    COMMAND
+        ${static_analysis_script}
+            --binary-dir
+            ${CMAKE_CURRENT_BINARY_DIR}
+            --includes
+            ${CONNEXTDDS_INCLUDE_DIRS}
+            --defines
+            ${CONNEXTDDS_COMPILE_DEFINITIONS}
+    COMMENT
+        "Running static analysis...")
+
+set_target_properties(static_analysis
+    PROPERTIES
+        EXCLUDE_FROM_ALL TRUE)
 
 # asynchronous_publication
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c")
