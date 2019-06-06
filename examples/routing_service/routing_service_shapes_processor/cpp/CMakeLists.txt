@@ -20,9 +20,9 @@ if(NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR ${msg})
 endif()
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE)
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_NOCASE)
 
-if(CMAKE_BUILD_TYPE STREQUAL "debug")
+if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
     set(msg
         "You have selected to build the library in debug mode. It's recommended "
         "to run the debug version of Routing Service or otherwise you may run "
@@ -55,8 +55,8 @@ set_target_properties(shapesprocessor
         ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
         ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
         ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"               
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"               
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
         RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
 )
 
@@ -67,4 +67,3 @@ target_link_libraries(shapesprocessor
 target_include_directories(shapesprocessor
     PUBLIC
         "${CMAKE_CURRENT_SOURCE_DIR}")
-

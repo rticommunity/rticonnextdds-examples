@@ -11,9 +11,24 @@
 #
 
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 11)
 project (StructArrayTransformation)
 
+if(NOT BUILD_SHARED_LIBS)
+    set(msg
+        "Static linking is not supported for this example. You can build it "
+        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_NOCASE)
+
+if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Routing Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
+endif()
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
@@ -47,14 +62,24 @@ target_include_directories(structarraytransf
     PUBLIC ${CMAKE_BINARY_DIR}
     PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
 
-target_compile_definitions(structarraytransf
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
+set_target_properties(structarraytransf
+    PROPERTIES
+    CXX_STANDARD 11
+    OUTPUT_NAME_DEBUG structarraytransfd
+    LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+    ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+    RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+    )
 
 target_link_libraries(structarraytransf
     RTIConnextDDS::routing_service_infrastructure
-    RTIConnextDDS::cpp2_api
-    RTIConnextDDS::c_api
-    ${CONNEXTDDS_EXTERNAL_LIBS})
+    RTIConnextDDS::cpp2_api)
 
 
 # Define the Publisher application
