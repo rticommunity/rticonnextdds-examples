@@ -1,4 +1,4 @@
-# Routing Service
+# RTI Routing Service
 
 RTI Routing Service is an out-of-the-box solution that allows developers to
 rapidly scale and integrate real-time systems that are disparate or
