@@ -12,7 +12,7 @@ Firstly, you have to copy pre-commit hook in this folder to the hooks folder:
 
 ```bash
 cd <project_folder>
-cp githooks/pre-commit .git/hooks/pre-commit
+cp resources/githooks/pre-commit .git/hooks/pre-commit
 ```
 
 ## clang-format
