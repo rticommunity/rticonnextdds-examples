@@ -10,4 +10,4 @@ install:
   - sudo apt install -y clang-format-9
   - npm install -g markdownlint-cli
 script:
-  - ./githooks/pre-commit
+  - ./resources/githooks/pre-commit
