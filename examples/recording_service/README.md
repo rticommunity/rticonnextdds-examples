@@ -1,6 +1,9 @@
 # Recording Service
 
-RTI Recording Service includes three tools:
+RTI Recording Service is the first off-the-shelf solution for reliable and
+non-intrusive recording, analysis and replay of real-time data, messages and
+events at high data rates and high fidelity. RTI Recording Service is comprised
+of three different tools:
 
 -   Recording Service, an RTI Connext DDS application that records Topics and
     discovery data. Recording Service records updates to data along with a
@@ -18,6 +21,7 @@ RTI Recording Service includes three tools:
     efficiently, then post-processed into a queryable form. Converter also
     provides APIs to plug in custom storage.
 
-In this directory you will find some examples about the Recording Service.
-For more info check out the
-[documentation](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/manuals/recording_service/introduction.html).
+In this directory you will find some examples illustrating the most important
+features of RTI Recording Service. For more information, please refer to the
+[RTI Recording Service User's Manual]
+(https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/manuals/recording_service/introduction.html).
