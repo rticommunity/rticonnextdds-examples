@@ -275,6 +275,20 @@ function(connextdds_verbose message)
     message(VERBOSE ${message})
 endfunction()
 
+
+function(connextdds_log_xml XML_NAME XML)
+    string(REPLACE "\n"
+           ";" lines
+           ${XML})
+
+    message(VERBOSE "~~~~~~~START ${XML_NAME}~~~~~~~")
+    foreach(line ${lines})
+        message(VERBOSE "\t${line}")
+    endforeach()
+    message(VERBOSE "~~~~~~~FINISH ${XML_NAME}~~~~~~~")
+
+endfunction()
+
 #####################################################################
 # Preconditions Check                                               #
 #####################################################################
@@ -516,7 +530,8 @@ function(connextdds_check_component_field_version
     rti_versions_file
     rti_architectures)
     connextdds_debug("connextdds_check_component_field_version called")
-    connextdds_debug("================================================")
+    connextdds_debug(
+        "====================================================================")
     connextdds_debug("\tfield_name: ${field_name}")
     connextdds_debug("\trti_architectures: [${${rti_architectures}}]")
     connextdds_verbose("Checking version for ${field_name}")
@@ -525,7 +540,7 @@ function(connextdds_check_component_field_version
     set(field_section_regex "<${field_name}>.*</${field_name}>")
     string(REGEX MATCH ${field_section_regex} field_xml "${rti_versions_file}")
 
-    connextdds_debug("Component info:\n ${field_xml}")
+    connextdds_log_xml("Component info:" "${field_xml}")
 
     # Check all the architectures defined in the component
     foreach(architecture IN LISTS ${rti_architectures})
@@ -542,7 +557,7 @@ function(connextdds_check_component_field_version
             "</version>")
         string(REGEX MATCH ${field_arch_regex} field_arch "${field_xml}")
         if(field_arch)
-            connextdds_debug("Field arch:\n ${field_xml}")
+            connextdds_log_xml("Field arch:" "${field_arch}")
             break()
         endif()
     endforeach()
@@ -558,7 +573,7 @@ function(connextdds_check_component_field_version
     set(field_version_regex
         "<version>[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?</version>")
     string(REGEX MATCH ${field_version_regex} field_version "${field_arch}")
-    connextdds_debug("Component version tag:\n ${field_version}")
+    connextdds_log_xml("Component version tag:" "${field_version}")
 
     if(NOT field_version)
         set(rtiversion_error TRUE PARENT_SCOPE)
@@ -575,7 +590,8 @@ function(connextdds_check_component_field_version
         ${field_version_number_regex}
         field_version_number
         ${field_version})
-    connextdds_debug("Component version: ${field_version_number}")
+
+    connextdds_log_xml("Component version:" "${field_version_number}")
 
     if(NOT field_version_number)
         set(rtiversion_error TRUE PARENT_SCOPE)
@@ -603,7 +619,8 @@ function(connextdds_check_component_field_version
     else()
         connextdds_verbose("${field_name} version.........OK")
     endif()
-    connextdds_debug("================================================")
+    connextdds_debug(
+        "====================================================================")
 endfunction()
 
 # This method searches the libraries indicated in `library_names` under
@@ -630,7 +647,8 @@ function(get_all_library_variables
     library_names
     result_var_name)
     connextdds_debug("get_all_library_variables called")
-    connextdds_debug("================================================")
+    connextdds_debug(
+        "====================================================================")
     connextdds_debug("\tlibrary_names: ${library_names}")
     connextdds_debug("\tresult_var_name: ${result_var_name}")
 
@@ -706,7 +724,8 @@ function(get_all_library_variables
 
     set(${result_var_name}_LIBRARIES
         ${result_var_name}_LIBRARIES_${build_mode}_${link_mode})
-    connextdds_debug("================================================")
+    connextdds_debug(
+        "====================================================================")
 endfunction()
 
 #####################################################################
