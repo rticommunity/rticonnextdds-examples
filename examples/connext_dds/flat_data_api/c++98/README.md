@@ -1,7 +1,11 @@
 # Example Code: Flat Data API example
 
-This example shows how to use FlatData in the RTI Connext DDS _Modern C++ API_. 
-For an example using the _Traditional C++ API_, see the c++98 directory.
+This example shows how to use FlatData in the RTI Connext DDS _Traditional C++ API_. 
+For an example using the _Modern C++ API_, see ../c++11.
+
+**Important:** A known issue in the _Traditional C++ API_ affects this example.
+The function `build_data_sample_fast` in CameraImage_publisher.cxx cannot be used
+without a fix. Contact support@rti.com to get access to this fix.
 
 ## Exploring the code
 
@@ -21,16 +25,16 @@ sample received by a DataReader. See `print_average_pixel_simple()` and
 `print_average_pixel_fast()`. The rest is the *rtiddsgen*-generated code to
 create a `DataReader` and read data samples.
 
-## Building C++11 Example
+## Building C++98 Example
 
 First, use rtiddsgen to generate a makefile for your machine's architecture and
 compiler. For example:
 
 ```bash
-rtiddsgen -language C++11 -example <your_target_architecture> CameraImage.idl
+rtiddsgen -language C++ -example <your_target_architecture> CameraImage.idl
 ```
 
-The option **-language C++11** is required.
+The option **-language C++** is required.
 
 You may get messages saying that some files already exist and will not be
 replaced. You can safely ignore those messages, since all the source files
@@ -45,7 +49,7 @@ make -f <makefile_for_your_target_architecture>
 The executables *CameraImage_publisher* and *CameraImage_subscriber* are located
 under **objs/\<architecture\>**
 
-## Running C++11 Example
+## Running C++98 Example
 
 ```plain
 Usage: ./objs/<architecture>.0/CameraImage_[publisher|subscriber] [domain_id] [sample_count]
