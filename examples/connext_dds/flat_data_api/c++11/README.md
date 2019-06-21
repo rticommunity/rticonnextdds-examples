@@ -48,5 +48,5 @@ under **objs/\<architecture\>**
 ## Running C++11 Example
 
 ```plain
-Usage: ./objs/<architecture>.0/CameraImage_[publisher|subscriber] [domain_id] [sample_count]
+Usage: ./objs/<architecture>/CameraImage_[publisher|subscriber] [domain_id] [sample_count]
 ```
