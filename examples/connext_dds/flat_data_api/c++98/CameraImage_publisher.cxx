@@ -59,13 +59,20 @@ const int PIXEL_COUNT = 10;
 // Simplest way to create the data sample
 bool build_data_sample(CameraImageBuilder& builder, int seed)
 {
-    builder.add_format(RGB);
-    if (builder.check_failure()) {
+    // The Traditional C++ API doesn't use exceptions, so errors must be checked
+    // after each operation.
+    //
+    // Depending on the function, the error can be checked via the return value
+    // when they return a boolean, an Offset (is_null()), or a Builder (is_valid()).
+    // A Builder also provides check_failure() when the error can't be notified
+    // with the return value.
+
+    if (!builder.add_format(RGB)) {
         return false;
     }
 
     ResolutionOffset resolution_offset = builder.add_resolution();
-    if (builder.check_failure()) {
+    if (resolution_offset.is_null()) {
         return false;
     }
     if (!resolution_offset.height(100)) {
@@ -93,12 +100,15 @@ bool build_data_sample(CameraImageBuilder& builder, int seed)
     // Method 1 - Build the pixel sequence element by element
     rti::flat::FinalSequenceBuilder<PixelOffset> pixels_builder =
             builder.build_pixels();
-    if (pixels_builder.check_failure()) {
+    if (!pixels_builder.is_valid()) {
         return false;
     }
 
     for (int i = 0; i < PIXEL_COUNT; i++) {
         PixelOffset pixel = pixels_builder.add_next();
+        if (pixel.is_null()) {
+            return false;
+        }
         if (!pixel.red((seed + i) % 100)) {
             return false;
         }
@@ -144,13 +154,12 @@ bool build_data_sample_fast(CameraImageBuilder& builder, int seed)
         return false;
     }
 
-    builder.add_format(RGB);
-    if (builder.check_failure()) {
+    if (!builder.add_format(RGB)) {
         return false;
     }
 
     ResolutionOffset resolution_offset = builder.add_resolution();
-    if (builder.check_failure()) {
+    if (resolution_offset.is_null()) {
         return false;
     }
     if (!resolution_offset.height(100)) {
@@ -167,7 +176,7 @@ bool build_data_sample_fast(CameraImageBuilder& builder, int seed)
     // cheap (it just advances the underlying buffer without initializing anything)
     rti::flat::FinalSequenceBuilder<PixelOffset> pixels_builder =
             builder.build_pixels();
-    if (pixels_builder.check_failure()) {
+    if (!pixels_builder.is_valid()) {
         return false;
     }
 
@@ -184,6 +193,9 @@ bool build_data_sample_fast(CameraImageBuilder& builder, int seed)
     // 2) Use plain_cast to access the buffer as an array of regular C++ Pixels
     // (pixel_array's type is PixelPlainHelper*)
     PixelPlainHelper *pixel_array = rti::flat::plain_cast(pixels);
+    if (pixel_array == NULL) {
+        return false;
+    }
     for (int i = 0; i < PIXEL_COUNT; i++) {
         PixelPlainHelper& pixel = pixel_array[i];
         pixel.red = (seed + i) % 100;

@@ -61,7 +61,7 @@ Use rtiddsgen to generate a makefile for your machine's architecture and
 compiler. For example:
 
 ```bash
-rtiddsgen -language C++11 -example <your_target_architecture> CameraImage.idl
+rtiddsgen -language C++11 -additionalHeaderFile Common.hpp -example <your_target_architecture> CameraImage.idl
 ```
 
 You may get messages saying that some files already exist and will not be
