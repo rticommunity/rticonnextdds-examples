@@ -1,5 +1,8 @@
 # Example Code: Flat Data API example
 
+This example shows how to use FlatData in the RTI Connext DDS _Modern C++ API_. 
+For an example using the _Traditional C++ API_, see the c++98 directory.
+
 ## Exploring the code
 
 ### CameraImage.idl
@@ -42,8 +45,8 @@ make -f <makefile_for_your_target_architecture>
 The executables *CameraImage_publisher* and *CameraImage_subscriber* are located
 under **objs/\<architecture\>**
 
-## Running C+11 Example
+## Running C++11 Example
 
 ```plain
-Usage: ./objs/<architecture>.0/CameraImage_[publisher|subscriber] [domain_id] [sample_count]
+Usage: ./objs/<architecture>/CameraImage_[publisher|subscriber] [domain_id] [sample_count]
 ```
