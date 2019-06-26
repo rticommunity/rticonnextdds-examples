@@ -119,8 +119,12 @@ void publisher_flat(const ApplicationOptions &options)
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
+    if (count) {
+        std::cout << "Average end-to-end latency: "
               << total_latency / (count * 2) << " microseconds\n";
+    } else {
+        std::cout << "No samples received\n";
+    }
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -212,8 +216,12 @@ void publisher_zero_copy(const ApplicationOptions &options)
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
+    if (count) {
+        std::cout << "Average end-to-end latency: "
               << total_latency / (count * 2) << " microseconds\n";
+    } else {
+        std::cout << "No samples received\n";
+    }
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -310,8 +318,12 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
+    if (count) {
+        std::cout << "Average end-to-end latency: "
               << total_latency / (count * 2) << " microseconds\n";
+    } else {
+        std::cout << "No samples received\n";
+    }
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -399,8 +411,12 @@ void publisher_plain(const ApplicationOptions &options)
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
+    if (count) {
+        std::cout << "Average end-to-end latency: "
               << total_latency / (count * 2) << " microseconds\n";
+    } else {
+        std::cout << "No samples received\n";
+    }
 
     // Wait for unmatch
     wait_for_reader(writer, false);
