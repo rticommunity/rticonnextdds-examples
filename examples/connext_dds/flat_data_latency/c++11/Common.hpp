@@ -40,47 +40,6 @@ void wait_for_writer(dds::sub::DataReader<T>& reader)
     }
 }
 
-/**
- * DataWriterListener that implements on_sample_removed
- *
- * This callback allows the application writting flat-data samples to know when
- * it is safe to reuse a sample that was previously written. The listener
- * triggers a GuardCondition that can be attached to a Waitset.
- */
-template <typename TopicType>
-class FlatDataSampleRemovedListener :
-        public dds::pub::NoOpDataWriterListener<TopicType> {
-public:
-    void on_sample_removed(
-            dds::pub::DataWriter<TopicType>& writer, 
-            const rti::core::Cookie& cookie) override
-    {
-        guard_condition.trigger_value(true);
-    }
-
-    /**
-     * Gets the condition that can be attached to a waitset
-     */
-    dds::core::cond::GuardCondition get_condition()
-    {
-        return guard_condition;
-    }
-
-    /**
-     * Sets the condition back to false
-     *
-     * This should be called after the condition triggers a Waitset.
-     */
-    void reset_condition()
-    {
-        guard_condition.trigger_value(false);
-    }
-
-private:
-    dds::core::cond::GuardCondition guard_condition;
-};
-
-
 // CameraImageType can be flat_types::CameraImage or flat_zero_copy_types::CameraImage
 template <typename CameraImageType>
 void populate_flat_sample(CameraImageType& sample, int count)
@@ -168,5 +127,15 @@ inline void configure_nic(
         qos.policy<Property>().set({
                 "dds.transport.UDPv4.builtin.parent.allow_interfaces",
                 nic});
+    }
+}
+
+inline void print_latency(int total_latency, int count)
+{
+    if (count > 0) {
+        std::cout << "Average end-to-end latency: "
+              << total_latency / (count * 2) << " microseconds\n";
+    } else {
+        std::cout << "No samples received\n";
     }
 }

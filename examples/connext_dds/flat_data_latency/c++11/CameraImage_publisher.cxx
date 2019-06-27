@@ -113,14 +113,12 @@ void publisher_flat(const ApplicationOptions &options)
             uint64_t latency = receive_ts - pong.timestamp();
             total_latency += latency;
             if (receive_ts - latency_interval_start_time > 4000000) {
-                std::cout << "Average end-to-end latency: "
-                          << total_latency / (count * 2) << " microseconds\n";
+                print_latency(total_latency, count);
                 latency_interval_start_time = 0;
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
-              << total_latency / (count * 2) << " microseconds\n";
+    print_latency(total_latency, count);
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -206,14 +204,12 @@ void publisher_zero_copy(const ApplicationOptions &options)
             uint64_t latency = recv_ts - pong_samples[0].data().timestamp();
             total_latency += latency;
             if (recv_ts - latency_interval_start_time > 4000000) {
-                std::cout << "Average end-to-end latency: "
-                          << total_latency / (count * 2) << " microseconds\n";
+                print_latency(total_latency, count);
                 latency_interval_start_time = 0;
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
-              << total_latency / (count * 2) << " microseconds\n";
+    print_latency(total_latency, count);
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -304,14 +300,12 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
             uint64_t latency = recv_ts - pong.timestamp();
             total_latency += latency;
             if (recv_ts - latency_interval_start_time > 4000000) {
-                std::cout << "Average end-to-end latency: "
-                          << total_latency / (count * 2) << " microseconds\n";
+                print_latency(total_latency, count);
                 latency_interval_start_time = 0;
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
-              << total_latency / (count * 2) << " microseconds\n";
+    print_latency(total_latency, count);
 
     // Wait for unmatch
     wait_for_reader(writer, false);
@@ -393,14 +387,12 @@ void publisher_plain(const ApplicationOptions &options)
             uint64_t latency = recv_ts - pong_samples[0].data().timestamp();
             total_latency += latency;
             if (recv_ts - latency_interval_start_time > 4000000) {
-                std::cout << "Average end-to-end latency: " 
-                          << total_latency / (count * 2) << " microseconds\n";
+                print_latency(total_latency, count);
                 latency_interval_start_time = 0;
             }
         }
     }
-    std::cout << "Average end-to-end latency: "
-              << total_latency / (count * 2) << " microseconds\n";
+    print_latency(total_latency, count);
 
     // Wait for unmatch
     wait_for_reader(writer, false);
