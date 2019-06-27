@@ -130,7 +130,7 @@ inline void configure_nic(
     }
 }
 
-inline void print_latency(const int &total_latency, const int &count)
+inline void print_latency(int total_latency, int count)
 {
     if (count > 0) {
         std::cout << "Average end-to-end latency: "
