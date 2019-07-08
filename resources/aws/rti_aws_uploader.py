@@ -71,7 +71,7 @@ class BucketNotFoundError(Exception):
 
 
 class BucketForbiddenError(Exception):
-    """Raised when does not have permissions to access the bucket."""
+    """Raised when the user does not have permissions to access the bucket."""
 
     pass
 
