@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 #
 # (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
 # grants Licensee a license to use, modify, compile, and create derivative
@@ -13,15 +13,15 @@
 Create zip archive with minimal files to allow compilation of the examples.
 
 Examples:
-    From installation path:
+    From installation path::
 
         python create_minimal_package.py -p /home/user/rti_connext_dds-6.0.0
 
-    From installer archive url:
+    From installer archive url::
 
         python create_minimal_package.py -u https://www.url.example/pkg.taṙ.gz
 
-    From installation path to directory:
+    From installation path to directory::
 
         python create_minimal_package.py -p /path -o /tmp
 
@@ -36,20 +36,21 @@ import tempfile
 import tarfile
 import zipfile
 
-from typing import List, Tuple, Optional, Dict, Match
 from urllib import request
 from pathlib import Path
 from zipfile import ZipFile
 from urllib.error import URLError
 
-HOME_PATH: Path = Path.home()
-SCRIPT_PATH: Path = Path(__file__)
-TMP_PATH: Path = Path(tempfile.gettempdir()).resolve()
+HOME_PATH = Path.home()
+SCRIPT_PATH = Path(__file__)
+TMP_PATH = Path(tempfile.gettempdir())
 
-logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}")
+logger = logging.getLogger(SCRIPT_PATH.name)
 logger.setLevel(logging.DEBUG)
 
-fh = logging.FileHandler(filename=SCRIPT_PATH.with_suffix(".log"), mode="w")
+fh = logging.FileHandler(
+    filename=str(SCRIPT_PATH.with_suffix(".log")), mode="w"
+)
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(
     logging.Formatter(
@@ -82,7 +83,7 @@ class VersionNotFoundError(FileNotFoundError):
     pass
 
 
-def get_argument_parser() -> argparse.ArgumentParser:
+def get_argument_parser():
     """Create argument parser.
 
     Returns:
@@ -135,14 +136,14 @@ def get_argument_parser() -> argparse.ArgumentParser:
     return parser
 
 
-def guess_architecture_from_installation(installation_path: Path) -> str:
+def guess_architecture_from_installation(installation_path):
     """Guess target architecture based on lib directory.
 
     Args:
-        installation_path: RTI Connext DDS installation path.
+        installation_path (Path): RTI Connext DDS installation path.
 
     Returns:
-        Target architecture.
+        str: Target architecture.
 
     Raises:
         InstallationNotFoundError: When installation directory does not exist.
@@ -163,13 +164,13 @@ def guess_architecture_from_installation(installation_path: Path) -> str:
         logger.debug(e, stack_info=True)
         raise
 
-    architecture_list: List[str] = [
+    architecture_list = [
         directory.name
         for directory in installation_path.joinpath("lib").iterdir()
         if directory.is_dir() and directory.name != "java"
     ]
 
-    arch_number: int = len(architecture_list)
+    arch_number = len(architecture_list)
     try:
 
         if arch_number == 0:
@@ -183,7 +184,7 @@ def guess_architecture_from_installation(installation_path: Path) -> str:
         logger.debug(e, stack_info=True)
         raise
 
-    architecture: Optional[str] = None
+    architecture = None
 
     if arch_number > 1:
 
@@ -192,7 +193,7 @@ def guess_architecture_from_installation(installation_path: Path) -> str:
         while architecture not in architecture_list:
 
             logger.info(
-                f"Select architecture: {' , '.join(architecture_list)}"
+                "Select architecture: {}".format(" , ".join(architecture_list))
             )
             architecture = input("> ")
 
@@ -200,27 +201,27 @@ def guess_architecture_from_installation(installation_path: Path) -> str:
 
         architecture = architecture_list[0]
 
-    logger.debug(f"Guessed architecture: {architecture}.")
+    logger.debug("Guessed architecture: {}.".format(architecture))
 
     return architecture
 
 
-def guess_version_from_name(name: str) -> str:
+def guess_version_from_name(name):
     """Guess package version based on file/diretory name.
 
     Args:
-        name: String to search the version from
+        name (str): String to search the version from
 
     Returns:
-        Version string.
+        str: Version string.
 
     Raises:
         VersionNotFoundError: When could not find version in the string.
 
     """
-    version_regex: str = r"-([0-9]\.[0-9]\.[0-9])-?"
+    version_regex = r"-([0-9]\.[0-9]\.[0-9])-?"
 
-    vers_search: Optional[Match] = re.search(version_regex, name)
+    vers_search = re.search(version_regex, name)
     try:
 
         if not vers_search:
@@ -237,28 +238,28 @@ def guess_version_from_name(name: str) -> str:
 
     version = vers_search.groups()[0]
 
-    logger.debug(f"Guessed version: {version}.")
+    logger.debug("Guessed version: {}.".format(version))
 
     return version
 
 
-def guess_architecture_from_name(name: str) -> str:
+def guess_architecture_from_name(name):
     """Guess package architecture based on file/diretory name.
 
     Args:
-        name: String to search the architecture from
+        name (str): String to search the architecture from
 
     Returns:
-        Architecture string.
+        str: Architecture string.
 
     Raises:
         ArchitectureNotFoundError: When could not find architecture in the
             string.
 
     """
-    architecture_regex: str = r"-([a-zA-Z0-9\.]+)\.(?:tar|zip)"
+    architecture_regex = r"-([a-zA-Z0-9\.]+)\.(?:tar|zip)"
 
-    arch_search: Optional[Match] = re.search(architecture_regex, name)
+    arch_search = re.search(architecture_regex, name)
 
     try:
 
@@ -275,23 +276,21 @@ def guess_architecture_from_name(name: str) -> str:
 
     architecture = arch_search.groups()[0]
 
-    logger.debug(f"Guessed architecture: {architecture}.")
+    logger.debug("Guessed architecture: {}.".format(architecture))
 
     return architecture
 
 
-def download_extract_installer(
-    installer_archive_url: str, installer_output_path: Path
-) -> Tuple[Path, Dict[str, str]]:
+def download_extract_installer(installer_archive_url, installer_output_path):
     """Download and extract the evaluation package installer.
 
     Args:
-        installer_archive_url: RTI Connext DDS installer URL.
-        installer_output_path: RTI Connext DDS installer output path.
+        installer_archive_url (str): RTI Connext DDS installer URL.
+        installer_output_path (Path): RTI Connext DDS installer output path.
 
     Returns:
-        Path to installer.
-        Dictionary with target version and architecture.
+        str: Path to installer.
+        Dict[str, str]: Dictionary with target version and architecture.
 
     Raises:
         VersionNotFoundError: When could not find version in the string.
@@ -303,11 +302,13 @@ def download_extract_installer(
 
     """
     logger.info(
-        f"Donwloading and exctacting installer to {installer_output_path}..."
+        "Donwloading and exctacting installer to {}...".format(
+            installer_output_path
+        )
     )
 
-    pkg_info: Dict[str, str] = {}
-    archive_name: str = installer_archive_url.split("/")[-1]
+    pkg_info = {}
+    archive_name = installer_archive_url.split("/")[-1]
 
     try:
 
@@ -376,36 +377,37 @@ def download_extract_installer(
 
     return (
         installer_output_path.joinpath(
-            f"rti_connext_dds-{pkg_info.get('version')}"
-            f"-eval-{pkg_info.get('architecture')}"
-            f".{installer_extension}"
+            "rti_connext_dds-{}-eval-{}.{}".format(
+                pkg_info.get("version"),
+                pkg_info.get("architecture"),
+                installer_extension,
+            )
         ),
         pkg_info,
     )
 
 
-def install_package(installer_path: Path, installation_parent_path: Path):
+def install_package(installer_path, installation_parent_path):
     """Install package into local machine.
 
     Args:
-        installer_path: RTI Connext DDS installer path.
-        installation_parent_path: RTI Connext DDS parent installation path.
-
-    Returns:
+        installer_path (Path): RTI Connext DDS installer path.
+        installation_parent_path (Path): RTI Connext DDS parent installation
+            path.
 
     Raises:
         InstallerNotFoundError: When installer path does not exist.
         pexpect.TIMEOUT: On timeout during the installation.
 
     """
-    logger.info(f"Installing package in {installation_parent_path}...")
+    logger.info("Installing package in {}...".format(installation_parent_path))
 
     try:
 
         if not installer_path.exists():
 
             raise InstallerNotFoundError(
-                f"Installer {installer_path} does not exist."
+                "Installer {} does not exist.".format(installer_path)
             )
 
     except InstallerNotFoundError as e:
@@ -415,14 +417,12 @@ def install_package(installer_path: Path, installation_parent_path: Path):
 
     try:
 
-        child: pexpect.spawn = pexpect.spawn(
-            str(installer_path), ["--mode", "text"]
-        )
+        child = pexpect.spawn(str(installer_path), ["--mode", "text"])
         child.delaybeforesend = 0.5
 
         while True:
 
-            index: int = child.expect(
+            index = child.expect(
                 [r"Installation Directory.+:", r"(Press|Do you).+:"]
             )
 
@@ -456,10 +456,10 @@ def select_files_for_minimun_package(installation_path):
     """Obtain files for minimal package.
 
     Args:
-        installation_path: RTI Connext DDS installation path.
+        installation_path (Path): RTI Connext DDS installation path.
 
     Returns:
-        Chosen files.
+        List[Path]: Chosen files.
 
     Raises:
         FileNotFoundError: When no files are found.
@@ -478,7 +478,7 @@ def select_files_for_minimun_package(installation_path):
         "resource/scripts/**/*",
     )
 
-    selected_files: List[Path] = []
+    selected_files = []
 
     for rel in globs:
 
@@ -501,40 +501,44 @@ def select_files_for_minimun_package(installation_path):
 
 
 def create_minimal_package(
-    selected_files: List[Path],
-    pkg_info: Dict[str, str],
-    archive_parent_path: Path,
-    installation_path: Path,
-) -> None:
+    selected_files, pkg_info, archive_parent_path, installation_path
+):
     """Create minimal zip of a Connext DDS package.
 
     Args:
-        selected_files: obtained files for minimal package.
-        pkg_info: Dictionary with target version and architecture.
-        archive_parent_path: Minimal archive destination directory.
-        installation_path: RTI Connext DDS installation path.
+        selected_files (List[Path]): obtained files for minimal package.
+        pkg_info (Dict[str, str]): Dictionary with target version and
+            architecture.
+        archive_parent_path (Path): Minimal archive destination directory.
+        installation_path (Path): RTI Connext DDS installation path.
 
     Raises:
         zipfile.BadZipFile: On error creating zip archive.
 
     """
-    logger.info(f"Creating minimal package in {archive_parent_path}...")
+    logger.info(
+        "Creating minimal package in {}...".format(archive_parent_path)
+    )
 
     vers = pkg_info.get("version")
     arch = pkg_info.get("architecture")
 
-    zip_name = f"rti_connext_dds-{vers}-min-{arch}.zip"
+    zip_name = "rti_connext_dds-{}-min-{}.zip".format(vers, arch)
 
     try:
 
         with ZipFile(
-            archive_parent_path.joinpath(zip_name), "w", zipfile.ZIP_DEFLATED
+            str(archive_parent_path.joinpath(zip_name)),
+            "w",
+            zipfile.ZIP_DEFLATED,
         ) as z:
 
             for file_to_compress in selected_files:
                 z.write(
-                    file_to_compress,
-                    file_to_compress.relative_to(installation_path.parent),
+                    str(file_to_compress),
+                    str(
+                        file_to_compress.relative_to(installation_path.parent)
+                    ),
                 )
 
     except zipfile.BadZipFile as e:
@@ -546,17 +550,23 @@ def create_minimal_package(
 def main():
     args = get_argument_parser().parse_args()
 
-    pkg_info: Dict[str, str] = {}
+    pkg_info = {}
 
-    installer_path: Path = None
+    installer_path = None
 
     if args.output_path:
 
-        output_path: Path = args.output_path.resolve()
+        try:
+
+            output_path = args.output_path.resolve()
+
+        except FileNotFoundError:
+
+            sys.exit("Error: Path not found {}.".format(output_path))
 
     else:
 
-        output_path: Path = TMP_PATH
+        output_path = TMP_PATH
 
     if args.rti_connextdds_url:
 
@@ -584,7 +594,13 @@ def main():
 
     elif args.rti_installer_path:
 
-        installer_path = args.rti_installer_path.resolve()
+        try:
+
+            installer_path = args.rti_installer_path.resolve()
+
+        except FileNotFoundError:
+
+            sys.exit("Error: Path not found {}.".format(installer_path))
 
     if installer_path:
 
@@ -613,12 +629,18 @@ def main():
             sys.exit("Error: Pexpect returnted timeout.")
 
         rti_connextdds_path = output_path.joinpath(
-            f"rti_connext_dds-{pkg_info.get('version')}"
+            "rti_connext_dds-{}".format(pkg_info.get("version"))
         )
 
     elif args.rti_connextdds_path:
 
-        rti_connextdds_path = args.rti_connextdds_path.resolve()
+        try:
+
+            rti_connextdds_path = args.rti_connextdds_path.resolve()
+
+        except FileNotFoundError:
+
+            sys.exit("Error: Path not found {}.".format(installer_path))
 
     else:
 
@@ -626,7 +648,7 @@ def main():
 
     if not rti_connextdds_path.exists():
 
-        sys.exit(f"Path {rti_connextdds_path} does not exist.")
+        sys.exit("Error: Path {} does not exist.".format(rti_connextdds_path))
 
     if not pkg_info.get("version"):
 
