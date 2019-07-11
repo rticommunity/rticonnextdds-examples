@@ -5,9 +5,10 @@ before_install:
   - wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -
   - sudo add-apt-repository -y 'deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial main'
   - sudo apt update
-  - sudo apt install -y clang-format-9
+  - sudo apt install -y clang clang-format
   - npm install -g markdownlint-cli
-install: ./resources/travis/linux_install.py
+  - pip install Sultan
+install: 
+  - ./resources/travis/linux_install.py
 script:
-  - ./resources/githooks/pre-commit
   - ./resources/travis/linux_script.py
