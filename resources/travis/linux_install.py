@@ -1,3 +1,19 @@
+#!/usr/bin/env python3
+#
+# (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
+# grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no
+# warranty of any type, including any warranty for fitness for any purpose. RTI
+# is under no obligation to maintain or support the Software.  RTI shall not be
+# liable for any incidental or consequential damages arising out of the use or
+# inability to use the software.
+"""Installation of RTIConnextDDS before static analysis.
+
+The environment variable RTI_MIN_PACKAGE_URL must be assigned for downloading
+the minimal installation archive.
+
+"""
 import os
 import io
 import sys
@@ -8,7 +24,7 @@ from pathlib import Path
 from zipfile import ZipFile, ZipInfo
 from urllib.error import URLError
 
-HOME_PATH: Path = Path.home()
+HOME_PATH = Path.home()
 
 
 class ZipFileWithPermissions(ZipFile):
@@ -23,7 +39,7 @@ class ZipFileWithPermissions(ZipFile):
 
             member = self.getinfo(member)
 
-        targetpath = super()._extract_member(member, targetpath, pwd)
+        targetpath = super()._extract_member(member, str(targetpath), pwd)
 
         attr = member.external_attr >> 16
 
@@ -35,9 +51,10 @@ class ZipFileWithPermissions(ZipFile):
 
 
 def main():
-    rti_minimal_package_url: str = os.getenv("RTI_MIN_PACKAGE_URL")
+    rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
 
     if not rti_minimal_package_url:
+
         sys.exit(
             "Provide url with the environment variable RTI_MIN_PACKAGE_URL"
         )
@@ -48,7 +65,9 @@ def main():
 
     except URLError as e:
 
-        sys.exit(f"Error opening the URL: {e}")
+        sys.exit("Error opening the URL: {}".format(e))
+
+    print("Extracting minimal installation.")
 
     try:
 
@@ -64,7 +83,7 @@ def main():
 
     except zipfile.BadZipFile as e:
 
-        sys.exit(f"Error opening zip file: {e}")
+        sys.exit("Error opening zip file: {}".format(e))
 
 
 if __name__ == "__main__":
