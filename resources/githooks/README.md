@@ -15,6 +15,14 @@ cd <project_folder>
 cp resources/githooks/pre-commit .git/hooks/pre-commit
 ```
 
+Then you need Python3.5+ installed in your system, and the python package
+`Sultan`. After installing python and pip (python package manager), run the
+following code in your terminal:
+
+```bash
+pip install --user --upgrade Sultan
+```
+
 ## clang-format
 
 Checkout [llvm build page](http://llvm.org/builds/) for info about downloading
