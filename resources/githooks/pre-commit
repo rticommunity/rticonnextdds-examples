@@ -38,15 +38,12 @@ def stream_sultan_output(result):
         complete = result.is_complete
 
         for line in result.stdout:
-
             print(line)
 
         for line in result.stderr:
-
             print(line)
 
         if complete:
-
             break
 
         time.sleep(1)
@@ -63,7 +60,6 @@ def get_staged_files(repo_root):
 
     """
     with Sultan.load(cwd=repo_root) as s:
-
         result = s.git("diff-index", "--name-only", "--cached", "HEAD").run(
             halt_on_nonzero=False, q=True
         )
@@ -99,45 +95,32 @@ def perform_linting(repo_root, command, file_list):
     """
     cmd = command + file_list
     with Sultan.load(cwd=repo_root) as s:
-
         lint_result = getattr(s, cmd[0])(*cmd[1:]).run(
             halt_on_nonzero=False, streaming=True
         )
-
         stream_sultan_output(lint_result)
 
     if lint_result.rc != 0 or len(lint_result.stdout) > 1:
-
         error_output = lint_result.stdout
         raise FormatError("Format error:\n{}".format(error_output))
 
 
 if __name__ == "__main__":
-
     with Sultan.load(cwd=SCRIPT_PATH.parent) as s:
-
         try:
-
             result = s.git("rev-parse", "--show-toplevel").run(q=True)
-
         except CalledProcessError:
-
             sys.exit("Error: Script not in a git repository.")
 
         try:
-
             repo_root = Path(result.stdout[0]).resolve()
-
         except FileNotFoundError:
-
             sys.exit("Error: Root file path not found.")
 
     exit_error = False
-
     file_list = get_staged_files(repo_root)
 
     if not file_list:
-
         sys.exit()
 
     # Markdownlint
@@ -146,13 +129,9 @@ if __name__ == "__main__":
     filtered_file_list = filter_files(file_list, markdownlint_suffix)
 
     if filtered_file_list:
-
         try:
-
             perform_linting(repo_root, markdownlint_cmd, filtered_file_list)
-
         except FormatError:
-
             exit_error = True
 
     # Clang-format
@@ -161,13 +140,9 @@ if __name__ == "__main__":
     filtered_file_list = filter_files(file_list, clang_format_suffix)
 
     if filtered_file_list:
-
         try:
-
             perform_linting(repo_root, clang_format_cmd, filtered_file_list)
-
         except FormatError:
-
             exit_error = True
 
     sys.exit(exit_error)

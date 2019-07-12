@@ -34,15 +34,12 @@ def stream_sultan_output(result):
         complete = result.is_complete
 
         for line in result.stdout:
-
             print(line)
 
         for line in result.stderr:
-
             print(line)
 
         if complete:
-
             break
 
         time.sleep(1)
@@ -54,21 +51,16 @@ def main():
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
 
     if not rti_connext_dds_version:
-
         sys.exit("Error: RTIConnextDDS version no specified.")
 
     try:
-
         examples_dir = Path("examples/connext_dds").resolve()
-
     except FileNotFoundError:
-
         sys.exit("Error: Examples directory not found.")
 
     build_dir = examples_dir.joinpath("build")
 
     try:
-
         rti_connext_dds_dir = (
             Path.home()
             .joinpath(
@@ -76,64 +68,50 @@ def main():
             )
             .resolve()
         )
-
     except FileNotFoundError:
-
         sys.exit("Error: RTIConnextDDS not found.")
 
     if not rti_connext_dds_dir.exists():
-
         sys.exit("Error: RTIConnextDDS not found.")
 
     try:
-
         cmake_build_all_path = Path(
             "resources/cmake/ConnextDdsBuildAllConfigurations.cmake"
         ).resolve()
-
     except FileNotFoundError:
-
         sys.exit("Error: Path not found {}.".format(examples_dir))
 
     if not examples_dir.exists():
-
         sys.exit("Examples directory not found.")
 
     if not cmake_build_all_path.exists():
-
         sys.exit("Cmake script to build all configurations not found.")
 
     build_dir.mkdir(exist_ok=True)
 
     if not build_dir.exists():
-
         sys.exit("Build dir not found.")
 
     print("Building the examples...", flush=True)
     time_build_start = time.perf_counter()
 
     with Sultan.load(cwd=build_dir) as sultan:
-
         build_gen_result = sultan.cmake(
             "-DBUILD_SHARED_LIBS=ON",
             "-DCMAKE_BUILD_TYPE=Release",
             examples_dir,
         ).run(halt_on_nonzero=False, streaming=True)
-
         stream_sultan_output(build_gen_result)
 
         if build_gen_result.rc != 0:
-
             sys.exit("There was some errors during build.")
 
         building_result = sultan.intercept__build(
             "cmake", "--build .", "--config Release"
         ).run(halt_on_nonzero=False, streaming=True)
-
         stream_sultan_output(building_result)
 
         if building_result.rc != 0:
-
             sys.exit("There was some errors during build.")
 
         time_build_end = time.perf_counter()
@@ -179,7 +157,6 @@ def main():
     )
 
     if static_analysis_result.rc != 0:
-
         sys.exit("There where some errors during static analysis.")
 
 
