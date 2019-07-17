@@ -17,6 +17,21 @@ find_package(RTIConnextDDS
         core
 )
 
+if(STATIC_ANALYSIS)
+    find_program(CPPCHECK_EXE NAMES "cppcheck")
+    if(CPPCHECK_EXE)
+        set(CPPCHECK_CMD
+            ${CPPCHECK_EXE}
+                --enable=style,unusedFunction
+                --suppress=*:*/ndds/*
+                --suppress=*:*/src/*
+                --quiet
+                --relative-paths)
+        set(CMAKE_C_CPPCHECK "${CPPCHECK_CMD}")
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_CMD}")
+    endif()
+endif()
+
 set(static_analysis_script
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/static_analysis/run_static_analysis.py")
 
