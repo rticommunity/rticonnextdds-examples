@@ -97,8 +97,10 @@ def main():
 
     with Sultan.load(cwd=build_dir) as sultan:
         build_gen_result = sultan.cmake(
+            "-DSTATIC_ANALYSIS=ON",
             "-DBUILD_SHARED_LIBS=ON",
             "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
             examples_dir,
         ).run(halt_on_nonzero=False, streaming=True)
         stream_sultan_output(build_gen_result)
@@ -106,9 +108,9 @@ def main():
         if build_gen_result.rc != 0:
             sys.exit("There was some errors during build.")
 
-        building_result = sultan.intercept__build(
-            "cmake", "--build .", "--config Release"
-        ).run(halt_on_nonzero=False, streaming=True)
+        building_result = sultan.cmake("--build .", "--config Release").run(
+            halt_on_nonzero=False, streaming=True
+        )
         stream_sultan_output(building_result)
 
         if building_result.rc != 0:
@@ -119,13 +121,14 @@ def main():
         print("Analyzing the build...", flush=True)
         time_analysis_start = time.perf_counter()
 
+        connextdds_installation_include = Path.home().joinpath(
+            "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
+        )
+
         static_analysis_result = sultan.analyze__build(
             "--verbose",
             "--status-bugs",
-            "--exclude",
-            Path.home().joinpath(
-                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-            ),
+            "--exclude {}".format(connextdds_installation_include),
             "--exclude",
             ".",
             "-o",
