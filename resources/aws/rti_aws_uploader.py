@@ -1,4 +1,4 @@
-#!/usr/bin/env python3.7
+#!/usr/bin/env python3
 #
 # (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
 # grants Licensee a license to use, modify, compile, and create derivative
@@ -36,18 +36,16 @@ import logging
 import argparse
 
 from pathlib import Path
-from typing import List, Set, Dict
-from boto3_type_annotations import s3
 from botocore.client import ClientError
 from botocore.exceptions import NoCredentialsError
 
 
-SCRIPT_PATH: Path = Path(__file__).resolve()
+SCRIPT_PATH = Path(__file__)
 
-logger: logging.Logger = logging.getLogger(f"{SCRIPT_PATH.name}")
+logger = logging.getLogger(SCRIPT_PATH.name)
 logger.setLevel(logging.DEBUG)
 
-fh = logging.FileHandler(filename=SCRIPT_PATH.with_suffix(".log"))
+fh = logging.FileHandler(filename=str(SCRIPT_PATH.with_suffix(".log")))
 fh.setLevel(logging.DEBUG)
 fh.setFormatter(
     logging.Formatter(
@@ -76,183 +74,13 @@ class BucketForbiddenError(Exception):
     pass
 
 
-def bucket_exists(s3_resource: s3.ServiceResource, bucket_name: str) -> bool:
-    """Checks if bucket exists.
-
-    Args:
-        s3_resource: S3 resource to check the bucket from.
-        bucket_name: Selected bucket name to check.
+def get_argument_parser():
+    """Create argument parser.
 
     Returns:
-        exists: True if the bucket exists.
+        The argument parser.
 
-    Raises:
-        BucketNotFoundError: If the bucket does not exist.
-        BucketForbiddenError: If do not have permissions to access the bucket.
-        NoCredentialsError: If credentials are not found.
     """
-    exists: bool = True
-    try:
-        s3_resource.meta.client.head_bucket(Bucket=bucket_name)
-    except ClientError as e:
-        error_code = e.response["Error"]["Code"]
-        if error_code == "403":
-            forbidden_error = BucketForbiddenError(
-                f'Do not have permissions to access "{bucket_name}" bucket.'
-            )
-            logger.debug(e, exc_info=True)
-            raise forbidden_error
-        elif error_code == "404":
-            notfound_error = BucketNotFoundError(
-                f'Bucket "{bucket_name}" does not exisṫ.'
-            )
-            logger.debug(e, exc_info=True)
-            raise notfound_error
-    except NoCredentialsError as e:
-        logger.debug(e, exc_info=True)
-        raise
-    return exists
-
-
-def list_bucket_objects(
-    s3_resource: s3.ServiceResource, bucket_name: str
-) -> None:
-    """Lists objects inside a bucket.
-
-    Args:
-        s3_resource: S3 resource.
-        bucket_name: Bucket name from which objects will be listed.
-    """
-    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
-    obj_list: List[s3.Object] = [
-        s3_resource.Object(bucket_name, obj_summary.key)
-        for obj_summary in bucket.objects.all()
-    ]
-    if obj_list:
-        logger.info("Listing bucket Objects:")
-        for obj in obj_list:
-            logger.info(f"Obj ({obj.last_modified}) {obj.key}")
-    else:
-        logger.info("The bucket is empty.")
-
-
-def _get_directory_tree_file_path_list(
-    top_dir: Path, filtered_out_items: Set[str] = None
-) -> List[Path]:
-    """Obtains directory tree structure.
-
-    Args:
-        top_dir: Top directory path.
-        filtered_out_items: Filtered out subdir list (default=None).
-
-    Returns:
-        file_list: All file paths of the tree.
-    """
-    file_list: List[Path] = []
-    for curr_path, _, files in os.walk(top_dir):
-        dir_path = Path(curr_path).resolve()
-        if filtered_out_items and filtered_out_items.intersection(
-            dir_path.parts
-        ):
-            continue
-        for curr_file in files:
-            file_list.append(dir_path.joinpath(curr_file).resolve())
-    return file_list
-
-
-def _get_filtered_file_list(
-    top_dir: Path,
-    selected_top_items: Set[str] = None,
-    filtered_out_items: Set[str] = None,
-) -> List[Path]:
-    """Obtains a list of files under top_dir with their own paths.
-
-    Args:
-        top_dir: Top directory path.
-        selected_top_items: Selected top items list (default=None).
-        filtered_out_items: Filtered out subdir list (default=None).
-
-    Returns:
-        Sorted file path list.
-    """
-    file_list: List[Path] = []
-    for child in top_dir.iterdir():
-        if selected_top_items and child.name not in selected_top_items:
-            continue
-        if child.is_dir():
-            file_list.extend(
-                _get_directory_tree_file_path_list(
-                    child.resolve(), filtered_out_items
-                )
-            )
-        else:
-            file_list.append(child.resolve())
-    return sorted(file_list)
-
-
-def upload_directory(
-    s3_resource: s3.ServiceResource,
-    bucket_name: str,
-    local_dir_path: Path,
-    selected_top_items: Set[str],
-    filtered_out_items: Set[str],
-) -> None:
-    """Uploads local directory tree to the bucket.
-
-    Args:
-        s3_resource: S3 resource.
-        bucket_name: Bucket name.
-        local_dir_path: Directory path to upload.
-        selected_top_items: Selected top items list (default=None).
-        filtered_out_items: Filtered out subdir list (default=None).
-    """
-    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
-    file_path_filtered_list = _get_filtered_file_list(
-        local_dir_path, selected_top_items, filtered_out_items
-    )
-    logger.info("Starting upload...")
-    logger.debug("The following files will be uploaded:")
-    for path in file_path_filtered_list:
-        logger.debug(path)
-    for file_path in file_path_filtered_list:
-        source: Path = file_path
-        target: Path = file_path.relative_to(local_dir_path.parent)
-        logger.debug(f"source: {str(source)}")
-        logger.debug(f"target: {str(target)}")
-        bucket.upload_file(Filename=str(source), Key=str(target))
-    logger.info("Finished.")
-
-
-def remove_directory(
-    s3_resource: s3.ServiceResource, bucket_name: str, remote_dir_name: str
-) -> None:
-    """Deletes directory in bucket.
-
-    Args:
-        s3_resource: S3 resource.
-        bucket_name: Bucket name.
-        remote_dir_name: Remote directory name to delete.
-    """
-    bucket: s3.Bucket = s3_resource.Bucket(bucket_name)
-    file_key_list: List[Dict[str, str]] = [
-        {"Key": obj_summary.key}
-        for obj_summary in bucket.objects.all()
-        if obj_summary.key.startswith(remote_dir_name)
-    ]
-    if file_key_list:
-        logger.info("Removing selected folder...")
-        logger.warning("The following files will be removed:")
-        for obj in file_key_list:
-            logger.warning(obj["Key"])
-        if input("Are you sure? (yes/no): ").strip() != "yes":
-            return
-        bucket.delete_objects(Delete={"Objects": file_key_list})
-        logger.info("Finished.")
-    else:
-        logger.error(f'Error: Folder "{remote_dir_name}" not found.')
-
-
-def main():
     parser = argparse.ArgumentParser(
         description=__doc__,
         allow_abbrev=False,
@@ -277,7 +105,15 @@ def main():
     )
     mutual = parser.add_mutually_exclusive_group(required=True)
     mutual.add_argument(
-        "-u",
+        "-f",
+        "--upload-file",
+        type=Path,
+        metavar="file",
+        dest="local_file",
+        help="uploads only selected file",
+    )
+    mutual.add_argument(
+        "-d",
         "--upload-directory",
         type=Path,
         metavar="path",
@@ -293,8 +129,8 @@ def main():
         help="selects top dirs and files",
     )
     parser.add_argument(
-        "-f",
-        "--filtered-out-items",
+        "-s",
+        "--skip-items",
         nargs="+",
         metavar="item",
         dest="filtered_out_items",
@@ -315,39 +151,278 @@ def main():
         dest="list_bucket_objects",
         help="list objects in the bucket",
     )
-    args = parser.parse_args()
+    logger.debug("Created argument parser.")
+    return parser
+
+
+def bucket_exists(s3_resource, bucket_name):
+    """Checks if bucket exists.
+
+    Args:
+        s3_resource (s3.ServiceResource): S3 resource to check the bucket from.
+        bucket_name (str): Selected bucket name to check.
+
+    Returns:
+        bool: True if the bucket exists.
+
+    Raises:
+        BucketNotFoundError: If the bucket does not exist.
+        BucketForbiddenError: If do not have permissions to access the bucket.
+        NoCredentialsError: If credentials are not found.
+
+    """
+    exists = True
+
+    try:
+        s3_resource.meta.client.head_bucket(Bucket=bucket_name)
+    except ClientError as e:
+        error_code = e.response["Error"]["Code"]
+
+        if error_code == "403":
+            forbidden_error = BucketForbiddenError(
+                'Do not have permissions to access "{}" bucket.'.format(
+                    bucket_name
+                )
+            )
+            logger.debug(e, exc_info=True)
+            raise forbidden_error
+        elif error_code == "404":
+            notfound_error = BucketNotFoundError(
+                'Bucket "{}" does not exisṫ.'.format(bucket_name)
+            )
+            logger.debug(e, exc_info=True)
+            raise notfound_error
+    except NoCredentialsError as e:
+        logger.debug(e, exc_info=True)
+        raise
+
+    return exists
+
+
+def list_bucket_objects(s3_resource, bucket_name):
+    """Lists objects inside a bucket.
+
+    Args:
+        s3_resource (s3.ServiceResource): S3 resource.
+        bucket_name (str): Bucket name from which objects will be listed.
+
+    """
+    bucket = s3_resource.Bucket(bucket_name)
+    obj_list = [
+        s3_resource.Object(bucket_name, obj_summary.key)
+        for obj_summary in bucket.objects.all()
+    ]
+
+    if obj_list:
+        logger.info("Listing bucket Objects:")
+
+        for obj in obj_list:
+            logger.info("Obj ({}) {}".format(obj.last_modified, obj.key))
+    else:
+        logger.info("The bucket is empty.")
+
+
+def _get_directory_tree_file_path_list(top_dir, filtered_out_items):
+    """Obtains directory tree structure.
+
+    Args:
+        top_dir (Path): Top directory path.
+        filtered_out_items (Set[str]): Filtered out subdir list. Defaults to
+            None.
+
+    Returns:
+        List[Path]: All file paths of the tree.
+
+    """
+    file_list = []
+
+    for curr_path, _, files in os.walk(top_dir):
+        try:
+            dir_path = Path(curr_path).resolve()
+        except FileNotFoundError:
+            sys.exit("Error: Path not found {}.".format(dir_path))
+
+        if filtered_out_items and filtered_out_items.intersection(
+            dir_path.parts
+        ):
+            continue
+
+        for curr_file in files:
+            try:
+                curr_file_path = dir_path.joinpath(curr_file).resolve()
+            except FileNotFoundError:
+                sys.exit("Error: Path not found {}.".format(curr_file_path))
+
+            file_list.append(curr_file_path)
+
+    return file_list
+
+
+def _get_filtered_file_list(top_dir, selected_top_items, filtered_out_items):
+    """Obtains a list of files under top_dir with their own paths.
+
+    Args:
+        top_dir (Path): Top directory path.
+        selected_top_items (Set[str]): Selected top items list. Defaults to
+            None.
+        filtered_out_items (Set[str]): Filtered out subdir list. Defaults to
+            None.
+
+    Returns:
+        List[Path]: Sorted file path list.
+
+    """
+    file_list = []
+    for child in top_dir.iterdir():
+        try:
+            child_path = child.resolve()
+        except FileNotFoundError:
+            sys.exit("Error: Path not found {}.".format(child_path))
+
+        if selected_top_items and child_path.name not in selected_top_items:
+            continue
+
+        if child_path.is_dir():
+            file_list.extend(
+                _get_directory_tree_file_path_list(
+                    child_path, filtered_out_items
+                )
+            )
+        else:
+            file_list.append(child_path)
+
+    return sorted(file_list)
+
+
+def upload_file(s3_resource, bucket_name, local_file_path, remote_path):
+    """Uploads local file to bucket.
+
+    Args:
+        s3_resource (s3.ServiceResource): S3 resource.
+        bucket_name (str): Bucket name.
+        local_file_path (str): File path to upload.
+        remote_path (str): Remote folder path for local file.
+
+    """
+    logger.info("Uploading file...")
+    bucket = s3_resource.Bucket(bucket_name)
+    logger.debug("source: {}".format(local_file_path))
+    logger.debug("target: {}".format(remote_path))
+    bucket.upload_file(Filename=local_file_path, Key=remote_path)
+
+
+def upload_directory(
+    s3_resource,
+    bucket_name,
+    local_dir_path,
+    selected_top_items,
+    filtered_out_items,
+):
+    """Uploads local directory tree to the bucket.
+
+    Args:
+        s3_resource (s3.ServiceResource): S3 resource.
+        bucket_name (str): Bucket name.
+        local_dir_path (Path): Directory path to upload.
+        selected_top_items (Set[str]): Selected top items list (default=None).
+        filtered_out_items (Set[str]): Filtered out subdir list (default=None).
+
+    """
+    file_path_filtered_list = _get_filtered_file_list(
+        local_dir_path, selected_top_items, filtered_out_items
+    )
+    logger.info("Starting upload...")
+    logger.debug("The following files will be uploaded:")
+
+    for path in file_path_filtered_list:
+        logger.debug(path)
+
+    for file_path in file_path_filtered_list:
+        source = file_path
+        target = file_path.relative_to(local_dir_path.parent)
+        upload_file(s3_resource, bucket_name, str(source), str(target))
+
+    logger.info("Finished.")
+
+
+def remove_directory(s3_resource, bucket_name, remote_dir_name):
+    """Deletes directory in bucket.
+
+    Args:
+        s3_resource (s3.ServiceResource): S3 resource.
+        bucket_name (str): Bucket name.
+        remote_dir_name (str): Remote directory name to delete.
+
+    """
+    bucket = s3_resource.Bucket(bucket_name)
+    file_key_list = [
+        {"Key": obj_summary.key}
+        for obj_summary in bucket.objects.all()
+        if obj_summary.key.startswith(remote_dir_name)
+    ]
+
+    if file_key_list:
+        logger.info("Removing selected folder...")
+        logger.warning("The following files will be removed:")
+
+        for obj in file_key_list:
+            logger.warning(obj["Key"])
+
+        if input("Are you sure? (yes/no): ").strip() != "yes":
+            return
+
+        bucket.delete_objects(Delete={"Objects": file_key_list})
+        logger.info("Finished.")
+    else:
+        logger.error('Error: Folder "{}" not found.'.format(remote_dir_name))
+
+
+def main():
+    args = get_argument_parser().parse_args()
 
     if args.config_path:
-        config_path: Path = args.config_path.resolve()
+        try:
+            config_path = args.config_path.resolve()
+        except FileNotFoundError:
+            sys.exit("Error: Path not found {}.".format(config_path))
+
         if not config_path.is_file():
-            sys.exit(f'Error: Path "{config_path}" does not exist.')
+            sys.exit('Error: Path "{}" does not exist.'.format(config_path))
+
         os.environ["AWS_SHARED_CREDENTIALS_FILE"] = str(config_path)
 
-    s3_resource: s3.ServiceResource = boto3.resource("s3")
+    s3_resource = boto3.resource("s3")
 
     try:
         if not bucket_exists(s3_resource, args.bucket_name):
-            sys.exit(f'Error: Bucket "{args.bucket_name}" does not exist.')
+            sys.exit(
+                'Error: Bucket "{}" does not exist.'.format(args.bucket_name)
+            )
     except BucketNotFoundError as e:
-        sys.exit(f"Error: {e}")
+        sys.exit("Error: {}".format(e))
     except BucketForbiddenError as e:
-        sys.exit(f"Error: {e}")
+        sys.exit("Error: {}".format(e))
     except NoCredentialsError as e:
-        sys.exit(f"Error: {e}")
+        sys.exit("Error: {}".format(e))
 
     if args.list_bucket_objects:
         list_bucket_objects(s3_resource, args.bucket_name)
     elif args.local_dir:
-        local_dir: Path = args.local_dir.resolve()
+        try:
+            local_dir = args.local_dir.resolve()
+        except FileNotFoundError:
+            sys.exit("Error: Path not found {}.".format(local_dir))
 
         if not local_dir.exists():
-            sys.exit(f'Error: Path "{local_dir}" does not exist.')
+            sys.exit('Error: Path "{}" does not exist.'.format(local_dir))
 
-        selected_top_items: Set[str] = None
+        selected_top_items = None
+
         if args.selected_top_items:
             selected_top_items = set(args.selected_top_items)
 
-        filtered_out_items: Set[str] = None
+        filtered_out_items = None
+
         if args.filtered_out_items:
             filtered_out_items = set(args.filtered_out_items)
 
@@ -357,6 +432,18 @@ def main():
             local_dir,
             selected_top_items,
             filtered_out_items,
+        )
+    elif args.local_file:
+        try:
+            local_file = args.local_file.resolve()
+        except FileNotFoundError:
+            sys.exit("Error: Path not found {}.".format(local_file))
+
+        if not local_file.exists():
+            sys.exit('Error: Path "{}" does not exist.'.format(local_file))
+
+        upload_file(
+            s3_resource, args.bucket_name, local_file.name, local_file.name
         )
     else:
         remove_directory(s3_resource, args.bucket_name, args.remote_dir_name)
