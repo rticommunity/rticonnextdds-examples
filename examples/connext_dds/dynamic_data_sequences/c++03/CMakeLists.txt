@@ -37,8 +37,4 @@ target_include_directories(dynamic_data_sequences_cxx2
 set_target_properties(dynamic_data_sequences_cxx2
     PROPERTIES
         OUTPUT_NAME "dynamic_data_sequences"
-)
-
-target_link_options(dynamic_data_sequences_cxx2
-    PRIVATE
-        -Wl,--no-as-needed)
+        LINK_FLAGS -Wl,--no-as-needed)

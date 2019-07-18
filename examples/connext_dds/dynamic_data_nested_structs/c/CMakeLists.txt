@@ -37,8 +37,4 @@ target_include_directories(dynamic_data_nested_struct_c
 set_target_properties(dynamic_data_nested_struct_c
     PROPERTIES
         OUTPUT_NAME "dynamic_data_nested_struct"
-)
-
-target_link_options(dynamic_data_nested_struct_c
-    PRIVATE
-        -Wl,--no-as-needed)
+        LINK_FLAGS -Wl,--no-as-needed)

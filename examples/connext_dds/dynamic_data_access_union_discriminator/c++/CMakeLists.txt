@@ -36,8 +36,5 @@ target_include_directories(dynamic_data_union_example_cxx
 
 set_target_properties(dynamic_data_union_example_cxx
     PROPERTIES
-        OUTPUT_NAME "dynamic_data_union_example")
-
-target_link_options(dynamic_data_union_example_cxx
-    PRIVATE
-        -Wl,--no-as-needed)
+        OUTPUT_NAME "dynamic_data_union_example"
+        LINK_FLAGS -Wl,--no-as-needed)
