@@ -8,6 +8,7 @@ before_install:
   - sudo apt install -y clang clang-format
   - npm install -g markdownlint-cli
   - pip install Sultan
+  - pip install scan-build
 install: 
   - ./resources/travis/linux_install.py
 script:
