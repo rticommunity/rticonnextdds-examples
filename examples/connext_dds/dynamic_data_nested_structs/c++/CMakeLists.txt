@@ -38,3 +38,7 @@ set_target_properties(dynamic_data_nested_struct_cxx
     PROPERTIES
         OUTPUT_NAME "dynamic_data_nested_struct"
 )
+
+target_link_options(dynamic_data_nested_struct_cxx
+    PRIVATE
+        -Wl,--no-as-needed)

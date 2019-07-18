@@ -33,3 +33,7 @@ set_target_properties(dynamic_data_union_example_cxx2
     PROPERTIES
         OUTPUT_NAME "dynamic_data_union_example"
 )
+
+target_link_options(dynamic_data_union_example_cxx2
+    PRIVATE
+        -Wl,--no-as-needed)
