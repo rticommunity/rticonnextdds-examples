@@ -17,6 +17,41 @@ find_package(RTIConnextDDS
         core
 )
 
+if(STATIC_ANALYSIS)
+    find_program(CPPCHECK_EXE NAMES "cppcheck")
+    if(CPPCHECK_EXE)
+        set(CPPCHECK_CMD
+            ${CPPCHECK_EXE}
+                --enable=style,unusedFunction
+                --suppress=*:*/ndds/*
+                --suppress=*:*/src/*
+                --quiet
+                --relative-paths)
+        set(CMAKE_C_CPPCHECK "${CPPCHECK_CMD}")
+        set(CMAKE_CXX_CPPCHECK "${CPPCHECK_CMD}")
+    endif()
+endif()
+
+set(static_analysis_script
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/static_analysis/run_static_analysis.py")
+
+
+add_custom_target(static_analysis
+    COMMAND
+        ${static_analysis_script}
+            --binary-dir
+            ${CMAKE_CURRENT_BINARY_DIR}
+            --includes
+            ${CONNEXTDDS_INCLUDE_DIRS}
+            --defines
+            ${CONNEXTDDS_COMPILE_DEFINITIONS}
+    COMMENT
+        "Running static analysis...")
+
+set_target_properties(static_analysis
+    PROPERTIES
+        EXCLUDE_FROM_ALL TRUE)
+
 # asynchronous_publication
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c++")
