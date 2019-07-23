@@ -197,7 +197,7 @@ static int subscriber_main(int domainId, int sample_count, int sel_cft)
     DDS_ContentFilteredTopic *cft = NULL;
     /* If you want to modify datareader_qos programatically you
      * will need to use the following structure. */
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
     /* For this filter we only allow 1 parameter*/
     struct DDS_StringSeq parameters;
     const char* param_list[] = {"SOME_STRING"};

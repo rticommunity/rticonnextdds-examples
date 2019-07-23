@@ -117,7 +117,7 @@ static int subscriber_main(int domainId, int sample_count)
     struct DDS_Duration_t wait_timeout = {1,500000000};
     /* To change the DataReader's QoS programmatically you will need to
      * declare and initialize datareader_qos here. */
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
     struct waitsetsSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
 

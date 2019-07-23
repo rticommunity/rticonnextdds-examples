@@ -43,6 +43,11 @@ void print_average_pixel_fast(const CameraImage& sample)
 {
     auto pixels = sample.root().pixels();
     auto pixel_count = pixels.element_count();
+
+    if (pixel_count == 0) {
+        return;
+    }
+
     auto pixel_array = rti::flat::plain_cast(pixels);
 
     unsigned int red_sum = 0, green_sum = 0, blue_sum = 0;
@@ -146,4 +151,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

@@ -200,7 +200,7 @@ static int subscriber_main(int domainId, int sample_count, int sel_cft)
     struct DDS_Duration_t poll_period = {1,0};
     /* If you want to modify datareader_qos programatically you
      * will need to use the following structure. */
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
     /* Sequence of parameters for the content filter expression */
     struct DDS_StringSeq parameters;
     /* The default parameter list that we will include in the

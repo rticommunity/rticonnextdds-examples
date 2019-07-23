@@ -200,7 +200,7 @@ static int subscriber_main(int domainId, int sample_count)
     int count = 0;
     struct DDS_Duration_t poll_period = {4,0};
     struct DDS_SubscriberQos subscriber_qos = DDS_SubscriberQos_INITIALIZER;
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
     
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */

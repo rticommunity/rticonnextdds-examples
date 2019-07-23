@@ -128,7 +128,7 @@ DDS_DomainParticipant * numbers_common_create_participant(int domainId) {
     retcode = NDDS_Transport_Support_get_builtin_transport_property(part, 
 	DDS_TRANSPORTBUILTIN_UDPv4, 
 	(struct NDDS_Transport_Property_t *)&transport_UDPv4_property);
-    if (part == NULL) {
+    if (retcode != DDS_RETCODE_OK || part == NULL) {
 	printf("NDDS_Transport_Support_get_builtin_transport_property error\n");
         return NULL;
     }
@@ -193,6 +193,3 @@ int numbers_common_verify_qos(DDS_DomainParticipant * part) {
     printf("New UDPv4 receive socket buffer size is: %d \n", transport_UDPv4_property.recv_socket_buffer_size);
     return 0;
 }
-
-
-

@@ -150,6 +150,7 @@ static int subscriber_main(int domainId, int sample_count)
         DDS_String_dup("company MATCH %0 AND altitude >= %1"),
         &query_parameters);
 
+
     /* Main loop */
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         struct DDS_SampleInfoSeq info_seq;
@@ -174,7 +175,6 @@ static int subscriber_main(int domainId, int sample_count)
 
         /* Set new parameters. */
         if (update) {
-            update = 0;
             printf("Changing parameter to %s\n",
                 DDS_StringSeq_get(&query_parameters, 0));
             retcode = DDS_QueryCondition_set_query_parameters(

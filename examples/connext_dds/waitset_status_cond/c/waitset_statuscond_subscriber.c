@@ -105,8 +105,8 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
-    struct DDS_DataReaderListener reader_listener =
-        DDS_DataReaderListener_INITIALIZER;
+    /* struct DDS_DataReaderListener reader_listener =
+         DDS_DataReaderListener_INITIALIZER; */
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;

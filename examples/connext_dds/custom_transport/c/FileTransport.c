@@ -234,6 +234,9 @@ void NDDS_Transport_FILE_print_address(
     const NDDS_Transport_Port_t          port_in,
     int verbosity )
 {
+    if (address_in == NULL) {
+        return;
+    }
     unsigned const char *addressBytes = address_in->network_ordered_value;
     if ( port_in != -1 ) {
         NDDS_Transport_Log0printf("port= %d, ", port_in);
@@ -1758,5 +1761,3 @@ NDDS_Transport_Plugin *NDDS_Transport_FILE_create(
 
 
 /* end of $Id: FILE.c,v 1.20 2008/10/22 19:16:46 jim Exp $ */
-
-

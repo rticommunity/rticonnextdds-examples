@@ -214,7 +214,7 @@ static int subscriber_main(int domainId, int sample_count)
     struct DDS_Duration_t poll_period = {4,0};
     /* To change the time-based filter programmatically you will need to declare
      * the DataReaderQoS */
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
 
 
     /* To customize participant QoS, use 

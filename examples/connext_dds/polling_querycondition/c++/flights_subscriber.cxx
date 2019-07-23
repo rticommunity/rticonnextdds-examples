@@ -151,9 +151,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         /* Poll for a new samples every second. */
         NDDSUtility::sleep(receive_period);
+        bool update = false;
 
         /* Change the filter parameter after 5 seconds. */
-        bool update = false;
         if ((count + 1) % 10 == 5) {
             query_parameters[0] = "'CompanyB'";
             update = true;
@@ -166,7 +166,6 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         if (update) {
             printf("Changing parameter to %s\n", query_parameters[0]);
             query_condition->set_query_parameters(query_parameters);
-            update = false;
         }
 
         DDS_SampleInfoSeq info_seq;

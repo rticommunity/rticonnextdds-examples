@@ -107,7 +107,7 @@ static int publisher_main(int domainId, int sample_count) {
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_DataWriterQos writer_qos = DDS_DataWriterQos_INITIALIZER;
+    /* struct DDS_DataWriterQos writer_qos = DDS_DataWriterQos_INITIALIZER; */
     struct DDS_ChannelSettings_t *curr_channel;
 
     /* Changes for MultiChannel */
