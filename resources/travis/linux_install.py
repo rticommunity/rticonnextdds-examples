@@ -50,9 +50,10 @@ def main():
     rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
 
     if not rti_minimal_package_url:
-        sys.exit(
-            "Provide url with the environment variable RTI_MIN_PACKAGE_URL"
+        print(
+            "Environment variable RTI_MIN_PACKAGE_URL not found, skipping..."
         )
+        sys.exit()
 
     try:
         resp = request.urlopen(rti_minimal_package_url)
