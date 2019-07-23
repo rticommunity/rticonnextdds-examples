@@ -306,6 +306,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     retcode = subscriber->get_default_datareader_qos(datareader_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_datareader_qos error\n");
+        subscriber_shutdown(participant);
+        delete reader_listener;
         return -1;
     }
 
@@ -415,4 +417,3 @@ int main(int argc, char *argv[])
     return subscriber_main(domainId, sample_count);
 }
 #endif
-

@@ -114,7 +114,7 @@ static int publisher_main(int domainId, int sample_count)
     struct DDS_Duration_t send_period = {1,0};
     /* We need this structure in case we want to change the datawriter_qos
      * programmatically.*/
-    struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;
+    /* struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER; */
 
     /* To customize participant QoS, use 
        the configuration file USER_QOS_PROFILES.xml */

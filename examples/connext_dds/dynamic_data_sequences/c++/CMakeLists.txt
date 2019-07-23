@@ -36,5 +36,10 @@ target_include_directories(dynamic_data_sequences_cxx
 
 set_target_properties(dynamic_data_sequences_cxx
     PROPERTIES
-        OUTPUT_NAME "dynamic_data_sequences"
-)
+        OUTPUT_NAME "dynamic_data_sequences")
+
+if(UNIX AND CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set_target_properties(dynamic_data_sequences_cxx
+        PROPERTIES
+            LINK_FLAGS -Wl,--no-as-needed)
+endif()

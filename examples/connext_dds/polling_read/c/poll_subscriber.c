@@ -105,8 +105,8 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
-    struct DDS_DataReaderListener reader_listener =
-        DDS_DataReaderListener_INITIALIZER;
+    /* struct DDS_DataReaderListener reader_listener =
+         DDS_DataReaderListener_INITIALIZER; */
     DDS_DataReader *reader = NULL;
     pollDataReader *poll_reader = NULL;
     DDS_ReturnCode_t retcode;
@@ -117,7 +117,7 @@ static int subscriber_main(int domainId, int sample_count)
     /* We need to change the datareader_qos for this example.
      * If you want to do it programmatically, you will need to declare to
      * use the following struct.*/
-    struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER;
+    /* struct DDS_DataReaderQos datareader_qos = DDS_DataReaderQos_INITIALIZER; */
 
 
     /* To customize participant QoS, use 

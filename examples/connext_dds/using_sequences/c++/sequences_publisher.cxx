@@ -295,7 +295,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         printf("unloan error \n");
     }
 
-    delete short_buffer;
+    delete[] short_buffer;
 
     /* Delete data samples */
     retcode = sequencesTypeSupport::delete_data(owner_instance);
@@ -371,4 +371,3 @@ extern "C" void usrAppInit ()
    
 }
 #endif
-

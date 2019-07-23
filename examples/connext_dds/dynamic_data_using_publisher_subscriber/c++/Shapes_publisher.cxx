@@ -251,6 +251,7 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
             publisher_shutdown(participant, type_support);
+            return -1;
         }
 
         NDDSUtility::sleep(send_period);
@@ -325,4 +326,3 @@ extern "C" void usrAppInit ()
 
 }
 #endif
-

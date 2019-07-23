@@ -36,5 +36,10 @@ target_include_directories(dynamic_data_nested_struct_cxx2
 
 set_target_properties(dynamic_data_nested_struct_cxx2
     PROPERTIES
-        OUTPUT_NAME "dynamic_data_nested_struct"
-)
+        OUTPUT_NAME "dynamic_data_nested_struct")
+
+if(UNIX AND CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set_target_properties(dynamic_data_nested_struct_cxx2
+        PROPERTIES
+            LINK_FLAGS -Wl,--no-as-needed)
+endif()

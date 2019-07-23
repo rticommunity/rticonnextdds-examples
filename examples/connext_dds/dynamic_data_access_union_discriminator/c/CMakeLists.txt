@@ -37,3 +37,9 @@ target_include_directories(dynamic_data_union_example_c
 set_target_properties(dynamic_data_union_example_c
     PROPERTIES
         OUTPUT_NAME "dynamic_data_union_example")
+
+if(UNIX AND CMAKE_SYSTEM_NAME MATCHES "Linux")
+    set_target_properties(dynamic_data_union_example_c
+        PROPERTIES
+            LINK_FLAGS -Wl,--no-as-needed)
+endif()

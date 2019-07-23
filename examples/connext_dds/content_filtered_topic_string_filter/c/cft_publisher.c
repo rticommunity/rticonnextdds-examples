@@ -115,7 +115,7 @@ static int publisher_main(int domainId, int sample_count)
     char* odd_string =  DDS_String_dup("ODD");
     /* We need this structure in case we want to change the datawriter_qos
      * programmatically.*/
-    struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;
+    /* struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER; */
 
 
     /* To customize participant QoS, use 

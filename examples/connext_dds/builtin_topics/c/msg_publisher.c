@@ -279,8 +279,6 @@ static int publisher_main(int domain_id, int sample_count) {
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t send_period = { 1, 0 };
-    struct DDS_DomainParticipantFactoryQos factory_qos =
-            DDS_DomainParticipantFactoryQos_INITIALIZER;
     DDS_DataReader *builtin_participant_datareader = NULL;
     struct DDS_DataReaderListener builtin_participant_listener =
             DDS_DataReaderListener_INITIALIZER;
@@ -288,8 +286,11 @@ static int publisher_main(int domain_id, int sample_count) {
     struct DDS_DataReaderListener builtin_subscriber_listener =
             DDS_DataReaderListener_INITIALIZER;
     DDS_Subscriber *builtin_subscriber = NULL;
+    /* struct DDS_DomainParticipantFactoryQos factory_qos =
+            DDS_DomainParticipantFactoryQos_INITIALIZER;
+
     struct DDS_DomainParticipantQos participant_qos =
-            DDS_DomainParticipantQos_INITIALIZER;
+            DDS_DomainParticipantQos_INITIALIZER; */
 
     /* It is recommended to install built-in topic listeners on disabled
      * entities (EntityFactoryQoS). For this reason it is necessary to set
