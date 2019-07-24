@@ -38,7 +38,7 @@ set_target_properties(dynamic_data_union_example_c
     PROPERTIES
         OUTPUT_NAME "dynamic_data_union_example")
 
-if(AND CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_C_COMPILER_ID MATCHES "GNU")
     set_target_properties(dynamic_data_union_example_c
         PROPERTIES
             LINK_FLAGS -Wl,--no-as-needed)
