@@ -10,6 +10,6 @@ before_install:
   - pip install Sultan
   - pip install scan-build
 install: 
-  - ./resources/travis/linux_install.py
+  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then ./resources/travis/linux_install.py; fi'
 script:
-  - ./resources/travis/linux_script.py
+  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then ./resources/travis/linux_script.py; fi'

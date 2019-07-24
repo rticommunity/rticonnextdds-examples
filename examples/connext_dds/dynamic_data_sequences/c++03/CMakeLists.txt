@@ -38,7 +38,7 @@ set_target_properties(dynamic_data_sequences_cxx2
     PROPERTIES
         OUTPUT_NAME "dynamic_data_sequences")
 
-if(UNIX AND CMAKE_SYSTEM_NAME MATCHES "Linux")
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
     set_target_properties(dynamic_data_sequences_cxx2
         PROPERTIES
             LINK_FLAGS -Wl,--no-as-needed)
