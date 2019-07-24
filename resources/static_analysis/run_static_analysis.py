@@ -10,7 +10,7 @@
 # inability to use the software.
 """Perform static analysis.
 
-This module <blablabla>.
+TODO: MODULE DOCUMENTATION
 
 Examples:
     TODO: SOME EXAMPLES
