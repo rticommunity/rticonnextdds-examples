@@ -1,6 +1,6 @@
 # rticonnextdds-examples
 
-![Build Status](https://www.travis-ci.org/rticommunity/rticonnextdds-examples.svg?branch=develop)
+[![Build Status](https://www.travis-ci.org/rticommunity/rticonnextdds-examples.svg?branch=develop)](https://www.travis-ci.org/rticommunity/rticonnextdds-examples.svg?branch=develop)
 
 This repository includes examples on how to use specific features of RTI
 Connext DDS.
