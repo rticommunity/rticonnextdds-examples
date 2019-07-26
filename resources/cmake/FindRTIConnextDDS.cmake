@@ -1059,14 +1059,15 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::c_api ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::c_api
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${c_api_library}"
                 INTERFACE_INCLUDE_DIRECTORIES
                     "${CONNEXTDDS_INCLUDE_DIRS}"
                 INTERFACE_COMPILE_DEFINITIONS
                     "${target_definitions}"
                 INTERFACE_LINK_LIBRARIES
-                    "${dependencies}"
-                ${location_property}
-                    "${c_api_library}")
+                    "${dependencies}")
 
     endif()
 
@@ -1081,10 +1082,11 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::cpp_api ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::cpp_api
             PROPERTIES
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
-                    "${cpp_api_library}")
+                    "${cpp_api_library}"
+                INTERFACE_LINK_LIBRARIES
+                    RTIConnextDDS::c_api)
     endif()
 
     if(NOT TARGET RTIConnextDDS::cpp2_api)
@@ -1098,10 +1100,11 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::cpp2_api ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::cpp2_api
             PROPERTIES
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
-                    "${cpp2_api_library}")
+                    "${cpp2_api_library}"
+                INTERFACE_LINK_LIBRARIES
+                    RTIConnextDDS::c_api)
     endif()
 
     if(RTIConnextDDS_distributed_logger_FOUND)
@@ -1114,10 +1117,11 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 IMPORTED)
             set_target_properties(RTIConnextDDS::distributed_logger_c
                 PROPERTIES
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::c_api
+                    IMPORTED_NO_SONAME TRUE
                     ${location_property}
-                        "${distributed_logger_c_lib}")
+                        "${distributed_logger_c_lib}"
+                    INTERFACE_LINK_LIBRARIES
+                        RTIConnextDDS::c_api)
         endif()
 
         if(NOT TARGET RTIConnextDDS::distributed_logger_cpp)
@@ -1130,10 +1134,11 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 IMPORTED)
             set_target_properties(RTIConnextDDS::distributed_logger_cpp
                 PROPERTIES
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::cpp_api
+                    IMPORTED_NO_SONAME TRUE
                     ${location_property}
-                        "${distributed_logger_cpp_lib}")
+                        "${distributed_logger_cpp_lib}"
+                    INTERFACE_LINK_LIBRARIES
+                        RTIConnextDDS::cpp_api)
         endif()
     endif()
 
@@ -1150,6 +1155,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
             ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_infrastructure
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${rtirsinfrastructure_library}"
                 INTERFACE_LINK_LIBRARIES
@@ -1166,6 +1172,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::routing_service_c ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_c
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
@@ -1174,6 +1181,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::routing_service ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
@@ -1194,6 +1202,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::routing_service_cpp2 ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_cpp2
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
@@ -1205,6 +1214,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::security_plugins ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::security_plugins
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${SECURITY_PLUGINS_LIBRARIES_${build_type}_${link_type}}")
     endif()
@@ -1214,6 +1224,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         add_library(RTIConnextDDS::monitoring ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::monitoring
             PROPERTIES
+                IMPORTED_NO_SONAME TRUE
                 ${location_property}
                     "${MONITORING_LIBRARIES_${build_type}_${link_type}}")
     endif()
@@ -1227,6 +1238,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 PROPERTIES
                     INTERFACE_LINK_LIBRARIES
                         RTIConnextDDS::c_api
+                    IMPORTED_NO_SONAME TRUE
                     ${location_property}
                         "${messaging_c_lib}")
         endif()
@@ -1239,6 +1251,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 PROPERTIES
                     INTERFACE_LINK_LIBRARIES
                         RTIConnextDDS::cpp_api
+                    IMPORTED_NO_SONAME TRUE
                     ${location_property}
                         "${messaging_cpp_lib}")
         endif()
@@ -1253,6 +1266,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 PROPERTIES
                     INTERFACE_LINK_LIBRARIES
                         RTIConnextDDS::cpp2_api
+                    IMPORTED_NO_SONAME TRUE
                     ${location_property}
                         "${messaging_cpp2_lib}")
         endif()
