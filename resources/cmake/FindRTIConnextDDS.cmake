@@ -754,8 +754,7 @@ list(APPEND rti_versions_field_names_host
     "host_files"
     "core_release_docs"
     "core_api_docs"
-    "core_jars"
-    "target_libraries")
+    "core_jars")
 
 list(APPEND rti_versions_field_names_target
     "target_libraries")
