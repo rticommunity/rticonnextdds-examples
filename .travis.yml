@@ -9,7 +9,9 @@ before_install:
   - npm install -g markdownlint-cli
   - pip install Sultan
   - pip install scan-build
+  - pip install black
 install: 
-  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then ./resources/travis/linux_install.py; fi'
+  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then resources/travis/linux_install.py; fi'
 script:
-  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then ./resources/travis/linux_script.py; fi'
+  - 'if [ -n "$RTI_MIN_PACKAGE_URL" ]; then resources/travis/linux_static_analysis.py; fi'
+  - 'if [ -n "$TRAVIS_COMMIT_RANGE" ]; then resources/travis/linux_format.py --commit-range $TRAVIS_COMMIT_RANGE ; else resources/travis/linux_format.py --commit $TRAVIS_COMMIT; fi'
