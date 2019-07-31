@@ -65,8 +65,7 @@ modification history
 #include "ndds/ndds_cpp.h"
 
 
-class ParticipantListener : public DDSDomainParticipantListener
-{
+class ParticipantListener : public DDSDomainParticipantListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,
@@ -137,8 +136,7 @@ public:
 };
 
 
-class SubscriberListener : public DDSSubscriberListener
-{
+class SubscriberListener : public DDSSubscriberListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,
@@ -210,8 +208,7 @@ public:
 };
 
 
-class ReaderListener : public DDSDataReaderListener
-{
+class ReaderListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

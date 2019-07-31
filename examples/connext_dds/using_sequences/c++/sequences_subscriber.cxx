@@ -64,8 +64,7 @@ modification history
 #include "sequences.h"
 #include "sequencesSupport.h"
 
-class sequencesListener : public DDSDataReaderListener
-{
+class sequencesListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

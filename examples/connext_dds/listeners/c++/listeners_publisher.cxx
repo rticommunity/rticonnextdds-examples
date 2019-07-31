@@ -65,8 +65,7 @@ modification history
 #include "ndds/ndds_cpp.h"
 
 
-class DataWriterListener : public DDSDataWriterListener
-{
+class DataWriterListener : public DDSDataWriterListener {
 public:
     virtual void on_offered_deadline_missed(
             DDSDataWriter * /*writer*/,

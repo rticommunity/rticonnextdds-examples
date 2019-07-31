@@ -92,8 +92,7 @@ modification history
         continue;                              \
     }
 
-class hello_worldListener : public DDSDataReaderListener
-{
+class hello_worldListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

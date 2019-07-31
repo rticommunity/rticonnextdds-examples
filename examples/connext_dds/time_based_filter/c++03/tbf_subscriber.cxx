@@ -24,8 +24,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class tbfReaderListener : public NoOpDataReaderListener<tbf>
-{
+class tbfReaderListener : public NoOpDataReaderListener<tbf> {
 public:
     void on_data_available(dds::sub::DataReader<tbf> &reader)
     {

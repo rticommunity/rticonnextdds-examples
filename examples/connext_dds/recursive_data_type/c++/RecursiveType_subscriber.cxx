@@ -52,8 +52,7 @@ objs\<arch>\RecursiveType_subscriber <domain_id>
 
 using namespace DDS;
 
-class TreeListener : public DataReaderListener
-{
+class TreeListener : public DataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DataReader * /*reader*/,

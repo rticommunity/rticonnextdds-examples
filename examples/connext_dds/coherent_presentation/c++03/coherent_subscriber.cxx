@@ -33,8 +33,7 @@ std::pair<char, int> sample2map(const coherent &data)
     return std::make_pair(data.field(), data.value());
 }
 
-class CoherentListener : public NoOpDataReaderListener<coherent>
-{
+class CoherentListener : public NoOpDataReaderListener<coherent> {
 public:
     void on_data_available(DataReader<coherent> &reader)
     {

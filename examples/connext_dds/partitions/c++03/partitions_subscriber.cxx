@@ -26,8 +26,7 @@ using namespace dds::sub::qos;
 using namespace dds::sub::status;
 using namespace rti::core;
 
-class PartitionsListener : public NoOpDataReaderListener<partitions>
-{
+class PartitionsListener : public NoOpDataReaderListener<partitions> {
 public:
     void on_data_available(DataReader<partitions> &reader)
     {

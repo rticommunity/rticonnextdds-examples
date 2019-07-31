@@ -66,8 +66,7 @@ modification history
 
 #define NANOSECOND 1000000000.0
 
-class tbfListener : public DDSDataReaderListener
-{
+class tbfListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

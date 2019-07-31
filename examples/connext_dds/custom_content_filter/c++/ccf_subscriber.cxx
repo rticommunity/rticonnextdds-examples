@@ -68,8 +68,7 @@ modification history
 /* Custom filter defined here */
 #include "filter.cxx"
 
-class ccfListener : public DDSDataReaderListener
-{
+class ccfListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

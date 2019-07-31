@@ -88,8 +88,7 @@ void set_state(char c, int value)
 }
 /* End changes for coherent_presentation */
 
-class coherentListener : public DDSDataReaderListener
-{
+class coherentListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

@@ -68,8 +68,7 @@ modification history
 #include <stdio.h>
 #include <stdlib.h>
 
-class msgListener : public DDSDataReaderListener
-{
+class msgListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

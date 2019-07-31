@@ -26,8 +26,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class MsgListener : public NoOpDataReaderListener<msg>
-{
+class MsgListener : public NoOpDataReaderListener<msg> {
 public:
     void on_data_available(DataReader<msg> &reader)
     {

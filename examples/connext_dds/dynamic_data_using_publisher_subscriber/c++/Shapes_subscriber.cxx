@@ -50,8 +50,7 @@
 
 #define EXAMPLE_TYPE_NAME "ShapesType"
 
-class ShapeTypeListener : public DDSDataReaderListener
-{
+class ShapeTypeListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

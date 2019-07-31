@@ -34,8 +34,7 @@ const std::string expected_password = "password";
 // The builtin subscriber sets participant_qos.user_data, so we set up listeners
 // for the builtin DataReaders to access these fields.
 class BuiltinParticipantListener
-        : public NoOpDataReaderListener<ParticipantBuiltinTopicData>
-{
+        : public NoOpDataReaderListener<ParticipantBuiltinTopicData> {
 public:
     // This gets called when a participant has been discovered
     void on_data_available(DataReader<ParticipantBuiltinTopicData> &reader)
@@ -89,8 +88,7 @@ public:
 };
 
 class BuiltinSubscriberListener
-        : public NoOpDataReaderListener<SubscriptionBuiltinTopicData>
-{
+        : public NoOpDataReaderListener<SubscriptionBuiltinTopicData> {
 public:
     // This gets called when a subscriber has been discovered
     void on_data_available(DataReader<SubscriptionBuiltinTopicData> &reader)

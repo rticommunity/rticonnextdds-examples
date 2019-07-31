@@ -27,8 +27,7 @@ using namespace dds::topic;
 
 clock_t Init_time;
 
-class cfcReaderListener : public NoOpDataReaderListener<cfc>
-{
+class cfcReaderListener : public NoOpDataReaderListener<cfc> {
 public:
     void on_data_available(DataReader<cfc> &reader)
     {

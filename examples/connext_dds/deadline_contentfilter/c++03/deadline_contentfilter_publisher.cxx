@@ -24,8 +24,7 @@ using namespace dds::pub;
 using namespace dds::pub::qos;
 
 class DeadlineWriterListener
-        : public NoOpDataWriterListener<deadline_contentfilter>
-{
+        : public NoOpDataWriterListener<deadline_contentfilter> {
 public:
     void on_offered_deadline_missed(
             DataWriter<deadline_contentfilter> &writer,

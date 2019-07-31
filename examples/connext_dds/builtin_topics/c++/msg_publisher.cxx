@@ -88,8 +88,7 @@ const char *auth = "password";
    DataReaders to access these fields.
 */
 
-class BuiltinParticipantListener : public DDSDataReaderListener
-{
+class BuiltinParticipantListener : public DDSDataReaderListener {
 public:
     virtual void on_data_available(DDSDataReader *reader);
 };
@@ -174,8 +173,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
     builtin_reader->return_loan(data_seq, info_seq);
 }
 
-class BuiltinSubscriberListener : public DDSDataReaderListener
-{
+class BuiltinSubscriberListener : public DDSDataReaderListener {
 public:
     virtual void on_data_available(DDSDataReader *reader);
 };

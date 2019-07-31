@@ -23,8 +23,7 @@ using namespace dds::domain;
 using namespace dds::sub;
 using namespace dds::topic;
 
-class MarketDataReaderListener : public NoOpDataReaderListener<market_data>
-{
+class MarketDataReaderListener : public NoOpDataReaderListener<market_data> {
 public:
     void on_data_available(DataReader<market_data> &reader)
     {

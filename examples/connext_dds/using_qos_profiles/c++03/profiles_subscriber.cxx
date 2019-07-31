@@ -22,8 +22,7 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 
-class ProfilesListener : public NoOpDataReaderListener<profiles>
-{
+class ProfilesListener : public NoOpDataReaderListener<profiles> {
 public:
     ProfilesListener(std::string name) : listener_name_(name)
     {

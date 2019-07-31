@@ -23,8 +23,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class ProfilesListener : public NoOpDataReaderListener<HelloWorld>
-{
+class ProfilesListener : public NoOpDataReaderListener<HelloWorld> {
 public:
     void on_data_available(DataReader<HelloWorld> &reader)
     {

@@ -20,8 +20,7 @@
 
 #include "AwsExample.hpp"
 
-class AwsSubscriber
-{
+class AwsSubscriber {
 public:
     static const std::string TOPIC_NAME;
 
@@ -42,8 +41,7 @@ public:
     rti::core::cond::AsyncWaitSet async_waitset_;
 };
 
-class DataAvailableHandler
-{
+class DataAvailableHandler {
 public:
     /* Handles the reception of samples */
     void operator()()

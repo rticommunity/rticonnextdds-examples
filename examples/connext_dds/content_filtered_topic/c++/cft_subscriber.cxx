@@ -64,8 +64,7 @@ modification history
 #include "cftSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class cftListener : public DDSDataReaderListener
-{
+class cftListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

@@ -84,8 +84,7 @@ modification history
 #include <time.h>
 clock_t init;
 
-class deadline_contentfilterListener : public DDSDataReaderListener
-{
+class deadline_contentfilterListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

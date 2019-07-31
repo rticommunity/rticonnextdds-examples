@@ -70,8 +70,7 @@ modification history
 clock_t init;
 
 
-class asyncListener : public DDSDataReaderListener
-{
+class asyncListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

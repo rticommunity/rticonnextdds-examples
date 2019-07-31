@@ -26,8 +26,7 @@ using namespace dds::sub::qos;
 // For timekeeping
 clock_t InitTime;
 
-class AsyncListener : public NoOpDataReaderListener<async>
-{
+class AsyncListener : public NoOpDataReaderListener<async> {
 public:
     void on_data_available(DataReader<async> &reader)
     {

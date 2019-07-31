@@ -69,8 +69,7 @@
 #include <time.h>
 clock_t init;
 
-class cfcListener : public DDSDataReaderListener
-{
+class cfcListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

@@ -21,8 +21,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class CftListener : public NoOpDataReaderListener<cft>
-{
+class CftListener : public NoOpDataReaderListener<cft> {
 public:
     void on_data_available(DataReader<cft> &reader)
     {

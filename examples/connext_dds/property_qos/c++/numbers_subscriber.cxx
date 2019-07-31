@@ -65,8 +65,7 @@ modification history
 
 #include "numbers_common.cxx"
 
-class numbersListener : public DDSDataReaderListener
-{
+class numbersListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

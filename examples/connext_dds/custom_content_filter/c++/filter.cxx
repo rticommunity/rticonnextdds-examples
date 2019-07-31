@@ -19,8 +19,7 @@
  *  21May2014,amb Example adapted for RTI Connext DDS 5.1
  */
 
-class custom_filter_type : public DDSContentFilter
-{
+class custom_filter_type : public DDSContentFilter {
 public:
     virtual DDS_ReturnCode_t
             compile(void **new_compile_data,

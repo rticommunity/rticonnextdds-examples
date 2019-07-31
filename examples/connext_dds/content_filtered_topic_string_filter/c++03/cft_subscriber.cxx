@@ -26,8 +26,7 @@ using namespace dds::sub;
 using namespace dds::sub::qos;
 using namespace rti::core;
 
-class cftReaderListener : public NoOpDataReaderListener<cft>
-{
+class cftReaderListener : public NoOpDataReaderListener<cft> {
 public:
     void on_data_available(dds::sub::DataReader<cft> &reader)
     {

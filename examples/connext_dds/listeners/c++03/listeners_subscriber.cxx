@@ -22,8 +22,7 @@ using namespace dds::domain;
 using namespace dds::sub;
 using namespace dds::topic;
 
-class MyParticipantListener : public NoOpDomainParticipantListener
-{
+class MyParticipantListener : public NoOpDomainParticipantListener {
 public:
     virtual void on_requested_deadline_missed(
             dds::pub::AnyDataWriter &writer,
@@ -95,8 +94,7 @@ public:
     }
 };
 
-class MySubscriberListener : public NoOpSubscriberListener
-{
+class MySubscriberListener : public NoOpSubscriberListener {
 public:
     virtual void on_requested_deadline_missed(
             AnyDataReader &the_reader,
@@ -162,8 +160,7 @@ public:
     }
 };
 
-class MyDataReaderListener : public NoOpDataReaderListener<listeners>
-{
+class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     virtual void on_requested_deadline_missed(
             DataReader<listeners> &reader,
             const dds::core::status::RequestedDeadlineMissedStatus &status)

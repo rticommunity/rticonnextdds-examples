@@ -20,8 +20,7 @@ using namespace dds::domain;
 using namespace dds::pub;
 using namespace dds::topic;
 
-class MyDataWriterListener : public NoOpDataWriterListener<listeners>
-{
+class MyDataWriterListener : public NoOpDataWriterListener<listeners> {
 public:
     virtual void on_offered_deadline_missed(
             dds::pub::DataWriter<listeners> &writer,

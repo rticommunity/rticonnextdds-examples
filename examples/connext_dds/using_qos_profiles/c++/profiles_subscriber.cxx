@@ -66,8 +66,7 @@ modification history
 
 #define PROFILE_NAME_STRING_LEN 100
 
-class profilesListener : public DDSDataReaderListener
-{
+class profilesListener : public DDSDataReaderListener {
 public:
     profilesListener(char listener_name[PROFILE_NAME_STRING_LEN])
     {

@@ -23,8 +23,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class BatchDataReaderListener : public NoOpDataReaderListener<batch_data>
-{
+class BatchDataReaderListener : public NoOpDataReaderListener<batch_data> {
 public:
     void on_data_available(DataReader<batch_data> &reader)
     {

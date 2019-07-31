@@ -52,8 +52,7 @@ objs\<arch>\RecursiveType_subscriber <domain_id>
 
 #include "RecursiveType.hpp"
 
-class TreeReaderListener : public dds::sub::NoOpDataReaderListener<Tree>
-{
+class TreeReaderListener : public dds::sub::NoOpDataReaderListener<Tree> {
 public:
     TreeReaderListener() : count_(0)
     {

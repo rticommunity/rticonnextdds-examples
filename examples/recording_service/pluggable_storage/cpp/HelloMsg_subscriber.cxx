@@ -19,8 +19,8 @@
 
 #include "HelloMsg.hpp"
 
-class HelloMsgReaderListener : public dds::sub::NoOpDataReaderListener<HelloMsg>
-{
+class HelloMsgReaderListener
+        : public dds::sub::NoOpDataReaderListener<HelloMsg> {
 public:
     HelloMsgReaderListener() : count_(0)
     {

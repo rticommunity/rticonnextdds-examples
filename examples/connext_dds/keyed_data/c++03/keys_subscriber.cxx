@@ -23,8 +23,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::status;
 
-class KeysReaderListener : public NoOpDataReaderListener<keys>
-{
+class KeysReaderListener : public NoOpDataReaderListener<keys> {
 public:
     void on_data_available(DataReader<keys> &reader)
     {

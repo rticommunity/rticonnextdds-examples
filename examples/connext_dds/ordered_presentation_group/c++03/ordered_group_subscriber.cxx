@@ -25,8 +25,7 @@ using namespace dds::sub::qos;
 using namespace rti::sub;
 using namespace dds::topic;
 
-class ordered_groupSubscriberListener : public NoOpSubscriberListener
-{
+class ordered_groupSubscriberListener : public NoOpSubscriberListener {
 public:
     void on_data_on_readers(Subscriber &subscriber)
     {

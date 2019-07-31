@@ -23,8 +23,7 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 
-class CcfListener : public NoOpDataReaderListener<Foo>
-{
+class CcfListener : public NoOpDataReaderListener<Foo> {
 public:
     void on_data_available(DataReader<Foo> &reader)
     {

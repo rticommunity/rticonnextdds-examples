@@ -64,8 +64,7 @@ modification history
 #include "keysSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class keysListener : public DDSDataReaderListener
-{
+class keysListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

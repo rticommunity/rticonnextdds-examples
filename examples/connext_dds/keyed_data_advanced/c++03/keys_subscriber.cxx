@@ -24,8 +24,7 @@ using namespace dds::sub::cond;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
-class KeysReaderListener : public NoOpDataReaderListener<keys>
-{
+class KeysReaderListener : public NoOpDataReaderListener<keys> {
 public:
     void on_data_available(DataReader<keys> &reader)
     {

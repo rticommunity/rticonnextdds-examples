@@ -24,8 +24,7 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class hello_worldReaderListener : public NoOpDataReaderListener<hello_world>
-{
+class hello_worldReaderListener : public NoOpDataReaderListener<hello_world> {
 public:
     void on_data_available(DataReader<hello_world> &reader)
     {

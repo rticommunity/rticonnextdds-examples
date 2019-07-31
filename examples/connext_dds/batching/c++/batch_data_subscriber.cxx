@@ -61,8 +61,7 @@
 #include "batch_dataSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class batch_dataListener : public DDSDataReaderListener
-{
+class batch_dataListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

@@ -64,8 +64,7 @@ modification history
 #include "partitions.h"
 #include "partitionsSupport.h"
 
-class partitionsListener : public DDSDataReaderListener
-{
+class partitionsListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

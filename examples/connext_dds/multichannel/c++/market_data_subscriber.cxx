@@ -64,8 +64,7 @@
 #include "market_dataSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class market_dataListener : public DDSDataReaderListener
-{
+class market_dataListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

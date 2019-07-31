@@ -24,18 +24,18 @@
  * Wait for discovery
  */
 template <typename T>
-void wait_for_reader(dds::pub::DataWriter<T>& writer, bool match = true)
+void wait_for_reader(dds::pub::DataWriter<T> &writer, bool match = true)
 {
-    while((match && dds::pub::matched_subscriptions(writer).empty())
-            || (!match && !dds::pub::matched_subscriptions(writer).empty())) {
+    while ((match && dds::pub::matched_subscriptions(writer).empty())
+           || (!match && !dds::pub::matched_subscriptions(writer).empty())) {
         rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 }
 
 template <typename T>
-void wait_for_writer(dds::sub::DataReader<T>& reader)
+void wait_for_writer(dds::sub::DataReader<T> &reader)
 {
-    while(dds::sub::matched_publications(reader).empty()) {
+    while (dds::sub::matched_publications(reader).empty()) {
         rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 }
@@ -48,12 +48,12 @@ void wait_for_writer(dds::sub::DataReader<T>& reader)
  * triggers a GuardCondition that can be attached to a Waitset.
  */
 template <typename TopicType>
-class FlatDataSampleRemovedListener :
-        public dds::pub::NoOpDataWriterListener<TopicType> {
+class FlatDataSampleRemovedListener
+        : public dds::pub::NoOpDataWriterListener<TopicType> {
 public:
     void on_sample_removed(
-            dds::pub::DataWriter<TopicType>& writer, 
-            const rti::core::Cookie& cookie) override
+            dds::pub::DataWriter<TopicType> &writer,
+            const rti::core::Cookie &cookie) override
     {
         guard_condition.trigger_value(true);
     }
@@ -81,9 +81,10 @@ private:
 };
 
 
-// CameraImageType can be flat_types::CameraImage or flat_zero_copy_types::CameraImage
+// CameraImageType can be flat_types::CameraImage or
+// flat_zero_copy_types::CameraImage
 template <typename CameraImageType>
-void populate_flat_sample(CameraImageType& sample, int count)
+void populate_flat_sample(CameraImageType &sample, int count)
 {
     auto image = sample.root();
     image.format(common::Format::RGB);
@@ -97,9 +98,10 @@ void populate_flat_sample(CameraImageType& sample, int count)
     }
 }
 
-// CameraImageType can be zero_copy_types::CameraImage or plain_types::CameraImage
+// CameraImageType can be zero_copy_types::CameraImage or
+// plain_types::CameraImage
 template <typename CameraImageType>
-void populate_plain_sample(CameraImageType& sample, int count)
+void populate_plain_sample(CameraImageType &sample, int count)
 {
     sample.format(common::Format::RGB);
     sample.resolution().height(4320);
@@ -116,13 +118,12 @@ void display_flat_sample(const CameraImageType &sample)
 {
     auto image = sample.root();
 
-    std::cout << "\nTimestamp " << image.timestamp() << " "
-              <<  image.format();
+    std::cout << "\nTimestamp " << image.timestamp() << " " << image.format();
 
     std::cout << " Data (4 Bytes) ";
     const uint8_t *image_data = image.data().get_elements();
     for (int i = 0; i < 4; i++) {
-       std::cout << image_data[i];
+        std::cout << image_data[i];
     }
     std::cout << std::endl;
 }
@@ -130,23 +131,22 @@ void display_flat_sample(const CameraImageType &sample)
 template <typename CameraImageType>
 void display_plain_sample(const CameraImageType &sample)
 {
-    std::cout << "\nTimestamp " << sample.timestamp() << " "
-              <<  sample.format();
+    std::cout << "\nTimestamp " << sample.timestamp() << " " << sample.format();
 
     std::cout << " Data (4 Bytes) ";
     for (int i = 0; i < 4; i++) {
-       std::cout << sample.data()[i];
+        std::cout << sample.data()[i];
     }
     std::cout << std::endl;
 }
 
 struct ApplicationOptions {
-    ApplicationOptions() :
-            domain_id(0),
-            mode(0),
-            sample_count(-1), // infinite
-            execution_time(30000000),
-            display_sample(false)
+    ApplicationOptions()
+            : domain_id(0),
+              mode(0),
+              sample_count(-1),  // infinite
+              execution_time(30000000),
+              display_sample(false)
     {
     }
 
@@ -155,18 +155,17 @@ struct ApplicationOptions {
     int sample_count;
     uint64_t execution_time;
     bool display_sample;
-    std::string nic; // default: empty (no nic will be explicitly picked)
+    std::string nic;  // default: empty (no nic will be explicitly picked)
 };
 
 inline void configure_nic(
-        dds::domain::qos::DomainParticipantQos& qos,
-        const std::string& nic)
+        dds::domain::qos::DomainParticipantQos &qos,
+        const std::string &nic)
 {
     using rti::core::policy::Property;
 
     if (!nic.empty()) {
-        qos.policy<Property>().set({
-                "dds.transport.UDPv4.builtin.parent.allow_interfaces",
-                nic});
+        qos.policy<Property>().set(
+                { "dds.transport.UDPv4.builtin.parent.allow_interfaces", nic });
     }
 }

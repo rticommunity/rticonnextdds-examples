@@ -69,8 +69,7 @@ modification history
 #include "profiles.h"
 #include "profilesSupport.h"
 
-class profilesListener : public DDSDataReaderListener
-{
+class profilesListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

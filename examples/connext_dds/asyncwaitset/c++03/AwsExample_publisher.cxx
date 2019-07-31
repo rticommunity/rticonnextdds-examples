@@ -19,8 +19,7 @@
 
 #include "AwsExample.hpp"
 
-class AwsPublisher
-{
+class AwsPublisher {
 public:
     static const std::string TOPIC_NAME;
 
@@ -47,8 +46,7 @@ private:
 };
 
 
-class SendRequestHandler
-{
+class SendRequestHandler {
 public:
     // Handles the send sample condition
     void operator()(dds::core::cond::Condition condition)

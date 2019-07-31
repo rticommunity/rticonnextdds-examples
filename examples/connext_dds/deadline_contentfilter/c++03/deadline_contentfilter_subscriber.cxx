@@ -29,8 +29,7 @@ using namespace dds::sub::qos;
 clock_t init_time;
 
 class deadline_contentfilterReaderListener
-        : public NoOpDataReaderListener<deadline_contentfilter>
-{
+        : public NoOpDataReaderListener<deadline_contentfilter> {
 public:
     void on_data_available(DataReader<deadline_contentfilter> &reader)
     {

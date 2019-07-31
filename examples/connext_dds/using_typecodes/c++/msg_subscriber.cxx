@@ -75,8 +75,7 @@ modification history
  * Once we have detected a new topic, we will print out the Topic Name,
  * Participant ID, DataWriter id, and Data Type.
  */
-class BuiltinPublicationListener : public DDSDataReaderListener
-{
+class BuiltinPublicationListener : public DDSDataReaderListener {
 public:
     virtual void on_data_available(DDSDataReader *reader);
 };

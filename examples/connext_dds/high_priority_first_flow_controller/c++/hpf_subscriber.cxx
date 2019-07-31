@@ -16,8 +16,7 @@
 #include "hpfSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class hpfListener : public DDSDataReaderListener
-{
+class hpfListener : public DDSDataReaderListener {
 public:
     virtual void on_requested_deadline_missed(
             DDSDataReader * /*reader*/,

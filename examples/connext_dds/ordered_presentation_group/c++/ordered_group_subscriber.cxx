@@ -65,8 +65,7 @@ modification history
 #include "ordered_groupSupport.h"
 
 ////////////////////////////////////////////////////////////////////////
-class ordered_groupSubscriberListener : public DDSSubscriberListener
-{
+class ordered_groupSubscriberListener : public DDSSubscriberListener {
 public:
     virtual void on_data_on_readers(DDSSubscriber *subscriber);
 };

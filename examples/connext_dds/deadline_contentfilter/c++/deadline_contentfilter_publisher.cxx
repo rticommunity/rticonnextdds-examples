@@ -74,8 +74,7 @@ modification history
 
 
 /* Start changes for Deadline */
-class deadline_contentfilterListener : public DDSDataWriterListener
-{
+class deadline_contentfilterListener : public DDSDataWriterListener {
 public:
     virtual void on_offered_deadline_missed(
             DDSDataWriter *writer,
