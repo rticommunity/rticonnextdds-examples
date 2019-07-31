@@ -28,10 +28,10 @@ using namespace rti::pub;
 void publisher_main(int domain_id, int sample_count)
 {
     // To customize participant QoS, use file USER_QOS_PROFILES.xml
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // To customize topic QoS, use file USER_QOS_PROFILES.xml
-    Topic<async> topic (participant, "Example async");
+    Topic<async> topic(participant, "Example async");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -60,7 +60,7 @@ void publisher_main(int domain_id, int sample_count)
     // writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME);
 
     // Create the DataWriter with a QoS.
-    DataWriter<async> writer (Publisher(participant), topic, writer_qos);
+    DataWriter<async> writer(Publisher(participant), topic, writer_qos);
 
     // Create data sample for writing
     async instance;
@@ -71,7 +71,8 @@ void publisher_main(int domain_id, int sample_count)
     // InstanceHandle instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         std::cout << "Writing async, count " << count << std::endl;
 
         // Send count as data
@@ -81,14 +82,14 @@ void publisher_main(int domain_id, int sample_count)
         // writer.write(instance, instance_handle);
         writer.write(instance);
 
-        rti::util::sleep(Duration(0,100000000));
+        rti::util::sleep(Duration(0, 100000000));
     }
 
     // If using instance_handle, unregister it.
-    //writer.unregister_instance(instance_handle);
+    // writer.unregister_instance(instance_handle);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */

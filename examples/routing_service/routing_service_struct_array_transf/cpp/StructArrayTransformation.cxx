@@ -15,7 +15,7 @@
 
 using dds::core::xtypes::DynamicData;
 using dds::sub::SampleInfo;
-    
+
 /*
  * @brief Maps each element of struct SensorData from
  * SensorDataExample (see SensorDataExample.idl) into the separate
@@ -23,17 +23,17 @@ using dds::sub::SampleInfo;
  * (see TransformedSensorDataExample.idl).
  *
  */
-DynamicData* StructArrayTransformation::convert_sample(
-        const DynamicData* input_sample)
-{    
+DynamicData *StructArrayTransformation::convert_sample(
+        const DynamicData *input_sample)
+{
     SensorAttributesCollection native_collection =
-            rti::core::xtypes::convert<SensorAttributesCollection>(*input_sample);
+            rti::core::xtypes::convert<SensorAttributesCollection>(
+                    *input_sample);
 
     SensorData native_sensor_data;
-    
+
     /* Map elements from SensorAttributesCollection to SensorData */
-    for (int32_t count = 0;
-         count < native_collection.sensor_array().size();
+    for (int32_t count = 0; count < native_collection.sensor_array().size();
          ++count) {
         native_sensor_data.id().at(count) =
                 native_collection.sensor_array().at(count).id();
@@ -42,26 +42,24 @@ DynamicData* StructArrayTransformation::convert_sample(
         native_sensor_data.is_active().at(count) =
                 native_collection.sensor_array().at(count).is_active();
     }
-    
+
     return new DynamicData(rti::core::xtypes::convert(native_sensor_data));
 }
 
 void StructArrayTransformation::transform(
-        std::vector<DynamicData*>& output_sample_seq,
-        std::vector<SampleInfo*>& output_info_seq,
-        const std::vector<DynamicData*>& input_sample_seq,
-        const std::vector<SampleInfo*>& input_info_seq)
+        std::vector<DynamicData *> &output_sample_seq,
+        std::vector<SampleInfo *> &output_info_seq,
+        const std::vector<DynamicData *> &input_sample_seq,
+        const std::vector<SampleInfo *> &input_info_seq)
 {
-
-
     // resize the output sample and info sequences to hold as many samples
     // as the input sequences
     output_sample_seq.resize(input_sample_seq.size());
     output_info_seq.resize(input_info_seq.size());
-    
+
     // Convert each individual input sample
     for (size_t i = 0; i < input_sample_seq.size(); ++i) {
-        // convert data 
+        // convert data
         output_sample_seq[i] = convert_sample(input_sample_seq[i]);
         // copy info as is
         output_info_seq[i] = new SampleInfo(*input_info_seq[i]);
@@ -69,8 +67,8 @@ void StructArrayTransformation::transform(
 }
 
 void StructArrayTransformation::return_loan(
-        std::vector<DynamicData*>& sample_seq,
-        std::vector<SampleInfo*>& info_seq)
+        std::vector<DynamicData *> &sample_seq,
+        std::vector<SampleInfo *> &info_seq)
 {
     for (size_t i = 0; i < sample_seq.size(); ++i) {
         delete sample_seq[i];
@@ -83,23 +81,23 @@ void StructArrayTransformation::return_loan(
  * --- StructArrayTransformationPlugin ----------------------------------------
  */
 StructArrayTransformationPlugin::StructArrayTransformationPlugin(
-        const rti::routing::PropertySet&)
+        const rti::routing::PropertySet &)
 {
     // no configuration properties for this plug-in
 }
 
 rti::routing::transf::Transformation *
-StructArrayTransformationPlugin::create_transformation(
-        const rti::routing::TypeInfo&,
-        const rti::routing::TypeInfo&,
-        const rti::routing::PropertySet&)
+        StructArrayTransformationPlugin::create_transformation(
+                const rti::routing::TypeInfo &,
+                const rti::routing::TypeInfo &,
+                const rti::routing::PropertySet &)
 {
     return new StructArrayTransformation();
 }
 
 void StructArrayTransformationPlugin::delete_transformation(
-        rti::routing::transf::Transformation *transformation) {
-
+        rti::routing::transf::Transformation *transformation)
+{
     delete transformation;
 }
 

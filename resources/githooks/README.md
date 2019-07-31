@@ -1,10 +1,10 @@
 # Git hook for local pre-commit linting
 
 This hook will execute
-[clang-format](https://clang.llvm.org/docs/ClangFormat.html) and
-[markdownlint](https://github.com/igorshubovych/markdownlint-cli) whenever you
-try to commit new changes, failing to commit if there is any format issues in
-staged files.
+[clang-format](https://clang.llvm.org/docs/ClangFormat.html),
+[markdownlint](https://github.com/igorshubovych/markdownlint-cli) and
+[black](https://github.com/psf/black) whenever you try to commit new changes,
+failing to commit if there is any format issues in staged files.
 
 ## Installing the hook
 
@@ -23,12 +23,6 @@ following code in your terminal:
 pip install --user --upgrade Sultan
 ```
 
-## clang-format
-
-Checkout [llvm build page](http://llvm.org/builds/) for info about downloading
-`clang-format`. Version 9 of clang-format must be installed along with it's git
-integration.
-
 ## markdownlint
 
 Version 6 of [NodeJS](https://nodejs.org/) is needed to use this linter.
@@ -36,4 +30,18 @@ To install last version of `markdownlint`:
 
 ```bash
 npm install -g markdownlint-cli
+```
+
+## clang-format
+
+Checkout [llvm build page](http://llvm.org/builds/) for info about downloading
+`clang-format`. Version 9 of clang-format must be installed along with it's git
+integration.
+
+## black
+
+Black is an uncompromising Python formatter. You can install it with pip:
+
+```bash
+pip install --user --upgrade black
 ```

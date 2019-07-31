@@ -10,11 +10,11 @@
  * use or inability to use the software.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "HelloMsg.h"
 #include "HelloMsgSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Delete all entities */
 static int publisher_shutdown(DDS_DomainParticipant *participant)
@@ -29,7 +29,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
             status = -1;
         }
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -63,7 +64,7 @@ int publisher_main(int domainId, int sample_count)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = {2,0};
+    struct DDS_Duration_t send_period = { 2, 0 };
 
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
@@ -119,7 +120,8 @@ int publisher_main(int domainId, int sample_count)
     /* To customize data writer QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     writer = DDS_Publisher_create_datawriter(
-            publisher, topic,
+            publisher,
+            topic,
             &DDS_DATAWRITER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
@@ -152,7 +154,7 @@ int publisher_main(int domainId, int sample_count)
     */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing HelloMsg, count %d\n", count);
 
         /* Modify the data to be written here */
@@ -209,4 +211,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domainId, sample_count);
 }
-

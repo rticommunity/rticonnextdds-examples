@@ -11,9 +11,9 @@
 
 #include <iostream>
 
+#include "deadline_contentfilter.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "deadline_contentfilter.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -23,12 +23,12 @@ using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
 
-class DeadlineWriterListener :
-    public NoOpDataWriterListener<deadline_contentfilter> {
+class DeadlineWriterListener
+        : public NoOpDataWriterListener<deadline_contentfilter> {
 public:
     void on_offered_deadline_missed(
-        DataWriter<deadline_contentfilter> &writer,
-        const OfferedDeadlineMissedStatus &status)
+            DataWriter<deadline_contentfilter> &writer,
+            const OfferedDeadlineMissedStatus &status)
     {
         // Creates a temporary object in order to find out which instance
         // missed its deadline period. The 'key_value' call only fills in the
@@ -45,11 +45,12 @@ public:
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
     Topic<deadline_contentfilter> topic(
-        participant, "Example deadline_contentfilter");
+            participant,
+            "Example deadline_contentfilter");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -64,11 +65,11 @@ void publisher_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataWriter using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataWriter<deadline_contentfilter> > listener =
-        rti::core::bind_and_manage_listener(
-            writer,
-            new DeadlineWriterListener,
-            StatusMask::all());
+    rti::core::ListenerBinder<DataWriter<deadline_contentfilter>> listener =
+            rti::core::bind_and_manage_listener(
+                    writer,
+                    new DeadlineWriterListener,
+                    StatusMask::all());
 
     // Create two instances for writing and register them in order to be able
     // to recover them from the instance handle in the listener.
@@ -88,13 +89,13 @@ void publisher_main(int domain_id, int sample_count)
         sample1.x(count);
         sample1.y(count);
 
-        std::cout << "Writing instance0, x = " << sample0.x() << ", y = "
-                  << sample0.y() << std::endl;
+        std::cout << "Writing instance0, x = " << sample0.x()
+                  << ", y = " << sample0.y() << std::endl;
         writer.write(sample0, handle0);
 
         if (count < 15) {
-            std::cout << "Writing instance1, x = " << sample1.x() << ", y = "
-                      << sample1.y() << std::endl;
+            std::cout << "Writing instance1, x = " << sample1.x()
+                      << ", y = " << sample1.y() << std::endl;
             writer.write(sample1, handle1);
         } else if (count == 15) {
             std::cout << "Stopping writes to instance1" << std::endl;
@@ -109,7 +110,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -125,7 +126,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

@@ -13,7 +13,7 @@
 #include <random>
 
 #include <dds/pub/ddspub.hpp>
-#include <rti/util/util.hpp> // for sleep()
+#include <rti/util/util.hpp>  // for sleep()
 
 #include "LambdaFilterExample.hpp"
 
@@ -22,7 +22,7 @@
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    dds::domain::DomainParticipant participant (domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Register the same filter we use in the subscriber.
     //
@@ -34,23 +34,21 @@ void publisher_main(int domain_id, int sample_count)
     // one in the subscribing application.
     //
     create_lambda_filter<Stock>(
-        "stock_cft",
-        participant,
-        [](const Stock& stock)
-        {
-            return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
-        }
-    );
+            "stock_cft",
+            participant,
+            [](const Stock &stock) {
+                return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
+            });
 
     // Create a Topic -- and automatically register the type
-    dds::topic::Topic<Stock> topic (participant, "Example Stock");
+    dds::topic::Topic<Stock> topic(participant, "Example Stock");
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     dds::pub::DataWriter<Stock> writer(dds::pub::Publisher(participant), topic);
 
     Stock sample;
 
-    std::vector<std::string> symbols {"GOOG", "IBM", "RTI", "MSFT"};
+    std::vector<std::string> symbols { "GOOG", "IBM", "RTI", "MSFT" };
     std::random_device random_device;
     std::uniform_int_distribution<int> distribution(0, symbols.size() - 1);
 
@@ -63,10 +61,11 @@ void publisher_main(int domain_id, int sample_count)
         std::cout << "Writing " << sample << std::endl;
         writer.write(sample);
 
-        // Print whether the sample was pushed on the network (to the DataReader)
-        // or not (for example, because it was locally filtered out)
-        auto pushed_samples =
-            writer->datawriter_protocol_status().pushed_sample_count().change();
+        // Print whether the sample was pushed on the network (to the
+        // DataReader) or not (for example, because it was locally filtered out)
+        auto pushed_samples = writer->datawriter_protocol_status()
+                                      .pushed_sample_count()
+                                      .change();
         std::cout << "Sample was "
                   << (pushed_samples != 0 ? "pushed" : "not pushed")
                   << std::endl;
@@ -78,7 +77,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -93,7 +92,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main(): " << ex.what() << "\n";
         return -1;

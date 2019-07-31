@@ -23,23 +23,22 @@
 #include <stdio.h>
 #include <string.h>
 
-#include"data_structures.h"
+#include "data_structures.h"
 #include "line_conversion.h"
 
 #include "ndds/ndds_c.h"
 #include "routingservice/routingservice_adapter.h"
 
-#include <sys/select.h>
-#include <semaphore.h>
 #include <pthread.h>
+#include <semaphore.h>
+#include <sys/select.h>
 
 /* This function creates the typecode */
-DDS_TypeCode * RTI_RoutingServiceFileAdapter_create_type_code()
+DDS_TypeCode *RTI_RoutingServiceFileAdapter_create_type_code()
 {
-
-    struct DDS_TypeCodeFactory * factory = NULL;
-    struct DDS_TypeCode * sequence_tc = NULL; /* type code for octet */
-    struct DDS_TypeCode * struct_tc = NULL; /* Top-level typecode */
+    struct DDS_TypeCodeFactory *factory = NULL;
+    struct DDS_TypeCode *sequence_tc = NULL; /* type code for octet */
+    struct DDS_TypeCode *struct_tc = NULL;   /* Top-level typecode */
     struct DDS_StructMemberSeq member_seq = DDS_SEQUENCE_INITIALIZER;
     DDS_ExceptionCode_t ex = DDS_NO_EXCEPTION_CODE;
 
@@ -54,12 +53,13 @@ DDS_TypeCode * RTI_RoutingServiceFileAdapter_create_type_code()
     sequence_tc = DDS_TypeCodeFactory_create_sequence_tc(
             factory,
             MAX_PAYLOAD_SIZE,
-            DDS_TypeCodeFactory_get_primitive_tc(factory,
-                    DDS_TK_OCTET),
-                    &ex);
+            DDS_TypeCodeFactory_get_primitive_tc(factory, DDS_TK_OCTET),
+            &ex);
     if (ex != DDS_NO_EXCEPTION_CODE) {
-        fprintf(stderr, "ERROR: Unable to create 'payload' sequence typecode:"
-                " %d\n", ex);
+        fprintf(stderr,
+                "ERROR: Unable to create 'payload' sequence typecode:"
+                " %d\n",
+                ex);
         goto done;
     }
 
@@ -74,19 +74,21 @@ DDS_TypeCode * RTI_RoutingServiceFileAdapter_create_type_code()
         goto done;
     }
 
-    DDS_TypeCode_add_member(struct_tc,
+    DDS_TypeCode_add_member(
+            struct_tc,
             "value",
             DDS_MEMBER_ID_INVALID,
             sequence_tc,
             DDS_TYPECODE_NONKEY_MEMBER,
             &ex);
     if (ex != DDS_NO_EXCEPTION_CODE) {
-        fprintf(stderr,"Error adding member to struct typecode, error=%d\n",
+        fprintf(stderr,
+                "Error adding member to struct typecode, error=%d\n",
                 ex);
         goto done;
     }
-    if (sequence_tc !=NULL) {
-        DDS_TypeCodeFactory_delete_tc(factory,sequence_tc,&ex);
+    if (sequence_tc != NULL) {
+        DDS_TypeCodeFactory_delete_tc(factory, sequence_tc, &ex);
     }
     return struct_tc;
 
@@ -100,9 +102,9 @@ done:
     return NULL;
 }
 
-void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode * type_code)
+void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode *type_code)
 {
-    DDS_TypeCodeFactory * factory = NULL;
+    DDS_TypeCodeFactory *factory = NULL;
     DDS_ExceptionCode_t ex = DDS_NO_EXCEPTION_CODE;
 
     factory = DDS_TypeCodeFactory_get_instance();
@@ -112,7 +114,7 @@ void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode * type_code)
         return;
     } else {
         if (type_code != NULL) {
-            DDS_TypeCodeFactory_delete_tc(factory,type_code,&ex);
+            DDS_TypeCodeFactory_delete_tc(factory, type_code, &ex);
         }
         if (ex != DDS_NO_EXCEPTION_CODE) {
             fprintf(stderr, "Unable to delete typecode\n");
@@ -127,20 +129,19 @@ void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode * type_code)
 /*                                                                           */
 /* ========================================================================= */
 
-void * RTI_RoutingServiceFileStreamReader_run(void * threadParam)
+void *RTI_RoutingServiceFileStreamReader_run(void *threadParam)
 {
-
-    struct RTI_RoutingServiceFileStreamReader * self =
+    struct RTI_RoutingServiceFileStreamReader *self =
             (struct RTI_RoutingServiceFileStreamReader *) threadParam;
 
     /* This thread will notify periodically data availability in the file */
     while (self->is_running_enabled) {
-
         NDDS_Utility_sleep(&self->read_period);
 
         if (!feof(self->file)) {
             self->listener.on_data_available(
-                    self, self->listener.listener_data);
+                    self,
+                    self->listener.listener_data);
         }
     }
     return NULL;
@@ -155,7 +156,7 @@ void * RTI_RoutingServiceFileStreamReader_run(void * threadParam)
  * list
  */
 void RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
-        struct DDS_DynamicData ** samples,
+        struct DDS_DynamicData **samples,
         int count)
 {
     int i = 0;
@@ -167,7 +168,6 @@ void RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
     }
     free(samples);
     samples = NULL;
-
 }
 
 /*****************************************************************************/
@@ -179,19 +179,18 @@ void RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
  */
 void RTI_RoutingServiceFileStreamReader_read(
         RTI_RoutingServiceStreamReader stream_reader,
-        RTI_RoutingServiceSample ** sample_list,
-        RTI_RoutingServiceSampleInfo ** info_list,
-        int * count,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceSample **sample_list,
+        RTI_RoutingServiceSampleInfo **info_list,
+        int *count,
+        RTI_RoutingServiceEnvironment *env)
 {
-
     int i = 0, sample_counter = 0;
 
-    struct DDS_DynamicData * sample = NULL;
-    struct DDS_DynamicDataProperty_t     dynamic_data_props =
+    struct DDS_DynamicData *sample = NULL;
+    struct DDS_DynamicDataProperty_t dynamic_data_props =
             DDS_DynamicDataProperty_t_INITIALIZER;
 
-    struct RTI_RoutingServiceFileStreamReader * self =
+    struct RTI_RoutingServiceFileStreamReader *self =
             (struct RTI_RoutingServiceFileStreamReader *) stream_reader;
     /*
      * We don't provide sample info in this adapter, which
@@ -206,7 +205,8 @@ void RTI_RoutingServiceFileStreamReader_read(
     if ((self->connection->input_discovery_reader == self)) {
         int new_discovered_samples = 0;
 
-        fprintf(stdout,"DiscoveryReader: called function read "
+        fprintf(stdout,
+                "DiscoveryReader: called function read "
                 "for input discovery\n");
         /*
          * we keep track in the checking thread of the number of file names
@@ -216,20 +216,21 @@ void RTI_RoutingServiceFileStreamReader_read(
          * with the discovery_data_counter_read, subtracting one to another, we
          * know how many new discovered files we have
          */
-        new_discovered_samples = self->discovery_data_counter -
-                self->discovery_data_counter_read;
+        new_discovered_samples = self->discovery_data_counter
+                - self->discovery_data_counter_read;
 
         /*
          * we receive as a parameter the pointer to an array, and we need to
          * allocate memory for it, first for the array, then for the single
          * elements we put in it.
          */
-        *sample_list = calloc(
-                new_discovered_samples,
-                sizeof(struct RTI_RoutingServiceStreamInfo *));
+        *sample_list =
+                calloc(new_discovered_samples,
+                       sizeof(struct RTI_RoutingServiceStreamInfo *));
         if (*sample_list == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "Failure creating dynamic data sample in read "
+                    env,
+                    "Failure creating dynamic data sample in read "
                     "function for discovery");
             return;
         }
@@ -247,7 +248,7 @@ void RTI_RoutingServiceFileStreamReader_read(
              */
             streaminfo = RTI_RoutingServiceStreamInfo_new_discovered(
                     self->discovery_data[self->discovery_data_counter_read],
-                    "TextLine",/*typename*/
+                    "TextLine", /*typename*/
                     RTI_ROUTING_SERVICE_TYPE_REPRESENTATION_DYNAMIC_TYPE,
                     self->type_code);
 
@@ -270,14 +271,15 @@ void RTI_RoutingServiceFileStreamReader_read(
 
 
     } else {
+        fprintf(stdout, "StreamReader: called function read for data\n");
 
-        fprintf(stdout,"StreamReader: called function read for data\n");
-
-        *sample_list = calloc(self->samples_per_read,sizeof(DDS_DynamicData *));
+        *sample_list =
+                calloc(self->samples_per_read, sizeof(DDS_DynamicData *));
         if (*sample_list == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env,"Failure creating dynamic data "
-                            "sample list in read function");
+                    env,
+                    "Failure creating dynamic data "
+                    "sample list in read function");
             return;
         }
 
@@ -286,7 +288,6 @@ void RTI_RoutingServiceFileStreamReader_read(
          *  (or less if we encounter the end of file)
          */
         for (i = 0; i < self->samples_per_read && !feof(self->file); i++) {
-
             /*
              * Create a dynamic data sample for every buffer we read. We use
              * the type we received when the stream reader was created
@@ -295,9 +296,11 @@ void RTI_RoutingServiceFileStreamReader_read(
             if (sample == NULL) {
                 RTI_RoutingServiceEnvironment_set_error(
                         env,
-                        "Failure creating dynamic data sample in read function");
+                        "Failure creating dynamic data sample in read "
+                        "function");
                 RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
-                        (struct DDS_DynamicData **) *sample_list, sample_counter);
+                        (struct DDS_DynamicData **) *sample_list,
+                        sample_counter);
                 *sample_list = NULL;
                 return;
             }
@@ -305,9 +308,10 @@ void RTI_RoutingServiceFileStreamReader_read(
              * Fill the dynamic data sample fields
              * with the buffer read from the file.
              */
-            if ( !RTI_RoutingServiceFileAdapter_read_sample(
-                    sample, self->file,
-                    env)) {
+            if (!RTI_RoutingServiceFileAdapter_read_sample(
+                        sample,
+                        self->file,
+                        env)) {
                 /* No sample read */
                 DDS_DynamicData_delete(sample);
                 continue;
@@ -317,7 +321,6 @@ void RTI_RoutingServiceFileStreamReader_read(
         }
         /* Set the count to the actual number of samples we have generated */
         *count = sample_counter;
-
     }
     /*
      * If there are no samples to read we free the memory allocated straight
@@ -328,8 +331,6 @@ void RTI_RoutingServiceFileStreamReader_read(
         free(*sample_list);
         *sample_list = NULL;
     }
-
-
 }
 
 
@@ -337,17 +338,17 @@ void RTI_RoutingServiceFileStreamReader_read(
 
 void RTI_RoutingServiceFileStreamReader_return_loan(
         RTI_RoutingServiceStreamReader stream_reader,
-        RTI_RoutingServiceSample * sample_list,
-        RTI_RoutingServiceSampleInfo * info_list,
+        RTI_RoutingServiceSample *sample_list,
+        RTI_RoutingServiceSampleInfo *info_list,
         int count,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
     /* Release all the memory allocated with read() */
     int i;
     struct RTI_RoutingServiceFileStreamReader *self =
-            (struct RTI_RoutingServiceFileStreamReader*) stream_reader;
+            (struct RTI_RoutingServiceFileStreamReader *) stream_reader;
 
-    fprintf(stdout,"StreamReader: called function return_loan\n");
+    fprintf(stdout, "StreamReader: called function return_loan\n");
 
     /*
      * In case this is called on the discovery data, we free the memory for
@@ -359,10 +360,10 @@ void RTI_RoutingServiceFileStreamReader_return_loan(
         }
         free(sample_list);
         sample_list = NULL;
-    }
-    else{
+    } else {
         RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
-                (struct DDS_DynamicData **)sample_list, count);
+                (struct DDS_DynamicData **) sample_list,
+                count);
     }
 }
 
@@ -374,18 +375,18 @@ void RTI_RoutingServiceFileStreamReader_return_loan(
 
 int RTI_RoutingServiceFileStreamWriter_write(
         RTI_RoutingServiceStreamWriter stream_writer,
-        const RTI_RoutingServiceSample * sample_list,
-        const RTI_RoutingServiceSampleInfo * info_list,
+        const RTI_RoutingServiceSample *sample_list,
+        const RTI_RoutingServiceSampleInfo *info_list,
         int count,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
-    struct DDS_DynamicData * sample = NULL;
+    struct DDS_DynamicData *sample = NULL;
     int i = 0;
-    int written_sample=0;
-    struct RTI_RoutingServiceFileStreamWriter * self =
+    int written_sample = 0;
+    struct RTI_RoutingServiceFileStreamWriter *self =
             (struct RTI_RoutingServiceFileStreamWriter *) stream_writer;
 
-    fprintf(stdout,"StreamWriter: called function write\n");
+    fprintf(stdout, "StreamWriter: called function write\n");
 
     /* we explore the sample_list dynamic array we received */
     for (i = 0; i < count; i++) {
@@ -396,7 +397,9 @@ int RTI_RoutingServiceFileStreamWriter_write(
          * care to write to the file with the name of the stream.
          */
         if (!RTI_RoutingServiceFileAdapter_write_sample(
-                sample, self->file, env)) {
+                    sample,
+                    self->file,
+                    env)) {
             continue;
         }
         if (self->flush_enabled) {
@@ -413,32 +416,31 @@ int RTI_RoutingServiceFileStreamWriter_write(
 /*                                                                           */
 /* ========================================================================= */
 
-RTI_RoutingServiceSession
-RTI_RoutingServiceFileConnection_create_session(
+RTI_RoutingServiceSession RTI_RoutingServiceFileConnection_create_session(
         RTI_RoutingServiceConnection connection,
-        const struct RTI_RoutingServiceProperties * properties,
-        RTI_RoutingServiceEnvironment * env)
+        const struct RTI_RoutingServiceProperties *properties,
+        RTI_RoutingServiceEnvironment *env)
 {
     pthread_attr_t thread_attribute;
-    struct RTI_RoutingServiceFileConnection* file_connection =
-            (struct RTI_RoutingServiceFileConnection*) connection;
+    struct RTI_RoutingServiceFileConnection *file_connection =
+            (struct RTI_RoutingServiceFileConnection *) connection;
 
-    fprintf(stdout,"Connection: called function create_session\n");
+    fprintf(stdout, "Connection: called function create_session\n");
 
     if (file_connection->is_input == 1) {
         pthread_attr_init(&thread_attribute);
         pthread_attr_setdetachstate(&thread_attribute, PTHREAD_CREATE_JOINABLE);
         if (pthread_create(
-                &file_connection->tid,
-                NULL,
-                RTI_RoutingServiceFileAdpater_checking_thread,
-                (void*)file_connection) < 0) {
-
+                    &file_connection->tid,
+                    NULL,
+                    RTI_RoutingServiceFileAdpater_checking_thread,
+                    (void *) file_connection)
+            < 0) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "Error creating thread for directory"
+                    env,
+                    "Error creating thread for directory"
                     "scanning");
             return NULL;
-
         }
     }
 
@@ -457,19 +459,19 @@ RTI_RoutingServiceFileConnection_create_session(
 void RTI_RoutingServiceFileConnection_delete_session(
         RTI_RoutingServiceConnection connection,
         RTI_RoutingServiceSession session,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
     struct RTI_RoutingServiceFileConnection *file_connection =
-            (struct RTI_RoutingServiceFileConnection*) connection;
+            (struct RTI_RoutingServiceFileConnection *) connection;
     /* we wait for the discovery thread to end */
 
     if (file_connection->is_input) {
         file_connection->is_running_enabled = 0;
-        pthread_join(file_connection->tid,NULL);
-        fprintf(stdout,"thread discovery ended\n");
+        pthread_join(file_connection->tid, NULL);
+        fprintf(stdout, "thread discovery ended\n");
     }
 
-    fprintf(stdout,"Connection: called function delete_session\n");
+    fprintf(stdout, "Connection: called function delete_session\n");
 
     /* We don't need sessions in this example */
 }
@@ -477,9 +479,8 @@ void RTI_RoutingServiceFileConnection_delete_session(
 /*****************************************************************************/
 
 void RTI_RoutingServiceFileStreamReader_delete(
-        struct RTI_RoutingServiceFileStreamReader * self)
+        struct RTI_RoutingServiceFileStreamReader *self)
 {
-
     if (self->file != NULL) {
         fclose(self->file);
     }
@@ -489,52 +490,55 @@ void RTI_RoutingServiceFileStreamReader_delete(
 
 /*****************************************************************************/
 
-RTI_RoutingServiceStreamReader 
-RTI_RoutingServiceFileConnection_create_stream_reader(
-        RTI_RoutingServiceConnection connection,
-        RTI_RoutingServiceSession session,
-        const struct RTI_RoutingServiceStreamInfo * stream_info,
-        const struct RTI_RoutingServiceProperties * properties,
-        const struct RTI_RoutingServiceStreamReaderListener * listener,
-        RTI_RoutingServiceEnvironment * env)
+RTI_RoutingServiceStreamReader
+        RTI_RoutingServiceFileConnection_create_stream_reader(
+                RTI_RoutingServiceConnection connection,
+                RTI_RoutingServiceSession session,
+                const struct RTI_RoutingServiceStreamInfo *stream_info,
+                const struct RTI_RoutingServiceProperties *properties,
+                const struct RTI_RoutingServiceStreamReaderListener *listener,
+                RTI_RoutingServiceEnvironment *env)
 {
-
-    struct     RTI_RoutingServiceFileStreamReader * stream_reader = NULL;
+    struct RTI_RoutingServiceFileStreamReader *stream_reader = NULL;
     int read_period = 0;
     int samples_per_read = 0;
     int error = 0;
-    const char * read_period_property = NULL;
-    const char * samples_per_read_property = NULL;
-    char * filename = NULL;
-    FILE * file = NULL;
+    const char *read_period_property = NULL;
+    const char *samples_per_read_property = NULL;
+    char *filename = NULL;
+    FILE *file = NULL;
     pthread_attr_t thread_attribute;
     struct RTI_RoutingServiceFileConnection *file_connection =
             (struct RTI_RoutingServiceFileConnection *) connection;
 
-    fprintf(stdout,"Connection: called function create_stream_reader\n");
+    fprintf(stdout, "Connection: called function create_stream_reader\n");
 
     /* Get the configuration properties in <route>/<input>/<property> */
     read_period_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, "ReadPeriod");
+            properties,
+            "ReadPeriod");
     if (read_period_property == NULL) {
         read_period = 1000;
     } else {
         read_period = atoi(read_period_property);
         if (read_period <= 0) {
-            RTI_RoutingServiceEnvironment_set_error(env,
+            RTI_RoutingServiceEnvironment_set_error(
+                    env,
                     "Error: read_period property value not valid");
             return NULL;
         }
     }
 
     samples_per_read_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, "SamplesPerRead");
+            properties,
+            "SamplesPerRead");
     if (samples_per_read_property == NULL) {
         samples_per_read = 1;
     } else {
         samples_per_read = atoi(samples_per_read_property);
         if (samples_per_read <= 0) {
-            RTI_RoutingServiceEnvironment_set_error(env,
+            RTI_RoutingServiceEnvironment_set_error(
+                    env,
                     "ERROR:samples_per_read property value not valid");
             return NULL;
         }
@@ -546,8 +550,9 @@ RTI_RoutingServiceFileConnection_create_stream_reader(
      * path and filename, and \0 as terminator. after that we create the string
      * with sprintf
      */
-    filename = malloc(strlen(file_connection->path)+1
-            +strlen(stream_info->stream_name)+1);
+    filename =
+            malloc(strlen(file_connection->path) + 1
+                   + strlen(stream_info->stream_name) + 1);
     if (filename == NULL) {
         RTI_RoutingServiceEnvironment_set_error(
                 env,
@@ -555,42 +560,45 @@ RTI_RoutingServiceFileConnection_create_stream_reader(
         return NULL;
     }
 
-    sprintf(filename,"%s/%s",file_connection->path,stream_info->stream_name);
+    sprintf(filename, "%s/%s", file_connection->path, stream_info->stream_name);
 
     file = fopen(filename, "r");
     if (file == NULL) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Could not open file %s for read",filename);
+                env,
+                "Could not open file %s for read",
+                filename);
         free(filename);
-        filename=NULL;
+        filename = NULL;
         return NULL;
     }
     free(filename);
-    filename=NULL;
+    filename = NULL;
 
     /* Check that the type representation is DDS dynamic type code */
-    if (stream_info->type_info.type_representation_kind !=
-            RTI_ROUTING_SERVICE_TYPE_REPRESENTATION_DYNAMIC_TYPE) {
-
+    if (stream_info->type_info.type_representation_kind
+        != RTI_ROUTING_SERVICE_TYPE_REPRESENTATION_DYNAMIC_TYPE) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Unsupported type format creating stream reader");
+                env,
+                "Unsupported type format creating stream reader");
         fclose(file);
         return NULL;
     }
 
     /* Create the stream reader object */
-    stream_reader = calloc(
-            1, sizeof(struct RTI_RoutingServiceFileStreamReader));
+    stream_reader =
+            calloc(1, sizeof(struct RTI_RoutingServiceFileStreamReader));
     if (stream_reader == NULL) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Memory allocation error creating stream reader");
+                env,
+                "Memory allocation error creating stream reader");
         fclose(file);
         return NULL;
     }
 
     stream_reader->connection = file_connection;
     stream_reader->samples_per_read = samples_per_read;
-    stream_reader->read_period.sec =  read_period / 1000;
+    stream_reader->read_period.sec = read_period / 1000;
     stream_reader->read_period.nanosec = (read_period % 1000) * 1000000;
     stream_reader->file = file;
     stream_reader->listener = *listener;
@@ -605,11 +613,12 @@ RTI_RoutingServiceFileConnection_create_stream_reader(
             &stream_reader->tid,
             &thread_attribute,
             RTI_RoutingServiceFileStreamReader_run,
-            (void *)stream_reader);
+            (void *) stream_reader);
     pthread_attr_destroy(&thread_attribute);
     if (error) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Error creating thread for data_available notification");
+                env,
+                "Error creating thread for data_available notification");
         fclose(stream_reader->file);
         free(stream_reader);
         return NULL;
@@ -623,56 +632,55 @@ RTI_RoutingServiceFileConnection_create_stream_reader(
 void RTI_RoutingServiceFileConnection_delete_stream_reader(
         RTI_RoutingServiceConnection connection,
         RTI_RoutingServiceStreamReader stream_reader,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
-
-
-    struct RTI_RoutingServiceFileStreamReader * self =
+    struct RTI_RoutingServiceFileStreamReader *self =
             (struct RTI_RoutingServiceFileStreamReader *) stream_reader;
 
-    fprintf(stdout,"Connection: called function delete_stream_reader:%s\n",
+    fprintf(stdout,
+            "Connection: called function delete_stream_reader:%s\n",
             self->info->stream_name);
 
     self->is_running_enabled = 0;
-    pthread_join(self->tid,NULL);
+    pthread_join(self->tid, NULL);
 
     RTI_RoutingServiceFileStreamReader_delete(self);
-
 }
 
 /*****************************************************************************/
 
-RTI_RoutingServiceStreamWriter 
-RTI_RoutingServiceFileConnection_create_stream_writer(
-        RTI_RoutingServiceConnection connection,
-        RTI_RoutingServiceSession session,
-        const struct RTI_RoutingServiceStreamInfo * stream_info,
-        const struct RTI_RoutingServiceProperties * properties,
-        RTI_RoutingServiceEnvironment * env)
+RTI_RoutingServiceStreamWriter
+        RTI_RoutingServiceFileConnection_create_stream_writer(
+                RTI_RoutingServiceConnection connection,
+                RTI_RoutingServiceSession session,
+                const struct RTI_RoutingServiceStreamInfo *stream_info,
+                const struct RTI_RoutingServiceProperties *properties,
+                RTI_RoutingServiceEnvironment *env)
 {
+    struct RTI_RoutingServiceFileStreamWriter *stream_writer = NULL;
 
-    struct RTI_RoutingServiceFileStreamWriter * stream_writer = NULL;
 
-
-    const char * mode_property = NULL;
-    const char * flush_property = NULL;
-    char * filename = NULL;
-    FILE * file = NULL;
+    const char *mode_property = NULL;
+    const char *flush_property = NULL;
+    char *filename = NULL;
+    FILE *file = NULL;
     int flush_enabled = 0;
     int error = 0;
-    struct RTI_RoutingServiceFileConnection* file_connection =
+    struct RTI_RoutingServiceFileConnection *file_connection =
             (struct RTI_RoutingServiceFileConnection *) connection;
 
-    fprintf(stdout,"Connection: called function create_stream_writer\n");
+    fprintf(stdout, "Connection: called function create_stream_writer\n");
 
     mode_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, "WriteMode");
+            properties,
+            "WriteMode");
     if (mode_property != NULL) {
-        if (strcmp(mode_property, "overwrite") &&
-                strcmp(mode_property, "append") &&
-                strcmp(mode_property, "keep") ) {
+        if (strcmp(mode_property, "overwrite")
+            && strcmp(mode_property, "append")
+            && strcmp(mode_property, "keep")) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "Invalid value for WriteMode (%s). "
+                    env,
+                    "Invalid value for WriteMode (%s). "
                     "Allowed values: keep (default), overwrite, append",
                     mode_property);
             return NULL;
@@ -683,23 +691,26 @@ RTI_RoutingServiceFileConnection_create_stream_writer(
 
     /* Get the configuration properties in <route>/<output>/<property> */
 
-    flush_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, "Flush");
+    flush_property =
+            RTI_RoutingServiceProperties_lookup_property(properties, "Flush");
     if (flush_property != NULL) {
-        if (!strcmp(flush_property, "yes") || !strcmp(flush_property, "true") ||
-                !strcmp(flush_property, "1")) {
+        if (!strcmp(flush_property, "yes") || !strcmp(flush_property, "true")
+            || !strcmp(flush_property, "1")) {
             flush_enabled = 1;
         }
     }
 
     /* we prepare the string with the whole path */
-    filename = malloc(strlen(file_connection->path)+1
-            +strlen(stream_info->stream_name)+1);
+    filename =
+            malloc(strlen(file_connection->path) + 1
+                   + strlen(stream_info->stream_name) + 1);
     if (filename == NULL) {
-        RTI_RoutingServiceEnvironment_set_error(env,"Error allocating memory"
+        RTI_RoutingServiceEnvironment_set_error(
+                env,
+                "Error allocating memory"
                 "for filename create_stream_writer");
     }
-    sprintf(filename,"%s/%s",file_connection->path,stream_info->stream_name);
+    sprintf(filename, "%s/%s", file_connection->path, stream_info->stream_name);
 
     /*
      * if property is keep we try to open the file in read mode, if the result
@@ -710,7 +721,8 @@ RTI_RoutingServiceFileConnection_create_stream_writer(
         file = fopen(filename, "r");
         if (file != NULL) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "File exists and WriteMode is keep");
+                    env,
+                    "File exists and WriteMode is keep");
             fclose(file);
             free(filename);
             return NULL;
@@ -723,15 +735,16 @@ RTI_RoutingServiceFileConnection_create_stream_writer(
     file = fopen(filename, !strcmp(mode_property, "append") ? "a" : "w");
     if (file == NULL) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Could not open file for write: %s", filename);
+                env,
+                "Could not open file for write: %s",
+                filename);
         return NULL;
     }
     free(filename);
-    stream_writer = calloc(
-            1, sizeof(struct RTI_RoutingServiceFileStreamWriter));
+    stream_writer =
+            calloc(1, sizeof(struct RTI_RoutingServiceFileStreamWriter));
     if (stream_writer == NULL) {
-        RTI_RoutingServiceEnvironment_set_error(
-                env, "Memory allocation error");
+        RTI_RoutingServiceEnvironment_set_error(env, "Memory allocation error");
         fclose(file);
         return NULL;
     }
@@ -747,14 +760,14 @@ RTI_RoutingServiceFileConnection_create_stream_writer(
 void RTI_RoutingServiceFileConnection_delete_stream_writer(
         RTI_RoutingServiceConnection connection,
         RTI_RoutingServiceStreamWriter stream_writer,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
-
-    struct RTI_RoutingServiceFileStreamWriter * self =
+    struct RTI_RoutingServiceFileStreamWriter *self =
             (struct RTI_RoutingServiceFileStreamWriter *) stream_writer;
 
     fclose(self->file);
-    fprintf(stdout,"Connection: called function delete_stream_writer:%s\n",
+    fprintf(stdout,
+            "Connection: called function delete_stream_writer:%s\n",
             self->info->stream_name);
 
     free(self);
@@ -767,47 +780,51 @@ void RTI_RoutingServiceFileConnection_delete_stream_writer(
 /* ========================================================================= */
 
 RTI_RoutingServiceConnection
-RTI_RoutingServiceFileAdapterPlugin_create_connection(
-        struct RTI_RoutingServiceAdapterPlugin * adapter,
-        const char * routing_service_name,
-        const char * routing_service_group_name,
-        const struct RTI_RoutingServiceStreamReaderListener * output_disc_listener,
-        const struct RTI_RoutingServiceStreamReaderListener * input_disc_listener,
-        const struct RTI_RoutingServiceTypeInfo ** registeredTypes,
-        int    registeredTypeCount,
-        const struct RTI_RoutingServiceProperties * properties,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceFileAdapterPlugin_create_connection(
+                struct RTI_RoutingServiceAdapterPlugin *adapter,
+                const char *routing_service_name,
+                const char *routing_service_group_name,
+                const struct RTI_RoutingServiceStreamReaderListener
+                        *output_disc_listener,
+                const struct RTI_RoutingServiceStreamReaderListener
+                        *input_disc_listener,
+                const struct RTI_RoutingServiceTypeInfo **registeredTypes,
+                int registeredTypeCount,
+                const struct RTI_RoutingServiceProperties *properties,
+                RTI_RoutingServiceEnvironment *env)
 {
-    const char * is_input_connection = NULL;
-    const char * path = NULL;
-    const char * sleep_period = NULL;
-    struct RTI_RoutingServiceFileConnection * connection = NULL;
+    const char *is_input_connection = NULL;
+    const char *path = NULL;
+    const char *sleep_period = NULL;
+    struct RTI_RoutingServiceFileConnection *connection = NULL;
 
-    fprintf(stdout,"FileAdapter: called function create_connection\n");
+    fprintf(stdout, "FileAdapter: called function create_connection\n");
 
     connection = calloc(1, sizeof(struct RTI_RoutingServiceFileConnection));
     if (connection == NULL) {
-        RTI_RoutingServiceEnvironment_set_error(env,"Error allocating memory"
+        RTI_RoutingServiceEnvironment_set_error(
+                env,
+                "Error allocating memory"
                 "for connection");
         return NULL;
     }
 
-    sleep_period = RTI_RoutingServiceProperties_lookup_property(properties,
+    sleep_period = RTI_RoutingServiceProperties_lookup_property(
+            properties,
             "sleepPeriod");
     if (sleep_period == NULL) {
         connection->sleep_period = 5;
-    }
-    else {
+    } else {
         connection->sleep_period = atoi(sleep_period);
         if (connection->sleep_period <= 0) {
-            RTI_RoutingServiceEnvironment_set_error(env,"Error creating "
+            RTI_RoutingServiceEnvironment_set_error(
+                    env,
+                    "Error creating "
                     "Connection: sleep_period value not valid");
-
         }
     }
 
-    path = RTI_RoutingServiceProperties_lookup_property(
-            properties,"path");
+    path = RTI_RoutingServiceProperties_lookup_property(properties, "path");
     /*
      * if the property is not found, then we are going to assign default value.
      * As the default value is different depending of the connection, so we
@@ -817,13 +834,15 @@ RTI_RoutingServiceFileAdapterPlugin_create_connection(
 
     /* we recover properties from the xml file configuration */
     is_input_connection = RTI_RoutingServiceProperties_lookup_property(
-            properties,"direction");
+            properties,
+            "direction");
     /*
      * now we check if it is the connection that we use as
      * input connection or not
      */
-    if ((is_input_connection != NULL) && !strcmp(is_input_connection,"input")) {
-        fprintf(stdout,"Connection: This is an input connection\n");
+    if ((is_input_connection != NULL)
+        && !strcmp(is_input_connection, "input")) {
+        fprintf(stdout, "Connection: This is an input connection\n");
         connection->is_input = 1;
         connection->is_running_enabled = 1;
         /*
@@ -835,19 +854,19 @@ RTI_RoutingServiceFileAdapterPlugin_create_connection(
 
         if (path == NULL) {
             /* we assign the default value*/
-            strcpy(connection->path,".");
+            strcpy(connection->path, ".");
         } else {
             strcpy(connection->path, path);
         }
 
     } else {
         /*either it is output, or we assign default as output*/
-        fprintf(stdout,"Connection: This is an output connection\n");
+        fprintf(stdout, "Connection: This is an output connection\n");
         connection->is_input = 0;
-        connection->is_running_enabled=0;
+        connection->is_running_enabled = 0;
         if (path == NULL) {
             /* we assign the default value*/
-            strcpy(connection->path,"./filewrite");
+            strcpy(connection->path, "./filewrite");
         } else {
             strcpy(connection->path, path);
         }
@@ -858,15 +877,14 @@ RTI_RoutingServiceFileAdapterPlugin_create_connection(
 /*****************************************************************************/
 
 void RTI_RoutingServiceFileAdapterPlugin_delete_connection(
-        struct RTI_RoutingServiceAdapterPlugin * adapter,
+        struct RTI_RoutingServiceAdapterPlugin *adapter,
         RTI_RoutingServiceConnection connection,
-        RTI_RoutingServiceEnvironment * env)
+        RTI_RoutingServiceEnvironment *env)
 {
-
     struct RTI_RoutingServiceFileConnection *file_connection =
-            (struct RTI_RoutingServiceFileConnection*) connection;
+            (struct RTI_RoutingServiceFileConnection *) connection;
 
-    fprintf(stdout,"FileAdapter: called function delete connection\n");
+    fprintf(stdout, "FileAdapter: called function delete connection\n");
 
     if (file_connection->is_input) {
         RTI_RoutingServiceFileAdapter_delete_type_code(
@@ -885,10 +903,10 @@ void RTI_RoutingServiceFileAdapterPlugin_delete_connection(
 /*****************************************************************************/
 
 void RTI_RoutingServiceFileAdapterPlugin_delete(
-        struct RTI_RoutingServiceAdapterPlugin * adapter,
-        RTI_RoutingServiceEnvironment * env)
+        struct RTI_RoutingServiceAdapterPlugin *adapter,
+        RTI_RoutingServiceEnvironment *env)
 {
-    fprintf(stdout,"RoutingService: called function delete plugin\n");
+    fprintf(stdout, "RoutingService: called function delete plugin\n");
     free(adapter);
 }
 
@@ -898,24 +916,23 @@ void RTI_RoutingServiceFileAdapterPlugin_delete(
  * Discovery Functions gets called just once for every connection
  * That is why we delete them inside the
  */
-RTI_RoutingServiceStreamReader
-RTI_RoutingService_getInputDiscoveryReader(
+RTI_RoutingServiceStreamReader RTI_RoutingService_getInputDiscoveryReader(
         RTI_RoutingServiceConnection connection,
         RTI_RoutingServiceEnvironment *env)
 {
-
     struct RTI_RoutingServiceFileStreamReader *stream_reader = NULL;
     struct RTI_RoutingServiceFileConnection *file_connection =
-            (struct RTI_RoutingServiceFileConnection*) connection;
+            (struct RTI_RoutingServiceFileConnection *) connection;
 
-    fprintf(stdout,"Connection: called function getInputDiscoveryReader\n");
+    fprintf(stdout, "Connection: called function getInputDiscoveryReader\n");
 
     if (file_connection->is_input) {
-        stream_reader = calloc(1,
-                sizeof(struct RTI_RoutingServiceFileStreamReader));
+        stream_reader =
+                calloc(1, sizeof(struct RTI_RoutingServiceFileStreamReader));
         if (stream_reader == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "Failure creating discovery stream_reader");
+                    env,
+                    "Failure creating discovery stream_reader");
             return NULL;
         }
         /*
@@ -928,12 +945,13 @@ RTI_RoutingService_getInputDiscoveryReader(
 
         stream_reader->connection = file_connection;
         stream_reader->discovery_data_counter_read = 0;
-        stream_reader->discovery_data_counter=0;
+        stream_reader->discovery_data_counter = 0;
         stream_reader->type_code =
                 RTI_RoutingServiceFileAdapter_create_type_code();
         if (stream_reader->type_code == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
-                    env, "Failure creating Typecode");
+                    env,
+                    "Failure creating Typecode");
             free(stream_reader);
             stream_reader = NULL;
             return NULL;
@@ -943,20 +961,21 @@ RTI_RoutingService_getInputDiscoveryReader(
 }
 
 /* Entry point to the adapter plugin */
-struct RTI_RoutingServiceAdapterPlugin * 
-RTI_RoutingServiceFileAdapterPlugin_create(
-        const struct RTI_RoutingServiceProperties * properties,
-        RTI_RoutingServiceEnvironment * env)
+struct RTI_RoutingServiceAdapterPlugin *
+        RTI_RoutingServiceFileAdapterPlugin_create(
+                const struct RTI_RoutingServiceProperties *properties,
+                RTI_RoutingServiceEnvironment *env)
 {
-    struct RTI_RoutingServiceFileAdapterPlugin * adapter = NULL;
-    struct RTI_RoutingServiceVersion adapterVersion = {1,0,0,0};
+    struct RTI_RoutingServiceFileAdapterPlugin *adapter = NULL;
+    struct RTI_RoutingServiceVersion adapterVersion = { 1, 0, 0, 0 };
 
-    fprintf(stdout,"RoutingService: called function create_plugin\n");
+    fprintf(stdout, "RoutingService: called function create_plugin\n");
 
     adapter = calloc(1, sizeof(struct RTI_RoutingServiceFileAdapterPlugin));
     if (adapter == NULL) {
         RTI_RoutingServiceEnvironment_set_error(
-                env, "Memory allocation error creating plugin");
+                env,
+                "Memory allocation error creating plugin");
         return NULL;
     }
 
@@ -988,8 +1007,7 @@ RTI_RoutingServiceFileAdapterPlugin_create(
             RTI_RoutingServiceFileConnection_delete_session;
 
     /* stream reader functions */
-    adapter->_base.stream_reader_read =
-            RTI_RoutingServiceFileStreamReader_read;
+    adapter->_base.stream_reader_read = RTI_RoutingServiceFileStreamReader_read;
     adapter->_base.stream_reader_return_loan =
             RTI_RoutingServiceFileStreamReader_return_loan;
 
@@ -1004,4 +1022,3 @@ RTI_RoutingServiceFileAdapterPlugin_create(
     return (struct RTI_RoutingServiceAdapterPlugin *) adapter;
 }
 #undef ROUTER_CURRENT_SUBMODULE
-

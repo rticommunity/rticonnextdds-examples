@@ -12,18 +12,18 @@
 
 #include <algorithm>
 #include <iostream>
-#include <memory> // for unique_ptr
+#include <memory>  // for unique_ptr
 
-#include <signal.h>
 #include "CameraImage.hpp"
+#include <signal.h>
 
-#include <dds/sub/ddssub.hpp>
-#include <dds/pub/ddspub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/pub/ddspub.hpp>
+#include <dds/sub/ddssub.hpp>
 #include <rti/config/Logger.hpp>
 
-#include <rti/zcopy/sub/ZcopyDataReader.hpp>
 #include <rti/zcopy/pub/ZcopyDataWriter.hpp>
+#include <rti/zcopy/sub/ZcopyDataReader.hpp>
 
 #include "Common.hpp"
 
@@ -60,7 +60,7 @@ void subscriber_flat(const ApplicationOptions &options)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the publisher application\n";
+    std::cout << "Waiting for the publisher application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -77,10 +77,10 @@ void subscriber_flat(const ApplicationOptions &options)
         if ((ping_samples.length() > 0) && (ping_samples[0].info().valid())) {
             auto ping = ping_samples[0].data().root();
             if (ping.timestamp() == 0) {
-                //last sample received, break out of receive loop
+                // last sample received, break out of receive loop
                 break;
             }
-            if (options.display_sample){
+            if (options.display_sample) {
                 display_flat_sample(ping_samples[0].data());
             }
 
@@ -123,7 +123,7 @@ void subscriber_zero_copy(const ApplicationOptions &options)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the publisher application\n";
+    std::cout << "Waiting for the publisher application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -141,7 +141,7 @@ void subscriber_zero_copy(const ApplicationOptions &options)
                 // last sample received, break out of receive loop
                 break;
             }
-            if (options.display_sample){
+            if (options.display_sample) {
                 display_plain_sample(ping_samples[0].data());
             }
 
@@ -190,7 +190,7 @@ void subscriber_flat_zero_copy(const ApplicationOptions &options)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the publisher application\n";
+    std::cout << "Waiting for the publisher application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -208,10 +208,10 @@ void subscriber_flat_zero_copy(const ApplicationOptions &options)
             if (ping_samples[0].info().valid()) {
                 auto ping = ping_samples[0].data().root();
                 if (ping.timestamp() == 0) {
-                    //last sample received, break out of receive loop
+                    // last sample received, break out of receive loop
                     break;
                 }
-                if (options.display_sample){
+                if (options.display_sample) {
                     display_flat_sample(ping_samples[0].data());
                 }
 
@@ -265,7 +265,7 @@ void subscriber_plain(const ApplicationOptions &options)
     // We create the sample in the heap because is to large to be in the stack
     std::unique_ptr<CameraImage> pong_sample(new CameraImage);
 
-    std::cout<< "Waiting for the publisher application\n";
+    std::cout << "Waiting for the publisher application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -282,30 +282,33 @@ void subscriber_plain(const ApplicationOptions &options)
         // Write the pong sample
         if (ping_samples.length() && ping_samples[0].info().valid()) {
             if (ping_samples[0].data().timestamp() == 0) {
-                //last sample received, break out of receive loop
+                // last sample received, break out of receive loop
                 break;
             }
-            if (options.display_sample){
+            if (options.display_sample) {
                 display_plain_sample(ping_samples[0].data());
             }
             pong_sample->timestamp(ping_samples[0].data().timestamp());
-                writer.write(*pong_sample);
-                count++;
+            writer.write(*pong_sample);
+            count++;
         }
     }
     std::cout << "Subscriber shutting down\n";
 }
 
-void print_help(const char *program_name) {
+void print_help(const char *program_name)
+{
     std::cout << "Usage: " << program_name << "[options]\nOptions:\n";
     std::cout << " -domainId    <domain ID>    Domain ID\n";
     std::cout << " -mode        <1,2,3,4>      Subscriber modes\n";
     std::cout << "                                 1. subscriber_flat\n";
     std::cout << "                                 2. subscriber_zero_copy\n";
-    std::cout << "                                 3. subscriber_flat_zero_copy\n";
+    std::cout << "                                 3. "
+                 "subscriber_flat_zero_copy\n";
     std::cout << "                                 4. subscriber_plain\n";
     std::cout << " -displaySample              Displays the sample\n";
-    std::cout << " -nic         <IP address>   Use the nic specified by <ipaddr> to send\n";
+    std::cout << " -nic         <IP address>   Use the nic specified by "
+                 "<ipaddr> to send\n";
     std::cout << "                             Default: 127.0.0.1\n";
     std::cout << " -help                       Displays this information\n";
 }
@@ -316,16 +319,16 @@ int main(int argc, char *argv[])
 
 
     for (int i = 1; i < argc; i++) {
-        if (strstr(argv[i],"-h") == argv[i]) {
+        if (strstr(argv[i], "-h") == argv[i]) {
             print_help(argv[0]);
             return 0;
-        } else if (strstr(argv[i],"-di") == argv[i]) {
+        } else if (strstr(argv[i], "-di") == argv[i]) {
             options.display_sample = true;
-        } else if (strstr(argv[i],"-d") == argv[i]) {
+        } else if (strstr(argv[i], "-d") == argv[i]) {
             options.domain_id = atoi(argv[++i]);
-        } else if (strstr(argv[i],"-m") == argv[i]) {
+        } else if (strstr(argv[i], "-m") == argv[i]) {
             options.mode = atoi(argv[++i]);
-        } else if (strstr(argv[i],"-n") == argv[i]) {
+        } else if (strstr(argv[i], "-n") == argv[i]) {
             options.nic = (argv[++i]);
         } else {
             std::cout << "unexpected option: " << argv[i] << std::endl;
@@ -338,22 +341,22 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::WARNING);
 
     try {
-        switch(options.mode) {
-            case 1:
-                subscriber_flat(options);
-                break;
-            case 2:
-                subscriber_zero_copy(options);
-                break;
-            case 3:
-                subscriber_flat_zero_copy(options);
-                break;
-            case 4:
-                subscriber_plain(options);
-                break;
+        switch (options.mode) {
+        case 1:
+            subscriber_flat(options);
+            break;
+        case 2:
+            subscriber_zero_copy(options);
+            break;
+        case 3:
+            subscriber_flat_zero_copy(options);
+            break;
+        case 4:
+            subscriber_plain(options);
+            break;
         }
 
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber: " << ex.what() << std::endl;
         return -1;
@@ -367,4 +370,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

@@ -13,27 +13,25 @@
 #ifndef SHAPES_PROCESSOR_HPP_
 #define SHAPES_PROCESSOR_HPP_
 
+#include <iterator>
 #include <stdio.h>
 #include <stdlib.h>
-#include <iterator>
 
 #include <dds/core/corefwd.hpp>
 
-#include <rti/routing/processor/ProcessorPlugin.hpp>
-#include <rti/routing/processor/Processor.hpp>
+#include <dds/core/Optional.hpp>
 #include <dds/core/xtypes/DynamicData.hpp>
 #include <dds/core/xtypes/StructType.hpp>
-#include <dds/core/Optional.hpp>
+#include <rti/routing/processor/Processor.hpp>
+#include <rti/routing/processor/ProcessorPlugin.hpp>
 
-class ShapesAggregatorSimple :
-        public rti::routing::processor::NoOpProcessor {
-
+class ShapesAggregatorSimple : public rti::routing::processor::NoOpProcessor {
 public:
-    void on_data_available(rti::routing::processor::Route&);
+    void on_data_available(rti::routing::processor::Route &);
 
     void on_output_enabled(
-            rti::routing::processor::Route& route,
-            rti::routing::processor::Output& output);
+            rti::routing::processor::Route &route,
+            rti::routing::processor::Output &output);
 
     ShapesAggregatorSimple();
 
@@ -47,20 +45,18 @@ private:
 };
 
 
-class ShapesAggregatorAdv :
-        public rti::routing::processor::NoOpProcessor {
-
+class ShapesAggregatorAdv : public rti::routing::processor::NoOpProcessor {
 public:
-    void on_data_available(rti::routing::processor::Route&);
+    void on_data_available(rti::routing::processor::Route &);
 
     void on_output_enabled(
-            rti::routing::processor::Route& route,
-            rti::routing::processor::Output& output);
+            rti::routing::processor::Route &route,
+            rti::routing::processor::Output &output);
 
     ShapesAggregatorAdv(int32_t leading_input_index);
 
     ~ShapesAggregatorAdv();
-    
+
 private:
     // Optional member for deferred initialization: this object can be created
     // only when the output is enabled.
@@ -70,15 +66,13 @@ private:
     int32_t leading_input_index_;
 };
 
-class ShapesSplitter :
-        public rti::routing::processor::NoOpProcessor {
-
+class ShapesSplitter : public rti::routing::processor::NoOpProcessor {
 public:
-    void on_data_available(rti::routing::processor::Route&) override;
+    void on_data_available(rti::routing::processor::Route &) override;
 
     void on_input_enabled(
-            rti::routing::processor::Route& route,
-            rti::routing::processor::Input& input) override;
+            rti::routing::processor::Route &route,
+            rti::routing::processor::Input &input) override;
 
     ShapesSplitter();
 
@@ -91,27 +85,23 @@ private:
     dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
 };
 
-class ShapesProcessorPlugin :
-        public rti::routing::processor::ProcessorPlugin {
-                  
-public:        
+class ShapesProcessorPlugin : public rti::routing::processor::ProcessorPlugin {
+public:
     static const std::string PROCESSOR_KIND_PROPERTY_NAME;
     static const std::string PROCESSOR_LEADING_INPUT_PROPERTY_NAME;
     static const std::string PROCESSOR_AGGREGATOR_SIMPLE_NAME;
     static const std::string PROCESSOR_AGGREGATOR_ADV_NAME;
     static const std::string PROCESSOR_SPLITTER_NAME;
-    
-    rti::routing::processor::Processor* create_processor(
-            rti::routing::processor::Route& route,
-            const rti::routing::PropertySet& properties) override;
+
+    rti::routing::processor::Processor *create_processor(
+            rti::routing::processor::Route &route,
+            const rti::routing::PropertySet &properties) override;
 
     void delete_processor(
-            rti::routing::processor::Route& route,
+            rti::routing::processor::Route &route,
             rti::routing::processor::Processor *processor) override;
-    
-    ShapesProcessorPlugin(
-            const rti::routing::PropertySet& properties);
 
+    ShapesProcessorPlugin(const rti::routing::PropertySet &properties);
 };
 
 
@@ -120,7 +110,7 @@ public:
  * for plug-in registration through XML.
  *
  * The generated symbol has the name:
- * 
+ *
  * \code
  * ShapesProcessorPlugin_create_processor_plugin
  * \endcode

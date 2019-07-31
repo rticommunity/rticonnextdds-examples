@@ -24,8 +24,7 @@
  * provided IDL file, HelloMsg.idl.
  */
 RTI_USER_DLL_EXPORT
-struct RTI_RecordingServiceStorageWriter *
-FileStorageWriter_create_instance(
+struct RTI_RecordingServiceStorageWriter *FileStorageWriter_create_instance(
         const struct RTI_RoutingServiceProperties *properties);
 
 /**

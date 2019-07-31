@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "waitset_query_cond.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::cond;
@@ -43,9 +43,9 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a DataReader.
     DataReader<waitset_query_cond> reader(
-        Subscriber(participant),
-        topic,
-        reader_qos);
+            Subscriber(participant),
+            topic,
+            reader_qos);
 
     // Create the parameters of the condition.
     // The initial value of the parameter is EVEN string to get even numbers.
@@ -53,48 +53,53 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a query condition with a functor handler.
     QueryCondition query_condition(
-        Query(reader, "name MATCH %0", query_parameters),
-        DataState::any_data(),
-        [&reader](Condition condition)
-        {
-            // We take only samples that triggered the QueryCondition
-            auto condition_as_qc = polymorphic_cast<QueryCondition>(condition);
-            LoanedSamples<waitset_query_cond> samples
-                    = reader.select().condition(condition_as_qc).take();
-            for (auto sample : samples) {
-                if (!sample.info().valid()) {
-                    std::cout << "Got metadata" << std::endl;
-                } else {
-                    std::cout << sample.data() << std::endl;
+            Query(reader, "name MATCH %0", query_parameters),
+            DataState::any_data(),
+            [&reader](Condition condition) {
+                // We take only samples that triggered the QueryCondition
+                auto condition_as_qc =
+                        polymorphic_cast<QueryCondition>(condition);
+                LoanedSamples<waitset_query_cond> samples =
+                        reader.select().condition(condition_as_qc).take();
+                for (auto sample : samples) {
+                    if (!sample.info().valid()) {
+                        std::cout << "Got metadata" << std::endl;
+                    } else {
+                        std::cout << sample.data() << std::endl;
+                    }
                 }
-            }
-        }
-    );
+            });
 
     // Create the waitset and attach the condition.
     WaitSet waitset;
     waitset += query_condition;
 
     Duration wait_timeout(1);
-    std::cout << std::endl << ">>> Timeout: " << wait_timeout.sec() << " sec"
-              << std::endl
+    std::cout << std::endl
+              << ">>> Timeout: " << wait_timeout.sec() << " sec" << std::endl
               << ">>> Query conditions: " << query_condition.expression()
-              << std::endl << "\t %%0 = " << query_parameters[0] << std::endl
-              << "----------------------------------" << std::endl << std::endl;
+              << std::endl
+              << "\t %%0 = " << query_parameters[0] << std::endl
+              << "----------------------------------" << std::endl
+              << std::endl;
 
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         // We change the parameter in the Query Condition after 7 secs.
         if (count == 7) {
             query_parameters[0] = "'ODD'";
             query_condition.parameters(
-                query_parameters.begin(), query_parameters.end());
+                    query_parameters.begin(),
+                    query_parameters.end());
 
-            std::cout << std::endl<< "CHANGING THE QUERY CONDITION" << std::endl
-                      << ">>> Query conditions: "<< query_condition.expression()
-                      << std::endl << "\t %%0 = " << query_parameters[0]
-                      << std::endl << ">>> We keep one sample in the history"
-                      << std::endl << "-------------------------------------"
-                      << std::endl << std::endl;
+            std::cout << std::endl
+                      << "CHANGING THE QUERY CONDITION" << std::endl
+                      << ">>> Query conditions: "
+                      << query_condition.expression() << std::endl
+                      << "\t %%0 = " << query_parameters[0] << std::endl
+                      << ">>> We keep one sample in the history" << std::endl
+                      << "-------------------------------------" << std::endl
+                      << std::endl;
         }
 
         // 'dispatch()' blocks execution of the thread until one or more
@@ -108,8 +113,8 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

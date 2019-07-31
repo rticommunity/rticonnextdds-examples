@@ -26,11 +26,11 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "HelloWorld.h"
 #include "HelloWorldSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void HelloWorldListener_on_requested_deadline_missed(
         void *listener_data,
@@ -91,13 +91,13 @@ void HelloWorldListener_on_data_available(
     }
 
     retcode = HelloWorldDataReader_take(
-        HelloWorld_reader,
-        &data_seq,
-        &info_seq,
-        DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE,
-        DDS_ANY_VIEW_STATE,
-        DDS_ANY_INSTANCE_STATE);
+            HelloWorld_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -123,8 +123,7 @@ void HelloWorldListener_on_data_available(
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDS_DomainParticipant *participant)
+static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -137,7 +136,8 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -165,12 +165,12 @@ int subscriber_main(int domainId, int sample_count)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = { 4, 0 };
 
     /*
      * To customize participant QoS, use the configuration file
@@ -229,20 +229,17 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Set up a data reader listener */
-    reader_listener.on_requested_deadline_missed  =
+    reader_listener.on_requested_deadline_missed =
             HelloWorldListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
             HelloWorldListener_on_requested_incompatible_qos;
-    reader_listener.on_sample_rejected =
-            HelloWorldListener_on_sample_rejected;
+    reader_listener.on_sample_rejected = HelloWorldListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
             HelloWorldListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-            HelloWorldListener_on_sample_lost;
+    reader_listener.on_sample_lost = HelloWorldListener_on_sample_lost;
     reader_listener.on_subscription_matched =
             HelloWorldListener_on_subscription_matched;
-    reader_listener.on_data_available =
-            HelloWorldListener_on_data_available;
+    reader_listener.on_data_available = HelloWorldListener_on_data_available;
 
     /*
      * To customize data reader QoS, use the configuration file
@@ -261,9 +258,9 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("HelloWorld subscriber sleeping for %d sec...\n",
-        poll_period.sec);
+               poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }

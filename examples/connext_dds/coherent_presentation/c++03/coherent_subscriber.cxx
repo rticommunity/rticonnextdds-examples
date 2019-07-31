@@ -12,9 +12,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "coherent.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "coherent.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -28,13 +28,14 @@ using namespace rti::core;
 using namespace rti::sub;
 
 // Transform a DDS sample into a pair value for a dictionary.
-std::pair<char, int> sample2map(const coherent& data) {
+std::pair<char, int> sample2map(const coherent &data)
+{
     return std::make_pair(data.field(), data.value());
 }
 
 class CoherentListener : public NoOpDataReaderListener<coherent> {
 public:
-    void on_data_available(DataReader<coherent>& reader)
+    void on_data_available(DataReader<coherent> &reader)
     {
         // Take all samples
         LoanedSamples<coherent> samples = reader.take();
@@ -42,10 +43,10 @@ public:
         // Process samples and add to a dictionary
         std::map<char, int> values;
         std::transform(
-            rti::sub::valid_samples(samples.begin()),
-            rti::sub::valid_samples(samples.end()),
-            std::inserter(values, values.begin()),
-            sample2map);
+                rti::sub::valid_samples(samples.begin()),
+                rti::sub::valid_samples(samples.end()),
+                std::inserter(values, values.begin()),
+                sample2map);
         std::cout << std::endl;
 
         // Print result
@@ -91,22 +92,23 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder< DataReader<coherent> > scoped_listener =
-        bind_and_manage_listener(
-            reader,
-            new CoherentListener,
-            StatusMask::data_available());
+    ListenerBinder<DataReader<coherent>> scoped_listener =
+            bind_and_manage_listener(
+                    reader,
+                    new CoherentListener,
+                    StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         rti::util::sleep(Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // Infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

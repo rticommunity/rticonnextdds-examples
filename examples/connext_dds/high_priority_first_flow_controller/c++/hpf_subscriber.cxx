@@ -17,35 +17,47 @@
 #include "ndds/ndds_cpp.h"
 
 class hpfListener : public DDSDataReaderListener {
-  public:
+public:
     virtual void on_requested_deadline_missed(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedDeadlineMissedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedDeadlineMissedStatus & /*status*/)
+    {
+    }
 
     virtual void on_requested_incompatible_qos(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedIncompatibleQosStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedIncompatibleQosStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_rejected(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleRejectedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleRejectedStatus & /*status*/)
+    {
+    }
 
     virtual void on_liveliness_changed(
-        DDSDataReader* /*reader*/,
-        const DDS_LivelinessChangedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_LivelinessChangedStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_lost(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleLostStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleLostStatus & /*status*/)
+    {
+    }
 
     virtual void on_subscription_matched(
-        DDSDataReader* /*reader*/,
-        const DDS_SubscriptionMatchedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SubscriptionMatchedStatus & /*status*/)
+    {
+    }
 
-    virtual void on_data_available(DDSDataReader* reader);
+    virtual void on_data_available(DDSDataReader *reader);
 };
 
-void hpfListener::on_data_available(DDSDataReader* reader)
+void hpfListener::on_data_available(DDSDataReader *reader)
 {
     hpfDataReader *hpf_reader = NULL;
     hpfSeq data_seq;
@@ -60,8 +72,12 @@ void hpfListener::on_data_available(DDSDataReader* reader)
     }
 
     retcode = hpf_reader->take(
-        data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
@@ -84,8 +100,7 @@ void hpfListener::on_data_available(DDSDataReader* reader)
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
+static int subscriber_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -124,29 +139,33 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
     DDSTopic *topic = NULL;
-    hpfListener *reader_listener = NULL; 
+    hpfListener *reader_listener = NULL;
     DDSDataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t receive_period = {4,0};
+    DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
 
-    /* To customize the participant QoS, use 
+    /* To customize the participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-    /* To customize the subscriber QoS, use 
+    /* To customize the subscriber QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         fprintf(stderr, "create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -155,20 +174,21 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Register the type before creating the topic */
     type_name = hpfTypeSupport::get_type_name();
-    retcode = hpfTypeSupport::register_type(
-        participant, type_name);
+    retcode = hpfTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         subscriber_shutdown(participant);
         return -1;
     }
 
-    /* To customize the topic QoS, use 
+    /* To customize the topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = participant->create_topic(
-        "Example hpf",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example hpf",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         subscriber_shutdown(participant);
@@ -178,11 +198,13 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* Create a data reader listener */
     reader_listener = new hpfListener();
 
-    /* To customize the data reader QoS, use 
+    /* To customize the data reader QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     reader = subscriber->create_datareader(
-        topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
-        DDS_STATUS_MASK_ALL);
+            topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(participant);
@@ -191,10 +213,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
-        printf("hpf subscriber sleeping for %d sec...\n",
-        receive_period.sec);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("hpf subscriber sleeping for %d sec...\n", receive_period.sec);
 
         NDDSUtility::sleep(receive_period);
     }
@@ -220,7 +240,7 @@ int main(int argc, char *argv[])
 
     /* Uncomment this to turn on additional logging
     NDDSConfigLogger::get_instance()->
-    set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
+    set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
     NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 

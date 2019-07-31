@@ -26,21 +26,27 @@ struct cdata {
 };
 
 /* Evaluation function for 'divides' filter */
-int divide_test(long sample_data, long p) {
+int divide_test(long sample_data, long p)
+{
     return (sample_data % p == 0);
 }
 
 /* Evaluation function for 'greater than' filter */
-int gt_test(long sample_data, long p) {
+int gt_test(long sample_data, long p)
+{
     return (p > sample_data);
 }
 
-DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
-        void **new_compile_data, const char *expression,
+DDS_ReturnCode_t custom_filter_compile_function(
+        void *filter_data,
+        void **new_compile_data,
+        const char *expression,
         const struct DDS_StringSeq *parameters,
-        const struct DDS_TypeCode *type_code, const char *type_class_name,
-        void *old_compile_data) {
-    struct cdata* cd;
+        const struct DDS_TypeCode *type_code,
+        const char *type_class_name,
+        void *old_compile_data)
+{
+    struct cdata *cd;
 
     /* First free old data, if any */
     if (old_compile_data != NULL) {
@@ -72,7 +78,7 @@ DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
         goto err;
     }
 
-    cd = (struct cdata*) malloc(sizeof(struct cdata));
+    cd = (struct cdata *) malloc(sizeof(struct cdata));
     sscanf(DDS_StringSeq_get(parameters, 0), "%ld", &cd->param);
 
     /* Establish the correct evaluation function depending on the filter */
@@ -86,23 +92,27 @@ DDS_ReturnCode_t custom_filter_compile_function(void *filter_data,
 
     *new_compile_data = cd;
     return DDS_RETCODE_OK;
-    err: printf("CustomFilter: Unable to compile expression '%s'\n",
-            expression);
+err:
+    printf("CustomFilter: Unable to compile expression '%s'\n", expression);
     printf("              with parameters '%s' '%s'\n",
-            DDS_StringSeq_get(parameters, 0), DDS_StringSeq_get(parameters, 1));
+           DDS_StringSeq_get(parameters, 0),
+           DDS_StringSeq_get(parameters, 1));
     *new_compile_data = NULL;
     return DDS_RETCODE_BAD_PARAMETER;
 }
 
 /* Called to evaluated each sample. Will vary depending on the filter. */
-DDS_Boolean custom_filter_evaluate_function(void *filter_data,
-        void* compile_data, const void* sample,
-        const struct DDS_FilterSampleInfo * meta_data) {
-    struct cdata* cd;
-    struct ccf* msg;
+DDS_Boolean custom_filter_evaluate_function(
+        void *filter_data,
+        void *compile_data,
+        const void *sample,
+        const struct DDS_FilterSampleInfo *meta_data)
+{
+    struct cdata *cd;
+    struct ccf *msg;
 
-    cd = (struct cdata*) compile_data;
-    msg = (struct ccf*) sample;
+    cd = (struct cdata *) compile_data;
+    msg = (struct ccf *) sample;
 
     if (cd->eval_func(msg->x, cd->param)) {
         return DDS_BOOLEAN_TRUE;
@@ -111,9 +121,9 @@ DDS_Boolean custom_filter_evaluate_function(void *filter_data,
     }
 }
 
-void custom_filter_finalize_function(void *filter_data, void *compile_data) {
+void custom_filter_finalize_function(void *filter_data, void *compile_data)
+{
     if (compile_data != NULL) {
         free(compile_data);
     }
 }
-
