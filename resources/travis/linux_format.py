@@ -265,8 +265,8 @@ if __name__ == "__main__":
             clang_format_cmd.extend(commits)
 
         if clang_format_filtered_file_list:
-            # clang_format_cmd.append("--")
-            # clang_format_cmd.extend(clang_format_filtered_file_list)
+            clang_format_cmd.append("--")
+            clang_format_cmd.extend(clang_format_filtered_file_list)
 
             try:
                 print("\nclang-format... ", end="")
