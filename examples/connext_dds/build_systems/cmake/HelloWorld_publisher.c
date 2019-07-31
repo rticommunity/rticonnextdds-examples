@@ -26,15 +26,14 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "HelloWorld.h"
 #include "HelloWorldSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Delete all entities */
-static int publisher_shutdown(
-        DDS_DomainParticipant *participant)
+static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -47,7 +46,8 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -81,7 +81,7 @@ int publisher_main(int domainId, int sample_count)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = { 4, 0 };
 
     /*
      * To customize participant QoS, use the configuration file
@@ -116,9 +116,7 @@ int publisher_main(int domainId, int sample_count)
 
     /* Register type before creating topic */
     type_name = HelloWorldTypeSupport_get_type_name();
-    retcode = HelloWorldTypeSupport_register_type(
-            participant,
-            type_name);
+    retcode = HelloWorldTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -183,21 +181,21 @@ int publisher_main(int domainId, int sample_count)
      */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing HelloWorld, count %d\n", count);
 
         /* Modify the data to be written here */
 
         /* Write data */
         retcode = HelloWorldDataWriter_write(
-            HelloWorld_writer, instance, &instance_handle);
+                HelloWorld_writer,
+                instance,
+                &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
 
         NDDS_Utility_sleep(&send_period);
-
     }
 
     /*
@@ -214,8 +212,7 @@ int publisher_main(int domainId, int sample_count)
     /* Delete data sample */
     retcode = HelloWorldTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(
-                stderr,
+        fprintf(stderr,
                 "HelloWorldTypeSupport_delete_data error %d\n",
                 retcode);
     }

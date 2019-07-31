@@ -58,14 +58,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
+#include "ndds/ndds_cpp.h"
 #include "ordered.h"
 #include "orderedSupport.h"
-#include "ndds/ndds_cpp.h"
 
 /* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant) {
+static int publisher_shutdown(DDSDomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -98,21 +99,24 @@ static int publisher_shutdown(DDSDomainParticipant *participant) {
     return status;
 }
 
-extern "C" int publisher_main(int domainId, int sample_count) {
+extern "C" int publisher_main(int domainId, int sample_count)
+{
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    orderedDataWriter * ordered_writer = NULL;
+    orderedDataWriter *ordered_writer = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
     DDS_Duration_t send_period = { 1, 0 };
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -120,10 +124,12 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize publisher QoS, use 
+    /* To customize publisher QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher_with_profile("ordered_Library",
-            "ordered_Profile_subscriber_instance", NULL /* listener */,
+    publisher = participant->create_publisher_with_profile(
+            "ordered_Library",
+            "ordered_Profile_subscriber_instance",
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
@@ -139,26 +145,26 @@ extern "C" int publisher_main(int domainId, int sample_count) {
      */
 
     /* Get default publisher QoS to customize */
-/*    DDS_PublisherQos publisher_qos;
-    retcode = participant->get_default_publisher_qos(publisher_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_publisher_qos error\n");
-        return -1;
-    }
+    /*    DDS_PublisherQos publisher_qos;
+        retcode = participant->get_default_publisher_qos(publisher_qos);
+        if (retcode != DDS_RETCODE_OK) {
+            printf("get_default_publisher_qos error\n");
+            return -1;
+        }
 
-    publisher_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
-    publisher_qos.presentation.ordered_access = DDS_BOOLEAN_TRUE;
+        publisher_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
+        publisher_qos.presentation.ordered_access = DDS_BOOLEAN_TRUE;
 
-*/    /* To create publisher with default QoS, use DDS_PUBLISHER_QOS_DEFAULT
+    */    /* To create publisher with default QoS, use DDS_PUBLISHER_QOS_DEFAULT
      instead of publisher_qos */
-/*    publisher = participant->create_publisher(publisher_qos, NULL,
-            DDS_STATUS_MASK_NONE);
-    if (publisher == NULL) {
-        printf("create_participant error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-*/
+    /*    publisher = participant->create_publisher(publisher_qos, NULL,
+                DDS_STATUS_MASK_NONE);
+        if (publisher == NULL) {
+            printf("create_participant error\n");
+            publisher_shutdown(participant);
+            return -1;
+        }
+    */
     /* Register type before creating topic */
     type_name = orderedTypeSupport::get_type_name();
     retcode = orderedTypeSupport::register_type(participant, type_name);
@@ -168,20 +174,27 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic("Example ordered", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Example ordered",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize data writer QoS, use 
+    /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    writer = publisher->create_datawriter(topic, DDS_DATAWRITER_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    writer = publisher->create_datawriter(
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -230,7 +243,6 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         instance0->value = count;
         instance1->value = count;
 
@@ -274,7 +286,7 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -296,7 +308,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -318,18 +331,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif
-

@@ -9,8 +9,8 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <ctime>
+#include <iostream>
 
 #include "async.hpp"
 #include <dds/dds.hpp>
@@ -26,19 +26,19 @@ using namespace dds::sub::qos;
 // For timekeeping
 clock_t InitTime;
 
-class AsyncListener : public NoOpDataReaderListener<async> {
+class AsyncListener : public NoOpDataReaderListener<async>
+{
 public:
-    void on_data_available(DataReader<async>& reader)
+    void on_data_available(DataReader<async> &reader)
     {
         LoanedSamples<async> samples = reader.take();
         for (LoanedSamples<async>::iterator sampleIt = samples.begin();
-                sampleIt != samples.end();
-                ++sampleIt) {
-
+             sampleIt != samples.end();
+             ++sampleIt) {
             // Print the time we get each sample.
             if (sampleIt->info().valid()) {
                 double elapsed_ticks = clock() - InitTime;
-                double elapsed_secs  = elapsed_ticks / CLOCKS_PER_SEC;
+                double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
                 std::cout << "@ t=" << elapsed_secs << "s"
                           << ", got x = " << sampleIt->data().x() << std::endl;
             }
@@ -52,10 +52,10 @@ void subscriber_main(int domain_id, int sample_count)
     InitTime = clock();
 
     // To customize the paritcipant QoS, use the file USER_QOS_PROFILES.xml
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // To customize the topic QoS, use the file USER_QOS_PROFILES.xml
-    Topic<async> topic (participant, "Example async");
+    Topic<async> topic(participant, "Example async");
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -66,27 +66,28 @@ void subscriber_main(int domain_id, int sample_count)
     // reader_qos << History::KeepAll();
 
     // Create a DataReader with a QoS
-    DataReader<async> reader (Subscriber(participant), topic, reader_qos);
+    DataReader<async> reader(Subscriber(participant), topic, reader_qos);
 
     // Create a data reader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    rti::core::ListenerBinder< DataReader<async> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new AsyncListener,
-            dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<async>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new AsyncListener,
+                    dds::core::status::StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         std::cout << "async subscriber sleeping for 4 sec..." << std::endl;
         rti::util::sleep(Duration(4));
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0;   // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

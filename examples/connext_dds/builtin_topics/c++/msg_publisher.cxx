@@ -65,17 +65,19 @@ modification history
 
 * Install listeners
 
-* Uncommented the code that authorized a subscriber that belonged to an authorized participant
+* Uncommented the code that authorized a subscriber that belonged to an
+authorized participant
 
-* Changed ih to be an array of 6 ints instead of 4. An instance handle is the size of 6 ints.
+* Changed ih to be an array of 6 ints instead of 4. An instance handle is the
+size of 6 ints.
 */
 
+#include "msg.h"
+#include "msgSupport.h"
+#include "ndds/ndds_cpp.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "ndds/ndds_cpp.h"
-#include "msg.h"
-#include "msgSupport.h"
 
 
 /* Authorization string. */
@@ -86,7 +88,8 @@ const char *auth = "password";
    DataReaders to access these fields.
 */
 
-class BuiltinParticipantListener : public DDSDataReaderListener {
+class BuiltinParticipantListener : public DDSDataReaderListener
+{
 public:
     virtual void on_data_available(DDSDataReader *reader);
 };
@@ -95,7 +98,7 @@ public:
 void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
 {
     DDSParticipantBuiltinTopicDataDataReader *builtin_reader =
-        (DDSParticipantBuiltinTopicDataDataReader*) reader;
+            (DDSParticipantBuiltinTopicDataDataReader *) reader;
     DDS_ParticipantBuiltinTopicDataSeq data_seq;
     DDS_SampleInfoSeq info_seq;
     DDS_ReturnCode_t retcode;
@@ -103,9 +106,13 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
     const char *participant_data;
 
     /* We only process newly seen participants */
-    retcode = builtin_reader->take(data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-                                   DDS_ANY_SAMPLE_STATE, DDS_NEW_VIEW_STATE,
-                                   DDS_ANY_INSTANCE_STATE);
+    retcode = builtin_reader->take(
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     /* This happens when we get announcements from participants we
      * already know about
@@ -118,7 +125,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
         return;
     }
 
-    for(int i = 0; i < data_seq.length(); ++i) {
+    for (int i = 0; i < data_seq.length(); ++i) {
         if (!info_seq[i].valid_data)
             continue;
 
@@ -127,7 +134,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
         /* see if there is any participant_data */
         if (data_seq[i].user_data.value.length() != 0) {
             /* This sequence is guaranteed to be contiguous */
-            participant_data = (char*)&data_seq[i].user_data.value[0];
+            participant_data = (char *) &data_seq[i].user_data.value[0];
             is_auth = (strcmp(participant_data, auth) == 0);
         }
 
@@ -139,15 +146,21 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
                participant_data);
 
         int ih[6];
-        memcpy(ih, &info_seq[i].instance_handle,
-                sizeof(info_seq[i].instance_handle));
+        memcpy(ih,
+               &info_seq[i].instance_handle,
+               sizeof(info_seq[i].instance_handle));
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
-                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
+               ih[0],
+               ih[1],
+               ih[2],
+               ih[3],
+               ih[4],
+               ih[5]);
 
         if (!is_auth) {
             printf("Bad authorization, ignoring participant\n");
             DDSDomainParticipant *participant =
-                reader->get_subscriber()->get_participant();
+                    reader->get_subscriber()->get_participant();
 
             retcode = participant->ignore_participant(
                     info_seq[i].instance_handle);
@@ -161,24 +174,29 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
     builtin_reader->return_loan(data_seq, info_seq);
 }
 
-class BuiltinSubscriberListener : public DDSDataReaderListener {
+class BuiltinSubscriberListener : public DDSDataReaderListener
+{
 public:
-    virtual void on_data_available(DDSDataReader* reader);
+    virtual void on_data_available(DDSDataReader *reader);
 };
 
 /* This gets called when a new subscriber has been discovered */
 void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
 {
     DDSSubscriptionBuiltinTopicDataDataReader *builtin_reader =
-        (DDSSubscriptionBuiltinTopicDataDataReader*) reader;
+            (DDSSubscriptionBuiltinTopicDataDataReader *) reader;
     DDS_SubscriptionBuiltinTopicDataSeq data_seq;
     DDS_SampleInfoSeq info_seq;
     DDS_ReturnCode_t retcode;
 
     /* We only process newly seen subscribers */
-    retcode = builtin_reader->take(data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-                                   DDS_ANY_SAMPLE_STATE, DDS_NEW_VIEW_STATE,
-                                   DDS_ANY_INSTANCE_STATE);
+    retcode = builtin_reader->take(
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA)
         return;
@@ -194,9 +212,9 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
 
         printf("Built-in Reader: found subscriber \n");
         printf("\tparticipant_key->'%08x %08x %08x'\n",
-                data_seq[i].participant_key.value[0],
-                data_seq[i].participant_key.value[1],
-                data_seq[i].participant_key.value[2]);
+               data_seq[i].participant_key.value[0],
+               data_seq[i].participant_key.value[1],
+               data_seq[i].participant_key.value[2]);
         printf("\tkey->'%08x %08x %08x'\n",
                data_seq[i].key.value[0],
                data_seq[i].key.value[1],
@@ -204,10 +222,16 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
 
 
         int ih[6];
-        memcpy(ih, &info_seq[i].instance_handle,
-                sizeof(info_seq[i].instance_handle));
+        memcpy(ih,
+               &info_seq[i].instance_handle,
+               sizeof(info_seq[i].instance_handle));
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
-                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
+               ih[0],
+               ih[1],
+               ih[2],
+               ih[3],
+               ih[4],
+               ih[5]);
     }
 
     builtin_reader->return_loan(data_seq, info_seq);
@@ -216,8 +240,7 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
 /* End changes for Builtin_Topics */
 
 /* Delete all entities */
-static int publisher_shutdown(
-    DDSDomainParticipant *participant)
+static int publisher_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -257,13 +280,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    msgDataWriter * msg_writer = NULL;
+    msgDataWriter *msg_writer = NULL;
     msg *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t send_period = {1,0};
+    DDS_Duration_t send_period = { 1, 0 };
 
     /* By default, the participant is enabled upon construction.
      * At that time our listeners for the builtin topics have not
@@ -325,8 +348,10 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* To customize participant QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, participant_qos,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId,
+            participant_qos,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
@@ -350,8 +375,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
        Participant
     */
     DDSParticipantBuiltinTopicDataDataReader *builtin_participant_datareader =
-        (DDSParticipantBuiltinTopicDataDataReader*)
-        builtin_subscriber->lookup_datareader(DDS_PARTICIPANT_TOPIC_NAME);
+            (DDSParticipantBuiltinTopicDataDataReader *) builtin_subscriber
+                    ->lookup_datareader(DDS_PARTICIPANT_TOPIC_NAME);
     if (builtin_participant_datareader == NULL) {
         printf("***Error: failed to create builtin participant data reader\n");
         return 0;
@@ -360,13 +385,14 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Install our listener */
     BuiltinParticipantListener *builtin_participant_listener =
             new BuiltinParticipantListener();
-    builtin_participant_datareader->set_listener(builtin_participant_listener,
-                                                 DDS_DATA_AVAILABLE_STATUS);
+    builtin_participant_datareader->set_listener(
+            builtin_participant_listener,
+            DDS_DATA_AVAILABLE_STATUS);
 
     /* Get builtin subscriber's datareader for subscribers */
     DDSSubscriptionBuiltinTopicDataDataReader *builtin_subscription_datareader =
-        (DDSSubscriptionBuiltinTopicDataDataReader*)
-        builtin_subscriber->lookup_datareader(DDS_SUBSCRIPTION_TOPIC_NAME);
+            (DDSSubscriptionBuiltinTopicDataDataReader *) builtin_subscriber
+                    ->lookup_datareader(DDS_SUBSCRIPTION_TOPIC_NAME);
     if (builtin_subscription_datareader == NULL) {
         printf("***Error: failed to create builtin subscription data reader\n");
         return 0;
@@ -375,8 +401,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* Install our listener */
     BuiltinSubscriberListener *builtin_subscriber_listener =
             new BuiltinSubscriberListener();
-    builtin_subscription_datareader->set_listener(builtin_subscriber_listener,
-                                                  DDS_DATA_AVAILABLE_STATUS);
+    builtin_subscription_datareader->set_listener(
+            builtin_subscriber_listener,
+            DDS_DATA_AVAILABLE_STATUS);
 
     /* Done!  All the listeners are installed, so we can enable the
      * participant now.
@@ -390,7 +417,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* To customize publisher QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     publisher = participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
@@ -399,8 +428,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     /* Register the type before creating the topic */
     type_name = msgTypeSupport::get_type_name();
-    retcode = msgTypeSupport::register_type(
-        participant, type_name);
+    retcode = msgTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -410,20 +438,24 @@ extern "C" int publisher_main(int domainId, int sample_count)
     /* To customize topic QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     topic = participant->create_topic(
-        "Example msg",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example msg",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-     /* To customize data writer QoS, use
-        the configuration file USER_QOS_PROFILES.xml */
+    /* To customize data writer QoS, use
+       the configuration file USER_QOS_PROFILES.xml */
     writer = publisher->create_datawriter(
-        topic, DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
 
     if (writer == NULL) {
         printf("create_datawriter error\n");
@@ -453,7 +485,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         NDDSUtility::sleep(send_period);
 
         printf("Writing msg, count %d\n", count);

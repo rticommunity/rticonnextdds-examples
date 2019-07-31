@@ -9,8 +9,8 @@
  use the software.
  ******************************************************************************/
 
-#include <string>
 #include <iostream>
+#include <string>
 
 #include "msg.hpp"
 #include <dds/dds.hpp>
@@ -26,16 +26,15 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class MsgListener :
-    public NoOpDataReaderListener<msg> {
+class MsgListener : public NoOpDataReaderListener<msg>
+{
 public:
-    void on_data_available(DataReader<msg>& reader)
+    void on_data_available(DataReader<msg> &reader)
     {
         LoanedSamples<msg> samples = reader.take();
         for (LoanedSamples<msg>::iterator sampleIt = samples.begin();
-                sampleIt != samples.end();
-                ++sampleIt) {
-
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (sampleIt->info().valid()) {
                 std::cout << sampleIt->data() << std::endl;
             }
@@ -43,14 +42,16 @@ public:
     }
 };
 
-void subscriber_main(int domain_id, int sample_count,
-    std::string participant_auth)
+void subscriber_main(
+        int domain_id,
+        int sample_count,
+        std::string participant_auth)
 {
     // Retrieve the default participant QoS, from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos = QosProvider::Default()
-        .participant_qos();
+    DomainParticipantQos participant_qos =
+            QosProvider::Default().participant_qos();
     DomainParticipantResourceLimits resource_limits_qos =
-        participant_qos.policy<DomainParticipantResourceLimits>();
+            participant_qos.policy<DomainParticipantResourceLimits>();
 
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -58,14 +59,14 @@ void subscriber_main(int domain_id, int sample_count,
     // resource_limits_qos.participant_user_data_max_length(1024);
     // participant_qos << resource_limits_qos;
 
-    unsigned int max_participant_user_data = resource_limits_qos
-        .participant_user_data_max_length();
+    unsigned int max_participant_user_data =
+            resource_limits_qos.participant_user_data_max_length();
     if (participant_auth.size() > max_participant_user_data) {
         std::cout << "error, participant user_data exceeds resource limits"
                   << std::endl;
     } else {
         participant_qos << UserData(
-            ByteSeq(participant_auth.begin(), participant_auth.end()));
+                ByteSeq(participant_auth.begin(), participant_auth.end()));
     }
 
     // Create a DomainParticipant.
@@ -82,22 +83,23 @@ void subscriber_main(int domain_id, int sample_count,
 
     // Create a data reader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<msg> > scoped_listener = bind_and_manage_listener(
-        reader,
-        new MsgListener,
-        dds::core::status::StatusMask::data_available());
+    ListenerBinder<DataReader<msg>> scoped_listener = bind_and_manage_listener(
+            reader,
+            new MsgListener,
+            dds::core::status::StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // Each "sample_count" is one second.
         rti::util::sleep(Duration(1));
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     // Changes for Builtin_Topics
     // Get arguments for auth strings and pass to subscriber_main()

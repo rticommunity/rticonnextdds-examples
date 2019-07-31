@@ -12,9 +12,9 @@
 #include <algorithm>
 #include <iostream>
 
+#include "market_data.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "market_data.hpp"
 
 using namespace dds::core;
 using namespace rti::core;
@@ -23,18 +23,18 @@ using namespace dds::domain;
 using namespace dds::sub;
 using namespace dds::topic;
 
-class MarketDataReaderListener : public NoOpDataReaderListener<market_data> {
-  public:
-    void on_data_available(DataReader<market_data>& reader)
+class MarketDataReaderListener : public NoOpDataReaderListener<market_data>
+{
+public:
+    void on_data_available(DataReader<market_data> &reader)
     {
         // Take all samples
         LoanedSamples<market_data> samples = reader.take();
 
         for (LoanedSamples<market_data>::iterator sample_it = samples.begin();
-            sample_it != samples.end();
-            sample_it++) {
-
-            if (sample_it->info().valid()){
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 std::cout << sample_it->data() << std::endl;
             }
         }
@@ -58,20 +58,20 @@ void subscriber_main(int domain_id, int sample_count)
     std::cout << "filter is " << filter.expression() << std::endl;
 
     ContentFilteredTopic<market_data> cft_topic(
-        topic,
-        "ContentFilteredTopic",
-        filter);
+            topic,
+            "ContentFilteredTopic",
+            filter);
 
     // Create a DataReader with default Qos (Subscriber created in-line)
     DataReader<market_data> reader(Subscriber(participant), cft_topic);
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<market_data> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new MarketDataReaderListener,
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<market_data>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new MarketDataReaderListener,
+                    StatusMask::data_available());
 
     // Main loop.
     for (int count = 0; sample_count == 0 || count < sample_count; count++) {
@@ -94,7 +94,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -110,7 +110,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

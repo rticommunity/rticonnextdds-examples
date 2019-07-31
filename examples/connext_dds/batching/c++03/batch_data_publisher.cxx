@@ -23,7 +23,7 @@ using namespace dds::pub;
 void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
 {
     // Seconds to wait between samples published.
-    Duration send_period (1);
+    Duration send_period(1);
 
     // We pick the profile name if the turbo_mode is selected or not.
     // If turbo_mode is not selected, the batching profile will be used.
@@ -40,20 +40,20 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
     }
 
     // To customize entities QoS use the file USER_QOS_PROFILES.xml
-    DomainParticipant participant (
-        domain_id,
-        QosProvider::Default().participant_qos(profile_name));
+    DomainParticipant participant(
+            domain_id,
+            QosProvider::Default().participant_qos(profile_name));
 
-    Topic<batch_data> topic (participant, "Example batch_data");
+    Topic<batch_data> topic(participant, "Example batch_data");
 
-    Publisher publisher (
-        participant,
-        QosProvider::Default().publisher_qos(profile_name));
+    Publisher publisher(
+            participant,
+            QosProvider::Default().publisher_qos(profile_name));
 
-    DataWriter<batch_data> writer (
-        publisher,
-        topic,
-        QosProvider::Default().datawriter_qos(profile_name));
+    DataWriter<batch_data> writer(
+            publisher,
+            topic,
+            QosProvider::Default().datawriter_qos(profile_name));
 
     // Create data sample for writing.
     batch_data sample;
@@ -62,7 +62,7 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
     // written multiple times, initialize the key here and register the keyed
     // instance prior to writing.
     InstanceHandle instance_handle = InstanceHandle::nil();
-    //instance_handle = writer.register_instance(sample);
+    // instance_handle = writer.register_instance(sample);
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         // Modify the data to be written here
@@ -74,13 +74,13 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
         rti::util::sleep(send_period);
     }
 
-    //writer.unregister_instance(sample);
+    // writer.unregister_instance(sample);
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
     bool turbo_mode_on = false;
 
     if (argc >= 2) {
@@ -101,9 +101,10 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count, turbo_mode_on);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in publisher_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

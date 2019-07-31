@@ -70,11 +70,11 @@ modification history
 * Print key and instance_handle info.
 */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "msg.h"
 #include "msgSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Authorization string. */
 const char *auth = "password";
@@ -86,8 +86,10 @@ const char *auth = "password";
  */
 
 /* This gets called when a participant has been discovered */
-void BuiltinParticipantListener_on_data_available(void* listener_data,
-        DDS_DataReader* reader) {
+void BuiltinParticipantListener_on_data_available(
+        void *listener_data,
+        DDS_DataReader *reader)
+{
     DDS_ParticipantBuiltinTopicDataDataReader *builtin_reader = NULL;
     struct DDS_ParticipantBuiltinTopicDataSeq data_seq =
             DDS_SEQUENCE_INITIALIZER;
@@ -101,9 +103,14 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
     builtin_reader = DDS_ParticipantBuiltinTopicDataDataReader_narrow(reader);
 
     /* We only process newly seen participants */
-    retcode = DDS_ParticipantBuiltinTopicDataDataReader_take(builtin_reader,
-            &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
-            DDS_NEW_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = DDS_ParticipantBuiltinTopicDataDataReader_take(
+            builtin_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     /*
      * This happens when we get announcements from participants we
@@ -119,9 +126,9 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
 
     len = DDS_ParticipantBuiltinTopicDataSeq_get_length(&data_seq);
     for (i = 0; i < len; ++i) {
-        struct DDS_SampleInfo* info = NULL;
-        struct DDS_ParticipantBuiltinTopicData* data = NULL;
-        char* participant_data = "nil";
+        struct DDS_SampleInfo *info = NULL;
+        struct DDS_ParticipantBuiltinTopicData *data = NULL;
+        char *participant_data = "nil";
         int is_auth = 0;
 
         info = DDS_SampleInfoSeq_get_reference(&info_seq, i);
@@ -131,22 +138,28 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
             continue;
         /* see if there is any participant_data */
         if (DDS_OctetSeq_get_length(&data->user_data.value) != 0) {
-
             /* This sequence is guaranteed to be contiguous */
-            participant_data = (char*) (DDS_OctetSeq_get_reference(
-                    &data->user_data.value, 0));
+            participant_data = (char *) (DDS_OctetSeq_get_reference(
+                    &data->user_data.value,
+                    0));
             is_auth = (strcmp(participant_data, auth) == 0);
         }
 
         printf("Built-in Reader: found participant \n");
         printf("\tkey->'%08x%08x%08x'\n\tuser_data->'%s'\n",
-                data->key.value[0], data->key.value[1], data->key.value[2],
-                participant_data);
+               data->key.value[0],
+               data->key.value[1],
+               data->key.value[2],
+               participant_data);
 
-        memcpy(ih, &info->instance_handle,
-                sizeof(info->instance_handle));
+        memcpy(ih, &info->instance_handle, sizeof(info->instance_handle));
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
-                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
+               ih[0],
+               ih[1],
+               ih[2],
+               ih[3],
+               ih[4],
+               ih[5]);
 
         /* Ignore unauthorized subscribers */
         if (!is_auth) {
@@ -160,20 +173,25 @@ void BuiltinParticipantListener_on_data_available(void* listener_data,
             printf("Bad authorization, ignoring participant\n");
 
             /* Ignore the remote reader */
-            DDS_DomainParticipant_ignore_participant(participant,
+            DDS_DomainParticipant_ignore_participant(
+                    participant,
                     &info->instance_handle);
         }
     }
     retcode = DDS_ParticipantBuiltinTopicDataDataReader_return_loan(
-            builtin_reader, &data_seq, &info_seq);
+            builtin_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
 
 /* This gets called when a new subscriber has been discovered */
-void BuiltinSubscriberListener_on_data_available(void* listener_data,
-        DDS_DataReader* reader) {
+void BuiltinSubscriberListener_on_data_available(
+        void *listener_data,
+        DDS_DataReader *reader)
+{
     DDS_SubscriptionBuiltinTopicDataDataReader *builtin_reader = NULL;
     struct DDS_SubscriptionBuiltinTopicDataSeq data_seq =
             DDS_SEQUENCE_INITIALIZER;
@@ -187,9 +205,14 @@ void BuiltinSubscriberListener_on_data_available(void* listener_data,
     builtin_reader = DDS_SubscriptionBuiltinTopicDataDataReader_narrow(reader);
 
     /* We only process newly seen subscribers */
-    retcode = DDS_SubscriptionBuiltinTopicDataDataReader_take(builtin_reader,
-            &data_seq, &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
-            DDS_NEW_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = DDS_SubscriptionBuiltinTopicDataDataReader_take(
+            builtin_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_NEW_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA)
         return;
@@ -201,8 +224,8 @@ void BuiltinSubscriberListener_on_data_available(void* listener_data,
 
     len = DDS_SubscriptionBuiltinTopicDataSeq_get_length(&data_seq);
     for (i = 0; i < len; ++i) {
-        struct DDS_SampleInfo* info = NULL;
-        struct DDS_SubscriptionBuiltinTopicData* data = NULL;
+        struct DDS_SampleInfo *info = NULL;
+        struct DDS_SubscriptionBuiltinTopicData *data = NULL;
 
         info = DDS_SampleInfoSeq_get_reference(&info_seq, i);
         data = DDS_SubscriptionBuiltinTopicDataSeq_get_reference(&data_seq, i);
@@ -212,28 +235,37 @@ void BuiltinSubscriberListener_on_data_available(void* listener_data,
 
         printf("Built-in Reader: found subscriber \n");
         printf("\tparticipant_key->'%08x%08x%08x'\n",
-                data->participant_key.value[0], data->participant_key.value[1],
-                data->participant_key.value[2]);
+               data->participant_key.value[0],
+               data->participant_key.value[1],
+               data->participant_key.value[2]);
 
         printf("\tkey->'%08x %08x %08x'\n",
-                data->key.value[0], data->key.value[1],
-                data->key.value[2]);
+               data->key.value[0],
+               data->key.value[1],
+               data->key.value[2]);
 
-        memcpy(ih, &info->instance_handle,
-                sizeof(info->instance_handle));
+        memcpy(ih, &info->instance_handle, sizeof(info->instance_handle));
         printf("instance_handle: %08x%08x %08x%08x %08x%08x \n",
-                ih[0], ih[1], ih[2], ih[3], ih[4], ih[5]);
+               ih[0],
+               ih[1],
+               ih[2],
+               ih[3],
+               ih[4],
+               ih[5]);
     }
 
     retcode = DDS_SubscriptionBuiltinTopicDataDataReader_return_loan(
-            builtin_reader, &data_seq, &info_seq);
+            builtin_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
 }
 
 /* Delete all entities */
-static int publisher_shutdown(DDS_DomainParticipant *participant) {
+static int publisher_shutdown(DDS_DomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -245,7 +277,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant) {
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-                DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -267,7 +300,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant) {
     return status;
 }
 
-static int publisher_main(int domain_id, int sample_count) {
+static int publisher_main(int domain_id, int sample_count)
+{
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
@@ -353,8 +387,11 @@ static int publisher_main(int domain_id, int sample_count) {
     /* To customize participant QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domain_id, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domain_id,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
@@ -368,8 +405,8 @@ static int publisher_main(int domain_id, int sample_count) {
     /*
      * First, get the builtin subscriber
      */
-    builtin_subscriber = DDS_DomainParticipant_get_builtin_subscriber(
-            participant);
+    builtin_subscriber =
+            DDS_DomainParticipant_get_builtin_subscriber(participant);
     if (builtin_subscriber == NULL) {
         printf("***Error: failed to create builtin subscriber\n");
         return -1;
@@ -378,9 +415,9 @@ static int publisher_main(int domain_id, int sample_count) {
     /*
      * Then get builtin subscriber's datareader for participants
      */
-    builtin_participant_datareader =
-        DDS_Subscriber_lookup_datareader(builtin_subscriber,
-                DDS_PARTICIPANT_TOPIC_NAME);
+    builtin_participant_datareader = DDS_Subscriber_lookup_datareader(
+            builtin_subscriber,
+            DDS_PARTICIPANT_TOPIC_NAME);
 
     if (builtin_participant_datareader == NULL) {
         printf("***Error: failed to create builtin participant data reader\n");
@@ -391,11 +428,12 @@ static int publisher_main(int domain_id, int sample_count) {
      * Install our listener in the builtin datareader
      */
     builtin_participant_listener.on_data_available =
-        BuiltinParticipantListener_on_data_available;
+            BuiltinParticipantListener_on_data_available;
 
-    retcode = DDS_DataReader_set_listener(builtin_participant_datareader,
-                                &builtin_participant_listener,
-                                DDS_DATA_AVAILABLE_STATUS);
+    retcode = DDS_DataReader_set_listener(
+            builtin_participant_datareader,
+            &builtin_participant_listener,
+            DDS_DATA_AVAILABLE_STATUS);
     if (retcode != DDS_RETCODE_OK) {
         printf("set_listener failed %d\n", retcode);
         return -1;
@@ -406,9 +444,9 @@ static int publisher_main(int domain_id, int sample_count) {
     /*
      *  Get builtin subscriber's datareader for subscribers
      */
-    builtin_subscriber_datareader =
-        DDS_Subscriber_lookup_datareader(builtin_subscriber,
-                DDS_SUBSCRIPTION_TOPIC_NAME);
+    builtin_subscriber_datareader = DDS_Subscriber_lookup_datareader(
+            builtin_subscriber,
+            DDS_SUBSCRIPTION_TOPIC_NAME);
 
     if (builtin_subscriber_datareader == NULL) {
         printf("***Error: failed to create builtin subscription data reader\n");
@@ -417,17 +455,18 @@ static int publisher_main(int domain_id, int sample_count) {
 
     /* Install our listener */
     builtin_subscriber_listener.on_data_available =
-        BuiltinSubscriberListener_on_data_available;
+            BuiltinSubscriberListener_on_data_available;
 
-    retcode = DDS_DataReader_set_listener(builtin_subscriber_datareader,
-                                &builtin_subscriber_listener,
-                                DDS_DATA_AVAILABLE_STATUS);
+    retcode = DDS_DataReader_set_listener(
+            builtin_subscriber_datareader,
+            &builtin_subscriber_listener,
+            DDS_DATA_AVAILABLE_STATUS);
     if (retcode != DDS_RETCODE_OK) {
         printf("set_listener failed %d\n", retcode);
         return -1;
     }
 
-    if (DDS_Entity_enable((DDS_Entity*)participant) != DDS_RETCODE_OK) {
+    if (DDS_Entity_enable((DDS_Entity *) participant) != DDS_RETCODE_OK) {
         printf("***Error: Failed to Enable Participant\n");
         return -1;
     }
@@ -436,8 +475,10 @@ static int publisher_main(int domain_id, int sample_count) {
     /* To customize publisher QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     publisher = DDS_DomainParticipant_create_publisher(
-        participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
@@ -446,8 +487,7 @@ static int publisher_main(int domain_id, int sample_count) {
 
     /* Register type before creating topic */
     type_name = msgTypeSupport_get_type_name();
-    retcode = msgTypeSupport_register_type(
-        participant, type_name);
+    retcode = msgTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -457,9 +497,12 @@ static int publisher_main(int domain_id, int sample_count) {
     /* To customize topic QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example msg",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            "Example msg",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
@@ -469,8 +512,11 @@ static int publisher_main(int domain_id, int sample_count) {
     /* To customize data writer QoS, use
        DDS_Publisher_get_default_datawriter_qos() */
     writer = DDS_Publisher_create_datawriter(
-        publisher, topic,
-        &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            publisher,
+            topic,
+            &DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -500,16 +546,14 @@ static int publisher_main(int domain_id, int sample_count) {
     */
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing msg, count %d\n", count);
 
         /* Modify the data to be written here */
         instance->x = count;
 
         /* Write data */
-        retcode = msgDataWriter_write(
-            msg_writer, instance, &instance_handle);
+        retcode = msgDataWriter_write(msg_writer, instance, &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }

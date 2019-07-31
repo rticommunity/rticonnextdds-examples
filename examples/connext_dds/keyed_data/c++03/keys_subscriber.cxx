@@ -12,9 +12,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "keys.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "keys.hpp"
 
 using namespace dds::core;
 using namespace rti::core;
@@ -23,9 +23,10 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::status;
 
-class KeysReaderListener : public NoOpDataReaderListener<keys> {
-  public:
-    void on_data_available(DataReader<keys>& reader)
+class KeysReaderListener : public NoOpDataReaderListener<keys>
+{
+public:
+    void on_data_available(DataReader<keys> &reader)
     {
         // Take all samples
         LoanedSamples<keys> samples = reader.take();
@@ -33,8 +34,7 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
         for (LoanedSamples<keys>::iterator sample_it = samples.begin();
              sample_it != samples.end();
              sample_it++) {
-
-            const SampleInfo& info = sample_it->info();
+            const SampleInfo &info = sample_it->info();
             if (info.valid()) {
                 ViewState view_state = info.state().view_state();
                 if (view_state == ViewState::new_view()) {
@@ -52,11 +52,11 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
 
                 // Here we print a message if the instance state is
                 // 'not_alive_no_writers' or 'not_alive_disposed'.
-                const InstanceState& state = info.state().instance_state();
+                const InstanceState &state = info.state().instance_state();
                 if (state == InstanceState::not_alive_no_writers()) {
                     std::cout << "Instance " << sample.code()
                               << " has no writers" << std::endl;
-                } else if (state == InstanceState::not_alive_disposed()){
+                } else if (state == InstanceState::not_alive_disposed()) {
                     std::cout << "Instance " << sample.code() << " disposed"
                               << std::endl;
                 }
@@ -78,8 +78,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the datareader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder< DataReader<keys> > reader_listener =
-        bind_and_manage_listener(
+    ListenerBinder<DataReader<keys>> reader_listener = bind_and_manage_listener(
             reader,
             new KeysReaderListener,
             dds::core::status::StatusMask::all());
@@ -93,7 +92,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -109,9 +108,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

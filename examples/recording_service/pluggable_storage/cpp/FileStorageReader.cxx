@@ -26,17 +26,18 @@ namespace cpp_example {
 RTI_RECORDING_STORAGE_READER_CREATE_DEF(FileStorageReader);
 
 FileStorageReader::FileStorageReader(
-        const rti::routing::PropertySet& properties)
-    : StorageReader(properties)
+        const rti::routing::PropertySet &properties)
+        : StorageReader(properties)
 {
     rti::routing::PropertySet::const_iterator found =
-		properties.find("example.cpp_pluggable_storage.filename");
+            properties.find("example.cpp_pluggable_storage.filename");
     if (found == properties.end()) {
         throw std::runtime_error("Failed to get file name from properties");
     }
     file_name_ = std::string(found->second);
 
-    info_file_.open((file_name_ + ".info").c_str(),
+    info_file_.open(
+            (file_name_ + ".info").c_str(),
             std::ios::in | std::ios::binary);
     if (!info_file_.good()) {
         throw std::runtime_error("Failed to open metadata file");
@@ -57,21 +58,22 @@ FileStorageReader::~FileStorageReader()
 }
 
 rti::recording::storage::StorageStreamInfoReader *
-FileStorageReader::create_stream_info_reader(
-        const rti::routing::PropertySet&)
+        FileStorageReader::create_stream_info_reader(
+                const rti::routing::PropertySet &)
 {
     return new FileStorageStreamInfoReader(&info_file_);
 }
 
 void FileStorageReader::delete_stream_info_reader(
-            rti::recording::storage::StorageStreamInfoReader *stream_info_reader)
+        rti::recording::storage::StorageStreamInfoReader *stream_info_reader)
 {
     delete stream_info_reader;
 }
 
-rti::recording::storage::StorageStreamReader * FileStorageReader::create_stream_reader(
-        const rti::routing::StreamInfo&,
-        const rti::routing::PropertySet&)
+rti::recording::storage::StorageStreamReader *
+        FileStorageReader::create_stream_reader(
+                const rti::routing::StreamInfo &,
+                const rti::routing::PropertySet &)
 {
     return new FileStorageStreamReader(&data_file_);
 }
@@ -95,16 +97,15 @@ using namespace dds::core::xtypes;
  * would be to not read any data recorded before the given start time or after
  * the given end time.
  */
-FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file) :
-        data_file_(data_file),
-        type_("HelloMsg")
+FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file)
+        : data_file_(data_file), type_("HelloMsg")
 {
     type_.add_member(Member("id", primitive_type<int32_t>()).key(true));
     type_.add_member(Member("msg", StringType(256)));
     /* read-ahead, EOF is not an error */
     if (!read_sample()) {
         std::cout << "info: no first sample, storage file seems to be empty"
-                << std::endl;
+                  << std::endl;
     }
 }
 
@@ -233,9 +234,9 @@ bool FileStorageStreamReader::read_sample()
  * stream information that has not already been taken, and has a timestamp less
  * than or equal to the timestamp_limit.  */
 void FileStorageStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        std::vector<dds::sub::SampleInfo *>& info_seq,
-        const rti::recording::storage::SelectorState& selector)
+        std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        std::vector<dds::sub::SampleInfo *> &info_seq,
+        const rti::recording::storage::SelectorState &selector)
 {
     int64_t timestamp_limit = selector.timestamp_range_end();
     /* Add the currently read sample and sample info values to the taken data
@@ -256,10 +257,10 @@ void FileStorageStreamReader::read(
         sample_seq.push_back(read_data);
 
         DDS_SampleInfo read_sampleInfo = DDS_SAMPLEINFO_DEFAULT;
-        read_sampleInfo.valid_data = current_valid_data_ ?
-                DDS_BOOLEAN_TRUE : DDS_BOOLEAN_FALSE;
+        read_sampleInfo.valid_data =
+                current_valid_data_ ? DDS_BOOLEAN_TRUE : DDS_BOOLEAN_FALSE;
         read_sampleInfo.reception_timestamp.sec =
-                (DDS_Long) (current_timestamp_ / (int64_t) NANOSECS_PER_SEC);
+                (DDS_Long)(current_timestamp_ / (int64_t) NANOSECS_PER_SEC);
         read_sampleInfo.reception_timestamp.nanosec =
                 current_timestamp_ % (int64_t) NANOSECS_PER_SEC;
         dds::sub::SampleInfo *cpp_sample_info = new dds::sub::SampleInfo;
@@ -280,8 +281,8 @@ void FileStorageStreamReader::read(
 }
 
 void FileStorageStreamReader::return_loan(
-        std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        std::vector<dds::sub::SampleInfo *>& info_seq)
+        std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     for (size_t i = 0; i < sample_seq.size(); i++) {
         delete sample_seq[i];
@@ -307,16 +308,16 @@ void FileStorageStreamReader::reset()
     /* read-ahead, EOF is not an error */
     if (!read_sample()) {
         std::cout << "info: no first sample, storage file seems to be empty"
-                << std::endl;
+                  << std::endl;
     }
 }
 
 FileStorageStreamInfoReader::FileStorageStreamInfoReader(
-        std::ifstream *info_file) :
-    info_file_(info_file),
-    stream_info_taken_(false),
-    example_stream_info_("Example_Cpp_Storage", "HelloMsg"),
-    example_type_("HelloMsg")
+        std::ifstream *info_file)
+        : info_file_(info_file),
+          stream_info_taken_(false),
+          example_stream_info_("Example_Cpp_Storage", "HelloMsg"),
+          example_type_("HelloMsg")
 {
     using namespace dds::core::xtypes;
 
@@ -347,8 +348,8 @@ FileStorageStreamInfoReader::~FileStorageStreamInfoReader()
  * an empty count of taken elements.
  */
 void FileStorageStreamInfoReader::read(
-        std::vector<rti::routing::StreamInfo *>& sample_seq,
-        const rti::recording::storage::SelectorState&)
+        std::vector<rti::routing::StreamInfo *> &sample_seq,
+        const rti::recording::storage::SelectorState &)
 {
     /*
      * In this call, we would walk the stored data and discover what streams
@@ -381,7 +382,7 @@ void FileStorageStreamInfoReader::read(
 }
 
 void FileStorageStreamInfoReader::return_loan(
-            std::vector<rti::routing::StreamInfo *>& sample_seq)
+        std::vector<rti::routing::StreamInfo *> &sample_seq)
 {
     sample_seq.clear();
 }
@@ -433,4 +434,4 @@ void FileStorageStreamInfoReader::reset()
     stream_info_taken_ = false;
 }
 
-} // namespace cpp_example
+}  // namespace cpp_example

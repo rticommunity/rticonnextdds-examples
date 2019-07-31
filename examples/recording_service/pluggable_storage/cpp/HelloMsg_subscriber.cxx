@@ -13,28 +13,29 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
 
 #include "HelloMsg.hpp"
 
-class HelloMsgReaderListener : public dds::sub::NoOpDataReaderListener<HelloMsg> {
-  public:
-
-    HelloMsgReaderListener() : count_ (0)
+class HelloMsgReaderListener : public dds::sub::NoOpDataReaderListener<HelloMsg>
+{
+public:
+    HelloMsgReaderListener() : count_(0)
     {
     }
 
-    void on_data_available(dds::sub::DataReader<HelloMsg>& reader)
+    void on_data_available(dds::sub::DataReader<HelloMsg> &reader)
     {
         // Take all samples
         dds::sub::LoanedSamples<HelloMsg> samples = reader.take();
 
-        for ( dds::sub::LoanedSamples<HelloMsg>::iterator sample_it = samples.begin();
-        sample_it != samples.end(); sample_it++) {
-
-            if (sample_it->info().valid()){
+        for (dds::sub::LoanedSamples<HelloMsg>::iterator sample_it =
+                     samples.begin();
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 count_++;
                 std::cout << sample_it->data() << std::endl;
             }
@@ -46,7 +47,7 @@ class HelloMsgReaderListener : public dds::sub::NoOpDataReaderListener<HelloMsg>
         return count_;
     }
 
-  private:
+private:
     int count_;
 };
 
@@ -61,11 +62,11 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a DataReader with default Qos (Subscriber created in-line)
     HelloMsgReaderListener listener;
     dds::sub::DataReader<HelloMsg> reader(
-        dds::sub::Subscriber(participant),
-        topic,
-        dds::core::QosProvider::Default().datareader_qos(),
-        &listener,
-        dds::core::status::StatusMask::data_available());
+            dds::sub::Subscriber(participant),
+            topic,
+            dds::core::QosProvider::Default().datareader_qos(),
+            &listener,
+            dds::core::status::StatusMask::data_available());
 
     while (listener.count() < sample_count || sample_count == 0) {
         std::cout << "HelloMsg subscriber sleeping for 4 sec..." << std::endl;
@@ -80,9 +81,8 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -97,9 +97,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 
@@ -111,4 +112,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

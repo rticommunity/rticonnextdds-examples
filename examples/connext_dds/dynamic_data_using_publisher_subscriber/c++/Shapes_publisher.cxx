@@ -43,7 +43,7 @@
 #include <cstdio>
 #include <cstdlib>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
 #include "Shapes.h"
 #include "ndds/ndds_cpp.h"
@@ -51,8 +51,10 @@
 #define EXAMPLE_TYPE_NAME "ShapesType"
 
 /* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant,
-        DDSDynamicDataTypeSupport *type_support) {
+static int publisher_shutdown(
+        DDSDomainParticipant *participant,
+        DDSDynamicDataTypeSupport *type_support)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -89,14 +91,15 @@ static int publisher_shutdown(DDSDomainParticipant *participant,
     return status;
 }
 
-extern "C" int publisher_main(int domainId, int sample_count) {
+extern "C" int publisher_main(int domainId, int sample_count)
+{
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
     DDS_Duration_t send_period = { 0, 100000000 }; /* 100 ms */
     /*** Shape direction variables ***/
-    int direction = 1; /* 1 means left to right and -1, right to left */
+    int direction = 1;   /* 1 means left to right and -1, right to left */
     int x_position = 50; /* 50 is the initial position */
     /*** DDS ENTITIES ***/
     DDSDomainParticipant *participant = NULL;
@@ -111,24 +114,28 @@ extern "C" int publisher_main(int domainId, int sample_count) {
     struct DDS_DynamicDataTypeProperty_t props;
     DDSDynamicDataTypeSupport *type_support = NULL;
 
-    participant = DDSTheParticipantFactory->create_participant(domainId,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
             DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant, type_support);
         return -1;
     }
 
-    publisher = participant->create_publisher(DDS_PUBLISHER_QOS_DEFAULT,
-    NULL /* listener */, DDS_STATUS_MASK_NONE);
+    publisher = participant->create_publisher(
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant, type_support);
         return -1;
     }
 
-    /* Create DynamicData using TypeCode from Shapes.cxx 
+    /* Create DynamicData using TypeCode from Shapes.cxx
      * If you are NOT using a type generated with rtiddsgen, you
      * need to create this TypeCode from scratch.
      */
@@ -156,13 +163,17 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* Make sure both publisher and subscriber share the same topic 
+    /* Make sure both publisher and subscriber share the same topic
      * name.
-     * In the Shapes example: we are publishing a Square, which is the 
-     * topic name. If you want to publish other shapes (Triangle or 
+     * In the Shapes example: we are publishing a Square, which is the
+     * topic name. If you want to publish other shapes (Triangle or
      * Circle), you just need to update the topic name. */
-    topic = participant->create_topic("Square", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Square",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant, type_support);
@@ -170,8 +181,11 @@ extern "C" int publisher_main(int domainId, int sample_count) {
     }
 
     /* First, we create a generic DataWriter for our topic */
-    writer = publisher->create_datawriter(topic, DDS_DATAWRITER_QOS_DEFAULT,
-    NULL /* listener */, DDS_STATUS_MASK_NONE);
+    writer = publisher->create_datawriter(
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant, type_support);
@@ -179,10 +193,10 @@ extern "C" int publisher_main(int domainId, int sample_count) {
     }
 
     /* Then, to use DynamicData, we need to assign the generic
-     * DataWriter to a DynamicDataWriter, using 
+     * DataWriter to a DynamicDataWriter, using
      * DDS_DynamicDataWriter_narrow.
-     * The following narrow function should never fail, as it performs 
-     * only a safe cast. 
+     * The following narrow function should never fail, as it performs
+     * only a safe cast.
      */
     DynamicData_writer = DDSDynamicDataWriter::narrow(writer);
     if (DynamicData_writer == NULL) {
@@ -208,13 +222,14 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         printf("Sending shapesize %d\n", 30 + (count % 20));
         printf("Sending x position %d\n", x_position);
 
         /* Modify the shapesize from 30 to 50 */
-        retcode = data->set_long("shapesize",
-                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 30 + (count % 20));
+        retcode = data->set_long(
+                "shapesize",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+                30 + (count % 20));
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "! Unable to set shapesize\n");
             publisher_shutdown(participant, type_support);
@@ -222,7 +237,9 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         }
 
         /* Modify the position */
-        retcode = data->set_long("x", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+        retcode = data->set_long(
+                "x",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
                 x_position);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "! Unable to set x\n");
@@ -230,13 +247,13 @@ extern "C" int publisher_main(int domainId, int sample_count) {
             return -1;
         }
 
-        /* The x_position will be modified adding or substracting 
-         * 2 to the previous x_position depending on the direction. 
+        /* The x_position will be modified adding or substracting
+         * 2 to the previous x_position depending on the direction.
          */
         x_position += (direction * 2);
         /* The x_position will stay between 50 and 150 pixels.
          * When the position is greater than 150 'direction' will be negative
-         * (moving to the left) and when it is lower than 50 'direction' will 
+         * (moving to the left) and when it is lower than 50 'direction' will
          * be possitive (moving to the right).
          */
         if (x_position >= 150) {
@@ -268,7 +285,7 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -290,7 +307,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -312,17 +330,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

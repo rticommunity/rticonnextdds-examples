@@ -9,11 +9,11 @@
  use the software.
  ******************************************************************************/
 
-#include <string>
-#include <list>
 #include <algorithm>
-#include <iostream>
 #include <iomanip>
+#include <iostream>
+#include <list>
+#include <string>
 
 #include "msg.hpp"
 #include <dds/dds.hpp>
@@ -33,38 +33,40 @@ const std::string expected_password = "password";
 
 // The builtin subscriber sets participant_qos.user_data, so we set up listeners
 // for the builtin DataReaders to access these fields.
-class BuiltinParticipantListener :
-    public NoOpDataReaderListener<ParticipantBuiltinTopicData> {
+class BuiltinParticipantListener
+        : public NoOpDataReaderListener<ParticipantBuiltinTopicData>
+{
 public:
     // This gets called when a participant has been discovered
-    void on_data_available(DataReader<ParticipantBuiltinTopicData>& reader)
+    void on_data_available(DataReader<ParticipantBuiltinTopicData> &reader)
     {
         // We only process newly seen participants
-        LoanedSamples<ParticipantBuiltinTopicData> samples = reader.select()
-            .state(dds::sub::status::DataState::new_instance())
-            .take();
+        LoanedSamples<ParticipantBuiltinTopicData> samples =
+                reader.select()
+                        .state(dds::sub::status::DataState::new_instance())
+                        .take();
 
-        for (LoanedSamples<ParticipantBuiltinTopicData>::iterator sampleIt = samples.begin();
-                sampleIt != samples.end();
-                ++sampleIt) {
-
+        for (LoanedSamples<ParticipantBuiltinTopicData>::iterator sampleIt =
+                     samples.begin();
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (!sampleIt->info().valid()) {
                 continue;
             }
 
-            const ByteSeq& user_data = sampleIt->data().user_data().value();
-            std::string user_auth (user_data.begin(), user_data.end());
+            const ByteSeq &user_data = sampleIt->data().user_data().value();
+            std::string user_auth(user_data.begin(), user_data.end());
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
-            const BuiltinTopicKey& key = sampleIt->data().key();
+            const BuiltinTopicKey &key = sampleIt->data().key();
             std::cout << "Built-in Reader: found participant" << std::endl
-                      << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
-                      << " " << key.value()[2] << "'"         << std::endl
+                      << "\tkey->'" << key.value()[0] << " " << key.value()[1]
+                      << " " << key.value()[2] << "'" << std::endl
                       << "\tuser_data->'" << user_auth << "'" << std::endl
                       << "\tinstance_handle: "
-                      << sampleIt->info().instance_handle()   << std::endl;
+                      << sampleIt->info().instance_handle() << std::endl;
 
             std::cout.flags(default_format);
 
@@ -75,32 +77,34 @@ public:
 
                 // Get the associated participant...
                 DomainParticipant participant =
-                    reader.subscriber().participant();
+                        reader.subscriber().participant();
 
                 // Ignore the remote participant
                 dds::domain::ignore(
-                    participant,
-                    sampleIt->info().instance_handle());
+                        participant,
+                        sampleIt->info().instance_handle());
             }
         }
     }
 };
 
-class BuiltinSubscriberListener :
-    public NoOpDataReaderListener<SubscriptionBuiltinTopicData> {
+class BuiltinSubscriberListener
+        : public NoOpDataReaderListener<SubscriptionBuiltinTopicData>
+{
 public:
     // This gets called when a subscriber has been discovered
-    void on_data_available(DataReader<SubscriptionBuiltinTopicData>& reader)
+    void on_data_available(DataReader<SubscriptionBuiltinTopicData> &reader)
     {
-         // We only process newly seen subscribers
-        LoanedSamples<SubscriptionBuiltinTopicData> samples = reader.select()
-            .state(dds::sub::status::DataState::new_instance())
-            .take();
+        // We only process newly seen subscribers
+        LoanedSamples<SubscriptionBuiltinTopicData> samples =
+                reader.select()
+                        .state(dds::sub::status::DataState::new_instance())
+                        .take();
 
-        for (LoanedSamples<SubscriptionBuiltinTopicData>::iterator sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
-
+        for (LoanedSamples<SubscriptionBuiltinTopicData>::iterator sampleIt =
+                     samples.begin();
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (!sampleIt->info().valid()) {
                 continue;
             }
@@ -108,13 +112,13 @@ public:
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
-            const BuiltinTopicKey& partKey = sampleIt->data().participant_key();
-            const BuiltinTopicKey& key = sampleIt->data().key();
-            std::cout << "Built-in Reader: found subscriber"  << std::endl
-                      << "\tparticipant_key->'"
-                      << partKey.value()[0] << " " << partKey.value()[1] << " "
-                      << partKey.value()[2] << "'" << std::endl
-                      << "\tkey->'" << key.value()[0] << " "  << key.value()[1]
+            const BuiltinTopicKey &partKey = sampleIt->data().participant_key();
+            const BuiltinTopicKey &key = sampleIt->data().key();
+            std::cout << "Built-in Reader: found subscriber" << std::endl
+                      << "\tparticipant_key->'" << partKey.value()[0] << " "
+                      << partKey.value()[1] << " " << partKey.value()[2] << "'"
+                      << std::endl
+                      << "\tkey->'" << key.value()[0] << " " << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
                       << "\tinstance_handle: "
                       << sampleIt->info().instance_handle() << std::endl;
@@ -156,33 +160,33 @@ void publisher_main(int domain_id, int sample_count)
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
     // Then get builtin subscriber's datareader for participants.
-    std::vector< DataReader<ParticipantBuiltinTopicData> > participant_reader;
-    find< DataReader<ParticipantBuiltinTopicData> >(
-        builtin_subscriber,
-        dds::topic::participant_topic_name(),
-        std::back_inserter(participant_reader));
+    std::vector<DataReader<ParticipantBuiltinTopicData>> participant_reader;
+    find<DataReader<ParticipantBuiltinTopicData>>(
+            builtin_subscriber,
+            dds::topic::participant_topic_name(),
+            std::back_inserter(participant_reader));
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL and deleting it.
-    rti::core::ListenerBinder< DataReader<ParticipantBuiltinTopicData> >
-        participant_listener = rti::core::bind_and_manage_listener(
-            participant_reader[0],
-            new BuiltinParticipantListener,
-            dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData>>
+            participant_listener = rti::core::bind_and_manage_listener(
+                    participant_reader[0],
+                    new BuiltinParticipantListener,
+                    dds::core::status::StatusMask::data_available());
 
     // Get builtin subscriber's datareader for subscribers.
-    std::vector< DataReader<SubscriptionBuiltinTopicData> > subscription_reader;
-    find< DataReader<SubscriptionBuiltinTopicData> >(
-        builtin_subscriber,
-        dds::topic::subscription_topic_name(),
-        std::back_inserter(subscription_reader));
+    std::vector<DataReader<SubscriptionBuiltinTopicData>> subscription_reader;
+    find<DataReader<SubscriptionBuiltinTopicData>>(
+            builtin_subscriber,
+            dds::topic::subscription_topic_name(),
+            std::back_inserter(subscription_reader));
 
     // Install our listener using ListenerBinder.
-    rti::core::ListenerBinder< DataReader<SubscriptionBuiltinTopicData> >
-        subscriber_listener = rti::core::bind_and_manage_listener(
-            subscription_reader[0],
-            new BuiltinSubscriberListener,
-            dds::core::status::StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<SubscriptionBuiltinTopicData>>
+            subscriber_listener = rti::core::bind_and_manage_listener(
+                    subscription_reader[0],
+                    new BuiltinSubscriberListener,
+                    dds::core::status::StatusMask::data_available());
 
     // Done! All the listeners are installed, so we can enable the
     // participant now.
@@ -205,7 +209,8 @@ void publisher_main(int domain_id, int sample_count)
     // instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (short count=0; (sample_count == 0) || (count < sample_count); ++count){
+    for (short count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         rti::util::sleep(Duration(1));
         std::cout << "Writing msg, count " << count << std::endl;
 
@@ -218,7 +223,7 @@ void publisher_main(int domain_id, int sample_count)
     // writer.unregister_instance(instance);
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */

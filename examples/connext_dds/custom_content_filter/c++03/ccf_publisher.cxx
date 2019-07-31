@@ -12,9 +12,9 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "ccf.hpp"
 #include "filter.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -31,8 +31,8 @@ void publisher_main(int domain_id, int sample_count)
 
     // Register the custom filter type. It must be registered in both sides.
     participant->register_contentfilter(
-        CustomFilter<CustomFilterType>(new CustomFilterType()),
-        "CustomFilter");
+            CustomFilter<CustomFilterType>(new CustomFilterType()),
+            "CustomFilter");
 
     // Create a Topic -- and automatically register the type.
     Topic<Foo> topic(participant, "Example ccf");
@@ -44,7 +44,8 @@ void publisher_main(int domain_id, int sample_count)
     Foo instance;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         std::cout << "Writing ccf, count " << count << std::endl;
         instance.x(count);
         writer.write(instance);
@@ -55,8 +56,8 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // Infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

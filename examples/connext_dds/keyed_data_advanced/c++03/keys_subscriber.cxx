@@ -9,10 +9,10 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
 #include "keys.hpp"
+#include <dds/dds.hpp>
+#include <iostream>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -24,17 +24,16 @@ using namespace dds::sub::cond;
 using namespace dds::sub::qos;
 using namespace dds::sub::status;
 
-class KeysReaderListener : public NoOpDataReaderListener<keys> {
-  public:
-    void on_data_available(DataReader<keys>& reader)
+class KeysReaderListener : public NoOpDataReaderListener<keys>
+{
+public:
+    void on_data_available(DataReader<keys> &reader)
     {
         // To read the first instance the handle must be InstanceHandle::nil()
         InstanceHandle previous_handle = InstanceHandle::nil();
         LoanedSamples<keys> samples;
         do {
-            samples = reader.select()
-                .next_instance(previous_handle)
-                .take();
+            samples = reader.select().next_instance(previous_handle).take();
 
             // Update the previous handle to read the next instance.
             if (samples.length() > 0) {
@@ -42,10 +41,9 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
             }
 
             for (LoanedSamples<keys>::iterator sampleIt = samples.begin();
-                sampleIt != samples.end();
-                ++sampleIt) {
-
-                const SampleInfo& info = sampleIt->info();
+                 sampleIt != samples.end();
+                 ++sampleIt) {
+                const SampleInfo &info = sampleIt->info();
                 if (info.valid()) {
                     if (info.state().view_state() == ViewState::new_view()) {
                         new_instance_found(sampleIt->data());
@@ -62,7 +60,8 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
                     InstanceState inst_state = info.state().instance_state();
                     if (inst_state == InstanceState::not_alive_no_writers()) {
                         instance_lost_writers(key_sample);
-                    } else if (inst_state==InstanceState::not_alive_disposed()){
+                    } else if (
+                            inst_state == InstanceState::not_alive_disposed()) {
                         instance_disposed(key_sample);
                     }
                 }
@@ -70,7 +69,7 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
         } while (samples.length() > 0);
     }
 
-    void new_instance_found(const keys& msg)
+    void new_instance_found(const keys &msg)
     {
         // There are three cases here:
         // 1.) truly new instance.
@@ -110,21 +109,20 @@ class KeysReaderListener : public NoOpDataReaderListener<keys> {
         sampleState[code] = InstanceState::alive();
     }
 
-    void instance_lost_writers(const keys& msg)
+    void instance_lost_writers(const keys &msg)
     {
         std::cout << "Instance has no writers; code = " << msg.code()
                   << std::endl;
         sampleState[msg.code()] = InstanceState::not_alive_no_writers();
-
     }
 
-    void instance_disposed(const keys& msg)
+    void instance_disposed(const keys &msg)
     {
         std::cout << "Instance disposed; code = " << msg.code() << std::endl;
         sampleState[msg.code()] = InstanceState::not_alive_disposed();
     }
 
-    void handle_data(const keys& msg)
+    void handle_data(const keys &msg)
     {
         std::cout << "code: " << msg.code() << ", x: " << msg.x()
                   << ", y: " << msg.y() << std::endl;
@@ -155,14 +153,15 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener using ListenerBinder, a RAII that will take care of
     // setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<keys> > reader_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new KeysReaderListener,
-            dds::core::status::StatusMask::all());
+    rti::core::ListenerBinder<DataReader<keys>> reader_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new KeysReaderListener,
+                    dds::core::status::StatusMask::all());
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         rti::util::sleep(Duration(2));
     }
 }
@@ -170,7 +169,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -186,7 +185,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

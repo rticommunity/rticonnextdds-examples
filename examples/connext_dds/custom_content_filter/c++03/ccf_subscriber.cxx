@@ -12,10 +12,10 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
 #include "ccf.hpp"
 #include "filter.hpp"
+#include <dds/dds.hpp>
+#include <rti/core/ListenerBinder.hpp>
 
 using namespace dds::core;
 using namespace dds::core::status;
@@ -23,7 +23,8 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 
-class CcfListener : public NoOpDataReaderListener<Foo> {
+class CcfListener : public NoOpDataReaderListener<Foo>
+{
 public:
     void on_data_available(DataReader<Foo> &reader)
     {
@@ -31,9 +32,8 @@ public:
         LoanedSamples<Foo> samples = reader.take();
 
         for (LoanedSamples<Foo>::iterator sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
-
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (sampleIt->info().valid()) {
                 std::cout << sampleIt->data() << std::endl;
             }
@@ -51,8 +51,8 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Register the custom filter type. It must be registered in both sides.
     participant->register_contentfilter(
-        CustomFilter<CustomFilterType>(new CustomFilterType()),
-        "CustomFilter");
+            CustomFilter<CustomFilterType>(new CustomFilterType()),
+            "CustomFilter");
 
     // The default filter parameters will filter values that are divisible by 2.
     std::vector<std::string> parameters(2);
@@ -64,10 +64,7 @@ void subscriber_main(int domain_id, int sample_count)
     filter->name("CustomFilter");
 
     // Create the content filtered topic.
-    ContentFilteredTopic<Foo> cft_topic(
-        topic,
-        "ContentFilteredTopic",
-        filter);
+    ContentFilteredTopic<Foo> cft_topic(topic, "ContentFilteredTopic", filter);
 
     std::cout << "Filter: 2 divides x" << std::endl;
 
@@ -76,23 +73,24 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<Foo> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new CcfListener,
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<Foo>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new CcfListener,
+                    StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         if (count == 10) {
             std::cout << "Changing filter parameters" << std::endl
-                      << "Filter: 15 greater-than x"  << std::endl;
+                      << "Filter: 15 greater-than x" << std::endl;
             parameters[0] = "15";
             parameters[1] = "greater-than";
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
         } else if (count == 20) {
             std::cout << "Changing filter parameters" << std::endl
-                      << "Filter: 3 divides x"  << std::endl;
+                      << "Filter: 3 divides x" << std::endl;
             parameters[0] = "3";
             parameters[1] = "divides";
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
@@ -105,7 +103,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

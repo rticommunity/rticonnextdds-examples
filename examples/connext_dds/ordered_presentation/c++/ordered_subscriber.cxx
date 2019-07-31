@@ -58,23 +58,28 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
+#include "ndds/ndds_cpp.h"
 #include "ordered.h"
 #include "orderedSupport.h"
-#include "ndds/ndds_cpp.h"
 
 #define MAX_SUBSCRIBERS 2
 /* Start changes for Ordered_Presentation */
 
 /* No listener is needed; we poll readers in this function */
-void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
+void poll_data(orderedDataReader *ordered_reader[], int numreaders)
+{
     DDS_ReturnCode_t retcode = DDS_RETCODE_OK;
     for (int r = 0; r < numreaders; ++r) {
         DDS_SampleInfoSeq info_seq;
         orderedSeq data_seq;
-        retcode = ordered_reader[r]->take(data_seq, info_seq,
-                DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
+        retcode = ordered_reader[r]->take(
+                data_seq,
+                info_seq,
+                DDS_LENGTH_UNLIMITED,
+                DDS_ANY_SAMPLE_STATE,
+                DDS_ANY_VIEW_STATE,
                 DDS_ANY_INSTANCE_STATE);
         if (retcode == DDS_RETCODE_NO_DATA) {
             /* Not an error */
@@ -93,8 +98,10 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
             while (ident--) {
                 printf("\t");
             }
-            printf("Reader %d: Instance%d->value = %d\n", r, data_seq[i].id,
-                    data_seq[i].value);
+            printf("Reader %d: Instance%d->value = %d\n",
+                   r,
+                   data_seq[i].id,
+                   data_seq[i].value);
         }
 
         retcode = ordered_reader[r]->return_loan(data_seq, info_seq);
@@ -105,7 +112,8 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders) {
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(DDSDomainParticipant *participant) {
+static int subscriber_shutdown(DDSDomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -137,7 +145,8 @@ static int subscriber_shutdown(DDSDomainParticipant *participant) {
     return status;
 }
 
-extern "C" int subscriber_main(int domainId, int sample_count) {
+extern "C" int subscriber_main(int domainId, int sample_count)
+{
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber[2] = { 0 };
     DDSTopic *topic = NULL;
@@ -148,13 +157,15 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
     int i = 0;
-    char* profile_name[] = { (char*)"ordered_Profile_subscriber_instance",
-            (char*) "ordered_Profile_subscriber_topic" };
+    char *profile_name[] = { (char *) "ordered_Profile_subscriber_instance",
+                             (char *) "ordered_Profile_subscriber_topic" };
 
     /* To customize the participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -173,8 +184,12 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
 
     /* To customize the topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic("Example ordered", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Example ordered",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -199,15 +214,22 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
         printf("Subscriber %d using %s\n", i, profile_name[i]);
 
         subscriber[i] = participant->create_subscriber_with_profile(
-                "ordered_Library", profile_name[i], NULL, DDS_STATUS_MASK_NONE);
+                "ordered_Library",
+                profile_name[i],
+                NULL,
+                DDS_STATUS_MASK_NONE);
         if (subscriber[i] == NULL) {
             printf("create_subscriber%d error\n", i);
             subscriber_shutdown(participant);
             return -1;
         }
 
-        reader[i] = subscriber[i]->create_datareader_with_profile(topic,
-                "ordered_Library", profile_name[i], NULL, DDS_STATUS_MASK_ALL);
+        reader[i] = subscriber[i]->create_datareader_with_profile(
+                topic,
+                "ordered_Library",
+                profile_name[i],
+                NULL,
+                DDS_STATUS_MASK_ALL);
         if (reader[i] == NULL) {
             printf("create_datareader%d error\n", i);
             subscriber_shutdown(participant);
@@ -225,75 +247,72 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
      * using the XML file, you will need to add the following lines to your
      * code and comment out the above 'for' loop.
      */
-/*    for (int i = 0; i < MAX_SUBSCRIBERS; ++i) {
-*/        /* Get default subscriber QoS to customize */
-/*        DDS_SubscriberQos subscriber_qos;
-        retcode = participant->get_default_subscriber_qos(subscriber_qos);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("get_default_subscriber_qos error\n");
-            return -1;
-        }
+    /*    for (int i = 0; i < MAX_SUBSCRIBERS; ++i) {
+     */        /* Get default subscriber QoS to customize */
+    /*        DDS_SubscriberQos subscriber_qos;
+            retcode = participant->get_default_subscriber_qos(subscriber_qos);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("get_default_subscriber_qos error\n");
+                return -1;
+            }
 
-*/        /* Set this for both subscribers */
-/*        subscriber_qos.presentation.ordered_access = DDS_BOOLEAN_TRUE;
+    */        /* Set this for both subscribers */
+    /*        subscriber_qos.presentation.ordered_access = DDS_BOOLEAN_TRUE;
 
-        if (i == 0) {
-            printf("Subscriber 0 using Instance access scope\n");
-            subscriber_qos.presentation.access_scope =
-                    DDS_INSTANCE_PRESENTATION_QOS;
-        } else {
-            printf("Subscriber 1 using Topic access scope\n");
-            subscriber_qos.presentation.access_scope =
-                    DDS_TOPIC_PRESENTATION_QOS;
-        }
+            if (i == 0) {
+                printf("Subscriber 0 using Instance access scope\n");
+                subscriber_qos.presentation.access_scope =
+                        DDS_INSTANCE_PRESENTATION_QOS;
+            } else {
+                printf("Subscriber 1 using Topic access scope\n");
+                subscriber_qos.presentation.access_scope =
+                        DDS_TOPIC_PRESENTATION_QOS;
+            }
 
-*/        /* To create subscriber with default QoS, use
+    */        /* To create subscriber with default QoS, use
            * DDS_SUBSCRIBER_QOS_DEFAULT instead of subscriber_qos */
-/*        subscriber[i] = participant->create_subscriber(subscriber_qos, NULL,
-                DDS_STATUS_MASK_NONE);
-        if (subscriber[i] == NULL) {
-            printf("create_subscriber error\n");
-            subscriber_shutdown(participant);
-            return -1;
-        }
+    /*        subscriber[i] = participant->create_subscriber(subscriber_qos,
+       NULL, DDS_STATUS_MASK_NONE); if (subscriber[i] == NULL) {
+                printf("create_subscriber error\n");
+                subscriber_shutdown(participant);
+                return -1;
+            }
 
-*/        /* No listener needed, but we do need to increase history depth */
+    */        /* No listener needed, but we do need to increase history depth */
 
-        /* Get default datareader QoS to customize */
-/*        DDS_DataReaderQos datareader_qos;
-        retcode = subscriber[i]->get_default_datareader_qos(datareader_qos);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("get_default_datareader_qos error\n");
-            return -1;
-        }
+    /* Get default datareader QoS to customize */
+    /*        DDS_DataReaderQos datareader_qos;
+            retcode = subscriber[i]->get_default_datareader_qos(datareader_qos);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("get_default_datareader_qos error\n");
+                return -1;
+            }
 
-        datareader_qos.history.depth = 10;
+            datareader_qos.history.depth = 10;
 
-*/        /* To create datareader with default QoS,
+    */        /* To create datareader with default QoS,
            * use DDS_DATAREADER_QOS_DEFAULT instead of datareader_qos */
-/*        reader[i] = subscriber[i]->create_datareader(topic, datareader_qos,
-                NULL, DDS_STATUS_MASK_ALL);
-        if (reader[i] == NULL) {
-            printf("create_datareader error\n");
-            subscriber_shutdown(participant);
-            return -1;
+    /*        reader[i] = subscriber[i]->create_datareader(topic,
+       datareader_qos, NULL, DDS_STATUS_MASK_ALL); if (reader[i] == NULL) {
+                printf("create_datareader error\n");
+                subscriber_shutdown(participant);
+                return -1;
+            }
+
+            ordered_reader[i] = orderedDataReader::narrow(reader[i]);
+            if (ordered_reader[i] == NULL) {
+                printf("DataReader narrow error\n");
+                return -1;
+            }
         }
 
-        ordered_reader[i] = orderedDataReader::narrow(reader[i]);
-        if (ordered_reader[i] == NULL) {
-            printf("DataReader narrow error\n");
-            return -1;
-        }
-    }
-
-*/
+    */
     /* Poll for data every 4 seconds */
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         printf("ordered subscriber sleeping for %d sec...\n",
-                receive_period.sec);
+               receive_period.sec);
         NDDSUtility::sleep(receive_period);
 
         poll_data(ordered_reader, MAX_SUBSCRIBERS);
@@ -306,7 +325,7 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -328,7 +347,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -350,17 +370,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "sub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) subscriber_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

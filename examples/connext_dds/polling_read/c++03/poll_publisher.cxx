@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "poll.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -23,10 +23,10 @@ using namespace dds::pub;
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<poll> topic (participant, "Example poll");
+    Topic<poll> topic(participant, "Example poll");
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     DataWriter<poll> writer(Publisher(participant), topic);
@@ -34,7 +34,7 @@ void publisher_main(int domain_id, int sample_count)
     poll sample;
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         // Set x to a random number between 0 and 9.
-        sample.x((int)(rand() / (RAND_MAX/10.0)));
+        sample.x((int) (rand() / (RAND_MAX / 10.0)));
 
         std::cout << "Writing poll, count " << count << ", x = " << sample.x()
                   << std::endl;
@@ -47,7 +47,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -63,7 +63,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

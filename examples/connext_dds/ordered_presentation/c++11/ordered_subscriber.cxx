@@ -26,7 +26,7 @@ using namespace dds::sub::status;
 
 // Instead of using listeners, we are polling the readers to be able to see
 // the order of a set of received samples.
-void poll_readers(std::vector< DataReader<ordered> >& readers)
+void poll_readers(std::vector<DataReader<ordered>> &readers)
 {
     for (std::vector<int>::size_type i = 0; i < readers.size(); i++) {
         LoanedSamples<ordered> samples = readers[i].take();
@@ -34,8 +34,7 @@ void poll_readers(std::vector< DataReader<ordered> >& readers)
             if (sample.info().valid()) {
                 std::cout << std::string(i, '\t') << "Reader " << i
                           << ": Instance" << sample.data().id()
-                          << "->value = " << sample.data().value()
-                          << std::endl;
+                          << "->value = " << sample.data().value() << std::endl;
             }
         }
     }
@@ -52,16 +51,17 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a reader per QoS profile: ordering by topic and instance modes.
     std::vector<std::string> profile_names = {
         "ordered_Library::ordered_Profile_subscriber_instance",
-        "ordered_Library::ordered_Profile_subscriber_topic" };
+        "ordered_Library::ordered_Profile_subscriber_topic"
+    };
 
-    std::vector< DataReader<ordered> > readers;
+    std::vector<DataReader<ordered>> readers;
     for (std::vector<int>::size_type i = 0; i < profile_names.size(); i++) {
         std::cout << "Subscriber " << i << " using " << profile_names[i]
                   << std::endl;
 
         // Retrieve the subscriber QoS from USER_QOS_PROFILES.xml
-        SubscriberQos subscriber_qos = QosProvider::Default().subscriber_qos(
-            profile_names[i]);
+        SubscriberQos subscriber_qos =
+                QosProvider::Default().subscriber_qos(profile_names[i]);
 
         // If you want to change the Subscriber's QoS programmatically rather
         // than using the XML file, you will need to comment out the previous
@@ -78,8 +78,8 @@ void subscriber_main(int domain_id, int sample_count)
         Subscriber subscriber(participant, subscriber_qos);
 
         // Retrieve the DataReader QoS from USER_QOS_PROFILES.xml
-        DataReaderQos reader_qos = QosProvider::Default().datareader_qos(
-            profile_names[i]);
+        DataReaderQos reader_qos =
+                QosProvider::Default().datareader_qos(profile_names[i]);
 
         // If you want to change the DataReader's QoS programmatically rather
         // than using the XML file, you will need to comment out the previous
@@ -95,7 +95,8 @@ void subscriber_main(int domain_id, int sample_count)
     }
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         std::cout << "ordered subscriber sleeping for 4 sec.." << std::endl;
         rti::util::sleep(Duration(4));
         poll_readers(readers);
@@ -104,8 +105,8 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

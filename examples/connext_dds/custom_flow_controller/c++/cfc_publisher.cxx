@@ -58,14 +58,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
 #include "cfc.h"
 #include "cfcSupport.h"
 #include "ndds/ndds_cpp.h"
 
 /* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant) {
+static int publisher_shutdown(DDSDomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -98,12 +99,13 @@ static int publisher_shutdown(DDSDomainParticipant *participant) {
     return status;
 }
 
-extern "C" int publisher_main(int domainId, int sample_count) {
+extern "C" int publisher_main(int domainId, int sample_count)
+{
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    cfcDataWriter * cfc_writer = NULL;
+    cfcDataWriter *cfc_writer = NULL;
     cfc *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
@@ -112,10 +114,12 @@ extern "C" int publisher_main(int domainId, int sample_count) {
     DDS_Duration_t send_period = { 1, 0 };
     int i;
     int sample;
-    const char* cfc_name = "custom_flowcontroller";
+    const char *cfc_name = "custom_flowcontroller";
 
-    participant = DDSTheParticipantFactory->create_participant(domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -131,36 +135,38 @@ extern "C" int publisher_main(int domainId, int sample_count) {
      */
 
     /* Get default participant QoS to customize */
-/*    DDS_DomainParticipantQos participant_qos;
-    retcode = DDSTheParticipantFactory->get_default_participant_qos(
-            participant_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_participant_qos error\n");
-        return -1;
-    }
+    /*    DDS_DomainParticipantQos participant_qos;
+        retcode = DDSTheParticipantFactory->get_default_participant_qos(
+                participant_qos);
+        if (retcode != DDS_RETCODE_OK) {
+            printf("get_default_participant_qos error\n");
+            return -1;
+        }
 
-*/    /* By default, data will be sent via shared memory _and_ UDPv4.  Because
+    */    /* By default, data will be sent via shared memory _and_ UDPv4.  Because
      * the flowcontroller limits writes across all interfaces, this halves the
      * effective send rate.  To avoid this, we enable only the UDPv4 transport
      */
-/*    participant_qos.transport_builtin.mask = DDS_TRANSPORTBUILTIN_UDPv4;
+    /*    participant_qos.transport_builtin.mask = DDS_TRANSPORTBUILTIN_UDPv4;
 
-*/    /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
+    */    /* To create participant with default QoS, use DDS_PARTICIPANT_QOS_DEFAULT
      instead of participant_qos */
-/*    participant = DDSTheParticipantFactory->create_participant(domainId,
-            participant_qos, NULL, DDS_STATUS_MASK_NONE);
-    if (participant == NULL) {
-        printf("create_participant error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-*/    
+    /*    participant = DDSTheParticipantFactory->create_participant(domainId,
+                participant_qos, NULL, DDS_STATUS_MASK_NONE);
+        if (participant == NULL) {
+            printf("create_participant error\n");
+            publisher_shutdown(participant);
+            return -1;
+        }
+    */
     /* End changes for custom_flowcontroller
 
      /* To customize publisher QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher(DDS_PUBLISHER_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    publisher = participant->create_publisher(
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
@@ -176,20 +182,27 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic("Example cfc", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Example cfc",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize data writer QoS, use 
+    /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    writer = publisher->create_datawriter(topic, DDS_DATAWRITER_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    writer = publisher->create_datawriter(
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
         publisher_shutdown(participant);
@@ -206,69 +219,70 @@ extern "C" int publisher_main(int domainId, int sample_count) {
      * for the datawriter.
      */
 
-/*    DDS_FlowControllerProperty_t custom_fcp;
-    retcode = participant->get_default_flowcontroller_property(custom_fcp);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_flowcontroller_property error \n");
-        return -1;
-    }
+    /*    DDS_FlowControllerProperty_t custom_fcp;
+        retcode = participant->get_default_flowcontroller_property(custom_fcp);
+        if (retcode != DDS_RETCODE_OK) {
+            printf("get_default_flowcontroller_property error \n");
+            return -1;
+        }
 
-*/    /* Don't allow too many tokens to accumulate */
-/*    custom_fcp.token_bucket.max_tokens =
-            custom_fcp.token_bucket.tokens_added_per_period = 2;
-    custom_fcp.token_bucket.tokens_leaked_per_period = DDS_LENGTH_UNLIMITED;
+    */    /* Don't allow too many tokens to accumulate */
+    /*    custom_fcp.token_bucket.max_tokens =
+                custom_fcp.token_bucket.tokens_added_per_period = 2;
+        custom_fcp.token_bucket.tokens_leaked_per_period = DDS_LENGTH_UNLIMITED;
 
-*/    /* 100ms */
-/*    custom_fcp.token_bucket.period.sec = 0;
-    custom_fcp.token_bucket.period.nanosec = 100000000;
+    */    /* 100ms */
+    /*    custom_fcp.token_bucket.period.sec = 0;
+        custom_fcp.token_bucket.period.nanosec = 100000000;
 
-*/    /* The sample size is 1000, but the minimum bytes_per_token is 1024.
+    */    /* The sample size is 1000, but the minimum bytes_per_token is 1024.
      * Furthermore, we want to allow some overhead.
      */
-/*    custom_fcp.token_bucket.bytes_per_token = 1024;
+    /*    custom_fcp.token_bucket.bytes_per_token = 1024;
 
-*/    /* So, in summary, each token can be used to send about one message,
+    */    /* So, in summary, each token can be used to send about one message,
      * and we get 2 tokens every 100ms, so this limits transmissions to
      * about 20 messages per second.
      */
 
     /* Create flowcontroller and set properties */
-/*    DDSFlowController* cfc = NULL;
-    cfc = participant->create_flowcontroller(DDS_String_dup(cfc_name),
-            custom_fcp);
-    if (cfc == NULL) {
-        printf("create_flowcontroller error\n");
-        return -1;
-    }
+    /*    DDSFlowController* cfc = NULL;
+        cfc = participant->create_flowcontroller(DDS_String_dup(cfc_name),
+                custom_fcp);
+        if (cfc == NULL) {
+            printf("create_flowcontroller error\n");
+            return -1;
+        }
 
-*/    /* Get default datawriter QoS to customize */
-/*    DDS_DataWriterQos datawriter_qos;
+    */    /* Get default datawriter QoS to customize */
+    /*    DDS_DataWriterQos datawriter_qos;
 
-    retcode = publisher->get_default_datawriter_qos(datawriter_qos);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("get_default_datawriter_qos error\n");
-        return -1;
-    }
+        retcode = publisher->get_default_datawriter_qos(datawriter_qos);
+        if (retcode != DDS_RETCODE_OK) {
+            printf("get_default_datawriter_qos error\n");
+            return -1;
+        }
 
-*/    /* As an alternative to increasing h istory depth, we can just
+    */    /* As an alternative to increasing h istory depth, we can just
      * set the qos to keep all samples
      */
-/*    datawriter_qos.history.kind = DDS_KEEP_ALL_HISTORY_QOS;
+    /*    datawriter_qos.history.kind = DDS_KEEP_ALL_HISTORY_QOS;
 
-*/    /* Set flowcontroller for datawriter */
-/*    datawriter_qos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
-    datawriter_qos.publish_mode.flow_controller_name = DDS_String_dup(cfc_name);
+    */    /* Set flowcontroller for datawriter */
+    /*    datawriter_qos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
+        datawriter_qos.publish_mode.flow_controller_name =
+       DDS_String_dup(cfc_name);
 
-*/    /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
+    */    /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
      instead of datawriter_qos */
-/*    writer = publisher->create_datawriter(topic, datawriter_qos, NULL,
-            DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
-        printf("create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-*/
+    /*    writer = publisher->create_datawriter(topic, datawriter_qos, NULL,
+                DDS_STATUS_MASK_NONE);
+        if (writer == NULL) {
+            printf("create_datawriter error\n");
+            publisher_shutdown(participant);
+            return -1;
+        }
+    */
     /* End changes for custom_flowcontroller */
 
     cfc_writer = cfcDataWriter::narrow(writer);
@@ -297,7 +311,6 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         /* Changes for custom_flowcontroller */
         /* Simulate bursty writer */
         NDDSUtility::sleep(send_period);
@@ -339,7 +352,7 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -361,7 +374,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -383,18 +397,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif
-

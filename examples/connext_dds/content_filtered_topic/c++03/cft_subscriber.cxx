@@ -21,7 +21,8 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class CftListener : public NoOpDataReaderListener<cft> {
+class CftListener : public NoOpDataReaderListener<cft>
+{
 public:
     void on_data_available(DataReader<cft> &reader)
     {
@@ -30,9 +31,8 @@ public:
 
         // Print samples by copying to std::cout
         for (LoanedSamples<cft>::iterator sampleIt = samples.begin();
-            sampleIt != samples.end();
-            ++sampleIt) {
-
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (sampleIt->info().valid()) {
                 std::cout << sampleIt->data() << std::endl;
             }
@@ -45,9 +45,9 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
-    Topic<cft> topic (participant, "Example cft");
+    Topic<cft> topic(participant, "Example cft");
 
     // Sequence of parameters for the content filter expression
     std::vector<std::string> parameters(2);
@@ -59,8 +59,8 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     if (is_cft) {
         std::cout << std::endl
                   << "==========================" << std::endl
-                  << "Using CFT"                  << std::endl
-                  << "Filter: 1 <= x <= 4"        << std::endl
+                  << "Using CFT" << std::endl
+                  << "Filter: 1 <= x <= 4" << std::endl
                   << "==========================" << std::endl;
     }
 
@@ -83,31 +83,27 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     if (is_cft) {
         std::cout << "Using ContentFiltered Topic" << std::endl;
         cft_topic = ContentFilteredTopic<cft>(
-            topic,
-            "ContentFilteredTopic",
-            Filter("x >= %0 AND x <= %1", parameters));
-        reader = DataReader<cft>(
-            Subscriber(participant),
-            cft_topic,
-            reader_qos);
+                topic,
+                "ContentFilteredTopic",
+                Filter("x >= %0 AND x <= %1", parameters));
+        reader =
+                DataReader<cft>(Subscriber(participant), cft_topic, reader_qos);
     } else {
         std::cout << "Using Normal Topic" << std::endl;
-        reader = DataReader<cft>(
-            Subscriber(participant),
-            topic,
-            reader_qos);
+        reader = DataReader<cft>(Subscriber(participant), topic, reader_qos);
     }
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<cft> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new CftListener,
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<cft>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new CftListener,
+                    StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // Receive period of 1 second.
         rti::util::sleep(Duration(1));
 
@@ -121,7 +117,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
             std::cout << std::endl
                       << "==========================" << std::endl
                       << "Changing filter parameters" << std::endl
-                      << "Filter: 5 <= x <= 9"        << std::endl
+                      << "Filter: 5 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
             parameters[0] = "5";
@@ -131,7 +127,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
             std::cout << std::endl
                       << "==========================" << std::endl
                       << "Changing filter parameters" << std::endl
-                      << "Filter: 3 <= x <= 9"        << std::endl
+                      << "Filter: 3 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
             parameters[0] = "3";
@@ -143,8 +139,8 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
-    bool is_cft = true;   // Use content filtered topic?
+    int sample_count = 0;  // Infinite loop
+    bool is_cft = true;    // Use content filtered topic?
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -164,9 +160,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count, is_cft);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

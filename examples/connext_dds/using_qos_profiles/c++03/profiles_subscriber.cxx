@@ -9,12 +9,12 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
+#include "profiles.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "profiles.hpp"
 
 using namespace dds::core;
 using namespace dds::core::status;
@@ -22,31 +22,33 @@ using namespace dds::domain;
 using namespace dds::topic;
 using namespace dds::sub;
 
-class ProfilesListener : public NoOpDataReaderListener<profiles> {
+class ProfilesListener : public NoOpDataReaderListener<profiles>
+{
 public:
     ProfilesListener(std::string name) : listener_name_(name)
     {
     }
 
-    void on_data_available(DataReader<profiles>& reader)
+    void on_data_available(DataReader<profiles> &reader)
     {
         // Take all samples
         LoanedSamples<profiles> samples = reader.take();
 
         std::cout << "============================================="
-                  << std::endl << listener_name() << " listener received"
-                  << std::endl;
+                  << std::endl
+                  << listener_name() << " listener received" << std::endl;
 
         for (LoanedSamples<profiles>::iterator sample_it = samples.begin();
-            sample_it != samples.end(); sample_it++) {
-
+             sample_it != samples.end();
+             sample_it++) {
             if (sample_it->info().valid()) {
                 std::cout << sample_it->data() << std::endl;
             }
         }
 
         std::cout << "============================================="
-                  << std::endl << std::endl;
+                  << std::endl
+                  << std::endl;
     }
 
     std::string listener_name() const
@@ -71,46 +73,50 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a Topic with default QoS.
     Topic<profiles> topic(
-        participant,
-        "Example profiles",
-        qos_provider.topic_qos());
+            participant,
+            "Example profiles",
+            qos_provider.topic_qos());
 
     // Create a DataWriter with the QoS profile "transient_local_profile" that
     // it is inside the QoS library "profiles_Library".
-    DataReader<profiles> reader_transient_local(subscriber, topic,
-        qos_provider.datareader_qos(
-            "profiles_Library::transient_local_profile"));
+    DataReader<profiles> reader_transient_local(
+            subscriber,
+            topic,
+            qos_provider.datareader_qos(
+                    "profiles_Library::transient_local_profile"));
 
     // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles> > scoped_transient_listener =
-        rti::core::bind_and_manage_listener(
-            reader_transient_local,
-            new ProfilesListener("transient_local_profile"),
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<profiles>> scoped_transient_listener =
+            rti::core::bind_and_manage_listener(
+                    reader_transient_local,
+                    new ProfilesListener("transient_local_profile"),
+                    StatusMask::data_available());
 
     // Create a DataReader with the QoS profile "volatile_profile" that it is
     // inside the QoS library "profiles_Library".
-    DataReader<profiles> reader_volatile(subscriber, topic,
-        qos_provider.datareader_qos(
-            "profiles_Library::volatile_profile"));
+    DataReader<profiles> reader_volatile(
+            subscriber,
+            topic,
+            qos_provider.datareader_qos("profiles_Library::volatile_profile"));
 
     // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles> > scoped_volatile_listener =
-        rti::core::bind_and_manage_listener(
-            reader_volatile,
-            new ProfilesListener("volatile_profile"),
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<profiles>> scoped_volatile_listener =
+            rti::core::bind_and_manage_listener(
+                    reader_volatile,
+                    new ProfilesListener("volatile_profile"),
+                    StatusMask::data_available());
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         rti::util::sleep(Duration(1));
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -126,7 +132,7 @@ int main(int argc, char* argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

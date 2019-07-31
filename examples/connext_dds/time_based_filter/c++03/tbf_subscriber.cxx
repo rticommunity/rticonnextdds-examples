@@ -12,9 +12,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "tbf.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "tbf.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -24,25 +24,26 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class tbfReaderListener : public NoOpDataReaderListener<tbf> {
-  public:
-    void on_data_available(dds::sub::DataReader<tbf>& reader)
+class tbfReaderListener : public NoOpDataReaderListener<tbf>
+{
+public:
+    void on_data_available(dds::sub::DataReader<tbf> &reader)
     {
         // Take all samples
         LoanedSamples<tbf> samples = reader.take();
 
         for (LoanedSamples<tbf>::iterator sample_it = samples.begin();
-        sample_it != samples.end(); sample_it++) {
-
-            if (sample_it->info().valid()){
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 // Here we get source timestamp of the sample using the sample
                 // info. 'info.source_timestamp()' returns dds::core::Time.
-                double source_timestamp = sample_it->info()
-                    .source_timestamp().to_secs();
+                double source_timestamp =
+                        sample_it->info().source_timestamp().to_secs();
 
-                const tbf& data = sample_it->data();
-                std::cout << source_timestamp << "\t" << data.code()
-                          << "\t\t" << data.x() << std::endl;
+                const tbf &data = sample_it->data();
+                std::cout << source_timestamp << "\t" << data.code() << "\t\t"
+                          << data.x() << std::endl;
             }
         }
     }
@@ -69,17 +70,18 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataReader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder< DataReader<tbf> > reader_listener =
-        rti::core::bind_and_manage_listener(
-                reader,
-                new tbfReaderListener,
-                dds::core::status::StatusMask::all());
+    ListenerBinder<DataReader<tbf>> reader_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new tbfReaderListener,
+                    dds::core::status::StatusMask::all());
 
     std::cout << "================================================" << std::endl
-              << "Source Timestamp\tInstance\tX"                    << std::endl
+              << "Source Timestamp\tInstance\tX" << std::endl
               << "================================================" << std::endl
               << std::fixed;
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         rti::util::sleep(Duration(1));
     }
 }
@@ -87,7 +89,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -103,7 +105,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

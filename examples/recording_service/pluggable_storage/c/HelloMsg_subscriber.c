@@ -10,57 +10,57 @@
  * use or inability to use the software.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "HelloMsg.h"
 #include "HelloMsgSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 void HelloMsgListener_on_requested_deadline_missed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedDeadlineMissedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void HelloMsgListener_on_requested_incompatible_qos(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedIncompatibleQosStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void HelloMsgListener_on_sample_rejected(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleRejectedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void HelloMsgListener_on_liveliness_changed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_LivelinessChangedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void HelloMsgListener_on_sample_lost(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleLostStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleLostStatus *status)
 {
 }
 
 void HelloMsgListener_on_subscription_matched(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SubscriptionMatchedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void HelloMsgListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     HelloMsgDataReader *HelloMsg_reader = NULL;
     struct HelloMsgSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -107,8 +107,7 @@ void HelloMsgListener_on_data_available(
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDS_DomainParticipant *participant)
+static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -150,12 +149,12 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = { 4, 0 };
 
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
@@ -236,9 +235,8 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("HelloMsg subscriber sleeping for %d sec...\n",
-        poll_period.sec);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("HelloMsg subscriber sleeping for %d sec...\n", poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }
@@ -268,4 +266,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domainId, sample_count);
 }
-

@@ -58,44 +58,57 @@ modification history
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
+#include "ndds/ndds_cpp.h"
 #include "tbf.h"
 #include "tbfSupport.h"
-#include "ndds/ndds_cpp.h"
 
 #define NANOSECOND 1000000000.0
 
-class tbfListener : public DDSDataReaderListener {
-  public:
+class tbfListener : public DDSDataReaderListener
+{
+public:
     virtual void on_requested_deadline_missed(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedDeadlineMissedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedDeadlineMissedStatus & /*status*/)
+    {
+    }
 
     virtual void on_requested_incompatible_qos(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedIncompatibleQosStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedIncompatibleQosStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_rejected(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleRejectedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleRejectedStatus & /*status*/)
+    {
+    }
 
     virtual void on_liveliness_changed(
-        DDSDataReader* /*reader*/,
-        const DDS_LivelinessChangedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_LivelinessChangedStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_lost(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleLostStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleLostStatus & /*status*/)
+    {
+    }
 
     virtual void on_subscription_matched(
-        DDSDataReader* /*reader*/,
-        const DDS_SubscriptionMatchedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SubscriptionMatchedStatus & /*status*/)
+    {
+    }
 
-    virtual void on_data_available(DDSDataReader* reader);
+    virtual void on_data_available(DDSDataReader *reader);
 };
 
-void tbfListener::on_data_available(DDSDataReader* reader)
+void tbfListener::on_data_available(DDSDataReader *reader)
 {
     tbfDataReader *tbf_reader = NULL;
     tbfSeq data_seq;
@@ -110,8 +123,12 @@ void tbfListener::on_data_available(DDSDataReader* reader)
     }
 
     retcode = tbf_reader->take(
-        data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
@@ -128,13 +145,13 @@ void tbfListener::on_data_available(DDSDataReader* reader)
              * ({seconds,nanoseconds}). We convert nanoseconds to seconds to get
              * the decimal part of the timestamp.
              */
-            double source_timestamp = info_seq[i].source_timestamp.sec +
-                    info_seq[i].source_timestamp.nanosec/NANOSECOND;
+            double source_timestamp = info_seq[i].source_timestamp.sec
+                    + info_seq[i].source_timestamp.nanosec / NANOSECOND;
 
             printf("%f\t%d\t\t%d\n",
-                    source_timestamp,
-                    data_seq[i].code, data_seq[i].x);
-
+                   source_timestamp,
+                   data_seq[i].code,
+                   data_seq[i].x);
         }
     }
 
@@ -145,8 +162,7 @@ void tbfListener::on_data_available(DDSDataReader* reader)
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
+static int subscriber_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -169,13 +185,13 @@ static int subscriber_shutdown(
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
-/*
-    retcode = DDSDomainParticipantFactory::finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        printf("finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-*/
+    /*
+        retcode = DDSDomainParticipantFactory::finalize_instance();
+        if (retcode != DDS_RETCODE_OK) {
+            printf("finalize_instance error %d\n", retcode);
+            status = -1;
+        }
+    */
     return status;
 }
 
@@ -189,14 +205,16 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t receive_period = {4,0};
+    DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
 
     /* To customize the participant QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
@@ -206,7 +224,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* To customize the subscriber QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -215,8 +235,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Register the type before creating the topic */
     type_name = tbfTypeSupport::get_type_name();
-    retcode = tbfTypeSupport::register_type(
-        participant, type_name);
+    retcode = tbfTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
@@ -226,9 +245,11 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* To customize the topic QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     topic = participant->create_topic(
-        "Example tbf",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example tbf",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -241,8 +262,10 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     /* To customize the data reader QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     reader = subscriber->create_datareader(
-        topic, DDS_DATAREADER_QOS_DEFAULT, reader_listener,
-        DDS_STATUS_MASK_ALL);
+            topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -283,8 +306,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     printf("================================================\n");
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         /*printf("tbf subscriber sleeping for %d sec...\n",
                receive_period.sec);*/
 
@@ -299,7 +321,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -345,17 +367,30 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
-    USER_APPL_INIT;         /* for backwards compatibility */
-#endif
+    #ifdef USER_APPL_INIT
+    USER_APPL_INIT; /* for backwards compatibility */
+    #endif
 
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "sub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) subscriber_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif
-

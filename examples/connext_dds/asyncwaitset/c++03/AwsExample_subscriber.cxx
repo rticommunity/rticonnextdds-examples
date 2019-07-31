@@ -14,54 +14,49 @@
 #include <dds/core/ddscore.hpp>
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
-#include <rti/core/cond/AsyncWaitSet.hpp>
-#include <rti/util/util.hpp> // for sleep()
 #include <rti/config/Logger.hpp>
+#include <rti/core/cond/AsyncWaitSet.hpp>
+#include <rti/util/util.hpp>  // for sleep()
 
 #include "AwsExample.hpp"
 
-class AwsSubscriber {
-    
-public:        
-    
+class AwsSubscriber
+{
+public:
     static const std::string TOPIC_NAME;
-    
+
     AwsSubscriber(
             DDS_DomainId_t domain_id,
             rti::core::cond::AsyncWaitSet async_waitset);
 
     void process_received_samples();
-    
+
     int received_count();
-    
+
     ~AwsSubscriber();
-    
-public:    
-        
+
+public:
     // Entities to receive data
     dds::sub::DataReader<AwsExample> receiver_;
     // Reference to the AWS used for processing the events
     rti::core::cond::AsyncWaitSet async_waitset_;
 };
 
-class DataAvailableHandler {
-    
-public:   
-    
+class DataAvailableHandler
+{
+public:
     /* Handles the reception of samples */
     void operator()()
     {
         subscriber_.process_received_samples();
     }
-    
-    DataAvailableHandler(AwsSubscriber& subscriber) : subscriber_(subscriber)
+
+    DataAvailableHandler(AwsSubscriber &subscriber) : subscriber_(subscriber)
     {
     }
-    
+
 private:
-    
-    AwsSubscriber& subscriber_;
-    
+    AwsSubscriber &subscriber_;
 };
 
 // AwsSubscriberPlayer implementation
@@ -71,8 +66,7 @@ const std::string AwsSubscriber::TOPIC_NAME = "AwsExample Example";
 AwsSubscriber::AwsSubscriber(
         DDS_DomainId_t domain_id,
         rti::core::cond::AsyncWaitSet async_waitset)
-    : receiver_(dds::core::null),
-      async_waitset_(async_waitset)
+        : receiver_(dds::core::null), async_waitset_(async_waitset)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -97,65 +91,68 @@ void AwsSubscriber::process_received_samples()
 {
     // Take all samples This will reset the StatusCondition
     dds::sub::LoanedSamples<AwsExample> samples = receiver_.take();
-    
+
     // Release status condition in case other threads can process outstanding
     // samples
-    async_waitset_.unlock_condition(dds::core::cond::StatusCondition(receiver_));
+    async_waitset_.unlock_condition(
+            dds::core::cond::StatusCondition(receiver_));
 
-    // Process sample 
-    for (dds::sub::LoanedSamples<AwsExample>::iterator sample_it = samples.begin();
+    // Process sample
+    for (dds::sub::LoanedSamples<AwsExample>::iterator sample_it =
+                 samples.begin();
          sample_it != samples.end();
          sample_it++) {
         if (sample_it->info().valid()) {
-            std::cout 
-                    << "Received sample:\n\t" 
-                    << sample_it->data() 
-                    << std::endl;
-        }        
+            std::cout << "Received sample:\n\t" << sample_it->data()
+                      << std::endl;
+        }
     }
-    // Sleep a random amount of time between 1 and 10 secs. This is 
-    // intended to cause the handling thread of the AWS to take a long 
-    // time dispatching    
+    // Sleep a random amount of time between 1 and 10 secs. This is
+    // intended to cause the handling thread of the AWS to take a long
+    // time dispatching
     rti::util::sleep(dds::core::Duration::from_secs(rand() % 10 + 1));
 }
 
 int AwsSubscriber::received_count()
 {
     return receiver_->datareader_protocol_status()
-            .received_sample_count().total();
+            .received_sample_count()
+            .total();
 }
 
 AwsSubscriber::~AwsSubscriber()
 {
-    async_waitset_.detach_condition(dds::core::cond::StatusCondition(receiver_));
+    async_waitset_.detach_condition(
+            dds::core::cond::StatusCondition(receiver_));
 }
-
 
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int thread_pool_size = 4;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
     const std::string USAGE(
             "AwsSubscriber_subscriber [options]\n"
             "Options:\n"
             "\t-d, -domainId: Domain ID\n"
-            "\t-t, -threads: Number of threads used to process sample reception\n"
-            "\t-s, -samples: Total number of received samples before exiting\n");
-    
+            "\t-t, -threads: Number of threads used to process sample "
+            "reception\n"
+            "\t-s, -samples: Total number of received samples before "
+            "exiting\n");
+
     srand(time(NULL));
 
     for (int i = 0; i < argc; i++) {
-        if (strcmp(argv[i], "-d") == 0
-                || strcmp(argv[i], "-domainId") == 0) {
+        if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "-domainId") == 0) {
             if (i == argc - 1) {
                 std::cerr << "missing domain ID parameter value " << std::endl;
                 return -1;
             } else {
                 domain_id = atoi(argv[++i]);
             }
-        } else if (strcmp(argv[i], "-t") == 0
+        } else if (
+                strcmp(argv[i], "-t") == 0
                 || strcmp(argv[i], "-threads") == 0) {
             if (i == argc - 1) {
                 std::cerr << "missing threads parameter value " << std::endl;
@@ -163,7 +160,8 @@ int main(int argc, char *argv[])
             } else {
                 thread_pool_size = atoi(argv[++i]);
             }
-        } else if (strcmp(argv[i], "-s") == 0
+        } else if (
+                strcmp(argv[i], "-s") == 0
                 || strcmp(argv[i], "-samples") == 0) {
             if (i == argc - 1) {
                 std::cerr << "missing samples parameter value " << std::endl;
@@ -171,8 +169,8 @@ int main(int argc, char *argv[])
             } else {
                 sample_count = atoi(argv[++i]);
             }
-        } else if (strcmp(argv[i], "-h") == 0
-                || strcmp(argv[i], "-help") == 0) {
+        } else if (
+                strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
             std::cout << USAGE << std::endl;
             return 0;
         }
@@ -183,26 +181,24 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-
         // An AsyncWaitSet (AWS) for multi-threaded events .
         // The AWS will provide the infrastructure to receive samples using
         // multiple threads.
         rti::core::cond::AsyncWaitSet async_waitset(
-                rti::core::cond::AsyncWaitSetProperty()
-                    .thread_pool_size(thread_pool_size));   
-            
+                rti::core::cond::AsyncWaitSetProperty().thread_pool_size(
+                        thread_pool_size));
+
         async_waitset.start();
-        
-        AwsSubscriber subscriber(
-                domain_id, 
-                async_waitset); 
-          
+
+        AwsSubscriber subscriber(domain_id, async_waitset);
+
         std::cout << "Wait for samples..." << std::endl;
-        while (subscriber.received_count() < sample_count || sample_count == 0) {   
+        while (subscriber.received_count() < sample_count
+               || sample_count == 0) {
             rti::util::sleep(dds::core::Duration(1));
         }
-        
-    } catch (const std::exception& ex) {
+
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in main(): " << ex.what() << std::endl;
         return -1;
@@ -216,4 +212,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
