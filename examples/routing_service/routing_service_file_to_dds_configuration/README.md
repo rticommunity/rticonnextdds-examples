@@ -1,4 +1,4 @@
-# Route/QoS Configuration Example - File to DDS Adapter: Using a Routing Service Customized Adapter to Connect a Simple File to DDS
+# Route/QoS Configuration Example - File to DDS Adapter
 
 ## Concept
 

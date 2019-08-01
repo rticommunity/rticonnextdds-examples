@@ -59,8 +59,8 @@ can be found. The XML files in the source directory are also copied over to this
 binary directory so that *Recording Service* can be run directly from this
 directory as well.
 
-**Note**
-
+> **Note:**
+>
 > In order to build, `CMake` will invoke *RTI DDS Code Generator* on the
 > `ServiceCommon.idl`, `ServiceAdmin.idl` and `RecordingServiceTypes.idl` files
 > that can be found in `$(CONNEXTDDS_DIR)/resource/idl` directory. These files
@@ -68,10 +68,10 @@ directory as well.
 > any *Recording Service*-specific types (`RecordingServiceTypes.idl`). The
 > resulting generated C++ code will be stored in a folder called `generated` in
 > the CMake build directory.
-
-**Note**
-
-> **Cross-compilation**. When you need to cross-compile the example, the above
+>
+> **Cross-compilation**:
+>
+> When you need to cross-compile the example, the above
 > command will not work, the assigned compiler won't be the cross-compiler and
 > errors may happen when linking against the cross-compiled Connext binaries. To
 > fix this, you have to create a file with the architecture name and call CMake
@@ -88,8 +88,9 @@ set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
 Then you can call CMake like this:
 
 ```sh
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> 
-        -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir> \
+      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> \
+      -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
 
 ## Running the Example
@@ -100,7 +101,7 @@ shipped with the example, called `recorder_remote_admin.xml`:
 
 ```sh
 cd <binary directory>
-$(CONNEXTDDS_DIR)/bin/rtirecordingservice 
+$(CONNEXTDDS_DIR)/bin/rtirecordingservice
         -cfgFile recorder_remote_admin.xml -cfgName remote_admin
 ```
 

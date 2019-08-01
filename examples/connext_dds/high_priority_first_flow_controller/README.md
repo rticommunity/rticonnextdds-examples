@@ -80,8 +80,12 @@ Flow Controller. The stock examples is modified as follows:
     ```
 
 3.  The generated hpf_publisher.cxx is modified top add a line tagged with
-    `<<HPF>> instance->payload.ensure_length(HPF_MAX_PAYLOAD_SIZE,
-    HPF_MAX_PAYLOAD_SIZE); //<<HPF>>`
+
+    ```cpp
+    instance->payload.ensure_length(
+            HPF_MAX_PAYLOAD_SIZE,
+            HPF_MAX_PAYLOAD_SIZE); // <<HPF>>
+    ```
 
 4.  The USER_QOS_PROFILES.xml is modified to configure a High Priority First
     Flow controller.

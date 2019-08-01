@@ -29,8 +29,8 @@ The following files are part of the example:
     work properly, it expects data to have been recorded with the recorder
     configuration first.
 
-**Note**
-
+> **Note**:
+>
 > The application expects the `recorder_config.xml` or `replay_config.xml` file
 > to be located in the current working directory when launching. The build
 > system will copy these files to the binary directory but if you're going to
@@ -62,8 +62,8 @@ application can be found. The XML files in the source directory are also copied
 over to this binary directory so that *Recording Service* can be run directly
 from this directory as well.
 
-**Note**
-
+> **Note**:
+>
 > **Cross-compilation**. When you need to cross-compile the example, the above
 > command will not work, the assigned compiler won't be the cross-compiler and
 > errors may happen when linking against the cross-compiled Connext binaries. To
@@ -81,8 +81,9 @@ set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
 Then you can call CMake like this:
 
 ```sh
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> 
-        -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir> \
+      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> \
+      -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
 
 ## Running the Example
@@ -105,8 +106,8 @@ cd <binary directory>
 ./ServiceAsLibExample record <your domain ID>
 ```
 
-**Note**
-
+> **Note**:
+>
 > You can run from other directory, just make sure the `recorder_config.xml`
 > file is in the directory where you're running from.
 
@@ -117,13 +118,13 @@ cd <binary directory>
 ./ServiceAsLibExample replay <your domain ID> 480
 ```
 
-**Note**
-
+> **Note**:
+>
 > You can run from other directory, just make sure the `replay_config.xml` file
 > is in the directory where you're running from, as well as a directory called
 > `cdr_recording`, where Recorder must have saved the data from the recording
 > session (so it should contain the `metadata`, `discovery` and user-data
-> files). 
+> files).
 
 ## Requirements
 
