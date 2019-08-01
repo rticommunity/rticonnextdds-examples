@@ -13,17 +13,17 @@
 #include <iostream>
 
 #include <dds/pub/ddspub.hpp>
-#include <rti/util/util.hpp> // for sleep()
+#include <rti/util/util.hpp>  // for sleep()
 
 #include "waitset_cond_modern.hpp"
 
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    dds::domain::DomainParticipant participant (domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    dds::topic::Topic<Foo> topic (participant, "Example Foo");
+    dds::topic::Topic<Foo> topic(participant, "Example Foo");
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     dds::pub::DataWriter<Foo> writer(dds::pub::Publisher(participant), topic);
@@ -39,9 +39,8 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -56,9 +55,10 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in publisher_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

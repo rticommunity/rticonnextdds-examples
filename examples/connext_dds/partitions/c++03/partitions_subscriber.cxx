@@ -28,14 +28,14 @@ using namespace rti::core;
 
 class PartitionsListener : public NoOpDataReaderListener<partitions> {
 public:
-    void on_data_available(DataReader<partitions>& reader)
+    void on_data_available(DataReader<partitions> &reader)
     {
         // Take all samples
         LoanedSamples<partitions> samples = reader.take();
 
         for (LoanedSamples<partitions>::iterator sample_it = samples.begin();
-            sample_it != samples.end(); sample_it++) {
-
+             sample_it != samples.end();
+             sample_it++) {
             if (sample_it->info().valid()) {
                 // After partition mismatch unpair,
                 // it detects the instance as new.
@@ -94,23 +94,23 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<partitions> > scoped_listener =
-        bind_and_manage_listener(
-            reader,
-            new PartitionsListener,
-            StatusMask::data_available());
+    ListenerBinder<DataReader<partitions>> scoped_listener =
+            bind_and_manage_listener(
+                    reader,
+                    new PartitionsListener,
+                    StatusMask::data_available());
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         rti::util::sleep(Duration(4));
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -126,9 +126,10 @@ int main(int argc, char* argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

@@ -12,21 +12,21 @@
 
 
 #include <iostream>
-#include <memory> // for shared_ptr and unique_ptr
+#include <memory>  // for shared_ptr and unique_ptr
 #include <signal.h>
 
+#include <dds/core/ddscore.hpp>
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
-#include <dds/core/ddscore.hpp>
 
 #include <rti/config/Logger.hpp>
-#include <rti/util/util.hpp> // for sleep()
 #include <rti/core/ListenerBinder.hpp>
+#include <rti/util/util.hpp>  // for sleep()
 
 #include "CameraImage.hpp"
 
-#include <rti/zcopy/sub/ZcopyDataReader.hpp>
 #include <rti/zcopy/pub/ZcopyDataWriter.hpp>
+#include <rti/zcopy/sub/ZcopyDataReader.hpp>
 
 #include "Common.hpp"
 
@@ -59,12 +59,12 @@ void publisher_flat(const ApplicationOptions &options)
     // Create a ReadCondition for any data on the pong reader, and attach it to
     // a Waitset
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any());
+            reader,
+            dds::sub::status::DataState::any());
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the subscriber application\n";
+    std::cout << "Waiting for the subscriber application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -73,7 +73,7 @@ void publisher_flat(const ApplicationOptions &options)
     uint64_t total_latency = 0;
     uint64_t latency_interval_start_time = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while(count <= options.sample_count || options.sample_count == -1) {
+    while (count <= options.sample_count || options.sample_count == -1) {
         // Get and populate the sample
         auto ping_sample = writer.extensions().get_loan();
         populate_flat_sample(*ping_sample, count);
@@ -82,7 +82,7 @@ void publisher_flat(const ApplicationOptions &options)
         auto ping = ping_sample->root();
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
-                || (send_ts - start_ts >= options.execution_time)) {
+            || (send_ts - start_ts >= options.execution_time)) {
             // notify reader about last sample
             ping.timestamp(0);
             writer.write(*ping_sample);
@@ -90,8 +90,8 @@ void publisher_flat(const ApplicationOptions &options)
         }
         ping.timestamp(send_ts);
 
-        // Write the ping sample. 
-        // 
+        // Write the ping sample.
+        //
         // The DataWriter now owns the buffer and the application should not
         // reuse the sample.
         writer.write(*ping_sample);
@@ -118,6 +118,7 @@ void publisher_flat(const ApplicationOptions &options)
             }
         }
     }
+
     print_latency(total_latency, count);
 
     // Wait for unmatch
@@ -155,7 +156,7 @@ void publisher_zero_copy(const ApplicationOptions &options)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the subscriber application\n";
+    std::cout << "Waiting for the subscriber application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -167,11 +168,10 @@ void publisher_zero_copy(const ApplicationOptions &options)
     int count = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
     while (count <= options.sample_count || options.sample_count == -1) {
-
         // Create and write the ping sample:
         // The DataWriter gets a sample from its shared memory sample pool. This
-        // operation does not allocate memory. Samples are returned to the sample
-        // pool when they are returned from the DataWriter queue.
+        // operation does not allocate memory. Samples are returned to the
+        // sample pool when they are returned from the DataWriter queue.
         CameraImage *ping_sample = writer.extensions().get_loan();
 
         // Populate the sample
@@ -179,7 +179,7 @@ void publisher_zero_copy(const ApplicationOptions &options)
 
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
-                || (send_ts - start_ts >= options.execution_time)) {
+            || (send_ts - start_ts >= options.execution_time)) {
             // notify reader about last sample
             ping_sample->timestamp(0);
             writer.write(*ping_sample);
@@ -209,6 +209,7 @@ void publisher_zero_copy(const ApplicationOptions &options)
             }
         }
     }
+
     print_latency(total_latency, count);
 
     // Wait for unmatch
@@ -253,7 +254,7 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    std::cout<< "Waiting for the subscriber application\n";
+    std::cout << "Waiting for the subscriber application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -274,7 +275,7 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
         auto ping = ping_sample->root();
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
-                || (send_ts - start_ts >= options.execution_time)) {
+            || (send_ts - start_ts >= options.execution_time)) {
             // notify reader about last sample
             ping.timestamp(0);
             writer.write(*ping_sample);
@@ -330,26 +331,26 @@ void publisher_plain(const ApplicationOptions &options)
 
     // Create the pong DataWriter with a profile from USER_QOS_PROFILES.xml
     dds::pub::DataWriter<CameraImage> writer(
-            dds::pub::Publisher(participant), 
+            dds::pub::Publisher(participant),
             ping_topic);
 
     // Create the pong DataReader
     dds::topic::Topic<CameraImage> pong_topic(participant, "CameraImagePong");
     dds::sub::DataReader<CameraImage> reader(
-            dds::sub::Subscriber(participant), 
+            dds::sub::Subscriber(participant),
             pong_topic);
 
     // Create a ReadCondition for any data on the pong reader, and attach it to
     // a Waitset
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any());
+            reader,
+            dds::sub::status::DataState::any());
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
     std::unique_ptr<CameraImage> ping_sample(new CameraImage);
 
-    std::cout<< "Waiting for the subscriber application\n";
+    std::cout << "Waiting for the subscriber application\n";
     wait_for_reader(writer);
     wait_for_writer(reader);
     std::cout << "Discovery complete\n";
@@ -358,10 +359,10 @@ void publisher_plain(const ApplicationOptions &options)
     uint64_t total_latency = 0;
     uint64_t latency_interval_start_time = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while(count <= options.sample_count || options.sample_count == -1) {
+    while (count <= options.sample_count || options.sample_count == -1) {
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
-                || (send_ts - start_ts >= options.execution_time)) {
+            || (send_ts - start_ts >= options.execution_time)) {
             ping_sample->timestamp(0);
             writer.write(*ping_sample);
             break;
@@ -405,14 +406,14 @@ void publisher_copy_sample(int domain_id, int sample_count)
 
     std::cout << "Running publisher_copy_sample\n";
 
-    dds::domain::DomainParticipant participant (domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     std::unique_ptr<CameraImage> ping_sample(new CameraImage);
     std::unique_ptr<CameraImage> copy(new CameraImage);
 
     int count = 0;
     uint64_t total_latency = 0;
-    while(count < sample_count || sample_count == 0) {
+    while (count < sample_count || sample_count == 0) {
         ping_sample->data()[45345] = count + sample_count + 100;
         ping_sample->timestamp(participant->current_time().to_microsecs());
         *copy = *ping_sample;
@@ -427,24 +428,27 @@ void publisher_copy_sample(int domain_id, int sample_count)
         total_latency += latency;
         if (count % 10 == 0) {
             std::cout << "Average end-to-end latency: "
-                        << total_latency / (count * 1) << " microseconds\n";
+                      << total_latency / (count * 1) << " microseconds\n";
         }
     }
 }
 
-void print_help(const char *program_name) {
+void print_help(const char *program_name)
+{
     std::cout << "Usage: " << program_name << "[options]\nOptions:\n";
     std::cout << " -domainId    <domain ID>    Domain ID\n";
     std::cout << " -mode        <1,2,3,4>      Publisher modes\n";
     std::cout << "                                 1. publisher_flat\n";
     std::cout << "                                 2. publisher_zero_copy\n";
-    std::cout << "                                 3. publisher_flat_zero_copy\n";
+    std::cout
+            << "                                 3. publisher_flat_zero_copy\n";
     std::cout << "                                 4. publisher_plain\n";
     std::cout << " -sampleCount <sample count> Sample count\n";
     std::cout << "                             Default: -1 (infinite)\n";
     std::cout << " -executionTime <sec>        Execution time in seconds\n";
     std::cout << "                             Default: 30\n";
-    std::cout << " -nic         <IP address>   Use the nic specified by <ipaddr> to send\n";
+    std::cout << " -nic         <IP address>   Use the nic specified by "
+                 "<ipaddr> to send\n";
     std::cout << "                             Default: automatic\n";
     std::cout << " -help                       Displays this information\n";
 }
@@ -454,18 +458,18 @@ int main(int argc, char *argv[])
     ApplicationOptions options;
 
     for (int i = 1; i < argc; i++) {
-        if (strstr(argv[i],"-h") == argv[i]) {
+        if (strstr(argv[i], "-h") == argv[i]) {
             print_help(argv[0]);
             return 0;
-        } else if (strstr(argv[i],"-d") == argv[i]) {
+        } else if (strstr(argv[i], "-d") == argv[i]) {
             options.domain_id = atoi(argv[++i]);
-        } else if (strstr(argv[i],"-m") == argv[i]) {
+        } else if (strstr(argv[i], "-m") == argv[i]) {
             options.mode = atoi(argv[++i]);
-        } else if (strstr(argv[i],"-s") == argv[i]) {
+        } else if (strstr(argv[i], "-s") == argv[i]) {
             options.sample_count = atoi(argv[++i]);
-        } else if (strstr(argv[i],"-e") == argv[i]) {
-            options.execution_time = atoi(argv[++i])*1000000;
-        } else if (strstr(argv[i],"-n") == argv[i]) {
+        } else if (strstr(argv[i], "-e") == argv[i]) {
+            options.execution_time = atoi(argv[++i]) * 1000000;
+        } else if (strstr(argv[i], "-n") == argv[i]) {
             options.nic = (argv[++i]);
         } else {
             std::cout << "unexpected option: " << argv[i] << std::endl;
@@ -480,24 +484,24 @@ int main(int argc, char *argv[])
 
     try {
         switch (options.mode) {
-            case 1:
-                publisher_flat(options);
-                break;
-            case 2:
-                publisher_zero_copy(options);
-                break;
-            case 3:
-                publisher_flat_zero_copy(options);
-                break;
-            case 4:
-                publisher_plain(options);
-                break;
-            case 5:
-                publisher_copy_sample(0, 0);
-                break;
+        case 1:
+            publisher_flat(options);
+            break;
+        case 2:
+            publisher_zero_copy(options);
+            break;
+        case 3:
+            publisher_flat_zero_copy(options);
+            break;
+        case 4:
+            publisher_plain(options);
+            break;
+        case 5:
+            publisher_copy_sample(0, 0);
+            break;
         }
 
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher: " << ex.what() << std::endl;
         return -1;
@@ -511,4 +515,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

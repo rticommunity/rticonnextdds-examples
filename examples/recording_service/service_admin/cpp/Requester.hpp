@@ -10,13 +10,13 @@
  * use or inability to use the software.
  */
 
-#include <dds/domain/domainfwd.hpp>
 #include <dds/core/External.hpp>
+#include <dds/domain/domainfwd.hpp>
 #include <rti/request/Requester.hpp>
 
-#include "ServiceCommon.hpp"
-#include "ServiceAdmin.hpp"
 #include "RecordingServiceTypes.hpp"
+#include "ServiceAdmin.hpp"
+#include "ServiceCommon.hpp"
 
 /*
  * This class acts as an interpreter between the command-line arguments provided
@@ -29,9 +29,9 @@ public:
 
     RTI::Service::Admin::CommandActionKind command_kind() const;
 
-    const std::string& resource_identifier() const;
+    const std::string &resource_identifier() const;
 
-    const std::string& command_params() const;
+    const std::string &command_params() const;
 
     uint32_t admin_domain_id() const;
 
@@ -40,10 +40,9 @@ public:
         std::string description;
     };
 
-    const TimeTagParams& time_tag_params() const;
+    const TimeTagParams &time_tag_params() const;
 
 private:
-
     RTI::Service::Admin::CommandActionKind command_kind_;
 
     std::string resource_id_;
@@ -54,12 +53,11 @@ private:
 
     TimeTagParams time_tag_params_;
 
-    void print_usage(const std::string& program_name);
+    void print_usage(const std::string &program_name);
 
     static RTI::Service::Admin::CommandActionKind parse_command_kind(char *arg);
 
     static uint32_t parse_domain_id(char *arg);
-
 };
 
 /*
@@ -71,21 +69,20 @@ private:
  */
 class Application {
 public:
-
     /*
      * A requester type that can send command requests and receive replies to
      * those requests.
      */
     typedef rti::request::Requester<
             RTI::Service::Admin::CommandRequest,
-            RTI::Service::Admin::CommandReply> ServiceAdminRequester;
+            RTI::Service::Admin::CommandReply>
+            ServiceAdminRequester;
 
-    Application(ArgumentsParser& args_parser);
+    Application(ArgumentsParser &args_parser);
     ~Application();
 
 private:
-
-    ArgumentsParser& args_parser_;
+    ArgumentsParser &args_parser_;
 
     dds::domain::DomainParticipant participant_;
 
@@ -97,5 +94,4 @@ private:
      *
      */
     dds::core::external<ServiceAdminRequester>::shared_ptr command_requester_;
-
 };

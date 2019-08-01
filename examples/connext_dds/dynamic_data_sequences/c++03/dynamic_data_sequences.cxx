@@ -9,8 +9,8 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <dds/dds.hpp>
+#include <iostream>
 
 using namespace dds::core::xtypes;
 using namespace rti::core::xtypes;
@@ -46,21 +46,22 @@ DynamicType create_dynamictype_sequence_struct()
 
     // Add a sequence of type SimpleStruct
     DynamicType simple_struct = create_dynamictype_simple_struct();
-    type_with_sequence.add_member(Member(
-        "sequence_member",
-        SequenceType(simple_struct, MAX_SEQ_LEN)));
+    type_with_sequence.add_member(
+            Member("sequence_member",
+                   SequenceType(simple_struct, MAX_SEQ_LEN)));
 
     return type_with_sequence;
 }
 
-void write_data(DynamicData& sample)
+void write_data(DynamicData &sample)
 {
     // Get the sequence member to set its elements.
     DynamicData sequence_member = sample.value<DynamicData>("sequence_member");
 
     // Get the type of the sequence members.
-    DynamicType simple_struct_dynamic_type = static_cast<const SequenceType&>(
-        sequence_member.type()).content_type();
+    DynamicType simple_struct_dynamic_type =
+            static_cast<const SequenceType &>(sequence_member.type())
+                    .content_type();
 
     // Write a new struct for each member of the sequence.
     for (int i = 0; i < MAX_SEQ_LEN; i++) {
@@ -81,8 +82,8 @@ void write_data(DynamicData& sample)
         // error.
         loaned_data.get().value("a_member", i);
 
-         // We're returning the loan explicitly; the destructor
-         // of loaned_data would do it too.
+        // We're returning the loan explicitly; the destructor
+        // of loaned_data would do it too.
         loaned_data.return_loan();
 
         // **Value**:
@@ -92,14 +93,15 @@ void write_data(DynamicData& sample)
 
         // Add to the sequence.
         std::cout << "Writing sequence element #" << (i + 1) << " :"
-                  << std::endl << simple_struct_element;
+                  << std::endl
+                  << simple_struct_element;
         sequence_member.value(i + 1, simple_struct_element);
     }
 
     sample.value("sequence_member", sequence_member);
 }
 
-void read_data(const DynamicData& sample)
+void read_data(const DynamicData &sample)
 {
     // Get the sequence member
     DynamicData sequence_member = sample.value<DynamicData>("sequence_member");
@@ -107,7 +109,7 @@ void read_data(const DynamicData& sample)
     // Get the total amount of elements contained in the sequence by accessing
     // the dynamic data info.
     std::cout << "* Getting sequence member info..." << std::endl;
-    const DynamicDataInfo& info = sequence_member.info();
+    const DynamicDataInfo &info = sequence_member.info();
     int seq_len = info.member_count();
     std::cout << "* Sequence contains " << seq_len << " elements" << std::endl;
 
@@ -123,7 +125,8 @@ void read_data(const DynamicData& sample)
         LoanedDynamicData loaned_struct = sequence_member.loan_value(i + 1);
 
         std::cout << "Reading sequence element #" << (i + 1) << " :"
-                  << std::endl << struct_element; // or loaned_struct.get();
+                  << std::endl
+                  << struct_element;  // or loaned_struct.get();
     }
 }
 
@@ -140,7 +143,7 @@ int main()
 
         std::cout << "***** Reading a sample *****" << std::endl;
         read_data(struct_sequence_data);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions.
         std::cerr << "Exception: " << ex.what() << std::endl;
         return -1;

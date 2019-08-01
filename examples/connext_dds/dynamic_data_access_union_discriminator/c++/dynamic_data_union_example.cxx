@@ -35,7 +35,8 @@
 
 using namespace std;
 
-DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf)
+{
     static DDS_TypeCode *unionTC = NULL;
     struct DDS_UnionMemberSeq members;
     DDS_ExceptionCode_t err;
@@ -45,8 +46,11 @@ DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
      * will be the default one. In this example index = 1 refers
      * to the the member 'aLong'. Take into account that index
      * starts in 0 */
-    unionTC = tcf->create_union_tc("Foo", DDS_MUTABLE_EXTENSIBILITY,
-            tcf->get_primitive_tc(DDS_TK_LONG), 1, /* default-member index */
+    unionTC = tcf->create_union_tc(
+            "Foo",
+            DDS_MUTABLE_EXTENSIBILITY,
+            tcf->get_primitive_tc(DDS_TK_LONG),
+            1,       /* default-member index */
             members, /* For now, it does not have any member */
             err);
     if (err != DDS_NO_EXCEPTION_CODE) {
@@ -55,8 +59,11 @@ DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
     }
 
     /* Case 1 will be a short named aShort */
-    unionTC->add_member("aShort", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
-            tcf->get_primitive_tc(DDS_TK_SHORT), DDS_TYPECODE_NONKEY_MEMBER,
+    unionTC->add_member(
+            "aShort",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+            tcf->get_primitive_tc(DDS_TK_SHORT),
+            DDS_TYPECODE_NONKEY_MEMBER,
             err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member aShort: " << err << endl;
@@ -64,16 +71,24 @@ DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
     }
 
     /* Case 2, the default, will be a long named aLong */
-    unionTC->add_member("aLong", 2, tcf->get_primitive_tc(DDS_TK_LONG),
-            DDS_TYPECODE_NONKEY_MEMBER, err);
+    unionTC->add_member(
+            "aLong",
+            2,
+            tcf->get_primitive_tc(DDS_TK_LONG),
+            DDS_TYPECODE_NONKEY_MEMBER,
+            err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member aLong: " << err << endl;
         goto fail;
     }
 
     /* Case 3 will be a double named aDouble */
-    unionTC->add_member("aDouble", 3, tcf->get_primitive_tc(DDS_TK_DOUBLE),
-            DDS_TYPECODE_NONKEY_MEMBER, err);
+    unionTC->add_member(
+            "aDouble",
+            3,
+            tcf->get_primitive_tc(DDS_TK_DOUBLE),
+            DDS_TYPECODE_NONKEY_MEMBER,
+            err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member aDouble: " << err << endl;
         goto fail;
@@ -81,13 +96,15 @@ DDS_TypeCode *create_type_code(DDS_TypeCodeFactory *tcf) {
 
     return unionTC;
 
-    fail: if (unionTC != NULL) {
+fail:
+    if (unionTC != NULL) {
         tcf->delete_tc(unionTC, err);
     }
     return NULL;
 }
 
-int example() {
+int example()
+{
     /* Creating the union typeCode */
     DDS_TypeCodeFactory *tcf = NULL;
     tcf = DDS_TypeCodeFactory::get_instance();
@@ -124,7 +141,9 @@ int example() {
 
     /* When we set a value in one of the members of the union,
      * the discriminator updates automatically to point that member.  */
-    retcode = data.set_short("aShort", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+    retcode = data.set_short(
+            "aShort",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             42);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set short member " << endl;
@@ -141,25 +160,28 @@ int example() {
     cout << "The member selected is " << info.member_name << endl;
 
     /* Getting the value of the target member */
-    retcode = data.get_short(valueTestShort, "aShort",
+    retcode = data.get_short(
+            valueTestShort,
+            "aShort",
             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to get member value" << endl;
         goto fail;
     }
 
-    cout << "The member selected is " << info.member_name << "with value: "
-            << valueTestShort << endl;
+    cout << "The member selected is " << info.member_name
+         << "with value: " << valueTestShort << endl;
 
     ret = 1;
 
-    fail:
+fail:
     if (unionTC != NULL) {
         tcf->delete_tc(unionTC, err);
     }
     return ret;
 }
 
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     return example();
 }

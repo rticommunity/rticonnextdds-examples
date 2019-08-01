@@ -9,13 +9,13 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
 
+#include "cft.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "cft.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -27,15 +27,15 @@ using namespace dds::sub::qos;
 using namespace rti::core;
 
 class cftReaderListener : public NoOpDataReaderListener<cft> {
-  public:
-    void on_data_available(dds::sub::DataReader<cft>& reader)
+public:
+    void on_data_available(dds::sub::DataReader<cft> &reader)
     {
         // Take all samples
         LoanedSamples<cft> samples = reader.take();
 
         for (LoanedSamples<cft>::iterator sample_it = samples.begin();
-        sample_it != samples.end(); sample_it++) {
-
+             sample_it != samples.end();
+             sample_it++) {
             if (sample_it->info().valid()) {
                 std::cout << sample_it->data() << std::endl;
             }
@@ -77,11 +77,12 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
         filter->name(rti::topic::stringmatch_filter_name());
 
         cft_topic = ContentFilteredTopic<cft>(
-            topic,
-            "ContentFilteredTopic",
-            filter);
+                topic,
+                "ContentFilteredTopic",
+                filter);
 
-        reader = DataReader<cft>(Subscriber(participant), cft_topic,reader_qos);
+        reader =
+                DataReader<cft>(Subscriber(participant), cft_topic, reader_qos);
     } else {
         std::cout << "Using Normal Topic" << std::endl;
         reader = DataReader<cft>(Subscriber(participant), topic, reader_qos);
@@ -89,8 +90,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder< DataReader<cft> > scoped_listener =
-        bind_and_manage_listener(
+    ListenerBinder<DataReader<cft>> scoped_listener = bind_and_manage_listener(
             reader,
             new cftReaderListener,
             StatusMask::data_available());
@@ -103,20 +103,23 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     }
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         rti::util::sleep(dds::core::Duration(1));
         if (!is_cft) {
             continue;
         }
 
         if (count == 10) {
-            std::cout << std::endl << "===========================" << std::endl
+            std::cout << std::endl
+                      << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Append 'ODD' filter" << std::endl
                       << "===========================" << std::endl;
             cft_topic->append_to_expression_parameter(0, "ODD");
         } else if (count == 20) {
-            std::cout << std::endl << "===========================" << std::endl
+            std::cout << std::endl
+                      << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Removing 'EVEN' filter" << std::endl
                       << "===========================" << std::endl;
@@ -128,7 +131,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
     bool is_cft = true;
 
     if (argc >= 2) {
@@ -149,7 +152,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count, is_cft);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main(): " << ex.what()
                   << std::endl;

@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
 
 #include "LambdaFilterExample.hpp"
@@ -29,34 +29,32 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a ContentFilteredTopic that only selects those Stocks whose
     // symbol is GOOG or IBM.
     auto lambda_cft = create_lambda_cft<Stock>(
-        "stock_cft",
-        topic,
-        [](const Stock& stock)
-        {
-            return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
-        }
-    );
+            "stock_cft",
+            topic,
+            [](const Stock &stock) {
+                return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
+            });
 
     dds::sub::DataReader<Stock> reader(
-        dds::sub::Subscriber(participant), lambda_cft);
+            dds::sub::Subscriber(participant),
+            lambda_cft);
 
-    // Create a ReadCondition for any data on this reader and associate a handler
+    // Create a ReadCondition for any data on this reader and associate a
+    // handler
     int count = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [&reader, &count]()
-        {
-            // Take all samples
-            dds::sub::LoanedSamples<Stock> samples = reader.take();
-            for (auto sample : samples){
-                if (sample.info().valid()){
-                    count++;
-                    std::cout << sample.data() << std::endl;
+            reader,
+            dds::sub::status::DataState::any(),
+            [&reader, &count]() {
+                // Take all samples
+                dds::sub::LoanedSamples<Stock> samples = reader.take();
+                for (auto sample : samples) {
+                    if (sample.info().valid()) {
+                        count++;
+                        std::cout << sample.data() << std::endl;
+                    }
                 }
-            }
-
-        } // The LoanedSamples destructor returns the loan
+            }  // The LoanedSamples destructor returns the loan
     );
 
     // Create a WaitSet and attach the ReadCondition
@@ -67,14 +65,14 @@ void subscriber_main(int domain_id, int sample_count)
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
         std::cout << "Stock subscriber sleeping for 4 sec...\n";
-        waitset.dispatch(dds::core::Duration(4)); // Wait up to 4s each time
+        waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
     }
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -89,7 +87,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main(): " << ex.what() << "\n";
         return -1;

@@ -27,25 +27,25 @@ RTI_RECORDING_STORAGE_READER_CREATE_DECL(FileStorageReader);
  * and FileStorageStreamInfoReader. These objects are used by Replay and/or
  * Converter to retrieve data from the storage.
  */
-class FileStorageReader :
-        public rti::recording::storage::StorageReader {
+class FileStorageReader : public rti::recording::storage::StorageReader {
 public:
-    FileStorageReader(const rti::routing::PropertySet& properties);
+    FileStorageReader(const rti::routing::PropertySet &properties);
     ~FileStorageReader();
 
-    rti::recording::storage::StorageStreamInfoReader *
-            create_stream_info_reader(
-                    const rti::routing::PropertySet& properties);
+    rti::recording::storage::StorageStreamInfoReader *create_stream_info_reader(
+            const rti::routing::PropertySet &properties);
 
     void delete_stream_info_reader(
-            rti::recording::storage::StorageStreamInfoReader *stream_info_reader);
+            rti::recording::storage::StorageStreamInfoReader
+                    *stream_info_reader);
 
-    rti::recording::storage::StorageStreamReader * create_stream_reader(
-            const rti::routing::StreamInfo& stream_info,
-            const rti::routing::PropertySet& properties);
+    rti::recording::storage::StorageStreamReader *create_stream_reader(
+            const rti::routing::StreamInfo &stream_info,
+            const rti::routing::PropertySet &properties);
 
     void delete_stream_reader(
             rti::recording::storage::StorageStreamReader *stream_reader);
+
 private:
     std::ifstream info_file_;
     std::ifstream data_file_;
@@ -60,10 +60,9 @@ private:
  * Note: this example is only fit to work with the provided type definition
  * (type HelloMsg - see HelloMsg.idl for more information).
  */
-class FileStorageStreamReader :
-        public rti::recording::storage::DynamicDataStorageStreamReader {
+class FileStorageStreamReader
+        : public rti::recording::storage::DynamicDataStorageStreamReader {
 public:
-
     FileStorageStreamReader(std::ifstream *data_file);
 
     virtual ~FileStorageStreamReader();
@@ -74,18 +73,18 @@ public:
      * the data to be provided (data not read before vs data of any kind, lower
      * and upper time limits, etc).
      */
-    virtual void read(
-            std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-            std::vector<dds::sub::SampleInfo *>& info_seq,
-            const rti::recording::storage::SelectorState& selector);
+    virtual void
+            read(std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+                 std::vector<dds::sub::SampleInfo *> &info_seq,
+                 const rti::recording::storage::SelectorState &selector);
 
     /*
      * The return loan operation should free any resources allocated by the
      * read() operation.
      */
     virtual void return_loan(
-            std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-            std::vector<dds::sub::SampleInfo *>& info_seq);
+            std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+            std::vector<dds::sub::SampleInfo *> &info_seq);
 
     /*
      * This method should flag Replay/Converter that all data related to the
@@ -96,7 +95,6 @@ public:
     virtual void reset();
 
 private:
-
     std::ifstream *data_file_;
     int64_t current_timestamp_;
     int current_valid_data_;
@@ -132,16 +130,16 @@ public:
      * the data to be provided (data not read before vs data of any kind, lower
      * and upper time limits, etc).
      */
-    virtual void read(
-            std::vector<rti::routing::StreamInfo *>& sample_seq,
-            const rti::recording::storage::SelectorState& selector);
+    virtual void
+            read(std::vector<rti::routing::StreamInfo *> &sample_seq,
+                 const rti::recording::storage::SelectorState &selector);
 
     /*
      * The return loan operation should free any resources allocated by the
      * read() operation.
      */
-    virtual void return_loan(
-            std::vector<rti::routing::StreamInfo *>& sample_seq);
+    virtual void
+            return_loan(std::vector<rti::routing::StreamInfo *> &sample_seq);
 
     /*
      * An int64-represented time-stamp (in nanoseconds) representing the
@@ -162,11 +160,10 @@ public:
     virtual void reset();
 
 private:
-
     std::ifstream *info_file_;
     bool stream_info_taken_;
     rti::routing::StreamInfo example_stream_info_;
     dds::core::xtypes::StructType example_type_;
 };
 
-} // namespace cpp_example
+}  // namespace cpp_example

@@ -31,18 +31,16 @@ if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
-    )
-
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
     )
 
 # Generate type plug-in files for conversion types

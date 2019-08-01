@@ -30,7 +30,7 @@
  objs\<arch>\NestedStructExample
  */
 /********* IDL representation for this example ************
- 
+
  struct InnerStruct {
  double x;
  double y;
@@ -46,8 +46,8 @@
 
 using namespace std;
 
-DDS_TypeCode *
-inner_struct_get_typecode(DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode *inner_struct_get_typecode(DDS_TypeCodeFactory *tcf)
+{
     static DDS_TypeCode *tc = NULL;
     DDS_StructMemberSeq members;
     DDS_ExceptionCode_t err;
@@ -60,18 +60,24 @@ inner_struct_get_typecode(DDS_TypeCodeFactory *tcf) {
     }
 
     /* Member 1 will be a double named x */
-    tc->add_member("x", DDS_TYPECODE_MEMBER_ID_INVALID,
+    tc->add_member(
+            "x",
+            DDS_TYPECODE_MEMBER_ID_INVALID,
             DDS_TypeCodeFactory_get_primitive_tc(tcf, DDS_TK_DOUBLE),
-            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, err);
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER,
+            err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member x" << endl;
         goto fail;
     }
 
     /* Member 2 will be a double named y */
-    tc->add_member("y", DDS_TYPECODE_MEMBER_ID_INVALID,
+    tc->add_member(
+            "y",
+            DDS_TYPECODE_MEMBER_ID_INVALID,
             DDS_TypeCodeFactory_get_primitive_tc(tcf, DDS_TK_DOUBLE),
-            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, err);
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER,
+            err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member y" << endl;
         goto fail;
@@ -80,15 +86,16 @@ inner_struct_get_typecode(DDS_TypeCodeFactory *tcf) {
     DDS_StructMemberSeq_finalize(&members);
     return tc;
 
-    fail: if (tc != NULL) {
+fail:
+    if (tc != NULL) {
         tcf->delete_tc(tc, err);
     }
     DDS_StructMemberSeq_finalize(&members);
     return NULL;
 }
 
-DDS_TypeCode *
-outer_struct_get_typecode(DDS_TypeCodeFactory * tcf) {
+DDS_TypeCode *outer_struct_get_typecode(DDS_TypeCodeFactory *tcf)
+{
     static DDS_TypeCode *tc = NULL;
     DDS_TypeCode *innerTC = NULL;
 
@@ -107,10 +114,14 @@ outer_struct_get_typecode(DDS_TypeCodeFactory * tcf) {
         cerr << "! Unable to create innerTC" << endl;
         goto fail;
     }
-    /* Member 1 of outer struct will be a struct of type inner_struct 
+    /* Member 1 of outer struct will be a struct of type inner_struct
      * called inner*/
-    tc->add_member("inner", DDS_TYPECODE_MEMBER_ID_INVALID, innerTC,
-            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, err);
+    tc->add_member(
+            "inner",
+            DDS_TYPECODE_MEMBER_ID_INVALID,
+            innerTC,
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER,
+            err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member inner struct" << endl;
         goto fail;
@@ -123,7 +134,8 @@ outer_struct_get_typecode(DDS_TypeCodeFactory * tcf) {
     DDS_StructMemberSeq_finalize(&members);
     return tc;
 
-    fail: if (tc != NULL) {
+fail:
+    if (tc != NULL) {
         tcf->delete_tc(tc, err);
     }
     DDS_StructMemberSeq_finalize(&members);
@@ -134,7 +146,8 @@ outer_struct_get_typecode(DDS_TypeCodeFactory * tcf) {
     return NULL;
 }
 
-int main() {
+int main()
+{
     DDS_TypeCodeFactory *tcf = NULL;
     DDS_ExceptionCode_t err;
 
@@ -152,7 +165,8 @@ int main() {
         return -1;
     }
 
-    /* Creating the typeCode of the outer_struct that contains an inner_struct */
+    /* Creating the typeCode of the outer_struct that contains an inner_struct
+     */
     struct DDS_TypeCode *outer_tc = outer_struct_get_typecode(tcf);
     if (inner_tc == NULL) {
         cerr << "! Unable to create outer typecode " << endl;
@@ -169,38 +183,46 @@ int main() {
     DDS_DynamicData bounded_data(NULL, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
 
     cout << " Connext Dynamic Data Nested Struct Example" << endl
-            << "--------------------------------------------" << endl;
+         << "--------------------------------------------" << endl;
 
     cout << " Data Types" << endl << "------------------" << endl;
     inner_tc->print_IDL(0, err);
     outer_tc->print_IDL(0, err);
 
     /* Setting the inner data */
-    retcode = inner_data.set_double("x", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+    retcode = inner_data.set_double(
+            "x",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             3.14159);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'x' in the inner struct" << endl;
         goto fail;
     }
 
-    retcode = inner_data.set_double("y", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+    retcode = inner_data.set_double(
+            "y",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             2.71828);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'y' in the inner struct" << endl;
         goto fail;
     }
 
-    cout << endl << endl << " get/set_complex_member API" << endl
-            << "------------------" << endl;
+    cout << endl
+         << endl
+         << " get/set_complex_member API" << endl
+         << "------------------" << endl;
     /* Using set_complex_member, we copy inner_data values in inner_struct of
      * outer_data */
     cout << "Setting the initial values of struct with set_complex_member()"
-            << endl;
-    retcode = outer_data.set_complex_member("inner",
-            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, inner_data);
+         << endl;
+    retcode = outer_data.set_complex_member(
+            "inner",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+            inner_data);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set complex struct value "
-                << "(member inner in the outer struct)" << endl;
+             << "(member inner in the outer struct)" << endl;
         goto fail;
     }
 
@@ -214,11 +236,13 @@ int main() {
 
     cout << endl << " + get_complex_member() called" << endl;
 
-    retcode = outer_data.get_complex_member(inner_data, "inner",
+    retcode = outer_data.get_complex_member(
+            inner_data,
+            "inner",
             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to get complex struct value"
-                << "(member inner in the outer struct)" << endl;
+             << "(member inner in the outer struct)" << endl;
         goto fail;
     }
     cout << endl << " + inner_data value" << endl;
@@ -227,14 +251,18 @@ int main() {
     /* get_complex_member made a copy of the inner_struct. If we modify
      * inner_data values, outer_data inner_struct WILL NOT be modified. */
     cout << endl << " + setting new values to inner_data" << endl;
-    retcode = inner_data.set_double("x", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+    retcode = inner_data.set_double(
+            "x",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             1.00000);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'x' in the inner struct" << endl;
         goto fail;
     }
 
-    retcode = inner_data.set_double("y", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+    retcode = inner_data.set_double(
+            "y",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             0.00001);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value 'y' in the inner struct" << endl;
@@ -254,14 +282,18 @@ int main() {
     outer_data.print(stdout, 1);
 
     /* Bind/Unbind member API */
-    cout << endl << endl << "bind/unbind API" << endl << "------------------"
-            << endl;
+    cout << endl
+         << endl
+         << "bind/unbind API" << endl
+         << "------------------" << endl;
 
-    /* Using bind_complex_member, we do not copy inner_struct, but bind it. 
+    /* Using bind_complex_member, we do not copy inner_struct, but bind it.
      * So, if we modify bounded_data, the inner member inside outer_data WILL
      * also be modified */
     cout << endl << " + bind complex member called" << endl;
-    retcode = outer_data.bind_complex_member(bounded_data, "inner",
+    retcode = outer_data.bind_complex_member(
+            bounded_data,
+            "inner",
             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to bind the structs" << endl;
@@ -271,15 +303,19 @@ int main() {
     bounded_data.print(stdout, 1);
 
     cout << endl << " + setting new values to bounded_data" << endl;
-    retcode = bounded_data.set_double("x",
-            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1.00000);
+    retcode = bounded_data.set_double(
+            "x",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+            1.00000);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value to 'x' with the bounded data" << endl;
         goto fail;
     }
 
-    retcode = bounded_data.set_double("y",
-            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 0.00001);
+    retcode = bounded_data.set_double(
+            "y",
+            DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+            0.00001);
     if (retcode != DDS_RETCODE_OK) {
         cerr << "! Unable to set value to 'y' in the bounded data" << endl;
         goto fail;
@@ -305,7 +341,8 @@ int main() {
 
     ret = 1;
 
-    fail: if (inner_tc != NULL) {
+fail:
+    if (inner_tc != NULL) {
         tcf->delete_tc(inner_tc, err);
     }
 

@@ -16,20 +16,20 @@
 
 using namespace dds::core::xtypes;
 
-UnionType create_union_type() 
+UnionType create_union_type()
 {
     return UnionType(
             "Foo",
             primitive_type<int32_t>(),
-            {
-                UnionMember("aShort", primitive_type<short>(), 0),
-                UnionMember("aLong", primitive_type<int>(), UnionMember::DEFAULT_LABEL),
-                UnionMember("aDouble", primitive_type<double>(), 3)
-            }
-    );
+            { UnionMember("aShort", primitive_type<short>(), 0),
+              UnionMember(
+                      "aLong",
+                      primitive_type<int>(),
+                      UnionMember::DEFAULT_LABEL),
+              UnionMember("aDouble", primitive_type<double>(), 3) });
 }
 
-void example() 
+void example()
 {
     // Create the type of the union
     UnionType union_type = create_union_type();
@@ -55,11 +55,11 @@ void example()
     std::cout << " with value " << aShort << std::endl;
 }
 
-int main(int argc, char *argv[]) 
+int main(int argc, char *argv[])
 {
     try {
         example();
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cerr << "Caught exception: " << ex.what() << std::endl;
         return -1;
     }

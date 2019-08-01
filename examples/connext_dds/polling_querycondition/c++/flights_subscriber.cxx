@@ -12,7 +12,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
 #include "flights.h"
 #include "flightsSupport.h"
@@ -21,8 +21,7 @@
 /* We remove all the listener code as we won't use any listener */
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
+static int subscriber_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -45,13 +44,13 @@ static int subscriber_shutdown(
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
-/*
-    retcode = DDSDomainParticipantFactory::finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        printf("finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-*/
+    /*
+        retcode = DDSDomainParticipantFactory::finalize_instance();
+        if (retcode != DDS_RETCODE_OK) {
+            printf("finalize_instance error %d\n", retcode);
+            status = -1;
+        }
+    */
     return status;
 }
 
@@ -66,13 +65,15 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     int count = 0;
 
     /* Poll for new samples every second. */
-    DDS_Duration_t receive_period = {1,0};
+    DDS_Duration_t receive_period = { 1, 0 };
     int status = 0;
 
     /* Create the Participant. */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant);
@@ -81,7 +82,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Create a Subscriber. */
     subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -90,8 +93,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Register the type before creating the topic. */
     type_name = FlightTypeSupport::get_type_name();
-    retcode = FlightTypeSupport::register_type(
-        participant, type_name);
+    retcode = FlightTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant);
@@ -100,9 +102,11 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Create a Topic. */
     topic = participant->create_topic(
-        "Example Flight",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example Flight",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -111,16 +115,17 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     /* Call create_datareader passing NULL in the listener parameter. */
     reader = subscriber->create_datareader(
-        topic, DDS_DATAREADER_QOS_DEFAULT, NULL,
-        DDS_STATUS_MASK_ALL);
+            topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            NULL,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
         return -1;
     }
 
-    FlightDataReader *flight_reader =
-        FlightDataReader::narrow(reader);
+    FlightDataReader *flight_reader = FlightDataReader::narrow(reader);
     if (reader == NULL) {
         printf("DataReader narrow error\n");
         return -1;
@@ -135,25 +140,27 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     query_parameters[0] = "'CompanyA'";
     query_parameters[1] = "30000";
     printf("Setting parameter to company %s, altitude bigger or equals to %s\n",
-        query_parameters[0], query_parameters[1]);
+           query_parameters[0],
+           query_parameters[1]);
 
     /* Create the query condition with an expession to MATCH the id field in
      * the structure and a numeric comparison. Note that you should make a copy
      * of the expression string when creating the query condition - beware it
      * going out of scope! */
     DDSQueryCondition *query_condition = flight_reader->create_querycondition(
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE,
-        DDS_ALIVE_INSTANCE_STATE,
-        DDS_String_dup("company MATCH %0 AND altitude >= %1"),
-        query_parameters);
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ALIVE_INSTANCE_STATE,
+            DDS_String_dup("company MATCH %0 AND altitude >= %1"),
+            query_parameters);
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         /* Poll for a new samples every second. */
         NDDSUtility::sleep(receive_period);
+        bool update = false;
 
         /* Change the filter parameter after 5 seconds. */
-        bool update = false;
         if ((count + 1) % 10 == 5) {
             query_parameters[0] = "'CompanyB'";
             update = true;
@@ -166,15 +173,17 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         if (update) {
             printf("Changing parameter to %s\n", query_parameters[0]);
             query_condition->set_query_parameters(query_parameters);
-            update = false;
         }
 
         DDS_SampleInfoSeq info_seq;
         FlightSeq data_seq;
 
         /* Iterate through the samples read using the read_w_condition method */
-        retcode = flight_reader->read_w_condition(data_seq, info_seq,
-                        DDS_LENGTH_UNLIMITED, query_condition);
+        retcode = flight_reader->read_w_condition(
+                data_seq,
+                info_seq,
+                DDS_LENGTH_UNLIMITED,
+                query_condition);
         if (retcode == DDS_RETCODE_NO_DATA) {
             // Not an error
             continue;
@@ -187,8 +196,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         for (int i = 0; i < data_seq.length(); ++i) {
             if (info_seq[i].valid_data) {
                 printf("\t[trackId: %d, company: %s, altitude: %d]\n",
-                    data_seq[i].trackId, data_seq[i].company,
-                    data_seq[i].altitude);
+                       data_seq[i].trackId,
+                       data_seq[i].company,
+                       data_seq[i].altitude);
             }
         }
 
@@ -229,16 +239,30 @@ int main(int argc, char *argv[])
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
-    USER_APPL_INIT;         /* for backwards compatibility */
-#endif
+    #ifdef USER_APPL_INIT
+    USER_APPL_INIT; /* for backwards compatibility */
+    #endif
 
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000, (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "sub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) subscriber_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

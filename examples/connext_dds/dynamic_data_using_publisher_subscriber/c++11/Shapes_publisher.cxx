@@ -9,10 +9,10 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <dds/dds.hpp>
-#include <rti/core/xtypes/DynamicDataTuples.hpp>
 #include "Shapes.hpp"
+#include <dds/dds.hpp>
+#include <iostream>
+#include <rti/core/xtypes/DynamicDataTuples.hpp>
 
 using namespace dds::core;
 using namespace dds::core::xtypes;
@@ -26,7 +26,7 @@ void publisher_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Create DynamicData using the type defined in the IDL file.
-    const StructType& shape_type = rti::topic::dynamic_type<ShapeType>::get();
+    const StructType &shape_type = rti::topic::dynamic_type<ShapeType>::get();
 
     // If you want to create the type from code instead of using an IDL
     // file with rtiddsgen, comment out the previous declaration and
@@ -52,14 +52,14 @@ void publisher_main(int domain_id, int sample_count)
     DynamicData shape_data(shape_type);
 
     // Initialize the data values.
-    int direction  = 1;
+    int direction = 1;
     int x_position = 50;
     int shape_size = 30;
 
     // Set data with C++ tuples (C++11 only).
     rti::core::xtypes::set_tuple(
-        shape_data,
-        std::make_tuple(std::string("BLUE"), x_position, 100, shape_size));
+            shape_data,
+            std::make_tuple(std::string("BLUE"), x_position, 100, shape_size));
 
     // Standard method with setters (C++03 compatible).
     // shape_data.value<std::string>("color", "BLUE");
@@ -68,7 +68,8 @@ void publisher_main(int domain_id, int sample_count)
     // shape_data.value("shapesize", shape_size);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // Modify and set the shape size from 30 to 50.
         shape_size = 30 + (count % 20);
         shape_data.value("shapesize", shape_size);
@@ -77,8 +78,8 @@ void publisher_main(int domain_id, int sample_count)
         shape_data.value("x", x_position);
 
         // Publish data.
-        std::cout << "Sending [shapesize=" << shape_size
-                  << ", x=" << x_position  << "]" << std::endl;
+        std::cout << "Sending [shapesize=" << shape_size << ", x=" << x_position
+                  << "]" << std::endl;
         writer.write(shape_data);
 
         // Update the position X.
@@ -96,7 +97,7 @@ void publisher_main(int domain_id, int sample_count)
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */

@@ -1,6 +1,7 @@
 # Example Code: Using TypeCodes
 
 ## Concept
+
 *Type schemas* -- the names and definitions of a type and its fields -- are
 represented by *TypeCode* objects. A type code value consists of a type code
 kind and a list of members. Type codes unambiguously match type representations
@@ -26,14 +27,14 @@ not available from the built-in data returned by the *DataWriter's*
 
 If your data type has an especially complex type code, you may need to increase
 the value of the `type_code_max_serialized_length` field in the
-*DomainParticipant's* `DOMAIN_PARTICIPANT_RESOURCE_LIMITS` QoS policy
-(DDS Extension). Or, to prevent the propagation of type codes altogether, you
-can set this value to zero `0`. Be aware that some features of monitoring tools,
-as well as some features of the middleware itself
-(such as *ContentFilteredTopics*) will not work correctly if you disable
-*TypeCode* propagation.
+*DomainParticipant's* `DOMAIN_PARTICIPANT_RESOURCE_LIMITS` QoS policy (DDS
+Extension). Or, to prevent the propagation of type codes altogether, you can set
+this value to zero `0`. Be aware that some features of monitoring tools, as well
+as some features of the middleware itself (such as *ContentFilteredTopics*) will
+not work correctly if you disable *TypeCode* propagation.
 
 ## Example Description
+
 The *Topic* type in this example is complex to illustrate the power of type
 codes. The default value for `resource_limits.type_code_max_serialized_length`
 is `2048` bytes -- an insufficient size to hold the type codes of a complex

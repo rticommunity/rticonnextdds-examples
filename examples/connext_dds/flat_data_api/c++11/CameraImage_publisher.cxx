@@ -13,15 +13,15 @@
 #include <iostream>
 
 #include <dds/pub/ddspub.hpp>
-#include <rti/util/util.hpp> // for sleep()
 #include <rti/config/Logger.hpp>
+#include <rti/util/util.hpp>  // for sleep()
 
 #include "CameraImage.hpp"
 
 const int PIXEL_COUNT = 10;
 
 // Simplest way to create the data sample
-void build_data_sample(CameraImageBuilder& builder, int seed)
+void build_data_sample(CameraImageBuilder &builder, int seed)
 {
     builder.add_format(Format::RGB);
 
@@ -46,7 +46,7 @@ void build_data_sample(CameraImageBuilder& builder, int seed)
 
 // Creates the same data sample using a faster method
 // to populate the pixel sequence
-void build_data_sample_fast(CameraImageBuilder& builder, int seed)
+void build_data_sample_fast(CameraImageBuilder &builder, int seed)
 {
     // The initialization of these members doesn't change
     builder.build_source().set_string("CAM-1");
@@ -61,7 +61,8 @@ void build_data_sample_fast(CameraImageBuilder& builder, int seed)
     // of iterating through each element Offset
 
     // 1) Use the builder to add all the elements at once. This operation is
-    // cheap (it just advances the underlying buffer without initializing anything)
+    // cheap (it just advances the underlying buffer without initializing
+    // anything)
     auto pixels_builder = builder.build_pixels();
     pixels_builder.add_n(PIXEL_COUNT);
     auto pixels = pixels_builder.finish();
@@ -70,7 +71,7 @@ void build_data_sample_fast(CameraImageBuilder& builder, int seed)
     // (pixel_array's type is PixelPlainHelper*)
     auto pixel_array = rti::flat::plain_cast(pixels);
     for (int i = 0; i < PIXEL_COUNT; i++) {
-        auto& pixel = pixel_array[i];
+        auto &pixel = pixel_array[i];
         pixel.red((seed + i) % 100);
         pixel.green((seed + i + 1) % 100);
         pixel.blue((seed + i + 2) % 100);
@@ -80,10 +81,10 @@ void build_data_sample_fast(CameraImageBuilder& builder, int seed)
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    dds::domain::DomainParticipant participant (domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    dds::topic::Topic<CameraImage> topic (participant, "Example CameraImage");
+    dds::topic::Topic<CameraImage> topic(participant, "Example CameraImage");
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     dds::pub::DataWriter<CameraImage> writer(
@@ -95,9 +96,9 @@ void publisher_main(int domain_id, int sample_count)
 
         // Build the CameraImage data sample using the builder
         if (count % 2 == 0) {
-            build_data_sample(builder, count); // method 1
+            build_data_sample(builder, count);  // method 1
         } else {
-            build_data_sample_fast(builder, count); // method 2
+            build_data_sample_fast(builder, count);  // method 2
         }
 
         // Create the sample
@@ -113,9 +114,8 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -130,9 +130,10 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in publisher_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 
@@ -144,4 +145,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

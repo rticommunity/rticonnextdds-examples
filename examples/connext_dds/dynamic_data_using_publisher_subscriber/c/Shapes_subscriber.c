@@ -38,45 +38,61 @@
 
  */
 
+#include "Shapes.h"
+#include "ndds/ndds_c.h"
 #include <stdio.h>
 #include <stdlib.h>
-#include "ndds/ndds_c.h"
-#include "Shapes.h"
 
 #define EXAMPLE_TYPE_NAME "ShapesType"
 
-void ShapeTypeListener_on_requested_deadline_missed(void* listener_data,
-        DDS_DataReader* reader,
-        const struct DDS_RequestedDeadlineMissedStatus *status) {
+void ShapeTypeListener_on_requested_deadline_missed(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status)
+{
 }
 
-void ShapeTypeListener_on_requested_incompatible_qos(void* listener_data,
-        DDS_DataReader* reader,
-        const struct DDS_RequestedIncompatibleQosStatus *status) {
+void ShapeTypeListener_on_requested_incompatible_qos(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status)
+{
 }
 
-void ShapeTypeListener_on_sample_rejected(void* listener_data,
-        DDS_DataReader* reader, const struct DDS_SampleRejectedStatus *status) {
+void ShapeTypeListener_on_sample_rejected(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleRejectedStatus *status)
+{
 }
 
-void ShapeTypeListener_on_liveliness_changed(void* listener_data,
-        DDS_DataReader* reader,
-        const struct DDS_LivelinessChangedStatus *status) {
+void ShapeTypeListener_on_liveliness_changed(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_LivelinessChangedStatus *status)
+{
 }
 
-void ShapeTypeListener_on_sample_lost(void* listener_data,
-        DDS_DataReader* reader, const struct DDS_SampleLostStatus *status) {
+void ShapeTypeListener_on_sample_lost(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleLostStatus *status)
+{
 }
 
-void ShapeTypeListener_on_subscription_matched(void* listener_data,
-        DDS_DataReader* reader,
-        const struct DDS_SubscriptionMatchedStatus *status) {
+void ShapeTypeListener_on_subscription_matched(
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SubscriptionMatchedStatus *status)
+{
 }
 
-void ShapeTypeListener_on_data_available(void* listener_data,
-        DDS_DataReader* reader) {
+void ShapeTypeListener_on_data_available(
+        void *listener_data,
+        DDS_DataReader *reader)
+{
     /* We need to create a DynamicDataReader to receive the DynamicData
-     * and a DynamicDataSeq to store there the available DynamicData received 
+     * and a DynamicDataSeq to store there the available DynamicData received
      */
     DDS_DynamicDataReader *DynamicData_reader = NULL;
     struct DDS_DynamicDataSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -86,7 +102,7 @@ void ShapeTypeListener_on_data_available(void* listener_data,
 
     /* To use DynamicData, we need to assign the generic DataReader to
      * a DynamicDataReader, using DDS_DynamicDataReader_narrow.
-     * The following narrow fuction should never fail, as it performs 
+     * The following narrow fuction should never fail, as it performs
      * only a safe cast.
      */
     DynamicData_reader = DDS_DynamicDataReader_narrow(reader);
@@ -95,9 +111,14 @@ void ShapeTypeListener_on_data_available(void* listener_data,
         return;
     }
 
-    retcode = DDS_DynamicDataReader_take(DynamicData_reader, &data_seq,
-            &info_seq, DDS_LENGTH_UNLIMITED, DDS_ANY_SAMPLE_STATE,
-            DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = DDS_DynamicDataReader_take(
+            DynamicData_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -109,11 +130,14 @@ void ShapeTypeListener_on_data_available(void* listener_data,
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             DDS_DynamicData_print(
                     DDS_DynamicDataSeq_get_reference(&data_seq, i),
-                    stdout, 1);
+                    stdout,
+                    1);
         }
     }
 
-    retcode = DDS_DynamicDataReader_return_loan(DynamicData_reader, &data_seq,
+    retcode = DDS_DynamicDataReader_return_loan(
+            DynamicData_reader,
+            &data_seq,
             &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
@@ -124,8 +148,10 @@ void ShapeTypeListener_on_data_available(void* listener_data,
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(DDS_DomainParticipant *participant,
-        struct DDS_DynamicDataTypeSupport *typeSupport) {
+static int subscriber_shutdown(
+        DDS_DomainParticipant *participant,
+        struct DDS_DynamicDataTypeSupport *typeSupport)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -141,7 +167,8 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant,
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-                DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -162,7 +189,8 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant,
     return status;
 }
 
-static int subscriber_main(int domainId, int sample_count) {
+static int subscriber_main(int domainId, int sample_count)
+{
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
@@ -181,16 +209,21 @@ static int subscriber_main(int domainId, int sample_count) {
     struct DDS_DynamicDataTypeSupport *type_support = NULL;
 
     participant = DDS_DomainParticipantFactory_create_participant(
-            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         subscriber_shutdown(participant, type_support);
         return -1;
     }
 
-    subscriber = DDS_DomainParticipant_create_subscriber(participant,
-            &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
+    subscriber = DDS_DomainParticipant_create_subscriber(
+            participant,
+            &DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
@@ -200,7 +233,7 @@ static int subscriber_main(int domainId, int sample_count) {
 
     /* Create DynamicData using TypeCode from Shapes.c
      * If you are NOT using a type generated with rtiddsgen, you
-     * need to create this TypeCode from scratch. 
+     * need to create this TypeCode from scratch.
      */
     type_code = ShapeType_get_typecode();
     if (type_code == NULL) {
@@ -219,8 +252,10 @@ static int subscriber_main(int domainId, int sample_count) {
 
     /* Register the type before creating the topic */
     type_name = EXAMPLE_TYPE_NAME;
-    retcode = DDS_DynamicDataTypeSupport_register_type(type_support,
-            participant, type_name);
+    retcode = DDS_DynamicDataTypeSupport_register_type(
+            type_support,
+            participant,
+            type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
         subscriber_shutdown(participant, type_support);
@@ -230,10 +265,15 @@ static int subscriber_main(int domainId, int sample_count) {
     /* Make sure both publisher and subscriber share the same topic name.
      * In the Shapes example: we are subscribing to a Square, wich is the
      * topic name. If you want to publish other shapes (Triangle or Circle),
-     * you just need to update the topic name. 
+     * you just need to update the topic name.
      */
-    topic = DDS_DomainParticipant_create_topic(participant, "Square", type_name,
-            &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = DDS_DomainParticipant_create_topic(
+            participant,
+            "Square",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant, type_support);
@@ -254,9 +294,12 @@ static int subscriber_main(int domainId, int sample_count) {
     reader_listener.on_data_available = ShapeTypeListener_on_data_available;
 
     /* First, we create a generic DataReader for our topic */
-    reader = DDS_Subscriber_create_datareader(subscriber,
-            DDS_Topic_as_topicdescription(topic), &DDS_DATAREADER_QOS_DEFAULT,
-            &reader_listener, DDS_STATUS_MASK_ALL);
+    reader = DDS_Subscriber_create_datareader(
+            subscriber,
+            DDS_Topic_as_topicdescription(topic),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant, type_support);
@@ -266,7 +309,7 @@ static int subscriber_main(int domainId, int sample_count) {
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("ShapeType subscriber sleeping for %d sec...\n",
-                poll_period.sec);
+               poll_period.sec);
         NDDS_Utility_sleep(&poll_period);
     }
 
@@ -275,7 +318,7 @@ static int subscriber_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -297,7 +340,8 @@ int wmain(int argc, wchar_t** argv)
     return subscriber_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -320,17 +364,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = NULL;
+const unsigned char *__ctype = NULL;
 
-void usrAppInit ()
+void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "sub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) subscriber_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

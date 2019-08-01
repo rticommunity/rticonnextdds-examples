@@ -9,8 +9,8 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <dds/dds.hpp>
+#include <iostream>
 
 using namespace dds::core::xtypes;
 using namespace rti::core::xtypes;
@@ -85,12 +85,13 @@ int main()
 
     std::cout << inner_data << std::endl
               << " + current outer_data value " << std::endl
-              << outer_data << std::endl << std::endl;
+              << outer_data << std::endl
+              << std::endl;
 
     // Using loan_value, we do not copy inner, but bind it.
     // So, if we modify loaned_inner, the inner member inside outer_data WILL
     // also be modified.
-    std::cout << " loan/unloan API"  << std::endl
+    std::cout << " loan/unloan API" << std::endl
               << "-----------------" << std::endl
               << " + loan member called" << std::endl;
     LoanedDynamicData loaned_inner = outer_data.loan_value("inner");

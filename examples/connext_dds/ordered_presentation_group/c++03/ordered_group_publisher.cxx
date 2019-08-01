@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "ordered_group.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -82,7 +82,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -98,7 +98,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

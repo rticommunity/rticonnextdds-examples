@@ -13,63 +13,68 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
 
 #include "CameraImage.hpp"
 
 // Shows how to access a flat data sample (this is the simplest code, for
 // a more efficient implementation, see print_average_pixel_fast).
-void print_average_pixel_simple(const CameraImage& sample)
+void print_average_pixel_simple(const CameraImage &sample)
 {
     auto pixels = sample.root().pixels();
     auto pixel_count = pixels.element_count();
     unsigned int red_sum = 0, green_sum = 0, blue_sum = 0;
 
-    for (auto&& pixel : pixels) {
+    for (auto &&pixel : pixels) {
         red_sum += pixel.red();
         green_sum += pixel.green();
         blue_sum += pixel.blue();
     }
 
     std::cout << "Avg. pixel: (" << red_sum / pixel_count << ", "
-              << green_sum / pixel_count << ", "
-              << blue_sum / pixel_count << ")";
+              << green_sum / pixel_count << ", " << blue_sum / pixel_count
+              << ")";
 }
 
 // Shows how to access a flat data sample in a more efficient way
-void print_average_pixel_fast(const CameraImage& sample)
+void print_average_pixel_fast(const CameraImage &sample)
 {
     auto pixels = sample.root().pixels();
     auto pixel_count = pixels.element_count();
+
+    if (pixel_count == 0) {
+        return;
+    }
+
     auto pixel_array = rti::flat::plain_cast(pixels);
 
     unsigned int red_sum = 0, green_sum = 0, blue_sum = 0;
     for (unsigned int i = 0; i < pixel_count; i++) {
-        const auto& pixel = pixel_array[i];
+        const auto &pixel = pixel_array[i];
         red_sum += pixel.red();
         green_sum += pixel.green();
         blue_sum += pixel.blue();
     }
 
     std::cout << "Avg. pixel: (" << red_sum / pixel_count << ", "
-              << green_sum / pixel_count << ", "
-              << blue_sum / pixel_count << ")";
+              << green_sum / pixel_count << ", " << blue_sum / pixel_count
+              << ")";
 }
 
-int process_data(dds::sub::DataReader<CameraImage>& reader)
+int process_data(dds::sub::DataReader<CameraImage> &reader)
 {
     // Take all samples
     int count = 0;
     auto samples = rti::sub::valid_data(reader.take());
-    for (const auto& sample : samples) {
+    for (const auto &sample : samples) {
         count++;
         auto root = sample.data().root();
 
         std::cout << root.source().get_string() << ": ";
         // print_average_pixel_simple(sample.data()); // Method 1
-        print_average_pixel_fast(sample.data()); // Method 2
+        print_average_pixel_fast(sample.data());  // Method 2
         std::cout << std::endl;
     }
 
@@ -89,16 +94,15 @@ void subscriber_main(int domain_id, int sample_count)
             dds::sub::Subscriber(participant),
             topic);
 
-    // Create a ReadCondition for any data on this reader and associate a handler
+    // Create a ReadCondition for any data on this reader and associate a
+    // handler
     int count = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [&reader, &count](/* dds::core::cond::Condition condition */)
-        {
-            count += process_data(reader);
-        }
-    );
+            reader,
+            dds::sub::status::DataState::any(),
+            [&reader, &count](/* dds::core::cond::Condition condition */) {
+                count += process_data(reader);
+            });
 
     // Create a WaitSet and attach the ReadCondition
     dds::core::cond::WaitSet waitset;
@@ -107,17 +111,17 @@ void subscriber_main(int domain_id, int sample_count)
     while (count < sample_count || sample_count == 0) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
-        std::cout << "CameraImage subscriber sleeping for 4 sec..." << std::endl;
+        std::cout << "CameraImage subscriber sleeping for 4 sec..."
+                  << std::endl;
 
-        waitset.dispatch(dds::core::Duration(4)); // Wait up to 4s each time
+        waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
     }
 }
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -132,9 +136,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 
@@ -146,4 +151,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

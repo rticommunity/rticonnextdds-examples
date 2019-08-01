@@ -9,9 +9,9 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <dds/dds.hpp>
 #include "flights.hpp"
+#include <dds/dds.hpp>
+#include <iostream>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -30,7 +30,7 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a Topic -- and automatically register the type.
     Topic<Flight> topic(participant, "Example Flight");
 
-     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+    // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather than
@@ -54,12 +54,15 @@ void subscriber_main(int domain_id, int sample_count)
     // Create the query condition with an expession to MATCH the id field in
     // the structure and a numeric comparison.
     QueryCondition query_condition(
-        Query(reader, "company MATCH %0 AND altitude >= %1", query_parameters),
-        DataState::any_data());
+            Query(reader,
+                  "company MATCH %0 AND altitude >= %1",
+                  query_parameters),
+            DataState::any_data());
 
     // Main loop
     bool update = false;
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         // Poll for new samples every second.
         rti::util::sleep(Duration(1));
 
@@ -77,20 +80,18 @@ void subscriber_main(int domain_id, int sample_count)
             std::cout << "Changing parameter to " << query_parameters[0]
                       << std::endl;
             query_condition.parameters(
-                query_parameters.begin(),
-                query_parameters.end());
+                    query_parameters.begin(),
+                    query_parameters.end());
             update = false;
         }
 
         // Get new samples selecting them with a condition.
-        LoanedSamples<Flight> samples = reader.select()
-            .condition(query_condition)
-            .read();
+        LoanedSamples<Flight> samples =
+                reader.select().condition(query_condition).read();
 
         for (LoanedSamples<Flight>::iterator sampleIt = samples.begin();
-                sampleIt != samples.end();
-                ++sampleIt) {
-
+             sampleIt != samples.end();
+             ++sampleIt) {
             if (!sampleIt->info().valid())
                 continue;
 
@@ -102,7 +103,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

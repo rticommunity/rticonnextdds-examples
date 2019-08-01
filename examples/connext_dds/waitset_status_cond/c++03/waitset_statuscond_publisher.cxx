@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "waitset_statuscond.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -46,7 +46,8 @@ void publisher_main(int domain_id, int sample_count)
     // Create a sample for writing.
     Foo instance;
 
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         std::cout << "Writing waitset_statuscond, count " << count << std::endl;
         instance.x(count);
         writer.write(instance);
@@ -57,8 +58,8 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // Infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

@@ -9,51 +9,53 @@ different annotations for each mode.
 
 ### CameraImage_publisher.cxx and CameraImage_subscriber.cxx
 
-`CameraImage_publisher.cxx` and `CameraImage_subscriber.cxx` implement each
-mode in a separate function:
+`CameraImage_publisher.cxx` and `CameraImage_subscriber.cxx` implement each mode
+in a separate function:
 
-* `CameraImage_publisher.cxx`:
-  * `publisher_flat()`
-  * `publisher_zero_copy()`
-  * `publisher_flat_zero_copy()`
-  * `publisher_plain()`
+-   `CameraImage_publisher.cxx`:
 
-* `CameraImage_subscriber.cxx`:
-  * `subscriber_flat()`
-  * `subscriber_zero_copy()`
-  * `subscriber_flat_zero_copy()`
-  * `subscriber_plain()`
+    - `publisher_flat()`
+    - `publisher_zero_copy()`
+    - `publisher_flat_zero_copy()`
+    - `publisher_plain()`
+
+-   `CameraImage_subscriber.cxx`:
+
+    - `subscriber_flat()`
+    - `subscriber_zero_copy()`
+    - `subscriber_flat_zero_copy()`
+    - `subscriber_plain()`
 
 These functions are very similar but have a few differences specific to each
 feature:
 
-* **Language binding**: `*_flat` and `*_flat_zero_copy` use the FlatData
-  language binding, with a distinct way to create and access the data sample.
-   `*_zero_copy` and `*_plain` use the regular (`PLAIN`) language binding.
-* **Sample lifecycle**: `*_flat`, `*_zero_copy` and `*_flat_zero_copy` use
-  DataWriter-managed samples, obtained with the `get_loan` function. The
-  application doesn't delete these samples.
+-   **Language binding**: `*_flat` and `*_flat_zero_copy` use the FlatData
+    language binding, with a distinct way to create and access the data sample.
+    `*_zero_copy` and `*_plain` use the regular (`PLAIN`) language binding.
+
+-   **Sample lifecycle**: `*_flat`, `*_zero_copy` and `*_flat_zero_copy` use
+    DataWriter-managed samples, obtained with the `get_loan` function. The
+    application doesn't delete these samples.
 
 ### Common.hpp
 
 `Common.hpp` implements functionality used by both applications:
 
-* Waiting for discovery
-* Functions to populate and print the data
-* Application options
+- Waiting for discovery
+- Functions to populate and print the data
+- Application options
 
 ### QoS Settings
 
 The FlatData profile used in this example inherits from the builtin
 `StrictReliable.LargeData` profile. This builtin profile sets up the middleware
-for sending large data by using Asynchronous Pubisher, a default Flow
-Controller and other optimizations. In the FlatData profile, the *Durability
-QoS* of the DataWriter is set to volatile to enable managed samples to be
-reused when they are acknowledged. The *DataRepresentation QoS* is set to
-*Extended CDR version 2* at both the DataWriter and the DataReader as FlatData
-language binding is only supported with this data representation. The tranport
-settings of the participant are also tuned to ensure reduced latency while
-sending large data.
+for sending large data by using Asynchronous Pubisher, a default Flow Controller
+and other optimizations. In the FlatData profile, the *Durability QoS* of the
+DataWriter is set to volatile to enable managed samples to be reused when they
+are acknowledged. The *DataRepresentation QoS* is set to *Extended CDR version
+2* at both the DataWriter and the DataReader as FlatData language binding is
+only supported with this data representation. The tranport settings of the
+participant are also tuned to ensure reduced latency while sending large data.
 
 ## Building C++11 Example
 
@@ -74,14 +76,14 @@ Compile the Publisher and Subscriber apps:
 make -f <makefile_for_your_target_architecture>
 ```
 
-The executables *CameraImage_publisher* and *CameraImage_subscriber* are
-located under `objs/\<architecture\>`.
+The executables *CameraImage_publisher* and *CameraImage_subscriber* are located
+under `objs/\<architecture\>`.
 
 ## Running C++11 Example
 
 ### Usage
 
-```plain
+```plaintext
 Usage: ./objs/<archictecture>/CameraImage_[publisher|subscriber] [options]
 
 Options:
@@ -110,7 +112,7 @@ interface only.
 *CameraImage_publisher* waits for the subscriber and then prints the average
 one-way latency every 4 seconds:
 
-```plain
+```plaintext
 Running publisher_zero_copy
 Waiting for the subscriber application
 Discovery complete
@@ -120,10 +122,10 @@ Average end-to-end latency: 81 microseconds
 Average end-to-end latency: 82 microseconds
 ```
 
-*CameraImage_subscriber* waits for the publisher and responds to each ping
-with a pong message:
+*CameraImage_subscriber* waits for the publisher and responds to each ping with
+a pong message:
 
-```plain
+```plaintext
 Running subscriber_zero_copy
 Waiting for the publisher application
 Discovery complete
