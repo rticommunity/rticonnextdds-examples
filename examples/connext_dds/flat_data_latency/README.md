@@ -1,4 +1,4 @@
-# Example Code: FlatData and ZeroCopy examples
+# Example Code: FlatData and ZeroCopy
 
 ## Concept
 

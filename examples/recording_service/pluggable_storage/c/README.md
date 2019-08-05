@@ -1,3 +1,5 @@
+# Recording Service -- Pluggable Storage
+
 ## Example Description
 
 This example shows how to implement a custom *RTI Recording Service* Storage

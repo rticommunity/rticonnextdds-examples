@@ -1,0 +1,8 @@
+CameraImage.cxx
+CameraImage.h
+CameraImagePlugin.cxx
+CameraImagePlugin.h
+CameraImageSupport.cxx
+CameraImageSupport.h
+makefile*
+objs
