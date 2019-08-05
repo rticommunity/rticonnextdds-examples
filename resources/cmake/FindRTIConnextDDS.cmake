@@ -33,7 +33,6 @@
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
-#
 # This module defines the following `IMPORTED` targets:
 #
 # - ``RTIConnextDDS::c_api``
@@ -193,6 +192,10 @@
 #   you want to ensure that you are using a specific OpenSSL version, you must
 #   set the ``CONNEXTDDS_OPENSSL_VERSION`` so that it can be added to the
 #   find_package(OpenSSL) invocation.
+#
+# - If you want to build against debug versions of imported targets, you must
+#   enable ``CONNEXTDDS_IMPORTED_TARGETS_DEBUG``. Example:
+#       cmake -DCONNEXTDDS_IMPORTED_TARGETS_DEBUG=ON
 #
 # Note
 # ^^^^
@@ -1039,10 +1042,10 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         set(target_definitions ${CONNEXTDDS_COMPILE_DEFINITIONS})
     endif()
 
-    if(${CMAKE_BUILD_TYPE} MATCHES "Release")
-        set(build_type "RELEASE")
-    else()
+    if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
         set(build_type "DEBUG")
+    else()
+        set(build_type "RELEASE")
     endif()
 
     if(NOT TARGET RTIConnextDDS::c_api)
