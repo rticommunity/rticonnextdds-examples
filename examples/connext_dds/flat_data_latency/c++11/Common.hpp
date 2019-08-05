@@ -133,7 +133,7 @@ inline void print_latency(int total_latency, int count)
 {
     if (count > 0) {
         std::cout << "Average end-to-end latency: "
-              << total_latency / (count * 2) << " microseconds\n";
+                  << total_latency / (count * 2) << " microseconds\n";
     } else {
         std::cout << "No samples received\n";
     }

@@ -1,7 +1,7 @@
 # Example Code: Flat Data API example
 
-This example shows how to use FlatData in the RTI Connext DDS _Traditional C++ API_. 
-For an example using the _Modern C++ API_, see [../c++11](../c++11).
+This example shows how to use FlatData in the RTI Connext DDS _Traditional C++
+API_. For an example using the _Modern C++ API_, see [../c++11](../c++11).
 
 **Important:** A known issue in the _Traditional C++ API_ affects this example.
 The function `build_data_sample_fast` in CameraImage_publisher.cxx cannot be used
@@ -33,8 +33,14 @@ managed. When used with the Traditional C++ API, the FlatData API doesn't throw
 exceptions, so error management is explicit. In the Modern C++ API, exceptions
 simplify the code in these functions. For more information about error management
 in the FlatData API, see:
-* Error management in Builders ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html), [C++11](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
-* Error management in Offsets ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html), [C++11](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
+
+-   Error management in Builders
+    ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html),
+    [C++11](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
+
+-   Error management in Offsets
+    ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html),
+    [C++11](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
 
 ## Building C++98 Example
 
@@ -48,8 +54,8 @@ rtiddsgen -language C++ -example <your_target_architecture> CameraImage.idl
 The option **-language C++** is required.
 
 You may get messages saying that some files already exist and will not be
-replaced. You can safely ignore those messages, since all the source files
-for this example are already provided.
+replaced. You can safely ignore those messages, since all the source files for
+this example are already provided.
 
 Next, compile the Publisher and Subscriber apps:
 
@@ -57,8 +63,8 @@ Next, compile the Publisher and Subscriber apps:
 make -f <makefile_for_your_target_architecture>
 ```
 
-The executables *CameraImage_publisher* and *CameraImage_subscriber* are located
-under **objs/\<architecture\>**
+The executables *CameraImage_publisher* and *CameraImage_subscriber* are
+located under **objs/\<architecture\>**
 
 ## Running C++98 Example
 
