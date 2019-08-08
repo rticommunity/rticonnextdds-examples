@@ -1201,14 +1201,18 @@ endif()
 # rtixml2 Library Component Variables                               #
 #####################################################################
 if(rtixml2 IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    if(WIN32)
+        message(FATAL_ERROR "rtixml2 component is not supported for Windows")
+    endif()
+
     # Find all flavors of librtixml2
     set(rtixml2_libs
         "rtixml2"
         "nddsc"
         "nddscore")
-    get_all_library_variables("${rtixml2_libs}" "rtixml2")
+    get_all_library_variables("${rtixml2_libs}" "RTIXML2")
 
-    if(rtixml2_FOUND)
+    if(RTIXML2_FOUND)
         set(RTIConnextDDS_rtixml2_FOUND TRUE)
     else()
         set(RTIConnextDDS_rtixml2_FOUND FALSE)
@@ -1218,7 +1222,7 @@ endif()
 #####################################################################
 # Low Bandwidth Pluggins Component Variables                        #
 #####################################################################
-if(low_banwith_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+if(low_bandwidth_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
     # Find all flavors of librtilbedisc
     set(rtilbedisc_libs
         "rtilbedisc"
