@@ -9,6 +9,7 @@ set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake")
 
+# Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
 connextdds_add_example(

@@ -83,12 +83,12 @@ default behavior:
 -   `-G` -- CMake generator. The generator is the native build system to use
     build the source code. All the valid values are described described in the
     CMake documentation [CMake Generators
-    Section.](https://cmake.org/cmake/help/v3.13/manual/cmake-generators.7.html)
+    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
 
 For example, to build a example in Debug/Static mode run CMake as follows:
 
 ```sh
-cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON ..
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
 ```
 
 ### Configuring Connext DDS Installation Path and Architecture
