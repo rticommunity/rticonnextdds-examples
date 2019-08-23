@@ -1,6 +1,6 @@
 # Example Code: Flat Data API example
 
-This example shows how to use FlatData in the RTI Connext DDS _Traditional C++ API_. 
+This example shows how to use FlatData in the RTI Connext DDS _Traditional C++ API_.
 For an example using the _Modern C++ API_, see [../c++11](../c++11).
 
 **Important:** A known issue in the _Traditional C++ API_ affects this example.
@@ -33,8 +33,13 @@ managed. When used with the Traditional C++ API, the FlatData API doesn't throw
 exceptions, so error management is explicit. In the Modern C++ API, exceptions
 simplify the code in these functions. For more information about error management
 in the FlatData API, see:
-* Error management in Builders ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html), [C++11](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
-* Error management in Offsets ([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html), [C++11](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
+
+-   Error management in Builders
+([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html),
+[C++11](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
+-   Error management in Offsets
+([C++98](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html),
+[C++11](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
 
 ## Building C++98 Example
 
