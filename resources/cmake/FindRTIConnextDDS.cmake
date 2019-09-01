@@ -12,8 +12,9 @@
 #
 # Components
 # ^^^^^^^^^^
-# This module sets variables for the following components that are part
-# of RTI Connext DDS:
+# This module sets variables for the following components that are part of RTI
+# Connext DDS:
+#
 # - core (default, always provided)
 # - messaging_api
 # - security_plugins
@@ -154,6 +155,7 @@
 #
 # If you are building a simple ConnextDDS application (you are only using
 # the  core libraries), use the following variables:
+#
 #  - For a C application: CONNEXTDDS_C_API
 #  - For a Traditional C++ application: CONNEXTDDS_CPP_API
 #  - For a Modern C++ application: CONNEXTDDS_CPP2_API
@@ -267,13 +269,20 @@
 #####################################################################
 # Logging Macros                                                    #
 #####################################################################
-if("${CMAKE_MINOR_VERSION}" GREATER_EQUAL 15)
+
+# These two macros allow better code tracing with debug and verbose messages
+# using new CMake 3.15 message types. If cmake 3.14 or lower is in use, default
+# messages will be displayed starting with ``DEBUG`` or ``VERBOSE`` instead.
+#
+# Arguments:
+# - message: provides the message text
+if("${CMAKE_MINOR_VERSION}" GREATER_EQUAL "15")
     macro(connextdds_log_debug message)
-        message(DEBUG ${message})
+        message(DEBUG "${message}")
     endmacro()
 
     macro(connextdds_log_verbose message)
-        message(VERBOSE ${message})
+        message(VERBOSE "${message}")
     endmacro()
 else()
     macro(connextdds_log_debug message)
@@ -285,7 +294,12 @@ else()
     endmacro()
 endif()
 
-function(connextdds_log_xml XML_NAME XML)
+# This macro allow xml login with previous ``VERBOSE`` loger macros.
+#
+# Arguments:
+# - XML_NAME: provides the name of the xml
+# - XML: provides the xml contents
+macro(connextdds_log_xml XML_NAME XML)
     string(REPLACE "\n"
            ";" lines
            ${XML})
@@ -295,8 +309,7 @@ function(connextdds_log_xml XML_NAME XML)
         connextdds_log_verbose("\t${line}")
     endforeach()
     connextdds_log_verbose("~~~~~~~FINISH ${XML_NAME}~~~~~~~")
-
-endfunction()
+endmacro()
 
 #####################################################################
 # Preconditions Check                                               #
