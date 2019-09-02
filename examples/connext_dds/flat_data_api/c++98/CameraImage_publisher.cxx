@@ -18,8 +18,7 @@
 #include "ndds/ndds_cpp.h"
 
 /* Delete all entities */
-static int publisher_shutdown(
-    DDSDomainParticipant *participant)
+static int publisher_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -57,15 +56,15 @@ static int publisher_shutdown(
 const int PIXEL_COUNT = 10;
 
 // Simplest way to create the data sample
-bool build_data_sample(CameraImageBuilder& builder, int seed)
+bool build_data_sample(CameraImageBuilder &builder, int seed)
 {
     // The Traditional C++ API doesn't use exceptions, so errors must be checked
     // after each operation.
     //
     // Depending on the function, the error can be checked via the return value
-    // when they return a boolean, an Offset (is_null()), or a Builder (is_valid()).
-    // A Builder also provides check_failure() when the error can't be notified
-    // with the return value.
+    // when they return a boolean, an Offset (is_null()), or a Builder
+    // (is_valid()). A Builder also provides check_failure() when the error
+    // can't be notified with the return value.
 
     if (!builder.add_format(RGB)) {
         return false;
@@ -130,7 +129,7 @@ bool build_data_sample(CameraImageBuilder& builder, int seed)
 
 //
 // Note:
-// build_data_sample_fast disabled due to known issue. 
+// build_data_sample_fast disabled due to known issue.
 // Contact support@rti.com for a fix.
 //
 #if 0
@@ -205,8 +204,8 @@ bool build_data_sample_fast(CameraImageBuilder& builder, int seed)
 
     return true;
 }
-#else // See Note in #if above
-bool build_data_sample_fast(CameraImageBuilder& builder, int seed)
+#else  // See Note in #if above
+bool build_data_sample_fast(CameraImageBuilder &builder, int seed)
 {
     return build_data_sample(builder, seed);
 }
@@ -218,29 +217,33 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    CameraImageDataWriter * CameraImage_writer = NULL;
+    CameraImageDataWriter *CameraImage_writer = NULL;
     CameraImage *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t send_period = {4,0};
+    DDS_Duration_t send_period = { 4, 0 };
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDSTheParticipantFactory->create_participant(
-        domainId, DDS_PARTICIPANT_QOS_DEFAULT, 
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize publisher QoS, use 
+    /* To customize publisher QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     publisher = participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         fprintf(stderr, "create_publisher error\n");
         publisher_shutdown(participant);
@@ -249,31 +252,34 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     /* Register type before creating topic */
     type_name = CameraImageTypeSupport::get_type_name();
-    retcode = CameraImageTypeSupport::register_type(
-        participant, type_name);
+    retcode = CameraImageTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = participant->create_topic(
-        "Example CameraImage",
-        type_name, DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example CameraImage",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize data writer QoS, use 
+    /* To customize data writer QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     writer = publisher->create_datawriter(
-        topic, DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         fprintf(stderr, "create_datawriter error\n");
         publisher_shutdown(participant);
@@ -287,9 +293,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
-        CameraImageBuilder builder = rti::flat::build_data<CameraImage>(CameraImage_writer);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        CameraImageBuilder builder =
+                rti::flat::build_data<CameraImage>(CameraImage_writer);
         if (builder.check_failure()) {
             printf("builder creation error\n");
             publisher_shutdown(participant);
@@ -299,9 +305,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
         // Build the CameraImage data sample using the builder
         bool build_result = false;
         if (count % 2 == 0) {
-            build_result = build_data_sample(builder, count); // method 1
+            build_result = build_data_sample(builder, count);  // method 1
         } else {
-            build_result = build_data_sample_fast(builder, count); // method 2
+            build_result = build_data_sample_fast(builder, count);  // method 2
         }
 
         if (!build_result) {
@@ -315,7 +321,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         if (instance == NULL) {
             printf("finish_sample() error\n");
             publisher_shutdown(participant);
-            return -1;            
+            return -1;
         }
 
         printf("Writing CameraImage, count %d\n", count);
@@ -346,10 +352,9 @@ int main(int argc, char *argv[])
 
     /* Uncomment this to turn on additional logging
     NDDSConfigLogger::get_instance()->
-    set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API, 
+    set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
     NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
     return publisher_main(domain_id, sample_count);
 }
-

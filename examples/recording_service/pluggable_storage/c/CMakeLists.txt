@@ -16,16 +16,6 @@ project (PluggableStorage)
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_NOCASE)
-
-if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
-    set(msg
-        "You have selected to build the library in debug mode. It's recommended "
-        "to run the debug version of Recording Service or otherwise you may run "
-        "into undefined behavior")
-    message(WARNING ${msg})
-endif()
-
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
