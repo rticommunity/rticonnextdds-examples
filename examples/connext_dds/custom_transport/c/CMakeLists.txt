@@ -14,6 +14,7 @@ if(WIN32)
     message(FATAL_ERROR "This example is not supported in Windows.")
 endif()
 
+# Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
