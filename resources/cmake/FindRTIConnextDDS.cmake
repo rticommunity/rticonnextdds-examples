@@ -14,6 +14,7 @@
 # ^^^^^^^^^^
 # This module sets variables for the following components that are part
 # of RTI Connext DDS:
+#
 # - core (default, always provided)
 # - messaging_api
 # - security_plugins
@@ -33,7 +34,6 @@
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
-#
 # This module defines the following `IMPORTED` targets:
 #
 # - ``RTIConnextDDS::c_api``
@@ -48,17 +48,24 @@
 #   The C API library for Distributed Logger if found.
 # - ``RTIConnextDDS::distributed_logger_cpp``
 #   The CPP API library for Distributed Logger if found.
+# - ``RTIConnextDDS::metp``
+#   The METP library if found (nddsmetp).
 # - ``RTIConnextDDS::routing_service_infrastructure``
 #   The infrastructure library for Routing Service if found.
 # - ``RTIConnextDDS::routing_service_c``
-#   The C API library for Routing Service if found (includes rtiroutingservice
-#   and rtirsinfrastructure).
+#   The C API library for Routing Service if found (includes rtiroutingservice,
+#   rtirsinfrastructure, rtixml2 and rticonnextmsgc. Also nddsmetp and
+#   rticonnextmsgc if found).
 # - ``RTIConnextDDS::routing_service_cpp2``
 #   The CPP2 API library for Routing Service if found (includes
-#   rtiroutingservice and rtirsinfrastructure).
+#   rtiroutingservice, rtirsinfrastructure, rtixml2 and rticonnextmsgc. Also
+#   nddsmetp and rticonnextmsgc if found).
 # - ``RTIConnextDDS::routing_service``
 #   The same as RTIConnextDDS::routing_service_c. Maintained for backward
 #   compatibility.
+# - ``RTIConnextDDS::assign_transformation``
+#   The assign transformation library if found (includes rtirsassigntransf and
+#   rtiroutingservice).
 # - ``RTIConnextDDS::monitoring``
 #   The Monitoring library if found.
 # - ``RTIConnextDDS::security_plugins``
@@ -66,9 +73,38 @@
 # - ``RTIConnextDDS::messaging_c_api``
 #   The Request Reply C API library if found (rticonnextmsgc).
 # - ``RTIConnextDDS::messaging_cpp_api``
-#   The Request Reply CPP API library if found  (rticonnextmsgcpp).
+#   The Request Reply CPP API library if found (rticonnextmsgcpp).
 # - ``RTIConnextDDS::messaging_cpp2_api``
-#   The Request Reply C API library if found  (rticonnextmsgcpp2).
+#   The Request Reply C API library if found (rticonnextmsgcpp2).
+# - ``RTIConnextDDS::nddstls``
+#   The tls library if found (nddstls).
+# - ``RTIConnextDDS::transport_tcp``
+#   The Transport TCP library if found (nddstransporttcp).
+# - ``RTIConnextDDS::transport_tls``
+#   The Transport TLS library if found (nddstransporttls).
+# - ``RTIConnextDDS::transport_wan``
+#   The Transport WAN library if found (nddstransportwan).
+# - ``RTIConnextDDS::recording_service``
+#   The Recording Service library if found (includes rtirecordingservice,
+#   rtiroutingservice, rtirsinfrastructure, nddscpp2, rtidlc, nddsmetp,
+#   rticonnextmsgc and rtixml2).
+# - ``RTIConnextDDS::rtixml2``
+#   The RTI XML2 library if found (rtixml2).
+# - ``RTIConnextDDS::low_bandwidth_discovery_static``
+#   The Discovery Static library for Low Bandwidth Plugins if found
+#   (nddsdiscoverystatic).
+# - ``RTIConnextDDS::low_bandwidth_edisc``
+#   The edisc library for Low Bandwidth Plugins if found (rtilbedisc).
+# - ``RTIConnextDDS::low_bandwidth_pdisc``
+#   The pdisc library for Low Bandwidth Plugins if found (rtilbpdisc).
+# - ``RTIConnextDDS::low_bandwidth_rtps``
+#   The rtps library for Low Bandwidth Plugins if found (rtilbrtps).
+# - ``RTIConnextDDS::low_bandwidth_sm``
+#   The sm library for Low Bandwidth Plugins if found (rtilbsm).
+# - ``RTIConnextDDS::low_bandwidth_st``
+#   The st library for Low Bandwidth Plugins if found (rtilbst).
+# - ``RTIConnextDDS::rtizrtps``
+#   The rtizrtps library if found (rtizrtps).
 #
 # Result Variables
 # ^^^^^^^^^^^^^^^^
@@ -134,19 +170,75 @@
 #   - ``MESSAGING_CPP2``
 #     (e.g, ``MESSAGING_CPP2_API_LIBRARIES_RELEASE_STATIC``)
 #
-# - ``routing_service``:
+# - ``distributed_loger`` component:
+#   - ``DISTRIBUTED_LOGGER_C``
+#     (e.g., ``DISTRIBUTED_LOGGER_C_LIBRARIES_RELEASE_STATIC)
+#   - ``DISTRIBUTED_LOGGER_CPP``
+#     (e.g., ``DISTRIBUTED_LOGGER_CPP_LIBRARIES_RELEASE_STATIC)
+#
+# - ``metp`` component:
+#   - ``METP``
+#     (e.g., ``METP_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``routing_service`` component:
 #   - ``ROUTING_SERVICE_API``
 #     (e.g., ``ROUTING_SERVICE_API_LIBRARIES_RELEASE_STATIC``)
 #   - ``ROUTING_SERVICE_INFRASTRUCTURE``
 #     (e.g., ``ROUTING_SERVICE_INFRASTRUCTURE_LIBRARIES_RELEASE_STATIC``)
 #
-# - ``security_plugins``:
+# - ``assign_transformation`` component:
+#   - ``ASSIGN_TRANSFORMATION``
+#     (e.g., ``ASSIGN_TRANSFORMATION_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``security_plugins`` component:
 #   - ``SECURITY_PLUGINS``
 #     (e.g., ``SECURITY_PLUGINS_LIBRARIES_RELEASE_STATIC``)
 #
-# - ``monitoring_libraries``:
+# - ``monitoring_libraries`` component:
 #   - ``MONITORING_LIBRARIES``
 #     (e.g., ``MONITORING_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``nddstls`` component:
+#   - ``NDDSTLS``
+#     (e.g., ``NDDSTLS_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``transport_tcp`` component:
+#   - ``TRANSPORT_TCP``
+#     (e.g., ``TRANSPORT_TCP_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``transport_tls`` component:
+#   - ``TRANSPORT_TLS``
+#     (e.g., ``TRANSPORT_TLS_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``transport_wan`` component:
+#   - ``TRANSPORT_WAN``
+#     (e.g., ``TRANSPORT_WAN_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``recording_service`` component:
+#   - ``RECORDING_SERVICE_API``
+#     (e.g., ``RECORDING_SERVICE_API_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``rtixml2`` component:
+#   - ``RTIXML2``
+#     (e.g., ``RTIXML2_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``low_bandwidth_plugins`` component:
+#   - ``LOW_BANDWIDTH_DISCOVERY_STATIC``
+#     (e.g., ``LOW_BANDWIDTH_DISCOVERY_STATIC_LIBRARIES_RELEASE_STATIC``)
+#   - ``LOW_BANDWIDTH_EDISC``
+#     (e.g., ``LOW_BANDWIDTH_EDISC_LIBRARIES_RELEASE_STATIC``)
+#   - ``LOW_BANDWIDTH_PDISC``
+#     (e.g., ``LOW_BANDWIDTH_PDISC_LIBRARIES_RELEASE_STATIC``)
+#   - ``LOW_BANDWIDTH_RTPS``
+#     (e.g., ``LOW_BANDWIDTH_RTPS_LIBRARIES_RELEASE_STATIC``)
+#   - ``LOW_BANDWIDTH_SM``
+#     (e.g., ``LOW_BANDWIDTH_SM_LIBRARIES_RELEASE_STATIC``)
+#   - ``LOW_BANDWIDTH_ST``
+#     (e.g., ``LOW_BANDWIDTH_ST_LIBRARIES_RELEASE_STATIC``)
+#
+# - ``rtizrtps`` component:
+#   - ``RTIZRTPS``
+#     (e.g., ``RTIZRTPS_LIBRARIES_RELEASE_STATIC``)
 #
 #   Also, the ``<VAR>_FOUND`` variable is set for each one of the previous
 #   variables (e.g., ``MONITORING_LIBRARIES_RELEASE_STATIC_FOUND`` and
@@ -791,7 +883,7 @@ else()
 endif()
 
 #####################################################################
-# Distributed Logger Component Variables                                 #
+# Distributed Logger Component Variables                            #
 #####################################################################
 if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
@@ -803,6 +895,7 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS)
     # Find all flavors of rtidlcpp
     set(distributed_logger_cpp_libs
         "rtidlcpp"
+        "librtidlc"
         "nddscpp"
         "nddsc"
         "nddscore")
@@ -822,6 +915,25 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         set(RTIConnextDDS_distributed_logger_FOUND FALSE)
     endif()
 endif()
+
+#####################################################################
+# METP Library Component Variables                                  #
+#####################################################################
+if(metp IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddsmetp
+    set(metp_libs
+        "nddsmetp"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${metp_libs}" "METP")
+
+    if(METP_FOUND)
+        set(RTIConnextDDS_metp_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_metp_FOUND FALSE)
+    endif()
+endif()
+
 
 #####################################################################
 # Routing Service Component Variables                               #
@@ -848,10 +960,22 @@ if(routing_service IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         "${rtirsinfrastructure_libs}"
         "ROUTING_SERVICE_INFRASTRUCTURE")
 
+    set(addon_dependencies)
+    if(RTIConnextDDS_metp_FOUND)
+        set(addon_dependencies "nddsmetp")
+    endif()
+
+    if(RTIConnextDDS_distributed_logger_FOUND)
+        set(addon_dependencies "${addon_dependencies}" "rtidlc")
+    endif()
+
     # Find all flavors of librtiroutingservice
     set(routing_service_libs
         "rtiroutingservice"
         "rtirsinfrastructure"
+        ${addon_dependencies}
+        "rtixml2"
+        "rticonnextmsgc"
         "nddsc"
         "nddscore")
     get_all_library_variables("${routing_service_libs}" "ROUTING_SERVICE_API")
@@ -869,6 +993,27 @@ if(routing_service IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         set(RTIConnextDDS_routing_service_FOUND FALSE)
     endif()
 
+endif()
+
+#####################################################################
+# Assign Transformation Component Variables                         #
+#####################################################################
+if(assign_transformation IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of librtirsassigntransf
+    set(assign_transformation_libs
+        "rtirsassigntransf"
+        "rtiroutingservice"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables(
+        "${assign_transformation_libs}"
+        "ASSIGN_TRANSFORMATION")
+
+    if(ASSIGN_TRANSFORMATION_FOUND)
+        set(RTIConnextDDS_assign_transformation_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_assign_transformation_FOUND FALSE)
+    endif()
 endif()
 
 #####################################################################
@@ -948,7 +1093,6 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         set(RTIConnextDDS_security_plugins_FOUND FALSE)
     endif()
 
-
 endif()
 
 #####################################################################
@@ -965,6 +1109,203 @@ if(monitoring_libraries IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         set(RTIConnextDDS_monitoring_libraries_FOUND TRUE)
     else()
         set(RTIConnextDDS_monitoring_libraries_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# TLS Static Component Variables                                    #
+#####################################################################
+if(nddstls IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddstls
+    set(nddstls_libs
+        "nddstls"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${nddstls_libs}" "NDDSTLS")
+
+    if(NDDSTLS_FOUND)
+        set(RTIConnextDDS_nddstls_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_nddstls_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# Transport TCP Library Component Variables                         #
+#####################################################################
+if(transport_tcp IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddstransporttcp
+    set(transport_tcp_libs
+        "nddstransporttcp"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${transport_tcp_libs}" "TRANSPORT_TCP")
+
+    if(TRANSPORT_TCP_FOUND)
+        set(RTIConnextDDS_transport_tcp_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_transport_tcp_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# Transport TLS Library Component Variables                         #
+#####################################################################
+if(transport_tls IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddstransporttls
+    set(transport_tls_libs
+        "nddstransporttls"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${transport_tls_libs}" "TRANSPORT_TLS")
+
+    if(TRANSPORT_TLS_FOUND)
+        set(RTIConnextDDS_transport_tls_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_transport_tls_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# Transport WAN Library Component Variables                         #
+#####################################################################
+if(transport_wan IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddstransportwan
+    set(transport_wan_libs
+        "nddstransportwan"
+        "nddstransporttls"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${transport_wan_libs}" "TRANSPORT_WAN")
+
+    if(TRANSPORT_WAN_FOUND)
+        set(RTIConnextDDS_transport_wan_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_transport_wan_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# Recording Service API Component Variables                         #
+#####################################################################
+if(recording_service IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of librtirecordingservice
+    set(recording_service_libs
+        "rtirecordingservice"
+        "rtiroutingservice"
+        "rtirsinfrastructure"
+        "nddscpp2"
+        "rtidlc"
+        "nddsmetp"
+        "rticonnextmsgc"
+        "rtixml2"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables(
+        "${recording_service_libs}"
+        "RECORDING_SERVICE_API")
+
+    if(RECORDING_SERVICE_API_FOUND)
+        set(RTIConnextDDS_recording_service_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_recording_service_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# rtixml2 Library Component Variables                               #
+#####################################################################
+if(rtixml2 IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    if(WIN32)
+        message(FATAL_ERROR "rtixml2 component is not supported for Windows")
+    endif()
+
+    # Find all flavors of librtixml2
+    set(rtixml2_libs
+        "rtixml2"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtixml2_libs}" "RTIXML2")
+
+    if(RTIXML2_FOUND)
+        set(RTIConnextDDS_rtixml2_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_rtixml2_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# Low Bandwidth Pluggins Component Variables                        #
+#####################################################################
+if(low_bandwidth_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of libnddsdiscoverystatic
+    set(discovery_static_libs
+        "nddsdiscoverystatic"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables(
+        "${discovery_static_libs}"
+        "LOW_BANDWIDTH_DISCOVERY_STATIC")
+
+        # Find all flavors of librtilbedisc
+    set(rtilbedisc_libs
+        "rtilbedisc"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtilbedisc_libs}" "LOW_BANDWIDTH_EDISC")
+
+    # Find all flavors of librtilbpdisc
+    set(rtilbpdisc_libs
+        "rtilbpdisc"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtilbpdisc_libs}" "LOW_BANDWIDTH_PDISC")
+
+    # Find all flavors of librtilbrtps
+    set(rtilbrtps_libs
+        "rtilbrtps"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtilbrtps_libs}" "LOW_BANDWIDTH_RTPS")
+
+    # Find all flavors of librtilbsm
+    set(rtilbsm_libs
+        "rtilbsm"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtilbsm_libs}" "LOW_BANDWIDTH_SM")
+
+    # Find all flavors of librtilbst
+    set(rtilbst_libs
+        "rtilbst"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtilbst_libs}" "LOW_BANDWIDTH_ST")
+
+    if(LOW_BANDWIDTH_DISCOVERY_STATIC_FOUND AND LOW_BANDWIDTH_EDISC_FOUND AND
+            LOW_BANDWIDTH_PDISC_FOUND AND LOW_BANDWIDTH_RTPS_FOUND AND
+            LOW_BANDWIDTH_SM_FOUND AND LOW_BANDWIDTH_ST_FOUND)
+        set(RTIConnextDDS_low_bandwidth_plugins_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_low_bandwidth_plugins_FOUND FALSE)
+    endif()
+endif()
+
+#####################################################################
+# rtizrtps Component Variables                                      #
+#####################################################################
+if(rtizrtps IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    # Find all flavors of librtizrtps
+    set(rtizrtps_libs
+        "rtizrtps"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables("${rtizrtps_libs}" "RTIZRTPS")
+
+    if(RTIZRTPS_FOUND)
+        set(RTIConnextDDS_rtizrtps_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_rtizrtps_FOUND FALSE)
     endif()
 endif()
 
@@ -1141,8 +1482,22 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         endif()
     endif()
 
+    if(RTIConnextDDS_metp_FOUND AND NOT TARGET RTIConnextDDS::metp)
+        list(GET METP_LIBRARIES_${build_type}_${link_type} 0 rtimetp_library)
+
+        add_library(RTIConnextDDS::metp ${link_type} IMPORTED)
+
+        set_target_properties(RTIConnextDDS::metp
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${rtimetp_library}"
+                INTERFACE_LINK_LIBRARIES
+                    RTIConnextDDS::c_api)
+    endif()
+
     if(RTIConnextDDS_routing_service_FOUND AND
-        NOT TARGET RTIConnextDDS::routing_service_infrastructure)
+            NOT TARGET RTIConnextDDS::routing_service_infrastructure)
 
         list(GET
             ROUTING_SERVICE_INFRASTRUCTURE_LIBRARIES_${build_type}_${link_type}
@@ -1168,6 +1523,19 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
             rtirroutingservice_library)
 
+        set(dependencies
+            RTIConnextDDS::routing_service_infrastructure)
+
+        if(RTIConnextDDS_metp_FOUND)
+            set(dependencies ${dependencies} "RTIConnextDDS::metp")
+        endif()
+
+        if(RTIConnextDDS_distributed_loger_FOUND)
+            set(dependencies
+                ${dependencies}
+                "RTIConnextDDS::distributed_logger_c")
+        endif()
+
         add_library(RTIConnextDDS::routing_service_c ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_c
             PROPERTIES
@@ -1175,7 +1543,7 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::routing_service_infrastructure)
+                    "${dependencies}")
 
         add_library(RTIConnextDDS::routing_service ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service
@@ -1184,12 +1552,12 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                 ${location_property}
                     "${rtirroutingservice_library}"
                 INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::routing_service_infrastructure)
+                    "${dependencies}")
     endif()
 
     if(RTIConnextDDS_routing_service_FOUND AND
-        NOT TARGET RTIConnextDDS::routing_service_cpp2 AND
-	RTICONNEXTDDS_VERSION VERSION_GREATER_EQUAL "6.0.0")
+            NOT TARGET RTIConnextDDS::routing_service_cpp2 AND
+            RTICONNEXTDDS_VERSION VERSION_GREATER_EQUAL "6.0.0")
 
         list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
             rtirroutingservice_library)
@@ -1197,6 +1565,16 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
         set(dependencies
             RTIConnextDDS::routing_service_infrastructure
             RTIConnextDDS::cpp2_api)
+
+        if(RTIConnextDDS_metp_FOUND)
+            set(dependencies ${dependencies} "RTIConnextDDS::metp")
+        endif()
+
+        if(RTIConnextDDS_distributed_loger_FOUND)
+            set(dependencies
+                ${dependencies}
+                "RTIConnextDDS::distributed_logger_cpp")
+        endif()
 
         add_library(RTIConnextDDS::routing_service_cpp2 ${link_type} IMPORTED)
         set_target_properties(RTIConnextDDS::routing_service_cpp2
@@ -1208,24 +1586,21 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                     "${dependencies}")
     endif()
 
-    if(RTIConnextDDS_security_plugins_FOUND AND
-        NOT TARGET RTIConnextDDS::security_plugins)
-        add_library(RTIConnextDDS::security_plugins ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::security_plugins
+    if(RTIConnextDDS_assign_transformation_FOUND AND
+            NOT TARGET RTIConnextDDS::assign_transformation)
+        list(GET ASSIGN_TRANSFORMATION_LIBRARIES_${build_type}_${link_type} 0
+            rtiassigntransf_library)
+        add_library(RTIConnextDDS::assign_transformation ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::routing_service_c
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::assign_transformation
             PROPERTIES
                 IMPORTED_NO_SONAME TRUE
                 ${location_property}
-                    "${SECURITY_PLUGINS_LIBRARIES_${build_type}_${link_type}}")
-    endif()
-
-    if(RTIConnextDDS_monitoring_libraries_FOUND  AND
-        NOT TARGET RTIConnextDDS::monitoring)
-        add_library(RTIConnextDDS::monitoring ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::monitoring
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${MONITORING_LIBRARIES_${build_type}_${link_type}}")
+                    "${rtiassigntransf_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
     endif()
 
     if(RTIConnextDDS_messaging_api_FOUND)
@@ -1270,4 +1645,167 @@ if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
                         "${messaging_cpp2_lib}")
         endif()
     endif()
+
+    if(RTIConnextDDS_security_plugins_FOUND AND
+            NOT TARGET RTIConnextDDS::security_plugins)
+        add_library(RTIConnextDDS::security_plugins ${link_type} IMPORTED)
+        set_target_properties(RTIConnextDDS::security_plugins
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${SECURITY_PLUGINS_LIBRARIES_${build_type}_${link_type}}")
+    endif()
+
+    if(RTIConnextDDS_monitoring_libraries_FOUND AND
+            NOT TARGET RTIConnextDDS::monitoring)
+        add_library(RTIConnextDDS::monitoring ${link_type} IMPORTED)
+        set_target_properties(RTIConnextDDS::monitoring
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${MONITORING_LIBRARIES_${build_type}_${link_type}}")
+    endif()
+
+    if(RTIConnextDDS_nddstls_FOUND AND
+            NOT TARGET RTIConnextDDS::nddstls)
+        list(GET NDDSTLS_LIBRARIES_${build_type}_${link_type} 0
+            nddstls_library)
+        add_library(RTIConnextDDS::nddstls ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::nddstls
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${nddstls_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_transport_tcp_FOUND AND
+            NOT TARGET RTIConnextDDS::transport_tcp)
+        list(GET TRANSPORT_TCP_LIBRARIES_${build_type}_${link_type} 0
+            transport_tcp_library)
+        add_library(RTIConnextDDS::transport_tcp ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::transport_tcp
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${transport_tcp_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_transport_tls_FOUND AND
+            NOT TARGET RTIConnextDDS::transport_tls)
+        list(GET TRANSPORT_TLS_LIBRARIES_${build_type}_${link_type} 0
+            transport_tls_library)
+        add_library(RTIConnextDDS::transport_tls ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::transport_tls
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${transport_tls_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_transport_wan_FOUND AND
+            NOT TARGET RTIConnextDDS::transport_wan)
+        list(GET TRANSPORT_WAN_LIBRARIES_${build_type}_${link_type} 0
+            transport_wan_library)
+        add_library(RTIConnextDDS::transport_wan ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::transport_tls
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::transport_wan
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${transport_wan_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_recording_service_FOUND AND
+            NOT TARGET RTIConnextDDS::recording_service)
+        list(GET RECORDING_SERVICE_LIBRARIES_${build_type}_${link_type} 0
+            recording_service_library)
+        add_library(RTIConnextDDS::recording_service ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::routing_service_c
+            RTIConnextDDS::routing_service_infrastructure
+            RTIConnextDDS::cpp2_api
+            RTIConnextDDS::distributed_logger_c
+            RTIConnextDDS::metp
+            RTIConnextDDS::messaging_c_api
+            RTIConnextDDS::rtixml2
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::recording_service
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${recording_service_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_rtixml2_FOUND AND
+            NOT TARGET RTIConnextDDS::rtixml2)
+        list(GET RTIXML2_LIBRARIES_${build_type}_${link_type} 0
+            rtixml2_library)
+        add_library(RTIConnextDDS::rtixml2 ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::rtixml2
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${rtixml2_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_low_bandwidth_plugins_FOUND AND
+            NOT TARGET RTIConnextDDS::low_bandwidth_plugins)
+        list(GET LOW_BANDWIDTH_PLUGINS_LIBRARIES_${build_type}_${link_type} 0
+            low_bandwidth_plugins_library)
+        add_library(RTIConnextDDS::low_bandwidth_plugins ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::low_bandwidth_discovery_static
+            RTIConnextDDS::low_bandwidth_edisc
+            RTIConnextDDS::low_bandwidth_pdisc
+            RTIConnextDDS::low_bandwidth_rtps
+            RTIConnextDDS::low_bandwidth_sm
+            RTIConnextDDS::low_bandwidth_st
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::low_bandwidth_plugins
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${low_bandwidth_plugins_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
+    if(RTIConnextDDS_rtirtps_FOUND AND
+            NOT TARGET RTIConnextDDS::rtirtps)
+        list(GET RTIRTPS_LIBRARIES_${build_type}_${link_type} 0
+            rtirtps_library)
+        add_library(RTIConnextDDS::rtirtps ${link_type} IMPORTED)
+        set(dependencies
+            RTIConnextDDS::c_api)
+        set_target_properties(RTIConnextDDS::rtirtps
+            PROPERTIES
+                IMPORTED_NO_SONAME TRUE
+                ${location_property}
+                    "${rtirtps_library}"
+                INTERFACE_LINK_LIBRARIES
+                    "${dependencies}")
+    endif()
+
 endif()
