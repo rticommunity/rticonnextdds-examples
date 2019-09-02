@@ -275,7 +275,7 @@
 # messages will be displayed starting with ``DEBUG`` or ``VERBOSE`` instead.
 #
 # Arguments:
-# - message: provides the message text
+# - message: provides the text message
 if("${CMAKE_MINOR_VERSION}" GREATER_EQUAL "15")
     macro(connextdds_log_debug message)
         message(DEBUG "${message}")
