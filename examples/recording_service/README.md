@@ -23,5 +23,4 @@ of three different tools:
 
 In this directory you will find some examples illustrating the most important
 features of RTI Recording Service. For more information, please refer to the
-[RTI Recording Service User's Manual]
-(https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/manuals/recording_service/introduction.html).
+[RTI Recording Service User's Manual](https://community.rti.com/static/documentation/connext-dds/6.0.0/doc/manuals/recording_service/introduction.html).

@@ -43,13 +43,13 @@ add_custom_command(
     OUTPUT ${HELLOMSG_CPP_SOURCES}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
     COMMAND ${RTICODEGEN} -language C++03 -update typefiles
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated"
             "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )
 
 add_custom_target(
-    generated_code 
-    DEPENDS 
+    generated_code
+    DEPENDS
         ${HELLOMSG_CPP_SOURCES}
         generated_code_dir
 )
@@ -69,7 +69,7 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageWriterCpp
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -90,7 +90,7 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageReaderCpp
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -106,7 +106,7 @@ add_dependencies(HelloMsg_publisher generated_code)
 
 target_include_directories(
     HelloMsg_publisher
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -128,7 +128,7 @@ add_dependencies(HelloMsg_subscriber generated_code)
 
 target_include_directories(
     HelloMsg_subscriber
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )

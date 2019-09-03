@@ -28,21 +28,25 @@
                 <durability>
                     <kind>VOLATILE_DURABILITY_QOS</kind>
                 </durability>
-
-                <!-- Use XCDR2 format always, even for plain DataWriters so
-                     that they can communicate with flat-data DataReaders, which
-                     only support XCDR2 -->
-                <representation>
-                    <value><element>XCDR2_DATA_REPRESENTATION</element></value>
-                </representation>
+                <!-- Optional setting used to reduce latency.
+                     Configure DataWriter to prevent dynamic allocation of
+                     serialization buffer -->
+                <property>
+                    <value>
+                        <element>
+                            <name>dds.data_writer.history.memory_manager.fast_pool.pool_buffer_max_size</name>
+                            <value>LENGTH_UNLIMITED</value>
+                        </element>
+                    </value>
+                </property>
             </datawriter_qos>
             <datareader_qos>
-                <!-- Use XCDR2 format always, even for plain DataReaders so
-                     that they can communicate with flat-data DataWriters, which
-                     only support XCDR2 -->
-                <representation>
-                    <value><element>XCDR2_DATA_REPRESENTATION</element></value>
-                </representation>
+                <!-- Optional setting used to reduce latency.
+                     Configure DataReader to prevent dynamic allocation of
+                     buffer used for storing received fragments -->
+                <reader_resource_limits>
+                    <dynamically_allocate_fragmented_samples>false</dynamically_allocate_fragmented_samples>
+                </reader_resource_limits>
             </datareader_qos>
             <participant_qos>
                 <property>

@@ -36,16 +36,20 @@ In this example you will find files for the following elements:
 -   Configuration for the *RoutingService* that loads the custom *Processor* and
     provides the communication between publisher and subscriber applications.
 
-This *Processor* implementation can receive the properties in the following
-table.
+This *Processor* implementation can receive the following properties:
 
-| Name                                     | Value       | Description                                                                                                                                                                     |
-|------------------------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| **shapes_processor.kind**                |  `<enum>`   | - *aggregator_simple*: Indicates the plug-in to instantiate a ShapesAggregatoSimpler.                                                                                           |
-|                                          |             | - *aggregator_adv*: Indicates the plug-in to instantiate a ShapesAggregatorAdv.                                                                                                 |
-|                                          |             | - *splittler*: Indicates the plug-in to instantiate a ShapesSplitter.                                                                                                           |
-|                                          |             | If a different value other than the ones above is specified, the creation of the will throw an exception. If this property is not specified, it will create a *ShapesSplitter*. |
-| **shapes_processor.leading_input_index** | `<integer>` | Only applicable to *ShapesAggregatorAdv*. Indicates the index of the leading input. In this example, only 0 and 1 are valid values.                                             |
+-   `shapes_processor.kind` (`<enum>`):
+    -   *aggregator_simple*: Indicates the plug-in to instantiate a
+        ShapesAggregatoSimpler.
+    -   *aggregator_adv*: Indicates the plug-in to instantiate a
+        ShapesAggregatorAdv.
+    -   *splittler*: Indicates the plug-in to instantiate a ShapesSplitter.
+        If a different value other than the ones above is specified, the
+        creation of the will throw an exception. If this property is not
+        specified, it will create a *ShapesSplitter*.
+-   `shapes_processor.leading_input_index` (`<integer>`):
+    -   Only applicable to *ShapesAggregatorAdv*. Indicates the index of the
+        leading input. In this example, only 0 and 1 are valid values.
 
 ### ShapesAggregator
 
@@ -78,8 +82,8 @@ The aggregation algorithm consists of simply an average of the values `x` and
 `y` of all inputs. The remaining elements are set equal to the values of the
 data read from the leading input.
 
-**Note**
-
+>**Note**:
+>
 > For the proper behavior of both *Processor*\s it's required for the DDS inputs
 > to be configured with a history policy that preserves only the last sample.
 > This guarantees that memory doesn't grow unbounded since the processor will
