@@ -12,8 +12,8 @@
 #
 # Components
 # ^^^^^^^^^^
-# This module sets variables for the following components that are part
-# of RTI Connext DDS:
+# This module sets variables for the following components that are part of RTI
+# Connext DDS:
 #
 # - core (default, always provided)
 # - messaging_api
@@ -246,6 +246,7 @@
 #
 # If you are building a simple ConnextDDS application (you are only using
 # the  core libraries), use the following variables:
+#
 #  - For a C application: CONNEXTDDS_C_API
 #  - For a Traditional C++ application: CONNEXTDDS_CPP_API
 #  - For a Modern C++ application: CONNEXTDDS_CPP2_API
@@ -361,6 +362,51 @@
 #
 
 #####################################################################
+# Logging Macros                                                    #
+#####################################################################
+
+# These two macros allow better code tracing with debug and verbose messages
+# using new CMake 3.15 message types. If cmake 3.14 or lower is in use, default
+# messages will be displayed starting with ``DEBUG`` or ``VERBOSE`` instead.
+#
+# Arguments:
+# - message: provides the text message
+if("${CMAKE_MINOR_VERSION}" GREATER_EQUAL "15")
+    macro(connextdds_log_debug message)
+        message(DEBUG "${message}")
+    endmacro()
+
+    macro(connextdds_log_verbose message)
+        message(VERBOSE "${message}")
+    endmacro()
+else()
+    macro(connextdds_log_debug message)
+        message("DEBUG ${message}")
+    endmacro()
+
+    macro(connextdds_log_verbose message)
+        message("VERBOSE ${message}")
+    endmacro()
+endif()
+
+# This macro allow xml login with previous ``VERBOSE`` loger macros.
+#
+# Arguments:
+# - XML_NAME: provides the name of the xml
+# - XML: provides the xml contents
+macro(connextdds_log_xml XML_NAME XML)
+    string(REPLACE "\n"
+           ";" lines
+           ${XML})
+
+    connextdds_log_verbose("~~~~~~~START ${XML_NAME}~~~~~~~")
+    foreach(line ${lines})
+        connextdds_log_verbose("\t${line}")
+    endforeach()
+    connextdds_log_verbose("~~~~~~~FINISH ${XML_NAME}~~~~~~~")
+endmacro()
+
+#####################################################################
 # Preconditions Check                                               #
 #####################################################################
 #
@@ -369,13 +415,17 @@
 # default installation directories.
 
 if(NOT CONNEXTDDS_DIR)
+    connextdds_log_verbose("CONNEXTDDS_DIR not specified")
+
     # Is a patch
     if(PACKAGE_FIND_VERSION_COUNT EQUAL 4)
         set(folder_version
             "${PACKAGE_FIND_VERSION_MAJOR}.${PACKAGE_FIND_VERSION_MINOR}.${PACKAGE_FIND_VERSION_PATCH}")
+        connextdds_log_debug("The required ConnextDDS version is a patch")
     else()
         set(folder_version ${RTIConnextDDS_FIND_VERSION})
     endif()
+    connextdds_log_verbose("ConnextDDS version ${folder_version}")
 
     if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(connextdds_root_hints
@@ -392,6 +442,7 @@ if(NOT CONNEXTDDS_DIR)
             "/Applications/rti_connext_dds-${folder_version}")
     endif()
 
+    connextdds_log_debug("Root hints: ${connextdds_root_hints}")
 endif()
 
 # We require having an rti_versions file under the installation directory
@@ -415,6 +466,7 @@ set(codegen_name "rtiddsgen")
 if(WIN32)
     set(codegen_name "${codegen_name}.bat")
 endif()
+connextdds_log_debug("Codegen script ${codegen_name}")
 
 find_path(RTICODEGEN_DIR
     NAME "${codegen_name}"
@@ -433,15 +485,21 @@ else()
         "Path to RTI Codegen")
 
     # Execute RTI Code Generator to get the version
+    connextdds_log_debug("Get the Codegen version: '${RTICODEGEN} -version'")
     execute_process(COMMAND ${RTICODEGEN} -version
         OUTPUT_VARIABLE codegen_version_string)
+    connextdds_log_debug("Command output:")
+    connextdds_log_debug("${codegen_version_string}")
 
     string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
         RTICODEGEN_VERSION "${codegen_version_string}")
+    connextdds_log_verbose("Codegen version: ${RTICODEGEN_VERSION}")
 endif()
 
 # Find RTI Connext DDS architecture if CONNEXTDDS_ARCH is unset
 if(NOT DEFINED CONNEXTDDS_ARCH)
+    connextdds_log_verbose("CONNEXTDDS_ARCH was not provided")
+    connextdds_log_verbose("CONNEXTDDS_ARCH trying to guess the RTI Architecture")
 
     # Guess the RTI Connext DDS architecture
     if(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
@@ -449,9 +507,11 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
             major_version
             ${CMAKE_CXX_COMPILER_VERSION})
         set(version_compiler "${major_version}.0")
+        connextdds_log_debug("Compiler version: ${version_compiler}")
 
         string(REGEX REPLACE "^([0-9]+)\\.([0-9]+).*$" "\\1"
             kernel_version "${CMAKE_SYSTEM_VERSION}")
+        connextdds_log_debug("Kernel version: ${kernel_version}")
 
         set(guessed_architecture
              "x64Darwin${kernel_version}${version_compiler}")
@@ -459,7 +519,6 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
         if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86")
             set(connextdds_host_arch "i86Win32")
-
         elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "AMD64")
             set(connextdds_host_arch "x64Win64")
 
@@ -467,10 +526,12 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
             message(FATAL_ERROR
                 "${CMAKE_HOST_SYSTEM} is not supported as host architecture")
         endif()
+        connextdds_log_debug("Host architecture: ${connextdds_host_arch}")
 
         string(REGEX MATCH "[0-9][0-9][0-9][0-9]"
              vs_year
              "${CMAKE_GENERATOR}")
+        connextdds_log_debug("Visual Studio year: ${vs_year}")
         set(guessed_architecture "${connextdds_host_arch}VS${vs_year}")
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         if(CMAKE_COMPILER_VERSION VERSION_EQUAL "4.6.3")
@@ -481,6 +542,8 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
                 "${CMAKE_SYSTEM_VERSION}")
         endif()
 
+        connextdds_log_debug("Kernel version: ${kernel_version}")
+
         if(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "x86_64")
             set(connextdds_host_arch "x64Linux")
 
@@ -488,15 +551,18 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
             set(connextdds_host_arch "i86Linux")
         endif()
 
+        connextdds_log_debug("Host architecture: ${connextdds_host_arch}")
         set(guessed_architecture
-            "${connextdds_host_arch}${kernel_version}gcc${CMAKE_COMPILER_VERSION}")
+            "${connextdds_host_arch}${kernel_version}gcc${CMAKE_C_COMPILER_VERSION}")
     endif()
 
+    connextdds_log_verbose("Guessed RTI architecture: ${guessed_architecture}")
 
     if(DEFINED ENV{CONNEXTDDS_ARCH})
         set(CONNEXTDDS_ARCH $ENV{CONNEXTDDS_ARCH})
     elseif(EXISTS "${CONNEXTDDS_DIR}/lib/${guessed_architecture}")
         set(CONNEXTDDS_ARCH "${guessed_architecture}")
+        connextdds_log_debug("${CONNEXTDDS_DIR}/lib/${guessed_architecture} exists")
     else()
         # If CONNEXTDDS_ARCH is unspecified, the module tries uses the first
         # architecture installed by looking under $CONNEXTDDS_DIR/lib.
@@ -580,9 +646,18 @@ function(connextdds_check_component_field_version
     field_name
     rti_versions_file
     rti_architectures)
+    connextdds_log_debug("connextdds_check_component_field_version called")
+    connextdds_log_debug(
+        "====================================================================")
+    connextdds_log_debug("\tfield_name: ${field_name}")
+    connextdds_log_debug("\trti_architectures: [${${rti_architectures}}]")
+    connextdds_log_verbose("Checking version for ${field_name}")
+
     # Get the component info
     set(field_section_regex "<${field_name}>.*</${field_name}>")
     string(REGEX MATCH ${field_section_regex} field_xml "${rti_versions_file}")
+
+    connextdds_log_xml("Component info:" "${field_xml}")
 
     # Check all the architectures defined in the component
     foreach(architecture IN LISTS ${rti_architectures})
@@ -599,6 +674,7 @@ function(connextdds_check_component_field_version
             "</version>")
         string(REGEX MATCH ${field_arch_regex} field_arch "${field_xml}")
         if(field_arch)
+            connextdds_log_xml("Field arch:" "${field_arch}")
             break()
         endif()
     endforeach()
@@ -614,6 +690,7 @@ function(connextdds_check_component_field_version
     set(field_version_regex
         "<version>[0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+(\\.[0-9]+)?)?</version>")
     string(REGEX MATCH ${field_version_regex} field_version "${field_arch}")
+    connextdds_log_xml("Component version tag:" "${field_version}")
 
     if(NOT field_version)
         set(rtiversion_error TRUE PARENT_SCOPE)
@@ -631,6 +708,8 @@ function(connextdds_check_component_field_version
         field_version_number
         ${field_version})
 
+    connextdds_log_xml("Component version:" "${field_version_number}")
+
     if(NOT field_version_number)
         set(rtiversion_error TRUE PARENT_SCOPE)
         message(WARNING
@@ -644,6 +723,7 @@ function(connextdds_check_component_field_version
         # set it here in the scope of the caller to store the value that has
         # been detected.
         set(RTICONNEXTDDS_VERSION ${field_version_number} PARENT_SCOPE)
+        connextdds_log_verbose("Found ConnextDDS version: ${field_version_number}")
     elseif(NOT RTICONNEXTDDS_VERSION STREQUAL field_version_number)
         # Otherwise, if the detected version is inconsistent with the previous
         # value of RTICONNEXTDDS_VERSION, we throw an error.
@@ -653,7 +733,11 @@ function(connextdds_check_component_field_version
             "${RTICONNEXTDDS_VERSION}")
         message(WARNING ${warning})
         set(rtiversion_error TRUE PARENT_SCOPE)
+    else()
+        connextdds_log_verbose("${field_name} version.........OK")
     endif()
+    connextdds_log_debug(
+        "====================================================================")
 endfunction()
 
 # This method searches the libraries indicated in `library_names` under
@@ -679,6 +763,11 @@ endfunction()
 function(get_all_library_variables
     library_names
     result_var_name)
+    connextdds_log_debug("get_all_library_variables called")
+    connextdds_log_debug(
+        "====================================================================")
+    connextdds_log_debug("\tlibrary_names: ${library_names}")
+    connextdds_log_debug("\tresult_var_name: ${result_var_name}")
 
     set(mode_library_found TRUE)
     set(${result_var_name}_FOUND TRUE PARENT_SCOPE)
@@ -698,6 +787,8 @@ function(get_all_library_variables
                 else()
                     set(name "${name}")
                 endif()
+                connextdds_log_debug(
+                    "\t\t[${build_mode}/${link_mode}]Library name: ${name}")
 
                 find_library(lib${library_name}_${build_mode}_${link_mode}
                     NAMES
@@ -724,13 +815,12 @@ function(get_all_library_variables
             string(TOUPPER ${build_mode} upper_build_mode)
 
             if(${mode_library_found})
-                set(${result_var_name}_LIBRARIES_${upper_build_mode}_${upper_link_mode}
-                    ${libraries} PARENT_SCOPE)
-                set(${result_var_name}_LIBRARIES_${upper_build_mode}_${upper_link_mode}_FOUND
-                    TRUE PARENT_SCOPE)
+                set(lib_var "${result_var_name}_LIBRARIES_${upper_build_mode}_${upper_link_mode}")
+                set(${lib_var} ${libraries} PARENT_SCOPE)
+                connextdds_log_debug("\t${lib_var} = ${libraries}")
+                set(${lib_var}_FOUND TRUE PARENT_SCOPE)
             else()
-                set(${result_var_name}_LIBRARIES_${upper_build_mode}_${upper_link_mode}_FOUND
-                    FALSE PARENT_SCOPE)
+                set(${lib_var}_FOUND FALSE PARENT_SCOPE)
                 set(${result_var_name}_FOUND FALSE PARENT_SCOPE)
             endif()
             unset(lib${library_name}_${build_mode}_${link_mode} CACHE)
@@ -751,6 +841,8 @@ function(get_all_library_variables
 
     set(${result_var_name}_LIBRARIES
         ${result_var_name}_LIBRARIES_${build_mode}_${link_mode})
+    connextdds_log_debug(
+        "====================================================================")
 endfunction()
 
 #####################################################################
