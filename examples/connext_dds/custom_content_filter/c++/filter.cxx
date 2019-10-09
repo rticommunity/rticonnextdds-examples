@@ -19,24 +19,31 @@
  *  21May2014,amb Example adapted for RTI Connext DDS 5.1
  */
 
-class custom_filter_type: public DDSContentFilter {
+class custom_filter_type : public DDSContentFilter {
 public:
-    virtual DDS_ReturnCode_t compile(void** new_compile_data,
-            const char *expression, const DDS_StringSeq& parameters,
-            const DDS_TypeCode* type_code, const char* type_class_name,
-            void *old_compile_data);
+    virtual DDS_ReturnCode_t
+            compile(void **new_compile_data,
+                    const char *expression,
+                    const DDS_StringSeq &parameters,
+                    const DDS_TypeCode *type_code,
+                    const char *type_class_name,
+                    void *old_compile_data);
 
-    virtual DDS_Boolean evaluate(void* compile_data, const void* sample,
-            const struct DDS_FilterSampleInfo * meta_data);
+    virtual DDS_Boolean evaluate(
+            void *compile_data,
+            const void *sample,
+            const struct DDS_FilterSampleInfo *meta_data);
 
-    virtual void finalize(void* compile_data);
+    virtual void finalize(void *compile_data);
 };
 
-bool divide_test(long sample_data, long p) {
+bool divide_test(long sample_data, long p)
+{
     return (sample_data % p == 0);
 }
 
-bool gt_test(long sample_data, long p) {
+bool gt_test(long sample_data, long p)
+{
     return (p > sample_data);
 }
 
@@ -47,21 +54,25 @@ struct cdata {
 };
 
 /* Called when Custom Filter is created, or when parameters are changed */
-DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
-        const char *expression, const DDS_StringSeq& parameters,
-        const DDS_TypeCode* type_code, const char* type_class_name,
-        void *old_compile_data) {
-    struct cdata* cd = NULL;
-    
+DDS_ReturnCode_t custom_filter_type::compile(
+        void **new_compile_data,
+        const char *expression,
+        const DDS_StringSeq &parameters,
+        const DDS_TypeCode *type_code,
+        const char *type_class_name,
+        void *old_compile_data)
+{
+    struct cdata *cd = NULL;
+
     /* First free old data, if any */
     delete old_compile_data;
 
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
      * and <var> is an integral member of the msg structure.
-     * 
+     *
      * We don't actually check that <var> has the correct typecode,
-     * (or even that it exists!). See example Typecodes to see 
+     * (or even that it exists!). See example Typecodes to see
      * how to work with typecodes.
      *
      * The compile information is a structure including the first filter
@@ -82,7 +93,7 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
         goto err;
     }
 
-    cd = (struct cdata*) malloc(sizeof(struct cdata));
+    cd = (struct cdata *) malloc(sizeof(struct cdata));
     sscanf(parameters[0], "%ld", &cd->param);
 
     if (strcmp(parameters[1], "greater-than") == 0) {
@@ -97,19 +108,22 @@ DDS_ReturnCode_t custom_filter_type::compile(void** new_compile_data,
     return DDS_RETCODE_OK;
 
 err:
-    printf("CustomFilter: Unable to compile expression '%s'\n",
-            expression);
-    printf("              with parameters '%s' '%s'\n", parameters[0],
-            parameters[1]);
+    printf("CustomFilter: Unable to compile expression '%s'\n", expression);
+    printf("              with parameters '%s' '%s'\n",
+           parameters[0],
+           parameters[1]);
     *new_compile_data = NULL;
     return DDS_RETCODE_BAD_PARAMETER;
 }
 
 /* Called to evaluated each sample */
-DDS_Boolean custom_filter_type::evaluate(void* compile_data, const void* sample,
-        const struct DDS_FilterSampleInfo * meta_data) {
-    cdata* cd = (cdata*) compile_data;
-    ccf* msg = (ccf*) sample;
+DDS_Boolean custom_filter_type::evaluate(
+        void *compile_data,
+        const void *sample,
+        const struct DDS_FilterSampleInfo *meta_data)
+{
+    cdata *cd = (cdata *) compile_data;
+    ccf *msg = (ccf *) sample;
 
     if (cd->eval_func(msg->x, cd->param))
         return DDS_BOOLEAN_TRUE;
@@ -117,8 +131,8 @@ DDS_Boolean custom_filter_type::evaluate(void* compile_data, const void* sample,
         return DDS_BOOLEAN_FALSE;
 }
 
-void custom_filter_type::finalize(void* compile_data) {
+void custom_filter_type::finalize(void *compile_data)
+{
     if (compile_data != NULL)
         delete compile_data;
 }
-

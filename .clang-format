@@ -86,7 +86,7 @@ AllowShortFunctionsOnASingleLine: false
 BreakBeforeBraces: Custom
 BraceWrapping:
     # AfterCaseLabel
-    AfterClass: true             # CFR2-03: C classes
+    AfterClass: false             # CFR2-03: C classes
     AfterControlStatement: false # CFR2-11: Control statements
     AfterEnum: false             # CFR3-04: Use of typedef
     AfterFunction: true          # CFR3-02: Function definition

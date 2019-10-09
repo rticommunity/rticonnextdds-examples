@@ -9,9 +9,9 @@
  use the software.
  ******************************************************************************/
 
+#include "ccf.hpp"
 #include <cstdlib>
 #include <dds/dds.hpp>
-#include "ccf.hpp"
 
 using namespace dds::core;
 using namespace dds::core::xtypes;
@@ -22,22 +22,25 @@ struct CustomCompileData {
     bool (*eval_func)(long, long);
 };
 
-bool divide_test(long sample_data, long p) {
+bool divide_test(long sample_data, long p)
+{
     return (sample_data % p == 0);
 }
 
-bool gt_test(long sample_data, long p) {
+bool gt_test(long sample_data, long p)
+{
     return (p > sample_data);
 }
 
-class CustomFilterType: public ContentFilter<Foo, CustomCompileData> {
+class CustomFilterType : public ContentFilter<Foo, CustomCompileData> {
 public:
     // Called when Custom Filter is created, or when parameters are changed.
-    virtual CustomCompileData& compile(const std::string& expression,
-        const StringSeq& parameters,
-        const optional<DynamicType>& type_code,
-        const std::string& type_class_name,
-        CustomCompileData* old_compile_data)
+    virtual CustomCompileData &
+            compile(const std::string &expression,
+                    const StringSeq &parameters,
+                    const optional<DynamicType> &type_code,
+                    const std::string &type_class_name,
+                    CustomCompileData *old_compile_data)
     {
         // First free old data, if any.
         if (old_compile_data != NULL)
@@ -66,7 +69,7 @@ public:
             throw std::invalid_argument("Invalid filter parameters number");
         }
 
-        CustomCompileData* cd = new CustomCompileData();
+        CustomCompileData *cd = new CustomCompileData();
         cd->param = atol(parameters[0].c_str());
 
         if (parameters[1] == "greater-than") {
@@ -81,13 +84,15 @@ public:
     }
 
     // Called to evaluated each sample.
-    virtual bool evaluate(CustomCompileData& compile_data, const Foo& sample,
-            const FilterSampleInfo& meta_data)
+    virtual bool evaluate(
+            CustomCompileData &compile_data,
+            const Foo &sample,
+            const FilterSampleInfo &meta_data)
     {
         return compile_data.eval_func(sample.x(), compile_data.param);
     }
 
-    virtual void finalize(CustomCompileData& compile_data)
+    virtual void finalize(CustomCompileData &compile_data)
     {
         // This is the pointer allocated in "compile" method.
         // For this reason we need to take the address.

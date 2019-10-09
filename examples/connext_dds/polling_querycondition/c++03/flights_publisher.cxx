@@ -9,9 +9,9 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <dds/dds.hpp>
 #include "flights.hpp"
+#include <dds/dds.hpp>
+#include <iostream>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -23,10 +23,10 @@ using namespace dds::pub::qos;
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos.
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<Flight> topic (participant, "Example Flight");
+    Topic<Flight> topic(participant, "Example Flight");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -46,10 +46,8 @@ void publisher_main(int domain_id, int sample_count)
     flights_info[3] = Flight(4444, "CompanyB", 25000);
 
     // Main loop
-    for (int count = 0;
-        (sample_count == 0) || (count < sample_count);
-        count += flights_info.size()){
-
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count += flights_info.size()) {
         // Update flight info latitude
         std::cout << "Updating and sending values" << std::endl;
 
@@ -68,7 +66,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

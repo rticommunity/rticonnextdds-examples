@@ -13,7 +13,7 @@ set(CMAKE_MODULE_PATH
 # Find the RTI Connext DDS libraries
 if(NOT RTIConnextDDS_FOUND)
     find_package(RTIConnextDDS
-        "5.3.0"
+        "6.0.0"
         REQUIRED
         COMPONENTS
             core
@@ -37,3 +37,9 @@ target_include_directories(dynamic_data_union_example_cxx
 set_target_properties(dynamic_data_union_example_cxx
     PROPERTIES
         OUTPUT_NAME "dynamic_data_union_example")
+
+if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+    set_target_properties(dynamic_data_union_example_cxx
+        PROPERTIES
+            LINK_FLAGS -Wl,--no-as-needed)
+endif()

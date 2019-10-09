@@ -24,9 +24,9 @@ void publisher_main(int domain_id, int sample_count)
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
-    Topic<cft> topic (participant, "Example cft");
+    Topic<cft> topic(participant, "Example cft");
 
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
 
@@ -37,7 +37,7 @@ void publisher_main(int domain_id, int sample_count)
     //            << Durability::TransientLocal()
     //            << History::KeepLast(20);
 
-    DataWriter<cft> writer (Publisher(participant), topic, writer_qos);
+    DataWriter<cft> writer(Publisher(participant), topic, writer_qos);
 
     // Create data sample for writing
     cft instance;
@@ -50,7 +50,8 @@ void publisher_main(int domain_id, int sample_count)
     // instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
@@ -61,7 +62,7 @@ void publisher_main(int domain_id, int sample_count)
         instance.x(count % 10);
 
         std::cout << "Writing cft, count " << instance.count() << "\t"
-                  << "x=" << instance.x()  << std::endl;
+                  << "x=" << instance.x() << std::endl;
 
         writer.write(instance, instance_handle);
 
@@ -91,9 +92,10 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in publisher_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

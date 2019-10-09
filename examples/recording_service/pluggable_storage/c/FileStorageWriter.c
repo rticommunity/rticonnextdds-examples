@@ -10,8 +10,8 @@
  * use or inability to use the software.
  */
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -21,16 +21,16 @@
 #include "FileStorageWriter.h"
 
 #ifdef _WIN32
-#define PRIu64 "I64u"
-#define PRIi64 "I64i"
+    #define PRIu64 "I64u"
+    #define PRIi64 "I64i"
 #else
-#include <inttypes.h>
+    #include <inttypes.h>
 #endif
 #ifndef FALSE
-#define FALSE 0
+    #define FALSE 0
 #endif
 #ifndef TRUE
-#define TRUE 1
+    #define TRUE 1
 #endif
 
 #define NANOSECS_PER_SEC 1000000000ll
@@ -116,16 +116,15 @@ void FileStorageStreamWriter_store(
         const struct DDS_SampleInfo *sample_info = sample_info_array[i];
         DDS_DynamicData *sample = sampleArray[i];
         DDS_Octet valid_data = sample_info->valid_data;
-        int64_t timestamp =
-                (int64_t) sample_info->reception_timestamp.sec
+        int64_t timestamp = (int64_t) sample_info->reception_timestamp.sec
                 * NANOSECS_PER_SEC;
         timestamp += sample_info->reception_timestamp.nanosec;
 
         fprintf(stream_writer->file,
-                "Sample number: %"PRIu64"\n",
+                "Sample number: %" PRIu64 "\n",
                 stream_writer->stored_sample_count);
         fprintf(stream_writer->file,
-                "Reception timestamp: %"PRIi64"\n",
+                "Reception timestamp: %" PRIi64 "\n",
                 timestamp);
         fprintf(stream_writer->file, "Valid data: %u\n", valid_data);
         if (valid_data) {
@@ -169,7 +168,8 @@ int FileStorageStreamWriter_initialize(
             &stream_writer->as_storage_stream_writer);
 
     /* init implementation */
-    stream_writer->as_storage_stream_writer.store = FileStorageStreamWriter_store;
+    stream_writer->as_storage_stream_writer.store =
+            FileStorageStreamWriter_store;
     stream_writer->as_storage_stream_writer.stream_writer_data = stream_writer;
 
     stream_writer->file = file;
@@ -197,8 +197,8 @@ int FileStorageWriter_connect(void *storage_writer_data)
     writer->file.file = fopen(writer->file.file_name, "w");
     if (writer->file.file == NULL) {
         printf("%s: %s\n",
-                "Failed to open file for writing",
-                writer->file.file_name);
+               "Failed to open file for writing",
+               writer->file.file_name);
         return FALSE;
     }
     strcpy(writer->info_file.file_name, writer->file.file_name);
@@ -206,8 +206,8 @@ int FileStorageWriter_connect(void *storage_writer_data)
     writer->info_file.file = fopen(writer->info_file.file_name, "w");
     if (writer->info_file.file == NULL) {
         printf("%s: %s\n",
-                "Failed to open file for writing",
-                writer->info_file.file_name);
+               "Failed to open file for writing",
+               writer->info_file.file_name);
         /* Cleanup if error */
         fclose(writer->file.file);
         return FALSE;
@@ -224,7 +224,7 @@ int FileStorageWriter_connect(void *storage_writer_data)
     /* Time was returned in seconds. Transform to nanoseconds */
     current_time *= NANOSECS_PER_SEC;
     fprintf(writer->info_file.file,
-            "Start timestamp: %"PRIi64"\n",
+            "Start timestamp: %" PRIi64 "\n",
             current_time);
     return TRUE;
 }
@@ -253,7 +253,9 @@ int FileStorageWriter_disconnect(void *storage_writer_data)
     }
     /* Time was returned in seconds. Transform to nanoseconds */
     current_time *= NANOSECS_PER_SEC;
-    fprintf(writer->info_file.file, "End timestamp: %"PRIi64"\n", current_time);
+    fprintf(writer->info_file.file,
+            "End timestamp: %" PRIi64 "\n",
+            current_time);
     if (fclose(writer->info_file.file) != 0) {
         perror("Failed to close output info file");
         return FALSE;
@@ -276,17 +278,18 @@ int FileStorageWriter_disconnect(void *storage_writer_data)
  * the case of the user-data creation function.
  */
 struct RTI_RecordingServiceStoragePublicationWriter *
-FileStorageWriter_create_publication_writer(void *storage_writer_data)
+        FileStorageWriter_create_publication_writer(void *storage_writer_data)
 {
     struct RTI_RecordingServiceStoragePublicationWriter *stream_writer = NULL;
 
     RTI_UNUSED_PARAMETER(storage_writer_data);
 
-    stream_writer = malloc(sizeof(
-            struct RTI_RecordingServiceStoragePublicationWriter));
+    stream_writer =
+            malloc(sizeof(struct RTI_RecordingServiceStoragePublicationWriter));
     if (stream_writer == NULL) {
-        printf("Failed to allocate RTI_RecordingServiceStoragePublicationWriter "
-                "instance\n");
+        printf("Failed to allocate "
+               "RTI_RecordingServiceStoragePublicationWriter "
+               "instance\n");
         return NULL;
     }
     RTI_RecordingServiceStoragePublicationWriter_initialize(stream_writer);
@@ -315,10 +318,10 @@ FileStorageWriter_create_publication_writer(void *storage_writer_data)
  * HelloMsg topic/type defined in the example.
  */
 struct RTI_RecordingServiceStorageStreamWriter *
-FileStorageWriter_create_stream_writer(
-        void *storage_writer_data,
-        const struct RTI_RoutingServiceStreamInfo *stream_info,
-        const struct RTI_RoutingServiceProperties *properties)
+        FileStorageWriter_create_stream_writer(
+                void *storage_writer_data,
+                const struct RTI_RoutingServiceStreamInfo *stream_info,
+                const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageWriter *writer =
             (struct FileStorageWriter *) storage_writer_data;
@@ -346,8 +349,8 @@ FileStorageWriter_create_stream_writer(
             return NULL;
         }
         if (!FileStorageStreamWriter_initialize(
-                stream_writer,
-                writer->file.file)) {
+                    stream_writer,
+                    writer->file.file)) {
             free(stream_writer);
             printf("Failed to initialize FileStorageStreamWriter instance\n");
             return NULL;
@@ -388,7 +391,7 @@ void FileStorageWriter_delete_stream_writer(
  * the file is closed in the FileStorageWriter_disconnect() function above.
  */
 int FileStorageWriter_initialize(
-        struct FileStorageWriter * writer,
+        struct FileStorageWriter *writer,
         const struct RTI_RoutingServiceProperties *properties)
 {
     const char *file_name = NULL;
@@ -413,7 +416,7 @@ int FileStorageWriter_initialize(
             FILENAME_PROPERTY_NAME);
     if (file_name == NULL) {
         printf("Failed to find property with name=%s\n",
-                FILENAME_PROPERTY_NAME);
+               FILENAME_PROPERTY_NAME);
         /* Cleanup on failure */
         free(writer);
         return FALSE;
@@ -451,10 +454,10 @@ void FileStorageWriter_delete_instance(
  * Note: the example only works with samples of the provided HelloMsg type,
  * described in file HelloMsg.idl.
  */
-struct RTI_RecordingServiceStorageWriter * FileStorageWriter_create_instance(
+struct RTI_RecordingServiceStorageWriter *FileStorageWriter_create_instance(
         const struct RTI_RoutingServiceProperties *properties)
 {
-    struct FileStorageWriter * writer = NULL;
+    struct FileStorageWriter *writer = NULL;
 
     writer = malloc(sizeof(struct FileStorageWriter));
     if (writer == NULL) {

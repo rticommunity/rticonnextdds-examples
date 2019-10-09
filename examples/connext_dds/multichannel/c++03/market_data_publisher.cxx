@@ -11,8 +11,8 @@
 
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "market_data.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace rti::core;
@@ -31,84 +31,85 @@ MultiChannel create_multichannel_qos()
     // Create 8 channels based on Symbol.
     std::vector<ChannelSettings> channels;
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(), // All the transports available
-                "239.255.0.2",
-                0)),                        // Port determined automatically
-        "Symbol MATCH '[A-C]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),  // All the transports
+                                                         // available
+                            "239.255.0.2",
+                            0)),  // Port determined automatically
+            "Symbol MATCH '[A-C]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.3",
-                0)),
-        "Symbol MATCH '[D-F]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.3",
+                            0)),
+            "Symbol MATCH '[D-F]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.4",
-                0)),
-        "Symbol MATCH '[G-I]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.4",
+                            0)),
+            "Symbol MATCH '[G-I]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.5",
-                0)),
-        "Symbol MATCH '[J-L]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.5",
+                            0)),
+            "Symbol MATCH '[J-L]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.6",
-                0)),
-        "Symbol MATCH '[M-O]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.6",
+                            0)),
+            "Symbol MATCH '[M-O]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.7",
-                0)),
-        "Symbol MATCH '[P-S]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.7",
+                            0)),
+            "Symbol MATCH '[P-S]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.8",
-                0)),
-        "Symbol MATCH '[T-V]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.8",
+                            0)),
+            "Symbol MATCH '[T-V]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(ChannelSettings(
-        std::vector<TransportMulticastSettings>(
-            1,
-            TransportMulticastSettings(
-                std::vector<std::string>(),
-                "239.255.0.9",
-                0)),
-        "Symbol MATCH '[W-Z]*'",
-        PUBLICATION_PRIORITY_UNDEFINED));
+            std::vector<TransportMulticastSettings>(
+                    1,
+                    TransportMulticastSettings(
+                            std::vector<std::string>(),
+                            "239.255.0.9",
+                            0)),
+            "Symbol MATCH '[W-Z]*'",
+            PUBLICATION_PRIORITY_UNDEFINED));
 
     // Set the MultiChannel QoS.
     return MultiChannel(channels, rti::topic::stringmatch_filter_name());
@@ -117,10 +118,10 @@ MultiChannel create_multichannel_qos()
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<market_data> topic (participant, "Example market_data");
+    Topic<market_data> topic(participant, "Example market_data");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -138,7 +139,7 @@ void publisher_main(int domain_id, int sample_count)
     // Main loop.
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         // Update the sample.
-        char symbol = (char)('A' + (count % 26));
+        char symbol = (char) ('A' + (count % 26));
         sample.Symbol(std::string(1, symbol));
         sample.Price(count);
 
@@ -151,7 +152,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -167,7 +168,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

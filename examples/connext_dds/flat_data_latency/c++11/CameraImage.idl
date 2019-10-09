@@ -78,6 +78,9 @@ module zero_copy_types {
 
     @final
     @transfer_mode(SHMEM_REF)
+    // Use XCDR2 format so that plain DataWriters can communicate with
+    // flat-data DataReaders, which only support XCDR2
+    @allowed_data_representation(XCDR2)
     struct CameraImage {
       long long timestamp;
       common::Format format;
@@ -96,6 +99,9 @@ module plain_types {
     };
 
     @final
+    // Use XCDR2 format so that plain DataWriters can communicate with
+    // flat-data DataReaders, which only support XCDR2
+    @allowed_data_representation(XCDR2)
     struct CameraImage {
       long long timestamp;
       common::Format format;

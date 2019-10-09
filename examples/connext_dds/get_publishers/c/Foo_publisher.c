@@ -37,15 +37,17 @@
  ------------ -------
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "Foo.h"
 #include "FooSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Delete all entities */
-static int publisher_shutdown(DDS_DomainParticipant *participant,
-        struct DDS_PublisherSeq publisherSeq) {
+static int publisher_shutdown(
+        DDS_DomainParticipant *participant,
+        struct DDS_PublisherSeq publisherSeq)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -57,7 +59,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant,
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-                DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -67,7 +70,6 @@ static int publisher_shutdown(DDS_DomainParticipant *participant,
             printf("finalize publisherSeq error\n");
             status = -1;
         }
-
     }
 
     /* RTI Connext provides finalize_instance() method on
@@ -85,7 +87,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant,
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count) {
+static int publisher_main(int domainId, int sample_count)
+{
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL, *publisher2 = NULL;
     /* We will use this temporal publisher to print all created publishers */
@@ -95,13 +98,15 @@ static int publisher_main(int domainId, int sample_count) {
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = { 4, 0 };
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      * the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant, publisherSeq);
@@ -112,10 +117,12 @@ static int publisher_main(int domainId, int sample_count) {
      * get_publishers API
      */
 
-    /* To customize publisher QoS, use 
+    /* To customize publisher QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    publisher = DDS_DomainParticipant_create_publisher(participant,
-            &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
+    publisher = DDS_DomainParticipant_create_publisher(
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
@@ -125,8 +132,10 @@ static int publisher_main(int domainId, int sample_count) {
 
     printf("The first publisher is %p\n", publisher);
 
-    publisher2 = DDS_DomainParticipant_create_publisher(participant,
-            &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
+    publisher2 = DDS_DomainParticipant_create_publisher(
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher2 == NULL) {
         printf("create_publisher2 error\n");
@@ -147,21 +156,20 @@ static int publisher_main(int domainId, int sample_count) {
 
     /* We print the publishers obtained */
     for (count = 0; count < DDS_PublisherSeq_get_length(&publisherSeq);
-            ++count) {
+         ++count) {
         tmp = DDS_PublisherSeq_get(&publisherSeq, count);
         printf("The %d publisher I foud is: %p\n", count, tmp);
-
     }
 
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant, publisherSeq);
-    /* End - modifying the generated example to showcase the usage of the 
+    /* End - modifying the generated example to showcase the usage of the
      * get_publishers API
      */
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -183,7 +191,8 @@ int wmain(int argc, wchar_t** argv)
     return publisher_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -206,17 +215,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = NULL;
+const unsigned char *__ctype = NULL;
 
-void usrAppInit ()
+void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

@@ -25,16 +25,15 @@ using namespace dds::sub::qos;
 
 class BatchDataReaderListener : public NoOpDataReaderListener<batch_data> {
 public:
-    void on_data_available(DataReader<batch_data>& reader)
+    void on_data_available(DataReader<batch_data> &reader)
     {
         // Take all samples
         LoanedSamples<batch_data> samples = reader.take();
         for (LoanedSamples<batch_data>::iterator sample_it = samples.begin();
-                sample_it != samples.end();
-                sample_it++) {
-
+             sample_it != samples.end();
+             sample_it++) {
             if (sample_it->info().valid()) {
-                 std::cout << sample_it->data() << std::endl;
+                std::cout << sample_it->data() << std::endl;
             }
         }
     }
@@ -54,27 +53,27 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
     }
 
     // To customize entities QoS use the file USER_QOS_PROFILES.xml
-    DomainParticipant participant (
-        domain_id,
-        QosProvider::Default().participant_qos(profile_name));
+    DomainParticipant participant(
+            domain_id,
+            QosProvider::Default().participant_qos(profile_name));
 
-    Topic<batch_data> topic (participant, "Example batch_data");
+    Topic<batch_data> topic(participant, "Example batch_data");
 
-    Subscriber subscriber (
-        participant,
-        QosProvider::Default().subscriber_qos(profile_name));
+    Subscriber subscriber(
+            participant,
+            QosProvider::Default().subscriber_qos(profile_name));
 
     DataReader<batch_data> reader(
-        subscriber,
-        topic,
-        QosProvider::Default().datareader_qos(profile_name));
+            subscriber,
+            topic,
+            QosProvider::Default().datareader_qos(profile_name));
 
     // Set the listener using a RAII so it's exception-safe
-    rti::core::ListenerBinder< DataReader<batch_data> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new BatchDataReaderListener,
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<batch_data>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new BatchDataReaderListener,
+                    StatusMask::data_available());
 
     // Main loop
     for (int count = 0; count < sample_count || sample_count == 0; ++count) {
@@ -86,7 +85,7 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
     bool turbo_mode_on = false;
 
     if (argc >= 2) {
@@ -107,7 +106,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count, turbo_mode_on);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main(): " << ex.what() << "\n";
         return -1;

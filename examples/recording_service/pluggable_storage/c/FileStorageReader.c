@@ -10,32 +10,32 @@
  * use or inability to use the software.
  */
 
+#include <errno.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <string.h>
 
 #include "ndds/ndds_c.h"
-#include "routingservice/routingservice_infrastructure.h"
 #include "recordingservice/recordingservice_storagereader.h"
+#include "routingservice/routingservice_infrastructure.h"
 
-#include "HelloMsg.h"
 #include "FileStorageReader.h"
+#include "HelloMsg.h"
 
 #define NANOSECS_PER_SEC 1000000000
 
 #ifdef _WIN32
-#define SCNi64 "I64i"
-#define SCNu64 "I64u"
+    #define SCNi64 "I64i"
+    #define SCNu64 "I64u"
 #else
-#include <inttypes.h>
+    #include <inttypes.h>
 #endif
 #ifndef FALSE
-#define FALSE 0
+    #define FALSE 0
 #endif
 #ifndef TRUE
-#define TRUE 1
+    #define TRUE 1
 #endif
 
 struct FileRecord {
@@ -61,7 +61,8 @@ struct FileStorageStreamInfoReader {
     struct RTI_RoutingServiceStreamInfo *stream_info;
     int stream_info_taken;
     struct FileRecord info_file_record;
-    struct RTI_RecordingServiceStorageStreamInfoReader base_discovery_stream_reader;
+    struct RTI_RecordingServiceStorageStreamInfoReader
+            base_discovery_stream_reader;
 };
 
 #define FileStorageReader_FILE_NAME_MAX 1024
@@ -131,8 +132,9 @@ long long FileStorageStreamInfoReader_get_service_start_time(
     int64_t timestamp = 0;
 
     if (fscanf(stream_reader->info_file_record.file,
-            "Start timestamp: %"SCNi64"\n",
-            &timestamp) != 1) {
+               "Start timestamp: %" SCNi64 "\n",
+               &timestamp)
+        != 1) {
         printf("Failed to read start timestamp from info file\n");
     }
     return timestamp;
@@ -152,8 +154,9 @@ long long FileStorageStreamInfoReader_get_service_stop_time(
     int64_t timestamp = 0;
 
     if (fscanf(stream_reader->info_file_record.file,
-            "End timestamp: %"SCNi64"\n",
-            &timestamp) != 1) {
+               "End timestamp: %" SCNi64 "\n",
+               &timestamp)
+        != 1) {
         printf("Failed to read end timestamp from info file\n");
     }
     return timestamp;
@@ -213,8 +216,8 @@ int FileStorageStreamInfoReader_initialize(
     strcpy(stream_reader->file_record.fileName, fileName);
     strcpy(stream_reader->info_file_record.fileName, fileName);
     strcat(stream_reader->info_file_record.fileName, ".info");
-    stream_reader->info_file_record.file = fopen(
-            stream_reader->info_file_record.fileName, "r");
+    stream_reader->info_file_record.file =
+            fopen(stream_reader->info_file_record.fileName, "r");
     if (stream_reader->info_file_record.file == NULL) {
         perror("Failed to open info file");
         return FALSE;
@@ -238,7 +241,8 @@ int FileStorageStreamInfoReader_initialize(
 }
 
 /*
- * --- User-data StreamReader -------------------------------------------------------
+ * --- User-data StreamReader
+ * -------------------------------------------------------
  */
 
 /**
@@ -254,35 +258,39 @@ int FileStorageStreamReader_readSample(
     if (feof(stream_reader->file_record.file)) {
         return FALSE;
     }
-    if (fscanf(
-            stream_reader->file_record.file,
-            "Sample number: %"SCNu64"\n",
-            &sampleNr) != 1) {
+    if (fscanf(stream_reader->file_record.file,
+               "Sample number: %" SCNu64 "\n",
+               &sampleNr)
+        != 1) {
         printf("Failed to read sample number from file\n");
         return FALSE;
     }
     if (fscanf(stream_reader->file_record.file,
-            "Reception timestamp: %"SCNi64"\n",
-            &stream_reader->current_timestamp) != 1) {
+               "Reception timestamp: %" SCNi64 "\n",
+               &stream_reader->current_timestamp)
+        != 1) {
         printf("Failed to read current timestamp from file\n");
         return FALSE;
     }
     if (fscanf(stream_reader->file_record.file,
-            "Valid data: %u\n",
-            &stream_reader->current_valid_data) != 1) {
+               "Valid data: %u\n",
+               &stream_reader->current_valid_data)
+        != 1) {
         printf("Failed to read current valid data flag from file\n");
         return FALSE;
     }
     if (stream_reader->current_valid_data) {
         if (fscanf(stream_reader->file_record.file,
-                "    Data.id: %i\n",
-                &stream_reader->current_data_id) != 1) {
+                   "    Data.id: %i\n",
+                   &stream_reader->current_data_id)
+            != 1) {
             printf("Failed to read current data.id field from file\n");
             return FALSE;
         }
         if (fscanf(stream_reader->file_record.file,
-                "    Data.msg: %256[^\n]\n",
-                stream_reader->current_data_msg) != 1) {
+                   "    Data.msg: %256[^\n]\n",
+                   stream_reader->current_data_msg)
+            != 1) {
             printf("Failed to read current data.msg field from file\n");
             return FALSE;
         }
@@ -298,11 +306,11 @@ int FileStorageStreamReader_readSample(
 int FileStorageStreamReader_addSampleToData(
         struct FileStorageStreamReader *stream_reader)
 {
-    DDS_Long current_length = DDS_DynamicDataSeq_get_length(
-            &stream_reader->taken_data);
+    DDS_Long current_length =
+            DDS_DynamicDataSeq_get_length(&stream_reader->taken_data);
     DDS_Long target_length = current_length + 1;
-    DDS_Long current_maximum = DDS_DynamicDataSeq_get_maximum(
-            &stream_reader->taken_data);
+    DDS_Long current_maximum =
+            DDS_DynamicDataSeq_get_maximum(&stream_reader->taken_data);
     DDS_DynamicData *current_data = NULL;
     struct DDS_SampleInfo *current_info = NULL;
     DDS_ReturnCode_t ret_code = DDS_RETCODE_OK;
@@ -311,17 +319,17 @@ int FileStorageStreamReader_addSampleToData(
      * (maximum), we double the capacity */
     if (current_maximum < target_length) {
         if (!DDS_DynamicDataSeq_set_maximum(
-                &stream_reader->taken_data,
-                2 * current_maximum)) {
+                    &stream_reader->taken_data,
+                    2 * current_maximum)) {
             printf("Failed to set new capacity (%d) for data sequence\n",
-                    2 * current_maximum);
+                   2 * current_maximum);
             return FALSE;
         }
         if (!DDS_SampleInfoSeq_set_maximum(
-                &stream_reader->taken_info,
-                2 * current_maximum)) {
+                    &stream_reader->taken_info,
+                    2 * current_maximum)) {
             printf("Failed to set new capacity (%d) for info sequence\n",
-                    2 * current_maximum);
+                   2 * current_maximum);
             return FALSE;
         }
     }
@@ -342,15 +350,13 @@ int FileStorageStreamReader_addSampleToData(
     current_info = DDS_SampleInfoSeq_get_reference(
             &stream_reader->taken_info,
             current_length);
-    current_info->reception_timestamp.sec =
-            (DDS_Long) (stream_reader->current_timestamp
-                    / (int64_t) NANOSECS_PER_SEC);
-    current_info->reception_timestamp.nanosec =
-            (DDS_Long) (stream_reader->current_timestamp
-                    % (int64_t) NANOSECS_PER_SEC);
-    current_info->valid_data = (stream_reader->current_valid_data ?
-            DDS_BOOLEAN_TRUE :
-            DDS_BOOLEAN_FALSE);
+    current_info->reception_timestamp.sec = (DDS_Long)(
+            stream_reader->current_timestamp / (int64_t) NANOSECS_PER_SEC);
+    current_info->reception_timestamp.nanosec = (DDS_Long)(
+            stream_reader->current_timestamp % (int64_t) NANOSECS_PER_SEC);
+    current_info->valid_data =
+            (stream_reader->current_valid_data ? DDS_BOOLEAN_TRUE
+                                               : DDS_BOOLEAN_FALSE);
     if (stream_reader->current_valid_data) {
         /* Set the current data ID */
         ret_code = DDS_DynamicData_set_long(
@@ -429,9 +435,8 @@ void FileStorageStreamReader_read(
         return;
     }
     for (i = 0; i < *count; i++) {
-        (*out_samples)[i] = DDS_DynamicDataSeq_get_reference(
-                &stream_reader->taken_data,
-                i);
+        (*out_samples)[i] =
+                DDS_DynamicDataSeq_get_reference(&stream_reader->taken_data, i);
     }
 
     *out_sample_infos = malloc(*count * sizeof(RTI_RoutingServiceSampleInfo));
@@ -441,17 +446,16 @@ void FileStorageStreamReader_read(
         return;
     }
     for (i = 0; i < *count; i++) {
-        (*out_sample_infos)[i] = DDS_SampleInfoSeq_get_reference(
-                &stream_reader->taken_info,
-                i);
+        (*out_sample_infos)[i] =
+                DDS_SampleInfoSeq_get_reference(&stream_reader->taken_info, i);
     }
 }
 
 void FileStorageStreamReader_return_loan(
-            void *stream_reader_data,
-            RTI_RoutingServiceSample *samples,
-            RTI_RoutingServiceSampleInfo *sample_infos,
-            int count)
+        void *stream_reader_data,
+        RTI_RoutingServiceSample *samples,
+        RTI_RoutingServiceSampleInfo *sample_infos,
+        int count)
 {
     struct FileStorageStreamReader *stream_reader =
             (struct FileStorageStreamReader *) stream_reader_data;
@@ -493,14 +497,13 @@ int FileStorageStreamReader_initialize(
 {
     RTI_UNUSED_PARAMETER(domain_id);
 
-    if (stream_info->stream_name == NULL ) {
+    if (stream_info->stream_name == NULL) {
         return FALSE;
     }
 
     strcpy(stream_reader->file_record.fileName, file_name);
-    stream_reader->file_record.file = fopen(
-            stream_reader->file_record.fileName,
-            "r");
+    stream_reader->file_record.file =
+            fopen(stream_reader->file_record.fileName, "r");
     if (stream_reader->file_record.file == NULL) {
         return FALSE;
     }
@@ -509,15 +512,11 @@ int FileStorageStreamReader_initialize(
      * Reserve space for at least 1 element, initially */
     DDS_DynamicDataSeq_initialize(&stream_reader->taken_data);
     DDS_SampleInfoSeq_initialize(&stream_reader->taken_info);
-    if (!DDS_DynamicDataSeq_set_maximum(
-            &stream_reader->taken_data,
-            1)) {
+    if (!DDS_DynamicDataSeq_set_maximum(&stream_reader->taken_data, 1)) {
         printf("Failed to set new capacity (1) for data sequence\n");
         return FALSE;
     }
-    if (!DDS_SampleInfoSeq_set_maximum(
-            &stream_reader->taken_info,
-            1)) {
+    if (!DDS_SampleInfoSeq_set_maximum(&stream_reader->taken_info, 1)) {
         printf("Failed to set new capacity (1) for info sequence\n");
         return FALSE;
     }
@@ -533,10 +532,8 @@ int FileStorageStreamReader_initialize(
     stream_reader->as_stream_reader.read = FileStorageStreamReader_read;
     stream_reader->as_stream_reader.return_loan =
             FileStorageStreamReader_return_loan;
-    stream_reader->as_stream_reader.finished =
-            FileStorageStreamReader_finished;
-    stream_reader->as_stream_reader.reset =
-            FileStorageStreamReader_reset;
+    stream_reader->as_stream_reader.finished = FileStorageStreamReader_finished;
+    stream_reader->as_stream_reader.reset = FileStorageStreamReader_reset;
     stream_reader->as_stream_reader.stream_reader_data = stream_reader;
 
     return TRUE;
@@ -552,7 +549,7 @@ void FileStorageReader_delete_stream_reader(
 {
     struct FileStorageStreamReader *file_stream_reader =
             (struct FileStorageStreamReader *)
-                stream_reader->stream_reader_data;
+                    stream_reader->stream_reader_data;
 
     RTI_UNUSED_PARAMETER(storage_reader_data);
 
@@ -577,10 +574,10 @@ void FileStorageReader_delete_stream_reader(
  * the given end time.
  */
 struct RTI_RecordingServiceStorageStreamReader *
-FileStorageReader_create_stream_reader(
-        void *storage_reader_data,
-        const struct RTI_RoutingServiceStreamInfo *stream_info,
-        const struct RTI_RoutingServiceProperties *properties)
+        FileStorageReader_create_stream_reader(
+                void *storage_reader_data,
+                const struct RTI_RoutingServiceStreamInfo *stream_info,
+                const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageReader *storage_reader =
             (struct FileStorageReader *) storage_reader_data;
@@ -595,29 +592,27 @@ FileStorageReader_create_stream_reader(
             RTI_RECORDING_SERVICE_DOMAIN_ID_PROPERTY_NAME);
     if (domain_id_str == NULL) {
         printf("%s: could not find %s property in property set\n",
-                RTI_FUNCTION_NAME,
-                RTI_RECORDING_SERVICE_DOMAIN_ID_PROPERTY_NAME);
+               RTI_FUNCTION_NAME,
+               RTI_RECORDING_SERVICE_DOMAIN_ID_PROPERTY_NAME);
     }
     errno = 0;
     domain_id = strtol(domain_id_str, NULL, 10);
     if (errno == ERANGE) {
         printf("Failed to parse domain ID from string: '%s'. Range error.\n",
-                domain_id_str);
+               domain_id_str);
     }
-    stream_reader = (struct FileStorageStreamReader *)
-            malloc(sizeof(struct FileStorageStreamReader));
+    stream_reader = (struct FileStorageStreamReader *) malloc(
+            sizeof(struct FileStorageStreamReader));
     if (stream_reader == NULL) {
         printf("Failed to allocate FileStorageStreamReader instance\n");
         return NULL;
     }
     if (!FileStorageStreamReader_initialize(
-            stream_reader,
-            storage_reader->file_name,
-            stream_info,
-            domain_id)) {
-        printf("%s: !init %s\n",
-                RTI_FUNCTION_NAME,
-                "FileStorageStreamReader");
+                stream_reader,
+                storage_reader->file_name,
+                stream_info,
+                domain_id)) {
+        printf("%s: !init %s\n", RTI_FUNCTION_NAME, "FileStorageStreamReader");
         FileStorageReader_delete_stream_reader(
                 storage_reader_data,
                 &stream_reader->as_stream_reader);
@@ -632,7 +627,7 @@ FileStorageReader_create_stream_reader(
  */
 void FileStorageReader_delete_stream_info_reader(
         void *storage_reader_data,
-        struct RTI_RecordingServiceStorageStreamInfoReader * stream_reader)
+        struct RTI_RecordingServiceStorageStreamInfoReader *stream_reader)
 {
     struct FileStorageStreamInfoReader *example_stream_reader =
             (struct FileStorageStreamInfoReader *)
@@ -678,9 +673,9 @@ void FileStorageReader_delete_stream_info_reader(
  * time should be ignored - this is, not discovered).
  */
 struct RTI_RecordingServiceStorageStreamInfoReader *
-FileStorageReader_create_stream_info_reader(
-        void *storage_reader_data,
-        const struct RTI_RoutingServiceProperties *properties)
+        FileStorageReader_create_stream_info_reader(
+                void *storage_reader_data,
+                const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageReader *storage_reader =
             (struct FileStorageReader *) storage_reader_data;
@@ -688,15 +683,15 @@ FileStorageReader_create_stream_info_reader(
 
     RTI_UNUSED_PARAMETER(properties);
 
-    stream_reader = (struct FileStorageStreamInfoReader *)
-            malloc(sizeof(struct FileStorageStreamInfoReader));
+    stream_reader = (struct FileStorageStreamInfoReader *) malloc(
+            sizeof(struct FileStorageStreamInfoReader));
     if (stream_reader == NULL) {
         printf("Failed to allocate FileStorageStreamInfoReader instance\n");
         return NULL;
     }
     if (!FileStorageStreamInfoReader_initialize(
-            stream_reader,
-            storage_reader->file_name)) {
+                stream_reader,
+                storage_reader->file_name)) {
         printf("Failed to initialize FileStorageStreamInfoReader instance\n");
         FileStorageReader_delete_stream_info_reader(
                 storage_reader_data,
@@ -732,7 +727,7 @@ void FileStorageReader_delete_instance(
  * <property> XML tag of the storage configuration. The name of the property
  * is defined in the FILENAME_PROPERTY_NAME constant above.
  */
-struct RTI_RecordingServiceStorageReader * FileStorageReader_create(
+struct RTI_RecordingServiceStorageReader *FileStorageReader_create(
         const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageReader *storage_reader = NULL;
@@ -750,7 +745,7 @@ struct RTI_RecordingServiceStorageReader * FileStorageReader_create(
             FILENAME_PROPERTY_NAME);
     if (file_name == NULL) {
         printf("Failed to find property with name=%s\n",
-                FILENAME_PROPERTY_NAME);
+               FILENAME_PROPERTY_NAME);
         free(storage_reader);
         return NULL;
     }

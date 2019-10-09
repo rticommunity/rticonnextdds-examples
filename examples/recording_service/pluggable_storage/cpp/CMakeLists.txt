@@ -12,6 +12,21 @@
 cmake_minimum_required(VERSION 3.11)
 project (PluggableStorage)
 
+if(NOT BUILD_SHARED_LIBS)
+    set(msg
+        "Static linking is not supported for this example. You can build it "
+        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Recording Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
+endif()
+
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
@@ -43,13 +58,13 @@ add_custom_command(
     OUTPUT ${HELLOMSG_CPP_SOURCES}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
     COMMAND ${RTICODEGEN} -language C++03 -update typefiles
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
+            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated"
             "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )
 
 add_custom_target(
-    generated_code 
-    DEPENDS 
+    generated_code
+    DEPENDS
         ${HELLOMSG_CPP_SOURCES}
         generated_code_dir
 )
@@ -69,7 +84,7 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageWriterCpp
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -90,7 +105,7 @@ target_link_libraries(
 
 target_include_directories(
     FileStorageReaderCpp
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -106,7 +121,7 @@ add_dependencies(HelloMsg_publisher generated_code)
 
 target_include_directories(
     HelloMsg_publisher
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )
@@ -128,7 +143,7 @@ add_dependencies(HelloMsg_subscriber generated_code)
 
 target_include_directories(
     HelloMsg_subscriber
-    PUBLIC 
+    PUBLIC
         "${CMAKE_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
 )

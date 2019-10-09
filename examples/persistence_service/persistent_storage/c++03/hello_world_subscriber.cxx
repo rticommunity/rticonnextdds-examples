@@ -9,13 +9,13 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
 #include <algorithm>
+#include <cstdlib>
 #include <iostream>
 
+#include "hello_world.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "hello_world.hpp"
 
 using namespace dds::core;
 using namespace dds::core::status;
@@ -25,17 +25,16 @@ using namespace dds::sub;
 using namespace dds::sub::qos;
 
 class hello_worldReaderListener : public NoOpDataReaderListener<hello_world> {
-  public:
-    void on_data_available(DataReader<hello_world>& reader)
+public:
+    void on_data_available(DataReader<hello_world> &reader)
     {
         // Take all samples
         LoanedSamples<hello_world> samples = reader.take();
 
         for (LoanedSamples<hello_world>::iterator sample_it = samples.begin();
-            sample_it != samples.end();
-            sample_it++) {
-
-            if (sample_it->info().valid()){
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 std::cout << sample_it->data() << std::endl;
             }
         }
@@ -54,22 +53,22 @@ void subscriber_main(int domain_id, int sample_count, bool drs)
     // In this example, we have modified them using a QoS XML profile. See
     // further details in USER_QOS_PROFILES.xml.
     std::string qos_libname = "persistence_example_Library";
-    DataReaderQos reader_qos = drs ?
-        QosProvider::Default().datareader_qos(
-            qos_libname + "::durable_reader_state_Profile") :
-        QosProvider::Default().datareader_qos(
-            qos_libname + "::persistence_service_Profile");
+    DataReaderQos reader_qos = drs
+            ? QosProvider::Default().datareader_qos(
+                    qos_libname + "::durable_reader_state_Profile")
+            : QosProvider::Default().datareader_qos(
+                    qos_libname + "::persistence_service_Profile");
 
     // Create a DataReader (Subscriber created in-line)
     DataReader<hello_world> reader(Subscriber(participant), topic, reader_qos);
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder< DataReader<hello_world> > scoped_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new hello_worldReaderListener,
-            StatusMask::data_available());
+    rti::core::ListenerBinder<DataReader<hello_world>> scoped_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new hello_worldReaderListener,
+                    StatusMask::data_available());
 
     for (int count = 0; sample_count == 0 || count < sample_count; ++count) {
         std::cout << "hello_world subscriber sleeping for 4 sec..."
@@ -81,11 +80,11 @@ void subscriber_main(int domain_id, int sample_count, bool drs)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
     bool drs = false;
 
-    for (int i = 1; i < argc; ) {
-        const std::string& param = argv[i++];
+    for (int i = 1; i < argc;) {
+        const std::string &param = argv[i++];
 
         if (param == "-domain_id" && i < argc) {
             domain_id = atoi(argv[i++]);
@@ -110,7 +109,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count, drs);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;
