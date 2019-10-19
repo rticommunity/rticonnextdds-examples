@@ -55,7 +55,7 @@ public:
     {
         stop_thread_ = true;
         filereader_thread_.join();
-        inputfile_.close();
+        input_file_stream_.close();
     }
 
 private:
@@ -70,7 +70,8 @@ private:
     bool stop_thread_;
     uint16_t sampling_period_;
 
-    std::ifstream inputfile_;
+    std::ifstream input_file_stream_;
+    std::string input_file_name_;
     std::string buffer_;
     dds::core::xtypes::DynamicType *adapter_type_;
 };

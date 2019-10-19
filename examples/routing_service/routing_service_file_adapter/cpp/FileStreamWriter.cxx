@@ -15,23 +15,17 @@ const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter
 
 FileStreamWriter::FileStreamWriter(const PropertySet &property)
 {
-
-    // const auto &it = property.find(OUTPUT_FILE_PROPERTY_NAME);
-    // if (it != property.end()) {
-    //     std::string outfilepath = it->second;
-    //     std::cout << "FilePath: " << outfilepath << std::endl;
-    //     outputfile_.open(outfilepath);
-    // }
+    std::string outputfilename;
     for (const auto &it: property) {
         if (it.first == OUTPUT_FILE_PROPERTY_NAME) {
-            std::string outfilepath = it.second;
-            std::cout << "FilePath: " << outfilepath << std::endl;
-            outputfile_.open(outfilepath);
+            outputfilename = it.second;
+            std::cout << "Output file name: " << outputfilename << std::endl;
+            output_file_.open(outputfilename);
         }
     }
 
-    if (!outputfile_.is_open()) {
-        throw std::logic_error("Open output file");
+    if (!output_file_.is_open()) {
+        throw std::logic_error("Open output file: " + outputfilename);
     }
 };
 
@@ -39,14 +33,18 @@ int FileStreamWriter::write(
         const std::vector<dds::core::xtypes::DynamicData *> &samples,
         const std::vector<dds::sub::SampleInfo *> &infos)
 {
-    for (std::vector<dds::core::xtypes::DynamicData *>::const_iterator it
-         = samples.begin();
-         it != samples.end();
-         ++it) {
+    for (std::vector<dds::core::xtypes::DynamicData *>::const_iterator it = samples.begin(); 
+            it != samples.end(); 
+            ++it) {
         std::string str = rti::topic::to_string(
-                (**it), rti::topic::PrintFormatProperty::Json());
-        std::cout << "Received Sample (JSON):" << std::endl << str << std::endl;
-        outputfile_ << str << std::endl;
+                (**it), 
+                rti::topic::PrintFormatProperty::Default());
+        std::cout << "Received Sample: " << std::endl << str << std::endl;
+
+        output_file_ << (*it)->value<std::string>("color") << "," 
+                << (*it)->value<int32_t>("x") << "," 
+                << (*it)->value<int32_t>("y") << "," 
+                << (*it)->value<int32_t>("shapesize") << std::endl;
     }
     return 0;
 }

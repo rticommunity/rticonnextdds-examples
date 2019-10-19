@@ -27,7 +27,7 @@ find_package(
 # Define the library that will provide the adapter plugin
 add_library(
     fileadapter
-    MODULE
+    SHARED
         ${CMAKE_SOURCE_DIR}/FileAdapter.cxx
         ${CMAKE_SOURCE_DIR}/FileConnection.cxx
         ${CMAKE_SOURCE_DIR}/FileDiscoveryStreamReader.cxx
@@ -45,6 +45,19 @@ target_link_libraries(
 
 # Copy the sample data file into the binary directory
 configure_file(
-    ${CMAKE_SOURCE_DIR}/samples_in.csv
-    ${CMAKE_BINARY_DIR}/samples_in.csv
+    ${CMAKE_SOURCE_DIR}/samples_in_square.csv
+    ${CMAKE_BINARY_DIR}/samples_in_square.csv
+    COPYONLY
+)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/ShapeType.xml
+    ${CMAKE_BINARY_DIR}/ShapeType.xml
+    COPYONLY
+)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/RsFileAdapter.xml
+    ${CMAKE_BINARY_DIR}/RsFileAdapter.xml
+    COPYONLY
 )

@@ -22,18 +22,23 @@ void FileStreamReader::ProcessThread()
     stop_thread_ = false;
 
     while (!stop_thread_) {
-        if (inputfile_.is_open()) {
-            std::getline(inputfile_, buffer_);
+        if (input_file_stream_.is_open()) {
+            std::getline(input_file_stream_, buffer_);
 
-            // Here we notify routing service, that there is data available
-            // on the StreamReader, triggering a call to take().
-            if (!inputfile_.eof()) {
+            /** 
+             * Here we notify routing service, that there is data available 
+             * on the StreamReader, triggering a call to take().
+             */
+            if (!input_file_stream_.eof()) {
                 reader_listener_->on_data_available(this);
+            } else {
+                stop_thread_ = true;
             }
         }
 
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
+    std::cout << "Reached end of stream for file " << input_file_name_ << std::endl;
 }
 
 FileStreamReader::FileStreamReader(
@@ -50,13 +55,14 @@ FileStreamReader::FileStreamReader(
     // Parse the properties provided in the xml configuration file
     for (const auto &it : property) {
         if (it.first == INPUT_FILE_PROPERTY_NAME) {
-            inputfile_.open(it.second);
+            input_file_name_ = it.second;
+            input_file_stream_.open(it.second);
         } else if (it.first == SAMPLE_PERIOD_PROPERTY_NAME) {
             sampling_period_ = std::stoi(it.second);
         }
     }
 
-    if (!inputfile_.is_open()) {
+    if (!input_file_stream_.is_open()) {
         throw std::logic_error("Input file not provided or unable to open");
     }
 
@@ -86,17 +92,30 @@ void FileStreamReader::take(
         std::vector<dds::sub::SampleInfo *> &infos)
 {
     std::istringstream s(buffer_);
-    std::string id;
-    std::string message;
-    std::getline(s, id, ',');
-    std::getline(s, message, ',');
+    std::string color;
+    std::string x;
+    std::string y;
+    std::string shapesize;
+
+    // Reading input from the csv file
+    std::getline(s, color, ',');
+    std::getline(s, x, ',');
+    std::getline(s, y, ',');
+    std::getline(s, shapesize, ',');
 
     samples.resize(1);
     infos.resize(1);
 
     DynamicData *sample = new DynamicData(*adapter_type_);
-    sample->value("id", std::stoi(id));
-    sample->value("message", message);
+
+    /** 
+     * This is the hardcoded type information about ShapeType.
+     * You are advised to change this as per your type definition
+     */
+    sample->value("color", color);
+    sample->value("x", std::stoi(x));
+    sample->value("y", std::stoi(y));
+    sample->value("shapesize", std::stoi(shapesize));
 
     dds::sub::SampleInfo *info = new dds::sub::SampleInfo();
     (*info)->native().valid_data = DDS_BOOLEAN_TRUE;

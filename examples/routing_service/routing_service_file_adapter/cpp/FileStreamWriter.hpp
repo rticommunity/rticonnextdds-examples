@@ -31,14 +31,14 @@ public:
 
     ~FileStreamWriter()
     {
-        outputfile_.close();
+        output_file_.close();
     };
 
 private:
 
     static const std::string OUTPUT_FILE_PROPERTY_NAME;
 
-    std::ofstream outputfile_;
+    std::ofstream output_file_;
 };
 
 }  // namespace examples

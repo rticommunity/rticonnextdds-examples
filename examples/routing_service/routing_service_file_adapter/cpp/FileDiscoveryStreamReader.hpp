@@ -30,7 +30,7 @@ public:
     void return_loan(std::vector<rti::routing::StreamInfo*>&);
 
 private:
-    std::vector<rti::routing::StreamInfo> data_samples_;
+    std::vector<rti::routing::StreamInfo *> data_samples_;
 };
 
 }  // namespace examples

@@ -13,17 +13,21 @@ using namespace rti::community::examples;
 
 FileDiscoveryStreamReader::FileDiscoveryStreamReader(const PropertySet &)
 {
-    // In our example, we provide statically the stream information available.
-    // Make sure, the stream name and the stream type matches the ones described
-    // in the XML configuration file.
-    this->data_samples_.resize(1, StreamInfo("TestTopic", "TestType"));
+    /**
+     * In our example, we provide statically the stream information available. 
+     * Make sure, the stream name and the stream type matches the <stream_name> 
+     * and <registered_type_name> respectively in the XML configuration file.
+     */
+    this->data_samples_.push_back(new StreamInfo("Square", "ShapeType"));
 }
 
 void FileDiscoveryStreamReader::take(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
     stream.resize(this->data_samples_.size());
-    stream[0] = &(this->data_samples_[0]);
+    for (int i = 0; i < this->data_samples_.size(); i++) {
+        stream[i] = this->data_samples_[i];
+    }
 }
 
 void FileDiscoveryStreamReader::return_loan(
