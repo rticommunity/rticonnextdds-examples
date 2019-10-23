@@ -52,16 +52,34 @@ Recording Service API* documentation.
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
-- `CONNEXTDDS_DIR`
-- `CONNEXTDDS_ARCH`
+-   `CONNEXTDDS_DIR`: pointing to the installation of RTI Connext DDS to be
+    used.
+
+-   `CONNEXTDDS_ARCH`: the RTI Connext DDS Target architecture to be used in
+    your system.
+
+-   `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release
+    and Debug.
+
+-   `BUILD_SHARED_LIBS`: specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking.
 
 Build the example code by running the following command:
 
 ```bash
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
+```
+
+In case you are using Windows x64, you have to add the option -A in the cmake
+command as follow:
+
+```bash
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 **Cross-compilation**.

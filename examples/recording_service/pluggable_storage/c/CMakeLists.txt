@@ -15,7 +15,7 @@ project (PluggableStorage)
 if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "
-        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
     message(FATAL_ERROR ${msg})
 endif()
 
@@ -31,16 +31,11 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.0.1"
     REQUIRED
     COMPONENTS
         core
         routing_service
-)
-
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
 )
 
 # Create the directory that's going to contain the generated code files
@@ -72,7 +67,7 @@ add_custom_target(
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    FileStorageWriter MODULE
+    FileStorageWriter
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
 )
@@ -96,7 +91,7 @@ target_include_directories(
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    FileStorageReader MODULE
+    FileStorageReader
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
 )

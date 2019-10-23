@@ -16,7 +16,7 @@ project (ShapesProcessor)
 if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "
-        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
     message(FATAL_ERROR ${msg})
 endif()
 
@@ -34,7 +34,7 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.0.1"
     REQUIRED
     COMPONENTS
         core
