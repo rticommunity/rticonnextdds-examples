@@ -22,12 +22,21 @@ bool FileInputDiscoveryStreamReader::fexists(const std::string filename)
     return input_file.is_open();
 }
 
-FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader(const PropertySet &)
+FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader( 
+        const PropertySet &, 
+        StreamReaderListener *input_stream_discovery_listener)
+        : data_samples_mutex_(), 
+        data_samples_()
 {
+    input_stream_discovery_listener_ = input_stream_discovery_listener;
+
     /**
      * In our example, we provide statically the stream information available. 
-     * Make sure, the stream name and the stream type matches the <stream_name> 
-     * and <registered_type_name> respectively in the XML configuration file.
+     * We do not have a mechanism demonstrating how to perform discovery after 
+     * startup. However, as an idea you can have a thread monitoring the file 
+     * system and updating the list of StreamInfo samples and calling 
+     * input_stream_discovery_listener_->on_data_available(this); to notify that 
+     * new files have been discovered.
      */
     if (fexists(SQUARE_FILE_NAME)) {
         this->data_samples_.push_back(new StreamInfo("Square", "ShapeType"));
@@ -40,26 +49,62 @@ FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader(const PropertySet
     if (fexists(TRIANGLE_FILE_NAME)) {
         this->data_samples_.push_back(new StreamInfo("Triangle", "ShapeType"));
     }
+
+    /** 
+     * Once the FileInputDiscoveryStreamReader is initialized, we trigger an 
+     * event to notify that the streams are ready.
+     */
+    input_stream_discovery_listener_->on_data_available(this);
 }
 
-void FileInputDiscoveryStreamReader::dispose()
+void FileInputDiscoveryStreamReader::dispose(
+        const rti::routing::StreamInfo *stream_info)
 {
-    for (int i = 0; i < this->data_samples_.size(); i++) {
-        this->data_samples_[i]->disposed(true);
-    }
+    /**
+     * This guard is essential since the take() and return_loan() operations triggered 
+     * by calling on_data_available() execute on a different thread. The take() and 
+     * return_loan() operations also need to access the data_samples_ list.
+     */
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
+
+    rti::routing::StreamInfo *stream_info_disposed = new StreamInfo(
+            stream_info->stream_name(), 
+            stream_info->type_info().type_name());
+    stream_info_disposed->disposed(true);
+
+    this->data_samples_.push_back(stream_info_disposed);
+    input_stream_discovery_listener_->on_data_available(this);
 }
 
 void FileInputDiscoveryStreamReader::take(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
-    stream.resize(this->data_samples_.size());
-    for (int i = 0; i < this->data_samples_.size(); i++) {
-        stream[i] = this->data_samples_[i];
+    /**
+     * This guard is essential since the take() and return_loan() operations triggered 
+     * by calling on_data_available() execute on a different thread. The take() and 
+     * return_loan() operations also need to access the data_samples_ list.
+     */
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
+
+    auto iter = data_samples_.begin();
+    while (iter != data_samples_.end()) {
+        stream.push_back(*iter);
+        iter++;
     }
 }
 
 void FileInputDiscoveryStreamReader::return_loan(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
+    /**
+     * This guard is essential since the take() and return_loan() operations triggered 
+     * by calling on_data_available() execute on a different thread. The take() and 
+     * return_loan() operations also need to access the data_samples_ list.
+     */
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
+
+    for (int i = 0; i < stream.size(); i++) {
+        this->data_samples_.pop_front();
+    }
     stream.clear();
 }

@@ -63,6 +63,8 @@ private:
     std::ifstream input_file_stream_;
     std::string input_file_name_;
     std::string buffer_;
+
+    const rti::routing::StreamInfo *stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;
 };
 

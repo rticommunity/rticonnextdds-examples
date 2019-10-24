@@ -16,14 +16,8 @@ FileConnection::FileConnection(
         StreamReaderListener *input_stream_discovery_listener,
         StreamReaderListener *output_stream_discovery_listener,
         const PropertySet &properties) :
-        input_discovery_reader_(properties)
+        input_discovery_reader_(properties, input_stream_discovery_listener)
 {
-    /** 
-     * Once the FileConnection is initialized, we trigger an event 
-     * to notify that the streams are ready.
-     */
-    input_stream_discovery_listener_ = input_stream_discovery_listener;
-    input_stream_discovery_listener_->on_data_available(&input_discovery_reader_);
 };
 
 StreamReader *FileConnection::create_stream_reader(
@@ -70,8 +64,8 @@ DiscoveryStreamReader *FileConnection::input_stream_discovery_reader()
  * that the <creation_mode> for <output> should be ON_ROUTE_MATCH for the cleanup 
  * to be propagated to the StreamWriter as well.
  */
-void FileConnection::dispose_discovery_streams()
+void FileConnection::dispose_discovery_stream(
+        const rti::routing::StreamInfo *stream_info)
 {
-    input_discovery_reader_.dispose();
-    input_stream_discovery_listener_->on_data_available(&input_discovery_reader_);
+    input_discovery_reader_.dispose(stream_info);
 }

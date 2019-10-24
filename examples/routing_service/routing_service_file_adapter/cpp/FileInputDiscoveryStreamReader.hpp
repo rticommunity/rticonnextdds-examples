@@ -28,13 +28,15 @@ using namespace rti::routing::adapter;
 
 class FileInputDiscoveryStreamReader : public DiscoveryStreamReader {
 public:
-    FileInputDiscoveryStreamReader(const PropertySet &);
+    FileInputDiscoveryStreamReader(
+            const PropertySet &, 
+            StreamReaderListener *input_stream_discovery_listener);
 
     void take(std::vector<rti::routing::StreamInfo*>&);
 
     void return_loan(std::vector<rti::routing::StreamInfo*>&);
 
-    void dispose();
+    void dispose(const rti::routing::StreamInfo *stream_info);
 
     bool fexists(const std::string filename);
 
@@ -44,7 +46,9 @@ private:
     static const std::string CIRCLE_FILE_NAME;
     static const std::string TRIANGLE_FILE_NAME;
 
-    std::vector<rti::routing::StreamInfo *> data_samples_;
+    std::mutex data_samples_mutex_;
+    std::list<rti::routing::StreamInfo *> data_samples_;
+    StreamReaderListener *input_stream_discovery_listener_;
 };
 
 }  // namespace examples

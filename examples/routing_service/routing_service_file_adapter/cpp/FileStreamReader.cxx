@@ -37,7 +37,7 @@ void FileStreamReader::file_reading_thread()
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
     std::cout << "Reached end of stream for file " << input_file_name_ << std::endl;
-    file_connection_->dispose_discovery_streams();
+    file_connection_->dispose_discovery_stream(stream_info_);
 }
 
 FileStreamReader::FileStreamReader(
@@ -49,6 +49,9 @@ FileStreamReader::FileStreamReader(
         sampling_period_(1), 
         stop_thread_(false)
 {
+    stream_info_ = new StreamInfo(
+            info.stream_name(), 
+            info.type_info().type_name());
     file_connection_ = connection;
     reader_listener_ = listener;
     adapter_type_ = static_cast<DynamicType *>(

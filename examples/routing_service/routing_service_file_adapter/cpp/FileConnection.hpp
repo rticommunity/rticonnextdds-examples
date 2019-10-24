@@ -47,11 +47,11 @@ public:
 
     DiscoveryStreamReader *output_stream_discovery_reader();
 
-    void dispose_discovery_streams();
+    void dispose_discovery_stream(
+            const rti::routing::StreamInfo *stream_info);
 
 private:
     FileInputDiscoveryStreamReader input_discovery_reader_;
-    StreamReaderListener *input_stream_discovery_listener_;
 };
 
 }  // namespace examples
