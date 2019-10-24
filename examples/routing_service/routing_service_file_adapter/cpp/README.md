@@ -43,27 +43,26 @@ To run the example, you just need to run the following command from the `build`
 folder (where the adapter plugin library has been created).
 
 This example has been written to allow easy experimentation with the Shapes Demo shipped with 
-*RTI Connext DDS* installer bundle. We use the environment variable SHAPE_TOPIC in the ```RsFileAdapter.xml``` 
-configuration file. SHAPE_TOPIC should be the type of shape you are publishing or subscribing to.
+*RTI Connext DDS* installer bundle. We use the environment variable ```SHAPE_TOPIC``` in the ```RsFileAdapter.xml``` 
+configuration file. ```SHAPE_TOPIC``` should be the type of shape you are publishing or subscribing to.
 
-Possible values for SHAPE_TOPIC are: 
+Possible values for ```SHAPE_TOPIC``` are: 
 - Square
 - Circle
 - Triangle
 
 You have 3 different configurations (cfgName) to choose from: 
 - **FileAdapterToDDS** - This reads data from a file using the FileAdapter and outputs it to DDS. 
-You can visualize the ouptut by subscribing to the chosen SHAPE_TOPIC.
+You can visualize the ouptut by subscribing to the chosen ```SHAPE_TOPIC``` in Shapes Demo.
 - **DDSToFileAdapter** - This writes data to a file using the FileAdapter by reading the input from 
-DDS. You can publish data in Shapes Demo for a shape and set that value to SHAPE_TOPIC before 
+DDS. You can publish data in Shapes Demo for a shape and set that value to ```SHAPE_TOPIC``` before 
 starting Routing Service.
 - **FileAdapterToFileAdapter** - This reads data from a file and writes data to another file both 
-using the FileAdapater plug-in. As before you should set the appropriate value of SHAPE_TOPIC 
+using the FileAdapter plug-in. As before you should set the appropriate value of ```SHAPE_TOPIC``` 
 before starting Routing Service
 
 ```bash
-cd build
-<Connext DDS Directory>/bin/rtiroutingservice -cfgFile ../RsFileAdapter.xml -cfgName <cfgName>
+cd build <Connext DDS Directory>/bin/rtiroutingservice -cfgFile ../RsFileAdapter.xml -cfgName <cfgName>
 ```
 
 Here is an output from a sample run:
@@ -111,7 +110,7 @@ Received Sample:
    shapesize: 30
 ```
 
-The general behavior of this example, can be controlled using properties and the SHAPE_TOPIC environment 
+The general behavior of this example, can be controlled using properties and the ```SHAPE_TOPIC``` environment 
 variable. You can modify properties in the Routing Service configuration file. This is the list of 
 available properties:
 
