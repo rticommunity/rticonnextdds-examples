@@ -30,7 +30,7 @@ add_library(
     SHARED
         ${CMAKE_SOURCE_DIR}/FileAdapter.cxx
         ${CMAKE_SOURCE_DIR}/FileConnection.cxx
-        ${CMAKE_SOURCE_DIR}/FileDiscoveryStreamReader.cxx
+        ${CMAKE_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamReader.cxx
         ${CMAKE_SOURCE_DIR}/FileStreamWriter.cxx
 )

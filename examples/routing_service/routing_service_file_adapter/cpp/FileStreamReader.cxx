@@ -39,15 +39,18 @@ void FileStreamReader::ProcessThread()
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
     std::cout << "Reached end of stream for file " << input_file_name_ << std::endl;
+    file_connection_->dispose_discovery_streams();
 }
 
 FileStreamReader::FileStreamReader(
+        FileConnection *connection, 
         const StreamInfo &info,
         const PropertySet &property,
         StreamReaderListener *listener)
         : filereader_thread_(),
         sampling_period_(1)
 {
+    file_connection_ = connection;
     reader_listener_ = listener;
     adapter_type_ = static_cast<DynamicType *>(
             info.type_info().type_representation());

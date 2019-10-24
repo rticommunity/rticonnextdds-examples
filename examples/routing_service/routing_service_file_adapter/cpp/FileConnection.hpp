@@ -11,7 +11,7 @@
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/Connection.hpp>
 
-#include "FileDiscoveryStreamReader.hpp"
+#include "FileInputDiscoveryStreamReader.hpp"
 
 namespace rti {
 namespace community {
@@ -27,12 +27,14 @@ public:
             StreamReaderListener *input_stream_discovery_listener,
             StreamReaderListener *output_stream_discovery_listener,
             const PropertySet &properties) :
-            discovery_reader_(properties)
+            input_discovery_reader_(properties)
     {
-        // Once the FileConnection is initialized, we trigger an event
-        // to notify that the streams are ready.
-        input_stream_discovery_listener->on_data_available(&discovery_reader_);
-        output_stream_discovery_listener->on_data_available(&discovery_reader_);
+        /** 
+         * Once the FileConnection is initialized, we trigger an event 
+         * to notify that the streams are ready.
+         */
+        input_stream_discovery_listener_ = input_stream_discovery_listener;
+        input_stream_discovery_listener_->on_data_available(&input_discovery_reader_);
     };
 
     StreamReader *create_stream_reader(
@@ -51,15 +53,18 @@ public:
     void delete_stream_writer(StreamWriter *writer);
 
     DiscoveryStreamReader *input_stream_discovery_reader() {
-        return &discovery_reader_;
+        return &input_discovery_reader_;
     };
 
     DiscoveryStreamReader *output_stream_discovery_reader() {
-        return &discovery_reader_;
+        return NULL;
     };
 
+    void dispose_discovery_streams();
+
 private:
-    FileDiscoveryStreamReader discovery_reader_;
+    FileInputDiscoveryStreamReader input_discovery_reader_;
+    StreamReaderListener *input_stream_discovery_listener_;
 };
 
 }  // namespace examples

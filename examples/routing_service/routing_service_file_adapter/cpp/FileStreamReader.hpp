@@ -12,6 +12,8 @@
 #include <iostream>
 #include <thread>
 
+#include "FileConnection.hpp"
+
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamReader.hpp>
 
@@ -25,6 +27,7 @@ using namespace rti::routing::adapter;
 class FileStreamReader : public DynamicDataStreamReader {
 public:
     FileStreamReader(
+            FileConnection *connection, 
             const StreamInfo &info,
             const PropertySet &,
             StreamReaderListener *listener);
@@ -65,6 +68,7 @@ private:
 
     void ProcessThread();
 
+    FileConnection *file_connection_;
     StreamReaderListener *reader_listener_;
     std::thread filereader_thread_;
     bool stop_thread_;

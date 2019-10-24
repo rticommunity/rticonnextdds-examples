@@ -18,7 +18,7 @@ StreamReader *FileConnection::create_stream_reader(
         const PropertySet &properties,
         StreamReaderListener *listener)
 {
-    return new FileStreamReader(info, properties, listener);
+    return new FileStreamReader(this, info, properties, listener);
 };
 
 void FileConnection::delete_stream_reader(StreamReader *reader)
@@ -37,4 +37,17 @@ StreamWriter *FileConnection::create_stream_writer(
 void FileConnection::delete_stream_writer(StreamWriter *writer)
 {
     delete writer;
+}
+
+/**
+ * This function is called by the FileStreamReader to indicate that it has 
+ * reached EOF and its time to dispose the route. The dispose set by the 
+ * FileInputDiscoveryStreamReader starts the chain of cleanup procedure. Remember 
+ * that the <creation_mode> for <output> should be ON_ROUTE_MATCH for the cleanup 
+ * to be propagated to the StreamWriter as well.
+ */
+void FileConnection::dispose_discovery_streams()
+{
+    input_discovery_reader_.dispose();
+    input_stream_discovery_listener_->on_data_available(&input_discovery_reader_);
 }

@@ -11,7 +11,7 @@ The code in this directory provides the following components:
 
 - `FileAdapter` implements the plugin that is loaded by *RTI Routing Service*. It is responsible to create and delete connections.
 - `FileConnection` implements a connection. This component is responsible of the creation and deletion of `StreamReaders` and `StreamWriters`.
-- `FileDiscoveryStreamReader` implements the logic necessary to propagate information about newly discovered streams to RTI Routing Service.
+- `FileInputDiscoveryStreamReader` implements the logic necessary to propagate information about newly discovered streams to RTI Routing Service.
 - `FileStreamReader` implements an `StreamReader` that reads sample information from a CSV file.
 - `FileStreamWriter` implements an `StreamReader` that writes sample information to a file in JSON format.
 

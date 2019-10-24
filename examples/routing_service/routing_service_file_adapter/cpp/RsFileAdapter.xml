@@ -37,7 +37,7 @@
             <session name="session">
                 <route>
                     <input connection="FileConnection">
-                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
                         <stream_name>Square</stream_name>
                         <property>
@@ -89,7 +89,7 @@
                             <value>
                                 <element>
                                     <name>example.adapter.output_file</name>
-                                    <value>samples_out_square.txt</value>
+                                    <value>samples_out_square.csv</value>
                                 </element>
                             </value>
                         </property>
@@ -109,7 +109,7 @@
             <session name="session">
                 <route>
                     <input connection="FileConnection">
-                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
                         <stream_name>Square</stream_name>
                         <property>
