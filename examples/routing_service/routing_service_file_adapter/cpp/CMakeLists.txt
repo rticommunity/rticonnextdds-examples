@@ -45,8 +45,20 @@ target_link_libraries(
 
 # Copy the sample data file into the binary directory
 configure_file(
-    ${CMAKE_SOURCE_DIR}/samples_in_square.csv
-    ${CMAKE_BINARY_DIR}/samples_in_square.csv
+    ${CMAKE_SOURCE_DIR}/Input_Circle.csv
+    ${CMAKE_BINARY_DIR}/Input_Circle.csv
+    COPYONLY
+)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/Input_Square.csv
+    ${CMAKE_BINARY_DIR}/Input_Square.csv
+    COPYONLY
+)
+
+configure_file(
+    ${CMAKE_SOURCE_DIR}/Input_Triangle.csv
+    ${CMAKE_BINARY_DIR}/Input_Triangle.csv
     COPYONLY
 )
 

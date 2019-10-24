@@ -67,6 +67,8 @@ FileStreamReader::FileStreamReader(
 
     if (!input_file_stream_.is_open()) {
         throw std::logic_error("Input file not provided or unable to open");
+    } else {
+        std::cout << "Input file name: " << input_file_name_ << std::endl;
     }
 
     filereader_thread_ = std::thread(&FileStreamReader::ProcessThread, this);

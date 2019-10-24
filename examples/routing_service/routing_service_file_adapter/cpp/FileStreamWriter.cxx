@@ -15,17 +15,18 @@ const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter
 
 FileStreamWriter::FileStreamWriter(const PropertySet &property)
 {
-    std::string outputfilename;
+    std::string output_file_name;
     for (const auto &it: property) {
         if (it.first == OUTPUT_FILE_PROPERTY_NAME) {
-            outputfilename = it.second;
-            std::cout << "Output file name: " << outputfilename << std::endl;
-            output_file_.open(outputfilename);
+            output_file_name = it.second;
+            output_file_.open(output_file_name);
         }
     }
 
     if (!output_file_.is_open()) {
-        throw std::logic_error("Open output file: " + outputfilename);
+        throw std::logic_error("Open output file: " + output_file_name);
+    } else {
+        std::cout << "Output file name: " << output_file_name << std::endl;
     }
 };
 

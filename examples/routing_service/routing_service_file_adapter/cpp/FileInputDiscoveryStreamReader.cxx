@@ -11,9 +11,9 @@
 using namespace rti::routing;
 using namespace rti::community::examples;
 
-const std::string FileInputDiscoveryStreamReader::SQUARE_FILE_NAME = "samples_in_square.csv";
-const std::string FileInputDiscoveryStreamReader::CIRCLE_FILE_NAME = "samples_in_circle.csv";
-const std::string FileInputDiscoveryStreamReader::TRIANGLE_FILE_NAME = "samples_in_triangle.csv";
+const std::string FileInputDiscoveryStreamReader::SQUARE_FILE_NAME = "Input_Square.csv";
+const std::string FileInputDiscoveryStreamReader::CIRCLE_FILE_NAME = "Input_Circle.csv";
+const std::string FileInputDiscoveryStreamReader::TRIANGLE_FILE_NAME = "Input_Triangle.csv";
 
 bool FileInputDiscoveryStreamReader::fexists(const std::string filename)
 {

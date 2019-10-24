@@ -39,12 +39,12 @@
                     <input connection="FileConnection">
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <stream_name>Square</stream_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
                         <property>
                             <value>
                                 <element>
                                     <name>example.adapter.input_file</name>
-                                    <value>samples_in_square.csv</value>
+                                    <value>Input_$(SHAPE_TOPIC).csv</value>
                                 </element>
                                 <element>
                                     <name>example.adapter.sample_period_sec</name>
@@ -56,7 +56,7 @@
                     <dds_output participant="DDSConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <topic_name>Square</topic_name>
+                        <topic_name>$(SHAPE_TOPIC)</topic_name>
                     </dds_output>
                 </route>
             </session>
@@ -79,17 +79,17 @@
                     <dds_input participant="DDSConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <topic_name>Square</topic_name>
+                        <topic_name>$(SHAPE_TOPIC)</topic_name>
                     </dds_input>
                     <output connection="FileConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <stream_name>Square</stream_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
                         <property>
                             <value>
                                 <element>
                                     <name>example.adapter.output_file</name>
-                                    <value>samples_out_square.csv</value>
+                                    <value>Output_$(SHAPE_TOPIC).csv</value>
                                 </element>
                             </value>
                         </property>
@@ -111,12 +111,12 @@
                     <input connection="FileConnection">
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <stream_name>Square</stream_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
                         <property>
                             <value>
                                 <element>
                                     <name>example.adapter.input_file</name>
-                                    <value>samples_in_square.csv</value>
+                                    <value>Input_$(SHAPE_TOPIC).csv</value>
                                 </element>
                                 <element>
                                     <name>example.adapter.sample_period_sec</name>
@@ -128,12 +128,12 @@
                     <output connection="FileConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <stream_name>Square</stream_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
                         <property>
                             <value>
                                 <element>
                                     <name>example.adapter.output_file</name>
-                                    <value>samples_out_square.csv</value>
+                                    <value>Output_$(SHAPE_TOPIC).csv</value>
                                 </element>
                             </value>
                         </property>
