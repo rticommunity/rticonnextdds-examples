@@ -12,6 +12,20 @@
 
 using namespace rti::community::examples;
 
+FileConnection::FileConnection(
+        StreamReaderListener *input_stream_discovery_listener,
+        StreamReaderListener *output_stream_discovery_listener,
+        const PropertySet &properties) :
+        input_discovery_reader_(properties)
+{
+    /** 
+     * Once the FileConnection is initialized, we trigger an event 
+     * to notify that the streams are ready.
+     */
+    input_stream_discovery_listener_ = input_stream_discovery_listener;
+    input_stream_discovery_listener_->on_data_available(&input_discovery_reader_);
+};
+
 StreamReader *FileConnection::create_stream_reader(
         Session *session,
         const StreamInfo &info,
@@ -38,6 +52,16 @@ void FileConnection::delete_stream_writer(StreamWriter *writer)
 {
     delete writer;
 }
+
+DiscoveryStreamReader *FileConnection::output_stream_discovery_reader() 
+{
+    return NULL;
+};
+
+DiscoveryStreamReader *FileConnection::input_stream_discovery_reader() 
+{
+    return &input_discovery_reader_;
+};
 
 /**
  * This function is called by the FileStreamReader to indicate that it has 

@@ -17,10 +17,8 @@ using namespace dds::core::xtypes;
 const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME = "example.adapter.input_file";
 const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME = "example.adapter.sample_period_sec";
 
-void FileStreamReader::ProcessThread()
+void FileStreamReader::file_reading_thread()
 {
-    stop_thread_ = false;
-
     while (!stop_thread_) {
         if (input_file_stream_.is_open()) {
             std::getline(input_file_stream_, buffer_);
@@ -48,7 +46,8 @@ FileStreamReader::FileStreamReader(
         const PropertySet &property,
         StreamReaderListener *listener)
         : filereader_thread_(),
-        sampling_period_(1)
+        sampling_period_(1), 
+        stop_thread_(false)
 {
     file_connection_ = connection;
     reader_listener_ = listener;
@@ -71,25 +70,7 @@ FileStreamReader::FileStreamReader(
         std::cout << "Input file name: " << input_file_name_ << std::endl;
     }
 
-    filereader_thread_ = std::thread(&FileStreamReader::ProcessThread, this);
-}
-
-void FileStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos)
-{
-    take(samples, infos);
-    return;
-}
-
-
-void FileStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos,
-        const SelectorState &selector_state)
-{
-    take(samples, infos);
-    return;
+    filereader_thread_ = std::thread(&FileStreamReader::file_reading_thread, this);
 }
 
 void FileStreamReader::take(
@@ -150,4 +131,11 @@ void FileStreamReader::return_loan(
     }
     samples.clear();
     samples.clear();
+}
+
+FileStreamReader::~FileStreamReader()
+{
+    stop_thread_ = true;
+    filereader_thread_.join();
+    input_file_stream_.close();
 }

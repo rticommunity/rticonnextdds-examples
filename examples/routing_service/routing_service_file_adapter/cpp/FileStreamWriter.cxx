@@ -49,3 +49,8 @@ int FileStreamWriter::write(
     }
     return 0;
 }
+
+FileStreamWriter::~FileStreamWriter()
+{
+    output_file_.close();
+};

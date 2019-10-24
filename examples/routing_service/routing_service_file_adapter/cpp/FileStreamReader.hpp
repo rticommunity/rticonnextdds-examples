@@ -32,15 +32,6 @@ public:
             const PropertySet &,
             StreamReaderListener *listener);
 
-    void read(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &);
-
-    void read(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &,
-            const SelectorState &selector_state);
-
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &);
@@ -54,19 +45,14 @@ public:
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &);
 
-    ~FileStreamReader()
-    {
-        stop_thread_ = true;
-        filereader_thread_.join();
-        input_file_stream_.close();
-    }
+    ~FileStreamReader();
 
 private:
 
     static const std::string INPUT_FILE_PROPERTY_NAME;
     static const std::string SAMPLE_PERIOD_PROPERTY_NAME;
 
-    void ProcessThread();
+    void file_reading_thread();
 
     FileConnection *file_connection_;
     StreamReaderListener *reader_listener_;

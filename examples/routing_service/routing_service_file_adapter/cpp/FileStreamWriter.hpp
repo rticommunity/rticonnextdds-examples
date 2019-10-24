@@ -29,15 +29,11 @@ public:
             const std::vector<dds::core::xtypes::DynamicData *> &samples,
             const std::vector<dds::sub::SampleInfo *> &infos);
 
-    ~FileStreamWriter()
-    {
-        output_file_.close();
-    };
+    ~FileStreamWriter();
 
 private:
 
     static const std::string OUTPUT_FILE_PROPERTY_NAME;
-
     std::ofstream output_file_;
 };
 
