@@ -74,7 +74,8 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
 cmake --build .
 ```
 
-In case of Windows x64, you have to add the option -A in the cmake command as follow:
+In case you are using Windows x64, you have to add the option -A in the cmake
+command as follow:
 
 ```bash
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
