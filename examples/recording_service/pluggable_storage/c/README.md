@@ -138,7 +138,7 @@ RTI Recording Service started
 *.dat* file. The *.dat.info* file contains information about when the service
 started and finished.
 
-## Running the C++ example (Replay storage reader)
+## Running the C example (Replay storage reader)
 
 For *Replay* to have some data to replay, we assume that you have run the
 storage writer example and recorded some data. We also assume that you correctly
@@ -160,7 +160,7 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName CppFileReaderExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName C_ReaderExample -domainIdBase <your domain ID>
 ```
 
 You should see the samples in the file being published and received by the
