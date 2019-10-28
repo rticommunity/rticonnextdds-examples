@@ -52,16 +52,34 @@ Recording Service API* documentation.
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
-- `CONNEXTDDS_DIR`
-- `CONNEXTDDS_ARCH`
+-   `CONNEXTDDS_DIR`: pointing to the installation of RTI Connext DDS to be
+    used.
+
+-   `CONNEXTDDS_ARCH`: the RTI Connext DDS Target architecture to be used in
+    your system.
+
+-   `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release
+    and Debug.
+
+-   `BUILD_SHARED_LIBS`: specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking.
 
 Build the example code by running the following command:
 
 ```bash
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
+```
+
+In case you are using Windows x64, you have to add the option -A in the cmake
+command as follow:
+
+```bash
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
+        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 **Cross-compilation**.
@@ -115,12 +133,12 @@ RTI Recording Service (Recorder) 6.0.0 starting...
 RTI Recording Service started
 ```
 
-*Recorder* will create two files, `C_PluggableStorage.dat` and
-`C_PluggableStorage.dat.info`. The `HelloMsg` recorded samples are in the *.dat*
+*Recorder* will create two files, `Cpp_PluggableStorage.dat` and
+`Cpp_PluggableStorage.dat.info`. The `HelloMsg` recorded samples are in the *.dat*
 file. The *.dat.info* file contains information about when the service started
 and finished.
 
-## Running the C example (Replay storage reader)
+## Running the C++ example (Replay storage reader)
 
 For *Replay* to have some data to replay, we assume that you have run the
 storage writer example and recorded some data. We also assume that you correctly
@@ -142,14 +160,14 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName C_ReaderExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName CppFileReaderExample -domainIdBase <your domain ID>
 ```
 
 You should see the samples in the file being published and received by the
 subscribing application. *Note*: If you started Recording Service before
 starting the publisher aplicationp, it may look like Replay is taking a long
 time to start. This happens because the start time of the recording (written in
-the `C_PluggableStorage.dat.info` file) will be much earlier than the first
+the `Cpp_PluggableStorage.dat.info` file) will be much earlier than the first
 recorded sample. For this example, we recommend that you run the publisher
 before you run *Recorder*, so the start time and the time of the first sample
 will be similar.

@@ -15,7 +15,7 @@ project(ServiceAsLib)
 if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "
-        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
     message(FATAL_ERROR ${msg})
 endif()
 
@@ -40,11 +40,6 @@ find_package(
     COMPONENTS
         core
         routing_service
-)
-
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
 )
 
 # Select the adequate version of the Recording Service library depending on the
