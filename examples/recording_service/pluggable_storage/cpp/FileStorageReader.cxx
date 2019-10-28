@@ -229,7 +229,7 @@ bool FileStorageStreamReader::read_sample()
     return true;
 }
 
-/* in this call, the timestamp argument provides the end-timestamp that the
+/* In this call, the timestamp argument provides the end-timestamp that the
  * Replay Service or Converter is querying. The plugin should provide only
  * stream information that has not already been taken, and has a timestamp less
  * than or equal to the timestamp_limit.  */
@@ -239,16 +239,26 @@ void FileStorageStreamReader::read(
         const rti::recording::storage::SelectorState &selector)
 {
     int64_t timestamp_limit = selector.timestamp_range_end();
-    /* Add the currently read sample and sample info values to the taken data
+    /*
+     * Add the currently read sample and sample info values to the taken data
      * and info collections (sequences), as long as their timestamp does not
-     * exceed the timestamp_limit provided */
+     * exceed the timestamp_limit provided
+     */
     if (current_timestamp_ > timestamp_limit) {
         return;
     }
     if (finished()) {
         return;
     }
-    while (current_timestamp_ <= timestamp_limit) {
+    int32_t read_samples = 0;
+    /*
+     * Check if the currently cached sample's reception timestamp is within the
+     * selector's time limit and number of samples. If that is the case, it will
+     * be added to the collection of samples to be returned by this call.
+     */
+    while (current_timestamp_ <= timestamp_limit
+            && read_samples < selector.max_samples()) {
+        read_samples++;
         using namespace dds::core::xtypes;
 
         DynamicData *read_data = new DynamicData(type_);
@@ -266,14 +276,7 @@ void FileStorageStreamReader::read(
         dds::sub::SampleInfo *cpp_sample_info = new dds::sub::SampleInfo;
         (*cpp_sample_info)->native(read_sampleInfo);
         info_seq.push_back(cpp_sample_info);
-
-        /*
-         * When the next sample cached fulfills the condition to be taken (its
-         * timestamp is within the provided limit) this method adds it to the
-         * sequence used to store the current taken samples.
-         */
-
-        /* read ahead next sample, until EOF */
+        /* Read ahead next sample, until EOF */
         if (!read_sample()) {
             break;
         }
