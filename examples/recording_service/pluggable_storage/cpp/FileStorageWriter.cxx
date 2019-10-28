@@ -155,7 +155,7 @@ void FileStreamWriter::store(
                        << std::endl;
             // Get and store the sample's msg field
             data_file_ << "    Data.msg: "
-                       << sample_seq[i]->value<std::string>("msg").c_str()
+                       << sample_seq[i]->value<rti::core::string>("msg").c_str()
                        << std::endl;
         }
         stored_sample_count_++;
