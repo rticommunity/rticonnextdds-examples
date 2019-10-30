@@ -33,9 +33,18 @@ In order to build this example, you need to provide the following variables to
 
 ```bash
 mkdir build
-cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> -DCONNEXTDDS_ARCH=<Connext DDS Architecture> ..
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> -DCONNEXTDDS_ARCH=<Connext DDS Architecture> -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
+**Note:** If you are using a multi-configuration generator, such as Visual Studio solutions, you can specify the configuration mode to build as follows:
+
+```bash
+cmake --build . --config Release|Debug
+```
+
+Here is more information about generating [Visual Studio Solutions for Windows using CMake](https://cmake.org/cmake/help/v3.16/generator/Visual%20Studio%2016%202019.html#platform-selection).
+
+**Note:** The `BUILD_SHARED_LIBS` allows you to control if the generated library for this example is a static or a dynamic shared library. The following sections assume you are building a dynamic shared library. However Routing Service also supports static linking of adapters. To use this functionality you would need to create an application that uses Routing Service as a library component and statically links to this `FileAdapter` library.
 
 ## Running C++ example
 
@@ -61,15 +70,26 @@ starting Routing Service.
 using the FileAdapter plug-in. As before you should set the appropriate value of ```SHAPE_TOPIC``` 
 before starting Routing Service
 
+To run Routing Service, you will need first to set up your environment as follows:
+
 ```bash
-cd build <Connext DDS Directory>/bin/rtiroutingservice -cfgFile ../RsFileAdapter.xml -cfgName <cfgName>
+export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
+```
+
+```bash
+# From the build/ directory
+$ <Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName <cfgName>
 ```
 
 Here is an output from a sample run:
 
 ```bash
+$ export RTI_LD_LIBRARY_PATH=/Applications/rti_connext_dds-6.0.0/lib/x64Darwin16clang8.0
+
 $ export SHAPE_TOPIC="Triangle"
+
 $ /Applications/rti_connext_dds-6.0.0/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName FileAdapterToFileAdapter
+
 RTI Routing Service 6.0.0 executing (with name FileAdapterToFileAdapter)
 Input file name: Input_Triangle.csv
 Output file name: Output_Triangle.csv

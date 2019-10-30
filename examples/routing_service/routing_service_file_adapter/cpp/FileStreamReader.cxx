@@ -9,10 +9,13 @@
 #include <sstream>
 #include <thread>
 
+#include <rti/core/Exception.hpp>
 #include "FileStreamReader.hpp"
 
-using namespace rti::community::examples;
 using namespace dds::core::xtypes;
+using namespace rti::routing;
+using namespace rti::routing::adapter;
+using namespace rti::community::examples;
 
 const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME = "example.adapter.input_file";
 const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME = "example.adapter.sample_period_sec";
@@ -47,11 +50,9 @@ FileStreamReader::FileStreamReader(
         StreamReaderListener *listener)
         : filereader_thread_(),
         sampling_period_(1), 
-        stop_thread_(false)
+        stop_thread_(false), 
+        stream_info_(info.stream_name(), info.type_info().type_name())
 {
-    stream_info_ = new StreamInfo(
-            info.stream_name(), 
-            info.type_info().type_name());
     file_connection_ = connection;
     reader_listener_ = listener;
     adapter_type_ = static_cast<DynamicType *>(
@@ -68,7 +69,8 @@ FileStreamReader::FileStreamReader(
     }
 
     if (!input_file_stream_.is_open()) {
-        throw std::logic_error("Input file not provided or unable to open");
+        throw dds::core::IllegalOperationError(
+                "Input file not provided or unable to open");
     } else {
         std::cout << "Input file name: " << input_file_name_ << std::endl;
     }

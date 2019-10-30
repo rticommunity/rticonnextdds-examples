@@ -14,16 +14,12 @@
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamWriter.hpp>
 
-namespace rti {
-namespace community {
-namespace examples {
+namespace rti { namespace community { namespace examples {
 
-using namespace rti::routing;
-using namespace rti::routing::adapter;
-
-class FileStreamWriter : public DynamicDataStreamWriter {
+class FileStreamWriter : 
+        public rti::routing::adapter::DynamicDataStreamWriter {
 public:
-    FileStreamWriter(const PropertySet &);
+    FileStreamWriter(const rti::routing::PropertySet &);
 
     int write(
             const std::vector<dds::core::xtypes::DynamicData *> &samples,

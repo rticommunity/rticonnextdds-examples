@@ -13,12 +13,7 @@
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/DiscoveryStreamReader.hpp>
 
-namespace rti {
-namespace community {
-namespace examples {
-
-using namespace rti::routing;
-using namespace rti::routing::adapter;
+namespace rti { namespace community { namespace examples {
 
 /** 
  * This class implements a DiscoveryStreamReader, a special kind of StreamReader
@@ -26,17 +21,18 @@ using namespace rti::routing::adapter;
  * types.
  */
 
-class FileInputDiscoveryStreamReader : public DiscoveryStreamReader {
+class FileInputDiscoveryStreamReader : 
+        public rti::routing::adapter::DiscoveryStreamReader {
 public:
     FileInputDiscoveryStreamReader(
-            const PropertySet &, 
-            StreamReaderListener *input_stream_discovery_listener);
+            const rti::routing::PropertySet &, 
+            rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener);
 
     void take(std::vector<rti::routing::StreamInfo*>&);
 
     void return_loan(std::vector<rti::routing::StreamInfo*>&);
 
-    void dispose(const rti::routing::StreamInfo *stream_info);
+    void dispose(const rti::routing::StreamInfo &stream_info);
 
     bool fexists(const std::string filename);
 
@@ -48,7 +44,7 @@ private:
 
     std::mutex data_samples_mutex_;
     std::list<rti::routing::StreamInfo *> data_samples_;
-    StreamReaderListener *input_stream_discovery_listener_;
+    rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener_;
 };
 
 }  // namespace examples

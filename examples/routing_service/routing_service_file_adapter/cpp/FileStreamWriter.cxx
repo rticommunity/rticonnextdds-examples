@@ -8,7 +8,10 @@
 
 #include "FileStreamWriter.hpp"
 #include <rti/topic/to_string.hpp>
+#include <rti/core/Exception.hpp>
 
+using namespace rti::routing;
+using namespace rti::routing::adapter;
 using namespace rti::community::examples;
 
 const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter.output_file";
@@ -24,7 +27,8 @@ FileStreamWriter::FileStreamWriter(const PropertySet &property)
     }
 
     if (!output_file_.is_open()) {
-        throw std::logic_error("Open output file: " + output_file_name);
+        throw dds::core::IllegalOperationError(
+                "Open output file: " + output_file_name);
     } else {
         std::cout << "Output file name: " << output_file_name << std::endl;
     }

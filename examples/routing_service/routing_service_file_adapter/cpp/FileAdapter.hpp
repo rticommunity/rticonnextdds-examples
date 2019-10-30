@@ -14,22 +14,17 @@
 #include <rti/routing/RoutingService.hpp>
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 
-using namespace rti::routing;
-using namespace rti::routing::adapter;
-
-namespace rti {
-namespace community {
-namespace examples {
+namespace rti { namespace community { namespace examples {
 class FileAdapter : public rti::routing::adapter::AdapterPlugin {
 public:
     FileAdapter(rti::routing::PropertySet &){};
 
-    Connection *create_connection(
+    rti::routing::adapter::Connection *create_connection(
             rti::routing::adapter::detail::StreamReaderListener *,
             rti::routing::adapter::detail::StreamReaderListener *,
-            const PropertySet &);
+            const rti::routing::PropertySet &);
 
-    void delete_connection(Connection *connection){};
+    void delete_connection(rti::routing::adapter::Connection *connection){};
 
     rti::config::LibraryVersion get_version() const;
 };

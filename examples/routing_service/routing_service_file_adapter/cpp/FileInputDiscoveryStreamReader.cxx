@@ -9,6 +9,7 @@
 #include "FileInputDiscoveryStreamReader.hpp"
 
 using namespace rti::routing;
+using namespace rti::routing::adapter;
 using namespace rti::community::examples;
 
 const std::string FileInputDiscoveryStreamReader::SQUARE_FILE_NAME = "Input_Square.csv";
@@ -58,7 +59,7 @@ FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader(
 }
 
 void FileInputDiscoveryStreamReader::dispose(
-        const rti::routing::StreamInfo *stream_info)
+        const rti::routing::StreamInfo &stream_info)
 {
     /**
      * This guard is essential since the take() and return_loan() operations triggered 
@@ -68,8 +69,8 @@ void FileInputDiscoveryStreamReader::dispose(
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
     rti::routing::StreamInfo *stream_info_disposed = new StreamInfo(
-            stream_info->stream_name(), 
-            stream_info->type_info().type_name());
+            stream_info.stream_name(), 
+            stream_info.type_info().type_name());
     stream_info_disposed->disposed(true);
 
     this->data_samples_.push_back(stream_info_disposed);
@@ -85,12 +86,7 @@ void FileInputDiscoveryStreamReader::take(
      * return_loan() operations also need to access the data_samples_ list.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
-
-    auto iter = data_samples_.begin();
-    while (iter != data_samples_.end()) {
-        stream.push_back(*iter);
-        iter++;
-    }
+    std::copy(data_samples_.begin(), data_samples_.end(), std::back_inserter(stream));
 }
 
 void FileInputDiscoveryStreamReader::return_loan(
@@ -103,8 +99,10 @@ void FileInputDiscoveryStreamReader::return_loan(
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
+    auto iter = data_samples_.begin();
     for (int i = 0; i < stream.size(); i++) {
-        this->data_samples_.pop_front();
+        delete *iter;
+        iter = this->data_samples_.erase(iter);
     }
     stream.clear();
 }

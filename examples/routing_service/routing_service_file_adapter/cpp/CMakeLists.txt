@@ -27,49 +27,48 @@ find_package(
 # Define the library that will provide the adapter plugin
 add_library(
     fileadapter
-    SHARED
-        ${CMAKE_SOURCE_DIR}/FileAdapter.cxx
-        ${CMAKE_SOURCE_DIR}/FileConnection.cxx
-        ${CMAKE_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx
-        ${CMAKE_SOURCE_DIR}/FileStreamReader.cxx
-        ${CMAKE_SOURCE_DIR}/FileStreamWriter.cxx
+    # The kind of library created depends on value of BUILD_SHARED_LIBS=ON|OFF
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileAdapter.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileConnection.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamWriter.cxx"
 )
 
 target_link_libraries(
     fileadapter
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
-    RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 # Copy the sample data file into the binary directory
 configure_file(
-    ${CMAKE_SOURCE_DIR}/Input_Circle.csv
-    ${CMAKE_BINARY_DIR}/Input_Circle.csv
+    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"
+    "${CMAKE_BINARY_DIR}/Input_Circle.csv"
     COPYONLY
 )
 
 configure_file(
-    ${CMAKE_SOURCE_DIR}/Input_Square.csv
-    ${CMAKE_BINARY_DIR}/Input_Square.csv
+    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Square.csv"
+    "${CMAKE_BINARY_DIR}/Input_Square.csv"
     COPYONLY
 )
 
 configure_file(
-    ${CMAKE_SOURCE_DIR}/Input_Triangle.csv
-    ${CMAKE_BINARY_DIR}/Input_Triangle.csv
+    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Triangle.csv"
+    "${CMAKE_BINARY_DIR}/Input_Triangle.csv"
     COPYONLY
 )
 
 configure_file(
-    ${CMAKE_SOURCE_DIR}/ShapeType.xml
-    ${CMAKE_BINARY_DIR}/ShapeType.xml
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShapeType.xml"
+    "${CMAKE_BINARY_DIR}/ShapeType.xml"
     COPYONLY
 )
 
 configure_file(
-    ${CMAKE_SOURCE_DIR}/RsFileAdapter.xml
-    ${CMAKE_BINARY_DIR}/RsFileAdapter.xml
+    "${CMAKE_CURRENT_SOURCE_DIR}/RsFileAdapter.xml"
+    "${CMAKE_BINARY_DIR}/RsFileAdapter.xml"
     COPYONLY
 )

@@ -10,6 +10,8 @@
 #include "FileConnection.hpp"
 
 using namespace rti::community::examples;
+using namespace rti::routing;
+using namespace rti::routing::adapter;
 
 Connection *FileAdapter::create_connection(
         rti::routing::adapter::detail::StreamReaderListener
@@ -27,7 +29,7 @@ Connection *FileAdapter::create_connection(
 
 rti::config::LibraryVersion FileAdapter::get_version() const
 {
-    return rti::config::LibraryVersion(6, 0, 0, 'r');
+    return rti::config::LibraryVersion(1, 0, 0, 'r');
 };
 
 RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DEF(FileAdapter)

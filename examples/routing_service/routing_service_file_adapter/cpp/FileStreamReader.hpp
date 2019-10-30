@@ -17,20 +17,16 @@
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamReader.hpp>
 
-namespace rti {
-namespace community {
-namespace examples {
+namespace rti { namespace community { namespace examples {
 
-using namespace rti::routing;
-using namespace rti::routing::adapter;
-
-class FileStreamReader : public DynamicDataStreamReader {
+class FileStreamReader : 
+        public rti::routing::adapter::DynamicDataStreamReader {
 public:
     FileStreamReader(
             FileConnection *connection, 
-            const StreamInfo &info,
-            const PropertySet &,
-            StreamReaderListener *listener);
+            const rti::routing::StreamInfo &info,
+            const rti::routing::PropertySet &,
+            rti::routing::adapter::StreamReaderListener *listener);
 
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &,
@@ -39,7 +35,7 @@ public:
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &,
-            const SelectorState &selector_state);
+            const rti::routing::adapter::SelectorState &selector_state);
 
     void return_loan(
             std::vector<dds::core::xtypes::DynamicData *> &,
@@ -55,7 +51,7 @@ private:
     void file_reading_thread();
 
     FileConnection *file_connection_;
-    StreamReaderListener *reader_listener_;
+    rti::routing::adapter::StreamReaderListener *reader_listener_;
     std::thread filereader_thread_;
     bool stop_thread_;
     uint16_t sampling_period_;
@@ -64,7 +60,7 @@ private:
     std::string input_file_name_;
     std::string buffer_;
 
-    const rti::routing::StreamInfo *stream_info_;
+    rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;
 };
 

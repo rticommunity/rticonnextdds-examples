@@ -11,6 +11,8 @@
 #include "FileStreamWriter.hpp"
 
 using namespace rti::community::examples;
+using namespace rti::routing;
+using namespace rti::routing::adapter;
 
 FileConnection::FileConnection(
         StreamReaderListener *input_stream_discovery_listener,
@@ -65,7 +67,7 @@ DiscoveryStreamReader *FileConnection::input_stream_discovery_reader()
  * to be propagated to the StreamWriter as well.
  */
 void FileConnection::dispose_discovery_stream(
-        const rti::routing::StreamInfo *stream_info)
+        const rti::routing::StreamInfo &stream_info)
 {
     input_discovery_reader_.dispose(stream_info);
 }

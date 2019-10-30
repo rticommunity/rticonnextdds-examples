@@ -13,42 +13,37 @@
 
 #include "FileInputDiscoveryStreamReader.hpp"
 
-namespace rti {
-namespace community {
-namespace examples {
-using namespace rti::routing;
-using namespace rti::routing::adapter;
-using namespace rti::routing::adapter::detail;
+namespace rti { namespace community { namespace examples {
 
-class FileConnection : public Connection {
+class FileConnection : public rti::routing::adapter::Connection {
 public:
 
     FileConnection(
-            StreamReaderListener *input_stream_discovery_listener,
-            StreamReaderListener *output_stream_discovery_listener,
-            const PropertySet &properties);
+            rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener,
+            rti::routing::adapter::StreamReaderListener *output_stream_discovery_listener,
+            const rti::routing::PropertySet &properties);
 
-    StreamReader *create_stream_reader(
-            Session *session,
-            const StreamInfo &info,
-            const PropertySet &properties,
-            StreamReaderListener *listener);
+    rti::routing::adapter::StreamReader *create_stream_reader(
+            rti::routing::adapter::Session *session,
+            const rti::routing::StreamInfo &info,
+            const rti::routing::PropertySet &properties,
+            rti::routing::adapter::StreamReaderListener *listener);
 
-    void delete_stream_reader(StreamReader *reader);
+    void delete_stream_reader(rti::routing::adapter::StreamReader *reader);
 
-    StreamWriter *create_stream_writer(
-            Session *session,
-            const StreamInfo &info,
-            const PropertySet &properties);
+    rti::routing::adapter::StreamWriter *create_stream_writer(
+            rti::routing::adapter::Session *session,
+            const rti::routing::StreamInfo &info,
+            const rti::routing::PropertySet &properties);
 
-    void delete_stream_writer(StreamWriter *writer);
+    void delete_stream_writer(rti::routing::adapter::StreamWriter *writer);
 
-    DiscoveryStreamReader *input_stream_discovery_reader();
+    rti::routing::adapter::DiscoveryStreamReader *input_stream_discovery_reader();
 
-    DiscoveryStreamReader *output_stream_discovery_reader();
+    rti::routing::adapter::DiscoveryStreamReader *output_stream_discovery_reader();
 
     void dispose_discovery_stream(
-            const rti::routing::StreamInfo *stream_info);
+            const rti::routing::StreamInfo &stream_info);
 
 private:
     FileInputDiscoveryStreamReader input_discovery_reader_;
