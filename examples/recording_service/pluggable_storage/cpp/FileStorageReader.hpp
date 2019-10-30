@@ -14,7 +14,7 @@
 
 #include <fstream>
 
-namespace cpp_example {
+namespace rti { namespace recording { namespace cpp_example {
 
 /*
  * Convenience macro to forward-declare the C-style function that will be
@@ -118,8 +118,8 @@ private:
  * of time where valid recorded data can be found, or for which the Recorder app
  * executed.
  */
-class FileStorageStreamInfoReader
-        : public rti::recording::storage::StorageStreamInfoReader {
+class FileStorageStreamInfoReader :
+        public rti::recording::storage::StorageStreamInfoReader {
 public:
     FileStorageStreamInfoReader(std::ifstream *info_file);
     virtual ~FileStorageStreamInfoReader();
@@ -130,16 +130,16 @@ public:
      * the data to be provided (data not read before vs data of any kind, lower
      * and upper time limits, etc).
      */
-    virtual void
-            read(std::vector<rti::routing::StreamInfo *> &sample_seq,
-                 const rti::recording::storage::SelectorState &selector);
+    virtual void read(
+            std::vector<rti::routing::StreamInfo *> &sample_seq,
+            const rti::recording::storage::SelectorState &selector);
 
     /*
      * The return loan operation should free any resources allocated by the
      * read() operation.
      */
-    virtual void
-            return_loan(std::vector<rti::routing::StreamInfo *> &sample_seq);
+    virtual void return_loan(
+            std::vector<rti::routing::StreamInfo *> &sample_seq);
 
     /*
      * An int64-represented time-stamp (in nanoseconds) representing the
@@ -155,15 +155,26 @@ public:
      */
     virtual int64_t service_stop_time();
 
+    /*
+     * When this storage stream reader has finished reading all the available
+     * samples, this function should return true.
+     */
     virtual bool finished();
 
+    /*
+     * If Replay is going to be used with the looping capability, then this
+     * method has to be implemented. It restores the storage stream reader to
+     * a point where it will start reading samples from the beginning of the
+     * storage.
+     */
     virtual void reset();
 
 private:
+
     std::ifstream *info_file_;
     bool stream_info_taken_;
     rti::routing::StreamInfo example_stream_info_;
     dds::core::xtypes::StructType example_type_;
 };
 
-}  // namespace cpp_example
+} } }  // namespace rti::recording::cpp_example

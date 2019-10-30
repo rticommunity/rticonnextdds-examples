@@ -12,12 +12,13 @@
 
 #include "FileStorageReader.hpp"
 
+#include <limits>
 #include "dds/dds.hpp"
 
-#define NANOSECS_PER_SEC 1000000000
+#define NANOSECS_PER_SEC 1000000000ll
 
 
-namespace cpp_example {
+namespace rti { namespace recording { namespace cpp_example {
 
 /*
  * Convenience macro to define the C-style function that will be called by RTI
@@ -25,9 +26,14 @@ namespace cpp_example {
  */
 RTI_RECORDING_STORAGE_READER_CREATE_DEF(FileStorageReader);
 
+/*
+ * In the XML configuration, under the property tag for the storage plugin, a
+ * collection of name/value pairs can be passed. In this case, this example
+ * chooses to define a property to name the filename to use.
+ */
 FileStorageReader::FileStorageReader(
-        const rti::routing::PropertySet &properties)
-        : StorageReader(properties)
+        const rti::routing::PropertySet &properties) :
+    StorageReader(properties)
 {
     rti::routing::PropertySet::const_iterator found =
             properties.find("example.cpp_pluggable_storage.filename");
@@ -35,7 +41,6 @@ FileStorageReader::FileStorageReader(
         throw std::runtime_error("Failed to get file name from properties");
     }
     file_name_ = std::string(found->second);
-
     info_file_.open(
             (file_name_ + ".info").c_str(),
             std::ios::in | std::ios::binary);
@@ -48,11 +53,6 @@ FileStorageReader::FileStorageReader(
     }
 }
 
-/*
- * In the xml configuration, under the property tag for the storage plugin, a
- * collection of name/value pairs can be passed. In this case, this example
- * chooses to define a property to name the filename to use.
- */
 FileStorageReader::~FileStorageReader()
 {
 }
@@ -97,8 +97,9 @@ using namespace dds::core::xtypes;
  * would be to not read any data recorded before the given start time or after
  * the given end time.
  */
-FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file)
-        : data_file_(data_file), type_("HelloMsg")
+FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file) :
+    data_file_(data_file),
+    type_("HelloMsg")
 {
     type_.add_member(Member("id", primitive_type<int32_t>()).key(true));
     type_.add_member(Member("msg", StringType(256)));
@@ -229,7 +230,7 @@ bool FileStorageStreamReader::read_sample()
     return true;
 }
 
-/* in this call, the timestamp argument provides the end-timestamp that the
+/* In this call, the timestamp argument provides the end-timestamp that the
  * Replay Service or Converter is querying. The plugin should provide only
  * stream information that has not already been taken, and has a timestamp less
  * than or equal to the timestamp_limit.  */
@@ -239,16 +240,37 @@ void FileStorageStreamReader::read(
         const rti::recording::storage::SelectorState &selector)
 {
     int64_t timestamp_limit = selector.timestamp_range_end();
-    /* Add the currently read sample and sample info values to the taken data
+    /*
+     * Add the currently read sample and sample info values to the taken data
      * and info collections (sequences), as long as their timestamp does not
-     * exceed the timestamp_limit provided */
+     * exceed the timestamp_limit provided
+     */
     if (current_timestamp_ > timestamp_limit) {
         return;
     }
     if (finished()) {
         return;
     }
-    while (current_timestamp_ <= timestamp_limit) {
+    int32_t read_samples = 0;
+    /*
+     * The value of the sample selector's max samples could be
+     * dds::core::LENGTH_UNLIMITED, indicating that no maximum number of
+     * samples. But this value is actually negative, so a straight comparison
+     * against it could yield unexpected results. Transform the value into
+     * something we can compare against.
+     */
+    const int32_t max_samples =
+            (selector.max_samples() == dds::core::LENGTH_UNLIMITED)
+                    ? std::numeric_limits<int32_t>::max()
+                    : selector.max_samples();
+    /*
+     * Check if the currently cached sample's reception timestamp is within the
+     * selector's time limit and number of samples. If that is the case, it will
+     * be added to the collection of samples to be returned by this call.
+     */
+    while (current_timestamp_ <= timestamp_limit
+            && read_samples < max_samples) {
+        read_samples++;
         using namespace dds::core::xtypes;
 
         DynamicData *read_data = new DynamicData(type_);
@@ -266,14 +288,7 @@ void FileStorageStreamReader::read(
         dds::sub::SampleInfo *cpp_sample_info = new dds::sub::SampleInfo;
         (*cpp_sample_info)->native(read_sampleInfo);
         info_seq.push_back(cpp_sample_info);
-
-        /*
-         * When the next sample cached fulfills the condition to be taken (its
-         * timestamp is within the provided limit) this method adds it to the
-         * sequence used to store the current taken samples.
-         */
-
-        /* read ahead next sample, until EOF */
+        /* Read ahead next sample, until EOF */
         if (!read_sample()) {
             break;
         }
@@ -434,4 +449,4 @@ void FileStorageStreamInfoReader::reset()
     stream_info_taken_ = false;
 }
 
-}  // namespace cpp_example
+} } }  // namespace rti::recording::cpp_example

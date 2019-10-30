@@ -12,6 +12,8 @@
 cmake_minimum_required(VERSION 3.11)
 project (PluggableStorage)
 
+set(CMAKE_DEBUG_POSTFIX "d")
+
 if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "

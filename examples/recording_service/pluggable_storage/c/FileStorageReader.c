@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "ndds/ndds_c.h"
 #include "recordingservice/recordingservice_storagereader.h"
@@ -414,6 +415,17 @@ void FileStorageStreamReader_read(
     long long timestamp_limit =
             (long long) selector->time_range_end.sec * NANOSECS_PER_SEC
             + selector->time_range_end.nanosec;
+    int read_samples = 0;
+    /*
+     * The value of the sample selector's max samples could be
+     * DDS_LENGTH_UNLIMITED, indicating that no maximum number of samples. But
+     * this value is actually negative, so a straight comparison against it
+     * could yield unexpected results. Transform the value into something we
+     * can compare against.
+     */
+    const int max_samples = (selector->max_samples == DDS_LENGTH_UNLIMITED)
+            ? INT_MAX
+            : selector->max_samples;
 
     if (stream_reader->current_timestamp > timestamp_limit) {
         *count = 0;
@@ -424,7 +436,9 @@ void FileStorageStreamReader_read(
     do {
         FileStorageStreamReader_addSampleToData(stream_reader);
         FileStorageStreamReader_readSample(stream_reader);
-    } while (stream_reader->current_timestamp <= timestamp_limit);
+        read_samples++;
+    } while (stream_reader->current_timestamp <= timestamp_limit
+            && read_samples < max_samples);
     /* The number of taken samples is the current length of the data sequence */
     *count = (int) DDS_DynamicDataSeq_get_length(&stream_reader->taken_data);
 
@@ -507,9 +521,10 @@ int FileStorageStreamReader_initialize(
     if (stream_reader->file_record.file == NULL) {
         return FALSE;
     }
-
-    /* Initialize the data and info holders (sequences)
-     * Reserve space for at least 1 element, initially */
+    /*
+     * Initialize the data and info holders (sequences)
+     * Reserve space for at least 1 element, initially
+     */
     DDS_DynamicDataSeq_initialize(&stream_reader->taken_data);
     DDS_SampleInfoSeq_initialize(&stream_reader->taken_info);
     if (!DDS_DynamicDataSeq_set_maximum(&stream_reader->taken_data, 1)) {
