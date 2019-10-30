@@ -15,6 +15,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <limits.h>
 
 #include "ndds/ndds_c.h"
 #include "recordingservice/recordingservice_storagereader.h"
@@ -50,9 +51,7 @@ struct FileStorageStreamReader {
     DDS_Long current_data_id;
     char current_data_msg[256];
     struct DDS_DynamicDataSeq taken_data;
-    RTI_RoutingServiceSample *loaned_data;
     struct DDS_SampleInfoSeq taken_info;
-    RTI_RoutingServiceSampleInfo *loaned_info;
     DDS_TypeCode *type_code;
     struct RTI_RecordingServiceStorageStreamReader as_stream_reader;
 };
@@ -417,6 +416,16 @@ void FileStorageStreamReader_read(
             (long long) selector->time_range_end.sec * NANOSECS_PER_SEC
             + selector->time_range_end.nanosec;
     int read_samples = 0;
+    /*
+     * The value of the sample selector's max samples could be
+     * DDS_LENGTH_UNLIMITED, indicating that no maximum number of samples. But
+     * this value is actually negative, so a straight comparison against it
+     * could yield unexpected results. Transform the value into something we
+     * can compare against.
+     */
+    const int max_samples = (selector->max_samples == DDS_LENGTH_UNLIMITED)
+            ? INT_MAX
+            : selector->max_samples;
 
     if (stream_reader->current_timestamp > timestamp_limit) {
         *count = 0;
@@ -429,30 +438,27 @@ void FileStorageStreamReader_read(
         FileStorageStreamReader_readSample(stream_reader);
         read_samples++;
     } while (stream_reader->current_timestamp <= timestamp_limit
-            && read_samples < selector->max_samples);
+            && read_samples < max_samples);
     /* The number of taken samples is the current length of the data sequence */
     *count = (int) DDS_DynamicDataSeq_get_length(&stream_reader->taken_data);
 
-    stream_reader->loaned_data =
-            malloc(*count * sizeof(RTI_RoutingServiceSample));
-    if (stream_reader->loaned_data == NULL) {
+    *out_samples = malloc(*count * sizeof(RTI_RoutingServiceSample));
+    if (*out_samples == NULL) {
         printf("Failed to allocate sample array\n");
         *count = 0;
         return;
     }
-    *out_samples = stream_reader->loaned_data;
     for (i = 0; i < *count; i++) {
         (*out_samples)[i] =
                 DDS_DynamicDataSeq_get_reference(&stream_reader->taken_data, i);
     }
-    stream_reader->loaned_info =
-            malloc(*count * sizeof(RTI_RoutingServiceSampleInfo));
-    if (stream_reader->loaned_info == NULL) {
+
+    *out_sample_infos = malloc(*count * sizeof(RTI_RoutingServiceSampleInfo));
+    if (*out_sample_infos == NULL) {
         printf("Failed to allocate sample info array\n");
         *count = 0;
         return;
     }
-    *out_sample_infos = stream_reader->loaned_info;
     for (i = 0; i < *count; i++) {
         (*out_sample_infos)[i] =
                 DDS_SampleInfoSeq_get_reference(&stream_reader->taken_info, i);
@@ -473,14 +479,8 @@ void FileStorageStreamReader_return_loan(
     DDS_DynamicDataSeq_set_length(&stream_reader->taken_data, 0);
     DDS_SampleInfoSeq_set_length(&stream_reader->taken_info, 0);
 
-    if (stream_reader->loaned_data != NULL) {
-        free(stream_reader->loaned_data);
-    }
-    stream_reader->loaned_data = NULL;
-    if (stream_reader->loaned_info != NULL) {
-        free(stream_reader->loaned_info);
-    }
-    stream_reader->loaned_info = NULL;
+    free(samples);
+    free(sample_infos);
 }
 
 int FileStorageStreamReader_finished(void *stream_reader_data)
@@ -535,11 +535,6 @@ int FileStorageStreamReader_initialize(
         printf("Failed to set new capacity (1) for info sequence\n");
         return FALSE;
     }
-    /*
-     * Initialize the loaned data holders
-     */
-    stream_reader->loaned_data = NULL;
-    stream_reader->loaned_info = NULL;
     stream_reader->type_code =
             (DDS_TypeCode *) stream_info->type_info.type_representation;
     /* Bootstrap the take loop: read the first sample */
