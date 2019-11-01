@@ -20,15 +20,12 @@
 //#define USE_NDDS42_API
 
 /* The new value of the transport socket size */
-#define NEW_SOCKET_BUFFER_SIZE          (65507)
-#define NEW_SOCKET_BUFFER_SIZE_STRING   ("65507")
-
-
-
+#define NEW_SOCKET_BUFFER_SIZE (65507)
+#define NEW_SOCKET_BUFFER_SIZE_STRING ("65507")
 
 
 /* Creates the domain participant, modifying the transport qos properties
- * to increase the send and receive socket buffer size to 64k. 
+ * to increase the send and receive socket buffer size to 64k.
  * Returns zero if success, non-zero in case of error.
  */
 extern DDS_DomainParticipant *numbers_common_create_participant(int domainId);

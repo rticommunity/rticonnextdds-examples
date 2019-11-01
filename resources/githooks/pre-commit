@@ -1,0 +1,40 @@
+#!/usr/bin/env python3
+#
+# (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
+# grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no
+# warranty of any type, including any warranty for fitness for any purpose. RTI
+# is under no obligation to maintain or support the Software.  RTI shall not be
+# liable for any incidental or consequential damages arising out of the use or
+# inability to use the software.
+"""Ensure correct format of staged files.
+
+This script uses linux_format.py to ensure code changes which will be commited
+with correct format.
+"""
+import os
+import sys
+
+from pathlib import Path
+
+
+def main():
+    try:
+        script_path = Path(__file__).resolve()
+    except FileNotFoundError:
+        sys.exit("Error: Path does not exist.")
+    else:
+        if not script_path.exists():
+            sys.exit("Error: Path does not exist.")
+
+    if script_path.parents[1].name != ".git":
+        sys.exit("Error: script not located in .git/hooks.")
+
+    root = script_path.parents[2]
+    formater = root.joinpath("resources", "travis", "linux_format.py")
+    os.system(str(formater))
+
+
+if __name__ == "__main__":
+    main()

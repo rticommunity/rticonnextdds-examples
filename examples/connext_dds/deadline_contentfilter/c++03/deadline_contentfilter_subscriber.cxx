@@ -11,12 +11,12 @@
 
 #include <algorithm>
 #include <cstdlib>
-#include <iostream>
 #include <ctime>
+#include <iostream>
 
+#include "deadline_contentfilter.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "deadline_contentfilter.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -28,35 +28,34 @@ using namespace dds::sub::qos;
 
 clock_t init_time;
 
-class deadline_contentfilterReaderListener :
-    public NoOpDataReaderListener<deadline_contentfilter> {
-  public:
-    void on_data_available(DataReader<deadline_contentfilter>& reader)
+class deadline_contentfilterReaderListener
+        : public NoOpDataReaderListener<deadline_contentfilter> {
+public:
+    void on_data_available(DataReader<deadline_contentfilter> &reader)
     {
         // Take all samples
         LoanedSamples<deadline_contentfilter> samples = reader.take();
 
         for (LoanedSamples<deadline_contentfilter>::iterator sample_it =
-                samples.begin();
-            sample_it != samples.end();
-            sample_it++) {
-
-            if (sample_it->info().valid()){
+                     samples.begin();
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - init_time;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
-                const deadline_contentfilter& data = sample_it->data();
+                const deadline_contentfilter &data = sample_it->data();
                 std::cout << "@ t=" << elapsed_secs << "s, Instance"
-                          << data.code() << ": <" << data.x()
-                          << "," << data.y() << ">" << std::endl;
+                          << data.code() << ": <" << data.x() << "," << data.y()
+                          << ">" << std::endl;
             }
         }
     }
 
     void on_requested_deadline_missed(
-        DataReader<deadline_contentfilter>& reader,
-        const RequestedDeadlineMissedStatus& status)
+            DataReader<deadline_contentfilter> &reader,
+            const RequestedDeadlineMissedStatus &status)
     {
         double elapsed_ticks = clock() - init_time;
         double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
@@ -84,16 +83,17 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a Topic -- and automatically register the type
     Topic<deadline_contentfilter> topic(
-        participant, "Example deadline_contentfilter");
+            participant,
+            "Example deadline_contentfilter");
 
     // Set up a Content Filtered Topic to show interaction with deadline.
     std::vector<std::string> parameters(1);
     parameters[0] = "2";
 
     ContentFilteredTopic<deadline_contentfilter> cft_topic(
-        topic,
-        "ContentFilteredTopic",
-        Filter("code < %0", parameters));
+            topic,
+            "ContentFilteredTopic",
+            Filter("code < %0", parameters));
 
     // Retrieve the default DataReader's QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -110,18 +110,21 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a DataReader (Subscriber created in-line)
     DataReader<deadline_contentfilter> reader(
-        Subscriber(participant), cft_topic, reader_qos);
+            Subscriber(participant),
+            cft_topic,
+            reader_qos);
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<deadline_contentfilter> > listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new deadline_contentfilterReaderListener,
-            StatusMask::all());
+    rti::core::ListenerBinder<DataReader<deadline_contentfilter>> listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new deadline_contentfilterReaderListener,
+                    StatusMask::all());
 
     std::cout << std::fixed;
-    for (short count=0; (sample_count == 0) || (count < sample_count); ++count){
+    for (short count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // After 10 seconds, change filter to accept only instance 0.
         if (count == 10) {
             std::cout << "Starting to filter out instance1" << std::endl;
@@ -136,7 +139,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -152,7 +155,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "waitset_statuscond.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::cond;
@@ -57,18 +57,19 @@ void subscriber_main(int domain_id, int sample_count)
     // statuses we are interested in:
     status_condition.enabled_statuses(StatusMask::data_available());
 
-     // Create the waitset and attach the condition.
-     WaitSet waitset;
-     waitset += status_condition;
+    // Create the waitset and attach the condition.
+    WaitSet waitset;
+    waitset += status_condition;
 
-     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    // Main loop
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         // 'wait()' blocks execution of the thread until one or more attached
         // Conditions become true, or until a user-specified timeout expires.
         // Another way would be to use 'dispatch()' to wait and dispatch the
         // events as it's done in the "waitset_query_cond" example.
-        WaitSet::ConditionSeq active_conditions = waitset.wait(
-            Duration::from_millisecs(1500));
+        WaitSet::ConditionSeq active_conditions =
+                waitset.wait(Duration::from_millisecs(1500));
 
         if (active_conditions.size() == 0) {
             std::cout << "Wait timed out!! No conditions were triggered."
@@ -82,7 +83,8 @@ void subscriber_main(int domain_id, int sample_count)
         // In this case, we have only a single condition, but if we had
         // multiple, we would need to iterate over them and check which one is
         // true. Leaving the logic for the more complex case.
-        for (std::vector<int>::size_type i=0; i<active_conditions.size(); i++) {
+        for (std::vector<int>::size_type i = 0; i < active_conditions.size();
+             i++) {
             // Compare with Status Condition
             if (active_conditions[i] == status_condition) {
                 // Get the status changes so we can check witch status condition
@@ -90,15 +92,15 @@ void subscriber_main(int domain_id, int sample_count)
                 StatusMask triggeredmask = reader.status_changes();
 
                 // Subscription matched
-                if ((triggeredmask & StatusMask::data_available()).any()){
+                if ((triggeredmask & StatusMask::data_available()).any()) {
                     // Current conditions match our conditions to read data, so
                     // we can read data just like we would do in any other
                     // example.
                     LoanedSamples<Foo> samples = reader.take();
-                    for (LoanedSamples<Foo>::iterator sampleIt=samples.begin();
-                        sampleIt != samples.end();
-                        ++sampleIt) {
-
+                    for (LoanedSamples<Foo>::iterator sampleIt =
+                                 samples.begin();
+                         sampleIt != samples.end();
+                         ++sampleIt) {
                         if (!sampleIt->info().valid()) {
                             std::cout << "Got metadata" << std::endl;
                         } else {
@@ -108,14 +110,13 @@ void subscriber_main(int domain_id, int sample_count)
                 }
             }
         }
-
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // Infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

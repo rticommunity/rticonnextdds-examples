@@ -9,11 +9,11 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
-#include <dds/dds.hpp>
 #include "waitsets.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::cond;
@@ -51,10 +51,11 @@ void subscriber_main(int domain_id, int sample_count)
     // Note that the Read Conditions are dependent on both incoming data as
     // well as sample state.
     ReadCondition read_cond(
-        reader, DataState(
-            SampleState::not_read(),
-            ViewState::any(),
-            InstanceState::any()));
+            reader,
+            DataState(
+                    SampleState::not_read(),
+                    ViewState::any(),
+                    InstanceState::any()));
 
     // Get status conditions.
     // Each entity may have an attached Status Condition. To modify the
@@ -65,7 +66,8 @@ void subscriber_main(int domain_id, int sample_count)
     // Now that we have the Status Condition, we are going to enable the
     // statuses we are interested in:
     status_condition.enabled_statuses(
-        StatusMask::subscription_matched() | StatusMask::liveliness_changed());
+            StatusMask::subscription_matched()
+            | StatusMask::liveliness_changed());
 
     // Create and attach conditions to the WaitSet
     // Finally, we create the WaitSet and attach both the Read Conditions and
@@ -76,11 +78,12 @@ void subscriber_main(int domain_id, int sample_count)
     waitset.attach_condition(status_condition);
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // 'wait()' blocks execution of the thread until one or more attached
         // Conditions become true, or until a user-specified timeout expires.
-        WaitSet::ConditionSeq active_conditions = waitset.wait(
-            Duration::from_millisecs(1500));
+        WaitSet::ConditionSeq active_conditions =
+                waitset.wait(Duration::from_millisecs(1500));
 
         if (active_conditions.size() == 0) {
             std::cout << "Wait timed out!! No conditions were triggered."
@@ -90,7 +93,8 @@ void subscriber_main(int domain_id, int sample_count)
 
         std::cout << "Got " << active_conditions.size() << " active conditions"
                   << std::endl;
-        for (std::vector<int>::size_type i=0; i<active_conditions.size(); i++) {
+        for (std::vector<int>::size_type i = 0; i < active_conditions.size();
+             i++) {
             // Now we compare the current condition with the Status Conditions
             // and the Read Conditions previously defined. If they match, we
             // print the condition that was triggered.
@@ -103,7 +107,7 @@ void subscriber_main(int domain_id, int sample_count)
                 // Liveliness changed
                 if ((status_mask & StatusMask::liveliness_changed()).any()) {
                     LivelinessChangedStatus st =
-                        reader.liveliness_changed_status();
+                            reader.liveliness_changed_status();
                     std::cout << "Liveliness changed => Active writers = "
                               << st.alive_count() << std::endl;
                 }
@@ -111,36 +115,33 @@ void subscriber_main(int domain_id, int sample_count)
                 // Subscription matched
                 if ((status_mask & StatusMask::subscription_matched()).any()) {
                     SubscriptionMatchedStatus st =
-                        reader.subscription_matched_status();
+                            reader.subscription_matched_status();
                     std::cout << "Subscription matched => Cumulative matches = "
                               << st.total_count() << std::endl;
                 }
-            }
-            else if (active_conditions[i] == read_cond) {
+            } else if (active_conditions[i] == read_cond) {
                 // Current conditions match our conditions to read data, so we
                 // can read data just like we would do in any other example.
                 LoanedSamples<waitsets> samples = reader.take();
-                for (LoanedSamples<waitsets>::iterator sampleIt=samples.begin();
-                    sampleIt != samples.end();
-                    ++sampleIt) {
-
+                for (LoanedSamples<waitsets>::iterator sampleIt =
+                             samples.begin();
+                     sampleIt != samples.end();
+                     ++sampleIt) {
                     if (!sampleIt->info().valid()) {
                         std::cout << "Got metadata" << std::endl;
                     } else {
                         std::cout << sampleIt->data() << std::endl;
                     }
                 }
-
             }
         }
-
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

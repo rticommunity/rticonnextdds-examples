@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/sub/ddssub.hpp>
 
 #include "SensorData.hpp"
 
@@ -26,25 +26,26 @@ int subscriber_main(int domain_id, int sample_count)
     dds::topic::Topic<SensorData> topic(participant, "Example SensorData");
 
     // Create a DataReader with default Qos (Subscriber created in-line)
-    dds::sub::DataReader<SensorData> reader(dds::sub::Subscriber(participant), topic);
+    dds::sub::DataReader<SensorData> reader(
+            dds::sub::Subscriber(participant),
+            topic);
 
-    // Create a ReadCondition for any data on this reader and associate a handler
+    // Create a ReadCondition for any data on this reader and associate a
+    // handler
     int count = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [&reader, &count]()
-    {
-        // Take all samples
-        dds::sub::LoanedSamples<SensorData> samples = reader.take();
-        for (auto sample : samples){
-            if (sample.info().valid()){
-                count++;
-                std::cout << sample.data() << std::endl; 
-            }   
-        }
-
-    } // The LoanedSamples destructor returns the loan
+            reader,
+            dds::sub::status::DataState::any(),
+            [&reader, &count]() {
+                // Take all samples
+                dds::sub::LoanedSamples<SensorData> samples = reader.take();
+                for (auto sample : samples) {
+                    if (sample.info().valid()) {
+                        count++;
+                        std::cout << sample.data() << std::endl;
+                    }
+                }
+            }  // The LoanedSamples destructor returns the loan
     );
 
     // Create a WaitSet and attach the ReadCondition
@@ -56,16 +57,15 @@ int subscriber_main(int domain_id, int sample_count)
         // when they activate
         std::cout << "SensorData subscriber sleeping for 4 sec..." << std::endl;
 
-        waitset.dispatch(dds::core::Duration(4)); // Wait up to 4s each time
+        waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
     }
     return 1;
 }
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -80,9 +80,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 
@@ -94,4 +95,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-

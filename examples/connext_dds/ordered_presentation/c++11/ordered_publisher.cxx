@@ -28,7 +28,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // Retrieve the custom ordered publisher QoS, from USER_QOS_PROFILES.xml
     PublisherQos publisher_qos = QosProvider::Default().publisher_qos(
-        "ordered_Library::ordered_Profile_subscriber_instance");
+            "ordered_Library::ordered_Profile_subscriber_instance");
 
     // If you want to change the Publisher's QoS programmatically rather
     // than using the XML file, you will need to comment out the previous
@@ -45,7 +45,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos(
-        "ordered_Library::ordered_Profile_subscriber_instance");
+            "ordered_Library::ordered_Profile_subscriber_instance");
 
     // If you want to change the Publisher's QoS programmatically rather
     // than using the XML file, you will need to comment out the previous
@@ -65,7 +65,8 @@ void publisher_main(int domain_id, int sample_count)
     InstanceHandle handle1 = writer.register_instance(instance1);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         // Update content.
         instance0.value(count);
         instance1.value(count);
@@ -89,8 +90,8 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id    = 0;
-    int sample_count = 0; // Infinite loop
+    int domain_id = 0;
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

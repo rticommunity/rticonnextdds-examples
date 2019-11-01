@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
 
 #include "waitset_cond_modern.hpp"
@@ -31,41 +31,42 @@ int subscriber_main(int domain_id, int sample_count)
 
     // Create a Status Condition for the reader
     dds::core::cond::StatusCondition status_condition(reader);
- 
-    //Enable statuses configuration for the status that it is desired
-    status_condition.enabled_statuses(dds::core::status::StatusMask::liveliness_changed());
+
+    // Enable statuses configuration for the status that it is desired
+    status_condition.enabled_statuses(
+            dds::core::status::StatusMask::liveliness_changed());
 
     // Lambda function for the status_condition
     // Handler register a custom handler with the condition
     status_condition->handler([&reader]() {
-        // Get the status changes so we can check witch status condition triggered
+        // Get the status changes so we can check witch status condition
+        // triggered
         dds::core::status::StatusMask status_mask = reader.status_changes();
         // In Case of Liveliness changed
-        if ((status_mask &
-                dds::core::status::StatusMask::liveliness_changed()).any()) {
+        if ((status_mask & dds::core::status::StatusMask::liveliness_changed())
+                    .any()) {
             dds::core::status::LivelinessChangedStatus st =
-            reader.liveliness_changed_status();
+                    reader.liveliness_changed_status();
             std::cout << "Liveliness changed => Active writers = "
-                    << st.alive_count() << std::endl;
+                      << st.alive_count() << std::endl;
         }
-    }
-    ); // Create a ReadCondition for any data on this reader and associate a handler
+    });  // Create a ReadCondition for any data on this reader and associate a
+         // handler
 
     int count = 0;
     dds::sub::cond::ReadCondition read_condition(
             reader,
             dds::sub::status::DataState::any(),
-            [&reader, &count]()
-    {
-        // Take all samples
-        dds::sub::LoanedSamples<Foo> samples = reader.take();
-        for (auto sample : samples){
-            if (sample.info().valid()){
-                count++;
-                std::cout << sample.data() << std::endl;
-            }
-        }
-    } // The LoanedSamples destructor returns the loan
+            [&reader, &count]() {
+                // Take all samples
+                dds::sub::LoanedSamples<Foo> samples = reader.take();
+                for (auto sample : samples) {
+                    if (sample.info().valid()) {
+                        count++;
+                        std::cout << sample.data() << std::endl;
+                    }
+                }
+            }  // The LoanedSamples destructor returns the loan
     );
 
     // Create a WaitSet and attach both ReadCondition and StatusCondition
@@ -76,16 +77,15 @@ int subscriber_main(int domain_id, int sample_count)
     while (count < sample_count || sample_count == 0) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
-        waitset.dispatch(dds::core::Duration(4)); // Wait up to 4s each time
+        waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
     }
     return 1;
 }
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -100,9 +100,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

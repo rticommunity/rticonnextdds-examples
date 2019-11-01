@@ -9,12 +9,12 @@
  use the software.
  ******************************************************************************/
 
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
-#include <ctype.h>
 
-#include "line_conversion.h"
 #include "data_structures.h"
+#include "line_conversion.h"
 
 /* ========================================================================= */
 /*                                                                           */
@@ -23,28 +23,31 @@
 /* ========================================================================= */
 
 int RTI_RoutingServiceFileAdapter_read_sample(
-        struct DDS_DynamicData * sampleOut,
-        FILE * file,
-        RTI_RoutingServiceEnvironment * env)
+        struct DDS_DynamicData *sampleOut,
+        FILE *file,
+        RTI_RoutingServiceEnvironment *env)
 {
-    DDS_Octet * ptr_payload = NULL;
+    DDS_Octet *ptr_payload = NULL;
     struct DDS_OctetSeq payload_sequence;
     long data_read = 0;
     DDS_ReturnCode_t retCode = DDS_RETCODE_OK;
 
     DDS_OctetSeq_initialize(&payload_sequence);
-    DDS_OctetSeq_ensure_length(&payload_sequence,
-            MAX_PAYLOAD_SIZE, MAX_PAYLOAD_SIZE);
+    DDS_OctetSeq_ensure_length(
+            &payload_sequence,
+            MAX_PAYLOAD_SIZE,
+            MAX_PAYLOAD_SIZE);
     ptr_payload = DDS_OctetSeq_get_contiguous_buffer(&payload_sequence);
-    data_read=fread(ptr_payload,1,MAX_PAYLOAD_SIZE,file);
+    data_read = fread(ptr_payload, 1, MAX_PAYLOAD_SIZE, file);
     if (data_read == 0) {
         if (ferror(file)) {
-            fprintf(stderr,"ERROR: reading file");
+            fprintf(stderr, "ERROR: reading file");
             return 0;
         }
     }
     DDS_OctetSeq_ensure_length(&payload_sequence, data_read, MAX_PAYLOAD_SIZE);
-    DDS_DynamicData_set_octet_seq(sampleOut,
+    DDS_DynamicData_set_octet_seq(
+            sampleOut,
             "value",
             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
             &payload_sequence);
@@ -64,32 +67,32 @@ int RTI_RoutingServiceFileAdapter_read_sample(
 /* ========================================================================= */
 
 int RTI_RoutingServiceFileAdapter_write_sample(
-        struct DDS_DynamicData * sample,
-        FILE * file,
-        RTI_RoutingServiceEnvironment * env)
+        struct DDS_DynamicData *sample,
+        FILE *file,
+        RTI_RoutingServiceEnvironment *env)
 {
     DDS_ReturnCode_t retCode = DDS_RETCODE_OK;
     struct DDS_DynamicDataMemberInfo info;
     DDS_UnsignedLong ulongValue = 0;
-    DDS_Octet * ptr_payload = NULL;
+    DDS_Octet *ptr_payload = NULL;
     struct DDS_OctetSeq payload;
-    DDS_Long sample_length=0;
+    DDS_Long sample_length = 0;
 
     DDS_OctetSeq_initialize(&payload);
 
-    DDS_DynamicData_get_octet_seq(sample,
+    DDS_DynamicData_get_octet_seq(
+            sample,
             &payload,
             "value",
             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
 
-    sample_length=DDS_OctetSeq_get_length(&payload);
-    ptr_payload=DDS_OctetSeq_get_contiguous_buffer(&payload);
+    sample_length = DDS_OctetSeq_get_length(&payload);
+    ptr_payload = DDS_OctetSeq_get_contiguous_buffer(&payload);
     /*it  writes the retrieved string to the file*/
     if (retCode == DDS_RETCODE_OK) {
-        if (fwrite(ptr_payload,1,sample_length,file) < sample_length) {
+        if (fwrite(ptr_payload, 1, sample_length, file) < sample_length) {
             return 0;
         }
-
     }
     DDS_OctetSeq_finalize(&payload);
 

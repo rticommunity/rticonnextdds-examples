@@ -1,0 +1,7 @@
+HelloMsg.c
+HelloMsg.h
+HelloMsgPlugin.c
+HelloMsgPlugin.h
+USER_QOS_PROFILES.xml
+makefile_HelloMsg_*
+build/

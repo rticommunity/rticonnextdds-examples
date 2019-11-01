@@ -194,7 +194,32 @@ public class tbfSubscriber {
                 System.err.println("create_datareader error\n");
                 return;
             }                         
-        
+
+            /*
+             * If you want to change the time-based filter programmatically
+             * (e.g., to 2 seconds) rather than using the XML file, you will
+             * need to add the following lines to your code and comment out the
+             * create_datareader call above.
+             */
+
+            // DataReaderQos readerQos = new DataReaderQos();
+            // subscriber.get_default_datareader_qos(readerQos);
+
+            // Duration_t minimumSeparation = new Duration_t(2,0);
+            // readerQos.time_based_filter.minimum_separation.sec =
+            //         minimumSeparation.sec;
+            // readerQos.time_based_filter.minimum_separation.nanosec =
+            //         minimumSeparation.nanosec;
+            // reader = (tbfDataReader) subscriber.create_datareader(
+            //         topic,
+            //         readerQos,
+            //         listener,
+            //         StatusKind.STATUS_MASK_ALL);
+            // if (reader == null) {
+            //     System.err.println("create_datareader error\n");
+            //     return;
+            // }
+
             // --- Wait for data --- //
 
             /* Results table header: (1) source timestamp of the sample received;

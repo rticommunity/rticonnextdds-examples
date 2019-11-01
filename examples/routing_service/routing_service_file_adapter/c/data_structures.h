@@ -32,7 +32,6 @@ struct RTI_RoutingServiceFileAdapterPlugin {
 };
 /*****************************************************************************/
 struct RTI_RoutingServiceFileConnection {
-
     /* the path of the directory to scan */
     char path[256];
     /*
@@ -44,24 +43,23 @@ struct RTI_RoutingServiceFileConnection {
     int is_running_enabled;
     int sleep_period;
     /*pointer to input and output discovery reader*/
-    struct RTI_RoutingServiceFileStreamReader * input_discovery_reader;
+    struct RTI_RoutingServiceFileStreamReader *input_discovery_reader;
     /*input and output discovery listener (not pointer)*/
-    struct RTI_RoutingServiceStreamReaderListener  input_discovery_listener;
+    struct RTI_RoutingServiceStreamReaderListener input_discovery_listener;
     /*
      *this field is used to distinguish the connection,
      *this basically if it is the connection 1 or 2
      */
     int is_input;
-
 };
 
 /*****************************************************************************/
 
 struct RTI_RoutingServiceFileStreamWriter {
     /* streamInfo associated with the stream reader */
-    const struct RTI_RoutingServiceStreamInfo * info;
+    const struct RTI_RoutingServiceStreamInfo *info;
     /* file where we are writing */
-    FILE * file;
+    FILE *file;
     /* properties flush for writing on the file */
     int flush_enabled;
 };
@@ -75,9 +73,9 @@ struct RTI_RoutingServiceFileStreamReader {
      */
     struct RTI_RoutingServiceStreamReaderListener listener;
     /* streamInfo associated with the stream reader */
-    const struct RTI_RoutingServiceStreamInfo * info;
+    const struct RTI_RoutingServiceStreamInfo *info;
     /* typecode associated with the stream */
-    struct DDS_TypeCode * type_code;
+    struct DDS_TypeCode *type_code;
     /*
      * parameters for the execution of the thread that periodically
      * notify on_data_available
@@ -88,12 +86,13 @@ struct RTI_RoutingServiceFileStreamReader {
     struct DDS_Duration_t read_period;
     int samples_per_read;
     /*file we are reading */
-    FILE * file;
+    FILE *file;
     /*connection which the stream reader belongs to */
     struct RTI_RoutingServiceFileConnection *connection;
     /*the array of filenames present in the source directory*/
-    char** discovery_data;
-    /*counter for discovery_data array, indicate the last entry that has been read*/
+    char **discovery_data;
+    /*counter for discovery_data array, indicate the last entry that has been
+     * read*/
     int discovery_data_counter_read;
     /* counter for discovery data array, indicate the
      * total number of entry (file names) inside the array*/
@@ -107,7 +106,6 @@ struct RTI_RoutingServiceFileStreamReader {
      * new stream.
      */
 };
-
 
 
 #endif /* DATASTRUCTURES_H_ */

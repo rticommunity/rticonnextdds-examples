@@ -9,9 +9,9 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <dds/dds.hpp>
 #include "profiles.hpp"
+#include <dds/dds.hpp>
+#include <iostream>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -23,8 +23,8 @@ using namespace dds::pub::qos;
 void publisher_main(int domain_id, int sample_count)
 {
     // Retrieve the Participant QoS from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos = QosProvider::Default()
-        .participant_qos();
+    DomainParticipantQos participant_qos =
+            QosProvider::Default().participant_qos();
 
     // This example uses a built-in QoS profile to enable monitoring on the
     // DomainParticipant. This profile is specified in USER_QOS_PROFILES.xml.
@@ -55,7 +55,8 @@ void publisher_main(int domain_id, int sample_count)
     HelloWorld instance;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         std::cout << "Writing profiles, count " << count << std::endl;
 
         instance.msg("Hello World!");
@@ -67,7 +68,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

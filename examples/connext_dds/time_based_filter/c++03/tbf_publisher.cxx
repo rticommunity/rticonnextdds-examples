@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "tbf.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -23,10 +23,10 @@ using namespace dds::pub;
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<tbf> topic (participant, "Example tbf");
+    Topic<tbf> topic(participant, "Example tbf");
 
     // Create a DataWriter with default Qos (Publisher created in-line)
     DataWriter<tbf> writer(Publisher(participant), topic);
@@ -59,7 +59,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -75,7 +75,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

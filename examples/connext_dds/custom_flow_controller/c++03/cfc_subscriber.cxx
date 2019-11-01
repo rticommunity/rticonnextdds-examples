@@ -10,12 +10,12 @@
  ******************************************************************************/
 
 #include <cstdlib>
-#include <iostream>
 #include <ctime>
+#include <iostream>
 
+#include "cfc.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "cfc.hpp"
 
 using namespace dds::core;
 using namespace rti::core;
@@ -28,23 +28,23 @@ using namespace dds::topic;
 clock_t Init_time;
 
 class cfcReaderListener : public NoOpDataReaderListener<cfc> {
-  public:
-    void on_data_available(DataReader<cfc>& reader)
+public:
+    void on_data_available(DataReader<cfc> &reader)
     {
         // Take all samples
         LoanedSamples<cfc> samples = reader.take();
 
         for (LoanedSamples<cfc>::iterator sample_it = samples.begin();
-            sample_it != samples.end();
-            sample_it++) {
-
-            if (sample_it->info().valid()){
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - Init_time;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
-                std::cout << "@ t=" << elapsed_secs << "s, got x = "
-                          << sample_it->data().x() << std::endl;
+                std::cout << "@ t=" << elapsed_secs
+                          << "s, got x = " << sample_it->data().x()
+                          << std::endl;
             }
         }
     }
@@ -56,8 +56,8 @@ void subscriber_main(int domain_id, int sample_count)
     Init_time = clock();
 
     // Retrieve the default Participant QoS, from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos = QosProvider::Default()
-        .participant_qos();
+    DomainParticipantQos participant_qos =
+            QosProvider::Default().participant_qos();
 
     // If you want to change the Participant's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -80,11 +80,11 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataReader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder< DataReader<cfc> > reader_listener =
-        rti::core::bind_and_manage_listener(
-            reader,
-            new cfcReaderListener,
-            StatusMask::all());
+    ListenerBinder<DataReader<cfc>> reader_listener =
+            rti::core::bind_and_manage_listener(
+                    reader,
+                    new cfcReaderListener,
+                    StatusMask::all());
 
     std::cout << std::fixed;
     for (int count = 0; sample_count == 0 || count < sample_count; ++count) {
@@ -94,9 +94,8 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-
     int domain_id = 0;
-    int sample_count = 0; // infinite loop
+    int sample_count = 0;  // infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -111,9 +110,10 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << std::endl;
+        std::cerr << "Exception in subscriber_main(): " << ex.what()
+                  << std::endl;
         return -1;
     }
 

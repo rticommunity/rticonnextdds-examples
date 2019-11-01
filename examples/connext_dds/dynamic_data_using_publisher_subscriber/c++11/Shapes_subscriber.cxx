@@ -12,9 +12,9 @@
 #include <algorithm>
 #include <iostream>
 
+#include "Shapes.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/xtypes/DynamicDataTuples.hpp>
-#include "Shapes.hpp"
 
 using namespace dds::core;
 using namespace dds::core::cond;
@@ -25,21 +25,21 @@ using namespace dds::sub;
 using namespace dds::sub::cond;
 using namespace dds::sub::status;
 
-void print_shape_data(const DynamicData& data)
+void print_shape_data(const DynamicData &data)
 {
     // First method: using C++ tuples (C++11 only).
-    auto shape_tuple_data = rti::core::xtypes::get_tuple<
-        std::string, int32_t, int32_t, int32_t>(data);
+    auto shape_tuple_data = rti::core::xtypes::
+            get_tuple<std::string, int32_t, int32_t, int32_t>(data);
 
-    std::cout << "\t color: "     << std::get<0>(shape_tuple_data) << std::endl
-              << "\t x: "         << std::get<1>(shape_tuple_data) << std::endl
-              << "\t y: "         << std::get<2>(shape_tuple_data) << std::endl
+    std::cout << "\t color: " << std::get<0>(shape_tuple_data) << std::endl
+              << "\t x: " << std::get<1>(shape_tuple_data) << std::endl
+              << "\t y: " << std::get<2>(shape_tuple_data) << std::endl
               << "\t shapesize: " << std::get<3>(shape_tuple_data) << std::endl;
 
     // Second method: using DynamicData getters.
     std::cout << "\t color: " << data.value<std::string>("color") << std::endl
-              << "\t x: "     << data.value<int32_t>("x") << std::endl
-              << "\t y: "     << data.value<int32_t>("y") << std::endl
+              << "\t x: " << data.value<int32_t>("x") << std::endl
+              << "\t y: " << data.value<int32_t>("y") << std::endl
               << "\t shapesize: " << data.value<int32_t>("shapesize")
               << std::endl;
 
@@ -53,7 +53,7 @@ void subscriber_main(int domain_id, int sample_count)
     DomainParticipant participant(domain_id);
 
     // Create DynamicData using the type defined in the IDL file.
-    const StructType& shape_type = rti::topic::dynamic_type<ShapeType>::get();
+    const StructType &shape_type = rti::topic::dynamic_type<ShapeType>::get();
 
     // If you want to create the type from code instead of using an IDL
     // file with rtiddsgen, comment out the previous declaration and
@@ -78,23 +78,18 @@ void subscriber_main(int domain_id, int sample_count)
     // Create a ReadCondition for any data on this reader and associate
     // a handler.
     int count = 0;
-    ReadCondition read_condition(
-        reader,
-        DataState::any(),
-        [&reader, &count]()
-    {
+    ReadCondition read_condition(reader, DataState::any(), [&reader, &count]() {
         // Take all samples
         LoanedSamples<DynamicData> samples = reader.take();
-        for (auto sample : samples){
-            if (sample.info().valid()){
+        for (auto sample : samples) {
+            if (sample.info().valid()) {
                 count++;
 
                 // Print sample with different methods.
                 print_shape_data(sample.data());
             }
         }
-    }
-    );
+    });
 
     // Create a WaitSet and attach the ReadCondition
     WaitSet waitset;
@@ -104,14 +99,14 @@ void subscriber_main(int domain_id, int sample_count)
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
         std::cout << "ShapeType subscriber sleeping for 1 sec..." << std::endl;
-        waitset.dispatch(dds::core::Duration(1)); // Wait up to 1s each time
+        waitset.dispatch(dds::core::Duration(1));  // Wait up to 1s each time
     }
 }
 
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -127,7 +122,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;
