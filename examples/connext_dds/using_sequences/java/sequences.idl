@@ -8,10 +8,10 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-const long MAX_SEQUENCE_LEN = 100;
+const int32 MAX_SEQUENCE_LEN = 100;
 
-struct sequences { 
-    string<100> id; //@key
-    short count;
-    sequence<short, MAX_SEQUENCE_LEN> data;
-}; 
+struct sequences {
+    @key string<100> id;
+    int16 count;
+    sequence<int16, MAX_SEQUENCE_LEN> data;
+};

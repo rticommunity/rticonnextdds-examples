@@ -8,6 +8,8 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-struct ordered {    long id; //@key
-    long value;
-};
+struct ordered {
+    @key int32 id;
+    int32 value;
+};
+

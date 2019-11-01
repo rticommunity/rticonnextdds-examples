@@ -9,12 +9,8 @@
  use the software.
  ******************************************************************************/
 struct keys {
-
-  long code; //@key
-
-  long x;
-
-  long y;
-
+    @key int32 code;
+    int32 x;
+    int32 y;
 };
 

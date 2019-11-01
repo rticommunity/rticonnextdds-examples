@@ -9,40 +9,41 @@
  use the software.
  ******************************************************************************/
 enum enumeration {
-    a = 65,
+    @value(65) a,
     b,
     c
 };
 
+@nested
 struct nested2 {
     float float_var;
     double double_var;
     boolean boolean_var;
     char char_var;
     octet octet_var;
-    long long longlong_var;
+    int64 longlong_var;
     string<100> string_var;
-    sequence<short,2> shortSeq_var;
+    sequence<int16,2> shortSeq_var;
     sequence<string<1000>,1000> stringSeq_var;
-    short short_arr_var[2];
-    short short_arr_var_2[2][3];
-}; //@top-level false
+    int16 short_arr_var[2];
+    int16 short_arr_var_2[2][3];
+};
 
-typedef union alias_target switch (long) {
-    case 1:
-        long long_uvar;
-    case 5:
-        long long long_long_uvar;
-    default:
-        short short_uvar;
+typedef union alias_target switch (int32) {
+case 1:
+    int32 long_uvar;
+case 5:
+    int64 long_long_uvar;
+default:
+    int16 short_uvar;
 } alias_one;
 
 typedef alias_one alias_two;
 
 struct msg {
-    long id; //@key
-    long count;
-    short array_var[2];
+    @key int32 id;
+    int32 count;
+    int16 array_var[2];
     enumeration enum_type;
     nested2 struct_var;
     nested2 struct_var1;

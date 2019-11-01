@@ -9,5 +9,5 @@
  use the software.
  ******************************************************************************/
 struct hello_world {
-    long data;
+    int32 data;
 };

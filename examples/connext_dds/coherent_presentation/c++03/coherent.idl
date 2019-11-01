@@ -8,4 +8,8 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-struct coherent {    long id; //@key    char field;    long value;};
+struct coherent {
+    @key int32 id;
+    char field;
+    int32 value;
+};

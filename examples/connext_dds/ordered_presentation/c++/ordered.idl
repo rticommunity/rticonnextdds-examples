@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct ordered {
-      long id; //@key
-      long value;
+    @key int32 id;
+    int32 value;
 };

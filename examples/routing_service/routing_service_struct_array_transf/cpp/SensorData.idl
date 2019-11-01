@@ -9,7 +9,7 @@
  * not be liable for any incidental or consequential damages arising out of the
  * use or inability to use the software.
  */
-const long SENSOR_DATA_ARRAY_LENGTH = 4;
+const int32 SENSOR_DATA_ARRAY_LENGTH = 4;
 
 @nested
 struct SensorAttributes {
@@ -17,7 +17,7 @@ struct SensorAttributes {
     float value;
     boolean is_active;
 };
- 
+
 struct SensorAttributesCollection {
     SensorAttributes sensor_array[SENSOR_DATA_ARRAY_LENGTH];
 };

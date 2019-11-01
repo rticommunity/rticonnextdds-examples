@@ -13,14 +13,14 @@
  * preprocessor before generating the code (this constant won't be available
  * in your program).
  */
-const long HPF_MAX_PAYLOAD_SIZE = 8192*16; // 131MB
-const long HPF_MAX_STRING_SIZE = 64;
+const int32 HPF_MAX_PAYLOAD_SIZE = 8192*16; // 131MB
+const int32 HPF_MAX_STRING_SIZE = 64;
 
 /* This custom structure contains an opaque buffer (blob) of maximum size
- * 8Kb, an unsigned long and a simple string (max size=64 characters)
+ * 8Kb, an uint32 and a simple string (max size=64 characters)
  */
 struct hpf {
-    string<HPF_MAX_STRING_SIZE>             prefix;
-    long                                    sampleId;
-    sequence<octet, HPF_MAX_PAYLOAD_SIZE>   payload;
+    string<HPF_MAX_STRING_SIZE> prefix;
+    uint32 sampleId;
+    sequence<octet, HPF_MAX_PAYLOAD_SIZE> payload;
 };

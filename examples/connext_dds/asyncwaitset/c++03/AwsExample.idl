@@ -1,4 +1,4 @@
 struct AwsExample {
-    long key; //@key
-    long number;
+    @key int32 key;
+    int32 number;
 };

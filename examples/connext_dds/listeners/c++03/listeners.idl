@@ -11,7 +11,7 @@
 /* We will use msg to register a topic with an inconsistent
  * data type (i.e., same topic name but different data type)
  *  and trigger a listener in the subscriber application.
- */ 
+ */
 struct msg {
     char c;
 };
@@ -21,5 +21,5 @@ struct msg {
  * applications.
  */
 struct listeners {
-    short x;
+    int16 x;
 };

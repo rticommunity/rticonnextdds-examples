@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct market_data {
-    string<256> Symbol;  //@key
+    @key string<256> Symbol;
     double Price;
 };

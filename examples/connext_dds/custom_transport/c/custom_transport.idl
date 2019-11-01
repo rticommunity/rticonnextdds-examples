@@ -10,5 +10,5 @@
  ******************************************************************************/
 struct CustomTransport {
     string<64> str_value;
-    long long_value;
+    int32 long_value;
 };

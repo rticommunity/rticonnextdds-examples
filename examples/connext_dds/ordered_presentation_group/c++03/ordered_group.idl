@@ -8,7 +8,7 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-const long HELLO_MAX_STRING_SIZE = 256;
+const int32 HELLO_MAX_STRING_SIZE = 256;
 struct ordered_group {
     string<HELLO_MAX_STRING_SIZE> message;
 };

@@ -8,4 +8,7 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-struct ccf {    long x;};
+struct ccf {
+    int32 x;
+};
+

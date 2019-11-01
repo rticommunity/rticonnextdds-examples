@@ -11,6 +11,6 @@
 
 // The type used in the example publisher and subscriber
 struct Stock {
-    string symbol; //@Key
+    @key string symbol;
     double value;
 };

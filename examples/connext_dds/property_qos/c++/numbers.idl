@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct numbers{
-	long number;
+	int32 number;
 	float halfNumber;
-}; 
+};

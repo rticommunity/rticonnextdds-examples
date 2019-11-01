@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct waitset_query_cond {
-  short x;
-  string name;//@key
+    int16 x;
+    @key string name;
 };

@@ -9,7 +9,7 @@
  use the software.
  ******************************************************************************/
 struct Flight {
-    long trackId; //@key
+    @key int32 trackId;
     string<255> company;
-    long altitude;
+    int32 altitude;
 };

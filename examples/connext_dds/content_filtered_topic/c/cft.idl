@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct cft {
-    long x;
-    long count;
+    int32 x;
+    int32 count;
 };

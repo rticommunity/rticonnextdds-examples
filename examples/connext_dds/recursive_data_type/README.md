@@ -63,8 +63,8 @@ If you try this and run `rtiddsgen` you will encounter several problems:
 
 To overcome these problems use the following techniques:
 
-1.  Annotate the recursive type member with the annotation `//@resolve-name
-    false` This prevents `rtiddsgen` from trying to resolve the type and getting
+1.  Annotate the recursive type member with `@resolve_name(false)`.
+    This prevents `rtiddsgen` from trying to resolve the type and getting
     into the infinite recursion
 
 2.  Run `rtiddsgen` with the option `-notypecode` This option prevents it use
@@ -76,7 +76,7 @@ To overcome these problems use the following techniques:
     maximum size. Note that this option is currently only available in C and
     C++.
 
-4.  Declare the recursive type with the annotation `//@Optional` this causes
+4.  Declare the recursive type with the annotation `@optional` this causes
     `rtiddsgen` to generate a reference/pointer avoiding the self-reference
     compile-time issue.
 
@@ -90,8 +90,7 @@ struct Node {
 
 struct Tree {
     Node node;
-    sequence<Tree> children; //@Optional
-                             //@resolve-name false
+    @optional @resolve_name(false) sequence<Tree> children;
 };
 ```
 

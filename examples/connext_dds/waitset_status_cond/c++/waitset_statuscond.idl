@@ -9,5 +9,5 @@
  use the software.
  ******************************************************************************/
 struct waitset_statuscond {
-  short x;
+    int16 x;
 };

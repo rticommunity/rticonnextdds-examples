@@ -9,6 +9,6 @@
  use the software.
  ******************************************************************************/
 struct profiles {
-  string<100> profile_name; //@key
-  long x;
+    @key string<100> profile_name;
+    int32 x;
 };
