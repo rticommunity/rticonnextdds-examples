@@ -10,18 +10,18 @@ import/export data from/to files using RTI Routing Service.
 
 The code in this directory provides the following components:
 
-- `FileAdapter` implements the plugin that is loaded by *RTI Routing Service*.
+-   `FileAdapter` implements the plugin that is loaded by *RTI Routing Service*.
 It is responsible to create and delete connections.
-- `FileConnection` implements a connection. This component is responsible of the
+-   `FileConnection` implements a connection. This component is responsible of the
 creation and deletion of `StreamReaders` and `StreamWriters`.
-- `FileInputDiscoveryStreamReader` implements the logic necessary to propagate
+-   `FileInputDiscoveryStreamReader` implements the logic necessary to propagate
 information about the discovered input streams (in this case files) to the
 Routing Service. We do not have a `FileOutputDiscoveryStreamReader` since we
 directly write to the output file specified. However, it can be implemented in a
 very similar vein to the `FileInputDiscoveryStreamReader`.
-- `FileStreamReader` implements an `StreamReader` that reads sample information
+-   `FileStreamReader` implements an `StreamReader` that reads sample information
 from a CSV file.
-- `FileStreamWriter` implements an `StreamWriter` that writes sample information
+-   `FileStreamWriter` implements an `StreamWriter` that writes sample information
 to a file in CSV format.
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
@@ -78,13 +78,13 @@ Possible values for ```SHAPE_TOPIC``` are:
 
 You have 3 different configurations (cfgName) to choose from:
 
-- **FileAdapterToDDS** - This reads data from a file using the FileAdapter and
+-   **FileAdapterToDDS** - This reads data from a file using the FileAdapter and
 outputs it to DDS. You can visualize the ouptut by subscribing to the chosen
 ```SHAPE_TOPIC``` in Shapes Demo.
-- **DDSToFileAdapter** - This writes data to a file using the FileAdapter by
+-   **DDSToFileAdapter** - This writes data to a file using the FileAdapter by
 reading the input from DDS. You can publish data in Shapes Demo for a shape and
 set that value to ```SHAPE_TOPIC``` before starting Routing Service.
-- **FileAdapterToFileAdapter** - This reads data from a file and writes data to
+-   **FileAdapterToFileAdapter** - This reads data from a file and writes data to
 another file both using the FileAdapter plug-in. As before you should set the
 appropriate value of ```SHAPE_TOPIC``` before starting Routing Service.
 
