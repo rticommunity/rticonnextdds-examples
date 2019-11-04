@@ -17,7 +17,7 @@
 namespace rti { namespace community { namespace examples {
 class FileAdapter : public rti::routing::adapter::AdapterPlugin {
 public:
-    FileAdapter(rti::routing::PropertySet &){};
+    explicit FileAdapter(rti::routing::PropertySet &);
 
     rti::routing::adapter::Connection *create_connection(
             rti::routing::adapter::detail::StreamReaderListener *,

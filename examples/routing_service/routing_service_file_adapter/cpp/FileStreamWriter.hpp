@@ -19,7 +19,7 @@ namespace rti { namespace community { namespace examples {
 class FileStreamWriter : 
         public rti::routing::adapter::DynamicDataStreamWriter {
 public:
-    FileStreamWriter(const rti::routing::PropertySet &);
+    explicit FileStreamWriter(const rti::routing::PropertySet &);
 
     int write(
             const std::vector<dds::core::xtypes::DynamicData *> &samples,
