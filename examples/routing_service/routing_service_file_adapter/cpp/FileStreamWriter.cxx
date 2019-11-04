@@ -40,10 +40,10 @@ int FileStreamWriter::write(
         const std::vector<dds::sub::SampleInfo *> &infos)
 {
     for (auto sample : samples) {
-        std::string str = rti::topic::to_string(
-                *sample, 
-                rti::topic::PrintFormatProperty::Default());
-        std::cout << "Received Sample: " << std::endl << str << std::endl;
+        std::cout << "Received Sample: " 
+                << std::endl 
+                << rti::topic::to_string(*sample) 
+                << std::endl;
 
         output_file_ << sample->value<std::string>("color") << "," 
                 << sample->value<int32_t>("x") << "," 
