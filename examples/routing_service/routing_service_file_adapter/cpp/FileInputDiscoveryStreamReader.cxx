@@ -60,9 +60,11 @@ void FileInputDiscoveryStreamReader::dispose(
         const rti::routing::StreamInfo &stream_info)
 {
     /**
-     * This guard is essential since the take() and return_loan() operations triggered 
-     * by calling on_data_available() execute on a different thread. The take() and 
-     * return_loan() operations also need to access the data_samples_ list.
+     * This guard is essential since the take() and return_loan() operations 
+     * triggered by calling on_data_available() execute on an internal Routing 
+     * Service thread. The custom dispose() operation doesn't run on that thread. 
+     * Since the take() and return_loan() operations also need to access the 
+     * data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
@@ -79,9 +81,11 @@ void FileInputDiscoveryStreamReader::take(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
     /**
-     * This guard is essential since the take() and return_loan() operations triggered 
-     * by calling on_data_available() execute on a different thread. The take() and 
-     * return_loan() operations also need to access the data_samples_ list.
+     * This guard is essential since the take() and return_loan() operations 
+     * triggered by calling on_data_available() execute on an internal Routing 
+     * Service thread. The custom dispose() operation doesn't run on that thread. 
+     * Since the take() and return_loan() operations also need to access the 
+     * data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
     std::copy(data_samples_.begin(), data_samples_.end(), std::back_inserter(stream));
@@ -91,9 +95,11 @@ void FileInputDiscoveryStreamReader::return_loan(
         std::vector<rti::routing::StreamInfo *> &stream)
 {
     /**
-     * This guard is essential since the take() and return_loan() operations triggered 
-     * by calling on_data_available() execute on a different thread. The take() and 
-     * return_loan() operations also need to access the data_samples_ list.
+     * This guard is essential since the take() and return_loan() operations 
+     * triggered by calling on_data_available() execute on an internal Routing 
+     * Service thread. The custom dispose() operation doesn't run on that thread. 
+     * Since the take() and return_loan() operations also need to access the 
+     * data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
