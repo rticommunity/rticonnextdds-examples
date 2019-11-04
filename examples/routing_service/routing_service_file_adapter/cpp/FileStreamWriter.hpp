@@ -23,7 +23,7 @@ public:
 
     int write(
             const std::vector<dds::core::xtypes::DynamicData *> &samples,
-            const std::vector<dds::sub::SampleInfo *> &infos);
+            const std::vector<dds::sub::SampleInfo *> &infos) final;
 
     ~FileStreamWriter();
 

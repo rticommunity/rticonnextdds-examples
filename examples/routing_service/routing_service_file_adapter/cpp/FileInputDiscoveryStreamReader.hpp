@@ -28,9 +28,9 @@ public:
             const rti::routing::PropertySet &, 
             rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener);
 
-    void take(std::vector<rti::routing::StreamInfo*>&);
+    void take(std::vector<rti::routing::StreamInfo*>&) final;
 
-    void return_loan(std::vector<rti::routing::StreamInfo*>&);
+    void return_loan(std::vector<rti::routing::StreamInfo*>&) final;
 
     void dispose(const rti::routing::StreamInfo &stream_info);
 

@@ -22,9 +22,9 @@ public:
     rti::routing::adapter::Connection *create_connection(
             rti::routing::adapter::detail::StreamReaderListener *,
             rti::routing::adapter::detail::StreamReaderListener *,
-            const rti::routing::PropertySet &);
+            const rti::routing::PropertySet &) final;
 
-    void delete_connection(rti::routing::adapter::Connection *connection){};
+    void delete_connection(rti::routing::adapter::Connection *connection) final;
 
     rti::config::LibraryVersion get_version() const;
 };
