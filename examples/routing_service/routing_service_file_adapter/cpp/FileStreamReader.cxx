@@ -39,14 +39,14 @@ void FileStreamReader::file_reading_thread()
 
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
-    std::cout << "Reached end of stream for file " << input_file_name_ << std::endl;
+    std::cout << "Reached end of stream for file: " << input_file_name_ << std::endl;
     file_connection_->dispose_discovery_stream(stream_info_);
 }
 
 FileStreamReader::FileStreamReader(
         FileConnection *connection, 
         const StreamInfo &info,
-        const PropertySet &property,
+        const PropertySet &properties,
         StreamReaderListener *listener)
         : filereader_thread_(),
         sampling_period_(1), 
@@ -59,18 +59,21 @@ FileStreamReader::FileStreamReader(
             info.type_info().type_representation());
 
     // Parse the properties provided in the xml configuration file
-    for (const auto &it : property) {
-        if (it.first == INPUT_FILE_PROPERTY_NAME) {
-            input_file_name_ = it.second;
-            input_file_stream_.open(it.second);
-        } else if (it.first == SAMPLE_PERIOD_PROPERTY_NAME) {
-            sampling_period_ = std::stoi(it.second);
+    for (const auto &property : properties) {
+        if (property.first == INPUT_FILE_PROPERTY_NAME) {
+            input_file_name_ = property.second;
+            input_file_stream_.open(property.second);
+        } else if (property.first == SAMPLE_PERIOD_PROPERTY_NAME) {
+            sampling_period_ = std::stoi(property.second);
         }
     }
 
-    if (!input_file_stream_.is_open()) {
+    if (input_file_name_.empty()) {
         throw dds::core::IllegalOperationError(
-                "Input file not provided or unable to open");
+                "Error property not found: " + INPUT_FILE_PROPERTY_NAME);
+    } else if (!input_file_stream_.is_open()) {
+        throw dds::core::IllegalOperationError(
+                "Error opening input file: " + input_file_name_);
     } else {
         std::cout << "Input file name: " << input_file_name_ << std::endl;
     }

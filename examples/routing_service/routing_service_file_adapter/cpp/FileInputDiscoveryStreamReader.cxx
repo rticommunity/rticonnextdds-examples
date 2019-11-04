@@ -26,8 +26,6 @@ bool FileInputDiscoveryStreamReader::fexists(const std::string filename)
 FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader( 
         const PropertySet &, 
         StreamReaderListener *input_stream_discovery_listener)
-        : data_samples_mutex_(), 
-        data_samples_()
 {
     input_stream_discovery_listener_ = input_stream_discovery_listener;
 

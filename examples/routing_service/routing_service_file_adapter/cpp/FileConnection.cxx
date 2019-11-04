@@ -51,7 +51,7 @@ void FileConnection::delete_stream_writer(StreamWriter *writer)
 
 DiscoveryStreamReader *FileConnection::output_stream_discovery_reader() 
 {
-    return NULL;
+    return nullptr;
 };
 
 DiscoveryStreamReader *FileConnection::input_stream_discovery_reader() 

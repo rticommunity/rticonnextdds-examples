@@ -16,19 +16,20 @@ using namespace rti::community::examples;
 
 const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter.output_file";
 
-FileStreamWriter::FileStreamWriter(const PropertySet &property)
+FileStreamWriter::FileStreamWriter(const PropertySet &properties)
 {
     std::string output_file_name;
-    for (const auto &it: property) {
-        if (it.first == OUTPUT_FILE_PROPERTY_NAME) {
-            output_file_name = it.second;
+    for (const auto &property : properties) {
+        if (property.first == OUTPUT_FILE_PROPERTY_NAME) {
+            output_file_name = property.second;
             output_file_.open(output_file_name);
+            break;
         }
     }
 
     if (!output_file_.is_open()) {
         throw dds::core::IllegalOperationError(
-                "Open output file: " + output_file_name);
+                "Error opening output file: " + output_file_name);
     } else {
         std::cout << "Output file name: " << output_file_name << std::endl;
     }
@@ -38,18 +39,16 @@ int FileStreamWriter::write(
         const std::vector<dds::core::xtypes::DynamicData *> &samples,
         const std::vector<dds::sub::SampleInfo *> &infos)
 {
-    for (std::vector<dds::core::xtypes::DynamicData *>::const_iterator it = samples.begin(); 
-            it != samples.end(); 
-            ++it) {
+    for (auto sample : samples) {
         std::string str = rti::topic::to_string(
-                (**it), 
+                *sample, 
                 rti::topic::PrintFormatProperty::Default());
         std::cout << "Received Sample: " << std::endl << str << std::endl;
 
-        output_file_ << (*it)->value<std::string>("color") << "," 
-                << (*it)->value<int32_t>("x") << "," 
-                << (*it)->value<int32_t>("y") << "," 
-                << (*it)->value<int32_t>("shapesize") << std::endl;
+        output_file_ << sample->value<std::string>("color") << "," 
+                << sample->value<int32_t>("x") << "," 
+                << sample->value<int32_t>("y") << "," 
+                << sample->value<int32_t>("shapesize") << std::endl;
     }
     return 0;
 }
