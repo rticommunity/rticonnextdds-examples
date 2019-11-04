@@ -360,6 +360,19 @@
 # - All the Windows i86 and x64 platforms
 # - All the Darwin platforms (OS X 10.11-10.13)
 #
+# Logging in versions lower than CMake 3.15
+# ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+# For versions lower than CMake 3.15 ``CMAKE_MINOR_VERSION`` variable should be
+# use to define lower logging levels than ``STATUS`` mode. All this modes will
+# show messages of current level and higher. The following modes are available:
+#
+# - ``STATUS`` 
+#   Default mode. This will olnly show messages with same or higher logging
+#   level than CMake ``STATUS``.
+# - ``VERBOSE``
+#   This mode will show all messages from ``VERBOSE`` level and higher.
+# - ``DEBUG``
+#   This last mode will show messages from all previous levels and ``DEBUG``.
 
 #####################################################################
 # Logging Macros                                                    #
@@ -372,20 +385,38 @@
 # Arguments:
 # - message: provides the text message
 if("${CMAKE_MINOR_VERSION}" GREATER_EQUAL "15")
-    macro(connextdds_log_debug message)
-        message(DEBUG "${message}")
+    macro(connextdds_log_verbose message)
+        message(VERBOSE "VERBOSE ${message}")
     endmacro()
 
-    macro(connextdds_log_verbose message)
-        message(VERBOSE "${message}")
+    macro(connextdds_log_debug message)
+        message(DEBUG   "  DEBUG ${message}")
     endmacro()
 else()
-    macro(connextdds_log_debug message)
-        message("DEBUG ${message}")
-    endmacro()
+    set(CONNEXTDDS_LOG_LEVEL_LIST "STATUS" "VERBOSE" "DEBUG")
+
+    if(NOT CONNEXTDDS_LOG_LEVEL)
+        set(CONNEXTDDS_LOG_LEVEL "STATUS")
+    endif()
+
+    if(NOT CONNEXTDDS_LOG_LEVEL IN_LIST CONNEXTDDS_LOG_LEVEL_LIST)
+        string(REPLACE ";"
+            " " LOG_LEVELS_STRING
+            "${CONNEXTDDS_LOG_LEVEL_LIST}")
+        message(FATAL_ERROR "Log level must be one of: ${LOG_LEVELS_STRING}. "
+                "It's default value is STATUS.")
+    endif()
 
     macro(connextdds_log_verbose message)
-        message("VERBOSE ${message}")
+        if("${CONNEXTDDS_LOG_LEVEL}" MATCHES "VERBOSE|DEBUG")
+            message(STATUS "VERBOSE ${message}")
+        endif()
+    endmacro()
+
+    macro(connextdds_log_debug message)
+        if("${CONNEXTDDS_LOG_LEVEL}" STREQUAL "DEBUG")
+            message(STATUS "  DEBUG ${message}")
+        endif()
     endmacro()
 endif()
 
@@ -396,8 +427,8 @@ endif()
 # - XML: provides the xml contents
 macro(connextdds_log_xml XML_NAME XML)
     string(REPLACE "\n"
-           ";" lines
-           ${XML})
+        ";" lines
+        ${XML})
 
     connextdds_log_verbose("~~~~~~~START ${XML_NAME}~~~~~~~")
     foreach(line ${lines})
