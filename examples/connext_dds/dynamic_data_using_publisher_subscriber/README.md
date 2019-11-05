@@ -29,9 +29,9 @@ structure:
 
 ```cpp
 struct ShapeType {
-  string<128> color; //@key
-  long x;
-  long y;
-  long shapesize;
+    @key string<128> color;
+    int32 x;
+    int32 y;
+    int32 shapesize;
 };
 ```

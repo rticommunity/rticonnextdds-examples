@@ -19,8 +19,8 @@ enum Format {
 @final
 @language_binding(FLAT_DATA)
 struct Resolution {
-    long height;
-    long width;
+    int32 height;
+    int32 width;
 };
 
 @final
@@ -31,7 +31,7 @@ struct Pixel {
     octet blue;
 };
 
-const long MAX_IMAGE_SIZE = 8294400;
+const int32 MAX_IMAGE_SIZE = 8294400;
 
 @mutable
 @language_binding(FLAT_DATA)
