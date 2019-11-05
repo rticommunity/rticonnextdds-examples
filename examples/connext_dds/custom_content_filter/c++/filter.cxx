@@ -65,7 +65,7 @@ DDS_ReturnCode_t custom_filter_type::compile(
     struct cdata *cd = NULL;
 
     /* First free old data, if any */
-    delete old_compile_data;
+    free(old_compile_data);
 
     /* We expect an expression of the form "%0 %1 <var>"
      * where %1 = "divides" or "greater-than"
@@ -134,5 +134,5 @@ DDS_Boolean custom_filter_type::evaluate(
 void custom_filter_type::finalize(void *compile_data)
 {
     if (compile_data != NULL)
-        delete compile_data;
+        free(compile_data);
 }

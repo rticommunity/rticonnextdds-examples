@@ -137,8 +137,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      * strings! The single-quote do NOT go in the query condition itself. */
     DDS_StringSeq query_parameters;
     query_parameters.ensure_length(2, 2);
-    query_parameters[0] = "'CompanyA'";
-    query_parameters[1] = "30000";
+    query_parameters[0] = (char *) "'CompanyA'";
+    query_parameters[1] = (char *) "30000";
     printf("Setting parameter to company %s, altitude bigger or equals to %s\n",
            query_parameters[0],
            query_parameters[1]);
@@ -162,10 +162,10 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
         /* Change the filter parameter after 5 seconds. */
         if ((count + 1) % 10 == 5) {
-            query_parameters[0] = "'CompanyB'";
+            query_parameters[0] = (char *) "'CompanyB'";
             update = true;
         } else if ((count + 1) % 10 == 0) {
-            query_parameters[0] = "'CompanyA'";
+            query_parameters[0] = (char *) "'CompanyA'";
             update = true;
         }
 
