@@ -34,9 +34,9 @@ Connection *FileAdapter::create_connection(
 void FileAdapter::delete_connection(Connection *connection)
 {
     /**
-     * Perform cleanup pertaining to the connection object here. 
-     * In this example there is nothing to be done.
+     * Perform cleanup pertaining to the connection object here.
      */
+    delete connection;
 }
 
 rti::config::LibraryVersion FileAdapter::get_version() const

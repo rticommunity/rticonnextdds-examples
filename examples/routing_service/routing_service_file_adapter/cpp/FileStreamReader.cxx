@@ -48,8 +48,7 @@ FileStreamReader::FileStreamReader(
         const StreamInfo &info,
         const PropertySet &properties,
         StreamReaderListener *listener)
-        : filereader_thread_(),
-        sampling_period_(1), 
+        : sampling_period_(1), 
         stop_thread_(false), 
         stream_info_(info.stream_name(), info.type_info().type_name())
 {
