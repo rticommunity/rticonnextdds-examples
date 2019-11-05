@@ -10,9 +10,7 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-set (CMAKE_CXX_STANDARD 11)
 project (FileAdapter)
-
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
@@ -24,16 +22,17 @@ find_package(
         routing_service
 )
 
-# Define the library that will provide the adapter plugin
 add_library(
     fileadapter
-    # The kind of library created depends on value of BUILD_SHARED_LIBS=ON|OFF
         "${CMAKE_CURRENT_SOURCE_DIR}/FileAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileConnection.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamWriter.cxx"
 )
+
+set_property(TARGET fileadapter PROPERTY CXX_STANDARD 11)
+set_property(TARGET fileadapter PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(
     fileadapter
@@ -42,7 +41,7 @@ target_link_libraries(
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
-# Copy the sample data file into the binary directory
+# Copy the sample data files into the binary directory
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"
     "${CMAKE_BINARY_DIR}/Input_Circle.csv"
