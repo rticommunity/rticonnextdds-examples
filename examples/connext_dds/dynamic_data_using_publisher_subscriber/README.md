@@ -30,8 +30,8 @@ structure:
 ```cpp
 struct ShapeType {
     @key string<128> color;
-    long x;
-    long y;
-    long shapesize;
+    int32 x;
+    int32 y;
+    int32 shapesize;
 };
 ```
