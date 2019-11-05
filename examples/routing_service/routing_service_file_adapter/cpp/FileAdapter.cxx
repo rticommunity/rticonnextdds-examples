@@ -41,7 +41,7 @@ void FileAdapter::delete_connection(Connection *connection)
 
 rti::config::LibraryVersion FileAdapter::get_version() const
 {
-    return {1, 0, 0, 'r'};
+    return { 1, 0, 0, 'r' };
 };
 
 RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DEF(FileAdapter)

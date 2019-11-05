@@ -9,16 +9,18 @@
 #include <sstream>
 #include <thread>
 
-#include <rti/core/Exception.hpp>
 #include "FileStreamReader.hpp"
+#include <rti/core/Exception.hpp>
 
 using namespace dds::core::xtypes;
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 using namespace rti::community::examples;
 
-const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME = "example.adapter.input_file";
-const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME = "example.adapter.sample_period_sec";
+const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME =
+        "example.adapter.input_file";
+const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME =
+        "example.adapter.sample_period_sec";
 
 void FileStreamReader::file_reading_thread()
 {
@@ -26,8 +28,8 @@ void FileStreamReader::file_reading_thread()
         if (input_file_stream_.is_open()) {
             std::getline(input_file_stream_, buffer_);
 
-            /** 
-             * Here we notify routing service, that there is data available 
+            /**
+             * Here we notify routing service, that there is data available
              * on the StreamReader, triggering a call to take().
              */
             if (!input_file_stream_.eof()) {
@@ -39,23 +41,24 @@ void FileStreamReader::file_reading_thread()
 
         std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
     }
-    std::cout << "Reached end of stream for file: " << input_file_name_ << std::endl;
+    std::cout << "Reached end of stream for file: " << input_file_name_
+              << std::endl;
     file_connection_->dispose_discovery_stream(stream_info_);
 }
 
 FileStreamReader::FileStreamReader(
-        FileConnection *connection, 
+        FileConnection *connection,
         const StreamInfo &info,
         const PropertySet &properties,
         StreamReaderListener *listener)
-        : sampling_period_(1), 
-        stop_thread_(false), 
-        stream_info_(info.stream_name(), info.type_info().type_name())
+        : sampling_period_(1),
+          stop_thread_(false),
+          stream_info_(info.stream_name(), info.type_info().type_name())
 {
     file_connection_ = connection;
     reader_listener_ = listener;
-    adapter_type_ = static_cast<DynamicType *>(
-            info.type_info().type_representation());
+    adapter_type_ =
+            static_cast<DynamicType *>(info.type_info().type_representation());
 
     // Parse the properties provided in the xml configuration file
     for (const auto &property : properties) {
@@ -77,7 +80,8 @@ FileStreamReader::FileStreamReader(
         std::cout << "Input file name: " << input_file_name_ << std::endl;
     }
 
-    filereader_thread_ = std::thread(&FileStreamReader::file_reading_thread, this);
+    filereader_thread_ =
+            std::thread(&FileStreamReader::file_reading_thread, this);
 }
 
 void FileStreamReader::take(
@@ -101,7 +105,7 @@ void FileStreamReader::take(
 
     DynamicData *sample = new DynamicData(*adapter_type_);
 
-    /** 
+    /**
      * This is the hardcoded type information about ShapeType.
      * You are advised to change this as per your type definition
      */

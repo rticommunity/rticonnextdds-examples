@@ -17,10 +17,10 @@ using namespace rti::routing::adapter;
 FileConnection::FileConnection(
         StreamReaderListener *input_stream_discovery_listener,
         StreamReaderListener *output_stream_discovery_listener,
-        const PropertySet &properties) :
-        input_discovery_reader_(properties, input_stream_discovery_listener)
-{
-};
+        const PropertySet &properties)
+        : input_discovery_reader_(
+                properties,
+                input_stream_discovery_listener) {};
 
 StreamReader *FileConnection::create_stream_reader(
         Session *session,
@@ -49,22 +49,22 @@ void FileConnection::delete_stream_writer(StreamWriter *writer)
     delete writer;
 }
 
-DiscoveryStreamReader *FileConnection::output_stream_discovery_reader() 
+DiscoveryStreamReader *FileConnection::output_stream_discovery_reader()
 {
     return nullptr;
 };
 
-DiscoveryStreamReader *FileConnection::input_stream_discovery_reader() 
+DiscoveryStreamReader *FileConnection::input_stream_discovery_reader()
 {
     return &input_discovery_reader_;
 };
 
 /**
- * This function is called by the FileStreamReader to indicate that it has 
- * reached EOF and its time to dispose the route. The dispose set by the 
- * FileInputDiscoveryStreamReader starts the chain of cleanup procedure. Remember 
- * that the <creation_mode> for <output> should be ON_ROUTE_MATCH for the cleanup 
- * to be propagated to the StreamWriter as well.
+ * This function is called by the FileStreamReader to indicate that it has
+ * reached EOF and its time to dispose the route. The dispose set by the
+ * FileInputDiscoveryStreamReader starts the chain of cleanup procedure.
+ * Remember that the <creation_mode> for <output> should be ON_ROUTE_MATCH for
+ * the cleanup to be propagated to the StreamWriter as well.
  */
 void FileConnection::dispose_discovery_stream(
         const rti::routing::StreamInfo &stream_info)

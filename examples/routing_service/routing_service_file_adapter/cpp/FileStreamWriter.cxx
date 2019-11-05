@@ -7,14 +7,15 @@
 /*****************************************************************************/
 
 #include "FileStreamWriter.hpp"
-#include <rti/topic/to_string.hpp>
 #include <rti/core/Exception.hpp>
+#include <rti/topic/to_string.hpp>
 
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 using namespace rti::community::examples;
 
-const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME = "example.adapter.output_file";
+const std::string FileStreamWriter::OUTPUT_FILE_PROPERTY_NAME =
+        "example.adapter.output_file";
 
 FileStreamWriter::FileStreamWriter(const PropertySet &properties)
 {
@@ -40,15 +41,13 @@ int FileStreamWriter::write(
         const std::vector<dds::sub::SampleInfo *> &infos)
 {
     for (auto sample : samples) {
-        std::cout << "Received Sample: " 
-                << std::endl 
-                << rti::topic::to_string(*sample) 
-                << std::endl;
+        std::cout << "Received Sample: " << std::endl
+                  << rti::topic::to_string(*sample) << std::endl;
 
-        output_file_ << sample->value<std::string>("color") << "," 
-                << sample->value<int32_t>("x") << "," 
-                << sample->value<int32_t>("y") << "," 
-                << sample->value<int32_t>("shapesize") << std::endl;
+        output_file_ << sample->value<std::string>("color") << ","
+                     << sample->value<int32_t>("x") << ","
+                     << sample->value<int32_t>("y") << ","
+                     << sample->value<int32_t>("shapesize") << std::endl;
     }
     return 0;
 }
