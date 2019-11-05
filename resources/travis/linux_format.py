@@ -256,7 +256,7 @@ if __name__ == "__main__":
     # Clang-format
     if "clang-format" not in args.disabled_linters:
         clang_format_suffix_list = {".c", ".cxx"}
-        clang_format_cmd = ["git", "clang-format-10", "--diff"]
+        clang_format_cmd = ["git", "clang-format", "--diff"]
         clang_format_filtered_file_list = filter_files(
             file_list, clang_format_suffix_list
         )
