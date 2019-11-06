@@ -101,7 +101,7 @@ void FileStreamReader::take(
     std::getline(s, shapesize, ',');
 
     /**
-     * Note that we read one line at a time from the CSV file in the 
+     * Note that we read one line at a time from the CSV file in the
      * function file_reading_thread()
      */
     samples.resize(1);
