@@ -105,6 +105,7 @@ void FileStreamReader::take(
      * function file_reading_thread()
      */
     samples.resize(1);
+    infos.resize(1);
 
     DynamicData *sample = new DynamicData(*adapter_type_);
 
