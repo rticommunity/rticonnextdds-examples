@@ -59,13 +59,6 @@ DiscoveryStreamReader *FileConnection::input_stream_discovery_reader()
     return &input_discovery_reader_;
 };
 
-/**
- * This function is called by the FileStreamReader to indicate that it has
- * reached EOF and its time to dispose the route. The dispose set by the
- * FileInputDiscoveryStreamReader starts the chain of cleanup procedure.
- * Remember that the <creation_mode> for <output> should be ON_ROUTE_MATCH for
- * the cleanup to be propagated to the StreamWriter as well.
- */
 void FileConnection::dispose_discovery_stream(
         const rti::routing::StreamInfo &stream_info)
 {
