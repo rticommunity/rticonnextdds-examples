@@ -94,14 +94,14 @@ void FileStreamReader::take(
     std::string y;
     std::string shapesize;
 
-    // Reading input from the csv file
+    // Reading input from the CSV file
     std::getline(s, color, ',');
     std::getline(s, x, ',');
     std::getline(s, y, ',');
     std::getline(s, shapesize, ',');
 
+    // Note that we read one line at a time in the function file_reading_thread()
     samples.resize(1);
-    infos.resize(1);
 
     DynamicData *sample = new DynamicData(*adapter_type_);
 
@@ -114,11 +114,7 @@ void FileStreamReader::take(
     sample->value("y", std::stoi(y));
     sample->value("shapesize", std::stoi(shapesize));
 
-    dds::sub::SampleInfo *info = new dds::sub::SampleInfo();
-    (*info)->native().valid_data = DDS_BOOLEAN_TRUE;
-
     samples[0] = sample;
-    infos[0] = info;
 
     return;
 }

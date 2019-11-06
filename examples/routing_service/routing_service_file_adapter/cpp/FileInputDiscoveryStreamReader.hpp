@@ -33,13 +33,16 @@ public:
     void return_loan(std::vector<rti::routing::StreamInfo*>&) final;
 
     /**
-     * Custom operation defined to indicate disposing off an <input> 
+     * @brief Custom operation defined to indicate disposing off an <input> 
      * when the FileStreamReader has finished reading from a file. 
      * The FileInputDiscoveryStreamReader will then create a new 
      * discovery sample indicating that the stream has been disposed. 
      * This will cause the Routing Service to start tearing down the Routes 
      * associated with <input> having the corresponding <registered_type_name> 
      * and <stream_name>.
+     * 
+     * @param stream_info \b in. Reference to a StreamInfo object which should 
+     * be used when creating a new StreamInfo sample with disposed set to true
      */
     void dispose(const rti::routing::StreamInfo &stream_info);
 

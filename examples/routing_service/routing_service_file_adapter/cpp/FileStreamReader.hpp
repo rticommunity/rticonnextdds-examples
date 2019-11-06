@@ -48,6 +48,11 @@ private:
     static const std::string INPUT_FILE_PROPERTY_NAME;
     static const std::string SAMPLE_PERIOD_PROPERTY_NAME;
 
+    /**
+     * @brief Function used by filereader_thread_ to read samples from the 
+     * CSV formatted file one line at a time. The file only contains data and 
+     * no meta data information.
+     */
     void file_reading_thread();
 
     FileConnection *file_connection_;

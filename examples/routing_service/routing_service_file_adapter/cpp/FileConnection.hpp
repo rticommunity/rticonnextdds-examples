@@ -42,6 +42,16 @@ public:
 
     rti::routing::adapter::DiscoveryStreamReader *output_stream_discovery_reader() final;
 
+    /**
+     * @brief This function is called by the FileStreamReader to indicate that it has
+     * reached EOF and its time to dispose the route. The dispose set by the
+     * FileInputDiscoveryStreamReader starts the chain of cleanup procedure.
+     * Remember that the <creation_mode> for <output> should be ON_ROUTE_MATCH for
+     * the cleanup to be propagated to the StreamWriter as well.
+     * 
+     * @param stream_info \b in. Reference to a StreamInfo object which should 
+     * be used when creating a new StreamInfo sample with disposed set to true
+     */
     void dispose_discovery_stream(
             const rti::routing::StreamInfo &stream_info);
 
