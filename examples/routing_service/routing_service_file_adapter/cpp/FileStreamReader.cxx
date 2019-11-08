@@ -6,10 +6,10 @@
 /*                                                                           */
 /*****************************************************************************/
 
-#include <sstream>
-#include <thread>
 #include <algorithm>
 #include <cctype>
+#include <sstream>
+#include <thread>
 
 #include "FileStreamReader.hpp"
 #include <rti/core/Exception.hpp>
@@ -26,16 +26,16 @@ const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME =
 
 bool FileStreamReader::check_csv_file_line_format(const std::string &line)
 {
-    return (!line.empty()) 
-            && (std::count(line.begin(), line.end(), ',') == 3);
+    return (!line.empty()) && (std::count(line.begin(), line.end(), ',') == 3);
 }
 
 bool FileStreamReader::is_digit(const std::string &value)
 {
     return std::find_if(
-            value.begin(), 
-            value.end(), 
-            [](unsigned char c) { return !std::isdigit(c); }) == value.end();
+                   value.begin(),
+                   value.end(),
+                   [](unsigned char c) { return !std::isdigit(c); })
+            == value.end();
 }
 
 void FileStreamReader::file_reading_thread()
@@ -44,8 +44,8 @@ void FileStreamReader::file_reading_thread()
         if (input_file_stream_.is_open()) {
             {
                 /**
-                 * Essential to protect against concurrent data access to 
-                 * buffer_ from the take() methods running on a different 
+                 * Essential to protect against concurrent data access to
+                 * buffer_ from the take() methods running on a different
                  * Routing Service thread.
                  */
                 std::lock_guard<std::mutex> guard(buffer_mutex_);
@@ -113,7 +113,7 @@ void FileStreamReader::take(
         std::vector<dds::sub::SampleInfo *> &infos)
 {
     /**
-     * This protection is required since take() executes on a different 
+     * This protection is required since take() executes on a different
      * Routing Service thread.
      */
     std::lock_guard<std::mutex> guard(buffer_mutex_);
