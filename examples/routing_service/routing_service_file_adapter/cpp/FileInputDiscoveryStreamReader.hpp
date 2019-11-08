@@ -55,7 +55,7 @@ private:
     static const std::string TRIANGLE_FILE_NAME;
 
     std::mutex data_samples_mutex_;
-    std::list<rti::routing::StreamInfo *> data_samples_;
+    std::vector<std::unique_ptr<rti::routing::StreamInfo>> data_samples_;
     rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener_;
 };
 

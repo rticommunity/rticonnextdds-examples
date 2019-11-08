@@ -41,6 +41,12 @@ public:
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &) final;
 
+    void shutdown_file_reader_thread();
+
+    bool check_csv_file_line_format(const std::string &line);
+
+    bool is_digit(const std::string &value);
+
     ~FileStreamReader();
 
 private:
@@ -59,11 +65,12 @@ private:
     rti::routing::adapter::StreamReaderListener *reader_listener_;
     std::thread filereader_thread_;
     bool stop_thread_;
-    uint16_t sampling_period_;
+    std::chrono::seconds sampling_period_;
 
     std::ifstream input_file_stream_;
     std::string input_file_name_;
     std::string buffer_;
+    std::mutex buffer_mutex_;
 
     rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;

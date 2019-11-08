@@ -8,6 +8,8 @@
 
 #include <sstream>
 #include <thread>
+#include <algorithm>
+#include <cctype>
 
 #include "FileStreamReader.hpp"
 #include <rti/core/Exception.hpp>
@@ -22,14 +24,36 @@ const std::string FileStreamReader::INPUT_FILE_PROPERTY_NAME =
 const std::string FileStreamReader::SAMPLE_PERIOD_PROPERTY_NAME =
         "example.adapter.sample_period_sec";
 
+bool FileStreamReader::check_csv_file_line_format(const std::string &line)
+{
+    return (!line.empty()) 
+            && (std::count(line.begin(), line.end(), ',') == 3);
+}
+
+bool FileStreamReader::is_digit(const std::string &value)
+{
+    return std::find_if(
+            value.begin(), 
+            value.end(), 
+            [](unsigned char c) { return !std::isdigit(c); }) == value.end();
+}
+
 void FileStreamReader::file_reading_thread()
 {
     while (!stop_thread_) {
         if (input_file_stream_.is_open()) {
-            std::getline(input_file_stream_, buffer_);
+            {
+                /**
+                 * Essential to protect against concurrent data access to 
+                 * buffer_ from the take() methods running on a different 
+                 * Routing Service thread.
+                 */
+                std::lock_guard<std::mutex> guard(buffer_mutex_);
+                std::getline(input_file_stream_, buffer_);
+            }
 
             /**
-             * Here we notify routing service, that there is data available
+             * Here we notify Routing Service, that there is data available
              * on the StreamReader, triggering a call to take().
              */
             if (!input_file_stream_.eof()) {
@@ -39,7 +63,7 @@ void FileStreamReader::file_reading_thread()
             }
         }
 
-        std::this_thread::sleep_for(std::chrono::seconds(sampling_period_));
+        std::this_thread::sleep_for(sampling_period_);
     }
     std::cout << "Reached end of stream for file: " << input_file_name_
               << std::endl;
@@ -66,7 +90,7 @@ FileStreamReader::FileStreamReader(
             input_file_name_ = property.second;
             input_file_stream_.open(property.second);
         } else if (property.first == SAMPLE_PERIOD_PROPERTY_NAME) {
-            sampling_period_ = std::stoi(property.second);
+            sampling_period_ = std::chrono::seconds(std::stoi(property.second));
         }
     }
 
@@ -88,6 +112,17 @@ void FileStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
+    /**
+     * This protection is required since take() executes on a different 
+     * Routing Service thread.
+     */
+    std::lock_guard<std::mutex> guard(buffer_mutex_);
+
+    if (!check_csv_file_line_format(buffer_)) {
+        std::cout << "Incorrect format for line: " << buffer_ << std::endl;
+        return;
+    }
+
     std::istringstream s(buffer_);
     std::string color;
     std::string x;
@@ -100,6 +135,11 @@ void FileStreamReader::take(
     std::getline(s, y, ',');
     std::getline(s, shapesize, ',');
 
+    if (!(is_digit(x) && is_digit(y) && is_digit(shapesize))) {
+        std::cout << "Incorrect values found at line: " << buffer_ << std::endl;
+        return;
+    }
+
     /**
      * Note that we read one line at a time from the CSV file in the
      * function file_reading_thread()
@@ -107,7 +147,7 @@ void FileStreamReader::take(
     samples.resize(1);
     infos.resize(1);
 
-    DynamicData *sample = new DynamicData(*adapter_type_);
+    std::unique_ptr<DynamicData> sample(new DynamicData(*adapter_type_));
 
     /**
      * This is the hardcoded type information about ShapeType.
@@ -118,7 +158,7 @@ void FileStreamReader::take(
     sample->value("y", std::stoi(y));
     sample->value("shapesize", std::stoi(shapesize));
 
-    samples[0] = sample;
+    samples[0] = sample.release();
 
     return;
 }
@@ -129,7 +169,6 @@ void FileStreamReader::take(
         const SelectorState &selector_state)
 {
     take(samples, infos);
-    return;
 }
 
 void FileStreamReader::return_loan(
@@ -144,9 +183,13 @@ void FileStreamReader::return_loan(
     samples.clear();
 }
 
-FileStreamReader::~FileStreamReader()
+void FileStreamReader::shutdown_file_reader_thread()
 {
     stop_thread_ = true;
     filereader_thread_.join();
+}
+
+FileStreamReader::~FileStreamReader()
+{
     input_file_stream_.close();
 }

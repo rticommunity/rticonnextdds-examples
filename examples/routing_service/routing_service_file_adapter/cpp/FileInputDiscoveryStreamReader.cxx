@@ -41,15 +41,21 @@ FileInputDiscoveryStreamReader::FileInputDiscoveryStreamReader(
      * new files have been discovered.
      */
     if (fexists(SQUARE_FILE_NAME)) {
-        this->data_samples_.push_back(new StreamInfo("Square", "ShapeType"));
+        this->data_samples_.push_back(
+                std::unique_ptr<rti::routing::StreamInfo>(
+                        new StreamInfo("Square", "ShapeType")));
     }
 
     if (fexists(CIRCLE_FILE_NAME)) {
-        this->data_samples_.push_back(new StreamInfo("Circle", "ShapeType"));
+        this->data_samples_.push_back(
+                std::unique_ptr<rti::routing::StreamInfo>(
+                        new StreamInfo("Circle", "ShapeType")));
     }
 
     if (fexists(TRIANGLE_FILE_NAME)) {
-        this->data_samples_.push_back(new StreamInfo("Triangle", "ShapeType"));
+        this->data_samples_.push_back(
+                std::unique_ptr<rti::routing::StreamInfo>(
+                        new StreamInfo("Triangle", "ShapeType")));
     }
 
     /**
@@ -71,12 +77,13 @@ void FileInputDiscoveryStreamReader::dispose(
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
-    rti::routing::StreamInfo *stream_info_disposed = new StreamInfo(
-            stream_info.stream_name(),
-            stream_info.type_info().type_name());
-    stream_info_disposed->disposed(true);
+    std::unique_ptr<rti::routing::StreamInfo> stream_info_disposed(
+            new StreamInfo(
+                    stream_info.stream_name(),
+                    stream_info.type_info().type_name()));
+    stream_info_disposed.get()->disposed(true);
 
-    this->data_samples_.push_back(stream_info_disposed);
+    this->data_samples_.push_back(std::move(stream_info_disposed));
     input_stream_discovery_listener_->on_data_available(this);
 }
 
@@ -91,10 +98,12 @@ void FileInputDiscoveryStreamReader::take(
      * the data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
-    std::copy(
+    std::transform(
             data_samples_.begin(),
             data_samples_.end(),
-            std::back_inserter(stream));
+            std::back_inserter(stream),
+            [](const std::unique_ptr<rti::routing::StreamInfo> &element) 
+                    { return element.get(); });
 }
 
 void FileInputDiscoveryStreamReader::return_loan(
@@ -109,10 +118,13 @@ void FileInputDiscoveryStreamReader::return_loan(
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
-    auto iter = data_samples_.begin();
-    for (int i = 0; i < stream.size(); i++) {
-        delete *iter;
-        iter = this->data_samples_.erase(iter);
-    }
+    /**
+     * For discovery streams there will never be any outstanding return_loan(). 
+     * Thus we can be sure that each take() will be followed by a call to 
+     * return_loan(), before the next take() executes.
+     */
+    this->data_samples_.erase(
+            data_samples_.begin(), 
+            data_samples_.begin() + stream.size());
     stream.clear();
 }

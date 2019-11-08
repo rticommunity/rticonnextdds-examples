@@ -33,6 +33,8 @@ StreamReader *FileConnection::create_stream_reader(
 
 void FileConnection::delete_stream_reader(StreamReader *reader)
 {
+    FileStreamReader *file_reader = dynamic_cast<FileStreamReader *>(reader);
+    file_reader->shutdown_file_reader_thread();
     delete reader;
 }
 
