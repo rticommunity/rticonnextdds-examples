@@ -300,7 +300,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
         /* Modify the data to be sent and Write data */
         instance1->message =
-                "First sample, Topic 1 sent by DataWriter number 1";
+                (char *) "First sample, Topic 1 sent by DataWriter number 1";
 
         retcode = ordered_group_writer1->write(*instance1, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -308,7 +308,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         instance1->message =
-                "Second sample, Topic 1 sent by DataWriter number 1";
+                (char *) "Second sample, Topic 1 sent by DataWriter number 1";
 
         retcode = ordered_group_writer1->write(*instance1, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -316,7 +316,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         instance2->message =
-                "First sample, Topic 2 sent by DataWriter number 2";
+                (char *) "First sample, Topic 2 sent by DataWriter number 2";
 
         retcode = ordered_group_writer2->write(*instance2, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -324,7 +324,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         instance2->message =
-                "Second sample, Topic 2 sent by DataWriter number 2";
+                (char *) "Second sample, Topic 2 sent by DataWriter number 2";
 
         retcode = ordered_group_writer2->write(*instance2, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -332,7 +332,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         instance3->message =
-                "First sample, Topic 3 sent by DataWriter number 3";
+                (char *) "First sample, Topic 3 sent by DataWriter number 3";
 
         retcode = ordered_group_writer3->write(*instance3, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -340,7 +340,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         }
 
         instance3->message =
-                "Second sample, Topic 3 sent by DataWriter number 3";
+                (char *) "Second sample, Topic 3 sent by DataWriter number 3";
 
         retcode = ordered_group_writer3->write(*instance3, instance_handle);
         if (retcode != DDS_RETCODE_OK) {

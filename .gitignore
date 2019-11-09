@@ -5,6 +5,7 @@
 objs/
 bin/
 obj/
+build/
 *.csproj
 *.vcxproj.filters
 *.vcxproj.user
@@ -12,6 +13,10 @@ obj/
 *.opensdf
 *.suo
 *.userprefs
+*.o
+
+# Visual Studio Code
+.vscode/
 
 # C output files of Code Generator
 *Impl.*

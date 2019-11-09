@@ -135,16 +135,16 @@ extern "C" int publisher_main(int domainId, int sample_count)
     const int num_flights = 4;
     Flight flights_info[4];
     flights_info[0].trackId = 1111;
-    flights_info[0].company = "CompanyA";
+    flights_info[0].company = (char *) "CompanyA";
     flights_info[0].altitude = 15000;
     flights_info[1].trackId = 2222;
-    flights_info[1].company = "CompanyB";
+    flights_info[1].company = (char *) "CompanyB";
     flights_info[1].altitude = 20000;
     flights_info[2].trackId = 3333;
-    flights_info[2].company = "CompanyA";
+    flights_info[2].company = (char *) "CompanyA";
     flights_info[2].altitude = 30000;
     flights_info[3].trackId = 4444;
-    flights_info[3].company = "CompanyB";
+    flights_info[3].company = (char *) "CompanyB";
     flights_info[3].altitude = 25000;
 
     /* Main loop */
