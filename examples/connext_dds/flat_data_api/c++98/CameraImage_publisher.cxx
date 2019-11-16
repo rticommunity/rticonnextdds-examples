@@ -83,6 +83,7 @@ bool build_data_sample(CameraImageBuilder &builder, int seed)
         if (!resolution_offset.width(200)) {
             return false;
         }
+    }
 
     rti::flat::StringBuilder string_builder = builder.build_source();
     if (string_builder.check_failure()) {
@@ -97,7 +98,6 @@ bool build_data_sample(CameraImageBuilder &builder, int seed)
     string_builder.finish();
     if (string_builder.check_failure()) {
         return false;
-    }
     }
 
     // Method 1 - Build the pixel sequence element by element
