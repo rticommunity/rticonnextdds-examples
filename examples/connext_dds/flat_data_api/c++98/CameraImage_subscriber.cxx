@@ -203,7 +203,21 @@ void CameraImageListener::on_data_available(DDSDataReader *reader)
                 return;
             }
 
-            std::cout << root.source().get_string() << ": ";
+            // Print the source name
+            rti::flat::StringOffset source = root.source();
+            if (!source.is_null()) {
+                std::cout << root.source().get_string() << ": ";
+            } else {
+                std::cout << "(Unknown source)" << ": ";
+            }
+
+            // Print the field resolution (if it was published)
+            ResolutionOffset resolution = root.resolution();
+            if (!resolution.is_null()) {
+                std::cout << "(Resolution: " << resolution.height()
+                        << " x " << resolution.width() << ") ";
+            }
+
             // print_average_pixel_simple(data_seq[i]); // Method 1
             print_average_pixel_fast(data_seq[i]);  // Method 2
             std::cout << std::endl;

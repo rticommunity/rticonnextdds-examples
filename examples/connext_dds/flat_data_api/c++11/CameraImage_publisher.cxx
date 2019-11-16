@@ -25,9 +25,13 @@ void build_data_sample(CameraImageBuilder &builder, int seed)
 {
     builder.add_format(Format::RGB);
 
-    auto resolution_offset = builder.add_resolution();
-    resolution_offset.height(100);
-    resolution_offset.width(200);
+    if (seed % 3 == 0) {
+        // All fields in a mutable FlatData type are in effect optional. For
+        // illustration purposes, we will omit the resolution field in some samples
+        auto resolution_offset = builder.add_resolution();
+        resolution_offset.height(100);
+        resolution_offset.width(200);
+    }
 
     auto string_builder = builder.build_source();
     string_builder.set_string("CAM-1");
