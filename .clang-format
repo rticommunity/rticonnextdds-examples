@@ -59,7 +59,7 @@ AlwaysBreakTemplateDeclarations: true
 SpaceAfterTemplateKeyword: true
 
 NamespaceIndentation: None
-CompactNamespaces: false
+CompactNamespaces: true
 FixNamespaceComments: true
 
 # CFR2-10: Operators
