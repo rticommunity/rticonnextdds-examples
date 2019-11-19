@@ -42,13 +42,15 @@ Running the program produces the following output:
 --------------------------------------------
  Data Types
 ------------------
+@appendable
 struct InnerStruct {
-   double x;
-   double y;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    double x;
+    double y;
+};
+@appendable
 struct OuterStruct {
-   InnerStruct inner;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    InnerStruct inner;
+};
 
 
  get/set_complex_member API

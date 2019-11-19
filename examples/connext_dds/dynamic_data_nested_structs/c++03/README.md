@@ -56,16 +56,15 @@ Connext Dynamic Data Nested Struct Example
 --------------------------------------------
 Data Type
 -----------
+@appendable
 struct InnerStruct {
-  double x;
-  //@ID 0
-  double y;
-  //@ID 1
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    @id(0) double x;
+    @id(1) double y;
+};
+@appendable
 struct OuterStruct {
-  InnerStruct inner;
-  //@ID 0
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    @id(0) InnerStruct inner;
+};
 
 Setting the initial values of struct
 --------------------------------------

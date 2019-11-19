@@ -16,7 +16,7 @@
 
 #include <fstream>
 
-namespace cpp_example {
+namespace rti { namespace recording { namespace cpp_example {
 
 /*
  * Convenience macro to forward-declare the C-style function that will be
@@ -84,8 +84,8 @@ private:
  * is later available for StorageStreamReaders (see file FileStorageReader.hpp)
  * to convert or replay samples within a specified time range.
  */
-class FileStreamWriter
-        : public rti::recording::storage::DynamicDataStorageStreamWriter {
+class FileStreamWriter :
+        public rti::recording::storage::DynamicDataStorageStreamWriter {
 public:
     FileStreamWriter(std::ofstream &data_file, const std::string &stream_info);
 
@@ -101,6 +101,7 @@ public:
             const std::vector<dds::sub::SampleInfo *> &info_seq);
 
 private:
+
     uint64_t stored_sample_count_;
 
     std::ofstream &data_file_;
@@ -118,21 +119,21 @@ private:
  * convenience. In the case of this class, we've extended the
  * PublicationStorageDiscoveryStreamWriter class.
  */
-class PubDiscoveryFileStreamWriter
-        : public rti::recording::storage::PublicationStorageWriter {
+class PubDiscoveryFileStreamWriter :
+        public rti::recording::storage::PublicationStorageWriter {
 public:
     PubDiscoveryFileStreamWriter(std::ofstream &pub_file);
     ~PubDiscoveryFileStreamWriter();
 
-    void
-            store(const std::vector<dds::topic::PublicationBuiltinTopicData *>
-                          &sample_seq,
-                  const std::vector<dds::sub::SampleInfo *> &info_seq);
+    void store(
+            const std::vector<dds::topic::PublicationBuiltinTopicData *> &sample_seq,
+            const std::vector<dds::sub::SampleInfo *> &info_seq);
 
 private:
+
     std::ofstream &pub_file_;
 
     uint32_t stored_sample_count_;
 };
 
-}  // namespace cpp_example
+} } }  // namespace rti::recording::cpp_example

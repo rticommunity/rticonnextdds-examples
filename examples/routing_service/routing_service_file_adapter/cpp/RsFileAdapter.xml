@@ -1,0 +1,145 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/latest/rti_routing_service.xsd">
+
+    <types>
+        <include file="ShapeType.xml" />
+    </types>
+
+    <plugin_library name="AdapterLib">
+        <adapter_plugin name="FileAdapter">
+            <!--
+            By specifing this value, RTI Router will search for
+            libfileadapter.so in Unix systems, fileadapter.dll on
+            Windows systems and libfileadapter.dylib on Mac OS. 
+            RTI Routing Service will attempt to load this library from:
+                - Working directory or plugin_search_path
+                - Executable directory
+                - Environment library path
+            -->
+            <dll>fileadapter</dll>
+            <create_function>FileAdapter_create_adapter_plugin</create_function>
+        </adapter_plugin>
+    </plugin_library>
+
+    <!-- Demonstrates a scenario where the FileAdapter reads squares data from a file 
+            and the DDSAdapter writes it to a DDS domain which can be subscribed to in 
+            Shapes Demo or using 'rtiddsspy -printSample' -->
+    <routing_service name="FileAdapterToDDS">
+        <domain_route name="FileBridge">
+            <connection name="FileConnection" plugin_name="AdapterLib::FileAdapter">
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </connection>
+            <participant name="DDSConnection">
+                <domain_id>69</domain_id>
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </participant>
+            <session name="session">
+                <route>
+                    <input connection="FileConnection">
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
+                        <property>
+                            <value>
+                                <element>
+                                    <name>example.adapter.input_file</name>
+                                    <value>Input_$(SHAPE_TOPIC).csv</value>
+                                </element>
+                                <element>
+                                    <name>example.adapter.sample_period_sec</name>
+                                    <value>1</value>
+                                </element>
+                            </value>
+                        </property>
+                    </input>
+                    <dds_output participant="DDSConnection">
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>$(SHAPE_TOPIC)</topic_name>
+                    </dds_output>
+                </route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+    <!-- Demonstrates a scenario where the FileAdapter writes data to a file read by DDSAdapter 
+            from the DDS domain for the Squares published using ShapeType in Shapes Demo -->
+    <routing_service name="DDSToFileAdapter">
+        <domain_route name="FileBridge">
+            <connection name="FileConnection" plugin_name="AdapterLib::FileAdapter">
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </connection>
+            <participant name="DDSConnection">
+                <domain_id>69</domain_id>
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </participant>
+            <session name="session">
+                <route>
+                    <dds_input participant="DDSConnection">
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>$(SHAPE_TOPIC)</topic_name>
+                    </dds_input>
+                    <output connection="FileConnection">
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
+                        <property>
+                            <value>
+                                <element>
+                                    <name>example.adapter.output_file</name>
+                                    <value>Output_$(SHAPE_TOPIC).csv</value>
+                                </element>
+                            </value>
+                        </property>
+                    </output>
+                </route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+    <!-- Demonstrates a scenario where the FileAdapter reads from a file and writes 
+            back the same data to a new file -->
+    <routing_service name="FileAdapterToFileAdapter">
+        <domain_route name="FileBridge">
+            <connection name="FileConnection" plugin_name="AdapterLib::FileAdapter">
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </connection>
+            <session name="session">
+                <route>
+                    <input connection="FileConnection">
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
+                        <property>
+                            <value>
+                                <element>
+                                    <name>example.adapter.input_file</name>
+                                    <value>Input_$(SHAPE_TOPIC).csv</value>
+                                </element>
+                                <element>
+                                    <name>example.adapter.sample_period_sec</name>
+                                    <value>1</value>
+                                </element>
+                            </value>
+                        </property>
+                    </input>
+                    <output connection="FileConnection">
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <stream_name>$(SHAPE_TOPIC)</stream_name>
+                        <property>
+                            <value>
+                                <element>
+                                    <name>example.adapter.output_file</name>
+                                    <value>Output_$(SHAPE_TOPIC).csv</value>
+                                </element>
+                            </value>
+                        </property>
+                    </output>
+                </route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>

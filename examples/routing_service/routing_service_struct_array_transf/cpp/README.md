@@ -13,7 +13,7 @@ files (e.g., ./build).
 ```sh
 mkdir build
 cd build
-cmake ..
+cmake -DBUILD_SHARED_LIBS=ON ..
 ```
 
 Once you have run CMake, you will find a number of new files in your build

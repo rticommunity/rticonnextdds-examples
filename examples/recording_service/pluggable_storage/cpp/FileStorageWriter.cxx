@@ -15,7 +15,7 @@
 #define FILESTORAGEWRITER_INDENT_LEVEL (4)
 #define NANOSECS_PER_SEC 1000000000ll
 
-namespace cpp_example {
+namespace rti { namespace recording { namespace cpp_example {
 
 /*
  * Convenience macro to define the C-style function that will be called by RTI
@@ -24,7 +24,7 @@ namespace cpp_example {
 RTI_RECORDING_STORAGE_WRITER_CREATE_DEF(FileStorageWriter);
 
 /*
- * In the xml configuration, under the property tag for the storage plugin, a
+ * In the XML configuration, under the property tag for the storage plugin, a
  * collection of name/value pairs can be passed. In this case, this example
  * chooses to define a property to name the filename to use.
  */
@@ -155,7 +155,7 @@ void FileStreamWriter::store(
                        << std::endl;
             // Get and store the sample's msg field
             data_file_ << "    Data.msg: "
-                       << sample_seq[i]->value<std::string>("msg").c_str()
+                       << sample_seq[i]->value<dds::core::string>("msg").c_str()
                        << std::endl;
         }
         stored_sample_count_++;
@@ -201,4 +201,4 @@ void PubDiscoveryFileStreamWriter::store(
     }
 }
 
-}  // namespace cpp_example
+}}}  // namespace rti::recording::cpp_example

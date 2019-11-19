@@ -56,13 +56,15 @@ dynamic_data_nested_struct_example
 --------------------------------------------
  Data Types
 ------------------
+@appendable
 struct InnerStruct {
    double x;
    double y;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+};
+@appendable
 struct OuterStruct {
    InnerStruct inner;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+};
 
   get/set_complex_member API
 ----------------------------
