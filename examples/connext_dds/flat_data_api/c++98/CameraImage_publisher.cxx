@@ -70,15 +70,20 @@ bool build_data_sample(CameraImageBuilder &builder, int seed)
         return false;
     }
 
-    ResolutionOffset resolution_offset = builder.add_resolution();
-    if (resolution_offset.is_null()) {
-        return false;
-    }
-    if (!resolution_offset.height(100)) {
-        return false;
-    }
-    if (!resolution_offset.width(200)) {
-        return false;
+    if (seed % 3 == 0) {
+        // All fields in a mutable FlatData type are in effect optional. For
+        // illustration purposes, we will omit the resolution field in some
+        // samples
+        ResolutionOffset resolution_offset = builder.add_resolution();
+        if (resolution_offset.is_null()) {
+            return false;
+        }
+        if (!resolution_offset.height(100)) {
+            return false;
+        }
+        if (!resolution_offset.width(200)) {
+            return false;
+        }
     }
 
     rti::flat::StringBuilder string_builder = builder.build_source();
