@@ -102,7 +102,7 @@ Then you can call CMake like this:
 
 ```bash
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
-        -DCONNEXTDDS_ARCH=<connext architecture> ..
+      -DCMAKE_BUILD_TYPE=Release -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
 
 ## Running the C example (Recorder storage writer)
