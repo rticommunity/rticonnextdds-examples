@@ -208,14 +208,14 @@ void CameraImageListener::on_data_available(DDSDataReader *reader)
             if (!source.is_null()) {
                 std::cout << root.source().get_string() << ": ";
             } else {
-                std::cout << "(Unknown source)" << ": ";
+                std::cout << "(Unknown source): ";
             }
 
             // Print the field resolution (if it was published)
             ResolutionOffset resolution = root.resolution();
             if (!resolution.is_null()) {
-                std::cout << "(Resolution: " << resolution.height()
-                        << " x " << resolution.width() << ") ";
+                std::cout << "(Resolution: " << resolution.height() << " x "
+                          << resolution.width() << ") ";
             }
 
             // print_average_pixel_simple(data_seq[i]); // Method 1

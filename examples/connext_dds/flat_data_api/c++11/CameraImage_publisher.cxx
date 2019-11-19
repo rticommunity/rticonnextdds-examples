@@ -27,7 +27,8 @@ void build_data_sample(CameraImageBuilder &builder, int seed)
 
     if (seed % 3 == 0) {
         // All fields in a mutable FlatData type are in effect optional. For
-        // illustration purposes, we will omit the resolution field in some samples
+        // illustration purposes, we will omit the resolution field in some
+        // samples
         auto resolution_offset = builder.add_resolution();
         resolution_offset.height(100);
         resolution_offset.width(200);

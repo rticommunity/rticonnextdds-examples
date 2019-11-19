@@ -72,17 +72,17 @@ int process_data(dds::sub::DataReader<CameraImage> &reader)
         count++;
         auto root = sample.data().root();
 
-        // Print the source name. We assume the publisher always sets this field;
-        // if not, root.source().is_null() is true, and get_string() will throw
-        // an exception
+        // Print the source name. We assume the publisher always sets this
+        // field; if not, root.source().is_null() is true, and get_string() will
+        // throw an exception
         std::cout << root.source().get_string() << ": ";
 
         // Print the field resolution. In this case we assume the publisher may
         // decide not to send this field
         auto resolution = root.resolution();
         if (!resolution.is_null()) {
-            std::cout << "(Resolution: " << resolution.height()
-                      << " x " << resolution.width() << ") ";
+            std::cout << "(Resolution: " << resolution.height() << " x "
+                      << resolution.width() << ") ";
         }
 
         // print_average_pixel_simple(sample.data()); // Method 1
