@@ -124,7 +124,7 @@ folder (where the storage writer plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml 
+<connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml
         -cfgName CppFileWriterExample -domainIdBase <your domain ID>
 ```
 
@@ -162,7 +162,7 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile ../pluggable_replay_example.xml 
+<connext dir>/bin/rtireplayservice -cfgFile ../pluggable_replay_example.xml
         -cfgName CppFileReaderExample -domainIdBase <your domain ID>
 ```
 
