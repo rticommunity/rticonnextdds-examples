@@ -12,8 +12,8 @@
 
 #include "FileStorageReader.hpp"
 
-#include "dds/dds.hpp"
 #include <limits>
+#include "dds/dds.hpp"
 
 #define NANOSECS_PER_SEC 1000000000ll
 
@@ -32,8 +32,8 @@ RTI_RECORDING_STORAGE_READER_CREATE_DEF(FileStorageReader);
  * chooses to define a property to name the filename to use.
  */
 FileStorageReader::FileStorageReader(
-        const rti::routing::PropertySet &properties)
-        : StorageReader(properties)
+        const rti::routing::PropertySet &properties) :
+    StorageReader(properties)
 {
     rti::routing::PropertySet::const_iterator found =
             properties.find("example.cpp_pluggable_storage.filename");
@@ -97,8 +97,9 @@ using namespace dds::core::xtypes;
  * would be to not read any data recorded before the given start time or after
  * the given end time.
  */
-FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file)
-        : data_file_(data_file), type_("HelloMsg")
+FileStorageStreamReader::FileStorageStreamReader(std::ifstream *data_file) :
+    data_file_(data_file),
+    type_("HelloMsg")
 {
     type_.add_member(Member("id", primitive_type<int32_t>()).key(true));
     type_.add_member(Member("msg", StringType(256)));
@@ -260,15 +261,15 @@ void FileStorageStreamReader::read(
      */
     const int32_t max_samples =
             (selector.max_samples() == dds::core::LENGTH_UNLIMITED)
-            ? std::numeric_limits<int32_t>::max()
-            : selector.max_samples();
+                    ? std::numeric_limits<int32_t>::max()
+                    : selector.max_samples();
     /*
      * Check if the currently cached sample's reception timestamp is within the
      * selector's time limit and number of samples. If that is the case, it will
      * be added to the collection of samples to be returned by this call.
      */
     while (current_timestamp_ <= timestamp_limit
-           && read_samples < max_samples) {
+            && read_samples < max_samples) {
         read_samples++;
         using namespace dds::core::xtypes;
 
@@ -448,4 +449,4 @@ void FileStorageStreamInfoReader::reset()
     stream_info_taken_ = false;
 }
 
-}}}  // namespace rti::recording::cpp_example
+} } }  // namespace rti::recording::cpp_example

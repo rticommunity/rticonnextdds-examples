@@ -29,8 +29,8 @@ RTI_RECORDING_STORAGE_WRITER_CREATE_DEF(FileStorageWriter);
  * chooses to define a property to name the filename to use.
  */
 FileStorageWriter::FileStorageWriter(
-        const rti::routing::PropertySet &properties)
-        : StorageWriter(properties)
+        const rti::routing::PropertySet &properties) :
+    StorageWriter(properties)
 {
     rti::routing::PropertySet::const_iterator found =
             properties.find("example.cpp_pluggable_storage.filename");
@@ -83,10 +83,9 @@ FileStorageWriter::~FileStorageWriter()
     }
 }
 
-rti::recording::storage::StorageStreamWriter *
-        FileStorageWriter::create_stream_writer(
-                const rti::routing::StreamInfo &stream_info,
-                const rti::routing::PropertySet &)
+rti::recording::storage::StorageStreamWriter * FileStorageWriter::create_stream_writer(
+        const rti::routing::StreamInfo &stream_info,
+        const rti::routing::PropertySet &)
 {
     return new FileStreamWriter(data_file_, stream_info.stream_name());
 }
@@ -105,10 +104,10 @@ void FileStorageWriter::delete_stream_writer(
 
 FileStreamWriter::FileStreamWriter(
         std::ofstream &data_file,
-        const std::string &stream_name)
-        : stored_sample_count_(0),
-          data_file_(data_file),
-          stream_name_(stream_name)
+        const std::string &stream_name) :
+    stored_sample_count_(0),
+    data_file_(data_file),
+    stream_name_(stream_name)
 {
 }
 
@@ -163,8 +162,9 @@ void FileStreamWriter::store(
 }
 
 PubDiscoveryFileStreamWriter::PubDiscoveryFileStreamWriter(
-        std::ofstream &pub_file)
-        : pub_file_(pub_file), stored_sample_count_(0)
+        std::ofstream &pub_file) :
+    pub_file_(pub_file),
+    stored_sample_count_(0)
 {
 }
 
@@ -173,8 +173,7 @@ PubDiscoveryFileStreamWriter::~PubDiscoveryFileStreamWriter()
 }
 
 void PubDiscoveryFileStreamWriter::store(
-        const std::vector<dds::topic::PublicationBuiltinTopicData *>
-                &sample_seq,
+        const std::vector<dds::topic::PublicationBuiltinTopicData *> &sample_seq,
         const std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     using namespace dds::sub;
@@ -201,4 +200,4 @@ void PubDiscoveryFileStreamWriter::store(
     }
 }
 
-}}}  // namespace rti::recording::cpp_example
+} } }  // namespace rti::recording::cpp_example
