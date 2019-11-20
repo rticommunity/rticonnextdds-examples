@@ -123,7 +123,7 @@ folder (where the storage writer plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtirecordingservice -cfgFile pluggable_storage_example.xml -cfgName CppFileWriterExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml -cfgName CppFileWriterExample -domainIdBase <your domain ID>
 ```
 
 After running this command, you will see the following output:
@@ -160,7 +160,7 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile pluggable_replay_example.xml -cfgName CppFileReaderExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtireplayservice -cfgFile ../pluggable_replay_example.xml -cfgName CppFileReaderExample -domainIdBase <your domain ID>
 ```
 
 You should see the samples in the file being published and received by the
