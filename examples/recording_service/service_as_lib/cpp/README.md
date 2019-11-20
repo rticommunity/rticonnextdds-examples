@@ -98,7 +98,7 @@ Then you can call CMake like this:
 ```sh
 cmake -DCONNEXTDDS_DIR=<connext dir>
       -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
-      -DCONNEXTDDS_ARCH=<connext architecture> 
+      -DCONNEXTDDS_ARCH=<connext architecture>
       -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 ```
 

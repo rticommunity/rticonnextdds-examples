@@ -69,8 +69,8 @@ Build the example code by running the following command:
 ```bash
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
 ```
 
@@ -78,8 +78,8 @@ In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 
 ```bash
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 **Cross-compilation**.
@@ -102,7 +102,8 @@ Then you can call CMake like this:
 
 ```bash
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
-      -DCMAKE_BUILD_TYPE=Release -DCONNEXTDDS_ARCH=<connext architecture> ..
+      -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 ```
 
 ## Running the C example (Recorder storage writer)
@@ -123,7 +124,8 @@ folder (where the storage writer plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml -cfgName C_StorageExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml 
+        -cfgName C_StorageExample -domainIdBase <your domain ID>
 ```
 
 After running this command, you will see the following output:
@@ -160,7 +162,8 @@ folder (where the storage reader plugin shared library has been created).
 
 ```bash
 cd build
-<connext dir>/bin/rtireplayservice -cfgFile ../pluggable_replay_example.xml -cfgName C_ReaderExample -domainIdBase <your domain ID>
+<connext dir>/bin/rtireplayservice -cfgFile ../pluggable_replay_example.xml 
+        -cfgName C_ReaderExample -domainIdBase <your domain ID>
 ```
 
 You should see the samples in the file being published and received by the
