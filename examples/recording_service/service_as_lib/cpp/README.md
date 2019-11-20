@@ -64,8 +64,8 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
 cmake --build .
 ```
 
-> **Note**: 
-> 
+> **Note**:
+>
 > When using a multi-configuration generator, make sure you specify
 > the `--config` parameter in your call to `cmake --build .`. In general,
 > it's a good practice to always provide it.
@@ -111,7 +111,7 @@ cmake -DCONNEXTDDS_DIR=<connext dir>
 ## Running the Example
 
 When running the example, make sure that the Routing Service Library
-(_librtiroutingservice.so_ on Linux, _librtiroutingservice.dylib_ on Mac, 
+(_librtiroutingservice.so_ on Linux, _librtiroutingservice.dylib_ on Mac,
 _rtiroutingservice.dll_ on Windows) is accessible in the current dynamic library
 loading path (e.g. `LD_LIBRARY_PATH` on Linux).
 
