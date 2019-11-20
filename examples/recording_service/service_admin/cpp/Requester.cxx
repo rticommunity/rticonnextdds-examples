@@ -363,7 +363,7 @@ int main(int argc, char *argv[])
          */
         ArgumentsParser args_parser(argc, argv);
         Application requester_app(args_parser);
-    } catch (std::runtime_error &ex) {
+    } catch (std::exception &ex) {
         std::cerr << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
