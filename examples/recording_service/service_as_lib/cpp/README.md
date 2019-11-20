@@ -60,7 +60,7 @@ Build the example code by running the following command:
 mkdir build
 cd build
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
 ```
 
@@ -69,7 +69,7 @@ command as follow:
 
 ```sh
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 This will produce a binary directory (*build*) where the `ServiceAsLibExample`
@@ -96,9 +96,10 @@ set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
 Then you can call CMake like this:
 
 ```sh
-cmake -DCONNEXTDDS_DIR=<connext dir> \
-      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> \
-      -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir>
+      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
+      -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 ```
 
 ## Running the Example
