@@ -867,7 +867,7 @@ struct NDDS_Transport_RecvResource_FILE *NDDS_Transport_FILE_open_file_for_port(
     sprintf(tinfo,
             "transportClass=\"%d\";transportName=\"%s\";address=\"%s\";portNum="
             "\"%d\";"
-            "fileName=\"%s\";processId=\"%d\"",
+            "fileName=\"%s\";processId=\"%llu\"",
             NDDS_TRANSPORT_CLASSID_FILE,
             NDDS_TRANSPORT_FILE_CLASS_NAME,
             me->_property.address,

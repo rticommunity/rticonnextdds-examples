@@ -11,11 +11,11 @@
  */
 
 #include <errno.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <limits.h>
 
 #include "ndds/ndds_c.h"
 #include "recordingservice/recordingservice_storagereader.h"
@@ -438,7 +438,7 @@ void FileStorageStreamReader_read(
         FileStorageStreamReader_readSample(stream_reader);
         read_samples++;
     } while (stream_reader->current_timestamp <= timestamp_limit
-            && read_samples < max_samples);
+             && read_samples < max_samples);
     /* The number of taken samples is the current length of the data sequence */
     *count = (int) DDS_DynamicDataSeq_get_length(&stream_reader->taken_data);
 
