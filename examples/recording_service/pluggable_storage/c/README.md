@@ -74,6 +74,12 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
 cmake --build .
 ```
 
+> **Note**:
+>
+> When using a multi-configuration generator, make sure you specify
+> the `--config` parameter in your call to `cmake --build .`. In general,
+> it's a good practice to always provide it.
+
 In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 

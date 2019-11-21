@@ -54,6 +54,12 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
 cmake --build .
 ```
 
+> **Note**:
+>
+> When using a multi-configuration generator, make sure you specify
+> the `--config` parameter in your call to `cmake --build .`. In general,
+> it's a good practice to always provide it.
+
 This will produce a binary directory (*build*) where the `Requester` application
 can be found. The XML files in the source directory are also copied over to this
 binary directory so that *Recording Service* can be run directly from this
