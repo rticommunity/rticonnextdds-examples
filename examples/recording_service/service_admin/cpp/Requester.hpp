@@ -10,6 +10,7 @@
  * use or inability to use the software.
  */
 
+#include <dds/core/types.hpp>
 #include <dds/core/External.hpp>
 #include <dds/domain/domainfwd.hpp>
 #include <rti/request/Requester.hpp>
