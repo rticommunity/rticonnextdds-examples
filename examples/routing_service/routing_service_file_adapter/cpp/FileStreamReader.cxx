@@ -184,7 +184,7 @@ void FileStreamReader::return_loan(
         delete infos[i];
     }
     samples.clear();
-    samples.clear();
+    infos.clear();
 }
 
 void FileStreamReader::shutdown_file_reader_thread()
