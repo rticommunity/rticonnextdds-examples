@@ -14,6 +14,7 @@
 #define FILEDISCOVERYSTREAMREADER_HPP
 
 #include <fstream>
+#include <mutex>
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/DiscoveryStreamReader.hpp>
