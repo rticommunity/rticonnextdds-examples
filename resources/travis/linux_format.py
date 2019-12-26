@@ -212,7 +212,7 @@ if __name__ == "__main__":
     elif args.commit:
         commits = [args.commit + "^", args.commit]
 
-    exit_error: bool = True
+    exit_error: bool = False
     file_list: List[str] = get_changed_files(repo_root, commits)
 
     if not file_list:
