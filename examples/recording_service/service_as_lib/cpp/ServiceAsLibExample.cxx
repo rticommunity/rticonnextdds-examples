@@ -9,29 +9,28 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <cstdlib>
-#include <stdexcept>
+#include <iostream>
 #include <sstream>
+#include <stdexcept>
 #include <thread>
 
-#include <rti/recording/ServiceProperty.hpp>
 #include <rti/recording/RecordingService.hpp>
+#include <rti/recording/ServiceProperty.hpp>
 
 
 void print_usage(const char *executable)
 {
-    std::cout <<
-            "Usage: " << executable << " {record,replay} <Domain ID (int)> " <<
-            "[running secs (uint, optional, default: 60)]"
-            << std::endl;
+    std::cout << "Usage: " << executable
+              << " {record,replay} <Domain ID (int)> "
+              << "[running secs (uint, optional, default: 60)]" << std::endl;
 }
 
 void process_role(
         int argc,
         char *argv[],
-        rti::recording::ServiceProperty& service_property,
-        uint32_t& running_seconds)
+        rti::recording::ServiceProperty &service_property,
+        uint32_t &running_seconds)
 {
     const std::string recorder_role("record");
     const std::string replay_role("replay");
@@ -59,12 +58,15 @@ void process_role(
         int32_t domain_id = 0;
         domain_id_stream >> domain_id;
         if (domain_id_stream.bad()) {
-            throw std::runtime_error("Invalid arg value provided for domain ID");
+            throw std::runtime_error(
+                    "Invalid arg value provided for domain ID");
         }
         // Set up domain ID base, admin domain ID and monitoring domain ID
-        service_property.administration_domain_id(domain_id);
         service_property.domain_id_base(domain_id);
+        service_property.administration_domain_id(domain_id);
+        service_property.enable_administration(true);
         service_property.monitoring_domain_id(domain_id);
+        service_property.enable_monitoring(true);
     } else {
         throw std::runtime_error("Domain ID arg not provided");
     }
@@ -91,7 +93,7 @@ int main(int argc, char *argv[])
     uint32_t running_seconds = 60;
     try {
         process_role(argc, argv, service_property, running_seconds);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cerr << "Exception: " << ex.what() << std::endl;
         print_usage(argv[0]);
         return EXIT_FAILURE;
@@ -108,11 +110,10 @@ int main(int argc, char *argv[])
         // Wait for 'running_seconds' seconds
         std::this_thread::sleep_for(std::chrono::seconds(running_seconds));
         embedded_service.stop();
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cerr << "Exception: " << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;
 }
-

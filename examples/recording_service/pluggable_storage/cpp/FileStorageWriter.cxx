@@ -15,7 +15,7 @@
 #define FILESTORAGEWRITER_INDENT_LEVEL (4)
 #define NANOSECS_PER_SEC 1000000000ll
 
-namespace cpp_example {
+namespace rti { namespace recording { namespace cpp_example {
 
 /*
  * Convenience macro to define the C-style function that will be called by RTI
@@ -24,13 +24,13 @@ namespace cpp_example {
 RTI_RECORDING_STORAGE_WRITER_CREATE_DEF(FileStorageWriter);
 
 /*
- * In the xml configuration, under the property tag for the storage plugin, a
+ * In the XML configuration, under the property tag for the storage plugin, a
  * collection of name/value pairs can be passed. In this case, this example
  * chooses to define a property to name the filename to use.
  */
 FileStorageWriter::FileStorageWriter(
-        const rti::routing::PropertySet& properties) :
-    StorageWriter(properties)
+        const rti::routing::PropertySet &properties)
+        : StorageWriter(properties)
 {
     rti::routing::PropertySet::const_iterator found =
             properties.find("example.cpp_pluggable_storage.filename");
@@ -84,15 +84,15 @@ FileStorageWriter::~FileStorageWriter()
 }
 
 rti::recording::storage::StorageStreamWriter *
-FileStorageWriter::create_stream_writer(
-        const rti::routing::StreamInfo& stream_info,
-        const rti::routing::PropertySet&)
+        FileStorageWriter::create_stream_writer(
+                const rti::routing::StreamInfo &stream_info,
+                const rti::routing::PropertySet &)
 {
     return new FileStreamWriter(data_file_, stream_info.stream_name());
 }
 
 rti::recording::storage::PublicationStorageWriter *
-FileStorageWriter::create_publication_writer()
+        FileStorageWriter::create_publication_writer()
 {
     return new PubDiscoveryFileStreamWriter(pub_file_);
 }
@@ -104,11 +104,11 @@ void FileStorageWriter::delete_stream_writer(
 }
 
 FileStreamWriter::FileStreamWriter(
-        std::ofstream& data_file,
-        const std::string& stream_name) :
-    stored_sample_count_(0),
-    data_file_(data_file),
-    stream_name_(stream_name)
+        std::ofstream &data_file,
+        const std::string &stream_name)
+        : stored_sample_count_(0),
+          data_file_(data_file),
+          stream_name_(stream_name)
 {
 }
 
@@ -130,8 +130,8 @@ FileStreamWriter::~FileStreamWriter()
  * textual format.
  */
 void FileStreamWriter::store(
-        const std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        const std::vector<dds::sub::SampleInfo *>& info_seq)
+        const std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        const std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     using namespace dds::core::xtypes;
     using namespace rti::core::xtypes;
@@ -139,10 +139,9 @@ void FileStreamWriter::store(
 
     const int32_t count = sample_seq.size();
     for (int32_t i = 0; i < count; ++i) {
-        const SampleInfo& sample_info = *(info_seq[i]);
+        const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
-        int64_t timestamp =
-                (int64_t) sample_info->reception_timestamp().sec()
+        int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
                 * NANOSECS_PER_SEC;
         timestamp += sample_info->reception_timestamp().nanosec();
 
@@ -152,21 +151,20 @@ void FileStreamWriter::store(
 
         // now print sample data
         if (sample_info->valid()) {
-            data_file_ << "    Data.id: "
-                    << sample_seq[i]->value<int32_t>("id") << std::endl;
+            data_file_ << "    Data.id: " << sample_seq[i]->value<int32_t>("id")
+                       << std::endl;
             // Get and store the sample's msg field
             data_file_ << "    Data.msg: "
-                    << sample_seq[i]->value<std::string>("msg").c_str()
-                    << std::endl;
+                       << sample_seq[i]->value<dds::core::string>("msg").c_str()
+                       << std::endl;
         }
         stored_sample_count_++;
     }
 }
 
 PubDiscoveryFileStreamWriter::PubDiscoveryFileStreamWriter(
-        std::ofstream& pub_file) :
-    pub_file_(pub_file),
-    stored_sample_count_(0)
+        std::ofstream &pub_file)
+        : pub_file_(pub_file), stored_sample_count_(0)
 {
 }
 
@@ -175,17 +173,17 @@ PubDiscoveryFileStreamWriter::~PubDiscoveryFileStreamWriter()
 }
 
 void PubDiscoveryFileStreamWriter::store(
-        const std::vector<dds::topic::PublicationBuiltinTopicData *>& sample_seq,
-        const std::vector<dds::sub::SampleInfo *>& info_seq)
+        const std::vector<dds::topic::PublicationBuiltinTopicData *>
+                &sample_seq,
+        const std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     using namespace dds::sub;
 
     const int32_t count = sample_seq.size();
     for (int32_t i = 0; i < count; ++i) {
-        const SampleInfo& sample_info = *(info_seq[i]);
+        const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
-        int64_t timestamp =
-                (int64_t) sample_info->reception_timestamp().sec()
+        int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
                 * NANOSECS_PER_SEC;
         timestamp += sample_info->reception_timestamp().nanosec();
 
@@ -194,14 +192,13 @@ void PubDiscoveryFileStreamWriter::store(
         pub_file_ << "Valid data: " << sample_info->valid() << std::endl;
         // now print sample data
         if (sample_info->valid()) {
-            pub_file_ << "Topic name: "
-                    << sample_seq[i]->topic_name() << std::endl;
-            pub_file_ << "Type name: "
-                    << sample_seq[i]->type_name() << std::endl;
+            pub_file_ << "Topic name: " << sample_seq[i]->topic_name()
+                      << std::endl;
+            pub_file_ << "Type name: " << sample_seq[i]->type_name()
+                      << std::endl;
         }
         stored_sample_count_++;
     }
 }
 
-} // namespace cpp_example
-
+}}}  // namespace rti::recording::cpp_example

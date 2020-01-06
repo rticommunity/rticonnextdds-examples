@@ -1,6 +1,7 @@
 # Example Code: Time Based Filters
 
 ## Concept
+
 The `TIME_BASED_FILTER` QoS Policy allows you to specify that data should not be
 delivered more than once per specified period for data-instances of a
 *DataReader*, regardless of how fast *DataWriters* are publishing new samples of
@@ -21,14 +22,15 @@ hundredths (0.01) or thousandths (0.001) of a second.
 
 With this QoS policy, different *DataReaders* can set their own time-based
 filters, so that data published faster than the period set by a *DataReader*
-will be dropped by the middleware and not delivered to the *DataReader*.
-Note that all filtering takes place on the reader side.
+will be dropped by the middleware and not delivered to the *DataReader*. Note
+that all filtering takes place on the reader side.
 
 ## Example Description
+
 In this example, the Publisher application publishes samples of two different
 instances: `instance0` and `instance1`. Samples of `instance0` are published
-every 0.25 seconds, whereas samples of `instance1` are published every
-0.5 seconds.
+every 0.25 seconds, whereas samples of `instance1` are published every 0.5
+seconds.
 
 The Subscriber sets a time-based filter with a minimum separation of 2 seconds.
 Samples arriving earlier than this are silently dropped. The minimum separation
@@ -47,6 +49,7 @@ indirect dependence on the *DataWriter* settings.
 
 In the example we have set the time-based filter QoS via XML. That is, we have
 set the following default QoS in the *USER_QOS_PROFILES.xml* file:
+
 ```xml
 <datareader_qos>
     <time_based_filter>

@@ -11,9 +11,9 @@
 
 #include <iostream>
 
+#include "ordered_group.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
-#include "ordered_group.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -25,9 +25,9 @@ using namespace dds::sub::qos;
 using namespace rti::sub;
 using namespace dds::topic;
 
-class ordered_groupSubscriberListener: public NoOpSubscriberListener{
-  public:
-    void on_data_on_readers(Subscriber& subscriber)
+class ordered_groupSubscriberListener : public NoOpSubscriberListener {
+public:
+    void on_data_on_readers(Subscriber &subscriber)
     {
         // Create a coherent group access.
         CoherentAccess coherent_access(subscriber);
@@ -35,20 +35,20 @@ class ordered_groupSubscriberListener: public NoOpSubscriberListener{
         // Get the sequence of DataReaders that specifies the order
         // in wich each sample should be read.
         std::vector<AnyDataReader> readers;
-        int num_readers = find(subscriber,
-            dds::sub::status::DataState::new_data(),
-            std::back_inserter(readers));
+        int num_readers =
+                find(subscriber,
+                     dds::sub::status::DataState::new_data(),
+                     std::back_inserter(readers));
         std::cout << num_readers << std::endl;
 
         for (int i = 0; i < num_readers; i++) {
-            DataReader<ordered_group> reader =
-                readers[i].get<ordered_group>();
+            DataReader<ordered_group> reader = readers[i].get<ordered_group>();
 
             // We need to take only one sample each time, as we want to follow
             // the sequence of DataReaders. This way the samples will be
             // returned in the order in which they were modified.
             LoanedSamples<ordered_group> sample =
-                reader.select().max_samples(1).take();
+                    reader.select().max_samples(1).take();
 
             if (sample.length() > 0 && sample[0].info().valid()) {
                 std::cout << sample[0].data() << std::endl;
@@ -78,10 +78,10 @@ void subscriber_main(int domain_id, int sample_count)
     // Associate a listener to the subscriber using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
     ListenerBinder<Subscriber> subscriber_listener =
-        rti::core::bind_and_manage_listener(
-            subscriber,
-            new ordered_groupSubscriberListener,
-            dds::core::status::StatusMask::data_on_readers());
+            rti::core::bind_and_manage_listener(
+                    subscriber,
+                    new ordered_groupSubscriberListener,
+                    dds::core::status::StatusMask::data_on_readers());
 
     // Create three Topic, once for each DataReader.
     Topic<ordered_group> topic1(participant, "Topic1");
@@ -93,7 +93,8 @@ void subscriber_main(int domain_id, int sample_count)
     DataReader<ordered_group> reader2(subscriber, topic2);
     DataReader<ordered_group> reader3(subscriber, topic3);
 
-    for (int count = 0; (sample_count == 0) || (count < sample_count); ++count){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         ++count) {
         std::cout << "ordered_group subscriber sleeping for 1 sec..."
                   << std::endl;
         rti::util::sleep(Duration(1));
@@ -103,7 +104,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -119,7 +120,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

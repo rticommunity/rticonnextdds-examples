@@ -69,7 +69,8 @@ void publisher_main(int domain_id, int sample_count)
 
     // Main loop
     bool update_qos = false;
-    for (int count = 0; (sample_count == 0) || (count < sample_count); count++){
+    for (int count = 0; (sample_count == 0) || (count < sample_count);
+         count++) {
         std::cout << "Writing partitions, count " << count << std::endl;
 
         // Modify and send the sample.
@@ -124,10 +125,10 @@ void publisher_main(int domain_id, int sample_count)
     }
 }
 
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);

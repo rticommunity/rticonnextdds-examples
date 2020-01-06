@@ -21,7 +21,7 @@
  * file, HelloMsg.idl.
  */
 RTI_USER_DLL_EXPORT
-struct RTI_RecordingServiceStorageReader * FileStorageReader_create(
+struct RTI_RecordingServiceStorageReader *FileStorageReader_create(
         const struct RTI_RoutingServiceProperties *properties);
 
 /**

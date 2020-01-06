@@ -1,6 +1,7 @@
 # Example Code: Ordered Presentation
 
 ## Building Java Example
+
 Before compiling or running the example, make sure the environment variable
 `NDDSHOME` is set to the directory where your version of *RTI Connext* is
 installed.
@@ -11,12 +12,14 @@ Libraries and Utilities Getting Started Guide* describes this process in detail.
 Follow the same procedure to generate the code and build the examples. **Do not
 use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
-```
+
+```sh
 rtiddsgen -language Java -example i86Win32VS2010 ordered.idl
 ```
 
 You will see messages that look like this:
-```
+
+```plaintext
 File C:\local\Ordered_Presentation\java\orderedSubscriber.java already exists
 and will not be replaced with updated content. If you would like to get a new
 file with the new content, either remove this file or supply -replace option.
@@ -36,48 +39,57 @@ Before compiling in Java, make sure that the desired version of the *javac*
 compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
-```
+
+```sh
 javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
 ```
 
 On *UNIX* systems run:
-```
+
+```sh
 javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
 ```
 
 ## Running Java Example
-In two separate command prompt windows for the publisher and subscriber.
-Run the following commands from the example directory (this is necessary to
-ensure the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
-```
+
+```sh
 java -cp .;%NDDSHOME%\lib\java\nddsjava.jar orderedPublisher  <domain_id> <samples_to_send>
 java -cp .;%NDDSHOME%\lib\java\nddsjava.jar orderedSubscriber <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
-```
+
+```sh
 java -cp .:$NDDSHOME/lib/java/nddsjava.jar orderedPublisher  <domain_id> <samples_to_send>
 java -cp .:$NDDSHOME/lib/java/nddsjava.jar orderedSubscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
-    1. The `<domain_id>`. Both applications must use the same domain ID in order
-    to communicate. The default is 0.
-    2. How long the examples should run, measured in samples for the publisher
-    and sleep periods for the subscriber. A value of '0' instructs the
-    application to run forever; this is the default.
+
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
+    communicate. The default is 0.
+
+2.  How long the examples should run, measured in samples for the publisher and
+    sleep periods for the subscriber. A value of '0' instructs the application
+    to run forever; this is the default.
 
 While generating the output below, we used values that would capture the most
 interesting behavior. This ouput it is from:
-```
+
+```sh
 orderedPublisher  <domain_id> 10
 orderedSubscriber <domain_id> 3
 ```
 
 ### Publisher Output
-```
+
+```plaintext
 writing instance0, value->0
 writing instance1, value->0
 writing instance0, value->1
@@ -101,7 +113,8 @@ writing instance1, value->9
 ```
 
 ### Subscriber Output
-```
+
+```plaintext
 Subscriber 0 using Instance access scope
 Subscriber 1 using Topic access scope
 

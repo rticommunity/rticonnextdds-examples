@@ -58,14 +58,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
 #include "market_data.h"
 #include "market_dataSupport.h"
 #include "ndds/ndds_cpp.h"
 
 /* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant) {
+static int publisher_shutdown(DDSDomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -98,13 +99,14 @@ static int publisher_shutdown(DDSDomainParticipant *participant) {
     return status;
 }
 
-extern "C" int publisher_main(int domainId, int sample_count) {
+extern "C" int publisher_main(int domainId, int sample_count)
+{
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDS_DataWriterQos writer_qos;
     DDSDataWriter *writer = NULL;
-    market_dataDataWriter * market_data_writer = NULL;
+    market_dataDataWriter *market_data_writer = NULL;
     market_data *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
@@ -112,10 +114,12 @@ extern "C" int publisher_main(int domainId, int sample_count) {
     int count = 0;
     DDS_Duration_t send_period = { 0, 100000000 };
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -123,10 +127,12 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize publisher QoS, use 
+    /* To customize publisher QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher(DDS_PUBLISHER_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    publisher = participant->create_publisher(
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant);
@@ -142,10 +148,14 @@ extern "C" int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic("Example market_data", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Example market_data",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         publisher_shutdown(participant);
@@ -171,55 +181,65 @@ extern "C" int publisher_main(int domainId, int sample_count) {
      }
      */
     /* Create 8 channels based on Symbol */
-/*
-    writer_qos.multi_channel.channels.ensure_length(8, 8);
-    writer_qos.multi_channel.channels[0].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[A-C]*'");
-    writer_qos.multi_channel.channels[0].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[0].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.2");
-    writer_qos.multi_channel.channels[1].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[D-F]*'");
-    writer_qos.multi_channel.channels[1].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[1].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.3");
-    writer_qos.multi_channel.channels[2].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[G-I]*'");
-    writer_qos.multi_channel.channels[2].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[2].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.4");
-    writer_qos.multi_channel.channels[3].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[J-L]*'");
-    writer_qos.multi_channel.channels[3].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[3].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.5");
-    writer_qos.multi_channel.channels[4].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[M-O]*'");
-    writer_qos.multi_channel.channels[4].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[4].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.6");
-    writer_qos.multi_channel.channels[5].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[P-S]*'");
-    writer_qos.multi_channel.channels[5].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[5].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.7");
-    writer_qos.multi_channel.channels[6].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[T-V]*'");
-    writer_qos.multi_channel.channels[6].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[6].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.8");
-    writer_qos.multi_channel.channels[7].filter_expression = DDS_String_dup(
-            "Symbol MATCH '[W-Z]*'");
-    writer_qos.multi_channel.channels[7].multicast_settings.ensure_length(1, 1);
-    writer_qos.multi_channel.channels[7].multicast_settings[0].receive_address =
-            DDS_String_dup("239.255.0.9");
-*/
+    /*
+        writer_qos.multi_channel.channels.ensure_length(8, 8);
+        writer_qos.multi_channel.channels[0].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[A-C]*'");
+        writer_qos.multi_channel.channels[0].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[0].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.2");
+        writer_qos.multi_channel.channels[1].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[D-F]*'");
+        writer_qos.multi_channel.channels[1].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[1].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.3");
+        writer_qos.multi_channel.channels[2].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[G-I]*'");
+        writer_qos.multi_channel.channels[2].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[2].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.4");
+        writer_qos.multi_channel.channels[3].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[J-L]*'");
+        writer_qos.multi_channel.channels[3].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[3].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.5");
+        writer_qos.multi_channel.channels[4].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[M-O]*'");
+        writer_qos.multi_channel.channels[4].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[4].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.6");
+        writer_qos.multi_channel.channels[5].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[P-S]*'");
+        writer_qos.multi_channel.channels[5].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[5].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.7");
+        writer_qos.multi_channel.channels[6].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[T-V]*'");
+        writer_qos.multi_channel.channels[6].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[6].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.8");
+        writer_qos.multi_channel.channels[7].filter_expression = DDS_String_dup(
+                "Symbol MATCH '[W-Z]*'");
+        writer_qos.multi_channel.channels[7].multicast_settings.ensure_length(1,
+       1);
+        writer_qos.multi_channel.channels[7].multicast_settings[0].receive_address
+       = DDS_String_dup("239.255.0.9");
+    */
     /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     /* toggle between writer_qos and DDS_DATAWRITER_QOS_DEFAULT to alternate
      * between using code and using XML to specify the Qos */
-    writer = publisher->create_datawriter(topic,
-    /*writer_qos*/DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
+    writer = publisher->create_datawriter(
+            topic,
+            /*writer_qos*/ DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
@@ -254,7 +274,6 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         /* Changes for MultiChannel */
         /* Modify the data to be sent here */
         sprintf(instance->Symbol, "%c", 'A' + (count % 26));
@@ -287,7 +306,7 @@ extern "C" int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -309,7 +328,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -331,18 +351,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif
-

@@ -1,41 +1,20 @@
-/*  
-	This example illustrates a recursive data-type. That is a data-type that refers to itself.
-	These data-types cause various problems in the generated code:
-	
-	1) rtiddsgen may fail as it is unable to resolve the recursive dependency on the type
-	    getting into an infinite recursion that overflows the stack.
-	    
-	2) rtiddsgen may fail as it is unable to compute the "TypeCode" for the data-type
-	
-	3) rtiddsgen may fail as it is unable to compute the "max serialized size" for the data-type
-	
-	4) The generated header files may give compile-time errors due to them referencing types
-	    before they are fully defined
-	
-	These problems can be avoided in C and C++. There is currently no solution for Java:
-	
-	To overcome (1) annotate the recursive type member with the annotation " //@resolve-name false"
-	this prevents rtiddsgen from trying to resolve the type and getting into the infinite
-	recursion
-		
-	To overcome (2) run rtiddsgen with the option -notypecode  
-	this option prevents it use the recursive type inside an unbounded sequence and run
-	rtiddsgen with the option  trying to compute the typecode.
-	
-	To overcome (3) run rtiddsgen with the option -unboundedSupport this disables the
-	computation of the max serialized size as being unlimited there would be no maximum size.
-	Currently this option is only available in C and C++.
-	
-	To overcome (4) declare the recursive type with the annotation //@Optional
-	this causes rtiddsgen to generate a reference/pointer avoiding the self-reference compile-time
-	issue.
-*/
+/*
+ * (c) 2015-2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ *
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the Software.  Licensee has the right to distribute object form
+ * only for use with RTI products.  The Software is provided "as is", with no
+ * warranty of any type, including any warranty for fitness for any purpose.
+ * RTI is under no obligation to maintain or support the Software.  RTI shall
+ * not be liable for any incidental or consequential damages arising out of the
+ * use or inability to use the software.
+ */
+
 struct Node {
-    long data;
+    int32 data;
 };
 
 struct Tree {
     Node node;
-    sequence<Tree> children; //@Optional
-                             //@resolve-name false
+	@optional @resolve_name(false) sequence<Tree> children;
 };

@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "keys.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -26,10 +26,10 @@ using namespace dds::pub::qos;
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<keys> topic (participant, "Example keys");
+    Topic<keys> topic(participant, "Example keys");
 
     // Create a publisher for both DataWriters.
     Publisher publisher(participant);
@@ -41,7 +41,8 @@ void publisher_main(int domain_id, int sample_count)
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
-    // writer1_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+    // writer1_qos <<
+    // WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
     //             << Ownership::Exclusive()
     //             << OwnershipStrength(10)
     //             << Reliability::Reliable(Duration(60))
@@ -57,12 +58,13 @@ void publisher_main(int domain_id, int sample_count)
     // Retrieve the keys_Profile_dw2 QoS profile from USER_QOS_PROFILES.xml
     // for the second writer.
     DataWriterQos writer2_qos = QosProvider::Default().datawriter_qos(
-        "keys_Library::keys_Profile_dw2");
+            "keys_Library::keys_Profile_dw2");
 
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
-    // writer2_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
+    // writer2_qos <<
+    // WriterDataLifecycle::ManuallyDisposeUnregisteredInstances()
     //             << Ownership::Exclusive()
     //             << OwnershipStrength(5);
 
@@ -160,8 +162,8 @@ void publisher_main(int domain_id, int sample_count)
             if (samples1_active[i]) {
                 samples1[i].y(count + i * 1000);
                 std::cout << "DW1 write; code: " << samples1[i].code()
-                          << ", x: " << samples1[i].x() << ", y: "
-                          << samples1[i].y() << std::endl;
+                          << ", x: " << samples1[i].x()
+                          << ", y: " << samples1[i].y() << std::endl;
                 writer1.write(samples1[i], instance_handles1[i]);
             }
         }
@@ -179,8 +181,9 @@ void publisher_main(int domain_id, int sample_count)
         // Send sample for writer 2
         sample2.y(-count - 1000);
         if (sample2_active) {
-            std::cout << "DW2 write; code: " << sample2.code() << ", x: "
-                      << sample2.x() << ", y: " << sample2.y() << std::endl;
+            std::cout << "DW2 write; code: " << sample2.code()
+                      << ", x: " << sample2.x() << ", y: " << sample2.y()
+                      << std::endl;
             writer2.write(sample2, instance_handle2);
         }
     }
@@ -189,7 +192,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -205,7 +208,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

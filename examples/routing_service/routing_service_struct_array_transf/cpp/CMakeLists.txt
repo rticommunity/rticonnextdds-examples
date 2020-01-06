@@ -16,13 +16,11 @@ project (StructArrayTransformation)
 if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "
-        "using the -DBUILD_SHARED_LIBS=1 CMake parameter")
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
     message(FATAL_ERROR ${msg})
 endif()
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_NOCASE)
-
-if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
     set(msg
         "You have selected to build the library in debug mode. It's recommended "
         "to run the debug version of Routing Service or otherwise you may run "
@@ -31,18 +29,16 @@ if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
-    )
-
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
     )
 
 # Generate type plug-in files for conversion types

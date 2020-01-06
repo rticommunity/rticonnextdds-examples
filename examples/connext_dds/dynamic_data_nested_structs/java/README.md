@@ -1,6 +1,7 @@
 # Example Code: Nested Struct in Dynamic Data
 
 ## Building Java example
+
 The example is contained in the *DynamicDataNestedStruct.java* file. Before
 compiling or running the example, make sure the environment variable `NDDSHOME`
 is set to the directory where your version of *RTI Connext* is installed.
@@ -9,39 +10,47 @@ Before compiling in Java, make sure that the desired version of the *javac*
 compiler is in your `PATH` environment variable.
 
 In *Windows* systems run:
-```
+
+```sh
 javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar DynamicDataNestedStruct.java
 ```
 
 On *UNIX* systems (including Linux and MacOS X) run:
-```
+
+```sh
 javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar DynamicDataNestedStruct.java
 ```
 
 ## Running Java Example
+
 On *Windows* Systems:
-```
+
+```sh
 java -cp .;%NDDSHOME%\lib\java\nddsjava.jar DynamicDataNestedStruct
 ```
 
 On *UNIX* systems:
-```
+
+```sh
 java -cp .:$NDDSHOME/lib/java/nddsjava.jar DynamicDataNestedStruct
 ```
 
 Running the program produces the following output:
-```
+
+```plaintext
  Connext Dynamic Data Nested Struct Example
 --------------------------------------------
  Data Types
 ------------------
+@appendable
 struct InnerStruct {
-   double x;
-   double y;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    double x;
+    double y;
+};
+@appendable
 struct OuterStruct {
-   InnerStruct inner;
-}; //@Extensibility EXTENSIBLE_EXTENSIBILITY
+    InnerStruct inner;
+};
 
 
  get/set_complex_member API

@@ -9,11 +9,11 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
 #include <cstdlib>
+#include <iostream>
 
-#include <dds/dds.hpp>
 #include "Foo.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -45,7 +45,8 @@ void publisher_main(int domain_id)
               << std::endl;
 
     // Find the publishers.
-    std::cout << std::endl << "Calling to find_publishers()..." << std::endl
+    std::cout << std::endl
+              << "Calling to find_publishers()..." << std::endl
               << std::endl;
     std::vector<Publisher> publishers;
     rti::pub::find_publishers(participant, std::back_inserter(publishers));
@@ -60,24 +61,24 @@ void publisher_main(int domain_id)
     }
 }
 
- int main(int argc, char* argv[])
- {
-     int domain_id = 0;
+int main(int argc, char *argv[])
+{
+    int domain_id = 0;
 
-     if (argc >= 2) {
-         domain_id = atoi(argv[1]);
-     }
+    if (argc >= 2) {
+        domain_id = atoi(argv[1]);
+    }
 
-     // To turn on additional logging, include <rti/config/Logger.hpp> and
-     // uncomment the following line:
-     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // To turn on additional logging, include <rti/config/Logger.hpp> and
+    // uncomment the following line:
+    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
-     try {
-         publisher_main(domain_id);
-     } catch (std::exception ex) {
-         std::cout << "Exception caught: " << ex.what() << std::endl;
-         return -1;
-     }
+    try {
+        publisher_main(domain_id);
+    } catch (std::exception ex) {
+        std::cout << "Exception caught: " << ex.what() << std::endl;
+        return -1;
+    }
 
-     return 0;
- }
+    return 0;
+}

@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "hello_world.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -21,8 +21,12 @@ using namespace dds::topic;
 using namespace dds::pub;
 using namespace dds::pub::qos;
 
-void publisher_main(int domain_id, int sample_count, int initial_value,
-    bool use_durable_writer_history, int sleep)
+void publisher_main(
+        int domain_id,
+        int sample_count,
+        int initial_value,
+        bool use_durable_writer_history,
+        int sleep)
 {
     // Create a DomainParticipant with default Qos
     DomainParticipant participant(domain_id);
@@ -35,11 +39,11 @@ void publisher_main(int domain_id, int sample_count, int initial_value,
     // "durable_writer_history_Profile" profile. See that file for further
     // details.
     std::string qos_libname = "persistence_example_Library";
-    DataWriterQos writer_qos = use_durable_writer_history ?
-        QosProvider::Default().datawriter_qos(
-            qos_libname + "::durable_writer_history_Profile") :
-        QosProvider::Default().datawriter_qos(
-            qos_libname + "::persistence_service_Profile");
+    DataWriterQos writer_qos = use_durable_writer_history
+            ? QosProvider::Default().datawriter_qos(
+                    qos_libname + "::durable_writer_history_Profile")
+            : QosProvider::Default().datawriter_qos(
+                    qos_libname + "::persistence_service_Profile");
 
     // Create a DataWriter (Publisher created in-line)
     DataWriter<hello_world> writer(Publisher(participant), topic, writer_qos);
@@ -62,13 +66,13 @@ void publisher_main(int domain_id, int sample_count, int initial_value,
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
     int initial_value = 0;
     bool use_durable_writer_history = false;
     int sleep = 0;
 
-    for (int i = 1; i < argc; ) {
-        const std::string& param = argv[i++];
+    for (int i = 1; i < argc;) {
+        const std::string &param = argv[i++];
 
         if (param == "-sleep" && i < argc) {
             sleep = atoi(argv[i++]);
@@ -100,9 +104,13 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisher_main(domain_id, sample_count, initial_value,
-            use_durable_writer_history, sleep);
-    } catch (const std::exception& ex) {
+        publisher_main(
+                domain_id,
+                sample_count,
+                initial_value,
+                use_durable_writer_history,
+                sleep);
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

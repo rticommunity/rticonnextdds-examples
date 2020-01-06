@@ -23,7 +23,7 @@
 
 // Types common to all CameraImage definitions
 module common {
-    const long IMAGE_SIZE = 8294400 * 3;
+    const int32 IMAGE_SIZE = 8294400 * 3;
 
     enum Format {
         RGB,
@@ -37,8 +37,8 @@ module common_flat {
     @final
     @language_binding(FLAT_DATA)
     struct Resolution {
-      long height;
-      long width;
+        int32 height;
+        int32 width;
     };
 };
 
@@ -48,10 +48,10 @@ module flat_types {
     @final
     @language_binding(FLAT_DATA)
     struct CameraImage {
-      long long timestamp;
-      common::Format format;
-      common_flat::Resolution resolution;
-      octet data[common::IMAGE_SIZE];
+        int64 timestamp;
+        common::Format format;
+        common_flat::Resolution resolution;
+        octet data[common::IMAGE_SIZE];
     };
 };
 
@@ -61,10 +61,10 @@ module flat_zero_copy_types {
     @transfer_mode(SHMEM_REF)
     @language_binding(FLAT_DATA)
     struct CameraImage {
-      long long timestamp;
-      common::Format format;
-      common_flat::Resolution resolution;
-      octet data[common::IMAGE_SIZE];
+        int64 timestamp;
+        common::Format format;
+        common_flat::Resolution resolution;
+        octet data[common::IMAGE_SIZE];
     };
 };
 
@@ -72,17 +72,20 @@ module flat_zero_copy_types {
 module zero_copy_types {
     @final
     struct Resolution {
-      long height;
-      long width;
+        int32 height;
+        int32 width;
     };
 
     @final
     @transfer_mode(SHMEM_REF)
+    // Use XCDR2 format so that plain DataWriters can communicate with
+    // flat-data DataReaders, which only support XCDR2
+    @allowed_data_representation(XCDR2)
     struct CameraImage {
-      long long timestamp;
-      common::Format format;
-      Resolution resolution;
-      octet data[common::IMAGE_SIZE];
+        int64 timestamp;
+        common::Format format;
+        Resolution resolution;
+        octet data[common::IMAGE_SIZE];
     };
 };
 
@@ -91,15 +94,18 @@ module zero_copy_types {
 module plain_types {
     @final
     struct Resolution {
-      long height;
-      long width;
+        int32 height;
+        int32 width;
     };
 
     @final
+    // Use XCDR2 format so that plain DataWriters can communicate with
+    // flat-data DataReaders, which only support XCDR2
+    @allowed_data_representation(XCDR2)
     struct CameraImage {
-      long long timestamp;
-      common::Format format;
-      Resolution resolution;
-      octet data[common::IMAGE_SIZE];
+        int64 timestamp;
+        common::Format format;
+        Resolution resolution;
+        octet data[common::IMAGE_SIZE];
     };
 };

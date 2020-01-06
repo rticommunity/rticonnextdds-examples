@@ -1,7 +1,7 @@
 ##############################################################
-# RTI Conding Style
+# RTI Coding Style
 # -----------------
-# for clang-format > 5.0
+# for clang-format > 9.0
 ##############################################################
 
 BasedOnStyle: WebKit
@@ -23,11 +23,12 @@ IndentWidth: 4
 ContinuationIndentWidth: 8
 
 # CFR1-04: Nested macro definitions are nested two spaces
-# Unsupported
+IndentPPDirectives: BeforeHash
 
 # CFR1-05: Function parameter formatting
 AlignAfterOpenBracket: AlwaysBreak
 AllowAllParametersOfDeclarationOnNextLine: false
+AllowAllArgumentsOnNextLine: false
 AlwaysBreakAfterReturnType: None
 BinPackParameters: false
 BinPackArguments: false
@@ -44,10 +45,10 @@ SpacesBeforeTrailingComments: 2
 # Unsupported
 
 # CFR1-08: Pointer declarations
-# CFR3-06: Pointer declaration
 DerivePointerAlignment: false
 PointerAlignment: Right
-# Note that this won't work with references in C++
+# Note that this won't work with references in C++ and function return
+# declarations
 
 # CFR1-09: Casting
 SpaceAfterCStyleCast: true
@@ -58,11 +59,10 @@ AlwaysBreakTemplateDeclarations: true
 SpaceAfterTemplateKeyword: true
 
 NamespaceIndentation: None
-CompactNamespaces: false
+CompactNamespaces: true
 FixNamespaceComments: true
 
 # CFR2-10: Operators
-BreakBeforeBinaryOperators: true
 BreakBeforeTernaryOperators: true
 SpaceBeforeAssignmentOperators: true
 
@@ -80,23 +80,28 @@ KeepEmptyLinesAtTheStartOfBlocks: false
 AllowShortBlocksOnASingleLine: false
 AllowShortFunctionsOnASingleLine: false
 
-BraceWrapping:
-    AfterControlStatement: false
-    AfterEnum: false
-    # AfterExternBlock: false
-    AfterFunction: true     # CFR3-02: Function definition
-    AfterNamespace: false   # CFR2-03: C classes
-    AfterStruct: false
-    BeforeElse: false       # CFR2-12: Else clause placement
-    AfterUnion: false
-    BeforeCatch: false
-    IndentBraces: false
+# CFR3-06: Pointer declaration
+# Checkout CFR1-08
 
+BreakBeforeBraces: Custom
+BraceWrapping:
+    # AfterCaseLabel
+    AfterClass: false             # CFR2-03: C classes
+    AfterControlStatement: false # CFR2-11: Control statements
+    AfterEnum: false             # CFR3-04: Use of typedef
+    AfterFunction: true          # CFR3-02: Function definition
+    AfterNamespace: false        # CFR2-03: C classes
+    # AfterObjCDeclaration
+    AfterStruct: false           # CFR3-04: Use of typedef
+    AfterUnion: false
+    # AfterExternBlock: false
+    BeforeCatch: false
+    BeforeElse: false            # CFR2-12: Else clause placement
+    IndentBraces: false          # CFR3-02: Function definition
 # These ones I don't know... I would set them to false
 #   SplitEmptyFunction: false
 #   SplitEmptyRecord: false
 #   SplitEmptyNamespace: false
-
 
 ###############################################################
 # Formatting rules currently not in our coding conventions
@@ -124,6 +129,5 @@ IndentWrappedFunctionNames: true
 MaxEmptyLinesToKeep: 2
 
 Cpp11BracedListStyle: false
-#ExperimentalAutoDetectBinPacking: true
 
-
+BreakBeforeBinaryOperators: NonAssignment

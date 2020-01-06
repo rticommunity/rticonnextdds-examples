@@ -12,9 +12,9 @@
 #include <cstdlib>
 #include <iostream>
 
+#include "cfc.hpp"
 #include <dds/dds.hpp>
 #include <rti/pub/FlowController.hpp>
-#include "cfc.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -28,7 +28,7 @@ using namespace dds::pub::qos;
 
 const std::string flow_controller_name = "custom_flowcontroller";
 
-FlowControllerProperty define_flowcontroller(DomainParticipant& participant)
+FlowControllerProperty define_flowcontroller(DomainParticipant &participant)
 {
     // Create a custom FlowController based on tocken-bucket mechanism.
     // First specify the token-bucket configuration.
@@ -51,8 +51,8 @@ FlowControllerProperty define_flowcontroller(DomainParticipant& participant)
 
     // Create a FlowController Property to set the TokenBucket definition.
     FlowControllerProperty flowcontroller_property(
-        FlowControllerSchedulingPolicy::EARLIEST_DEADLINE_FIRST,
-        flowcontroller_tokenbucket);
+            FlowControllerSchedulingPolicy::EARLIEST_DEADLINE_FIRST,
+            flowcontroller_tokenbucket);
 
     return flowcontroller_property;
 }
@@ -60,8 +60,8 @@ FlowControllerProperty define_flowcontroller(DomainParticipant& participant)
 void publisher_main(int domain_id, int sample_count)
 {
     // Retrieve the default Participant QoS, from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos = QosProvider::Default()
-        .participant_qos();
+    DomainParticipantQos participant_qos =
+            QosProvider::Default().participant_qos();
 
     // If you want to change the Participant's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -78,11 +78,11 @@ void publisher_main(int domain_id, int sample_count)
 
     // Create the FlowController by code instead of from USER_QOS_PROFILES.xml.
     FlowControllerProperty flow_controller_property =
-        define_flowcontroller(participant);
+            define_flowcontroller(participant);
     FlowController flowcontroller(
-        participant,
-        flow_controller_name,
-        flow_controller_property);
+            participant,
+            flow_controller_name,
+            flow_controller_property);
 
     // Create a Topic -- and automatically register the type
     Topic<cfc> topic(participant, "Example cfc");
@@ -122,7 +122,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;

@@ -10,15 +10,26 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-
 project (PluggableStorage)
 
-# Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_DEBUG_POSTFIX "d")
 
-string(TOLOWER ${CMAKE_BUILD_TYPE} CMAKE_BUILD_TYPE_NOCASE)
+if(NOT BUILD_SHARED_LIBS)
+    set(msg
+        "Static linking is not supported for this example. You can build it "
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
+    message(FATAL_ERROR ${msg})
+endif()
 
-if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
+if(NOT CMAKE_BUILD_TYPE)
+    set(msg
+        "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
+        "is not supported for this example. Please provide a valid value for "
+        "the CMAKE_BUILD_TYPE parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
     set(msg
         "You have selected to build the library in debug mode. It's recommended "
         "to run the debug version of Recording Service or otherwise you may run "
@@ -26,17 +37,15 @@ if(CMAKE_BUILD_TYPE_NOCASE STREQUAL "debug")
     message(WARNING ${msg})
 endif()
 
+# Find RTI Connext dependencies
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+
 find_package(
     RTIConnextDDS "6.0.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
-)
-
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
 )
 
 # Create the directory that's going to contain the generated code files
@@ -68,7 +77,7 @@ add_custom_target(
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    FileStorageWriter MODULE
+    FileStorageWriter
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
 )
@@ -92,7 +101,7 @@ target_include_directories(
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    FileStorageReader MODULE
+    FileStorageReader
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
 )

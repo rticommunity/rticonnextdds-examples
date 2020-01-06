@@ -12,8 +12,8 @@
 #include <algorithm>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "poll.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -44,10 +44,9 @@ void subscriber_main(int domain_id, int sample_count)
         // afterwards.
         double sum = 0;
         for (LoanedSamples<poll>::iterator sample_it = samples.begin();
-            sample_it != samples.end();
-            sample_it++) {
-
-            if (sample_it->info().valid()){
+             sample_it != samples.end();
+             sample_it++) {
+            if (sample_it->info().valid()) {
                 sum += sample_it->data().x();
             }
         }
@@ -62,7 +61,7 @@ void subscriber_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -78,7 +77,7 @@ int main(int argc, char *argv[])
 
     try {
         subscriber_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
         return -1;

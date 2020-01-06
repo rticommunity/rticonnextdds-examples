@@ -12,6 +12,29 @@
 cmake_minimum_required(VERSION 3.11)
 project(ServiceAsLib)
 
+if(NOT BUILD_SHARED_LIBS)
+    set(msg
+        "Static linking is not supported for this example. You can build it "
+        "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(msg
+        "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
+        "is not supported for this example. Please provide a valid value for "
+        "the CMAKE_BUILD_TYPE parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Recording Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
+endif()
+
 if(NOT CMAKE_BUILD_TYPE)
     set(CMAKE_BUILD_TYPE Release)
 endif()
@@ -27,11 +50,6 @@ find_package(
         routing_service
 )
 
-find_package(
-    RTICodeGenerator "3.0.0"
-    REQUIRED
-)
-
 # Select the adequate version of the Recording Service library depending on the
 # build type
 set(recording_lib "rtirecordingservice")
@@ -41,13 +59,13 @@ endif()
 
 find_library(
     recordingservicelib
-    NAMES ${recording_lib} 
+    NAMES ${recording_lib}
     PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
-    
+
 # Copy recorder and replay configuration files to binary directory
 add_custom_command(
     OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
@@ -55,7 +73,7 @@ add_custom_command(
 
 add_custom_command(
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
-    COMMAND ${CMAKE_COMMAND} -E copy 
+    COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
         "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
     DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
@@ -75,14 +93,14 @@ add_executable(
 )
 
 set_target_properties(
-    ServiceAsLibExample 
+    ServiceAsLibExample
     PROPERTIES CXX_STANDARD 11)
 
 add_dependencies(ServiceAsLibExample copy_config_files)
 
 target_include_directories(
     ServiceAsLibExample
-    PUBLIC 
+    PUBLIC
         ${CONNEXTDDS_INCLUDE_DIRS}
 )
 

@@ -58,42 +58,55 @@
 #include <stdio.h>
 #include <stdlib.h>
 #ifdef RTI_VX653
-#include <vThreadsData.h>
+    #include <vThreadsData.h>
 #endif
 #include "market_data.h"
 #include "market_dataSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class market_dataListener: public DDSDataReaderListener {
+class market_dataListener : public DDSDataReaderListener {
 public:
-    virtual void on_requested_deadline_missed(DDSDataReader* /*reader*/,
-            const DDS_RequestedDeadlineMissedStatus& /*status*/) {
+    virtual void on_requested_deadline_missed(
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedDeadlineMissedStatus & /*status*/)
+    {
     }
 
-    virtual void on_requested_incompatible_qos(DDSDataReader* /*reader*/,
-            const DDS_RequestedIncompatibleQosStatus& /*status*/) {
+    virtual void on_requested_incompatible_qos(
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedIncompatibleQosStatus & /*status*/)
+    {
     }
 
-    virtual void on_sample_rejected(DDSDataReader* /*reader*/,
-            const DDS_SampleRejectedStatus& /*status*/) {
+    virtual void on_sample_rejected(
+            DDSDataReader * /*reader*/,
+            const DDS_SampleRejectedStatus & /*status*/)
+    {
     }
 
-    virtual void on_liveliness_changed(DDSDataReader* /*reader*/,
-            const DDS_LivelinessChangedStatus& /*status*/) {
+    virtual void on_liveliness_changed(
+            DDSDataReader * /*reader*/,
+            const DDS_LivelinessChangedStatus & /*status*/)
+    {
     }
 
-    virtual void on_sample_lost(DDSDataReader* /*reader*/,
-            const DDS_SampleLostStatus& /*status*/) {
+    virtual void on_sample_lost(
+            DDSDataReader * /*reader*/,
+            const DDS_SampleLostStatus & /*status*/)
+    {
     }
 
-    virtual void on_subscription_matched(DDSDataReader* /*reader*/,
-            const DDS_SubscriptionMatchedStatus& /*status*/) {
+    virtual void on_subscription_matched(
+            DDSDataReader * /*reader*/,
+            const DDS_SubscriptionMatchedStatus & /*status*/)
+    {
     }
 
-    virtual void on_data_available(DDSDataReader* reader);
+    virtual void on_data_available(DDSDataReader *reader);
 };
 
-void market_dataListener::on_data_available(DDSDataReader* reader) {
+void market_dataListener::on_data_available(DDSDataReader *reader)
+{
     market_dataDataReader *market_data_reader = NULL;
     market_dataSeq data_seq;
     DDS_SampleInfoSeq info_seq;
@@ -106,8 +119,13 @@ void market_dataListener::on_data_available(DDSDataReader* reader) {
         return;
     }
 
-    retcode = market_data_reader->take(data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-            DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+    retcode = market_data_reader->take(
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
@@ -129,7 +147,8 @@ void market_dataListener::on_data_available(DDSDataReader* reader) {
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(DDSDomainParticipant *participant) {
+static int subscriber_shutdown(DDSDomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -161,7 +180,8 @@ static int subscriber_shutdown(DDSDomainParticipant *participant) {
     return status;
 }
 
-extern "C" int subscriber_main(int domainId, int sample_count) {
+extern "C" int subscriber_main(int domainId, int sample_count)
+{
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
     DDSTopic *topic = NULL;
@@ -175,10 +195,12 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     DDS_Duration_t receive_period = { 4, 0 };
     int status = 0;
 
-    /* To customize the participant QoS, use 
+    /* To customize the participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT, NULL /* listener */,
+    participant = DDSTheParticipantFactory->create_participant(
+            domainId,
+            DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
@@ -186,10 +208,12 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize the subscriber QoS, use 
+    /* To customize the subscriber QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    subscriber = participant->create_subscriber(DDS_SUBSCRIBER_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    subscriber = participant->create_subscriber(
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -205,10 +229,14 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize the topic QoS, use 
+    /* To customize the topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic("Example market_data", type_name,
-            DDS_TOPIC_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+    topic = participant->create_topic(
+            "Example market_data",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
         subscriber_shutdown(participant);
@@ -218,8 +246,11 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     /* Start changes for MultiChannel */
 
     filtered_topic = participant->create_contentfilteredtopic_with_filter(
-            "Example market_data", topic, "Symbol MATCH 'A'",
-            expression_parameters, DDS_STRINGMATCHFILTER_NAME);
+            "Example market_data",
+            topic,
+            "Symbol MATCH 'A'",
+            expression_parameters,
+            DDS_STRINGMATCHFILTER_NAME);
     if (filtered_topic == NULL) {
         printf("create_contentfilteredtopic error\n");
         subscriber_shutdown(participant);
@@ -229,10 +260,13 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
     /* Create a data reader listener */
     reader_listener = new market_dataListener();
 
-    /* To customize the data reader QoS, use 
+    /* To customize the data reader QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    reader = subscriber->create_datareader(filtered_topic,
-            DDS_DATAREADER_QOS_DEFAULT, reader_listener, DDS_STATUS_MASK_ALL);
+    reader = subscriber->create_datareader(
+            filtered_topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
         subscriber_shutdown(participant);
@@ -244,7 +278,6 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         /* printf("market_data subscriber sleeping for %d sec...\n",
          *      receive_period.sec);
          */
@@ -280,7 +313,7 @@ extern "C" int subscriber_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -302,7 +335,8 @@ int wmain(int argc, wchar_t** argv)
 }
 
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -324,18 +358,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = *(__ctypePtrGet());
+const unsigned char *__ctype = *(__ctypePtrGet());
 
-extern "C" void usrAppInit ()
+extern "C" void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("sub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)subscriber_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "sub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) subscriber_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif
-

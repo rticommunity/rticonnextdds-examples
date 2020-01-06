@@ -55,15 +55,17 @@
  ------------ -------
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ndds/ndds_c.h"
 #include "ordered.h"
 #include "orderedSupport.h"
+#include <stdio.h>
+#include <stdlib.h>
 
 /* Delete all entities */
-static int publisher_shutdown(DDS_DomainParticipant *participant,
-        struct DDS_PublisherQos *publisher_qos) {
+static int publisher_shutdown(
+        DDS_DomainParticipant *participant,
+        struct DDS_PublisherQos *publisher_qos)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -75,7 +77,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant,
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-                DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -103,7 +106,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant,
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count) {
+static int publisher_main(int domainId, int sample_count)
+{
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
@@ -119,20 +123,26 @@ static int publisher_main(int domainId, int sample_count) {
     struct DDS_Duration_t send_period = { 1, 0 };
     struct DDS_PublisherQos publisher_qos = DDS_PublisherQos_INITIALIZER;
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant, &publisher_qos);
         return -1;
     }
 
-    publisher = DDS_DomainParticipant_create_publisher_with_profile(participant,
-            "ordered_Library", "ordered_Profile_subscriber_instance",
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+    publisher = DDS_DomainParticipant_create_publisher_with_profile(
+            participant,
+            "ordered_Library",
+            "ordered_Profile_subscriber_instance",
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
         publisher_shutdown(participant, &publisher_qos);
@@ -173,10 +183,14 @@ static int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = DDS_DomainParticipant_create_topic(participant, "Example ordered",
-            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+    topic = DDS_DomainParticipant_create_topic(
+            participant,
+            "Example ordered",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
@@ -184,10 +198,13 @@ static int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize data writer QoS, use 
+    /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    writer = DDS_Publisher_create_datawriter(publisher, topic,
-            &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
+    writer = DDS_Publisher_create_datawriter(
+            publisher,
+            topic,
+            &DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
@@ -218,10 +235,10 @@ static int publisher_main(int domainId, int sample_count) {
     instance0->id = 0;
     instance1->id = 1;
 
-    instance_handle0 = orderedDataWriter_register_instance(ordered_writer,
-            instance0);
-    instance_handle1 = orderedDataWriter_register_instance(ordered_writer,
-            instance1);
+    instance_handle0 =
+            orderedDataWriter_register_instance(ordered_writer, instance0);
+    instance_handle1 =
+            orderedDataWriter_register_instance(ordered_writer, instance1);
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -230,14 +247,18 @@ static int publisher_main(int domainId, int sample_count) {
         instance1->value = count;
 
         printf("Writing instance0, value->%d\n", instance0->value);
-        retcode = orderedDataWriter_write(ordered_writer, instance0,
+        retcode = orderedDataWriter_write(
+                ordered_writer,
+                instance0,
                 &instance_handle0);
         if (retcode != DDS_RETCODE_OK) {
             printf("write instance0 error %d\n", retcode);
         }
 
         printf("Writing instance1, value->%d\n", instance1->value);
-        retcode = orderedDataWriter_write(ordered_writer, instance1,
+        retcode = orderedDataWriter_write(
+                ordered_writer,
+                instance1,
                 &instance_handle1);
         if (retcode != DDS_RETCODE_OK) {
             printf("write instance0 error %d\n", retcode);
@@ -246,13 +267,17 @@ static int publisher_main(int domainId, int sample_count) {
         NDDS_Utility_sleep(&send_period);
     }
 
-    retcode = orderedDataWriter_unregister_instance(ordered_writer, instance0,
+    retcode = orderedDataWriter_unregister_instance(
+            ordered_writer,
+            instance0,
             &instance_handle0);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
     }
 
-    retcode = orderedDataWriter_unregister_instance(ordered_writer, instance1,
+    retcode = orderedDataWriter_unregister_instance(
+            ordered_writer,
+            instance1,
             &instance_handle1);
     if (retcode != DDS_RETCODE_OK) {
         printf("unregister instance error %d\n", retcode);
@@ -274,7 +299,7 @@ static int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -296,7 +321,8 @@ int wmain(int argc, wchar_t** argv)
     return publisher_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -319,17 +345,30 @@ int main(int argc, char *argv[]) {
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = NULL;
+const unsigned char *__ctype = NULL;
 
-void usrAppInit ()
+void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

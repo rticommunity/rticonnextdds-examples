@@ -56,16 +56,17 @@
  20May2014,amb Example adapted for RTI Connext DDS 5.1
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include "ndds/ndds_c.h"
 #include "ccf.h"
 #include "ccfSupport.h"
+#include "ndds/ndds_c.h"
+#include <stdio.h>
+#include <stdlib.h>
 /* Custom filter defined here */
 #include "filter.c"
 
 /* Delete all entities */
-static int publisher_shutdown(DDS_DomainParticipant *participant) {
+static int publisher_shutdown(DDS_DomainParticipant *participant)
+{
     DDS_ReturnCode_t retcode;
     int status = 0;
 
@@ -77,7 +78,8 @@ static int publisher_shutdown(DDS_DomainParticipant *participant) {
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-                DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             printf("delete_participant error %d\n", retcode);
             status = -1;
@@ -88,18 +90,19 @@ static int publisher_shutdown(DDS_DomainParticipant *participant) {
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
        clean destruction of the singleton. */
-/*
-    retcode = DDS_DomainParticipantFactory_finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        printf("finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-*/
+    /*
+        retcode = DDS_DomainParticipantFactory_finalize_instance();
+        if (retcode != DDS_RETCODE_OK) {
+            printf("finalize_instance error %d\n", retcode);
+            status = -1;
+        }
+    */
 
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count) {
+static int publisher_main(int domainId, int sample_count)
+{
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
@@ -113,21 +116,26 @@ static int publisher_main(int domainId, int sample_count) {
     struct DDS_Duration_t send_period = { 1, 0 };
     struct DDS_ContentFilter custom_filter = DDS_ContentFilter_INITIALIZER;
 
-    /* To customize participant QoS, use 
+    /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-            DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    /* To customize publisher QoS, use 
+    /* To customize publisher QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    publisher = DDS_DomainParticipant_create_publisher(participant,
-            &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
+    publisher = DDS_DomainParticipant_create_publisher(
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
@@ -144,10 +152,14 @@ static int publisher_main(int domainId, int sample_count) {
         return -1;
     }
 
-    /* To customize topic QoS, use 
+    /* To customize topic QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    topic = DDS_DomainParticipant_create_topic(participant, "Example ccf",
-            type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
+    topic = DDS_DomainParticipant_create_topic(
+            participant,
+            "Example ccf",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
@@ -162,8 +174,10 @@ static int publisher_main(int domainId, int sample_count) {
     custom_filter.finalize = custom_filter_finalize_function;
     custom_filter.filter_data = NULL;
 
-    retcode = DDS_DomainParticipant_register_contentfilter(participant,
-            "CustomFilter", &custom_filter);
+    retcode = DDS_DomainParticipant_register_contentfilter(
+            participant,
+            "CustomFilter",
+            &custom_filter);
     if (retcode != DDS_RETCODE_OK) {
         printf("Failed to register custom content filter");
         publisher_shutdown(participant);
@@ -172,10 +186,13 @@ static int publisher_main(int domainId, int sample_count) {
 
     /*------ End changes for Custom_Content_Filter ------*/
 
-    /* To customize data writer QoS, use 
+    /* To customize data writer QoS, use
      the configuration file USER_QOS_PROFILES.xml */
-    writer = DDS_Publisher_create_datawriter(publisher, topic,
-            &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */,
+    writer = DDS_Publisher_create_datawriter(
+            publisher,
+            topic,
+            &DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
@@ -202,14 +219,13 @@ static int publisher_main(int domainId, int sample_count) {
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
-/*
-    instance_handle = ccfDataWriter_register_instance(
-        ccf_writer, instance);
-*/
+    /*
+        instance_handle = ccfDataWriter_register_instance(
+            ccf_writer, instance);
+    */
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-
         printf("Writing ccf, count %d\n", count);
 
         /* Modify the data to be written here */
@@ -224,13 +240,13 @@ static int publisher_main(int domainId, int sample_count) {
         NDDS_Utility_sleep(&send_period);
     }
 
-/*
-    retcode = ccfDataWriter_unregister_instance(
-        ccf_writer, instance, &instance_handle);
-    if (retcode != DDS_RETCODE_OK) {
-        printf("unregister instance error %d\n", retcode);
-    }
-*/
+    /*
+        retcode = ccfDataWriter_unregister_instance(
+            ccf_writer, instance, &instance_handle);
+        if (retcode != DDS_RETCODE_OK) {
+            printf("unregister instance error %d\n", retcode);
+        }
+    */
 
     /* Delete data sample */
     retcode = ccfTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
@@ -243,7 +259,7 @@ static int publisher_main(int domainId, int sample_count) {
 }
 
 #if defined(RTI_WINCE)
-int wmain(int argc, wchar_t** argv)
+int wmain(int argc, wchar_t **argv)
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
@@ -265,7 +281,8 @@ int wmain(int argc, wchar_t** argv)
     return publisher_main(domainId, sample_count);
 }
 #elif !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
 
@@ -275,30 +292,43 @@ int main(int argc, char *argv[]) {
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
-    
+
     /* Uncomment this to turn on additional logging
     NDDS_Config_Logger_set_verbosity_by_category(
         NDDS_Config_Logger_get_instance(),
-        NDDS_CONFIG_LOG_CATEGORY_API, 
+        NDDS_CONFIG_LOG_CATEGORY_API,
         NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
-        
+
     return publisher_main(domainId, sample_count);
 }
 #endif
 
 #ifdef RTI_VX653
-const unsigned char* __ctype = NULL;
+const unsigned char *__ctype = NULL;
 
-void usrAppInit ()
+void usrAppInit()
 {
-#ifdef  USER_APPL_INIT
+    #ifdef USER_APPL_INIT
     USER_APPL_INIT; /* for backwards compatibility */
-#endif
+    #endif
 
     /* add application specific code here */
-    taskSpawn("pub", RTI_OSAPI_THREAD_PRIORITY_NORMAL, 0x8, 0x150000,
-            (FUNCPTR)publisher_main, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-
+    taskSpawn(
+            "pub",
+            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
+            0x8,
+            0x150000,
+            (FUNCPTR) publisher_main,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0);
 }
 #endif

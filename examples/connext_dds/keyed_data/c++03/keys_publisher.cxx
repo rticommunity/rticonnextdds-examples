@@ -12,8 +12,8 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <dds/dds.hpp>
 #include "keys.hpp"
+#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -25,10 +25,10 @@ using namespace dds::pub::qos;
 void publisher_main(int domain_id, int sample_count)
 {
     // Create a DomainParticipant with default Qos.
-    DomainParticipant participant (domain_id);
+    DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<keys> topic (participant, "Example keys");
+    Topic<keys> topic(participant, "Example keys");
 
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml
     DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
@@ -37,7 +37,8 @@ void publisher_main(int domain_id, int sample_count)
     // than using the XML file, you will need to comment out the previous
     // writer_qos assignment and uncomment this line.
 
-    //writer_qos << WriterDataLifecycle::ManuallyDisposeUnregisteredInstances();
+    // writer_qos <<
+    // WriterDataLifecycle::ManuallyDisposeUnregisteredInstances();
 
     // Create a DataWriter with default Qos (Publisher created in-line).
     DataWriter<keys> writer(Publisher(participant), topic, writer_qos);
@@ -115,7 +116,7 @@ void publisher_main(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0; // Infinite loop
+    int sample_count = 0;  // Infinite loop
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -131,7 +132,7 @@ int main(int argc, char *argv[])
 
     try {
         publisher_main(domain_id, sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
         return -1;
