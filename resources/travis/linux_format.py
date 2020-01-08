@@ -39,28 +39,27 @@ Examples: Run linters on staged changes::
 
 """
 import sys
-import time
-import argparse
 
+from argparse import ArgumentParser, RawDescriptionHelpFormatter, Namespace
 from pathlib import Path
-from sultan.api import Sultan
+from sultan.api import Sultan, Result
+from typing import List, Set, Optional
 
 
 class FormatError(Exception):
-    pass
+    """Formating error."""
 
 
-def get_argument_parser():
+def get_argument_parser() -> ArgumentParser:
     """Create argument parser.
 
-    Returns:
-        The argument parser.
+    :returns: The argument parser.
 
     """
-    parser = argparse.ArgumentParser(
+    parser = ArgumentParser(
         description=__doc__,
         allow_abbrev=False,
-        formatter_class=argparse.RawDescriptionHelpFormatter,
+        formatter_class=RawDescriptionHelpFormatter,
     )
     mutual = parser.add_mutually_exclusive_group(required=False)
     mutual.add_argument(
@@ -106,50 +105,42 @@ def get_argument_parser():
         default=[],
         help="Disable black linter.",
     )
+
     return parser
 
 
-def stream_sultan_output(result):
-    """Stream command output.
+def show_sultan_output(result: Result) -> None:
+    """Show command output.
 
-    Args:
-        result (sultan.result.Result): Command result object.
+    :param result: Command result object.
 
     """
-    while True:
-        complete = result.is_complete
+    for line in result.stdout:
+        print(line)
 
-        for line in result.stdout:
-            print(line)
-
-        for line in result.stderr:
-            print(line)
-
-        if complete:
-            break
-
-        time.sleep(1)
+    for line in result.stderr:
+        print(line)
 
 
-def get_changed_files(repo_root, commits=None):
-    """Obtains changed files.
+def get_changed_files(
+    repo_root: Path, commits: Optional[List[str]] = None
+) -> List[str]:
+    """Obtain changed files.
 
-    Args:
-        repo_root (Path): Repository top folder.
-        first_commit_hash: First commit hash. Defaults to None.
-        second_commit_hash: Second commit hash. Defaults to None.
-
-    Returns:
-        List[str]: List of staged files.
+    :param repo_root: Repository top folder.
+    :param commits: Commits range.
+    :returns: List of staged files.
 
     """
     command = ["diff", "--no-commit-id", "--name-only", "-r"]
 
     if commits:
         command.extend([*commits])
+        print(f"Checking file changes in the commit range: {commits}.")
     else:
         command.insert(3, "--cached")
         command.append("HEAD")
+        print(f"Checking local changed files...")
 
     with Sultan.load(cwd=repo_root) as s:
         changed_files = (
@@ -159,16 +150,12 @@ def get_changed_files(repo_root, commits=None):
     return changed_files
 
 
-def filter_files(file_list, extensions):
+def filter_files(file_list: List[str], extensions: Set[str]) -> List[str]:
     """Filter files with selected extensions.
 
-    Args:
-        file_list (List[str]): List of files.
-        extensions (Set[str], Optional): Set of extensions. Defaults to empty
-            set.
-
-    Returns:
-        List[str]: Filtered list of files.
+    :param file_list: List of files.
+    :param extensions: Set of extensions.
+    :returns: Filtered list of files.
 
     """
     return [
@@ -178,35 +165,30 @@ def filter_files(file_list, extensions):
     ]
 
 
-def perform_linting(repo_root, command):
-    """Performs ``command`` linter to ``files``.
+def perform_linting(repo_root: Path, command: List[str]) -> None:
+    """Perform ``command`` linter to ``files``.
 
-    Args:
-        repo_root (Path): Repository top folder.
-        command (List[str]): List of commands to run the linter.
-        file_list (List[str]): List of files that will be lintered.
-
-    Raises:
-        FormatError: When the linter outputs format errors.
+    :param repo_root: Repository top folder.
+    :param command: List of commands to run the linter.
+    :raises FormatError: When the linter outputs format errors.
 
     """
     with Sultan.load(cwd=repo_root) as s:
-        lint_result = getattr(s, command[0])(*command[1:]).run(
+        lint_result: Result = getattr(s, command[0])(*command[1:]).run(
             halt_on_nonzero=False, quiet=True
         )
 
     if lint_result.rc != 0 or len(lint_result.stdout) > 1:
-        error_output = lint_result.stdout
-        stream_sultan_output(lint_result)
-        raise FormatError("Format error:\n{}".format(error_output))
+        show_sultan_output(lint_result)
+        raise FormatError(f"Format error for {command} command.")
 
 
 if __name__ == "__main__":
-    args = get_argument_parser().parse_args()
-    script_path = Path(__file__)
+    args: Namespace = get_argument_parser().parse_args()
+    script_path: Path = Path(__file__)
 
     with Sultan.load(logging=False, cwd=script_path.parent) as s:
-        result = s.git("rev-parse", "--show-toplevel").run(
+        result: Result = s.git("rev-parse", "--show-toplevel").run(
             halt_on_nonzero=False, quiet=True
         )
 
@@ -214,83 +196,108 @@ if __name__ == "__main__":
             sys.exit("Error: Script not in a git repository.")
 
         try:
-            repo_root = Path(result.stdout[0]).resolve()
+            repo_root: Path = Path(result.stdout[0]).resolve()
         except FileNotFoundError:
             sys.exit("Error: Root repo path not found.")
         else:
             if not repo_root.exists():
                 sys.exit("Error: Root repo path not found.")
 
-    commits = None
+    print("Starting format checker...")
+
+    commits: Optional[List[str]] = None
 
     if args.commit_range:
         commits = args.commit_range.split("...")
     elif args.commit:
         commits = [args.commit + "^", args.commit]
 
-    exit_error = False
-    file_list = get_changed_files(repo_root, commits)
+    exit_error: bool = False
+    file_list: List[str] = get_changed_files(repo_root, commits)
 
     if not file_list:
-        sys.exit()
+        sys.exit("No changes found.")
 
     # Markdownlint
     if "markdownlint" not in args.disabled_linters:
-        markdownlint_suffix_list = {".md"}
-        markdownlint_cmd = ["markdownlint"]
-        markdownlint_filtered_file_list = filter_files(
+        markdownlint_suffix_list: Set = {".md"}
+        markdownlint_cmd: List[str] = ["markdownlint"]
+        markdownlint_filtered_file_list: List[str] = filter_files(
             file_list, markdownlint_suffix_list
         )
+        print()
+        print(" Markdown ".center(79, "="))
 
         if markdownlint_filtered_file_list:
             markdownlint_cmd.extend(markdownlint_filtered_file_list)
+            print(
+                "Checking markdown files format with Markdownlint: "
+                f"{markdownlint_filtered_file_list}"
+            )
 
             try:
-                print("markdownlint... ", end="")
                 perform_linting(repo_root, markdownlint_cmd)
             except FormatError:
                 exit_error = True
             else:
-                print("-- Done", end="")
+                print("Markdownlint done. No format issues.")
+        else:
+            print("No markdown files changed.")
 
     # Clang-format
     if "clang-format" not in args.disabled_linters:
-        clang_format_suffix_list = {".h", ".hxx", ".c", ".cxx"}
-        clang_format_cmd = ["git", "clang-format", "--diff"]
-        clang_format_filtered_file_list = filter_files(
+        clang_format_suffix_list: Set = {".h", ".hxx", ".c", ".cxx"}
+        clang_format_cmd: List[str] = ["git", "clang-format", "--diff"]
+        clang_format_filtered_file_list: List[str] = filter_files(
             file_list, clang_format_suffix_list
         )
-
-        if commits:
-            clang_format_cmd.extend(commits)
+        print()
+        print(" C/C++ ".center(79, "="))
 
         if clang_format_filtered_file_list:
+            if commits:
+                clang_format_cmd.extend(commits)
+
             clang_format_cmd.append("--")
             clang_format_cmd.extend(clang_format_filtered_file_list)
+            print(
+                "Checking C/C++ files format with clang-format: "
+                f"{clang_format_filtered_file_list}"
+            )
 
             try:
-                print("\nclang-format... ", end="")
                 perform_linting(repo_root, clang_format_cmd)
             except FormatError:
                 exit_error = True
             else:
-                print("-- Done", end="")
+                print("clang-format done. No format issues.")
+        else:
+            print("No C/C++ files changed.")
 
     # Black
     if "black" not in args.disabled_linters:
-        black_suffix_list = {".py"}
-        black_cmd = ["black", "--check", "--diff", "-l", "79"]
-        black_filtered_file_list = filter_files(file_list, black_suffix_list)
+        black_suffix_list: Set = {".py"}
+        black_cmd: List[str] = ["black", "--check", "--diff", "-l", "79"]
+        black_filtered_file_list: List[str] = filter_files(
+            file_list, black_suffix_list
+        )
+        print()
+        print(" Python ".center(79, "="))
 
         if black_filtered_file_list:
             black_cmd.extend(black_filtered_file_list)
+            print(
+                "Checking Python files format with Black: "
+                f"{black_filtered_file_list}"
+            )
 
             try:
-                print("\nblack... ", end="")
                 perform_linting(repo_root, black_cmd)
             except FormatError:
                 exit_error = True
             else:
-                print("-- Done")
+                print("Black done. No format issues.")
+        else:
+            print("No Python files changed.")
 
     sys.exit(exit_error)
