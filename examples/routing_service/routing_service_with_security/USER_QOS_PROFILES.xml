@@ -1,0 +1,102 @@
+<?xml version="1.0"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
+    version="6.0.0">
+
+    <qos_library name="SecurityExampleProfiles">
+    
+        <!-- Profile 'A' is based on the strict reliable profile. It is used by the hello_security Publisher.
+         -->
+
+		<qos_profile name="A" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true"/>
+
+        <qos_profile name="DSA_A" base_name="A"/>
+
+        <qos_profile name="RSA_A" base_name="A"/>
+
+
+        <!-- Profile 'B' is based on the security profile. It is used by the hello_security Subscriber.
+         -->
+        <qos_profile name="B" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+
+          <participant_qos>
+            <property>
+              <value>
+                <element>
+                  <name>dds.sec.auth.identity_ca</name>
+                  <value>file:./dds_security_01/cert/cacertECdsa.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.auth.identity_certificate</name>
+                  <value>file:./dds_security_01/cert/D2_DPECdsa.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.auth.private_key</name>
+                  <value>file:./dds_security_01/cert/D2_DPkeyECdsa.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.permissions_ca</name>
+                  <value>file:./dds_security_01/cert/cacertECdsa.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:./dds_security_01/xml/signed/signed_Governance.p7s</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.permissions</name>
+                  <value>file:./dds_security_01/xml/signed/signed_PermissionsD2_DP.p7s</value>
+                </element>
+              </value>
+            </property>
+          </participant_qos>
+        </qos_profile>
+
+       <qos_profile name="DSA_B" base_name="B">
+        <participant_qos>
+          <property>
+            <value>
+            <!--  <element>
+                <name>com.rti.serv.secure.authentication.shared_secret_algorithm</name>
+                <value>dh</value>
+              </element> -->
+              <element>
+                <name>dds.sec.auth.identity_ca</name>
+                <value>file:./dds_security_01/cert/cacertdsa.pem</value>
+                </element>
+              <element>
+                <name>dds.sec.auth.identity_certificate</name>
+                <value>file:./dds_security_01/cert/D2_DPdsa.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.auth.private_key</name>
+                <value>file:./dds_security_01/cert/D2_DPkeydsa.pem</value>
+              </element>
+            </value>
+          </property>
+        </participant_qos>
+      </qos_profile>
+
+      <qos_profile name="RSA_B" base_name="B">
+        <participant_qos>
+          <property>
+            <value>
+              <element>
+                <name>dds.sec.auth.identity_ca</name>
+                <value>file:./dds_security_01/cert/cacert.pem</value>
+                </element>
+              <element>
+                <name>dds.sec.auth.identity_certificate</name>
+                <value>file:./dds_security_01/cert/D2_DP.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.auth.private_key</name>
+                <value>file:./dds_security_01/cert/D2_DPkey.pem</value>
+              </element>
+            </value>
+          </property>
+        </participant_qos>
+      </qos_profile>
+
+    </qos_library>
+</dds>
