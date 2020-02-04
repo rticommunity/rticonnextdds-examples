@@ -5,12 +5,17 @@
     <domain_rule>
       <domains>
         <id_range>
+		  <!-- This Governance will apply to Domains 1 and 2 -->
           <min>1</min>
           <max>2</max>
         </id_range>
       </domains>
+	  <!-- Unauthenticated participants won't be allowed to communicate with 
+           secured participants in these domains -->
       <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
       <enable_join_access_control>true</enable_join_access_control>
+	  <!-- Encryption is applied to all types of communication, so it is 
+           protected against tampering and eavesdropping -->
       <discovery_protection_kind>ENCRYPT</discovery_protection_kind>
       <liveliness_protection_kind>ENCRYPT</liveliness_protection_kind>
       <rtps_protection_kind>SIGN</rtps_protection_kind>

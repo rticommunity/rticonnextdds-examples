@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
+    version="6.0.0">
+
+    <qos_library name="SecurityExampleProfiles">
+    
+        <!-- 
+        Profile 'SecuredPeer' is based on the security profile.
+        -->
+        <qos_profile name="SecuredPeer" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+            <participant_qos>
+                <property>
+                    <value>
+                        <element>
+                            <name>dds.sec.auth.identity_ca</name>
+                            <value>file:../../../resources/certAuthority/dsa01/ca/dsa01RootCaCert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.identity_certificate</name>
+                            <value>file:../../../resources/certAuthority/dsa01/identities/dsa01Peer01Cert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.private_key</name>
+                            <value>file:../../../resources/certAuthority/dsa01/identities/dsa01Peer01Key.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.access.permissions_ca</name>
+                            <value>file:../../../resources/certAuthority/dsa01/ca/dsa01RootCaCert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.access.governance</name>
+                            <value>file:./signed/governance.p7s</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.access.permissions</name>
+                            <value>file:./signed/permissionsPeer.p7s</value>
+                        </element>
+                    </value>
+                </property>
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>

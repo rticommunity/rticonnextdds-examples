@@ -1,0 +1,99 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----DC8AED6A96F14460DCF368EF018C62DE"
+
+This is an S/MIME signed message
+
+------DC8AED6A96F14460DCF368EF018C62DE
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/dds_security_permissions.xsd">
+    <!--
+    The Permissions XML contains the permissions of the DomainParticipant and binding them to the subject name of the DomainParticipant as defined in the Identity Certificate. This document must be signed by the Permissions CA.
+    -->
+    <permissions>
+        <!-- 
+        This grant section is specific for the Participant with artifacts generated using DSA
+        -->
+        <grant name="SecuredDomainPeer01Dsa">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampledsa/emailAddress=medsa@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2023-06-01T13:00:00</not_after>
+            </validity>
+            <!--
+            Actions that match the allowed data tags condition section <allow_rule> are permitted.
+            -->
+            <allow_rule>
+                <!-- 
+                The rule only applies to Domain 2
+                -->
+                <domains>
+                    <id>2</id>
+                </domains>
+                <!--
+                A DomainParticipant is permitted to publish any topic in any partition
+                -->
+                <publish>
+                    <topics>
+                        <topic>*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>*</partition>
+                    </partitions>
+                </publish>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
+------DC8AED6A96F14460DCF368EF018C62DE
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+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
+6ao=
+
+------DC8AED6A96F14460DCF368EF018C62DE--
+
