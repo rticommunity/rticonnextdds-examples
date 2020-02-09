@@ -246,3 +246,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++11")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
+
+# xml application
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
