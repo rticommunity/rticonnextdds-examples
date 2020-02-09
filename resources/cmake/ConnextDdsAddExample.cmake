@@ -151,7 +151,7 @@ include_guard(DIRECTORY)
 # Find the RTI Connext DDS libraries
 if(NOT RTIConnextDDS_FOUND)
     find_package(RTIConnextDDS
-        "5.3.0"
+        "6.0.0"
         REQUIRED
         COMPONENTS
             core
@@ -364,7 +364,7 @@ endfunction()
 
 function(connextdds_copy_qos_profile)
     set(optional_args)
-    set(single_value_args TARGET_PREFIX DEPENDANT_TARGET)
+    set(single_value_args TARGET_PREFIX DEPENDANT_TARGET FILENAME)
     set(multi_value_args)
 
     cmake_parse_arguments(_EXAMPLE_QOS
@@ -374,7 +374,12 @@ function(connextdds_copy_qos_profile)
         ${ARGN}
     )
 
-    set(user_qos_profile_name "USER_QOS_PROFILES.xml")
+    if(_EXAMPLE_QOS_FILENAME) 
+        set(user_qos_profile_name ${_EXAMPLE_QOS_FILENAME})
+	else()
+        set(user_qos_profile_name "USER_QOS_PROFILES.xml")
+    endif()
+
     set(qos_file "${CMAKE_CURRENT_SOURCE_DIR}/${user_qos_profile_name}")
 
     if(NOT EXISTS ${qos_file})
@@ -400,7 +405,7 @@ function(connextdds_copy_qos_profile)
                 ${CMAKE_COMMAND} -E copy_if_different
                     ${qos_file}
                     "${CMAKE_CURRENT_BINARY_DIR}"
-            COMMENT "Copying USER_QOS_PROFILES.xml"
+            COMMENT "Copying ${user_qos_profile_name}"
             DEPENDS
                 ${qos_file}
             VERBATIM
@@ -416,7 +421,7 @@ endfunction()
 
 function(connextdds_add_application)
     set(optional_args NO_REQUIRE_QOS)
-    set(single_value_args TARGET LANG PREFIX OUTPUT_NAME)
+    set(single_value_args TARGET LANG PREFIX OUTPUT_NAME QOS_FILENAME )
     set(multi_value_args SOURCES DEPENDENCIES)
 
     cmake_parse_arguments(_CONNEXT
@@ -429,7 +434,7 @@ function(connextdds_add_application)
         _CONNEXT_TARGET
         _CONNEXT_LANG
         _CONNEXT_SOURCES
-    )
+     )
 
     set(api "c")
 
@@ -475,10 +480,17 @@ function(connextdds_add_application)
     )
 
     if(NOT _CONNEXT_NO_REQUIRE_QOS)
-        connextdds_copy_qos_profile(
-            TARGET_PREFIX "${qos_prefix}_"
-            DEPENDANT_TARGET "${target_name}"
-        )
+        if (_CONNEXT_QOS_FILENAME)
+            connextdds_copy_qos_profile(
+                TARGET_PREFIX "${qos_prefix}_"
+                DEPENDANT_TARGET "${target_name}"
+                FILENAME ${_CONNEXT_QOS_FILENAME})
+        else()
+            connextdds_copy_qos_profile(
+                TARGET_PREFIX "${qos_prefix}_"
+                DEPENDANT_TARGET "${target_name}")
+        endif()
+
     endif()
 
 endfunction()
