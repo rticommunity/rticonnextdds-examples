@@ -26,7 +26,7 @@ The code for this example is laid out in the following way:
 This file defines the type ```KeyValuePair```, the topic ```EnvironmentTopic``` 
 as well as the ```Participant``` and all its child publisher, subscriber, reader and writer.
            
-2) In Modern C++ the participant is created using the call to ```create_participant_from_config()```.
+2) The participant is created using the call to ```create_participant_from_config()```.
 Using the participant the reader and writer are found and stored as references in the code.
 The reader and the writer are both specialized as <DynamicData> which allows the
 XML defintion of the type to be used without any code generation step.
