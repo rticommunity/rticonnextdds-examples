@@ -36,11 +36,11 @@ class MyDataReaderListener : public NoOpDataReaderListener<DynamicData> {
              sampleIt != samples.end();
              ++sampleIt) {
             // If the reference we get is valid data, it means we have actual
-            // data available, otherwise we got metadata.
+            // data available, otherwise we received metadata.
             if (sampleIt->info().valid()) {
                 std::cout << sampleIt->data() << std::endl;
             } else {
-                std::cout << "  Got metadata" << std::endl;
+                std::cout << "  Received metadata" << std::endl;
             }
         }
     }
@@ -134,6 +134,7 @@ int main(int argc, char *argv[], char *envp[])
     // Ignore our own publications so they do not trigger our data listener.
     dds::domain::ignore(participant, participant.instance_handle());
 
+    // Application id to uniquely identify data from a particular application
     int id = std::rand();
 
     // Publish the environment vairables to the topic configured in the
