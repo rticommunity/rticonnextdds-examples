@@ -1,4 +1,4 @@
-# Example Code: XML Application Environment
+# Example Code: XML Application - Environment Variable Pub/Sub
 
 The purpose of this example is to demonstrate the use of XML Application Creation
 and the Dynamic Data API.
@@ -53,11 +53,13 @@ On *UNIX* systems run:
 ./xml_application_env_cpp2
 ```
 If you wish to change the Domain that the application uses, you can change this
-in the application.xml file.  Modify the domain_id attribute of the domain:
+in the application.xml file.  Modify the domain_id attribute of the domain.  In 
+This case the domain id is set to 10, but can be any number from 0-255.
 
 ```xml
  <domain name="domain" domain_id="10">
  ```
+ 
 ## Customizing the Build
 
 ### Configuring Build Type and Generator
