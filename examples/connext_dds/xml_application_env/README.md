@@ -47,19 +47,3 @@ publishing their data independently.
 6) The main loop repeately publishes the environment variables.  The array of
 variables are provided to the main function in the ```char *envp[]``` parameter.
 
-
-
-
-The *Topic* type in this example is complex to illustrate the power of type
-codes. The default value for `resource_limits.type_code_max_serialized_length`
-is `2048` bytes -- an insufficient size to hold the type codes of a complex
-type. We need to increase the value so that built-in topics on the receiver side
-get the correct type code information of our example topic type, which has a
-size of `3070` bytes. Note that resource limits need to be changed both in the
-Publisher and Subscriber application's *DomainParticipant* QoS.
-
-The subscriber has no user data readers. Our purpose is to show how to
-manipulate metadata describing the message type. To do this, we listen for
-built-in topic data describing published topics. When we get information about
-new topic types, we print out information about the type using the *TypeCode*
-APIs.
