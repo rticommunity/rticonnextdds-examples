@@ -2,18 +2,6 @@
 
 The purpose of this example is to demonstrate the use of XML Application Creation
 and the Dynamic Data API.
-
-How do define a complete application in XML with:
-- type
-- domain
-  - topic
-- participant
-  - publisher
-    - writer
-  - subscriber
-    - reader
-
-
 ## Building the Example :wrench:
 
 To build this example, first run CMake to generate the corresponding build
@@ -64,8 +52,12 @@ On *UNIX* systems run:
 ```sh
 ./xml_application_env_cpp2
 ```
+If you wish to change the Domain that the application uses, you can change this
+in the application.xml file.  Modify the domain_id attribute of the domain:
 
-
+```xml
+ <domain name="domain" domain_id="10">
+ ```
 ## Customizing the Build
 
 ### Configuring Build Type and Generator
