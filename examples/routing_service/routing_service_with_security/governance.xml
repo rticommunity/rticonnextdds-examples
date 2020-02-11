@@ -1,35 +1,35 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/dds_security_governance.xsd">
-  <domain_access_rules>
-    <domain_rule>
-      <domains>
-        <id_range>
-		  <!-- This Governance will apply to Domains 1 and 2 -->
-          <min>1</min>
-          <max>2</max>
-        </id_range>
-      </domains>
-	  <!-- Unauthenticated participants won't be allowed to communicate with 
-           secured participants in these domains -->
-      <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
-      <enable_join_access_control>true</enable_join_access_control>
-	  <!-- Encryption is applied to all types of communication, so it is 
-           protected against tampering and eavesdropping -->
-      <discovery_protection_kind>ENCRYPT</discovery_protection_kind>
-      <liveliness_protection_kind>ENCRYPT</liveliness_protection_kind>
-      <rtps_protection_kind>SIGN</rtps_protection_kind>
-      <topic_access_rules>
-        <topic_rule>
-          <topic_expression>*</topic_expression>
-          <enable_discovery_protection>true</enable_discovery_protection>
-          <enable_liveliness_protection>true</enable_liveliness_protection>
-          <enable_read_access_control>true</enable_read_access_control>
-          <enable_write_access_control>true</enable_write_access_control>
-          <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
-          <data_protection_kind>ENCRYPT</data_protection_kind>
-        </topic_rule>
-      </topic_access_rules>
-    </domain_rule>
-  </domain_access_rules>
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/dds_security_governance.xsd">
+    <domain_access_rules>
+        <domain_rule>
+            <domains>
+                <id_range>
+                    <!-- This Governance will apply to Domains 1 and 2 -->
+                    <min>1</min>
+                    <max>2</max>
+                </id_range>
+            </domains>
+            <!-- Unauthenticated participants won't be allowed to communicate with 
+                 secured participants in these domains -->
+            <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
+            <enable_join_access_control>true</enable_join_access_control>
+            <!-- Encryption is applied to all types of communication, so it is 
+                 protected against tampering and eavesdropping -->
+            <discovery_protection_kind>ENCRYPT</discovery_protection_kind>
+            <liveliness_protection_kind>ENCRYPT</liveliness_protection_kind>
+            <rtps_protection_kind>SIGN</rtps_protection_kind>
+            <topic_access_rules>
+                <topic_rule>
+                    <topic_expression>*</topic_expression>
+                    <enable_discovery_protection>true</enable_discovery_protection>
+                    <enable_liveliness_protection>true</enable_liveliness_protection>
+                    <enable_read_access_control>true</enable_read_access_control>
+                    <enable_write_access_control>true</enable_write_access_control>
+                    <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
+                    <data_protection_kind>ENCRYPT</data_protection_kind>
+                </topic_rule>
+            </topic_access_rules>
+        </domain_rule>
+    </domain_access_rules>
 </dds>
