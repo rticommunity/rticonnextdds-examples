@@ -70,16 +70,17 @@ The certificates for this example are signed based on the DSA algorithm.
 In this example, data is only routed from Domain 0 to Domain 1.
 
 ## Before running the example
-Linux-based
------------
+
+### Linux-based
+
 If using dynamic libraries, your LD_LIBRARY_PATH must include
 ``$NDDSHOME/lib/<architecture>`` and 
 ``$RTI_OPENSSLHOME/<architecture>/<release or debug>/lib``
 (location of libcrypto.so and libssl.so).
 
 
-Windows
--------
+### Windows
+
 If using dynamic libraries, your PATH must include
 ``%NDDSHOME%\lib\<architecture>`` and 
 ``%RTI_OPENSSLHOME%\<architecture>\<release or debug>\bin``
@@ -100,10 +101,11 @@ to libeay32z and ssleay32z respectively.and the path to
    type the following in two different command shells, either
    on the same machine or on different machines:
 
-> rtiddsping -publisher -domainId 0
-> rtiddsping -subscriber -domainId 1 -qosFile securedPeerQosProfile.xml -qosProfile SecurityExampleProfiles::SecuredPeer
+   ``` rtiddsping -publisher -domainId 0```
+   
+   ``` rtiddsping -subscriber -domainId 1 -qosFile securedPeerQosProfile.xml -qosProfile SecurityExampleProfiles::SecuredPeer```
 
 
 3. Start the Routing Service on a different command shell:
 
-> rtiroutingservice -cfgFile routingServiceProfile.xml -cfgName security_example
+   ```rtiroutingservice -cfgFile routingServiceProfile.xml -cfgName security_example```
