@@ -1,8 +1,8 @@
 <?xml version="1.0"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
-    version="6.0.0">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/rti_dds_qos_profiles.xsd"
+    version="6.0.1">
 
     <qos_library name="SecurityExampleProfiles">
     
@@ -13,22 +13,60 @@
             <participant_qos>
                 <property>
                     <value>
+                        <!-- Use ECDSA -->
                         <element>
                             <name>dds.sec.auth.identity_ca</name>
-                            <value>file:../../../resources/certAuthority/dsa01/ca/dsa01RootCaCert.pem</value>
+                            <value>file:../../../resources/cert/ecdsa01/ca/ecdsa01RootCaCert.pem</value>
                         </element>
                         <element>
                             <name>dds.sec.auth.identity_certificate</name>
-                            <value>file:../../../resources/certAuthority/dsa01/identities/dsa01Peer01Cert.pem</value>
+                            <value>file:../../../resources/cert/ecdsa01/identities/ecdsa01Peer01Cert.pem</value>
                         </element>
                         <element>
                             <name>dds.sec.auth.private_key</name>
-                            <value>file:../../../resources/certAuthority/dsa01/identities/dsa01Peer01Key.pem</value>
+                            <value>file:../../../resources/cert/ecdsa01/identities/ecdsa01Peer01Key.pem</value>
                         </element>
                         <element>
                             <name>dds.sec.access.permissions_ca</name>
-                            <value>file:../../../resources/certAuthority/dsa01/ca/dsa01RootCaCert.pem</value>
+                            <value>file:../../../resources/cert/ecdsa01/ca/ecdsa01RootCaCert.pem</value>
                         </element>
+                        
+                        <!-- Use DSA -->
+                        <!--<element>
+                            <name>dds.sec.auth.identity_ca</name>
+                            <value>file:../../../resources/cert/dsa01/ca/dsa01RootCaCert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.identity_certificate</name>
+                            <value>file:../../../resources/cert/dsa01/identities/dsa01Peer01Cert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.private_key</name>
+                            <value>file:../../../resources/cert/dsa01/identities/dsa01Peer01Key.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.access.permissions_ca</name>
+                            <value>file:../../../resources/cert/dsa01/ca/dsa01RootCaCert.pem</value>
+                        </element>-->
+                        
+                        <!-- Use RSA -->
+                        <!--<element>
+                            <name>dds.sec.auth.identity_ca</name>
+                            <value>file:../../../resources/cert/rsa01/ca/rsa01RootCaCert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.identity_certificate</name>
+                            <value>file:../../../resources/cert/rsa01/identities/rsa01Peer01Cert.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.auth.private_key</name>
+                            <value>file:../../../resources/cert/rsa01/identities/rsa01Peer01Key.pem</value>
+                        </element>
+                        <element>
+                            <name>dds.sec.access.permissions_ca</name>
+                            <value>file:../../../resources/cert/rsa01/ca/rsa01RootCaCert.pem</value>
+                        </element>-->
+                        
                         <element>
                             <name>dds.sec.access.governance</name>
                             <value>file:./signed/governance.p7s</value>
