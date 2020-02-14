@@ -1,11 +1,11 @@
-# Example Code: XML Application Creation
+# Example Code: XML Application Creation - Environment
 
 ## Concept
 
 The purpose of this example is to demonstrate the use of XML Application Creation
 and the DynamicData API.  The use case is to have an application publish
 environment variables for itself as well as receive environment variables 
-from other instances. 
+from other instances.  These are published to the XML defined EnvironmentTopic.
 
 All the DDS entities are described in a single XML file using 
 [Connext DDS XML Application Creation](https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds/xml_application_creation/html_files/RTI_ConnextDDS_CoreLibraries_XML_AppCreation_GettingStarted/index.htm)
@@ -13,9 +13,9 @@ In code we make use of these entities by loading the file with the QosProvider
 and looking up a individual entity by name. 
 
 In this example both the publisher and subscriber are defined in the same participant.  
-This means that when we publish a sample with the writer, we will receive it on our reader.
+By default, this means that when we publish a sample with the writer, we will receive it on our reader.
 While this may be desireable in some cases, in this case we specifically ignore 
-our own published samples.  
+our own published samples so we only receive data from other publishers, not our own.
 
 ## Example Description
 
