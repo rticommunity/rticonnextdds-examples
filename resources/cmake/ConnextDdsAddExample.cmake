@@ -123,6 +123,7 @@ Function to build an example.
         SOURCES ...
         [PREFIX prefix]
         [OUTPUT_NAME output_name]
+        [QOS_FILENAME]
         [NO_REQUIRE_QOS]
         [DEPENDENCIES ...]
     )
@@ -139,8 +140,11 @@ This method will create the executables from chosen sources.
 ``OUTPUT_NAME``:
     Output name for the application. If not present, the target name will be
     used.
+``QOS_FILENAME``:
+    The filename of the desired QOS file.  If not specified USER_QOS_PROFILES.xml 
+    is used.
 ``NO_REQUIRE_QOS``:
-    If present, the USER_QOS_PROFILES.xml will not be copied to the binary dir.
+    If present, the QoS file will not be copied to the binary dir.
 ``DEPENDENCIES``:
     Other libraries to link.
 
@@ -421,7 +425,7 @@ endfunction()
 
 function(connextdds_add_application)
     set(optional_args NO_REQUIRE_QOS)
-    set(single_value_args TARGET LANG PREFIX OUTPUT_NAME QOS_FILENAME )
+    set(single_value_args TARGET LANG PREFIX OUTPUT_NAME QOS_FILENAME)
     set(multi_value_args SOURCES DEPENDENCIES)
 
     cmake_parse_arguments(_CONNEXT
