@@ -113,18 +113,16 @@ cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ### CMake Build Infrastructure
 
 The CMakeListst.txt script that builds this example uses a generic CMake
-function called connextdds_add_example that defines all the necessary constructs
+function called connextdds_add_application that defines all the necessary constructs
 to:
 
-1.  Run RTI Code Generator to generate the serialization/deserialization code
-    for the types defined in the IDL file associated with the example.
+1.  Specify the target language.
 
-2.  Build the corresponding Publisher and Subscriber applications.
+2.  Build the application executable.
 
-3.  Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
-    and subscriber executables are generated.
+3.  Copy the application.xml file into the directory where the executable is generated.
 
-You will find the definition of connextdds_add_example, along with detailed
+You will find the definition of connextdds_add_application, along with detailed
 documentation, in
 [resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
 
