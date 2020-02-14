@@ -118,4 +118,5 @@ target_link_libraries(SensorDataSubscriber
 set_target_properties(SensorDataSubscriber
     PROPERTIES
     CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED
 )
