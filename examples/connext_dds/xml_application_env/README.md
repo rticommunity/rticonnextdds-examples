@@ -25,12 +25,12 @@ The code for this example is laid out in the following way:
 1)  XML file *application.xml* (also known as a QoS file) is defined using the
 [RTI DDS Profiles Schema](http://community.rti.com/schema/6.0.0/rti_dds_profiles.xsd).
 This file defines the type ```KeyValuePair```, the topic ```EnvironmentTopic```
-as well as the ```Participant``` and all its child publisher, subscriber, 
+as well as the ```Participant``` and all its child publisher, subscriber,
 reader and writer.
-           
+
 2)  The participant is created using the call to ```create_participant_from_config()```.
 Using the participant the reader and writer are found and stored as references
-in the code.  The reader and the writer are both specialized as <DynamicData> which
+in the code.  The reader and the writer are both specialized as **DynamicData** which
 allows the XML defintion of the type to be used without any code generation step.
 
 3)  A listener is registered on the reader.  When the ```on_data_available()``` event
