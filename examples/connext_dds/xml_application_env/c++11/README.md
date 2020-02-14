@@ -1,4 +1,4 @@
-# Example Code: Example Code: XML Application Creation - Environment
+# Example Code: XML Application Creation - Environment
 
 The purpose of this example is to demonstrate the use of XML Application Creation
 and the Dynamic Data API.
