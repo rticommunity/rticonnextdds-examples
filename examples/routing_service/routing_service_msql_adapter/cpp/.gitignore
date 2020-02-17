@@ -1,0 +1,5 @@
+# ingnore all files in rs_dll/build
+rs_dll/build
+# ignore all files in rs_main/build
+rs_main/build
+!.gitignore
