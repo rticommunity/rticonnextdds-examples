@@ -1,0 +1,33 @@
+
+module rti {
+module recording {
+module examples {
+
+struct ReducedDCPSPublication {
+    boolean valid_data;
+    string<256> topic_name;
+    string<256> type_name;
+    sequence<octet> type;
+};
+
+const unsigned long GUID_LENGTH = 16;
+
+struct SequenceNumber {
+    long high;
+    unsigned long low;
+};
+
+struct UserDataKey {
+    int64 reception_timestamp;
+    octet original_writer_v_guid[GUID_LENGTH];
+    SequenceNumber original_v_seq_nr;
+};
+
+struct UserDataValue {
+    boolean valid_data;
+    sequence<char> data_blob;
+};
+
+};
+};
+};
