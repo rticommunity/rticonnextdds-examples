@@ -40,12 +40,14 @@ string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
 
 # Enable sanitizers
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address  -fsanitize=leak -g")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address  -fsanitize=leak")
-set(CMAKE_EXE_LINKER_FLAGS 
-    "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -fsanitize=leak")
-set(CMAKE_MODULE_LINKER_FLAGS 
-    "${CMAKE_MODULE_LINKER_FLAGS} -fsanitize=address -fsanitize=leak")
+if(ENABLE_SANITIZERS)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address  -fsanitize=leak -g")
+    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=address  -fsanitize=leak")
+    set(CMAKE_EXE_LINKER_FLAGS 
+        "${CMAKE_EXE_LINKER_FLAGS} -fsanitize=address -fsanitize=leak")
+    set(CMAKE_MODULE_LINKER_FLAGS 
+        "${CMAKE_MODULE_LINKER_FLAGS} -fsanitize=address -fsanitize=leak")
+endif()
 
 
 # Create the directory that's going to contain the generated code files

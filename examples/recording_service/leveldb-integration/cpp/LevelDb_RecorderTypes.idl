@@ -3,6 +3,11 @@ module rti {
 module recording {
 module examples {
 
+//
+// This type will be used to record relevant DCPSPublication information, but
+// without the overhead of storing all of the fields. We just need to store the
+// valid data flag, and the topic name, type name and serialized type object.
+//
 struct ReducedDCPSPublication {
     boolean valid_data;
     string<256> topic_name;
@@ -17,12 +22,22 @@ struct SequenceNumber {
     unsigned long low;
 };
 
+//
+// In order to use a no-SQL key-value storage, we need a way to uniquely 
+// identify a DDS sample and to easily access the time the sample arrived
+// (represented by the reception timestamp).
+// This type is used as the key for both publication data and user-data topics.
 struct UserDataKey {
     int64 reception_timestamp;
     octet original_writer_v_guid[GUID_LENGTH];
     SequenceNumber original_v_seq_nr;
 };
 
+//
+// This type is used to store a user-data sample into the key-value store.
+// For performance and simplicity, we will only store one Sample Info field
+// alongside with the serialized CDR sample: the valid data flag.
+//
 struct UserDataValue {
     boolean valid_data;
     sequence<char> data_blob;

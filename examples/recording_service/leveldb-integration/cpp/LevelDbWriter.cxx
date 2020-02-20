@@ -46,7 +46,7 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
     /* Get working directory from properties */
     working_dir_ = rti::recording::get_from_properties<std::string>(
             properties,
-            WORKING_DIR_PROPERTY)
+            WORKING_DIR_PROPERTY);
 
     /*
      * Create the metadata file that will be used to store the start and stop

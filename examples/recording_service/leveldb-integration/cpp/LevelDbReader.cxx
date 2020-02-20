@@ -36,7 +36,7 @@ LevelDbReader::LevelDbReader(const rti::routing::PropertySet& properties) :
     /* Get working directory from properties */
     working_dir_ = rti::recording::get_from_properties<std::string>(
             properties,
-            WORKING_DIR_PROPERTY)
+            WORKING_DIR_PROPERTY);
 }
 
 LevelDbReader::~LevelDbReader()
