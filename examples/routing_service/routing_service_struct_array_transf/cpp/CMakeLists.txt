@@ -114,3 +114,9 @@ target_link_libraries(SensorDataSubscriber
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS})
+    
+set_target_properties(SensorDataSubscriber
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED ON
+)
