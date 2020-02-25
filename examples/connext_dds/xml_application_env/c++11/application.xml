@@ -1,0 +1,87 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2020 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<!-- 
+Description
+XML QoS Profile for the XML Application - Environment Example
+
+The XML Application definition of the DDS entities in this example is 
+loaded from this file.
+
+This file intentionally does not have the default file of USER_QOS_PROFILES.xml.
+The application code uses the QosProvider to load the file explicitly instead
+loading the default file implicitly.
+
+For more information about XML-Based Application Creation, see the 
+RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Guide.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_profiles.xsd"
+     version="6.0.0">
+  
+  <!-- QoS Library containing the QoS profile used in the example. 
+          KeepLastReliable is used as the base profile. -->
+  <qos_library name="Qos_Library">
+    <qos_profile name="DefaultProfile">
+	      <participant_qos base_name="BuiltinQosLibExp::Generic.KeepLastReliable">
+        <!-- The participant name, if it is set, will be displayed in the RTI
+                    Analyzer tool, making it easier for you to tell one application
+                    from another when you're debugging. -->
+        <participant_name>
+          <name>XML Application Creation C++11 Example</name>
+        </participant_name>
+      </participant_qos>
+    </qos_profile>
+
+  </qos_library>
+  
+  <!-- Define the available types which can be realized as DynamicData.
+          The type used in this example is the KeyValuePair.  It represents a 
+          key and a value to represent an envirnment variable.  Additionally 
+          an id is used to identify different instances of the application. -->
+  <types>
+    <const name="KEY_MAX_LEN" type="long" value="64"/>
+    <const name="VALUE_MAX_LEN" type="long" value="2048"/>
+    <struct name="KeyValuePair">
+      <member name="id" type="int64" key="true" />
+      <member name="key" type="string" stringMaxLength="KEY_MAX_LEN" key="true" />
+      <member name="value" type="string" stringMaxLength="VALUE_MAX_LEN" />
+    </struct>
+  </types>
+
+  <!-- Define the domain to register types and topics.
+          The KeyValuePair must be registered as a type, and then that type 
+          is used to define the topic EnvironmentTopic.  -->
+  <domain_library name="domain_library">
+    <domain name="domain" domain_id="10">
+      <register_type name="KeyValuePairType" type_ref ="KeyValuePair" />
+      <topic name="EnvironmentTopic" register_type_ref="KeyValuePairType" />
+    </domain>
+  </domain_library>
+
+  <!-- The domain participant wraps up the other defintions into a top level 
+          entity that applications create from this qos definitition.  The
+          Participant references the domain defined in the domain library above
+          and defines the publisher and subscriber.  The associated data reader
+           and writer refrence the EnvironmentTopic as defined in the domain -->
+  <domain_participant_library name="domain_participant_library">
+    <domain_participant name="participant" domain_ref="domain_library::domain">
+      <publisher name="publisher">
+        <data_writer name="writer" topic_ref="EnvironmentTopic"/>
+      </publisher>
+      <subscriber name="subscriber">
+        <data_reader name="reader" topic_ref="EnvironmentTopic" />
+      </subscriber>
+    </domain_participant>
+  </domain_participant_library>
+
+</dds>
+
