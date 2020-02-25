@@ -14,8 +14,8 @@
 #define RTI_RECORDING_EXAMPLES_UTILS_H_
 
 
-#include <dds/core/Time.hpp>
-#include <dds/core/Duration.hpp>
+#include <dds/dds.hpp>
+
 #include <rti/core/constants.hpp>
 
 #include <leveldb/comparator.h>

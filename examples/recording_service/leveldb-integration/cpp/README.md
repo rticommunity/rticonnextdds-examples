@@ -79,6 +79,9 @@ system:
 - `LEVELDB_INCLUDE`: it should point to where the LevelDB API header files are
   located. This will normally be the `include` directory inside the directory
   where you cloned or extracted the LevelDB source code.
+- `BUILD_SHARED_LIBS`: required. The shared libraries flag needs to be on for
+  this example, as *RTI Recording Service* works by loading the libraries
+  dynamically.
 
 Build the example code by running the following command:
 
@@ -88,6 +91,7 @@ cd build
 cmake -DCONNEXTDDS_DIR=<connext directory> 
       -DCONNEXTDDS_ARCH=<connext architecture>
       -DCMAKE_BUILD_TYPE=Release 
+      -DBUILD_SHARED_LIBS=ON
       -DLEVELDB_DIR=<leveldb directory>
       -DLEVELDB_INCLUDE=<leveldb include directory>
       ..
@@ -107,7 +111,9 @@ command as follows:
 cmake -DCONNEXTDDS_DIR=<connext dir> 
       -DCONNEXTDDS_ARCH=<connext architecture>
       -DCMAKE_BUILD_TYPE=Release 
-      -DBUILD_SHARED_LIBS=ON .. 
+      -DBUILD_SHARED_LIBS=ON
+      -DLEVELDB_DIR=<leveldb directory>
+      -DLEVELDB_INCLUDE=<leveldb include directory>
       -A x64
 ```
 

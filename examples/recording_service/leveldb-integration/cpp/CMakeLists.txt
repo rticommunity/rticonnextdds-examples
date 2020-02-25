@@ -17,8 +17,6 @@ set(CMAKE_DEBUG_POSTFIX "d")
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
-set(BUILD_SHARED_LIBS "ON")
-
 find_package(
     RTIConnextDDS "6.0.1"
     REQUIRED
@@ -36,8 +34,13 @@ find_library(
 )
 
 # Disable RTTI.
-string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    string(REGEX REPLACE "/GR" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /GR-")
+else()
+    string(REGEX REPLACE "-frtti" "" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fno-rtti")
+endif()
 
 # Enable sanitizers
 if(ENABLE_SANITIZERS)
@@ -78,7 +81,7 @@ add_custom_target(
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    LevelDbWriter SHARED
+    LevelDbWriter MODULE
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
@@ -90,17 +93,19 @@ set_target_properties(
     PROPERTIES CXX_STANDARD 11
 )
 
+
 target_link_libraries(
     LevelDbWriter
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
-    ${CONNEXTDDS_EXTERNAL_LIBS}
     "${leveldb_lib}"
+    ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
     LevelDbWriter
     PUBLIC 
+        "${CMAKE_CURRENT_SOURCE_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}/generated"
         "${LEVELDB_INCLUDE}"
@@ -110,7 +115,7 @@ add_dependencies(LevelDbWriter generated_code)
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    LevelDbReader SHARED
+    LevelDbReader MODULE
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
@@ -126,8 +131,8 @@ target_link_libraries(
     LevelDbReader
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
-    ${CONNEXTDDS_EXTERNAL_LIBS}
     "${leveldb_lib}"
+    ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
@@ -143,14 +148,28 @@ add_dependencies(LevelDbReader generated_code)
 # Define the test executable
 add_executable(
     tester 
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/Tests.cxx")
 
 target_link_libraries(
     tester 
-    LevelDbWriter 
-    LevelDbReader
+    "${leveldb_lib}"
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
+target_include_directories(
+    tester
+    PUBLIC 
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
+        "${LEVELDB_INCLUDE}"
+)

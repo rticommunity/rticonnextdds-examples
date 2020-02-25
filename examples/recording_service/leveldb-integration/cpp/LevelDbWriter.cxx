@@ -13,15 +13,15 @@
 #include <memory>
 #include <algorithm>
 
-#include <dds_c/dds_c_typeobject.h>
-
-#include <leveldb/db.h>
-#include <leveldb/write_batch.h>
 #include <dds/core/types.hpp>
 #include <rti/core/constants.hpp>
 
-#include "LevelDbWriter.hpp"
+#include <leveldb/write_batch.h>
+
+#include <rti/recording/storage/StorageDefs.hpp>
+
 #include "LevelDb_RecorderTypes.hpp"
+#include "LevelDbWriter.hpp"
 
 
 #define WORKING_DIR_PROPERTY "rti.recording.examples.leveldb.working_dir"

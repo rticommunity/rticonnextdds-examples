@@ -21,7 +21,6 @@
 
 #include <leveldb/db.h>
 
-#include "LevelDb_RecorderTypes.hpp"
 #include "Utils.hpp"
 
 
@@ -50,7 +49,6 @@ RTI_RECORDING_STORAGE_READER_CREATE_DECL(LevelDbReader);
  *   the value being of type 'UserDataValue'. For more information, check the
  *   IDL file (LevelDb_RecorderTypes.idl) provided with this example.
  */
-RTI_USER_DLL_EXPORT
 class LevelDbReader : public rti::recording::storage::StorageReader {
 public:
 
@@ -102,7 +100,6 @@ private:
 /*
  * [TODO]
  */
-RTI_USER_DLL_EXPORT
 class LevelDbStreamReader :
         public rti::recording::storage::DynamicDataStorageStreamReader {
 public:
@@ -176,7 +173,6 @@ private:
 /*
  * [TODO]
  */
-RTI_USER_DLL_EXPORT
 class LevelDbStreamInfoReader :
         public rti::recording::storage::StorageStreamInfoReader {
 public:

@@ -173,6 +173,7 @@ LevelDbStreamReader::LevelDbStreamReader(
      */
     const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
+    DDS_DataRepresentationId_t auto_rep_id = DDS_AUTO_DATA_REPRESENTATION;
 
     db_iterator_ = std::unique_ptr<leveldb::Iterator>(
             data_db_->NewIterator(leveldb::ReadOptions()));

@@ -10,12 +10,7 @@
  * use or inability to use the software.
  */
 
-#include <dds_c/dds_c_string.h>
-
-#include <rti/core/NativeValueType.hpp>
-#include <dds/sub/SampleInfo.hpp>
-#include <dds/core/xtypes/DynamicType.hpp>
-#include <dds/core/xtypes/DynamicData.hpp>
+#include <dds/dds.hpp>
 
 #include <rti/recording/storage/StorageDefs.hpp>
 
@@ -24,6 +19,8 @@
 #include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbReader.hpp"
 #include "LevelDbWriter.hpp"
+
+#include <dds_c/dds_c_string.h>
 
 /**
  * This test application creates a storage writer and a storage reader of the
@@ -183,8 +180,11 @@ int main(int argc, char **argv)
         /* Add time range (end and start timestamps) to property set */
         stream_properties[rti::recording::start_timestamp_property_name()] =
                 "1000000000";
+        const int64_t max_int = LLONG_MAX;
+        std::stringstream max_int_stream;
+        max_int_stream << max_int;
         stream_properties[rti::recording::end_timestamp_property_name()] =
-                "1682025910000000000";
+                max_int_stream.str();
 
         rti::recording::storage::StorageStreamInfoReader *stream_info_reader =
                 leveldb_reader->create_stream_info_reader(stream_properties);
@@ -266,6 +266,8 @@ int main(int argc, char **argv)
     } catch (const std::exception& ex) {
         std::cerr << "Test Failed!!" << std::endl;
         std::cerr << "    Exception thrown: " << ex.what() << std::endl;
+        return EXIT_FAILURE;
     }
     std::cout << "Test Passed!!" << std::endl;
+    return EXIT_SUCCESS;
 }

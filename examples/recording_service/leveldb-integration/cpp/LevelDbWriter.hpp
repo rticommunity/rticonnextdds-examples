@@ -15,11 +15,11 @@
 
 #include <fstream>
 
-#include <leveldb/db.h>
+#include <routingservice/routingservice_infrastructure.h>
 
-#include "rti/recording/storage/StorageWriter.hpp"
-#include "rti/recording/storage/StorageStreamWriter.hpp"
-#include "rti/recording/storage/StorageDiscoveryStreamWriter.hpp"
+#include <rti/recording/storage/StorageWriter.hpp>
+
+#include <leveldb/db.h>
 
 #include "Utils.hpp"
 
@@ -47,7 +47,6 @@ RTI_RECORDING_STORAGE_WRITER_CREATE_DECL(LevelDbWriter);
  * stream writers is also defined in this file as a subset of the information
  * in the topic's type.
  */
-RTI_USER_DLL_EXPORT
 class LevelDbWriter : public rti::recording::storage::StorageWriter {
 public:
 
@@ -107,7 +106,6 @@ private:
  * stream name and the domain ID (of the format '<stream-name>@<domain-id>' to
  * store data samples.
  */
-RTI_USER_DLL_EXPORT
 class LevelDbStreamWriter :
         public rti::recording::storage::DynamicDataStorageStreamWriter {
 public:
@@ -151,7 +149,6 @@ private:
  * called 'DCPSPublication.dat' where it will store a reduced version of the
  * full DCPSPublication topic's type, for example purposes.
  */
-RTI_USER_DLL_EXPORT
 class PubDiscoveryLevelDbWriter :
         public rti::recording::storage::PublicationStorageWriter {
 public:
