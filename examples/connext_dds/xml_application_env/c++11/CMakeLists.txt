@@ -16,7 +16,7 @@ include(ConnextDdsAddExample)
 connextdds_add_application(
     TARGET xml_application_env
     LANG "C++11"
-    SOURCES xml_application_env.cpp
+    SOURCES "${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env.cpp"
     QOS_FILENAME "application.xml"
 )
 
