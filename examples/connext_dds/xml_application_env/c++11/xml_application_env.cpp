@@ -9,7 +9,6 @@
  use the software.
  ******************************************************************************/
 
-#include <chrono>
 #include <cstdlib>
 #include <dds/dds.hpp>
 #include <iostream>
@@ -58,19 +57,14 @@ void publish_env(int id,
         const DynamicType &kvpType,
         char *env[])
 {
-    // Create one sample from the specified type and populate the time field.
+    // Create one sample from the specified type and populate the id field.
     // This sample will be used repeatedly in the loop below.
     DynamicData sample(kvpType);
     sample.value<int64_t>("id", id);
-    auto now = std::chrono::high_resolution_clock::now()
-                       .time_since_epoch()
-                       .count();
-    sample.value<int64_t>("time", now);
-
-    char buf[4096];
 
     // Loop over the env pointer, extract the key and value from the enviroment
     // variable, set the values in the sample, and write with the writer.
+    char buf[4096];
     while (*env) {
         try {
             strncpy(buf, *env, 4095);
@@ -81,8 +75,7 @@ void publish_env(int id,
             sample.value<std::string>("value", value);
             env++;
 
-            // Now we can write out the populated sample of a single environment
-            // variable.
+            // Now we can write out the populated sample.
             writer.write(sample);
         } catch (std::exception ex) {
             std::cout << "Exception caught publishing sample: " << ex.what()

@@ -46,8 +46,7 @@ RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Gu
   <!-- Define the available types which can be realized as DynamicData.
           The type used in this example is the KeyValuePair.  It represents a 
           key and a value to represent an envirnment variable.  Additionally 
-          an id is used to identify different instances of the application,
-          as well as a time value to mark when the variables were published. -->
+          an id is used to identify different instances of the application. -->
   <types>
     <const name="KEY_MAX_LEN" type="long" value="64"/>
     <const name="VALUE_MAX_LEN" type="long" value="2048"/>
@@ -55,7 +54,6 @@ RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Gu
       <member name="id" type="int64" key="true" />
       <member name="key" type="string" stringMaxLength="KEY_MAX_LEN" key="true" />
       <member name="value" type="string" stringMaxLength="VALUE_MAX_LEN" />
-	  <member name="time" type="int64" />
     </struct>
   </types>
 
