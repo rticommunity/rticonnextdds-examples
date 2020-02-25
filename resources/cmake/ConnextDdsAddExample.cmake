@@ -98,9 +98,10 @@ Function to copy the USER_QOS_PROFILES.xml file.
     connextdds_copy_qos_profile(
         TARGET_PREFIX prefix
         DEPENDANT_TARGET dependant_target
+        [FILENAME qos_filename]
     )
 
-Copy the USER_QOS_PROFILES.xml file It will create the ``<prefix>_<lang>_qos``
+Copy the QoS profile file.  It will create the ``<prefix>_<lang>_qos``
 target. It will make the given target dependant of the target for the QoS.
 
 ``TARGET_PREFIX (required)``:
@@ -108,7 +109,9 @@ target. It will make the given target dependant of the target for the QoS.
 ``DEPENDANT_TARGET``:
     This target will depends of the created QoS target. So, when the dependant
     target is build, the QoS file will be copied.
-
+``FILENAME``:
+    The filename of the QoS file to be copied.  If not specified the default
+    name USER_QOS_PROFILES.xml will be used.
 
 connextdds_add_application
 --------------------------
@@ -380,7 +383,7 @@ function(connextdds_copy_qos_profile)
 
     if(_EXAMPLE_QOS_FILENAME) 
         set(user_qos_profile_name ${_EXAMPLE_QOS_FILENAME})
-	else()
+    else()
         set(user_qos_profile_name "USER_QOS_PROFILES.xml")
     endif()
 

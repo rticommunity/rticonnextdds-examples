@@ -54,8 +54,8 @@ class MyDataReaderListener : public NoOpDataReaderListener<DynamicData> {
 //  kvpType - a key value pair DynamicType
 //  env - the environment array
 void publish_env(int id,
-        DataWriter<DynamicData> writer,
-        DynamicType kvpType,
+        DataWriter<DynamicData> &writer,
+        const DynamicType &kvpType,
         char *env[])
 {
     // Create one sample from the specified type and populate the time field.
