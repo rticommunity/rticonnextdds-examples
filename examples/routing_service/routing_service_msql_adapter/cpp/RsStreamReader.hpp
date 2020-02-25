@@ -32,9 +32,8 @@ public:
 
     virtual ~RsStreamReader();
 
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &samples,
-                 std::vector<dds::sub::SampleInfo *> &infos) final;
+    void take(std::vector<dds::core::xtypes::DynamicData *> &samples,
+            std::vector<dds::sub::SampleInfo *> &infos) final;
 
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &samples,

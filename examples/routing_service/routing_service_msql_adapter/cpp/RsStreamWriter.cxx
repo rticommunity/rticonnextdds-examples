@@ -14,49 +14,49 @@
 #include "ConnectorMsqlDb.hpp"
 #include "RsLog.hpp"
 
-#define RTI_RS_LOG_ARGS	"RsStreamWriter"
+#define RTI_RS_LOG_ARGS "RsStreamWriter"
 
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 using namespace dds::core::xtypes;
 using namespace dds::sub;
 
-RsStreamWriter::RsStreamWriter(const StreamInfo &streamInfo, const PropertySet& properties)
+RsStreamWriter::RsStreamWriter(
+        const StreamInfo &streamInfo,
+        const PropertySet &properties)
 {
-	connWriter_ = new ConnectorMsqlDb(streamInfo.stream_name(), properties);
+    connWriter_ = new ConnectorMsqlDb(streamInfo.stream_name(), properties);
 }
 
 RsStreamWriter::~RsStreamWriter()
 {
-	delete connWriter_;
+    delete connWriter_;
 }
 
 auto RsStreamWriter::write(
-	const std::vector<DynamicData *>& sample_seq,
-	const std::vector<SampleInfo *>& info_seq) -> int
+        const std::vector<DynamicData *> &sample_seq,
+        const std::vector<SampleInfo *> &info_seq) -> int
 {
-	RTI_RS_LOG_FN(write);
+    RTI_RS_LOG_FN(write);
 
-	if (connWriter_->connected() == false) {
-		return 0;
-	}
+    if (connWriter_->connected() == false) {
+        return 0;
+    }
 
-	unsigned int count = 0;
-	if (sample_seq.size() == info_seq.size()) {
-		for (int i = 0; i < sample_seq.size(); i++) {
-			if (info_seq[i]->valid()) {
+    unsigned int count = 0;
+    if (sample_seq.size() == info_seq.size()) {
+        for (int i = 0; i < sample_seq.size(); i++) {
+            if (info_seq[i]->valid()) {
+                /* write data to the connector writer */
+                if (connWriter_->writeData(sample_seq[i])) {
+                    count++;
+                }
+            }
+        }
+    } else {
+        RTI_RS_ERROR("Sample and Info sequeces different lengths");
+    }
 
-				/* write data to the connector writer */
-				if (connWriter_->writeData(sample_seq[i])) {
-					count++;
-				}
-			}
-		}
-	}
-	else {
-		RTI_RS_ERROR("Sample and Info sequeces different lengths");
-	}
-
-	/* return number of samples written */
-	return count;
+    /* return number of samples written */
+    return count;
 }
