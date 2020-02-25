@@ -1,5 +1,5 @@
 #
-# (c) 2018 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# (c) 2020 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 #
 #  RTI grants Licensee a license to use, modify, compile, and create derivative
 #  works of the Software.  Licensee has the right to distribute object form
@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 
 
-cmake_minimum_required(VERSION 3.12)
+cmake_minimum_required(VERSION 3.11)
 project (MsqlAdapter)
 
 if(DEFINED ENV{NDDSHOME})
@@ -28,20 +28,13 @@ if(NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR ${msg})
 endif()
 
-if(NOT CONNEXTDDS_ARCH)
-    set(msg
-        "CONNEXTDDS_ARCH must be defined. For example, -DCONNEXTDDS_ARCH=x64Win64VS2017")
-    message(FATAL_ERROR ${msg})
-endif()
-
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
-    "$ENV{NDDSHOME}/resource/cmake"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../resources/cmake"
 )
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 find_package(
     RTIConnextDDS "6.0.1"
     REQUIRED
@@ -50,18 +43,20 @@ find_package(
         routing_service
 )
 
-# Compiler Definitions 
-add_compile_definitions(RTI_RS_USE_LOG) # if defined use logging
+find_package(ODBC)
 
 # Define the library that will provide the Adapter plugin
 add_library(msqladapter
     "${CMAKE_CURRENT_SOURCE_DIR}/../RsAdapterPlugin.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/../RsConnection.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/../RsStreamWriter.cxx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../RsStreamReader.cxx"
-	"${CMAKE_CURRENT_SOURCE_DIR}/../RsInputDiscoveryStreamReader.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../RsStreamReader.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../RsInputDiscoveryStreamReader.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/../ConnectorBase.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/../ConnectorMsqlDb.cxx")
+    
+# Compiler Definitions 
+target_compile_definitions(msqladapter PUBLIC RTI_RS_USE_LOG) # if defined use logging
 
 # Set target properties for lang requirement output library name
 set_target_properties(msqladapter
@@ -82,7 +77,7 @@ set_target_properties(msqladapter
 target_link_libraries(msqladapter
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::routing_service_infrastructure
-	odbc32.lib)
+	ODBC::ODBC)
 
 target_include_directories(msqladapter
     PUBLIC

@@ -20,7 +20,7 @@ There are two xml files in the rs_dds_msql_adapter\rs_main directory.
 To turn off logging edit CMakeLists.txt and comment out the following.
 
 ```
-add_compile_definitions(RTI_RS_USE_LOG) # if defined use logging
+target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use logging
 ```
 
 ## Building Debug executable:
