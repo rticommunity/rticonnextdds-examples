@@ -224,7 +224,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         } else if (retcode != DDS_RETCODE_OK) {
             // Is an error
             printf("take error: %d\n", retcode);
-            break;
+            continue;
         }
 
         int len = 0;

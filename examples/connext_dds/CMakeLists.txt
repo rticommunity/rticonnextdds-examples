@@ -107,7 +107,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
 
 # custom_transport
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
+if(NOT WIN32)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
+endif()
 
 # deadline_contentfilter
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c")
@@ -244,3 +246,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++11")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
+
+# xml application
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
