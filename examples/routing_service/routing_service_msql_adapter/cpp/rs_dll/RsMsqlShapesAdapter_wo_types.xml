@@ -1,0 +1,366 @@
+<?xml version="1.0"?>
+<!--
+  (c) 2020 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+  
+  RTI grants Licensee a license to use, modify, compile, and create derivative
+  works of the Software.  Licensee has the right to distribute object form
+  only for use with RTI products.  The Software is provided "as is", with no
+  warranty of any type, including any warranty for fitness for any purpose.
+  RTI is under no obligation to maintain or support the Software.  RTI shall
+  not be liable for any incidental or consequential damages arising out of the
+  use or inability to use the software.
+-->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/6.0.1/rti_routing_service.xsd">
+
+  <plugin_library name="MsqlDataPlugins">
+    <adapter_plugin name="MsqlAdapter">
+      <dll>msqladapter</dll>
+      <create_function>
+        RsAdapterPlugin_create_adapter_plugin
+      </create_function>
+    </adapter_plugin>
+  </plugin_library>
+
+  <qos_library name="RsMsqlQosLib">
+    <qos_profile name="RsMsqlQosReliableProfile" base_name="BuiltinQosLibExp::Generic.KeepLastReliable">
+      <datareader_qos>
+        <history>
+          <kind>KEEP_LAST_HISTORY_QOS</kind>
+        </history>
+      </datareader_qos>
+      <datawriter_qos>
+        <history>
+          <kind>KEEP_LAST_HISTORY_QOS</kind>
+        </history>
+        <lifespan>
+          <duration>
+            <sec>5</sec>
+            <nanosec>0</nanosec>
+          </duration>
+        </lifespan>
+      </datawriter_qos>
+    </qos_profile>
+  </qos_library>
+
+  <routing_service name="RS_DDS_To_MSQL">
+
+    <annotation>
+      <documentation>
+        Read DDS shapes on domain 0 and write to MSQL database
+      </documentation>
+    </annotation>
+
+    <administration>
+      <domain_id>0</domain_id>
+      <distributed_logger>
+        <enabled>true</enabled>
+      </distributed_logger>
+    </administration>
+
+    <!-- this route uses discovery to discover the types 
+	     therefore the types are not defined in XML -->
+    <domain_route name="DDS_to_MSQL_Route">
+      <participant name="DDS_Participant">
+        <domain_id>0</domain_id>
+        <participant_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+      </participant>
+
+      <!-- Configures a custom, adapter-based connection -->
+      <connection name="msql_connection" plugin_name="MsqlDataPlugins::MsqlAdapter">
+        <!-- Add properties here to configure the Connection instance.-->
+      </connection>
+
+      <session name="dds_to_msql_session" enabled="true">
+
+        <route name="Squares Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <dds_input name="Squares" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datareader_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Square</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_input>
+          <output connection="msql_connection" name="MsqlSquares">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <stream_name>Square</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamWriter. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </output>
+        </route>
+
+        <route name="Circles Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <dds_input name="Circles" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datareader_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Circle</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_input>
+          <output connection="msql_connection" name="MsqlCircles">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <stream_name>Circle</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamWriter. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </output>
+        </route>
+
+        <route name="Triangles Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <dds_input name="Triangles" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datareader_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Triangle</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_input>
+          <output connection="msql_connection" name="MsqlTriangles">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <stream_name>Triangle</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamWriter. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </output>
+        </route>
+      </session>
+    </domain_route>
+  </routing_service>
+
+  <routing_service name="RS_MSQL_To_DDS">
+    <annotation>
+      <documentation>
+        Read from MSQL database and publish DDS shapes on domain 0
+      </documentation>
+    </annotation>
+
+    <administration>
+      <domain_id>0</domain_id>
+      <distributed_logger>
+        <enabled>true</enabled>
+      </distributed_logger>
+    </administration>
+
+    <!-- this route uses discovery to discover the types 
+	therefore the types are not defined here in XML -->
+    <domain_route name="MSQL_to_DDS_Route">
+      <participant name="DDS_Participant">
+        <domain_id>0</domain_id>
+        <participant_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+      </participant>
+
+      <!-- Configures a custom, adapter-based connection -->
+      <connection name="msql_connection" plugin_name="MsqlDataPlugins::MsqlAdapter">
+        <!-- Add properties here to configure the Connection instance.-->
+      </connection>
+
+      <session name="msql_to_dds_session" enabled="true">
+
+        <route name="Squares Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <input connection="msql_connection" name="MsqlSquares">
+            <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+            <stream_name>Square</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamReader. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </input>
+          <dds_output name="Squares" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datawriter_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Square</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_output>
+        </route>
+
+        <route name="Circles Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <input connection="msql_connection" name="MsqlCircles">
+            <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+            <stream_name>Circle</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamReader. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </input>
+          <dds_output name="Circles" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datawriter_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Circle</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_output>
+        </route>
+
+        <route name="Triangles Route">
+          <!-- To use types discovered in either one of the domains for the creation of both  
+          the StreamReader and StreamWriter, you must set the <route_types> tag to true. -->
+          <route_types>true</route_types>
+          <input connection="msql_connection" name="MsqlTriangles">
+            <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+            <stream_name>Triangle</stream_name>
+            <registered_type_name>ShapeType</registered_type_name>
+            <!-- Add properties here to configure the StreamReader. -->
+            <property>
+              <value>
+                <element>
+                  <name>msql.db.servername</name>
+                  <value>RTI-10591\SQLEXPRESS</value>
+                </element>
+                <element>
+                  <name>msql.db.dbname</name>
+                  <value>Shapes</value>
+                </element>
+                <element>
+                  <name>msql.db.tablename</name>
+                  <value>Shapes_table</value>
+                </element>
+                <element>
+                  <name>msql.db.username</name>
+                  <value>rti_shapes_rs</value>
+                </element>
+                <element>
+                  <name>msql.db.password</name>
+                  <value>abc123</value>
+                </element>
+              </value>
+            </property>
+          </input>
+          <dds_output name="Triangles" participant="DDS_Participant">
+            <creation_mode>ON_ROUTE_MATCH</creation_mode>
+            <datawriter_qos base_name="RsMsqlQosLib::RsMsqlQosReliableProfile"/>
+            <topic_name>Triangle</topic_name>
+            <registered_type_name>ShapeType</registered_type_name>
+          </dds_output>
+        </route>
+      </session>
+
+    </domain_route>
+
+  </routing_service>
+
+</dds>
+
+
