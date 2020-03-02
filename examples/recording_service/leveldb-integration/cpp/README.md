@@ -480,18 +480,131 @@ of this method is:
       
     - Then serialize the `UserDataValue` sample into CDR.
     
+        ```cpp
+        dds::topic::topic_type_support<UserDataValue>::to_cdr_buffer(value_buffer_, value);
+        ```
         
+One important aspect to notice is that we insert all the samples
+passed in to the method as one single database operation, by using
+the `leveldb::WriteBatch` class. This class is where the key-value
+pairs are `Put()` into, to finally call `Write()` to actually
+write the samples into storage.
+    
+#### Implementation details of class `PubDiscoveryLevelDbWriter`
 
+Publication data is also stored in serialized format. Type 
+`UserDataKey` is used as the key data, and type 
+`ReducedDCPSPublication` is used as the value data. The code
+for the types defined in file `LevelDb_RecorderTypes.idl` will be
+generated automatically. The generated code includes methods to
+serialize and deserialize samples to and from CDR format.
 
+The main members of the `PubDiscoveryLevelDbWriter` class are:
 
+- `discovery_db_`: this is the LevelDB database object that will be
+  used to store the `DCPSPublication`.
+- `key_buffer_`: a byte (char) buffer used to store the serialized
+  key sample.
+- `value_buffer_`: a byte (char) buffer used to store the serialized
+  value sample.
 
+**Constructor**
 
+The constructor of this class opens the publication database, with
+fixed name (`DCPSPublication.dat`).
 
+Here the key value's byte buffer is also initialized properly, using
+the type's samples max serialized size:
 
+```cpp
+const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
+```
 
+However, we do not initialize the data value buffer. The reason 
+behind this is that we are going to store the serialized type-object
+(coming from discovery) in the stored information. We cannot know in
+advance the size of the types that we may discover. So we will let
+this buffer adapt the size dynamically as types are discovered.
 
+**Store method**
 
+When *Recorder* discovers a new type it will call the `store()`
+method in this class to store the necessary discovery information
+about the recorded topics and types. The method receives a vector
+of `dds::topic::PublicationBuiltinTopicData` pointers and a
+vector of associated `dds::sub::SampleInfo` pointer objects.
 
+The main goal of this method is:
+
+- To iterate over all the publication data pointers and the
+  sample info objects:
+  
+    - For every sample, prepare a **key** that is unique: use the
+      *original publication virtual GUID* and the *original publication
+      virtual sequence number*. Store the reception timestamp
+      alongside, so we can quickly implement time-series ordering
+      of the samples (see class `UserDataKeyComparator`). All these
+      fields are available in the `SampleInfo` object.
+      
+    - For every sample, prepare a **value** entry: get the valid data
+      flag and store it in the value object. If the sample is valid,
+      get the topic name and type name, and set them in the 
+      `ReducedDCPSPublication` sample:
+      
+        ```cpp
+        ReducedDCPSPublication reduced_sample;
+        reduced_sample.valid_data(sample_info.valid());
+        if (sample_info.valid()) {
+            reduced_sample.topic_name(sample.topic_name());
+            reduced_sample.type_name(sample.type_name());
+            // ...
+
+        ```
+        
+      If the type is available (type information is not always 
+      transmitted through discovery), then we need to get the 
+      serialized version to be stored.
+        ```cpp
+        const dds::core::optional<dds::core::xtypes::DynamicType> type =
+                sample->type();
+        if (type.is_set()) {
+            const dds::core::xtypes::DynamicType& dynamic_type = type.get();
+            const DDS_TypeCode& native_type = dynamic_type.native();
+            DDS_TypeObject *type_object =
+                    DDS_TypeObject_create_from_typecode(&native_type);
+            if (type_object == nullptr) {
+                // handle error condition
+                // ...
+                continue;
+            }
+            std::shared_ptr<DDS_TypeObject> type_object_ptr(
+                    type_object,
+                    DDS_TypeObject_delete);
+            uint32_t type_object_buffer_len =
+                    DDS_TypeObject_get_serialized_size(type_object);
+            std::vector<uint8_t> typeobject_buffer(type_object_buffer_len);
+            if (DDS_TypeObject_serialize(
+                    type_object,
+                    (char *) &(typeobject_buffer[0]),
+                    &type_object_buffer_len) != DDS_RETCODE_OK) {
+                // handle error condition
+                // ...
+                continue;
+            }
+            reduced_sample.type(typeobject_buffer);
+        }
+        ```
+      
+    - Then serialize the `ReducedDCPSPublication` sample into CDR.
+    
+        ```cpp
+        dds::topic::topic_type_support<ReducedDCPSPublication>::to_cdr_buffer(value_buffer_, value);
+        ```
+
+Like with user-data, we insert all the samples passed in to the 
+method as one single database operation, by using the 
+`leveldb::WriteBatch` class.
 
 
 

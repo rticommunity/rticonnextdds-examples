@@ -297,6 +297,8 @@ void LevelDbStreamWriter::store(
 PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
         const std::string& working_dir)
 {
+    using namespace dds::core::xtypes;
+
     /*
      * The discovery information (just the DCPSPublication topic) will be
      * stored in its own LevelDB database. The name of the database will be
@@ -323,6 +325,12 @@ PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
         throw std::runtime_error(log_stream.str());
     }
     discovery_db_.reset(db);
+    /*
+     * Pre-allocate key buffer, used to serialize the UserDataKey type to be
+     * used as a key
+     */
+    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 }
 
 PubDiscoveryLevelDbWriter::~PubDiscoveryLevelDbWriter()
