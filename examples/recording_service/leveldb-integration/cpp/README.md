@@ -79,9 +79,8 @@ system:
 - `LEVELDB_INCLUDE`: it should point to where the LevelDB API header files are
   located. This will normally be the `include` directory inside the directory
   where you cloned or extracted the LevelDB source code.
-- `BUILD_SHARED_LIBS`: required. The shared libraries flag needs to be on for
-  this example, as *RTI Recording Service* works by loading the libraries
-  dynamically.
+- `BUILD_TESTER_APP`: optional flag used to enable/disable the building of the
+  provided tester application. If not provided, the application won't be built.
 
 Build the example code by running the following command:
 
@@ -91,7 +90,6 @@ cd build
 cmake -DCONNEXTDDS_DIR=<connext directory> 
       -DCONNEXTDDS_ARCH=<connext architecture>
       -DCMAKE_BUILD_TYPE=Release 
-      -DBUILD_SHARED_LIBS=ON
       -DLEVELDB_DIR=<leveldb directory>
       -DLEVELDB_INCLUDE=<leveldb include directory>
       ..
@@ -111,9 +109,7 @@ command as follows:
 cmake -DCONNEXTDDS_DIR=<connext dir> 
       -DCONNEXTDDS_ARCH=<connext architecture>
       -DCMAKE_BUILD_TYPE=Release 
-      -DBUILD_SHARED_LIBS=ON
-      -DLEVELDB_DIR=<leveldb directory>
-      -DLEVELDB_INCLUDE=<leveldb include directory>
+      -DBUILD_SHARED_LIBS=ON .. 
       -A x64
 ```
 
@@ -324,3 +320,92 @@ cd build
         -cfgFile ../leveldb_converter.xml
         -cfgName LevelDb_To_SQLiteCDR
 ```
+
+## Description of the code
+
+This example is divided in three different parts: the writing side plug-in,
+the reading side plug-in and a tester application (building it can be 
+skipped).
+
+The following sections assume that you have read the section above,
+[Format of the stored data](#format-of-the-stored-data)
+
+### The LevelDbWriter class family
+
+The writing side of this example is implemented in class `LevelDbWriter`.
+This class will be loaded by *Recorder* or by *Converter* to store data
+into a LevelDB database (in the case of *Converter*, the class will be
+created when converting from a different format _into_ LevelDB format).
+
+Class **`LevelDbWriter`** extends API class 
+`rti::recording::storage::StorageWriter` and acts as a factory to
+create `StorageStreamWriter` and `PublicationStorageWriter` objects. It
+also defines a method to destroy the instances created by the factory
+methods. It will create the `metadata.dat` database and set the start
+time to be the time the constructor is called, and the end time to be
+the time the destructor is called.
+
+Given the above, there are two other classes defined for writing data:
+
+- **`LevelDbStreamWriter`**: this class extends the API class
+  `rti::recording::storage::DynamicDataStorageStreamWriter`. This API
+  class is a specialization of class `StorageStreamWriter` set up to
+  work with Dynamic Data samples. When a user-data topic is discovered
+  and matches the filters in the *Recorder* or *Converter* 
+  configuration, the application will ask the `LevelDbWriter` instance
+  to create an instance of this class, by calling method
+  `create_stream_writer()`.
+  The instances of this class will create the different 
+  `<topic-name>@<domain-id>` databases where samples of the different 
+  topics will be stored. 
+  The main method this class has to implement is `store()`. This
+  method will be called by the application when samples are available
+  to be written to storage. The samples and their associated info
+  objects will be passed to the method.
+- **`PubDiscoveryLevelDbWriter`**: this class extends the API class
+  `rti::recording::storage::PublicationStorageWriter`. This class
+  is in charge of storing samples of the built-in `DCPSPublication`
+  topic. *Recorder* will ask the `LevelDbWriter` instance to create
+  an instance of this class during startup, by calling method 
+  `create_publication_writer()`.
+  The instance of this class will be in charge of creating the 
+  `DCPSPublication.dat` database.
+  The main method this class implements is the `store()` method.
+  Available samples of topic `DCPSPublication` and their associated
+  sample info objects will be passed to the call.
+  
+**Implementation details of class `LevelDbStreamWriter`**.
+
+[TODO]
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

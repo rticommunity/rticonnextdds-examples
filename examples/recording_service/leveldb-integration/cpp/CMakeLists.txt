@@ -146,30 +146,35 @@ target_include_directories(
 add_dependencies(LevelDbReader generated_code)
 
 # Define the test executable
-add_executable(
-    tester 
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/Tests.cxx")
+if(BUILD_TESTER_APP)
 
-target_link_libraries(
-    tester 
-    "${leveldb_lib}"
-    RTIConnextDDS::routing_service_infrastructure
-    RTIConnextDDS::cpp2_api
-    ${CONNEXTDDS_EXTERNAL_LIBS}
-)
+    add_executable(
+        tester 
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.hpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/Tests.cxx"
+    )
 
-target_include_directories(
-    tester
-    PUBLIC 
-        "${CMAKE_CURRENT_BINARY_DIR}"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated"
-        "${LEVELDB_INCLUDE}"
-)
+    target_link_libraries(
+        tester 
+        "${leveldb_lib}"
+        RTIConnextDDS::routing_service_infrastructure
+        RTIConnextDDS::cpp2_api
+        ${CONNEXTDDS_EXTERNAL_LIBS}
+    )
+
+    target_include_directories(
+        tester
+        PUBLIC 
+            "${CMAKE_CURRENT_BINARY_DIR}"
+            "${CMAKE_CURRENT_BINARY_DIR}/generated"
+            "${LEVELDB_INCLUDE}"
+    )
+
+endif()
