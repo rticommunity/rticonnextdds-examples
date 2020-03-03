@@ -388,8 +388,12 @@ serialize and deserialize samples to and from CDR format.
 
 The main members of the `LevelDbStreamWriter` class are:
 
-- `data_db_`: this is the LevelDB database object that will be
-  used to store the data.
+- `data_db_`: this is the LevelDB database object (leveldb::DB) that 
+  will be used to store the data.
+- `key_comparator`: the custom key comparator will be passed when
+  the creation of the database happens. The key comparator checks
+  the reception timestamp of the samples and returns them in
+  monotonic ascending order.
 - `key_buffer_`: a byte (char) buffer used to store the serialized
   key sample.
 - `value_buffer_`: a byte (char) buffer used to store the serialized
@@ -501,8 +505,12 @@ serialize and deserialize samples to and from CDR format.
 
 The main members of the `PubDiscoveryLevelDbWriter` class are:
 
-- `discovery_db_`: this is the LevelDB database object that will be
-  used to store the `DCPSPublication`.
+- `discovery_db_`: this is the LevelDB database object (leveldb::DB)
+  that will be used to store the `DCPSPublication`.
+- `key_comparator`: the custom key comparator will be passed when
+  the creation of the database happens. The key comparator checks
+  the reception timestamp of the samples and returns them in
+  monotonic ascending order.
 - `key_buffer_`: a byte (char) buffer used to store the serialized
   key sample.
 - `value_buffer_`: a byte (char) buffer used to store the serialized
@@ -606,21 +614,396 @@ Like with user-data, we insert all the samples passed in to the
 method as one single database operation, by using the 
 `leveldb::WriteBatch` class.
 
+### The LevelDbReader class family
 
+The reading side of this example is implemented in the `LevelDbReader`
+classes. These classes are in charge of loading and interpreting
+a LevelDB database representing a recording previously
+recorded with *Recorder* and the `LevelDbWriter` plug-in. *Replay*
+and *Converter* (in the case of *Converter*, the class will be
+created when converting _from_ LevelDB format into a different 
+format).
 
+Class **`LevelDbReader`** extends API class 
+`rti::recording::storage::StorageReader` and acts as a factory to
+create `StorageStreamReader` and `StorageStreamInfoReader` objects. It
+also defines methods to destroy the instances created by the factory
+methods.
 
+Given the above, there are two other classes defined for writing data:
 
+- **`LevelDbStreamInfoReader`**: this class extends the API class
+  `rti::recording::storage::StorageStreamInfoReader`. This class
+  is in charge of reading serialized samples of type 
+  `ReducedDCPSPublication`. *Replay* will ask the `LevelDbReader` 
+  instance to create an instance of this class during startup, 
+  by calling method `create_stream_info_reader()`.
+  The instance of this class will be in charge of reading from the 
+  `DCPSPublication.dat` database.
+  The main methods this class implements are the `read()` and
+  `return_loan()` methods.
+  It also implements two methods that *Replay* uses to obtain the
+  database's start and end times, `service_start_time()` and
+  `service_stop_time()`.
+  It also implements the `fisnished()` method to tell *Replay* or
+  *Converter* when there are no more discovery samples to read.
+  The `reset()` method is used by *Replay* when the looping
+  option is enabled.
+  
+- **`LevelDbStreamReader`**: this class extends the API class
+  `rti::recording::storage::DynamicDataStorageStreamReader`. This API
+  class is a specialization of class `StorageStreamReader` set up to
+  work with Dynamic Data samples. When a user-data topic is discovered
+  (read by Replay using the stream info reader above) and matches the
+  filters in the *Replay* or *Converter* configuration, the application 
+  will ask the `LevelDbReader` instance to create an instance of this 
+  class, by calling method `create_stream_reader()`.
+  The instances of this class will look for and read the appropriate 
+  `<topic-name>@<domain-id>` database where samples of the topic are 
+  stored. 
+  The main method this class has to implement are `read()` and 
+  `return_loan()`. This methods will be called by the application when 
+  it's time to read new samples from the database. The `return_loan()`
+  operation is called by the application after the read samples have
+  been used so that resources associated with the samples can be freed. 
+  It also implements the `finished()` method to tell *Replay* or
+  *Converter* when there are no more samples for the topic to read.
+  The `reset()` method is used by *Replay* when the looping option 
+  is enabled.
+  
+#### Implementation details of class `LevelDbStreamReader`
 
+This Storage Reader plug-in works by reading data stored in 
+_serialized_ CDR format, by using the types described in the above section
+([Format of the stored data](#format-of-the-stored-data)). The code
+for the types defined in file `LevelDb_RecorderTypes.idl` will be
+generated automatically. The generated code includes methods to
+serialize and deserialize samples to and from CDR format.
 
+The main members of the `LevelDbStreamReader` class are:
 
+- `data_db_`: this is the LevelDB database object (`leveldb::DB`) that 
+  will be used to read the data and that was recorded by *Recorder* using
+  the Storage Writer implementation in this example.
+- `db_iterator_`: the class keeps a database iterator (`leveldb::Iterator`)
+  that points to the next sample to be read.
+- `current_timestamp_`: the current sample's reception timestamp.
+- `key_comparator`: the custom key comparator will be passed when
+  the creation of the database happens. The key comparator checks
+  the reception timestamp of the samples and returns them in
+  monotonic ascending order.
+- `key_buffer_`: a byte (char) buffer used to store the serialized
+  key sample, read from the database.
+- `value_buffer_`: a byte (char) buffer used to store the serialized
+  value sample.
+- `loaned_samples_`: every time the `read()` method is called, the
+  samples read are stored here. This vector of samples will be freed
+  when the `return_loan()` operation is called.
+- `loaned_infos_`: every time the `read()` method is called, the
+  sample info objects related to the read samples are stored here.
+  This vector will be freed when the `return_loan()` operation is
+  called.
 
+**Constructor**
 
+The constructor of the class attempts to open the expected database,
+given the topic name (`StreamInfo` object's stream name) and the
+domain ID.
+  
+Here the key value's byte buffer is also initialized properly, using
+the type's samples max serialized size:
 
+```cpp
+const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
+```
 
+The constructor also has to prepare the database iterator. Given
+the start timestamp and end timestamp passed as parameters, the
+iterator has to be set to the first sample that lies within that
+time range:
 
+```cpp
+db_iterator_ = std::unique_ptr<leveldb::Iterator>(
+        data_db_->NewIterator(leveldb::ReadOptions()));
+for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+    UserDataKey current_key = slice_to_user_type<UserDataKey>(
+            db_iterator_->key(),
+            key_buffer_);
+    int64_t current_timestamp = current_key.reception_timestamp();
+    if (current_timestamp_ >= start_timestamp_
+            && current_timestamp_ <= end_timestamp_) {
+        break;
+    } else {
+        db_iterator_->Next();
+    }
+}
+```
 
+The constructor also pre-allocates the necessary size in the
+value buffer, using the same logic as with the stream writers
+above:
 
+- If the type is unbounded, we initialize the buffer to 8 KB.
 
+- Else, we get the max serialized sample from the type and we
+  resize the buffer to that size. 
+  
+This is the code snippet for the above calculations:
 
+```cpp
+DDS_TypeCode *type = static_cast<DDS_TypeCode *>(
+        stream_info.type_info().type_representation());
+DDS_ExceptionCode_t ex = DDS_NO_EXCEPTION_CODE;
+if (DDS_TypeCode_is_unbounded(type, DDS_BOOLEAN_FALSE, &ex)
+        && ex != DDS_NO_EXCEPTION_CODE) {
+    value_buffer_.resize(8192);
+} else {
+    DDS_UnsignedLong size = DDS_TypeCode_get_cdr_serialized_sample_max_size(
+            type,
+            DDS_AUTO_DATA_REPRESENTATION,
+            &ex);
+    if (ex != DDS_NO_EXCEPTION_CODE) {
+        // ... handle error
+    }
+    value_buffer_.resize((std::vector<char>::size_type) size);
+}
+```
 
+**Read and return loan methods**
 
+The `read()` method receives two empty vectors: one to store the
+samples read, with pointers to `dds::core::xtypes::DynamicData` and
+another one to store sample info pointers (`dds::sub::SampleInfo`).
+It also receives a parameter of type 
+`rti::recording::storage::SelectorState`, which provides the
+conditions the returned samples have to comply with. In the case
+of *Replay*, a time range will be provided. The maximum number
+of samples to be returned can be specified too (*Converter* will
+use this to limit the number of samples to ask for, given that
+*Converter* will impose no time restrictions; *Replay* can also
+use this setting).
+
+Given the above, the `read()` method will run a while loop checking
+the current sample (the one pointed to by the iterator):
+
+```cpp
+UserDataKey current_key;
+const int64_t timestamp_limit =
+        to_nanosec_timestamp(selector.time_range_end());
+const int32_t max_samples = selector.max_samples();
+int32_t num_samples_read = 0;
+bool next_sample_valid = db_iterator_->Valid();
+while (next_sample_valid
+        && current_timestamp <= timestamp_limit
+        && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
+    // ...
+}
+```
+
+Inside the loop, it means the current sample pointed to by the
+iterator is valid and should be included in the read samples collection.
+The following code extracts the sample and deserializes the dynamic
+data object if the sample is valid:
+
+```cpp
+UserDataValue current_value = slice_to_user_type<UserDataValue>(
+        db_iterator_->value(),
+        value_buffer_);
+std::shared_ptr<DynamicData> sample(
+        std::make_shared<DynamicData>(type_));
+if (current_value.valid_data()) {
+    rti::core::xtypes::from_cdr_buffer(
+            *(sample.get()),
+            current_value.data_blob());
+}
+```
+
+Notice the use of function `slice_to_user_type()`, that transforms
+a LevelDB Slice into the desired type (by deserializing it).
+
+The following code snippet is the advancement of the database
+iterator to the next sample:
+
+```cpp
+db_iterator_->Next();
+if (db_iterator_->Valid()) {
+    current_key = slice_to_user_type<UserDataKey>(
+            db_iterator_->key(),
+            key_buffer_);
+    current_timestamp_ = current_key.reception_timestamp();
+    if (current_timestamp_ > end_timestamp_) {
+        next_sample_valid = false;
+    } else {
+        next_sample_valid = true;
+    }
+} else {
+    next_sample_valid = false;
+}
+```
+
+Notice that we need to check if the next sample, if any,
+is within the stream rea'ders time range (`current_timestamp`
+has less than or equal to the `end_timestamp_`).
+
+The `return_loan()` method clears the vectors used to 
+return the samples and sample infos, but also the internal
+`loaned_samples_` and `loaned_infos_` vectors.
+
+It also sets the `finished_` flag when the iterator has
+finished iterating, or else when the next sample's timestamp
+is out of time range.
+
+#### Implementation details of class `LevelDbStreamInfoReader`
+
+When *Recorder* runs, publication data is stored in serialized 
+format. Type `UserDataKey` is used as the key data, and type 
+`ReducedDCPSPublication` is used as the value data. The code
+for the types defined in file `LevelDb_RecorderTypes.idl` will be
+generated automatically. The generated code includes methods to
+serialize and deserialize samples to and from CDR format.
+
+The main members of the `LevelDbStreamInfoReader` class are:
+
+- `metadata_db_`: this is the LevelDB database object (`leveldb::DB`)
+  that was used to store the start and end timestamps of the
+  service run.
+- `discovery_db_`: this is the LevelDB database object (`leveldb::DB`)
+  where the DCPSPublication information was stored. The expected 
+  database name is `DCPSPublication.dat`.
+- `db_iterator_`: the class keeps a database iterator (`leveldb::Iterator`)
+  that points to the next sample to be read in the discovery database.
+- `current_timestamp_`: the current sample's reception timestamp.
+- `key_comparator`: the custom key comparator will be passed when
+  the creation of the database happens. The key comparator checks
+  the reception timestamp of the samples and returns them in
+  monotonic ascending order.
+- `key_buffer_`: a byte (char) buffer used to store the serialized
+  key sample.
+- `value_buffer_`: a byte (char) buffer used to store the serialized
+  value sample.
+- `loaned_stream_infos_`: every time the `read()` method is called, the
+  samples read are stored here. This vector of samples will be freed
+  when the `return_loan()` operation is called.
+
+**Constructor**
+
+The constructor of this class opens the publication database, with
+fixed name (`DCPSPublication.dat`). Similarly to the Stream Readers 
+above, the Stream Info Reader also pre-allocates the `key_buffer_`
+vector. Setting up the iterator works similarly too: we have to find
+the first valid sample within the specified time range.
+
+The constructor of this class also opens the `metadata.dat` LevelDB
+database where *Recorder* stored the start and stop times of the
+database values, and reads those values. These values are used in methods
+`service_start_time()` and `service_stop_time()`. *Replay* needs these
+values to establish a reference time range.
+
+**Read and return loan methods**
+
+The `read()` method is passed a vector of pointers to `rti::routing::StreamInfo`
+objects. This is where the read `DCPSPublication` samples should be stored and
+returned. 
+
+It also receives a parameter of type 
+`rti::recording::storage::SelectorState`, which provides the
+conditions the returned samples have to comply with. These conditions include
+time range information (usually an end timestamp) and the maximum number of
+samples to be read.
+
+Given the above, the `read()` method will run a while loop checking
+the current sample (the one pointed to by the iterator):
+
+```cpp
+UserDataKey current_key;
+const int64_t timestamp_limit =
+        to_nanosec_timestamp(selector.time_range_end());
+const int32_t max_samples = selector.max_samples();
+int32_t num_samples_read = 0;
+bool next_sample_valid = db_iterator_->Valid();
+while (next_sample_valid
+        && current_timestamp <= timestamp_limit
+        && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
+    // ...
+}
+```
+
+Inside the loop, it means the current sample pointed to by the
+iterator is valid and should be included in the stream infos collection.
+The following code deserializes the `ReducedDCPSPublication` sample, and
+if the sample is valid, then it deserializes the stored serialized type-object.
+Take into account, that the `StreamInfo` object expects the type representation
+to be a _type-code_, so we also convert the deserialized type-object into a
+type-code:
+
+```cpp
+ReducedDCPSPublication reduced_sample =
+        slice_to_user_type<ReducedDCPSPublication>(
+                db_iterator_->value(),
+                value_buffer_);
+std::shared_ptr<rti::routing::StreamInfo> stream_info =
+        std::make_shared<rti::routing::StreamInfo>("", "");
+if (reduced_sample.valid_data()) {
+    stream_info->stream_name(reduced_sample.topic_name());
+    stream_info->type_info().type_name(reduced_sample.type_name());
+    stream_info->type_info().type_representation_kind(
+            rti::routing::TypeRepresentationKind::DYNAMIC_TYPE);
+    DDS_TypeObject *type_obj =
+            DDS_TypeObjectFactory_create_typeobject_from_serialize_buffer(
+                    type_factory.get(),
+                    (const char *) reduced_sample.type().data(),
+                    reduced_sample.type().size());
+    if (type_obj == nullptr) {
+        // handle error condition
+        continue;
+    }
+    std::shared_ptr<DDS_TypeObject> type_ptr(
+            type_obj,
+            TypeObjectDeleter(type_factory.get()));
+    DDS_TypeCode *type_code = DDS_TypeObject_convert_to_typecode(type_obj);
+    if (type_code == nullptr) {
+        // handle error condition
+        continue;
+    }
+    stream_info->type_info().type_representation(type_code);
+}
+```
+The following snippet shows how advancing to the next sample is done. The
+iterator is advanced and we check if the end has been reached (whether the
+next value is valid or not). If it's valid, we also verify if the newly
+pointed-to sample's reception timestamp is within the stream's time range
+(verify it's less or equal than the `end_timestamp_`):
+
+```cpp
+db_iterator_->Next();
+if (db_iterator_->Valid()) {
+    current_key = slice_to_user_type<UserDataKey>(
+            db_iterator_->key(),
+            key_buffer_);
+    current_timestamp_ = current_key.reception_timestamp();
+    if (current_timestamp_ > end_timestamp_) {
+        next_sample_valid = false;
+    } else {
+        next_sample_valid = true;
+    }
+} else {
+    next_sample_valid = false;
+}
+```
+
+The mission of the `return_loan()` method is to free up any resources created
+by the `read()` method, and update the `finished_` flag. 
+
+In this case, it's very important that we delete the type-code objects created
+during the reading process:
+
+```cpp
+for (size_t i = 0; i < sample_seq.size(); i++) {
+    if (sample_seq[i]->type_info().type_representation() != nullptr) {
+        DDS_TypeCode *type_code = (DDS_TypeCode *)
+                sample_seq[i]->type_info().type_representation();
+        RTICdrTypeCode_destroyTypeCode((RTICdrTypeCode *) type_code);
+    }
+}
+```

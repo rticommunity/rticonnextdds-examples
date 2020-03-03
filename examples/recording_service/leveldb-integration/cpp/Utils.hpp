@@ -135,6 +135,23 @@ public:
     virtual void FindShortSuccessor(std::string* key) const;
 };
 
+/**
+ * Utility class to delete a type-object instance comfortably from within a
+ * smart pointer (can be easily used as a smart pointer deleter).
+ */
+struct TypeObjectDeleter {
+
+    TypeObjectDeleter(DDS_TypeObjectFactory *type_factory) :
+        type_factory_(type_factory) {}
+
+    void operator()(DDS_TypeObject *type)
+    {
+        DDS_TypeObjectFactory_delete_typeobject(type_factory_, type);
+    }
+
+    DDS_TypeObjectFactory *type_factory_;
+};
+
 
 } } } // namespace rti::recording::examples
 

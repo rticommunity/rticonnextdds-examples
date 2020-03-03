@@ -98,7 +98,9 @@ private:
 };
 
 /*
- * [TODO]
+ * This Stream Reader implementation is able to read LevelDB user-data databases
+ * created by the 'LevelDbStreamWriter' class. The name of the database is
+ * expected to be of the form '<stream-name>@<domain-id>'.
  */
 class LevelDbStreamReader :
         public rti::recording::storage::DynamicDataStorageStreamReader {
@@ -166,12 +168,16 @@ private:
 
     int64_t end_timestamp_;
 
+    int64_t current_timestamp_;
+
     bool finished_;
 
 };
 
 /*
- * [TODO]
+ * This stream info reader implementation is able to read a Level DB discovery
+ * database recorded with the LevelDbWriter implementation, called
+ * 'DCPSPublication.dat'.
  */
 class LevelDbStreamInfoReader :
         public rti::recording::storage::StorageStreamInfoReader {
@@ -230,6 +236,8 @@ private:
     int64_t start_timestamp_;
 
     int64_t end_timestamp_;
+
+    int64_t current_timestamp_;
 
     std::string discovery_filename_;
 

@@ -395,7 +395,7 @@ void PubDiscoveryLevelDbWriter::store(
                 const DDS_TypeCode& native_type = dynamic_type.native();
                 DDS_TypeObject *type_object =
                         DDS_TypeObject_create_from_typecode(&native_type);
-                if (type_object == NULL) {
+                if (type_object == nullptr) {
                     std::stringstream log_msg;
                     log_msg << "Failed to create type-object from type-code. "
                             "DCPSPublication sample cannot be stored"

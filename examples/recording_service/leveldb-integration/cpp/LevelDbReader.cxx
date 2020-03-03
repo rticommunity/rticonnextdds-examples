@@ -132,6 +132,7 @@ LevelDbStreamReader::LevelDbStreamReader(
              *((DDS_TypeCode *) stream_info.type_info().type_representation()))),
     start_timestamp_(start_timestamp),
     end_timestamp_(end_timestamp),
+    current_timestamp_(0),
     finished_(false)
 {
     /*
@@ -174,20 +175,27 @@ LevelDbStreamReader::LevelDbStreamReader(
     const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 
+    /*
+     * Setup the iterator. We need to advance to the next valid sample that fits
+     * within the specified time range.
+     */
     db_iterator_ = std::unique_ptr<leveldb::Iterator>(
             data_db_->NewIterator(leveldb::ReadOptions()));
-
     for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
-        int64_t current_timestamp = current_key.reception_timestamp();
-        if (current_timestamp >= start_timestamp_
-                && current_timestamp <= end_timestamp_) {
+        current_timestamp_ = current_key.reception_timestamp();
+        if (current_timestamp_ >= start_timestamp_
+                && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
         }
+    }
+    /* The DB may be empty (no sample fulfills the conditions) */
+    if (!db_iterator_->Valid()) {
+        finished_ = true;
     }
     /*
      * Pre-allocate an intelligent size for the CDR buffer to be used by the
@@ -229,16 +237,15 @@ void LevelDbStreamReader::read(
     if (finished_) {
         return;
     }
-    UserDataKey current_key =
-            slice_to_user_type<UserDataKey>(db_iterator_->key(), key_buffer_);
-    int64_t current_timestamp = current_key.reception_timestamp();
+    UserDataKey current_key;
     const int64_t timestamp_limit =
             to_nanosec_timestamp(selector.time_range_end());
     const int32_t max_samples = selector.max_samples();
     int32_t num_samples_read = 0;
-    while (current_timestamp <= timestamp_limit
-            && (max_samples < 0 ? true : (num_samples_read < max_samples))
-            && db_iterator_->Valid()) {
+    bool next_sample_valid = db_iterator_->Valid();
+    while (next_sample_valid
+            && current_timestamp_ <= timestamp_limit
+            && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
         /*
          * Get the current value from the LevelDB file. The value is of type
          * UserDataValue, tailored to provide the validity of the sample or
@@ -265,8 +272,7 @@ void LevelDbStreamReader::read(
         std::shared_ptr<dds::sub::SampleInfo> sample_info(
                 std::make_shared<dds::sub::SampleInfo>());
         DDS_SampleInfo native_sample_info = DDS_SAMPLEINFO_DEFAULT;
-        dds::core::Time reception_time =
-                timestamp_to_time(current_key.reception_timestamp());
+        dds::core::Time reception_time = timestamp_to_time(current_timestamp_);
         native_sample_info.reception_timestamp.sec =
                 (DDS_Long) reception_time.sec();
         native_sample_info.reception_timestamp.nanosec =
@@ -284,7 +290,18 @@ void LevelDbStreamReader::read(
             current_key = slice_to_user_type<UserDataKey>(
                     db_iterator_->key(),
                     key_buffer_);
-            current_timestamp = current_key.reception_timestamp();
+            current_timestamp_ = current_key.reception_timestamp();
+            /*
+             * Check if the sample is out of the stream's time range; if that is
+             * the case, we should set the stream as finished
+             */
+            if (current_timestamp_ > end_timestamp_) {
+                next_sample_valid = false;
+            } else {
+                next_sample_valid = true;
+            }
+        } else {
+            next_sample_valid = false;
         }
     }
     /*
@@ -310,6 +327,10 @@ void LevelDbStreamReader::return_loan(
     loaned_infos_.clear();
     if (!db_iterator_->Valid()) {
         finished_ = true;
+    } else {
+        if (current_timestamp_ > end_timestamp_) {
+            finished_ = true;
+        }
     }
 }
 
@@ -353,19 +374,29 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
         throw std::runtime_error(log_stream.str());
     }
     discovery_db_.reset(db);
+    /*
+     * Pre-allocate key buffer, used to serialize the UserDataKey type to be
+     * used as a key
+     */
+    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 
     db_iterator_.reset(discovery_db_->NewIterator(leveldb::ReadOptions()));
     for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
-        int64_t current_timestamp = current_key.reception_timestamp();
-        if (current_timestamp >= start_timestamp_
-                && current_timestamp <= end_timestamp_) {
+        current_timestamp_ = current_key.reception_timestamp();
+        if (current_timestamp_ >= start_timestamp_
+                && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
         }
+    }
+    /* The DB may be empty (no sample fulfills the conditions) */
+    if (!db_iterator_->Valid()) {
+        finished_ = true;
     }
 
     std::stringstream metadata_filename;
@@ -422,22 +453,6 @@ LevelDbStreamInfoReader::~LevelDbStreamInfoReader()
 {
 }
 
-struct TypeObjectDeleter {
-
-    TypeObjectDeleter(DDS_TypeObjectFactory *type_factory) :
-        type_factory_(type_factory) {}
-
-    void operator()(DDS_TypeObject *type)
-    {
-        DDS_TypeObjectFactory_delete_typeobject(type_factory_, type);
-    }
-
-    DDS_TypeObjectFactory *type_factory_;
-};
-
-/*
- * [TODO]
- */
 void LevelDbStreamInfoReader::read(
         std::vector<rti::routing::StreamInfo *>& sample_seq,
         const rti::recording::storage::SelectorState& selector)
@@ -445,19 +460,23 @@ void LevelDbStreamInfoReader::read(
     if (finished_) {
         return;
     }
+    /*
+     * We need a type object factory to deserialize the serialized type-object.
+     * We wrap it inside a smart pointer so we don't have to worry about
+     * cleanup.
+     */
     std::shared_ptr<DDS_TypeObjectFactory> type_factory(
             DDS_TypeObjectFactory_new(),
             DDS_TypeObjectFactory_delete);
-    UserDataKey current_key =
-            slice_to_user_type<UserDataKey>(db_iterator_->key(), key_buffer_);
-    int64_t current_timestamp = current_key.reception_timestamp();
+    UserDataKey current_key;
     const int64_t timestamp_limit =
             to_nanosec_timestamp(selector.time_range_end());
     const int32_t max_samples = selector.max_samples();
     int32_t num_samples_read = 0;
-    while (current_timestamp <= timestamp_limit
-            && (max_samples < 0 ? true : (num_samples_read < max_samples))
-            && db_iterator_->Valid()) {
+    bool next_sample_valid = db_iterator_->Valid();
+    while (next_sample_valid
+            && current_timestamp_ <= timestamp_limit
+            && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
         ReducedDCPSPublication reduced_sample =
                 slice_to_user_type<ReducedDCPSPublication>(
                         db_iterator_->value(),
@@ -499,6 +518,7 @@ void LevelDbStreamInfoReader::read(
                 continue;
             }
             stream_info->type_info().type_representation(type_code);
+            std::cout << stream_info->stream_name() << std::endl;
         }
         loaned_stream_infos_.resize(num_samples_read + 1);
         loaned_stream_infos_[num_samples_read] = stream_info;
@@ -509,7 +529,14 @@ void LevelDbStreamInfoReader::read(
             current_key = slice_to_user_type<UserDataKey>(
                     db_iterator_->key(),
                     key_buffer_);
-            current_timestamp = current_key.reception_timestamp();
+            current_timestamp_ = current_key.reception_timestamp();
+            if (current_timestamp_ > end_timestamp_) {
+                next_sample_valid = false;
+            } else {
+                next_sample_valid = true;
+            }
+        } else {
+            next_sample_valid = false;
         }
     }
     sample_seq.resize(num_samples_read);
@@ -535,7 +562,11 @@ void LevelDbStreamInfoReader::return_loan(
     }
     sample_seq.clear();
     loaned_stream_infos_.clear();
-    if (!db_iterator_->Valid()) {
+    if (db_iterator_->Valid()) {
+        if (current_timestamp_ > end_timestamp_) {
+            finished_ = true;
+        }
+    } else {
         finished_ = true;
     }
 }
