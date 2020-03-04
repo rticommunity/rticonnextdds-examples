@@ -17,7 +17,6 @@
 #include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbReader.hpp"
 
-#define WORKING_DIR_PROPERTY "rti.recording.examples.leveldb.working_dir"
 
 using namespace dds::core::xtypes;
 
@@ -35,7 +34,7 @@ LevelDbReader::LevelDbReader(const rti::routing::PropertySet& properties) :
     /* Get working directory from properties */
     working_dir_ = rti::recording::get_from_properties<std::string>(
             properties,
-            WORKING_DIR_PROPERTY);
+            working_dir_property_name());
 }
 
 LevelDbReader::~LevelDbReader()
