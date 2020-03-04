@@ -518,7 +518,6 @@ void LevelDbStreamInfoReader::read(
                 continue;
             }
             stream_info->type_info().type_representation(type_code);
-            std::cout << stream_info->stream_name() << std::endl;
         }
         loaned_stream_infos_.resize(num_samples_read + 1);
         loaned_stream_infos_[num_samples_read] = stream_info;
