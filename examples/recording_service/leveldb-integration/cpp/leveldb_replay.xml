@@ -26,6 +26,9 @@
                 </property>
             </plugin>
         </storage>
+        <playback>
+            <enable_looping>$(REPLAY_ENABLE_LOOPING)</enable_looping>
+        </playback>
         <domain_participant name="Domain0">
             <domain_id>0</domain_id>
         </domain_participant>

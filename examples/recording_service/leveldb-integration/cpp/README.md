@@ -5,7 +5,8 @@
 This example is an implementation of the pluggable *RTI Recording Service* 
 storage, using the no-SQL, persistent key-value store, LevelDB. This engine was
 developed by Google as a fast key-value storage library that maps from key 
-strings to string values. The LevelDB code can be found on [GitHub](https://github.com/google/leveldb).
+strings to string values. The LevelDB code can be found on 
+[GitHub](https://github.com/google/leveldb).
 
 This example is written in modern C++ (C++11) and shows how integration with a
 no-SQL storage technology can be done in *RTI Recording Service*. The example
@@ -55,8 +56,9 @@ Recording Service API* documentation.
 
 ## Getting LevelDB and building it
 
-The LevelDB database engine can be obtained from GitHub (this [link](https://github.com/google/leveldb). The repository can be cloned and there are 
-instructions in the documentation to build the library with `CMake`.
+The LevelDB database engine can be obtained from GitHub (this 
+[link](https://github.com/google/leveldb). The repository can be cloned and 
+there are instructions in the documentation to build the library with `CMake`.
 
 > **Note**:
 > Note: for this example, *RTI Recording Service* requires the LevelDB library
@@ -84,6 +86,8 @@ system:
   where you cloned or extracted the LevelDB source code.
 - `BUILD_TESTER_APP`: optional flag used to enable/disable the building of the
   provided tester application. If not provided, the application won't be built.
+- `ENABLE_SANITIZERS`: (GCC and similar compilers only) enable sanitizers when
+  building the code. This can be used to track memory problems and leaks.
 
 Build the example code by running the following command:
 
@@ -154,9 +158,25 @@ This example will work with any DDS Topic discovered on the DDS Domain ID of
 your choice. Run any application publishing data into that domain, for example
 *RTI Shapes Demo* or *RTI DDS Ping*.
 
-*RTI Recording Service* expects you to set an environment variable called 
-`LEVELDB_WORKING_DIR`. This variable should point to a directory with write
-permissions and where all the LevelDB directories and files will be created.
+The supplied XML configuration for *Recorder* expects you to set an environment 
+variable called `LEVELDB_WORKING_DIR`. This variable should point to a directory 
+with write permissions and where all the LevelDB directories and files will be 
+created.
+The path provided should not contain any trailing path separators. This variable
+is used in the XML file to set the XML variable called 
+`rti.recording.examples.leveldb.working_dir`.
+
+> **Note**:
+> Note: in this example, *Recorder* sets the `error_if_exists` flag when
+> opening the database files (directories). This will make the application fail
+> to run if the database was already recorded. To comfortably avoid having to
+> set the `LEVELDB_WORKING_DIR` variable to a different value, or having to
+> remove the contents of the directory each time we want to run *Recorder*
+> consecutively, an XML variable is provided: 
+> `rti.recording.examples.leveldb.enable_auto_dir`. When enabled, *Recorder*
+> will append the current timestamp in seconds to the working directory 
+> specified by the `LEVELDB_WORKING_DIR` environment variable and/or the 
+> `rti.recording.examples.leveldb.working_dir` XML variable.
 
 To run the example, you need to run the following command from the `build`
 folder (where the storage writer plugin shared library has been created).
@@ -168,6 +188,19 @@ cd build
         -cfgFile ../leveldb_recorder.xml
         -cfgName LevelDbIntegration 
         -domainIdBase <your chosen domain ID>
+```
+
+Note that if you don't want to export the necessary environment variables
+externally, *Recorder* accepts `-D<variable>=<name>` parameters to be supplied.
+So, in our case, you could run:
+
+```bash
+cd build
+<connext dir>/bin/rtirecordingservice 
+        -cfgFile ../leveldb_recorder.xml
+        -cfgName LevelDbIntegration 
+        -domainIdBase <your chosen domain ID>
+        -DLEVELDB_WORKING_DIR=<storage location>
 ```
 
 Of course, the export command has to be translated to your current OS and
@@ -292,20 +325,44 @@ coming from *Replay*. If you're running *Converter*, you can check the
 generated SQLite database with the SQLite command-line application or
 the SQLite viewer application of your choice.
 
-*RTI Recording Service* expects you to set an environment variable called 
-`LEVELDB_WORKING_DIR`. This variable should point to a directory with write
-permissions and where all the LevelDB directories and files will be created.
+The supplied XML configuration for *Replay* expects you to set two environment 
+variables:
+- `LEVELDB_WORKING_DIR`: this variable should point to a directory with write 
+  permissions and where all the LevelDB directories and files will be created.
+  Note: trailing path separators should be avoided when setting this variable.
+- `REPLAY_ENABLE_LOOPING`: this variable controls whether looping should be
+  enabled or not. When looping is enabled, *Replay* will not stop and exit
+  automatically when all data has been published, but it will start over again.
+
+The supplied XML configuration for *Converter* accepts the `LEVELDB_WORKING_DIR`
+variable only (*Converter* doesn't perform - it doesn't make sense - looping 
+over the data).
 
 To run *Replay*, you just need to run the following command from the `build`
 folder (where the storage reader plugin shared library has been created).
 
 ```bash
 export LEVELDB_WORKING_DIR=<storage location>
+export REPLAY_ENABLE_LOOPING=true
 cd build
 <connext dir>/bin/rtireplayservice 
         -cfgFile ../leveldb_replay.xml
         -cfgName LevelDbIntegration 
         -domainIdBase <your chosen domain ID>
+```
+
+Note that if you don't want to export the necessary environment variables
+externally, *Replay* accepts `-D<variable>=<name>` parameters to be supplied.
+So, in our case, you could run:
+
+```bash
+cd build
+<connext dir>/bin/rtireplayservice 
+        -cfgFile ../leveldb_replay.xml
+        -cfgName LevelDbIntegration 
+        -domainIdBase <your chosen domain ID>
+        -DLEVELDB_WORKING_DIR=<storage location>
+        -DREPLAY_ENABLE_LOOPING=true
 ```
 
 You should see the samples in the file being published and received by the

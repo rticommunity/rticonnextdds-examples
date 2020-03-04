@@ -153,7 +153,9 @@ LevelDbStreamReader::LevelDbStreamReader(
     /*
      * We use a custom key comparator, as the default lexicographic comparator
      * provided by default with LevelDB won't work properly with our desired
-     * order: monotonic and ascending based on reception timestamp
+     * order: monotonic and ascending based on reception timestamp.
+     * LevelDB will fail to open the database file that was recorded using our
+     * key comparator if we don't use the same one.
      */
     db_options.comparator = &key_comparator_;
     leveldb::Status db_status =
@@ -341,7 +343,21 @@ bool LevelDbStreamReader::finished()
 
 void LevelDbStreamReader::reset()
 {
-    // TODO
+    db_iterator_.reset(data_db_->NewIterator(leveldb::ReadOptions()));
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+        UserDataKey current_key = slice_to_user_type<UserDataKey>(
+                db_iterator_->key(),
+                key_buffer_);
+        current_timestamp_ = current_key.reception_timestamp();
+        if (current_timestamp_ >= start_timestamp_
+                && current_timestamp_ <= end_timestamp_) {
+            break;
+        } else {
+            db_iterator_->Next();
+        }
+    }
+    /* The DB may be empty (no sample fulfills the conditions) */
+    finished_ = !db_iterator_->Valid();
 }
 
 LevelDbStreamInfoReader::LevelDbStreamInfoReader(
@@ -361,6 +377,13 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
     /* Attempt to create the LevelDB database with the discovery filename */
     leveldb::DB *db = nullptr;
     leveldb::Options db_options;
+    /*
+     * We use a custom key comparator, as the default lexicographic comparator
+     * provided by default with LevelDB won't work properly with our desired
+     * order: monotonic and ascending based on reception timestamp.
+     * LevelDB will fail to open the database file that was recorded using our
+     * key comparator if we don't use the same one.
+     */
     db_options.comparator = &key_comparator_;
     leveldb::Status db_status =
             leveldb::DB::Open(db_options, discovery_filename_, &db);
@@ -401,7 +424,6 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
 
     std::stringstream metadata_filename;
     metadata_filename << working_dir << "/metadata.dat";
-    /* Attempt to create the LevelDB database with the derived filename */
     db_status = leveldb::DB::Open(
             leveldb::Options(),
             metadata_filename.str(),
@@ -595,7 +617,21 @@ bool LevelDbStreamInfoReader::finished()
 
 void LevelDbStreamInfoReader::reset()
 {
-    // TODO
+    db_iterator_.reset(discovery_db_->NewIterator(leveldb::ReadOptions()));
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+        UserDataKey current_key = slice_to_user_type<UserDataKey>(
+                db_iterator_->key(),
+                key_buffer_);
+        current_timestamp_ = current_key.reception_timestamp();
+        if (current_timestamp_ >= start_timestamp_
+                && current_timestamp_ <= end_timestamp_) {
+            break;
+        } else {
+            db_iterator_->Next();
+        }
+    }
+    /* The DB may be empty (no sample fulfills the conditions) */
+    finished_ = !db_iterator_->Valid();
 }
 
 } } } // namespace rti::recording::examples

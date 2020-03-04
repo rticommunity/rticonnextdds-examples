@@ -17,14 +17,13 @@
 #include <rti/core/constants.hpp>
 
 #include <leveldb/write_batch.h>
+#include "leveldb/env.h"
 
 #include <rti/recording/storage/StorageDefs.hpp>
 
 #include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbWriter.hpp"
 
-
-#define WORKING_DIR_PROPERTY "rti.recording.examples.leveldb.working_dir"
 
 namespace rti { namespace recording { namespace examples {
 
@@ -43,10 +42,39 @@ RTI_RECORDING_STORAGE_WRITER_CREATE_DEF(LevelDbWriter);
 LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
     StorageWriter(properties)
 {
+    /* Obtain current time so we can store it as the start time */
+    int64_t current_time = (int64_t) time(nullptr);
+    if (current_time == -1) {
+        throw std::runtime_error("Failed to obtain the current time");
+    }
     /* Get working directory from properties */
     working_dir_ = rti::recording::get_from_properties<std::string>(
             properties,
-            WORKING_DIR_PROPERTY);
+            working_dir_property_name());
+    /*
+     * The enable auto-dir property allows for Recorder to create a
+     * sub-directory inside the specified directory to use as the storage
+     * location.
+     */
+    const bool enable_auto_dir = rti::recording::get_from_properties<bool>(
+            properties,
+            enable_auto_dir_property_name());
+    if (enable_auto_dir) {
+        leveldb::Env *env = leveldb::Env::Default();
+        std::stringstream current_time_stream;
+        current_time_stream << "/" << current_time;
+        working_dir_ += current_time_stream.str();
+        leveldb::Status status = env->CreateDir(working_dir_);
+        if (!status.ok()) {
+            std::stringstream log_stream;
+            log_stream << "Failed to create auto working directory:"
+                    << std::endl;
+            log_stream << "    Directory = " << working_dir_ << std::endl;
+            log_stream << "    LevelDB error = " << status.ToString()
+                    << std::endl;
+            throw std::runtime_error(log_stream.str());
+        }
+    }
 
     /*
      * Create the metadata file that will be used to store the start and stop
@@ -58,6 +86,13 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
     /* DB options: create the file if not found; rest is fine to keep default */
     leveldb::Options db_options;
     db_options.create_if_missing = true;
+    /*
+     * For the best record/replay/convert experience, we do not allow to append
+     * data to an existing database. The following setting will preempt creation
+     * of the database if it already existed. You should choose a different
+     * working directory each time you run the tool
+     */
+    db_options.error_if_exists = true;
     leveldb::DB *db = nullptr;
     leveldb::Status db_status =
             leveldb::DB::Open(db_options, metadata_filename.str(), &db);
@@ -72,11 +107,6 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
     }
     metadata_db_.reset(db);
 
-    /* Obtain current time so we can store it as the start time */
-    int64_t current_time = (int64_t) time(nullptr);
-    if (current_time == -1) {
-        throw std::runtime_error("Failed to obtain the current time");
-    }
     /* Time was returned in seconds. Transform to nanoseconds */
     current_time *= (int64_t) rti::core::nanosec_per_sec;
     std::stringstream current_time_stream;
@@ -170,6 +200,14 @@ LevelDbStreamWriter::LevelDbStreamWriter(
     /* DB options: create the file if not found; rest is fine to keep default */
     leveldb::Options db_options;
     db_options.create_if_missing = true;
+    /*
+     * For the best record/replay/convert experience, we do not allow to append
+     * data to an existing database. The following setting will preempt creation
+     * of the database if it already existed. You should choose a different
+     * working directory each time you run the tool
+     */
+    db_options.error_if_exists = true;
+    /* Order samples in monotonic ascending reception timestamp order */
     db_options.comparator = &key_comparator_;
     /* Attempt to create the LevelDB database with the derived filename */
     leveldb::DB *db = nullptr;
@@ -311,6 +349,14 @@ PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
     /* DB options: create the file if not found; rest is fine to keep default */
     leveldb::Options db_options;
     db_options.create_if_missing = true;
+    /*
+     * For the best record/replay/convert experience, we do not allow to append
+     * data to an existing database. The following setting will preempt creation
+     * of the database if it already existed. You should choose a different
+     * working directory each time you run the tool
+     */
+    db_options.error_if_exists = true;
+    /* Order samples in monotonic ascending reception timestamp order */
     db_options.comparator = &key_comparator_;
     leveldb::DB *db = nullptr;
     leveldb::Status db_status =

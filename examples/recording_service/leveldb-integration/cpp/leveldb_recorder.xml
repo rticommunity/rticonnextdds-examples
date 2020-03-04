@@ -12,8 +12,6 @@
         </storage_plugin>
     </plugin_library>
     
-    <!--  A definition of a Recording Service instance to run that
-          loads a library written in C  -->
     <recording_service name="LevelDbIntegration">
         <!-- Storage properties. These are passed to the plugin in the 
              plugin_library -->
@@ -21,9 +19,26 @@
             <plugin plugin_name="StorageLibrary::LevelDb">
                 <property>
                     <value>
+                        <!-- This property establishes the working directory
+                             where Recorder will store the LevelDB database
+                             directories.
+                             Note: directory should not contain a trailing path
+                             separator. -->
                         <element>
                             <name>rti.recording.examples.leveldb.working_dir</name>
                             <value>$(LEVELDB_WORKING_DIR)</value>
+                        </element>
+                        <!-- This property is used to enable auto directory
+                             creation. Avoids having to set the 
+                             'leveldb.working_dir' property avoid every time.
+                             When set, it will automatically append the current
+                             timestamp (in seconds) to the 'leveldb.working_dir' 
+                             property value, and use that as the working 
+                             directory.
+                             Valid values are 1 (for true) or 0 (for false) -->
+                        <element>
+                            <name>rti.recording.examples.leveldb.enable_auto_dir</name>
+                            <value>1</value>
                         </element>
                     </value>
                 </property>

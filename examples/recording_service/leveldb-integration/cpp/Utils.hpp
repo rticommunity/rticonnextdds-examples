@@ -85,6 +85,16 @@ inline T slice_to_user_type(leveldb::Slice slice, std::vector<char>& buffer)
     return value_out;
 }
 
+inline const std::string working_dir_property_name()
+{
+    return "rti.recording.examples.leveldb.working_dir";
+}
+
+inline const std::string enable_auto_dir_property_name()
+{
+    return "rti.recording.examples.leveldb.enable_auto_dir";
+}
+
 /**
  * @brief The key used for storing the time the Recorder service was started.
  *        This value is stored in the metadata.dat database file.
