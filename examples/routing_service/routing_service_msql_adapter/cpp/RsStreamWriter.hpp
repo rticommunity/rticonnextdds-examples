@@ -32,7 +32,7 @@ public:
             const std::vector<dds::sub::SampleInfo *> &info_seq) -> int;
 
 private:
-    ConnectorBase *connWriter_ { nullptr };
+    ConnectorBase *conn_writer_ { nullptr };
 };
 
 #endif /* RS_STREAM_WRITER_ */

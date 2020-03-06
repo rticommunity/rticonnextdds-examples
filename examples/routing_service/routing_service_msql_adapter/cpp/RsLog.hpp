@@ -24,17 +24,11 @@
  *
 *****************************************************************************/
 #define RTI_RS_LOG_HEAD          "|| %s || I ||> "
-#define RTI_RS_LOG_HEAD_WARNING  "|| %s || W ||> "
-#define RTI_RS_LOG_HEAD_ERROR    "|| %s || E ||> "
 #define RTI_RS_LOG_HEAD_TRACE    "|| %s || T ||> "
 
 /*****************************************************************************
   
 *****************************************************************************/
-
-/* Error */
-#define RTI_RS_ERROR(msg_) \
-    fprintf(stdout,RTI_RS_LOG_HEAD_ERROR "%s\n", RTI_RS_LOG_ARGS, (msg_));
 
 #if RTI_RS_USE_LOG
 

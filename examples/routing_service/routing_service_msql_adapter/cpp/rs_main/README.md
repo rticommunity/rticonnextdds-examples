@@ -25,14 +25,6 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
 ## Building Debug executable:
 
-**Note 1:** To build with Connext DDS 6.0.1 using cmake edit **%NDDSHOME%\resource\cmake\FindRTIConnextDDS.cmake** and around line 870 comment out the following.
-
-```
-list(APPEND rti_versions_field_names_target
-        "routing_service_sdk") 
-```
-
-
 1. Create rs_dds_msql_adapter\rs_main\build directory. Everything in this directory is ignored by git.
 
 2. From rs_dds_msql_adapter\rs_main\build type the following. Enter **-G "Visual Studio 16 2019"** for Visual Studio 2019.
@@ -82,7 +74,7 @@ In Visual Studio add the command line parameters above in
 This will allow you to run the examples from Visual Studio, set breakpoints and 
 debug your adapter.
 
-**Note 2:** In order to debug your example with Visual Studio you will have to
+**Note 1:** In order to debug your example with Visual Studio you will have to
 make a small change to a file in order to work around a known issue with 
 Connext DDS Professional 6.0.0 and 6.0.1. 
 Open **%NDDSHOME%\include\rti\routing\adapter\detail\StreamReaderForwarder.hpp**

@@ -26,14 +26,15 @@ class RsStreamReader : public rti::routing::adapter::DynamicDataStreamReader {
 public:
     RsStreamReader(
             RsConnection *connection,
-            const rti::routing::StreamInfo &info,
+            const rti::routing::StreamInfo &stream_info,
             const rti::routing::PropertySet &properties,
             rti::routing::adapter::StreamReaderListener *listener);
 
     virtual ~RsStreamReader();
 
-    void take(std::vector<dds::core::xtypes::DynamicData *> &samples,
-            std::vector<dds::sub::SampleInfo *> &infos) final;
+    void
+            take(std::vector<dds::core::xtypes::DynamicData *> &samples,
+                 std::vector<dds::sub::SampleInfo *> &infos) final;
 
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &samples,
@@ -45,19 +46,19 @@ public:
             std::vector<dds::sub::SampleInfo *> &infos) final;
 
 private:
-    void readDataThread();
-    void shutdownReaderThread();
+    void read_data_thread();
+    void shutdown_reader_thread();
 
-    rti::routing::adapter::StreamReaderListener *readerListener_;
-    rti::routing::StreamInfo streamInfo_;
-    dds::core::xtypes::DynamicType *adapterType_;
+    rti::routing::adapter::StreamReaderListener *reader_listener_;
+    rti::routing::StreamInfo stream_info_;
+    dds::core::xtypes::DynamicType *adapter_type_;
 
     RsConnection *connection_;
-    std::thread readerThread_;
-    std::chrono::milliseconds samplingPeriod_; /* period to read data */
-    bool stopThread_ { false };
+    std::thread reader_thread_;
+    std::chrono::milliseconds sampling_period_; /* period to read data */
+    bool stop_thread_ { false };
 
-    ConnectorBase *connReader_ { nullptr };
+    ConnectorBase *conn_reader_ { nullptr };
     std::mutex data_mutex_;
 
     std::unique_ptr<dds::core::xtypes::DynamicData> sample_;

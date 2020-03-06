@@ -22,15 +22,15 @@ using namespace dds::core::xtypes;
 using namespace dds::sub;
 
 RsStreamWriter::RsStreamWriter(
-        const StreamInfo &streamInfo,
+        const StreamInfo &stream_info,
         const PropertySet &properties)
 {
-    connWriter_ = new ConnectorMsqlDb(streamInfo.stream_name(), properties);
+    conn_writer_ = new ConnectorMsqlDb(stream_info.stream_name(), properties);
 }
 
 RsStreamWriter::~RsStreamWriter()
 {
-    delete connWriter_;
+    delete conn_writer_;
 }
 
 auto RsStreamWriter::write(
@@ -39,7 +39,7 @@ auto RsStreamWriter::write(
 {
     RTI_RS_LOG_FN(write);
 
-    if (connWriter_->connected() == false) {
+    if (conn_writer_->connected() == false) {
         return 0;
     }
 
@@ -48,13 +48,13 @@ auto RsStreamWriter::write(
         for (int i = 0; i < sample_seq.size(); i++) {
             if (info_seq[i]->valid()) {
                 /* write data to the connector writer */
-                if (connWriter_->writeData(sample_seq[i])) {
+                if (conn_writer_->write_data(*sample_seq[i])) {
                     count++;
                 }
             }
         }
     } else {
-        RTI_RS_ERROR("Sample and Info sequeces different lengths");
+        throw dds::core::Error("Sample and Info sequeces different lengths");
     }
 
     /* return number of samples written */
