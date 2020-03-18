@@ -29,7 +29,7 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
 2. From rs_dds_msql_adapter\rs_main\build type the following. Enter **-G "Visual Studio 16 2019"** for Visual Studio 2019.
 
-`cmake -DBUILD_SHARED_LIBS=ON -DCONNEXTDDS_ARCH=x64Win64VS2017 -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017" -A x64 ..`
+`cmake -DBUILD_SHARED_LIBS=ON -DCONNEXTDDS_ARCH=x64Win64VS2017 -DCONNEXTDDS_IMPORTED_TARGETS_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017" -A x64 ..`
 
 3. The project can be built from Visual Studio or from the command line.
     - In Visual Studio open RSMain.sln and select **Debug** build configuration and build.
