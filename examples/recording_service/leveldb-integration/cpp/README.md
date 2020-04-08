@@ -120,6 +120,17 @@ cmake -DCONNEXTDDS_DIR=<connext dir>
       -A x64
 ```
 
+> **Note for building on Windows**:
+>
+> In file LevelDbReader.cxx, notice the first include, `dds/dds.hpp`. When
+> building on Windows, it is recommended to include that header before any 
+> direct inclusion of C, `dds_c/*.h` headers. If not, unresolved symbol link 
+> errors could happen. Also, if you need to access C headers directly, it is 
+> preferred to use header `ndds/ndds_c.h` than specific headers.
+> The reason behind this is that header `dds/core/macros.hpp` has to be called
+> before any C header is used. Otherwise, there may be a situation where symbols
+> are not correctly dll-imported.
+
 **Cross-compilation**.
 
 When you need to cross-compile the example, the above command will not work, the
