@@ -17,7 +17,7 @@
 #include <rti/core/constants.hpp>
 
 #include <leveldb/write_batch.h>
-#include "leveldb/env.h"
+#include <leveldb/env.h>
 
 #include <rti/recording/storage/StorageDefs.hpp>
 
@@ -290,9 +290,9 @@ void LevelDbStreamWriter::store(
         rti::core::SequenceNumber seq_nr(
                 sample_info.delegate().original_publication_virtual_sequence_number());
         UserDataKey key(
+                SequenceNumber(seq_nr.high(), seq_nr.low()),
                 reception_timestamp,
-                guid,
-                SequenceNumber(seq_nr.high(), seq_nr.low()));
+                guid);
         dds::topic::topic_type_support<UserDataKey>::to_cdr_buffer(
                 key_buffer_,
                 key);
@@ -415,9 +415,9 @@ void PubDiscoveryLevelDbWriter::store(
         rti::core::SequenceNumber seq_nr(
                 sample_info.delegate().original_publication_virtual_sequence_number());
         UserDataKey key(
+                SequenceNumber(seq_nr.high(), seq_nr.low()),
                 reception_timestamp,
-                guid,
-                SequenceNumber(seq_nr.high(), seq_nr.low()));
+                guid);
         dds::topic::topic_type_support<UserDataKey>::to_cdr_buffer(
                 key_buffer_,
                 key);

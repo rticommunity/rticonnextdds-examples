@@ -28,9 +28,9 @@ struct SequenceNumber {
 // (represented by the reception timestamp).
 // This type is used as the key for both publication data and user-data topics.
 struct UserDataKey {
+    SequenceNumber original_v_seq_nr;
     int64 reception_timestamp;
     octet original_writer_v_guid[GUID_LENGTH];
-    SequenceNumber original_v_seq_nr;
 };
 
 //

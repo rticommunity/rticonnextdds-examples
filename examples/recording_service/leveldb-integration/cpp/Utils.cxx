@@ -28,19 +28,7 @@ int UserDataKeyComparator::Compare(
         const leveldb::Slice& a,
         const leveldb::Slice& b) const
 {
-    using namespace rti::topic;
-
-    std::vector<char> buffer(
-            dynamic_type<UserDataKey>::get().cdr_serialized_sample_max_size());
-    UserDataKey key_a = slice_to_user_type<UserDataKey>(a, buffer);
-    UserDataKey key_b = slice_to_user_type<UserDataKey>(b, buffer);
-    if (key_a.reception_timestamp() < key_b.reception_timestamp()) {
-        return -1;
-    } else if (key_a.reception_timestamp() > key_b.reception_timestamp()) {
-        return 1;
-    } else {
-        return 0;
-    }
+    return memcmp(a.data(), b.data(), a.size());
 }
 
 const char* UserDataKeyComparator::Name() const
