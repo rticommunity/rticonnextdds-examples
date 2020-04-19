@@ -458,20 +458,40 @@ if(NOT CONNEXTDDS_DIR)
 
     if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(connextdds_root_hints
-            "$ENV{HOME}/rti_connext_dds-${folder_version}")
+            "$ENV{HOME}/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "$ENV{HOME}/rti_connext_dds-*"
+        )
 
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
         set(connextdds_root_hints
             "C:/Program Files (x86)/rti_connext_dds-${folder_version}"
             "C:/Program Files/rti_connext_dds-${folder_version}"
-            "C:/rti_connext_dds-${folder_version}")
+            "C:/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "C:/Program Files (x86)/rti_connext_dds-*"
+            "C:/Program Files/rti_connext_dds-*"
+            "C:/rti_connext_dds-*"
+        )
 
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
         set(connextdds_root_hints
-            "/Applications/rti_connext_dds-${folder_version}")
+            "/Applications/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "/Applications/rti_connext_dds-*"
+        )
     endif()
 
+    file(GLOB connextdds_root_paths_expanded
+        LIST_DIRECTORIES TRUE
+        ${connextdds_root_paths}
+    )
+
     connextdds_log_debug("Root hints: ${connextdds_root_hints}")
+    connextdds_log_debug("Root paths: ${connextdds_root_paths_expanded}")
 endif()
 
 # We require having an rti_versions file under the installation directory
@@ -480,7 +500,12 @@ find_path(CONNEXTDDS_DIR
     NAMES rti_versions.xml
     HINTS
         ENV NDDSHOME
-        ${connextdds_root_hints})
+        ${NDDSHOME}
+        ${connextdds_root_hints}
+    PATHS
+        ${connextdds_root_paths_expanded}
+
+)
 
 if(NOT CONNEXTDDS_DIR)
     set(error
@@ -505,7 +530,8 @@ find_path(RTICODEGEN_DIR
 if(NOT RTICODEGEN_DIR)
     set(warning
         "Codegen was not found. Please, check if rtiddsgen is under your "
-        "NDDSHOME/bin directory or provide it to CMake using -DRTICODEGEN_DIR")
+        "NDDSHOME/bin directory or provide it to CMake using -DRTICODEGEN_DIR"
+    )
         message(WARNING ${warning})
 else()
     set(RTICODEGEN
@@ -526,11 +552,10 @@ else()
 endif()
 
 # Find RTI Connext DDS architecture if CONNEXTDDS_ARCH is unset
-if(NOT DEFINED CONNEXTDDS_ARCH)
+if(NOT CONNEXTDDS_ARCH)
     connextdds_log_verbose("CONNEXTDDS_ARCH was not provided")
-    connextdds_log_verbose("CONNEXTDDS_ARCH trying to guess the RTI Architecture")
-
     # Guess the RTI Connext DDS architecture
+
     if(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
         string(REGEX REPLACE "^([0-9]+).*$" "\\1"
             major_version
@@ -587,7 +612,7 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
 
     connextdds_log_verbose("Guessed RTI architecture: ${guessed_architecture}")
 
-    if(DEFINED ENV{CONNEXTDDS_ARCH})
+    if(ENV{CONNEXTDDS_ARCH})
         set(CONNEXTDDS_ARCH $ENV{CONNEXTDDS_ARCH})
     elseif(EXISTS "${CONNEXTDDS_DIR}/lib/${guessed_architecture}")
         set(CONNEXTDDS_ARCH "${guessed_architecture}")
@@ -747,7 +772,7 @@ function(connextdds_check_component_field_version
         return()
     endif()
 
-    if(NOT DEFINED RTICONNEXTDDS_VERSION)
+    if(NOT RTICONNEXTDDS_VERSION)
         # If the variable version RTICONNEXTDDS_VERSION has not been set, we
         # set it here in the scope of the caller to store the value that has
         # been detected.
