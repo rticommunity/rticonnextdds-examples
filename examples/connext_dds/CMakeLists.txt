@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-connext-dds)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -11,7 +11,8 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(RTIConnextDDS
-    "6.0.0"
+    "6.0.1"
+    EXACT
     REQUIRED
     COMPONENTS
         core
@@ -109,6 +110,10 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
 # custom_transport
 if(NOT WIN32)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
+else()
+    message(
+        STATUS "Skipping custom_transport example: not compabile with Windows"
+    )
 endif()
 
 # deadline_contentfilter
