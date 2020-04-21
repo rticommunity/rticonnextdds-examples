@@ -27,10 +27,10 @@
 # find_package invocation for this module to set variables for the different
 # libraries associated with them.
 #
-# Also, the version consistency across all the requested components will be
+# Also, the version consistency across all the requested components can be
 # checked. If the version between the components missmatch,
-# `RTIConnextDDS_FOUND` will be set to `FALSE`. This feature can be disabled
-# setting `CONNEXTDDS_DISABLE_VERSION_CHECK` to `TRUE`.
+# `RTIConnextDDS_FOUND` will be set to `FALSE`. This feature can be enabled
+# setting `CONNEXTDDS_ENABLE_VERSION_CHECK` to `TRUE`.
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
@@ -500,7 +500,7 @@ find_path(CONNEXTDDS_DIR
     NAMES rti_versions.xml
     HINTS
         ENV NDDSHOME
-        ${NDDSHOME}
+        "${NDDSHOME}"
         ${connextdds_root_hints}
     PATHS
         ${connextdds_root_paths_expanded}
@@ -772,13 +772,7 @@ function(connextdds_check_component_field_version
         return()
     endif()
 
-    if(NOT RTICONNEXTDDS_VERSION)
-        # If the variable version RTICONNEXTDDS_VERSION has not been set, we
-        # set it here in the scope of the caller to store the value that has
-        # been detected.
-        set(RTICONNEXTDDS_VERSION ${field_version_number} PARENT_SCOPE)
-        connextdds_log_verbose("Found ConnextDDS version: ${field_version_number}")
-    elseif(NOT RTICONNEXTDDS_VERSION STREQUAL field_version_number)
+    if(NOT "${RTICONNEXTDDS_VERSION}" VERSION_EQUAL "${field_version_number}")
         # Otherwise, if the detected version is inconsistent with the previous
         # value of RTICONNEXTDDS_VERSION, we throw an error.
         set(warning
@@ -926,6 +920,14 @@ function(create_connext_imported_target)
         "${multi_value_args}"
         ${ARGN}
     )
+
+    if(WIN32
+        AND NOT BUILD_SHARED_LIBS
+        AND ${_CONNEXT_TARGET} STREQUAL "routing_service_c")
+        # ROUTING-276: Routing Service is not available as a static library
+        # for Windows
+        return()
+    endif()
 
     set(target_name RTIConnextDDS::${_CONNEXT_TARGET})
     if(TARGET ${target_name})
@@ -1571,19 +1573,28 @@ endif()
 #####################################################################
 # Version Variables                                                 #
 #####################################################################
-# Verify that all the components specified have the same version
-file(READ "${CONNEXTDDS_DIR}/rti_versions.xml" xml_file)
 
-if(CONNEXTDDS_DISABLE_VERSION_CHECK)
-    # If the version check is disabled, the method to check the component field
-    # version is called one time. That method will return the version described
-    # in the rti_versions.xml for a given component. When the check is
-    # disabled, the returned version is the core libraries version.
-    connextdds_check_component_field_version(
-        "header_files"
-        ${xml_file}
-        connextdds_host_arch)
-else()
+# In the header files, there is a variable that contains the BUILD ID of the
+# release. From the BUILD ID, we can get the version.
+set(regex_for_build "NDDSCORE_BUILD_.*_RTI_REL")
+file(STRINGS
+    "${CONNEXTDDS_DIR}/include/ndds/core_version/core_version_buildid.h"
+    build_id_line
+    REGEX ${regex_for_build}
+)
+string(REGEX MATCH
+    ${regex_for_build}
+    CONNEXTDDS_BUILD_ID
+    "${build_id_line}"
+)
+string(REGEX MATCH
+    "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+    RTICONNEXTDDS_VERSION
+    "${CONNEXTDDS_BUILD_ID}")
+
+if(CONNEXTDDS_ENABLE_VERSION_CHECK)
+    # Verify that all the components specified have the same version
+    file(READ "${CONNEXTDDS_DIR}/rti_versions.xml" xml_file)
     # Verify host components
     foreach(field IN LISTS rti_versions_field_names_host)
         connextdds_check_component_field_version(
@@ -1901,8 +1912,8 @@ if(RTIConnextDDS_FOUND)
     endif()
 
     create_connext_imported_target(
-        TARGET "routing_service_infrastructure"
-        VAR "ROUTING_SERVICE_INFRASTRUCTURE"
+        TARGET "routing_service_c"
+        VAR "ROUTING_SERVICE_API_LIBRARIES"
         DEPENDENCIES
             ${dependencies}
     )
