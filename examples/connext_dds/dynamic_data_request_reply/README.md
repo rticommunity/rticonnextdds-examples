@@ -6,8 +6,8 @@
 without defining an IDL in compile time.
 
 *Dynamic Data* provides an easy way to access the members of a data sample. Such
-members can be primitive data types or complex data types such as arrays or
-sequences.
+members can be primitive data types or complex data types such as structs,
+arrays or sequences.
 
 While the access to certain members is done using a name, the access in multiple
 cardinality data types (such as arrays or sequences) are done using a index
