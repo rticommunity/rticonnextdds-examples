@@ -32,8 +32,13 @@ a reply message.
 This example shows how to establish a Request-Reply communication pattern using
 the Request-Reply API based on Dynamic Data types.
 
-For this example we dinamicaly define two data types, one for the request samples and 
-the other for the reply samples. The request data type is the following:
+Within this example the Requester application requests a list of prime numbers
+from 1 to `n`. Then the Replier application computes the prime numbers and
+replies with the given sequence of prime numbers to the Requester.
+
+For this example we dinamicaly define two data types, one for the request 
+samples and the other for the reply samples. The request data type is the
+following:
 
 ```cpp
 struct PrimeNumberRequest {
@@ -69,11 +74,6 @@ struct PrimeNumberReply {
     PrimeNumberCalculationStatus status;
 };
 ```
-
-
-In this example the Requester application requests a list of prime numbers
-from 1 to `n`. Then the Replier application computes the prime numbers and
-replies with the given sequence of prime numbers to the Requester.
 
 All the Reply/Request communication is done using the previously mentioned
 Dynamic Data data types that are defined in "_PrimesType.cxx_".
