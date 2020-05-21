@@ -214,7 +214,7 @@ public:
             }
 
             /* We don't need to call replies.return_loan(); the destructor
-             * takes care of doing it every time replies goes out of scope
+             * takes care of doing it every time replies go out of scope
              */
         }
     }
@@ -276,4 +276,3 @@ int main(int argc, char *argv[])
     return requester_main(n, primes_per_reply, domain_id);
 }
 #endif
-
