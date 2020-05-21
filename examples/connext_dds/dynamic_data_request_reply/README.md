@@ -18,7 +18,7 @@ necessary to use other communication patterns in addition to publish-subscribe.
 
 Connext DDS includes support for the *Request-Reply* communication pattern. 
 It is available with the Connext DDS Professional, Evaluation, and Basic package
- types.
+types.
 
 
 The request-reply pattern has two roles: 
@@ -30,7 +30,7 @@ a reply message.
 ## Example description
 
 This example shows how to establish a Request-Reply communication pattern using
-the Request-Reply API based on Dynamic data types.
+the Request-Reply API based on Dynamic Data types.
 
 For this example we dinamicaly define two data types, one for the request samples and 
 the other for the reply samples. The request data type is the following:

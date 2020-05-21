@@ -149,14 +149,14 @@ DDS_TypeCode * get_PrimeNumberCalculationStatus_enum_typecode(
        goto fail;
     }
 
-	/* Case 2: We add the member REPLY_IN_COMPLETED with value 1 */
+	/* Case 2: We add the member REPLY_COMPLETED with value 1 */
 	enumTC->add_member_to_enum("REPLY_COMPLETED", 1, err);
     if (err != DDS_NO_EXCEPTION_CODE) {
        cerr << "! Unable to add member REPLY_IN_COMPLETED: " << err << endl;
        goto fail;
     }
 
-    /* Case 3: We add the member REPLY_IN_ERROR with value 2 */
+    /* Case 3: We add the member REPLY_ERROR with value 2 */
 	enumTC->add_member_to_enum("REPLY_ERROR", 2, err);
     if (err != DDS_NO_EXCEPTION_CODE) {
        cerr << "! Unable to add member REPLY_IN_ERROR: " << err << endl;
@@ -267,7 +267,6 @@ fail:
     }
     return NULL;
 }
-
 
 
 
