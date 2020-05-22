@@ -1,0 +1,248 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/6.0.0/rti_routing_service.xsd">
+    <!-- ********************************************************************** -->
+    <!-- RTI Routing service examples for TCP over WAN                          -->
+    <!-- Note: Change the IPs and ports below to fit yours                      -->
+    <!-- ********************************************************************** -->
+    <!-- UDP/Shared memory (domain 0) => TCP (domain 1)                         -->
+    <!-- ********************************************************************** -->
+    <routing_service name="example">
+
+        <annotation><documentation>In a WAN, routes from UDP or shared memory to TCP. Remember to edit the file and change the public IP address.</documentation></annotation>
+        <administration><domain_id>0</domain_id></administration>
+
+        <domain_route name="Route">
+            <participant name="participant0">
+                <domain_id>0</domain_id>
+            </participant>
+
+            <participant name="participant1">
+                <domain_id>1</domain_id>
+                <participant_qos>
+                    <discovery>
+                        <initial_peers>
+                            <element>tcpv4_wan://50.18.214.8:7400</element>
+                        </initial_peers>
+                    </discovery>
+                    <discovery_config>
+                        <participant_liveliness_assert_period>
+                            <sec>10</sec>
+                            <nanosec>0</nanosec>
+                        </participant_liveliness_assert_period>
+                    </discovery_config>
+                    <transport_builtin>
+                        <mask>MASK_NONE</mask>
+                    </transport_builtin>
+                    <property>
+                        <value>
+                            <element>
+                                <name>dds.transport.load_plugins</name>
+                                <value>dds.transport.TCPv4.tcp1</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.library</name>
+                                <value>nddstransporttcp</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.create_function</name>
+                                <value>NDDS_Transport_TCPv4_create</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.parent.classid</name>
+                                <value>NDDS_TRANSPORT_CLASSID_TCPV4_WAN</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.connection_liveliness.enable</name>
+                                <value>1</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.connection_liveliness.lease_duration</name>
+                                <value>10</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.connection_liveliness.assertions_per_lease_duration</name>
+                                <value>4</value>
+                            </element>
+                            <!--
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.public_address</name>
+                                <value>x.x.x.x:7400</value>
+                            </element>
+                            -->
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
+                                <value>0</value> <!-- changed to zero since we're not supporting inbound connections -->
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.disable_nagle</name>
+                                <value>1</value>
+                            </element>
+                        </value>
+                    </property>
+                </participant_qos>
+            </participant>
+
+            <session name="Session" enabled="true">
+                <auto_topic_route name="Square" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datareader_qos>
+                            <time_based_filter>
+                                <minimum_separation>
+                                    <sec>0</sec>
+                                    <nanosec>300000000</nanosec>
+                                </minimum_separation>
+                            </time_based_filter>
+                        </datareader_qos>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="Circle" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <!--<datawriter_qos>
+                            <writer_data_lifecycle>
+                                <autodispose_unregistered_instances>
+                                    false
+                                </autodispose_unregistered_instances>
+                            </writer_data_lifecycle>
+                        </datawriter_qos>
+                    -->
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="Triangle" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datareader_qos>
+                            <time_based_filter>
+                                <minimum_separation>
+                                    <sec>0</sec>
+                                    <nanosec>1000000000</nanosec>
+                                </minimum_separation>
+                            </time_based_filter>
+                        </datareader_qos>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+                <!-- Not needed since we break out each topic into their own auto routes
+                     and batching doesn't show history using the WIS js display, so batching isn't useful to demo
+                <auto_topic_route name="AllForward" enabled="false">                    
+                    <publish_with_original_info>true</publish_with_original_info>                   
+                    <input participant="1">
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                    </input>
+                    <output>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                    </output>
+                </auto_topic_route> -->
+
+                <!-- Content filtered topics, samples are filtered if x > 150 -->
+                <auto_topic_route name="SquareFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="CircleFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="TriangleFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+            <!--Adapt Square and Triangle topics to Circle topics, 
+                they could be split back apart on a remote RS if color could be used to designate original shape for example -->
+                <topic_route name="SquareToCircle" enabled="false">
+                    <input participant="participant0">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Square</topic_name>
+                    </input>
+                    <output participant="participant1">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Circle</topic_name>
+                    </output>
+                </topic_route>
+
+                <topic_route name="TriangleToCircle" enabled="false">
+                    <input participant="participant0">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Triangle</topic_name>
+                    </input>
+                    <output participant="participant1">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Circle</topic_name>
+                    </output>
+                </topic_route>
+
+                <auto_topic_route name="AllBackward" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info>                    
+                    <input participant="participant1">
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                    </input>
+                    <output participant="participant0">
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                    </output>
+                </auto_topic_route>
+                
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>

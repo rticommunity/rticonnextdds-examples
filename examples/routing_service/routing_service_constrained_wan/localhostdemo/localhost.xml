@@ -1,0 +1,207 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/6.0.0/rti_routing_service.xsd">
+    <routing_service name="example">
+        <annotation><documentation>Routing Service Example</documentation></annotation>
+        <administration><domain_id>0</domain_id></administration>
+
+        <domain_route name="Route" enabled="true">
+            <participant name="participant0"><domain_id>0</domain_id></participant>
+            <participant name="participant1"><domain_id>1</domain_id></participant>
+
+            <session name="Session" enabled="true">
+    <!-- Three topic routes are auto-enabled, to pass squares, circles, and triangles from domain 0 to domain 1 -->
+                <auto_topic_route name="Square" enabled="true">
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="Circle" enabled="true">
+                    <filter_propagation>
+                        <enabled>true</enabled>
+                        <max_event_delay><sec>1</sec><nanosec>0</nanosec></max_event_delay>
+                    </filter_propagation>
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="Triangle" enabled="true">
+                    <filter_propagation>
+                        <enabled>true</enabled>
+                        <max_event_delay><sec>1</sec><nanosec>0</nanosec></max_event_delay>
+                    </filter_propagation>
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+<!--Batching routes for squares, triangles, and circles, disabled by default 
+    Batching cannot be loaded dynamically via "update" calls, instead this route must be enabled-->
+                <auto_topic_route name="SquareBatch" enabled="false">
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datawriter_qos>
+                            <batch>
+                                <enable>true</enable>
+                                <max_samples>6</max_samples>
+                                <max_flush_delay>
+                                    <sec>2</sec>
+                                    <nanosec>0</nanosec>
+                                </max_flush_delay>
+                            </batch>
+                            <history>
+                                <kind>KEEP_LAST_HISTORY_QOS</kind>
+                                <depth>12</depth>
+                            </history>
+                        </datawriter_qos>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="TriangleBatch" enabled="false">
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datawriter_qos>
+                            <batch>
+                                <enable>true</enable>
+                                <max_samples>6</max_samples>
+                                <max_flush_delay>
+                                    <sec>2</sec>
+                                    <nanosec>0</nanosec>
+                                </max_flush_delay>
+                            </batch>
+                            <history>
+                                <kind>KEEP_LAST_HISTORY_QOS</kind>
+                                <depth>12</depth>
+                            </history>
+                        </datawriter_qos>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="CircleBatch" enabled="false">
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <datawriter_qos>
+                            <batch>
+                                <enable>true</enable>
+                                <max_samples>6</max_samples>
+                                <max_flush_delay>
+                                    <sec>2</sec>
+                                    <nanosec>0</nanosec>
+                                </max_flush_delay>
+                            </batch>
+                            <history>
+                                <kind>KEEP_LAST_HISTORY_QOS</kind>
+                                <depth>12</depth>
+                            </history>
+                        </datawriter_qos>
+                    </output>
+                </auto_topic_route>
+
+<!--Adapt Square and Triangle topics to Circle topics, 
+    they could be split back apart on a remote RS if color could be used to designate original shape for example -->
+                <topic_route name="SquareToCircle" enabled="false">
+                    <input participant="participant0">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Square</topic_name>
+                    </input>
+                    <output participant="participant1">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Circle</topic_name>
+                    </output>
+                </topic_route>
+                <topic_route name="TriangleToCircle" enabled="false">
+                    <input participant="participant0">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Triangle</topic_name>
+                    </input>
+                    <output participant="participant1">
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Circle</topic_name>
+                    </output>
+                </topic_route>
+
+                <!-- Routes for each shape that include a filter on the x value. Values < 150 are not filtered -->
+                <auto_topic_route name="SquareFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Square</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="CircleFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Circle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+                
+                <auto_topic_route name="TriangleFilter" enabled="false">
+                    <publish_with_original_info>true</publish_with_original_info> 
+                    <input participant="participant0">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                        <content_filter>
+                            <expression>x &lt; %0</expression>
+                            <parameter>150</parameter>
+                        </content_filter>
+                    </input>
+                    <output participant="participant1">
+                        <allow_topic_name_filter>Triangle</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>

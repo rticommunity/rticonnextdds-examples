@@ -1,0 +1,12 @@
+<auto_topic_route>
+    <input>
+        <datareader_qos>
+            <time_based_filter>
+                <minimum_separation>
+                    <sec>0</sec>
+                    <nanosec>1000000000</nanosec>
+                </minimum_separation>
+            </time_based_filter>
+        </datareader_qos>
+    </input>
+</auto_topic_route>

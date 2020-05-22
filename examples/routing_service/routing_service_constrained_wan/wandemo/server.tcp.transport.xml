@@ -1,0 +1,92 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/6.0.0/rti_routing_service.xsd">
+    <!-- RTI Routing service examples for TCP over WAN                          -->
+    <!-- Note: Change the IPs and ports below to fit yours                      -->
+    <!-- ********************************************************************** -->
+    <!-- TCP (domain 1) => UDP/Shared memory (domain 2)                         -->
+    <!-- ********************************************************************** -->
+    <routing_service name="TCP_2">
+        <annotation><documentation>In a WAN, routes from TCP to UDP or shared memory. Remember to edit the file and change the public IP address.</documentation></annotation>
+        <domain_route name="DR_TCPWAN_UPDLAN">
+            <participant name="1">
+                <domain_id>1</domain_id>
+                <participant_qos>
+                    <transport_builtin>
+                        <mask>MASK_NONE</mask>
+                    </transport_builtin>
+                    <property>
+                        <value>
+                            <element>
+                                <name>dds.transport.load_plugins</name>
+                                <value>dds.transport.TCPv4.tcp1</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.library</name>
+                                <value>nddstransporttcp</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.create_function</name>
+                                <value>NDDS_Transport_TCPv4_create</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.parent.classid</name>
+                                <value>NDDS_TRANSPORT_CLASSID_TCPV4_WAN</value>
+                            </element>
+                            <!--
+                                OPTIONAL ASYMMETRIC CONFIGURATION:
+                                You can use asymmetric communication across NAT and in that case you don't need a public IP address or
+                                forwarding a port for one of the routing services (for example this one, TCP_2). In that case you can remove
+                                this property, set server_bind_port to 0 and configure the initial peers only on this host, using the
+                                public IP and port of TCP_1.                                                                
+                                See the chapter about the TCP Transport in the RTI DDS User's Manual for more information.
+                            -->
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.public_address</name>
+                                <value>50.18.214.8:7400</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
+                                <value>7400</value>
+                            </element>
+                            <element>
+                                <name>dds.transport.TCPv4.tcp1.disable_nagle</name>
+                                <value>1</value>
+                            </element>
+                        </value>
+                    </property>
+                </participant_qos>
+            </participant>
+
+            <participant name="2">
+                <domain_id>2</domain_id>
+            </participant>
+
+            <session name="Session" enabled="true">
+                <auto_topic_route name="AllForward" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info>                    
+                    <input participant="1">
+                        <creation_mode>ON_DOMAIN_AND_ROUTE_MATCH</creation_mode>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </input>
+                    <output>
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </output>
+                </auto_topic_route>
+
+                <auto_topic_route name="AllBackward" enabled="true">
+                    <publish_with_original_info>true</publish_with_original_info>
+                    <input participant="2">
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </input>
+                    <output>
+                        <creation_mode>ON_DOMAIN_AND_ROUTE_MATCH</creation_mode>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </output>
+                </auto_topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>
