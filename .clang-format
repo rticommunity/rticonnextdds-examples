@@ -30,6 +30,7 @@ AlignAfterOpenBracket: AlwaysBreak
 AllowAllParametersOfDeclarationOnNextLine: false
 AllowAllArgumentsOnNextLine: false
 AlwaysBreakAfterReturnType: None
+PenaltyReturnTypeOnItsOwnLine: 1024
 BinPackParameters: false
 BinPackArguments: false
 ExperimentalAutoDetectBinPacking: false

@@ -10,19 +10,19 @@
  * use or inability to use the software.
  */
 
-#include <memory>
 #include <algorithm>
+#include <memory>
 
 #include <dds/core/types.hpp>
 #include <rti/core/constants.hpp>
 
-#include <leveldb/write_batch.h>
 #include <leveldb/env.h>
+#include <leveldb/write_batch.h>
 
 #include <rti/recording/storage/StorageDefs.hpp>
 
-#include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbWriter.hpp"
+#include "LevelDb_RecorderTypes.hpp"
 
 
 namespace rti { namespace recording { namespace examples {
@@ -39,8 +39,8 @@ RTI_RECORDING_STORAGE_WRITER_CREATE_DEF(LevelDbWriter);
  * working directory to be passed as a property here (see WORKING_DIR_PROPERTY
  * above).
  */
-LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
-    StorageWriter(properties)
+LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet &properties)
+        : StorageWriter(properties)
 {
     /* Obtain current time so we can store it as the start time */
     int64_t current_time = (int64_t) time(nullptr);
@@ -68,10 +68,10 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
         if (!status.ok()) {
             std::stringstream log_stream;
             log_stream << "Failed to create auto working directory:"
-                    << std::endl;
+                       << std::endl;
             log_stream << "    Directory = " << working_dir_ << std::endl;
             log_stream << "    LevelDB error = " << status.ToString()
-                    << std::endl;
+                       << std::endl;
             throw std::runtime_error(log_stream.str());
         }
     }
@@ -100,9 +100,9 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
         std::stringstream log_stream;
         log_stream << "Failed to open metadata DB file" << std::endl;
         log_stream << "    File name = " << metadata_filename.str()
-                << std::endl;
+                   << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     metadata_db_.reset(db);
@@ -119,7 +119,7 @@ LevelDbWriter::LevelDbWriter(const rti::routing::PropertySet& properties) :
         std::stringstream log_stream;
         log_stream << "Failed to write start time to metadata DB" << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
 }
@@ -143,16 +143,16 @@ LevelDbWriter::~LevelDbWriter()
         std::stringstream log_stream;
         log_stream << "Failed to write end time to metadata DB" << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         /* Do not throw in a C++ destructor */
         std::cerr << log_stream.str();
     }
 }
 
-rti::recording::storage::StorageStreamWriter *
-LevelDbWriter::create_stream_writer(
-        const rti::routing::StreamInfo& stream_info,
-        const rti::routing::PropertySet& properties)
+rti::recording::storage::StorageStreamWriter *LevelDbWriter::
+        create_stream_writer(
+                const rti::routing::StreamInfo &stream_info,
+                const rti::routing::PropertySet &properties)
 {
     /*
      * Recorder will pass the Domain ID information as a property. Get its value
@@ -165,8 +165,8 @@ LevelDbWriter::create_stream_writer(
     return new LevelDbStreamWriter(working_dir_, stream_info, domain_id);
 }
 
-rti::recording::storage::PublicationStorageWriter *
-LevelDbWriter::create_publication_writer()
+rti::recording::storage::PublicationStorageWriter *LevelDbWriter::
+        create_publication_writer()
 {
     return new PubDiscoveryLevelDbWriter(working_dir_);
 }
@@ -178,11 +178,10 @@ void LevelDbWriter::delete_stream_writer(
 }
 
 LevelDbStreamWriter::LevelDbStreamWriter(
-        const std::string& working_dir,
-        const rti::routing::StreamInfo& stream_info,
-        uint32_t domain_id) :
-    stream_info_(stream_info),
-    domain_id_(domain_id)
+        const std::string &working_dir,
+        const rti::routing::StreamInfo &stream_info,
+        uint32_t domain_id)
+        : stream_info_(stream_info), domain_id_(domain_id)
 {
     using namespace dds::core::xtypes;
 
@@ -194,8 +193,8 @@ LevelDbStreamWriter::LevelDbStreamWriter(
      * of the file will be '.dat'
      */
     std::stringstream db_filename;
-    db_filename << working_dir << "/"
-            << stream_info.stream_name() << "@" << domain_id << ".dat";
+    db_filename << working_dir << "/" << stream_info.stream_name() << "@"
+                << domain_id << ".dat";
     db_filename_ = db_filename.str();
     /* DB options: create the file if not found; rest is fine to keep default */
     leveldb::Options db_options;
@@ -209,6 +208,7 @@ LevelDbStreamWriter::LevelDbStreamWriter(
     db_options.error_if_exists = true;
     /* Order samples in monotonic ascending reception timestamp order */
     db_options.comparator = &key_comparator_;
+    db_options.compression = leveldb::kNoCompression;
     /* Attempt to create the LevelDB database with the derived filename */
     leveldb::DB *db = nullptr;
     leveldb::Status db_status =
@@ -218,7 +218,7 @@ LevelDbStreamWriter::LevelDbStreamWriter(
         log_stream << "Failed to open user-data DB file" << std::endl;
         log_stream << "    File name = " << db_filename_ << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     data_db_.reset(db);
@@ -226,7 +226,7 @@ LevelDbStreamWriter::LevelDbStreamWriter(
      * Pre-allocate key buffer, used to serialize the UserDataKey type to be
      * used as a key
      */
-    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    const StructType &key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
     /*
      * Pre-allocate an intelligent size for the CDR buffer to be used by the
@@ -237,7 +237,7 @@ LevelDbStreamWriter::LevelDbStreamWriter(
             stream_info.type_info().type_representation());
     DDS_ExceptionCode_t ex = DDS_NO_EXCEPTION_CODE;
     if (DDS_TypeCode_is_unbounded(type, DDS_BOOLEAN_FALSE, &ex)
-            && ex != DDS_NO_EXCEPTION_CODE) {
+        && ex != DDS_NO_EXCEPTION_CODE) {
         value_buffer_.resize(8192);
     } else {
         DDS_UnsignedLong size = DDS_TypeCode_get_cdr_serialized_sample_max_size(
@@ -247,9 +247,9 @@ LevelDbStreamWriter::LevelDbStreamWriter(
         if (ex != DDS_NO_EXCEPTION_CODE) {
             std::stringstream log_stream;
             log_stream << "Could not get serialized sample max size for stream"
-                    << std::endl;
+                       << std::endl;
             log_stream << "    Stream name = " << stream_info.stream_name()
-                    << std::endl;
+                       << std::endl;
             throw std::runtime_error(log_stream.str());
         }
         value_buffer_.resize((std::vector<char>::size_type) size);
@@ -261,8 +261,8 @@ LevelDbStreamWriter::~LevelDbStreamWriter()
 }
 
 void LevelDbStreamWriter::store(
-        const std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        const std::vector<dds::sub::SampleInfo *>& info_seq)
+        const std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        const std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     using namespace dds::core::xtypes;
     using namespace rti::core::xtypes;
@@ -279,7 +279,7 @@ void LevelDbStreamWriter::store(
          * - the original writer virtual GUID
          * - the original virtual sequence number
          */
-        const SampleInfo& sample_info = *(info_seq[i]);
+        const SampleInfo &sample_info = *(info_seq[i]);
         int64_t reception_timestamp = sample_info->reception_timestamp().sec();
         reception_timestamp *= rti::core::nanosec_per_sec;
         reception_timestamp += sample_info->reception_timestamp().nanosec();
@@ -288,7 +288,8 @@ void LevelDbStreamWriter::store(
                 sample_info.delegate().original_publication_virtual_guid());
         memcpy(guid.data(), original_pub_v_guid.native().value, GUID_LENGTH);
         rti::core::SequenceNumber seq_nr(
-                sample_info.delegate().original_publication_virtual_sequence_number());
+                sample_info.delegate()
+                        .original_publication_virtual_sequence_number());
         UserDataKey key(
                 SequenceNumber(seq_nr.high(), seq_nr.low()),
                 reception_timestamp,
@@ -305,7 +306,7 @@ void LevelDbStreamWriter::store(
         UserDataValue value;
         value.valid_data(sample_info.valid());
         if (sample_info.valid()) {
-            const dds::core::xtypes::DynamicData& sample = *(sample_seq[i]);
+            const dds::core::xtypes::DynamicData &sample = *(sample_seq[i]);
             rti::core::xtypes::to_cdr_buffer(value.data_blob(), sample);
         }
         dds::topic::topic_type_support<UserDataValue>::to_cdr_buffer(
@@ -315,25 +316,23 @@ void LevelDbStreamWriter::store(
 
         transaction.Put(key_slice, data_slice);
     }
-    leveldb::Status status = data_db_->Write(
-            leveldb::WriteOptions(),
-            &transaction);
+    leveldb::Status status =
+            data_db_->Write(leveldb::WriteOptions(), &transaction);
     if (!status.ok()) {
         std::stringstream log_stream;
         log_stream << "Error writing batch operations to LevelDB:" << std::endl;
         log_stream << "    Stream name = " << stream_info_.stream_name()
-                << std::endl;
+                   << std::endl;
         log_stream << "    File name = " << db_filename_ << std::endl;
         log_stream << "    LevelDB error = " << status.ToString() << std::endl;
-        log_stream << "Samples could not be stored ("
-                << count << (count == 1? " sample)" : "samples)")
-                << std::endl;
+        log_stream << "Samples could not be stored (" << count
+                   << (count == 1 ? " sample)" : "samples)") << std::endl;
         std::cerr << log_stream.str();
     }
 }
 
 PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
-        const std::string& working_dir)
+        const std::string &working_dir)
 {
     using namespace dds::core::xtypes;
 
@@ -364,10 +363,10 @@ PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
     if (!db_status.ok() || db == nullptr) {
         std::stringstream log_stream;
         log_stream << "Failed to open discovery (DCPSPublication) DB file"
-                << std::endl;
+                   << std::endl;
         log_stream << "    File name = " << discovery_filename_ << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     discovery_db_.reset(db);
@@ -375,7 +374,7 @@ PubDiscoveryLevelDbWriter::PubDiscoveryLevelDbWriter(
      * Pre-allocate key buffer, used to serialize the UserDataKey type to be
      * used as a key
      */
-    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    const StructType &key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 }
 
@@ -384,8 +383,9 @@ PubDiscoveryLevelDbWriter::~PubDiscoveryLevelDbWriter()
 }
 
 void PubDiscoveryLevelDbWriter::store(
-        const std::vector<dds::topic::PublicationBuiltinTopicData *>& sample_seq,
-        const std::vector<dds::sub::SampleInfo *>& info_seq)
+        const std::vector<dds::topic::PublicationBuiltinTopicData *>
+                &sample_seq,
+        const std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     using namespace dds::sub;
 
@@ -397,7 +397,7 @@ void PubDiscoveryLevelDbWriter::store(
         return;
     }
     for (int32_t i = 0; i < count; ++i) {
-        const SampleInfo& sample_info = *(info_seq[i]);
+        const SampleInfo &sample_info = *(info_seq[i]);
         /*
          * The key of a sample has to be unique and is hence composed of the
          * following:
@@ -413,7 +413,8 @@ void PubDiscoveryLevelDbWriter::store(
                 sample_info.delegate().original_publication_virtual_guid());
         memcpy(guid.data(), original_pub_v_guid.native().value, GUID_LENGTH);
         rti::core::SequenceNumber seq_nr(
-                sample_info.delegate().original_publication_virtual_sequence_number());
+                sample_info.delegate()
+                        .original_publication_virtual_sequence_number());
         UserDataKey key(
                 SequenceNumber(seq_nr.high(), seq_nr.low()),
                 reception_timestamp,
@@ -428,7 +429,7 @@ void PubDiscoveryLevelDbWriter::store(
          * sample, for example and practical purposes (the less fields we store,
          * the more efficient we are)
          */
-        dds::topic::PublicationBuiltinTopicData& sample = *(sample_seq[i]);
+        dds::topic::PublicationBuiltinTopicData &sample = *(sample_seq[i]);
         ReducedDCPSPublication reduced_sample;
         reduced_sample.valid_data(sample_info.valid());
         if (sample_info.valid()) {
@@ -437,14 +438,14 @@ void PubDiscoveryLevelDbWriter::store(
             const dds::core::optional<dds::core::xtypes::DynamicType> type =
                     sample->type();
             if (type.is_set()) {
-                const dds::core::xtypes::DynamicType& dynamic_type = type.get();
-                const DDS_TypeCode& native_type = dynamic_type.native();
+                const dds::core::xtypes::DynamicType &dynamic_type = type.get();
+                const DDS_TypeCode &native_type = dynamic_type.native();
                 DDS_TypeObject *type_object =
                         DDS_TypeObject_create_from_typecode(&native_type);
                 if (type_object == nullptr) {
                     std::stringstream log_msg;
                     log_msg << "Failed to create type-object from type-code. "
-                            "DCPSPublication sample cannot be stored"
+                               "DCPSPublication sample cannot be stored"
                             << std::endl;
                     log_msg << "    Topic name = " << sample.topic_name()
                             << std::endl;
@@ -465,12 +466,13 @@ void PubDiscoveryLevelDbWriter::store(
                         DDS_TypeObject_get_serialized_size(type_object);
                 std::vector<uint8_t> typeobject_buffer(type_object_buffer_len);
                 if (DDS_TypeObject_serialize(
-                        type_object,
-                        (char *) &(typeobject_buffer[0]),
-                        &type_object_buffer_len) != DDS_RETCODE_OK) {
+                            type_object,
+                            (char *) &(typeobject_buffer[0]),
+                            &type_object_buffer_len)
+                    != DDS_RETCODE_OK) {
                     std::stringstream log_msg;
                     log_msg << "Failed to serialize type-object. "
-                            "DCPSPublication sample cannot be stored"
+                               "DCPSPublication sample cannot be stored"
                             << std::endl;
                     log_msg << "    Topic name = " << sample.topic_name()
                             << std::endl;
@@ -493,20 +495,17 @@ void PubDiscoveryLevelDbWriter::store(
         leveldb::Slice data_slice(value_buffer_.data(), value_buffer_.size());
         transaction.Put(key_slice, data_slice);
     }
-    leveldb::Status status = discovery_db_->Write(
-            leveldb::WriteOptions(),
-            &transaction);
+    leveldb::Status status =
+            discovery_db_->Write(leveldb::WriteOptions(), &transaction);
     if (!status.ok()) {
         std::stringstream log_stream;
         log_stream << "Error writing batch operations to LevelDB:" << std::endl;
         log_stream << "    File name = " << discovery_filename_ << std::endl;
         log_stream << "    LevelDB error = " << status.ToString() << std::endl;
-        log_stream << "DCPSPublication samples could not be stored ("
-                << count << (count == 1? " sample)" : "samples)")
-                << std::endl;
+        log_stream << "DCPSPublication samples could not be stored (" << count
+                   << (count == 1 ? " sample)" : "samples)") << std::endl;
         std::cerr << log_stream.str();
     }
 }
 
-} } } // namespace rti::recording::examples
-
+}}}  // namespace rti::recording::examples

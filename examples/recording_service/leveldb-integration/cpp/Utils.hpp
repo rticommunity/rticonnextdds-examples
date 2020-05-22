@@ -29,7 +29,7 @@ namespace rti { namespace recording { namespace examples {
  * @brief Convert a Time object into an int-64 based timestamp representing
  *        nanoseconds.
  */
-inline int64_t to_nanosec_timestamp(const dds::core::Time& time)
+inline int64_t to_nanosec_timestamp(const dds::core::Time &time)
 {
     int64_t timestamp = time.sec();
     timestamp *= (int64_t) rti::core::nanosec_per_sec;
@@ -53,7 +53,7 @@ inline dds::core::Time timestamp_to_time(int64_t timestamp)
  * @brief Convert a Duration object into an int-64-based timestamp representing
  *        nanoseconds.
  */
-inline int64_t to_nanosec_timestamp(const dds::core::Duration& time_duration)
+inline int64_t to_nanosec_timestamp(const dds::core::Duration &time_duration)
 {
     int64_t timestamp = time_duration.sec();
     timestamp *= (int64_t) rti::core::nanosec_per_sec;
@@ -70,18 +70,13 @@ inline int64_t to_nanosec_timestamp(const dds::core::Duration& time_duration)
  *        LevelDb_RecorderTypes.idl, for more reference.
  */
 template <typename T>
-inline T slice_to_user_type(leveldb::Slice slice, std::vector<char>& buffer)
+inline T slice_to_user_type(leveldb::Slice slice, std::vector<char> &buffer)
 {
     T value_out;
     const char *raw_data = slice.data();
     buffer.resize(slice.size());
-    std::copy(
-            raw_data,
-            raw_data + slice.size(),
-            buffer.begin());
-    dds::topic::topic_type_support<T>::from_cdr_buffer(
-            value_out,
-            buffer);
+    std::copy(raw_data, raw_data + slice.size(), buffer.begin());
+    dds::topic::topic_type_support<T>::from_cdr_buffer(value_out, buffer);
     return value_out;
 }
 
@@ -123,7 +118,6 @@ inline const std::string end_time_key_name()
  */
 class UserDataKeyComparator : public leveldb::Comparator {
 public:
-
     UserDataKeyComparator();
 
     ~UserDataKeyComparator();
@@ -134,15 +128,15 @@ public:
      *     - if a > b: positive result
      *     - else: zero result
      */
-    virtual int Compare(const leveldb::Slice& a, const leveldb::Slice& b) const;
+    virtual int Compare(const leveldb::Slice &a, const leveldb::Slice &b) const;
 
-    virtual const char* Name() const;
+    virtual const char *Name() const;
 
     virtual void FindShortestSeparator(
             std::string *start,
-            const leveldb::Slice& limit) const;
+            const leveldb::Slice &limit) const;
 
-    virtual void FindShortSuccessor(std::string* key) const;
+    virtual void FindShortSuccessor(std::string *key) const;
 };
 
 /**
@@ -150,9 +144,10 @@ public:
  * smart pointer (can be easily used as a smart pointer deleter).
  */
 struct TypeObjectDeleter {
-
-    TypeObjectDeleter(DDS_TypeObjectFactory *type_factory) :
-        type_factory_(type_factory) {}
+    TypeObjectDeleter(DDS_TypeObjectFactory *type_factory)
+            : type_factory_(type_factory)
+    {
+    }
 
     void operator()(DDS_TypeObject *type)
     {
@@ -163,7 +158,6 @@ struct TypeObjectDeleter {
 };
 
 
-} } } // namespace rti::recording::examples
+}}}  // namespace rti::recording::examples
 
 #endif
-

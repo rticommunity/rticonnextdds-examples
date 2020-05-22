@@ -51,7 +51,6 @@ RTI_RECORDING_STORAGE_READER_CREATE_DECL(LevelDbReader);
  */
 class LevelDbReader : public rti::recording::storage::StorageReader {
 public:
-
     /**
      * Constructor. The storage writer expects the following property to be set
      * in the passed properties: "rti.recording.examples.leveldb.working_dir".
@@ -59,7 +58,7 @@ public:
      * (see files leveldb_replay.xml or leveldb_converter.xml) in the
      * <plugin><property> section.
      */
-    LevelDbReader(const rti::routing::PropertySet& properties);
+    LevelDbReader(const rti::routing::PropertySet &properties);
 
     ~LevelDbReader();
 
@@ -71,11 +70,12 @@ public:
      * in the property set parameter. This will be provided by Recording Service
      * automatically.
      */
-    rti::recording::storage::StorageStreamInfoReader * create_stream_info_reader(
-            const rti::routing::PropertySet& properties);
+    rti::recording::storage::StorageStreamInfoReader *create_stream_info_reader(
+            const rti::routing::PropertySet &properties);
 
     void delete_stream_info_reader(
-            rti::recording::storage::StorageStreamInfoReader *stream_info_reader);
+            rti::recording::storage::StorageStreamInfoReader
+                    *stream_info_reader);
 
     /**
      * Recording Service will call this method to create a Stream Reader object
@@ -85,16 +85,15 @@ public:
      * in the property set parameter, as well as the associated DDS Domain ID.
      * This will be provided by Recording Service automatically.
      */
-    rti::recording::storage::StorageStreamReader * create_stream_reader(
-            const rti::routing::StreamInfo& stream_info,
-            const rti::routing::PropertySet& properties);
+    rti::recording::storage::StorageStreamReader *create_stream_reader(
+            const rti::routing::StreamInfo &stream_info,
+            const rti::routing::PropertySet &properties);
 
     void delete_stream_reader(
             rti::recording::storage::StorageStreamReader *stream_reader);
+
 private:
-
     std::string working_dir_;
-
 };
 
 /*
@@ -102,13 +101,12 @@ private:
  * created by the 'LevelDbStreamWriter' class. The name of the database is
  * expected to be of the form '<stream-name>@<domain-id>'.
  */
-class LevelDbStreamReader :
-        public rti::recording::storage::DynamicDataStorageStreamReader {
+class LevelDbStreamReader
+        : public rti::recording::storage::DynamicDataStorageStreamReader {
 public:
-
     LevelDbStreamReader(
-            const std::string& working_dir,
-            const rti::routing::StreamInfo& stream_info,
+            const std::string &working_dir,
+            const rti::routing::StreamInfo &stream_info,
             uint32_t domain_id,
             int64_t start_timestamp,
             int64_t end_timestamp);
@@ -122,17 +120,17 @@ public:
      * and upper time limits, etc).
      */
     virtual void read(
-            std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-            std::vector<dds::sub::SampleInfo *>& info_seq,
-            const rti::recording::storage::SelectorState& selector);
+            std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+            std::vector<dds::sub::SampleInfo *> &info_seq,
+            const rti::recording::storage::SelectorState &selector);
 
     /*
      * The return loan operation should free any resources allocated by the
      * read() operation.
      */
     virtual void return_loan(
-            std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-            std::vector<dds::sub::SampleInfo *>& info_seq);
+            std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+            std::vector<dds::sub::SampleInfo *> &info_seq);
 
     /*
      * This method should flag Replay/Converter that all data related to the
@@ -143,7 +141,6 @@ public:
     virtual void reset();
 
 private:
-
     std::string db_filename_;
 
     rti::routing::StreamInfo stream_info_;
@@ -160,7 +157,8 @@ private:
 
     std::vector<char> value_buffer_;
 
-    std::vector<std::shared_ptr<dds::core::xtypes::DynamicData>> loaned_samples_;
+    std::vector<std::shared_ptr<dds::core::xtypes::DynamicData>>
+            loaned_samples_;
 
     std::vector<std::shared_ptr<dds::sub::SampleInfo>> loaned_infos_;
 
@@ -171,7 +169,6 @@ private:
     int64_t current_timestamp_;
 
     bool finished_;
-
 };
 
 /*
@@ -179,12 +176,11 @@ private:
  * database recorded with the LevelDbWriter implementation, called
  * 'DCPSPublication.dat'.
  */
-class LevelDbStreamInfoReader :
-        public rti::recording::storage::StorageStreamInfoReader {
+class LevelDbStreamInfoReader
+        : public rti::recording::storage::StorageStreamInfoReader {
 public:
-
     LevelDbStreamInfoReader(
-            const std::string& working_dir,
+            const std::string &working_dir,
             int64_t start_timestamp,
             int64_t end_timestamp);
 
@@ -197,15 +193,15 @@ public:
      * and upper time limits, etc).
      */
     virtual void read(
-            std::vector<rti::routing::StreamInfo *>& sample_seq,
-            const rti::recording::storage::SelectorState& selector);
+            std::vector<rti::routing::StreamInfo *> &sample_seq,
+            const rti::recording::storage::SelectorState &selector);
 
     /*
      * The return loan operation should free any resources allocated by the
      * read() operation.
      */
     virtual void return_loan(
-            std::vector<rti::routing::StreamInfo *>& sample_seq);
+            std::vector<rti::routing::StreamInfo *> &sample_seq);
 
     /*
      * An int64-represented time-stamp (in nanoseconds) representing the
@@ -226,7 +222,6 @@ public:
     virtual void reset();
 
 private:
-
     std::unique_ptr<leveldb::DB> metadata_db_;
 
     int64_t service_start_time_;
@@ -254,9 +249,8 @@ private:
     std::vector<std::shared_ptr<rti::routing::StreamInfo>> loaned_stream_infos_;
 
     bool finished_;
-
 };
 
-} } } // namespace rti::recording::examples
+}}}  // namespace rti::recording::examples
 
 #endif

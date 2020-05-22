@@ -58,14 +58,14 @@ add_custom_target(
     generated_code_dir ALL
     COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_CURRENT_BINARY_DIR}/generated")
 
-set(REDUCED_DCPSPUB_CPP_SOURCES
+set(RECORDER_TYPES_CPP_SOURCES
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
     "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
 )
 
 # Generate type plug-in files for the storage type
 add_custom_command(
-    OUTPUT ${REDUCED_DCPSPUB_CPP_SOURCES}
+    OUTPUT ${RECORDER_TYPES_CPP_SOURCES}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/LevelDb_RecorderTypes.idl"
     COMMAND ${RTICODEGEN} -language C++11 -update typefiles -unboundedSupport
             -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated" 
@@ -75,15 +75,14 @@ add_custom_command(
 add_custom_target(
     generated_code 
     DEPENDS 
-        ${REDUCED_DCPSPUB_CPP_SOURCES}
+        ${RECORDER_TYPES_CPP_SOURCES}
         generated_code_dir
 )
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    LevelDbWriter MODULE
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
+    LevelDbWriter SHARED
+    ${RECORDER_TYPES_CPP_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbWriter.cxx"
 )
@@ -115,9 +114,8 @@ add_dependencies(LevelDbWriter generated_code)
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    LevelDbReader MODULE
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
-    "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
+    LevelDbReader SHARED
+    ${RECORDER_TYPES_CPP_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.cxx"
 )
@@ -150,8 +148,7 @@ if(BUILD_TESTER_APP)
 
     add_executable(
         tester 
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypes.cxx"
-        "${CMAKE_CURRENT_BINARY_DIR}/generated/LevelDb_RecorderTypesPlugin.cxx"
+        ${RECORDER_TYPES_CPP_SOURCES}
         "${CMAKE_CURRENT_SOURCE_DIR}/Utils.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/Utils.hpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/LevelDbReader.cxx"

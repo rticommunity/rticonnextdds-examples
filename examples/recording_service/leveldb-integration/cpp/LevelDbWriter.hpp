@@ -49,14 +49,13 @@ RTI_RECORDING_STORAGE_WRITER_CREATE_DECL(LevelDbWriter);
  */
 class LevelDbWriter : public rti::recording::storage::StorageWriter {
 public:
-
     /**
      * Constructor. The storage writer expects the following property to be set
      * in the passed properties: "rti.recording.examples.leveldb.working_dir".
      * The property should be set in the RTI Recording Service XML configuration
      * (see file leveldb_recorder.xml) in the <plugin><property> section.
      */
-    LevelDbWriter(const rti::routing::PropertySet& properties);
+    LevelDbWriter(const rti::routing::PropertySet &properties);
 
     virtual ~LevelDbWriter();
 
@@ -70,9 +69,9 @@ public:
      * store, see the types 'UserDataKey' and 'UserDataValue' in the IDL file
      * associated with this example.
      */
-    rti::recording::storage::StorageStreamWriter * create_stream_writer(
-            const rti::routing::StreamInfo& stream_info,
-            const rti::routing::PropertySet& properties);
+    rti::recording::storage::StorageStreamWriter *create_stream_writer(
+            const rti::routing::StreamInfo &stream_info,
+            const rti::routing::PropertySet &properties);
 
     /**
      * Recording Service will call this method to obtain a stream writer for the
@@ -84,18 +83,18 @@ public:
      * samples, check type 'ReducedDCPSPublication' in the IDL file of this
      * example.
      */
-    rti::recording::storage::PublicationStorageWriter * create_publication_writer();
+    rti::recording::storage::PublicationStorageWriter *
+            create_publication_writer();
 
     /**
      * Recording Service will call this method to delete a previously created
-     * Stream Writer (no matter if it was created with the create_stream_writer()
-     * or create_publication_writer() method).
+     * Stream Writer (no matter if it was created with the
+     * create_stream_writer() or create_publication_writer() method).
      */
     void delete_stream_writer(
             rti::recording::storage::StorageStreamWriter *writer);
 
 private:
-
     std::string working_dir_;
 
     std::unique_ptr<leveldb::DB> metadata_db_;
@@ -106,13 +105,12 @@ private:
  * stream name and the domain ID (of the format '<stream-name>@<domain-id>' to
  * store data samples.
  */
-class LevelDbStreamWriter :
-        public rti::recording::storage::DynamicDataStorageStreamWriter {
+class LevelDbStreamWriter
+        : public rti::recording::storage::DynamicDataStorageStreamWriter {
 public:
-
     LevelDbStreamWriter(
-            const std::string& working_dir,
-            const rti::routing::StreamInfo& stream_info,
+            const std::string &working_dir,
+            const rti::routing::StreamInfo &stream_info,
             uint32_t domain_id);
 
     virtual ~LevelDbStreamWriter();
@@ -124,11 +122,10 @@ public:
      * associated with this example.
      */
     void store(
-            const std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-            const std::vector<dds::sub::SampleInfo *>& info_seq);
+            const std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+            const std::vector<dds::sub::SampleInfo *> &info_seq);
 
 private:
-
     std::string db_filename_;
 
     UserDataKeyComparator key_comparator_;
@@ -149,11 +146,10 @@ private:
  * called 'DCPSPublication.dat' where it will store a reduced version of the
  * full DCPSPublication topic's type, for example purposes.
  */
-class PubDiscoveryLevelDbWriter :
-        public rti::recording::storage::PublicationStorageWriter {
+class PubDiscoveryLevelDbWriter
+        : public rti::recording::storage::PublicationStorageWriter {
 public:
-
-    PubDiscoveryLevelDbWriter(const std::string& working_dir);
+    PubDiscoveryLevelDbWriter(const std::string &working_dir);
 
     ~PubDiscoveryLevelDbWriter();
 
@@ -164,11 +160,11 @@ public:
      * example.
      */
     void store(
-            const std::vector<dds::topic::PublicationBuiltinTopicData *>& sample_seq,
-            const std::vector<dds::sub::SampleInfo *>& info_seq);
+            const std::vector<dds::topic::PublicationBuiltinTopicData *>
+                    &sample_seq,
+            const std::vector<dds::sub::SampleInfo *> &info_seq);
 
 private:
-
     std::string discovery_filename_;
 
     UserDataKeyComparator key_comparator_;
@@ -180,6 +176,6 @@ private:
     std::vector<char> value_buffer_;
 };
 
-} } } // namespace rti::recording::examples
+}}}  // namespace rti::recording::examples
 
 #endif

@@ -12,8 +12,8 @@
 
 #include <vector>
 
-#include <leveldb/slice.h>
 #include <leveldb/comparator.h>
+#include <leveldb/slice.h>
 
 #include "Utils.hpp"
 
@@ -25,24 +25,25 @@ UserDataKeyComparator::~UserDataKeyComparator() = default;
 
 
 int UserDataKeyComparator::Compare(
-        const leveldb::Slice& a,
-        const leveldb::Slice& b) const
+        const leveldb::Slice &a,
+        const leveldb::Slice &b) const
 {
     return memcmp(a.data(), b.data(), a.size());
 }
 
-const char* UserDataKeyComparator::Name() const
+const char *UserDataKeyComparator::Name() const
 {
     return "rti.recording.examples.UserDataKeyComparator.1.0";
 }
 
 void UserDataKeyComparator::FindShortestSeparator(
         std::string *start,
-        const leveldb::Slice& limit) const { }
-
-void UserDataKeyComparator::FindShortSuccessor(std::string* key) const
+        const leveldb::Slice &limit) const
 {
 }
 
-} } } // namespace rti::recording::examples
+void UserDataKeyComparator::FindShortSuccessor(std::string *key) const
+{
+}
 
+}}}  // namespace rti::recording::examples

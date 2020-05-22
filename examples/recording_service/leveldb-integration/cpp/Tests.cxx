@@ -16,9 +16,9 @@
 
 #include "leveldb/env.h"
 
-#include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbReader.hpp"
 #include "LevelDbWriter.hpp"
+#include "LevelDb_RecorderTypes.hpp"
 
 #include <dds_c/dds_c_string.h>
 
@@ -73,8 +73,8 @@ int main(int argc, char **argv)
         env->CreateDir(dir_name_builder.str());
 
         /*
-         * Writing tests. Create a LevelDbWriter instance, from which we'll create
-         * a publication writer and a stream writer for a mock topic
+         * Writing tests. Create a LevelDbWriter instance, from which we'll
+         * create a publication writer and a stream writer for a mock topic
          */
         std::unique_ptr<rti::recording::examples::LevelDbWriter> leveldb_writer(
                 std::make_unique<rti::recording::examples::LevelDbWriter>(
@@ -98,12 +98,10 @@ int main(int argc, char **argv)
         std::shared_ptr<DDS_PublicationBuiltinTopicData> pub_data_raii_holder(
                 &native_pub_data,
                 DDS_PublicationBuiltinTopicData_finalize);
-        strncpy(
-                native_pub_data.topic_name,
+        strncpy(native_pub_data.topic_name,
                 topic_name.c_str(),
                 MIG_RTPS_PATHNAME_LEN_MAX);
-        strncpy(
-                native_pub_data.type_name,
+        strncpy(native_pub_data.type_name,
                 type_name.c_str(),
                 MIG_RTPS_PATHNAME_LEN_MAX);
         /*
@@ -120,8 +118,9 @@ int main(int argc, char **argv)
         assert(ex == DDS_NO_EXCEPTION_CODE);
 
         std::vector<dds::topic::PublicationBuiltinTopicData *> samples(1);
-        samples[0] = reinterpret_cast<dds::topic::PublicationBuiltinTopicData *>(
-                &native_pub_data);
+        samples[0] =
+                reinterpret_cast<dds::topic::PublicationBuiltinTopicData *>(
+                        &native_pub_data);
 
         DDS_SampleInfo native_info = DDS_SAMPLEINFO_DEFAULT;
         native_info.reception_timestamp.sec =
@@ -169,9 +168,9 @@ int main(int argc, char **argv)
         leveldb_writer.reset();
 
         /*
-         * Reading tests. Create a LevelDbReader instance, and create a stream info
-         * reader and a stream reader from it, that should be capable of reading
-         * from the infrastructure created from the writing side above.
+         * Reading tests. Create a LevelDbReader instance, and create a stream
+         * info reader and a stream reader from it, that should be capable of
+         * reading from the infrastructure created from the writing side above.
          */
         std::unique_ptr<rti::recording::examples::LevelDbReader> leveldb_reader(
                 std::make_unique<rti::recording::examples::LevelDbReader>(
@@ -199,12 +198,12 @@ int main(int argc, char **argv)
         assert(read_stream_infos.size() == 1);
         assert(read_stream_infos[0]->stream_name().compare(topic_name) == 0);
         assert(read_stream_infos[0]->type_info().type_name().compare(type_name)
-                == 0);
-        const char *read_typecode_name =
-                DDS_TypeCode_name(
-                        (const DDS_TypeCode *) read_stream_infos[0]->type_info()
-                                .type_representation(),
-                        &ex);
+               == 0);
+        const char *read_typecode_name = DDS_TypeCode_name(
+                (const DDS_TypeCode *) read_stream_infos[0]
+                        ->type_info()
+                        .type_representation(),
+                &ex);
         assert(ex == DDS_NO_EXCEPTION_CODE);
         assert(type.name().compare(read_typecode_name) == 0);
         assert(!read_stream_infos[0]->disposed());
@@ -239,7 +238,8 @@ int main(int argc, char **argv)
         stream_reader->read(read_data_samples, read_data_infos, selector);
         assert(read_data_samples.size() == 1);
         assert(read_data_infos.size() == 1);
-        std::string read_data_key = read_data_samples[0]->value<std::string>("key");
+        std::string read_data_key =
+                read_data_samples[0]->value<std::string>("key");
         assert(read_data_key.compare(sample_key) == 0);
         assert(read_data_infos[0]->valid());
         /*
@@ -263,7 +263,7 @@ int main(int argc, char **argv)
         leveldb_reader.reset();
 
         env->RemoveDir(dir_name_builder.str());
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cerr << "Test Failed!!" << std::endl;
         std::cerr << "    Exception thrown: " << ex.what() << std::endl;
         return EXIT_FAILURE;

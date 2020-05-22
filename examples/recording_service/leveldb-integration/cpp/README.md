@@ -1,27 +1,4 @@
-# Recording Service -- Integration with LevelDB
-
-## Example Description
-
-This example is an implementation of the pluggable *RTI Recording Service* 
-storage, using the no-SQL, persistent key-value store, LevelDB. This engine was
-developed by Google as a fast key-value storage library that maps from key 
-strings to string values. The LevelDB code can be found on 
-[GitHub](https://github.com/google/leveldb).
-
-This example is written in modern C++ (C++11) and shows how integration with a
-no-SQL storage technology can be done in *RTI Recording Service*. The example
-implements both the Storage Writer and Storage Reader plug-ins, so it can be
-used to record, replay and/or convert the data coming from the Connext DDS data
-bus. However, take into account that LevelDB is not meant to be accessed by two
-different processes at the same time, and hence recording and replaying (or
-converting) concurrently is _not supported_. In general, concurrently accessing
-the LevelDB database being recorded, replayed or converted is not supported in 
-this example. Note that this is not the case with our built-in SQLite 
-implementation, although concurrent access in that case is also discouraged.
-
-This example will store any DDS Topic discovered by *RTI Recording Service* that
-has been marked as to be recorded (by defining the Topics and Topic Groups in 
-the XML configuration).
+# Recording Service -- Integration with LevelDB, C++ Implementation
 
 The example provides the following files:
 
@@ -42,8 +19,8 @@ The example provides the following files:
 - `Utils.hpp` and `Utils.cxx` implement some helper functions and, more
   importantly, the `UserKeyComparator` class that is used to customise the
   sample ordering in LevelDB. Because *Recorder* and *Replay* work based on time
-  (they can be though about as time series storage) we need to make sure that
-  samples are ordered in reception timestamp order, ascending and monotonic.
+  (they can be thought of as time series storage) we need to make sure that
+  samples are ordered in reception timestamp order, ascending, and monotonic.
 - `leveldb_recorder.xml`, `leveldb_replay.xml` and `leveldb_converter.xml`
   provide XML configurations for *Recorder*, *Replay* and *Converter*,
   respectively. The converter configuration file contains two configurations,
@@ -169,8 +146,10 @@ This example will work with any DDS Topic discovered on the DDS Domain ID of
 your choice. Run any application publishing data into that domain, for example
 *RTI Shapes Demo* or *RTI DDS Ping*.
 
-The supplied XML configuration for *Recorder* expects you to set an environment 
-variable called `LEVELDB_WORKING_DIR`. This variable should point to a directory 
+The supplied XML configuration for *Recorder* expects you to set a variable 
+called `LEVELDB_WORKING_DIR` (recall that this can be done by providing a
+`-D` parameter to the command-line invocation, or by setting up an environment
+variable). This variable should point to a directory 
 with write permissions and where all the LevelDB directories and files will be 
 created.
 The path provided should not contain any trailing path separators. This variable
@@ -193,19 +172,6 @@ To run the example, you need to run the following command from the `build`
 folder (where the storage writer plugin shared library has been created).
 
 ```bash
-export LEVELDB_WORKING_DIR=<storage location>
-cd build
-<connext dir>/bin/rtirecordingservice 
-        -cfgFile ../leveldb_recorder.xml
-        -cfgName LevelDbIntegration 
-        -domainIdBase <your chosen domain ID>
-```
-
-Note that if you don't want to export the necessary environment variables
-externally, *Recorder* accepts `-D<variable>=<name>` parameters to be supplied.
-So, in our case, you could run:
-
-```bash
 cd build
 <connext dir>/bin/rtirecordingservice 
         -cfgFile ../leveldb_recorder.xml
@@ -214,8 +180,22 @@ cd build
         -DLEVELDB_WORKING_DIR=<storage location>
 ```
 
+Note that the command above could also be run by setting environment variables,
+if this is more convenient. In that case, you could run:
+
+```bash
+export LEVELDB_WORKING_DIR=<storage location>
+cd build
+<connext dir>/bin/rtirecordingservice 
+        -cfgFile ../leveldb_recorder.xml
+        -cfgName LevelDbIntegration 
+        -domainIdBase <your chosen domain ID>
+```
+
 Of course, the export command has to be translated to your current OS and
-shell. After running this command, you should see the following output:
+shell. 
+
+After running the command above, you should see the following output:
 
 ```bash
 RTI Recording Service (Recorder) 6.0.1 starting...
@@ -225,7 +205,7 @@ RTI Recording Service started
 The following directories will be created by *Recorder* after creating the
 Storage Writer instance:
 - `metadata.dat` database directory. This database will contain two key-value 
-  entries. They represent the nanoseconds timestamps where the LevelDB Storage 
+  entries. They represent the timestamps in nanoseconds where the LevelDB Storage 
   Writer was created (started) and destroyed (stopped).
   *Replay* will request these timestamps to know the time span of the database
   and perform its calculations.
@@ -272,7 +252,7 @@ The LevelDB library allows for the customization of the key ordering mechanism.
 This example implements a key comparator class that extends LevelDB's 
 `Comparator` interface. This implementation achieves ordering of samples in a
 strictly time-based manner. Resulting databases order their samples in an
-ascending, monotinic order based on the reception timestamp. See class
+ascending, monotonic order based on the reception timestamp. See class
 `UserDataKeyComparator` in files `Utils.hpp` and `Utils.cxx`.
 
 ### Publication Data
@@ -458,7 +438,7 @@ The main members of the `LevelDbStreamWriter` class are:
 
 - `data_db_`: this is the LevelDB database object (leveldb::DB) that 
   will be used to store the data.
-- `key_comparator`: the custom key comparator will be passed when
+- `key_comparator_`: the custom key comparator will be passed when
   the creation of the database happens. The key comparator checks
   the reception timestamp of the samples and returns them in
   monotonic ascending order.
@@ -575,7 +555,7 @@ The main members of the `PubDiscoveryLevelDbWriter` class are:
 
 - `discovery_db_`: this is the LevelDB database object (leveldb::DB)
   that will be used to store the `DCPSPublication`.
-- `key_comparator`: the custom key comparator will be passed when
+- `key_comparator_`: the custom key comparator will be passed when
   the creation of the database happens. The key comparator checks
   the reception timestamp of the samples and returns them in
   monotonic ascending order.
@@ -756,7 +736,7 @@ The main members of the `LevelDbStreamReader` class are:
 - `db_iterator_`: the class keeps a database iterator (`leveldb::Iterator`)
   that points to the next sample to be read.
 - `current_timestamp_`: the current sample's reception timestamp.
-- `key_comparator`: the custom key comparator will be passed when
+- `key_comparator_`: the custom key comparator will be passed when
   the creation of the database happens. The key comparator checks
   the reception timestamp of the samples and returns them in
   monotonic ascending order.
@@ -911,7 +891,7 @@ if (db_iterator_->Valid()) {
 ```
 
 Notice that we need to check if the next sample, if any,
-is within the stream rea'ders time range (`current_timestamp`
+is within the stream reader's time range (`current_timestamp`
 has less than or equal to the `end_timestamp_`).
 
 The `return_loan()` method clears the vectors used to 
@@ -942,7 +922,7 @@ The main members of the `LevelDbStreamInfoReader` class are:
 - `db_iterator_`: the class keeps a database iterator (`leveldb::Iterator`)
   that points to the next sample to be read in the discovery database.
 - `current_timestamp_`: the current sample's reception timestamp.
-- `key_comparator`: the custom key comparator will be passed when
+- `key_comparator_`: the custom key comparator will be passed when
   the creation of the database happens. The key comparator checks
   the reception timestamp of the samples and returns them in
   monotonic ascending order.

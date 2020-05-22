@@ -14,8 +14,8 @@
 
 #include <rti/recording/storage/StorageDefs.hpp>
 
-#include "LevelDb_RecorderTypes.hpp"
 #include "LevelDbReader.hpp"
+#include "LevelDb_RecorderTypes.hpp"
 
 
 using namespace dds::core::xtypes;
@@ -28,8 +28,8 @@ namespace rti { namespace recording { namespace examples {
  */
 RTI_RECORDING_STORAGE_READER_CREATE_DEF(LevelDbReader);
 
-LevelDbReader::LevelDbReader(const rti::routing::PropertySet& properties) :
-    StorageReader(properties)
+LevelDbReader::LevelDbReader(const rti::routing::PropertySet &properties)
+        : StorageReader(properties)
 {
     /* Get working directory from properties */
     working_dir_ = rti::recording::get_from_properties<std::string>(
@@ -41,9 +41,8 @@ LevelDbReader::~LevelDbReader()
 {
 }
 
-rti::recording::storage::StorageStreamInfoReader *
-LevelDbReader::create_stream_info_reader(
-        const rti::routing::PropertySet& properties)
+rti::recording::storage::StorageStreamInfoReader *LevelDbReader::
+        create_stream_info_reader(const rti::routing::PropertySet &properties)
 {
     /* Get time range information from the properties */
     int64_t start_timestamp = rti::recording::get_from_properties<int64_t>(
@@ -60,22 +59,22 @@ LevelDbReader::create_stream_info_reader(
 }
 
 void LevelDbReader::delete_stream_info_reader(
-            rti::recording::storage::StorageStreamInfoReader *stream_info_reader)
+        rti::recording::storage::StorageStreamInfoReader *stream_info_reader)
 {
     delete stream_info_reader;
 }
 
-rti::recording::storage::StorageStreamReader *
-LevelDbReader::create_stream_reader(
-        const rti::routing::StreamInfo& stream_info,
-        const rti::routing::PropertySet& properties)
+rti::recording::storage::StorageStreamReader *LevelDbReader::
+        create_stream_reader(
+                const rti::routing::StreamInfo &stream_info,
+                const rti::routing::PropertySet &properties)
 {
     /*
      * Make sure that there is a valid type representation the stream reader can
      * work with in the StreamInfo object
      */
     if (stream_info.type_info().type_representation_kind()
-            != rti::routing::TypeRepresentationKind::DYNAMIC_TYPE) {
+        != rti::routing::TypeRepresentationKind::DYNAMIC_TYPE) {
         throw std::runtime_error(
                 "Invalid type representation kind in StreamInfo object");
     }
@@ -121,18 +120,19 @@ using namespace dds::core::xtypes;
  * @pre stream_info.type_info().type_representation() != null
  */
 LevelDbStreamReader::LevelDbStreamReader(
-        const std::string& working_dir,
-        const rti::routing::StreamInfo& stream_info,
+        const std::string &working_dir,
+        const rti::routing::StreamInfo &stream_info,
         uint32_t domain_id,
         int64_t start_timestamp,
-        int64_t end_timestamp) :
-    stream_info_(stream_info),
-    type_(rti::core::native_conversions::cast_from_native<DynamicType>(
-             *((DDS_TypeCode *) stream_info.type_info().type_representation()))),
-    start_timestamp_(start_timestamp),
-    end_timestamp_(end_timestamp),
-    current_timestamp_(0),
-    finished_(false)
+        int64_t end_timestamp)
+        : stream_info_(stream_info),
+          type_(rti::core::native_conversions::cast_from_native<DynamicType>(
+                  *((DDS_TypeCode *) stream_info.type_info()
+                            .type_representation()))),
+          start_timestamp_(start_timestamp),
+          end_timestamp_(end_timestamp),
+          current_timestamp_(0),
+          finished_(false)
 {
     /*
      * Every stream and domain ID pair are stored in their own file. The name of
@@ -142,8 +142,8 @@ LevelDbStreamReader::LevelDbStreamReader(
      * of the file will be '.dat'
      */
     std::stringstream db_filename;
-    db_filename << working_dir << "/"
-            << stream_info.stream_name() << "@" << domain_id << ".dat";
+    db_filename << working_dir << "/" << stream_info.stream_name() << "@"
+                << domain_id << ".dat";
     db_filename_ = db_filename.str();
 
     /* Attempt to create the LevelDB database with the derived filename */
@@ -164,7 +164,7 @@ LevelDbStreamReader::LevelDbStreamReader(
         log_stream << "Failed to open user-data DB file" << std::endl;
         log_stream << "    File name = " << db_filename_ << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     data_db_.reset(db);
@@ -173,7 +173,7 @@ LevelDbStreamReader::LevelDbStreamReader(
      * Pre-allocate key buffer, used to serialize the UserDataKey type to be
      * used as a key
      */
-    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    const StructType &key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 
     /*
@@ -182,13 +182,13 @@ LevelDbStreamReader::LevelDbStreamReader(
      */
     db_iterator_ = std::unique_ptr<leveldb::Iterator>(
             data_db_->NewIterator(leveldb::ReadOptions()));
-    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid();) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
         current_timestamp_ = current_key.reception_timestamp();
         if (current_timestamp_ >= start_timestamp_
-                && current_timestamp_ <= end_timestamp_) {
+            && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
@@ -207,7 +207,7 @@ LevelDbStreamReader::LevelDbStreamReader(
             stream_info.type_info().type_representation());
     DDS_ExceptionCode_t ex = DDS_NO_EXCEPTION_CODE;
     if (DDS_TypeCode_is_unbounded(type, DDS_BOOLEAN_FALSE, &ex)
-            && ex != DDS_NO_EXCEPTION_CODE) {
+        && ex != DDS_NO_EXCEPTION_CODE) {
         value_buffer_.resize(8192);
     } else {
         DDS_UnsignedLong size = DDS_TypeCode_get_cdr_serialized_sample_max_size(
@@ -217,9 +217,9 @@ LevelDbStreamReader::LevelDbStreamReader(
         if (ex != DDS_NO_EXCEPTION_CODE) {
             std::stringstream log_stream;
             log_stream << "Could not get serialized sample max size for stream"
-                    << std::endl;
+                       << std::endl;
             log_stream << "    Stream name = " << stream_info.stream_name()
-                    << std::endl;
+                       << std::endl;
             throw std::runtime_error(log_stream.str());
         }
         value_buffer_.resize((std::vector<char>::size_type) size);
@@ -231,9 +231,9 @@ LevelDbStreamReader::~LevelDbStreamReader()
 }
 
 void LevelDbStreamReader::read(
-        std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        std::vector<dds::sub::SampleInfo *>& info_seq,
-        const rti::recording::storage::SelectorState& selector)
+        std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        std::vector<dds::sub::SampleInfo *> &info_seq,
+        const rti::recording::storage::SelectorState &selector)
 {
     if (finished_) {
         return;
@@ -244,9 +244,8 @@ void LevelDbStreamReader::read(
     const int32_t max_samples = selector.max_samples();
     int32_t num_samples_read = 0;
     bool next_sample_valid = db_iterator_->Valid();
-    while (next_sample_valid
-            && current_timestamp_ <= timestamp_limit
-            && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
+    while (next_sample_valid && current_timestamp_ <= timestamp_limit
+           && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
         /*
          * Get the current value from the LevelDB file. The value is of type
          * UserDataValue, tailored to provide the validity of the sample or
@@ -313,14 +312,17 @@ void LevelDbStreamReader::read(
     sample_seq.resize(num_samples_read);
     info_seq.resize(num_samples_read);
     for (int32_t i = 0; i < num_samples_read; i++) {
+        /* Replay and Converter guarantee that after every read() a call to
+         * return_loan() will happen to be able to clean up resources. In our
+         * case, we will clear the vectors */
         sample_seq[i] = loaned_samples_[i].get();
         info_seq[i] = loaned_infos_[i].get();
     }
 }
 
 void LevelDbStreamReader::return_loan(
-        std::vector<dds::core::xtypes::DynamicData *>& sample_seq,
-        std::vector<dds::sub::SampleInfo *>& info_seq)
+        std::vector<dds::core::xtypes::DynamicData *> &sample_seq,
+        std::vector<dds::sub::SampleInfo *> &info_seq)
 {
     sample_seq.clear();
     info_seq.clear();
@@ -343,13 +345,13 @@ bool LevelDbStreamReader::finished()
 void LevelDbStreamReader::reset()
 {
     db_iterator_.reset(data_db_->NewIterator(leveldb::ReadOptions()));
-    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid();) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
         current_timestamp_ = current_key.reception_timestamp();
         if (current_timestamp_ >= start_timestamp_
-                && current_timestamp_ <= end_timestamp_) {
+            && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
@@ -360,14 +362,14 @@ void LevelDbStreamReader::reset()
 }
 
 LevelDbStreamInfoReader::LevelDbStreamInfoReader(
-        const std::string& working_dir,
+        const std::string &working_dir,
         int64_t start_timestamp,
-        int64_t end_timestamp) :
-    service_start_time_(0),
-    service_end_time_(0),
-    start_timestamp_(start_timestamp),
-    end_timestamp_(end_timestamp),
-    finished_(false)
+        int64_t end_timestamp)
+        : service_start_time_(0),
+          service_end_time_(0),
+          start_timestamp_(start_timestamp),
+          end_timestamp_(end_timestamp),
+          finished_(false)
 {
     std::stringstream pub_filename;
     pub_filename << working_dir << "/DCPSPublication.dat";
@@ -389,10 +391,10 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
     if (!db_status.ok() || db == nullptr) {
         std::stringstream log_stream;
         log_stream << "Failed to open discovery (DCPSPublication) DB file"
-                << std::endl;
+                   << std::endl;
         log_stream << "    File name = " << discovery_filename_ << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     discovery_db_.reset(db);
@@ -400,17 +402,17 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
      * Pre-allocate key buffer, used to serialize the UserDataKey type to be
      * used as a key
      */
-    const StructType& key_type = rti::topic::dynamic_type<UserDataKey>::get();
+    const StructType &key_type = rti::topic::dynamic_type<UserDataKey>::get();
     key_buffer_.resize(key_type.cdr_serialized_sample_max_size());
 
     db_iterator_.reset(discovery_db_->NewIterator(leveldb::ReadOptions()));
-    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid();) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
         current_timestamp_ = current_key.reception_timestamp();
         if (current_timestamp_ >= start_timestamp_
-                && current_timestamp_ <= end_timestamp_) {
+            && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
@@ -423,17 +425,15 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
 
     std::stringstream metadata_filename;
     metadata_filename << working_dir << "/metadata.dat";
-    db_status = leveldb::DB::Open(
-            leveldb::Options(),
-            metadata_filename.str(),
-            &db);
+    db_status =
+            leveldb::DB::Open(leveldb::Options(), metadata_filename.str(), &db);
     if (!db_status.ok() || db == nullptr) {
         std::stringstream log_stream;
         log_stream << "Failed to open metadata DB file" << std::endl;
         log_stream << "    File name = " << metadata_filename.str()
-                << std::endl;
+                   << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     metadata_db_.reset(db);
@@ -449,7 +449,7 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
         std::stringstream log_stream;
         log_stream << "Failed to read start time to metadata DB" << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     timestamp_stream.str(timestamp_str);
@@ -463,7 +463,7 @@ LevelDbStreamInfoReader::LevelDbStreamInfoReader(
         std::stringstream log_stream;
         log_stream << "Failed to read start time to metadata DB" << std::endl;
         log_stream << "    LevelDB error = " << db_status.ToString()
-                << std::endl;
+                   << std::endl;
         throw std::runtime_error(log_stream.str());
     }
     timestamp_stream.str(timestamp_str);
@@ -475,8 +475,8 @@ LevelDbStreamInfoReader::~LevelDbStreamInfoReader()
 }
 
 void LevelDbStreamInfoReader::read(
-        std::vector<rti::routing::StreamInfo *>& sample_seq,
-        const rti::recording::storage::SelectorState& selector)
+        std::vector<rti::routing::StreamInfo *> &sample_seq,
+        const rti::recording::storage::SelectorState &selector)
 {
     if (finished_) {
         return;
@@ -495,9 +495,8 @@ void LevelDbStreamInfoReader::read(
     const int32_t max_samples = selector.max_samples();
     int32_t num_samples_read = 0;
     bool next_sample_valid = db_iterator_->Valid();
-    while (next_sample_valid
-            && current_timestamp_ <= timestamp_limit
-            && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
+    while (next_sample_valid && current_timestamp_ <= timestamp_limit
+           && (max_samples < 0 ? true : (num_samples_read < max_samples))) {
         ReducedDCPSPublication reduced_sample =
                 slice_to_user_type<ReducedDCPSPublication>(
                         db_iterator_->value(),
@@ -518,9 +517,10 @@ void LevelDbStreamInfoReader::read(
             if (type_obj == nullptr) {
                 std::stringstream log_stream;
                 log_stream << "Failed to create type-object from serialized "
-                        "buffer in DB (will be skipped)" << std::endl;
+                              "buffer in DB (will be skipped)"
+                           << std::endl;
                 log_stream << "    Stream name = "
-                        << reduced_sample.topic_name() << std::endl;
+                           << reduced_sample.topic_name() << std::endl;
                 std::cerr << log_stream.str();
                 continue;
             }
@@ -532,9 +532,10 @@ void LevelDbStreamInfoReader::read(
             if (type_code == nullptr) {
                 std::stringstream log_stream;
                 log_stream << "Failed to create type-code from type-object "
-                        "(will be skipped)" << std::endl;
+                              "(will be skipped)"
+                           << std::endl;
                 log_stream << "    Stream name = "
-                        << reduced_sample.topic_name() << std::endl;
+                           << reduced_sample.topic_name() << std::endl;
                 std::cerr << log_stream.str();
                 continue;
             }
@@ -566,7 +567,7 @@ void LevelDbStreamInfoReader::read(
 }
 
 void LevelDbStreamInfoReader::return_loan(
-        std::vector<rti::routing::StreamInfo *>& sample_seq)
+        std::vector<rti::routing::StreamInfo *> &sample_seq)
 {
     /*
      * We converted the type-object into a type-code to pass it to the Recording
@@ -575,8 +576,9 @@ void LevelDbStreamInfoReader::return_loan(
      */
     for (size_t i = 0; i < sample_seq.size(); i++) {
         if (sample_seq[i]->type_info().type_representation() != nullptr) {
-            DDS_TypeCode *type_code = (DDS_TypeCode *)
-                    sample_seq[i]->type_info().type_representation();
+            DDS_TypeCode *type_code = (DDS_TypeCode *) sample_seq[i]
+                                              ->type_info()
+                                              .type_representation();
             RTICdrTypeCode_destroyTypeCode((RTICdrTypeCode *) type_code);
         }
     }
@@ -617,13 +619,13 @@ bool LevelDbStreamInfoReader::finished()
 void LevelDbStreamInfoReader::reset()
 {
     db_iterator_.reset(discovery_db_->NewIterator(leveldb::ReadOptions()));
-    for (db_iterator_->SeekToFirst(); db_iterator_->Valid(); ) {
+    for (db_iterator_->SeekToFirst(); db_iterator_->Valid();) {
         UserDataKey current_key = slice_to_user_type<UserDataKey>(
                 db_iterator_->key(),
                 key_buffer_);
         current_timestamp_ = current_key.reception_timestamp();
         if (current_timestamp_ >= start_timestamp_
-                && current_timestamp_ <= end_timestamp_) {
+            && current_timestamp_ <= end_timestamp_) {
             break;
         } else {
             db_iterator_->Next();
@@ -633,5 +635,4 @@ void LevelDbStreamInfoReader::reset()
     finished_ = !db_iterator_->Valid();
 }
 
-} } } // namespace rti::recording::examples
-
+}}}  // namespace rti::recording::examples
