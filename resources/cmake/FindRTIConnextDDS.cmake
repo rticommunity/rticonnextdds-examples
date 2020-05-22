@@ -958,7 +958,7 @@ function(create_connext_imported_target)
     )
 
     # Create the library
-    add_library(${target_name} ${link_mode} IMPORTED)
+    add_library(${target_name} UNKNOWN IMPORTED)
 
 
     if(WIN32 AND BUILD_SHARED_LIBS)
@@ -989,7 +989,7 @@ function(create_connext_imported_target)
     # Set properties per configuration
     foreach(build_mode "RELEASE" "DEBUG")
 
-        list(GET ${_CONNEXT_VAR}_${build_mode}_${link_mode} 0
+        list(GET ${_CONNEXT_VAR}_LIBRARIES_${build_mode}_${link_mode} 0
             imported_library
         )
 
