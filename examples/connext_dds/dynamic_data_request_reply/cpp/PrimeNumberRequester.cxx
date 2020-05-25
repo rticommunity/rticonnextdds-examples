@@ -11,8 +11,7 @@
 
 #include <iostream>
 #include "PrimesType.cxx"
-/* Include the request-reply API */
-#include "ndds/ndds_requestreply_cpp.h"
+#include "ndds/ndds_requestreply_cpp.h" /* Include the request-reply API */
 
 class PrimeNumberRequesterExample {
 
@@ -58,7 +57,7 @@ public:
                     DDS::STATUS_MASK_NONE);
 
         if (participant == NULL) {
-            throw std::runtime_error("create_participant error");
+            throw std::runtime_error("! create_participant error");
         }
     }
 
@@ -89,45 +88,43 @@ public:
         }
 
 
-        // ----------- Create the request and reply typecode -----------------
+        /* ----------- Create the request and reply typecode ---------------- */
 
         /* Create TypeCode for dynamic data type request
         */
         DDS_TypeCode * request_type  = get_prime_number_request_typecode(factory);
         if (request_type == NULL) {
-            throw std::runtime_error("! Unable to create dynamic type code");
+            throw std::runtime_error(
+                    "! Unable to create dynamic request type code");
         }
 
-        /* Create TypeCode for dynamic data type reply
-        */
+        /* Create TypeCode for dynamic data type reply */
         DDS_TypeCode * reply_type  = type_w_PrimeNumberReply_typecode(factory);
         if (reply_type == NULL) {
-            throw std::runtime_error("! Unable to create dynamic type code");
+            throw std::runtime_error(
+                    "! Unable to create dynamic reply type code");
         }
 
 
-        // ----------- Create the request and reply TypeSupport -----------------
+        /* ----------- Create the request and reply TypeSupport ------------- */
 
-        /* Create the Dynamic data type support object for request
-        */
+        /* Create the Dynamic data type support object for request */
         DDS_DynamicDataTypeProperty_t props;
         DDSDynamicDataTypeSupport *request_type_support =
                 new DDSDynamicDataTypeSupport(request_type, props);
 
         if (request_type_support == NULL) {
             throw std::runtime_error(
-                    "! Unable to create dynamic data type support");
+                    "! Unable to create dynamic data type support for request");
         }
 
-        /* Create the Dynamic data type support object for request
-        */
-
+        /* Create the Dynamic data type support object for request */
         DDSDynamicDataTypeSupport *reply_type_support = 
                 new DDSDynamicDataTypeSupport(reply_type, props);
 
         if (reply_type_support == NULL) {
             throw std::runtime_error(
-                    "! Unable to create dynamic data type support");
+                    "! Unable to create dynamic data type support for reply");
         }
  
 
@@ -135,7 +132,8 @@ public:
 
         FillData(sample, factory,  n,  primes_per_reply);
 
-        /* Create the requester with the participant, and a QoS profile
+        /* 
+         * Create the requester with the participant, and a QoS profile
          * defined in USER_QOS_PROFILES.xml
          */
         connext::RequesterParams requester_params(participant);
@@ -146,14 +144,7 @@ public:
         requester_params.request_type_support(request_type_support);
         requester_params.reply_type_support(reply_type_support);
 
-        
-    
-
-        
-
-        /* Create the requester:
-         */
-
+        /* Create the requester: */
         connext::Requester<DDS_DynamicData, DDS_DynamicData> requester(
             requester_params);
 
@@ -169,11 +160,12 @@ public:
             connext::LoanedSamples<DDS_DynamicData> replies =
                 requester.receive_replies(MAX_WAIT);
 
-            /* When receive_replies times out,
+            /* 
+             * When receive_replies times out,
              * it returns an empty reply collection
              */
             if (replies.length() == 0) {
-                throw std::runtime_error("Timed out waiting for replies");
+                throw std::runtime_error("! Timed out waiting for replies");
                 return;
             }
 
@@ -185,12 +177,12 @@ public:
                     
                     DDS_PrintFormatProperty proper;
 
-                    // Get the status:
+                    /* Get the status: */
                     DDS_Long status;
                     it->data().get_long(status, "status",
                     DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
 
-                    // Get the sequence of primes:
+                    /* Get the sequence of primes: */
                     DDS_LongSeq primes_seq;
                     primes_seq.ensure_length(
                             primes_per_reply,
@@ -200,26 +192,25 @@ public:
                         "primes", 
                         DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
                     
-                    //We print the primes:
+                    /* We print the primes: */
                     for (int i = 0; i < primes_seq.length(); i++) {
                         std::cout << primes_seq[i] << " ";
                     }
 
-                    if (status != 0) { //REPLY_IN_PROGRESS
+                    if (status != 0) { /* REPLY_IN_PROGRESS */
                         in_progress = false;
-                        if (status == 2) { //REPLY_ERROR
-                            throw std::runtime_error("Error in replier");
+                        if (status == 2) { /* REPLY_ERROR */
+                            throw std::runtime_error("! Error in replier");
                         } else { /* reply->status == COMPLETED */
                             std::cout << "DONE" << std::endl;
                         }
                     }
-
-                    
-                    
+  
                 }
             }
 
-            /* We don't need to call replies.return_loan(); the destructor
+            /* 
+             * We don't need to call replies.return_loan(); the destructor
              * takes care of doing it every time replies go out of scope
              */
         }
@@ -256,7 +247,7 @@ int requester_main(int n, int primes_per_reply, int domain_id)
 int main(int argc, char *argv[])
 {
 
-    int domain_id = 0; //Default Domain ID if not specified
+    int domain_id = 0; /* Default Domain ID if not specified */
     int n;
     int primes_per_reply = 5;
 

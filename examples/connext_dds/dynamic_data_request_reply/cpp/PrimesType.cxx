@@ -12,7 +12,6 @@
 #include <iostream>
 #include <ndds_cpp.h>
 
-
 using namespace std;
 
 /*****************************************************************************/
@@ -71,8 +70,6 @@ struct PrimeNumberReply {
 };
 */
 
-
-
 #define THE_PRIME_SEQUENCE_MAX_LENGTH 1024
 
 /*****************************************************************************/
@@ -92,28 +89,28 @@ DDS_TypeCode * get_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
     DDS_StructMemberSeq members;
     DDS_ExceptionCode_t err;
 
-    //We create the typecode for a struct:
+    /* We create the typecode for a struct: */
     request_typecode = tcf->create_struct_tc("PrimeNumberRequest", members, err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to create struct TC" << endl;
         goto fail;
     }
-    //We add a member "n" to the struct:
+    /* We add a member "n" to the struct: */
     request_typecode->add_member("n",
                                 DDS_TYPECODE_MEMBER_ID_INVALID, 
                                 tcf->get_primitive_tc(DDS_TK_LONG),
-                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, //As required member.
+                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /* As required member. */
                                 err);
 
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << stderr << "! Unable to add a_member to PrimeNumberRequest" << endl;
         goto fail;
     }
-    //We add a member "primes_per_reply" to the struct:
+    /* We add a member "primes_per_reply" to the struct: */
     request_typecode->add_member("primes_per_reply",
                                 DDS_TYPECODE_MEMBER_ID_INVALID, 
                                 tcf->get_primitive_tc(DDS_TK_LONG),
-                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, //As required member.
+                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /*As required member. */
                                 err);
 
     if (err != DDS_NO_EXCEPTION_CODE) {
@@ -121,17 +118,15 @@ DDS_TypeCode * get_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
         goto fail;
     }
 
-    //We finalize and return the Typecode:
+    /* We finalize and return the Typecode: */
     DDS_StructMemberSeq_finalize(&members);
     return request_typecode;
-
 
     fail: if (request_typecode != NULL) {
         tcf->delete_tc(request_typecode, err);
     }
     DDS_StructMemberSeq_finalize(&members);
 
-    
     return NULL;
 
 }
@@ -212,7 +207,6 @@ fail:
     return NULL;
 }
 
-
 /*****************************************************************************/
 /* Get the typecode for the PrimeNumberReply                                 */
 /*****************************************************************************/
@@ -224,14 +218,14 @@ DDS_TypeCode * type_w_PrimeNumberReply_typecode(DDS_TypeCodeFactory *tcf) {
     struct DDS_StructMemberSeq members;
     DDS_ExceptionCode_t err;
 
-    //We get the Typecode for the sequence:
+    /* We get the Typecode for the sequence: */
     sequenceTC = get_PrimeNumberReply_sequence_typecode(tcf);
     if (sequenceTC == NULL) {
         cerr << "! Unable to get sequenceTC" << endl;
         goto fail;
     }
 
-    //We get the typecode for the enum:
+    /* We get the typecode for the enum: */
     enumTC = get_PrimeNumberCalculationStatus_enum_typecode(tcf);
     if (enumTC == NULL) {
         cerr << "! Unable to create innerTC" << endl;
@@ -243,23 +237,23 @@ DDS_TypeCode * type_w_PrimeNumberReply_typecode(DDS_TypeCodeFactory *tcf) {
         cerr << "! Unable to create Type with sequence TC" << endl;
         goto fail;
     }
-    //We add the sequence to the struct
+    /* We add the sequence to the struct */
     tc->add_member(
             "primes",
             DDS_TYPECODE_MEMBER_ID_INVALID,
             sequenceTC,
-            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, //As required member.
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /* As required member. */
             err);
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << "! Unable to add member to struct" << endl;
         goto fail;
     }
-    //We add the status Enum to the struct
+    /* We add the status Enum to the struct */
     tc->add_member(
             "status",
             DDS_TYPECODE_MEMBER_ID_INVALID,
             enumTC,
-            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, //As required member.
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /* As required member. */
             err);
 
     if (err != DDS_NO_EXCEPTION_CODE) {
@@ -278,7 +272,3 @@ fail:
     }
     return NULL;
 }
-
-
-
-

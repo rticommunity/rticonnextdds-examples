@@ -13,8 +13,7 @@
 #include <iostream>
 #include <vector>
 #include "PrimesType.cxx"
-/* Include the request-reply API */
-#include "ndds/ndds_requestreply_cpp.h"
+#include "ndds/ndds_requestreply_cpp.h" /* Include the request-reply API */
 
 class PrimeNumberReplierExample {
 
@@ -34,7 +33,7 @@ public:
                         DDS::STATUS_MASK_NONE);
 
         if (participant == NULL) {
-            throw std::runtime_error("create_participant error");
+            throw std::runtime_error("! create_participant error");
         }
     }
 
@@ -71,18 +70,34 @@ private:
         DDS_LongSeq primes_seq;
         primes_seq.maximum(primes_per_reply);
 
-        /* prime[i] indicates if i is a prime number
+        /* 
+         * prime[i] indicates if i is a prime number
          * Initially, we assume all of them are prime
          */
         std::vector<bool> prime(n+1, true);
 
+        /* 
+         * We know a priori that the first two number, 0 and 1,
+         * are not prime numbers so we mark them to "false":
+         */
+
         prime[0] = false;
         prime[1] = false;
+
+        /*
+         * Every composite number has a proper factor less than or equal to its
+         * square root, so we only need to try the integers up through sqrt(n)
+         */
 
         int m = (int) sqrt((float)n);
 
         for (int i = 2; i <= m; i++) {
             if (prime[i]) {
+
+                /**
+                 * We set all the composite numbers that have the current factor
+                 * to false, as they are not prime numbers:
+                 */ 
                 for (int k = i*i; k <= n; k+=i) {
                     prime[k] = false;
                 }
@@ -124,7 +139,8 @@ private:
             }
         }
 
-        /* Send the last reply. Indicate that the calculation is complete and
+        /* 
+         * Send the last reply. Indicate that the calculation is complete and
          * send any prime number left in the sequence
          */
         reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,1);
@@ -150,27 +166,29 @@ public:
         }
 
 
-        // ----------- Create the request and reply typecode -----------------
+        /* ----------- Create the request and reply typecode ---------------- */
 
-        /* Create TypeCode for dynamic data type request
+        /* 
+         * Create TypeCode for dynamic data type request
         */
         DDS_TypeCode *request_type  = get_prime_number_request_typecode(factory);
         if (request_type == NULL) {
-            throw std::runtime_error("! Unable to create dynamic type code");
+            throw std::runtime_error(
+                    "! Unable to create dynamic request type code");
         }
 
-        /* Create TypeCode for dynamic data type reply
-        */
+        /* Create TypeCode for dynamic data type reply */
         DDS_TypeCode *reply_type  = type_w_PrimeNumberReply_typecode(factory);
         if (reply_type == NULL) {
-            throw std::runtime_error("! Unable to create dynamic type code");
+            throw std::runtime_error(
+                    "! Unable to create dynamic reply type code");
         }
 
+        /* ----------- Create the request and reply TypeSupport ------------- */
 
-        // ----------- Create the request and reply TypeSupport -----------------
-
-        /* Create the Dynamic data type support object for request
-        */
+        /*
+         * Create the Dynamic data type support object for request
+         */
         DDS_DynamicDataTypeProperty_t props;
         DDSDynamicDataTypeSupport *request_type_support = 
                 new DDSDynamicDataTypeSupport(
@@ -179,19 +197,17 @@ public:
 
         if (request_type_support == NULL) {
             throw std::runtime_error(
-                    "! Unable to create dynamic data type support");
+                    "! Unable to create dynamic data type support for request");
 
         }
 
-        /* Create the Dynamic data type support object for reply
-        */
-
+        /* Create the Dynamic data type support object for reply */
         DDSDynamicDataTypeSupport *reply_type_support = 
                 new DDSDynamicDataTypeSupport(reply_type, props);
 
         if (reply_type_support == NULL) {
             throw std::runtime_error(
-                    "! Unable to create dynamic data type support");
+                    "! Unable to create dynamic data type support for reply");
         }
 
         /* Create parameters for replier */
@@ -209,7 +225,8 @@ public:
 
         DDS_DynamicData *reply = reply_type_support->create_data();
          
-        /* In this example we create the replier on the stack, but you
+        /* 
+         * In this example we create the replier on the stack, but you
          * can create on the heap as well
          */
         connext::Replier<DDS_DynamicData, DDS_DynamicData> replier(
@@ -218,7 +235,6 @@ public:
         /*
          * Receive requests and process them
          */
-
         const DDS::Duration_t MAX_WAIT = {20, 0};
 
         /* receive_request returns false when it times out */
@@ -240,7 +256,8 @@ public:
                     continue;
                 }
                 
-                /* We obtain "n" and "primes_per_reply" 
+                /* 
+                 * We obtain "n" and "primes_per_reply" 
                  * from the received sample:
                  */
                 
