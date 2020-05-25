@@ -18,7 +18,7 @@ class PrimeNumberRequesterExample {
 private:
     DDS::DomainParticipant * participant;
 
-    void FillData(
+    void fill_data(
             DDS_DynamicData *sample,
             DDS_TypeCodeFactory *factory,
             int n, int primes_per_reply) {
@@ -130,7 +130,7 @@ public:
 
         DDS_DynamicData *sample = request_type_support->create_data();
 
-        FillData(sample, factory,  n,  primes_per_reply);
+        fill_data(sample, factory,  n,  primes_per_reply);
 
         /* 
          * Create the requester with the participant, and a QoS profile
@@ -243,7 +243,6 @@ int requester_main(int n, int primes_per_reply, int domain_id)
     return 0;
 }
 
-#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[])
 {
 

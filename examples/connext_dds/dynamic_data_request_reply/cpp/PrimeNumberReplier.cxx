@@ -55,6 +55,29 @@ public:
 
 private:
 
+    /**
+     * This function populates the prime numbers up-to "n" and then
+     * creates a reply sample with the sequence of prime numbers.
+     * 
+     * This sequence is send to the requester in reponse to 
+     * PrimeNumberRequesterExample's request.
+     * 
+     * @param replier The Dynamic Data replier. It will send the reply to the
+     * requester once the prime numbers are populated.
+     * 
+     * @param request_sample_identity It contains the identity for the request
+     * sample. the identity is assigned by the middleware upon reception.
+     * 
+     * @param n It indicates the maximum number to evaluate for the calculation
+     * of prime numbers. The Replier will reply a list of prime numbers
+     * from 1 to `n`
+     * 
+     * @param primes_per_reply How many prime numbers should be included in each
+     * reply sample.
+     * 
+     * @param reply A pointer to DDS_DynamicData where the list of populated
+     * prime numbers will be stored.
+     */
     void calculate_and_send_primes(
         connext::Replier<DDS_DynamicData, DDS_DynamicData>& replier,
         const DDS::SampleIdentity_t& request_sample_identity,
@@ -89,9 +112,9 @@ private:
          * square root, so we only need to try the integers up through sqrt(n)
          */
 
-        int m = (int) sqrt((float)n);
+        int max_integers_to_try = (int) sqrt((float)n);
 
-        for (int i = 2; i <= m; i++) {
+        for (int i = 2; i <= max_integers_to_try; i++) {
             if (prime[i]) {
 
                 /**
@@ -121,7 +144,7 @@ private:
         }
 
         /* Calculation is done. Send remaining prime numbers */
-        for (int i = m + 1; i <= n; i++) {
+        for (int i = max_integers_to_try + 1; i <= n; i++) {
             if (prime[i]) {
 
                 DDS::Long length = primes_seq.length();
@@ -333,7 +356,6 @@ int replier_main(int domain_id) {
     return 0;
 }
 
-#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
