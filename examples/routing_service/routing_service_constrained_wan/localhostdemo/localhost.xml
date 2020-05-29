@@ -10,7 +10,7 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/6.0.0/rti_routing_service.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/rti_routing_service.xsd">
     <routing_service name="example">
         <annotation><documentation>Routing Service Example</documentation></annotation>
         <administration><domain_id>0</domain_id></administration>
