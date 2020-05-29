@@ -26,9 +26,9 @@ To run routing service using this configuration, from the command line
 execute:  
 `rtiroutingservice -cfgFile <path to xml>/localhost.xml -cfgName example`
 
-Routes can be enabled and disabled via the admin console GUI or via:  
+Routes can be enabled and disabled via the admin console GUI or via rtirssh:  
 `disable example Route::Session::Triangle`  
 `enable example Route::Session::TriangleBatch`
 
-Routes can be updated via:  
+Routes can be updated via rtirssh:  
 `update example Route::Session::TriangleBatch <path to xml>\300ms.xml`
