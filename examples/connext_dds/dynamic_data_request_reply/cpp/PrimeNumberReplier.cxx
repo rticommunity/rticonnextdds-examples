@@ -79,15 +79,14 @@ private:
      * prime numbers will be stored.
      */
     void calculate_and_send_primes(
-        connext::Replier<DDS_DynamicData, DDS_DynamicData>& replier,
-        const DDS::SampleIdentity_t& request_sample_identity,
-        DDS_Long n,
-        DDS_Long primes_per_reply,
-        DDS_DynamicData *reply)
-        {
+            connext::Replier<DDS_DynamicData, DDS_DynamicData>& replier,
+            const DDS::SampleIdentity_t& request_sample_identity,
+            DDS_Long n,
+            DDS_Long primes_per_reply,
+            DDS_DynamicData *reply) {
 
         /* Set Status to REPLY_IN_PROGRESS */
-        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,0);
+        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 0);
 
         /* Set the sequence: */
         DDS_LongSeq primes_seq;
@@ -166,7 +165,7 @@ private:
          * Send the last reply. Indicate that the calculation is complete and
          * send any prime number left in the sequence
          */
-        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,1);
+        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1);
         /* Send a reply now */
         reply->set_long_seq(
                 "primes",
@@ -264,18 +263,16 @@ public:
         connext::LoanedSamples<DDS_DynamicData>received_requests = 
                 replier.receive_requests(MAX_WAIT);
 
-        bool stop=1;
+        bool stop = true;
 
         while(stop) {
 
-            typedef connext::LoanedSamples<DDS_DynamicData>::iterator iterator;
-            for (
-                    iterator request_sample = received_requests.begin(); 
+            typedef connext::LoanedSamples<DDS_DynamicData>::iterator LoanedSamplesIterator;
+            for (iterator request_sample = received_requests.begin(); 
                     request_sample != received_requests.end(); 
-                    ++request_sample) 
-            {
+                    ++request_sample) {
                 
-                if(!request_sample->info().valid_data) {
+                if (!request_sample->info().valid_data) {
                     continue;
                 }
                 
@@ -297,9 +294,9 @@ public:
                         DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED);
 
                 /* This constant is defined in PrimesType.cxx */
-                if (n <= 0 || primes_per_reply <= 0 
-                        || primes_per_reply > THE_PRIME_SEQUENCE_MAX_LENGTH)
-                {
+                if (n <= 0
+                        || primes_per_reply <= 0 
+                        || primes_per_reply > THE_PRIME_SEQUENCE_MAX_LENGTH) {
 
                     std::cout << "Cannot process request" << std::endl;
 
@@ -312,8 +309,7 @@ public:
                     replier.send_reply(
                             *reply, 
                             request_sample->identity());
-                }
-                else{
+                } else {
                     std::cout << "Calculating prime numbers below "
                           << n << "... " << std::endl;
                 }
@@ -329,7 +325,7 @@ public:
  
             }
 
-            stop=0;
+            stop = false;
         }
     }
 };
@@ -367,5 +363,4 @@ int main(int argc, char *argv[])
 
 }
 #endif
-
 

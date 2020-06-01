@@ -80,7 +80,7 @@ const char * HelloWorldType_get_type_name(){
 /*****************************************************************************/
 /* Get the typecode for the prime_number_request                             */
 /*****************************************************************************/
-DDS_TypeCode * get_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
+DDS_TypeCode * create_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
     
     static DDS_TypeCode *request_typecode =NULL;
     
@@ -132,7 +132,7 @@ DDS_TypeCode * get_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
 /*****************************************************************************/
 /* Get the typecode for the PrimeNumberCalculationStatus                     */
 /*****************************************************************************/
-DDS_TypeCode * get_PrimeNumberCalculationStatus_enum_typecode(
+DDS_TypeCode * create_PrimeNumberCalculationStatus_enum_typecode(
         DDS_TypeCodeFactory *tcf) {
     
     static DDS_TypeCode *enumTC = NULL;
@@ -180,7 +180,7 @@ DDS_TypeCode * get_PrimeNumberCalculationStatus_enum_typecode(
 /*****************************************************************************/
 /* Get the typecode for the sequence of longs                                */
 /*****************************************************************************/
-DDS_TypeCode * get_PrimeNumberReply_sequence_typecode(DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode * create_PrimeNumberReply_sequence_typecode(DDS_TypeCodeFactory *tcf) {
 
     static DDS_TypeCode *reply_typecode = NULL;
     DDS_ExceptionCode_t err;

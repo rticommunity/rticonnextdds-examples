@@ -36,12 +36,12 @@ private:
         }
 
         rc = sample->set_long("primes_per_reply", 
-                        DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 
-                        primes_per_reply);
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 
+                primes_per_reply);
 
         if (rc != DDS_RETCODE_OK) {
             std::cerr << "! Unable to set value (" << primes_per_reply
-                      << ") for sampleId. Error=" << rc << std::endl;
+                    << ") for sampleId. Error=" << rc << std::endl;
         }
     }
 
@@ -71,7 +71,7 @@ public:
         }
 
         retcode = DDS::DomainParticipantFactory::get_instance()->
-            delete_participant(participant);
+                delete_participant(participant);
         if (retcode != DDS::RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
         }
@@ -92,7 +92,7 @@ public:
 
         /* Create TypeCode for dynamic data type request
         */
-        DDS_TypeCode * request_type  = get_prime_number_request_typecode(factory);
+        DDS_TypeCode *request_type  = get_prime_number_request_typecode(factory);
         if (request_type == NULL) {
             throw std::runtime_error(
                     "! Unable to create dynamic request type code");
@@ -128,7 +128,7 @@ public:
         }
  
 
-        DDS_DynamicData *sample = request_type_support->create_data();
+        DDS_DynamicData *request_sample = request_type_support->create_data();
 
         fill_data(sample, factory,  n,  primes_per_reply);
 
