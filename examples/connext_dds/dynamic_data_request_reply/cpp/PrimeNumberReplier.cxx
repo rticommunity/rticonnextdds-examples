@@ -192,8 +192,8 @@ public:
 
         /* 
          * Create TypeCode for dynamic data type request
-        */
-        DDS_TypeCode *request_type  = get_prime_number_request_typecode(factory);
+         */
+        DDS_TypeCode *request_type  = create_prime_number_request_typecode(factory);
         if (request_type == NULL) {
             throw std::runtime_error(
                     "! Unable to create dynamic request type code");
@@ -239,13 +239,13 @@ public:
 
         replier_params.service_name("PrimeCalculator");
         replier_params.qos_profile(
-                "RequestReplyExampleProfiles",
+                "RequestReplyExampleLibrary",
                 "ReplierExampleProfile");
                 
         replier_params.request_type_support(request_type_support);
         replier_params.reply_type_support(reply_type_support);
 
-        DDS_DynamicData *reply = reply_type_support->create_data();
+        DDS_DynamicData *reply_sample = reply_type_support->create_data();
          
         /* 
          * In this example we create the replier on the stack, but you
@@ -267,8 +267,11 @@ public:
 
         while(stop) {
 
-            typedef connext::LoanedSamples<DDS_DynamicData>::iterator LoanedSamplesIterator;
-            for (iterator request_sample = received_requests.begin(); 
+            typedef connext::LoanedSamples<DDS_DynamicData>::iterator
+                    LoanedSamplesIterator;
+
+            for (LoanedSamplesIterator request_sample = 
+                            received_requests.begin(); 
                     request_sample != received_requests.end(); 
                     ++request_sample) {
                 
@@ -301,13 +304,13 @@ public:
                     std::cout << "Cannot process request" << std::endl;
 
                     /* Send reply indicating error */
-                    reply->set_long(
+                    reply_sample->set_long(
                             "status",
                             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
                             2);
 
                     replier.send_reply(
-                            *reply, 
+                            *reply_sample, 
                             request_sample->identity());
                 } else {
                     std::cout << "Calculating prime numbers below "
@@ -319,7 +322,7 @@ public:
                         request_sample->identity(),
                         n,
                         primes_per_reply,
-                        reply);
+                        reply_sample);
 
                 std::cout << "DONE" << std::endl;
  
@@ -362,5 +365,3 @@ int main(int argc, char *argv[])
     return replier_main(domain_id);
 
 }
-#endif
-

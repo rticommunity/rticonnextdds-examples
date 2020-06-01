@@ -92,7 +92,7 @@ public:
 
         /* Create TypeCode for dynamic data type request
         */
-        DDS_TypeCode *request_type  = get_prime_number_request_typecode(factory);
+        DDS_TypeCode *request_type  = create_prime_number_request_typecode(factory);
         if (request_type == NULL) {
             throw std::runtime_error(
                     "! Unable to create dynamic request type code");
@@ -130,7 +130,7 @@ public:
 
         DDS_DynamicData *request_sample = request_type_support->create_data();
 
-        fill_data(sample, factory,  n,  primes_per_reply);
+        fill_data(request_sample, factory,  n,  primes_per_reply);
 
         /* 
          * Create the requester with the participant, and a QoS profile
@@ -139,7 +139,7 @@ public:
         connext::RequesterParams requester_params(participant);
         requester_params.service_name("PrimeCalculator");
         requester_params.qos_profile(
-                "RequestReplyExampleProfiles",
+                "RequestReplyExampleLibrary",
                 "RequesterExampleProfile");
         requester_params.request_type_support(request_type_support);
         requester_params.reply_type_support(reply_type_support);
@@ -150,7 +150,7 @@ public:
 
 
         /* Send the request */
-        requester.send_request(*sample);
+        requester.send_request(*request_sample);
 
         /* Receive replies */
         const DDS::Duration_t MAX_WAIT = {20, 0};
@@ -271,4 +271,4 @@ int main(int argc, char *argv[])
 
     return requester_main(n, primes_per_reply, domain_id);
 }
-#endif
+

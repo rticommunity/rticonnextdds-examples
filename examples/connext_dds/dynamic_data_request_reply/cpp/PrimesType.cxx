@@ -217,14 +217,14 @@ DDS_TypeCode * type_w_PrimeNumberReply_typecode(DDS_TypeCodeFactory *tcf) {
     DDS_ExceptionCode_t err;
 
     /* We get the Typecode for the sequence: */
-    sequenceTC = get_PrimeNumberReply_sequence_typecode(tcf);
+    sequenceTC = create_PrimeNumberReply_sequence_typecode(tcf);
     if (sequenceTC == NULL) {
         cerr << "! Unable to get sequenceTC" << endl;
         goto fail;
     }
 
     /* We get the typecode for the enum: */
-    enumTC = get_PrimeNumberCalculationStatus_enum_typecode(tcf);
+    enumTC = create_PrimeNumberCalculationStatus_enum_typecode(tcf);
     if (enumTC == NULL) {
         cerr << "! Unable to create innerTC" << endl;
         goto fail;
