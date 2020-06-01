@@ -86,7 +86,10 @@ private:
             DDS_DynamicData *reply) {
 
         /* Set Status to REPLY_IN_PROGRESS */
-        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 0);
+        reply->set_long(
+                "status",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+                REPLY_IN_PROGRESS);
 
         /* Set the sequence: */
         DDS_LongSeq primes_seq;
@@ -165,7 +168,11 @@ private:
          * Send the last reply. Indicate that the calculation is complete and
          * send any prime number left in the sequence
          */
-        reply->set_long("status", DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED, 1);
+        reply->set_long(
+                "status",
+                DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
+                REPLY_COMPLETED);
+
         /* Send a reply now */
         reply->set_long_seq(
                 "primes",
@@ -193,7 +200,9 @@ public:
         /* 
          * Create TypeCode for dynamic data type request
          */
-        DDS_TypeCode *request_type  = create_prime_number_request_typecode(factory);
+        DDS_TypeCode *request_type =
+                create_prime_number_request_typecode(factory);
+
         if (request_type == NULL) {
             throw std::runtime_error(
                     "! Unable to create dynamic request type code");
@@ -301,13 +310,13 @@ public:
                         || primes_per_reply <= 0 
                         || primes_per_reply > THE_PRIME_SEQUENCE_MAX_LENGTH) {
 
-                    std::cout << "Cannot process request" << std::endl;
+                    std::cerr << "Cannot process request" << std::endl;
 
                     /* Send reply indicating error */
                     reply_sample->set_long(
                             "status",
                             DDS_DYNAMIC_DATA_MEMBER_ID_UNSPECIFIED,
-                            2);
+                            REPLY_ERROR);
 
                     replier.send_reply(
                             *reply_sample, 

@@ -25,8 +25,7 @@ using namespace std;
  *
  * It simply contains an integer that requests all the prime numbers below it.
  *
- *
-*/
+ */
 
 /*
 struct PrimeNumberRequest {
@@ -71,6 +70,26 @@ struct PrimeNumberReply {
 #define THE_PRIME_SEQUENCE_MAX_LENGTH 1024
 
 /*****************************************************************************/
+/* An enum for the status of the reply.                                      */
+/*****************************************************************************/
+enum PrimeNumberCalculationStatus {
+        /* Indicates that this reply contains a new sequence of
+         * prime numbers for a request, but there are still more to come
+         */
+        REPLY_IN_PROGRESS = 0,
+
+        /* Indicates that this is the last sequence of 
+         * prime numbers for a request.
+         */
+        REPLY_COMPLETED = 1,
+
+        /* Indicates that there was an error. After an error
+         * there won't be any more replies for a request
+         */
+        REPLY_ERROR = 2
+};
+
+/*****************************************************************************/
 /* Returns a C String with the name of this data type                        */
 /*****************************************************************************/
 const char * HelloWorldType_get_type_name(){
@@ -94,22 +113,24 @@ DDS_TypeCode * create_prime_number_request_typecode(DDS_TypeCodeFactory * tcf) {
         goto fail;
     }
     /* We add a member "n" to the struct: */
-    request_typecode->add_member("n",
-                                DDS_TYPECODE_MEMBER_ID_INVALID, 
-                                tcf->get_primitive_tc(DDS_TK_LONG),
-                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /* As required member. */
-                                err);
+    request_typecode->add_member(
+            "n",
+            DDS_TYPECODE_MEMBER_ID_INVALID, 
+            tcf->get_primitive_tc(DDS_TK_LONG),
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /* As required member. */
+            err);
 
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << stderr << "! Unable to add a_member to PrimeNumberRequest" << endl;
         goto fail;
     }
     /* We add a member "primes_per_reply" to the struct: */
-    request_typecode->add_member("primes_per_reply",
-                                DDS_TYPECODE_MEMBER_ID_INVALID, 
-                                tcf->get_primitive_tc(DDS_TK_LONG),
-                                DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /*As required member. */
-                                err);
+    request_typecode->add_member(
+            "primes_per_reply",
+            DDS_TYPECODE_MEMBER_ID_INVALID, 
+            tcf->get_primitive_tc(DDS_TK_LONG),
+            DDS_TYPECODE_NONKEY_REQUIRED_MEMBER, /*As required member. */
+            err);
 
     if (err != DDS_NO_EXCEPTION_CODE) {
         cerr << stderr << "! Unable to add a_member to PrimeNumberRequest" << endl;
@@ -180,7 +201,8 @@ DDS_TypeCode * create_PrimeNumberCalculationStatus_enum_typecode(
 /*****************************************************************************/
 /* Get the typecode for the sequence of longs                                */
 /*****************************************************************************/
-DDS_TypeCode * create_PrimeNumberReply_sequence_typecode(DDS_TypeCodeFactory *tcf) {
+DDS_TypeCode * create_PrimeNumberReply_sequence_typecode(
+        DDS_TypeCodeFactory *tcf) {
 
     static DDS_TypeCode *reply_typecode = NULL;
     DDS_ExceptionCode_t err;

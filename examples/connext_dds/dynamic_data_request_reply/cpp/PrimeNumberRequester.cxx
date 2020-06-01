@@ -92,7 +92,9 @@ public:
 
         /* Create TypeCode for dynamic data type request
         */
-        DDS_TypeCode *request_type  = create_prime_number_request_typecode(factory);
+        DDS_TypeCode *request_type =
+                create_prime_number_request_typecode(factory);
+                
         if (request_type == NULL) {
             throw std::runtime_error(
                     "! Unable to create dynamic request type code");
