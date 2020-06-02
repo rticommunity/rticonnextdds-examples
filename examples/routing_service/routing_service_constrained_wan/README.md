@@ -40,10 +40,11 @@ From the rtirssh shell run:
 Notice how the square is now only received on domain 1 every 300ms
 
 5. Enable batching by first disabling the triangle's route, and then
-enabling the TriangleBatch route. This can be done by launching admin
-console, selecting the routing service instance in the "physical view"
-, and then right clicking on the Triangle route to disable it. Repeat
-this process on the TriangleBatch route to enable it.  
+enabling the TriangleBatch route.  
+This can be done by launching admin console, selecting the routing service
+instance in the "physical view", and then right clicking on the Triangle
+route to disable it.  
+Repeat this process on the TriangleBatch route to enable it.  
 Notice how the triangle is now updating in batches of 6 samples,
 compared to the other shapes that are updating one sample at a time.
 
