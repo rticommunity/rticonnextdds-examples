@@ -24,7 +24,7 @@ their routes using the 300ms.xml and 1000ms.xml files.
 
 ## Instructions
 
-1. Start two copies of shapesdemo, a publisher on domain 0 and a
+1. Start two copies of the shapesdemo, a publisher on domain 0 and a
 subscriber on domain 1.
 
 2. Start routing service using this configuration, from the command
