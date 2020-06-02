@@ -21,5 +21,5 @@ the software.
 
 Pull Requests with new examples should be created in the 
 [develop](https://github.com/rticommunity/rticonnextdds-examples/tree/develop) branch.
-Changes to 'master' branch won't be allowed. 
+Changes to 'master' branch won't be allowed.
 

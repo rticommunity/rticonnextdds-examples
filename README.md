@@ -25,9 +25,10 @@ versions of RTI Connext DDS, please check out the appropriate branch:
 - [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
 - [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
 
-The [develop](https://github.com/rticommunity/rticonnextdds-examples/tree/develop) branch
-contains the examples for the latest RTI Connext DDS release. It also contains the latest
-examples 
+The
+[develop](https://github.com/rticommunity/rticonnextdds-examples/tree/develop)
+branch contains the examples for the latest RTI Connext DDS release. It also
+contains the latest examples.
 
 On the other hand, the [master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
 branch contains the latest release branch's examples.
