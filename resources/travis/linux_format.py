@@ -221,7 +221,7 @@ if __name__ == "__main__":
     # Markdownlint
     if "markdownlint" not in args.disabled_linters:
         markdownlint_suffix_list: Set = {".md"}
-        markdownlint_cmd: List[str] = ["markdownlint"]
+        markdownlint_cmd: List[str] = ["mdl", "--style", ".mdl.rb"]
         markdownlint_filtered_file_list: List[str] = filter_files(
             file_list, markdownlint_suffix_list
         )
