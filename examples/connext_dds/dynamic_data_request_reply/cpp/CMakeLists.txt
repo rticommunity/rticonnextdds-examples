@@ -17,15 +17,13 @@ set(CMAKE_MODULE_PATH
 # Find the RTI Connext DDS libraries
 if(NOT RTIConnextDDS_FOUND)
     find_package(RTIConnextDDS
-        "5.3.0"
+        "6.0.0"
         REQUIRED
         COMPONENTS
             core
             messaging_api
     )
 endif()
-
-
 
 add_executable(prime_number_requester_cxx
     "${CMAKE_CURRENT_SOURCE_DIR}/PrimeNumberRequester.cxx"
@@ -35,35 +33,25 @@ add_executable(prime_number_replier_cxx
     "${CMAKE_CURRENT_SOURCE_DIR}/PrimeNumberReplier.cxx"
 )
 
-
-
 #We add the library:
 add_library(PrimesType "${CMAKE_CURRENT_SOURCE_DIR}/PrimesType.cxx")
 
 target_link_libraries(PrimesType
     PRIVATE
-        RTIConnextDDS::cpp_api
         RTIConnextDDS::messaging_cpp_api
 )
 
-list(APPEND EXTRA_LIBS PrimesType)
-
 target_link_libraries(prime_number_requester_cxx
     PRIVATE
-        RTIConnextDDS::cpp_api
         RTIConnextDDS::messaging_cpp_api
-    PUBLIC
-        ${EXTRA_LIBS}
+        PrimesType
 )
 
 target_link_libraries(prime_number_replier_cxx
     PRIVATE
-        RTIConnextDDS::cpp_api
         RTIConnextDDS::messaging_cpp_api
-    PUBLIC
-        ${EXTRA_LIBS}
+        PrimesType
 )
-
 
 target_include_directories(prime_number_requester_cxx
     PRIVATE
