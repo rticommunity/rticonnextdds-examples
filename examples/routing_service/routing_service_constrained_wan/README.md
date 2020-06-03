@@ -49,8 +49,8 @@ Notice how the triangle is now updating in batches of 6 samples,
 compared to the other shapes that are updating one sample at a time.
 
 6.  Combine batching and time filters together  
-From the rtirssh shell run: `update example
-Route::Session::TriangleBatch <path to xml>\300ms.xml`  
+From the rtirssh shell run:
+`update example Route::Session::TriangleBatch <path to xml>\300ms.xml`  
 Notice how the triangle is still batching 6 samples up at a time, but
 it is also time filtering one sample every 300ms.
 
