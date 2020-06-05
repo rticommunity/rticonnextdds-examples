@@ -57,9 +57,9 @@ target_include_directories(HelloWorld_publisher
     "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
-# Create the target for the publisher executable
+# Create the target for the subscriber executable
 add_executable(HelloWorld_subscriber
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_subscriber.c"
     ${HelloWorld_C_GENERATED_SOURCES}
 )
 

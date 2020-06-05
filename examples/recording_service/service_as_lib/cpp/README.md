@@ -59,17 +59,23 @@ Build the example code by running the following command:
 ```sh
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
 ```
+
+> **Note**:
+>
+> When using a multi-configuration generator, make sure you specify
+> the `--config` parameter in your call to `cmake --build .`. In general,
+> it's a good practice to always provide it.
 
 In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 
 ```sh
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> \
-        -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 This will produce a binary directory (*build*) where the `ServiceAsLibExample`
@@ -96,12 +102,18 @@ set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
 Then you can call CMake like this:
 
 ```sh
-cmake -DCONNEXTDDS_DIR=<connext dir> \
-      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> \
-      -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake -DCONNEXTDDS_DIR=<connext dir>
+      -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
+      -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 ```
 
 ## Running the Example
+
+When running the example, make sure that the Routing Service Library
+(_librtiroutingservice.so_ on Linux, _librtiroutingservice.dylib_ on Mac,
+_rtiroutingservice.dll_ on Windows) is accessible in the current dynamic library
+loading path (e.g. `LD_LIBRARY_PATH` on Linux).
 
 The following command-line parameters are expected by the application:
 

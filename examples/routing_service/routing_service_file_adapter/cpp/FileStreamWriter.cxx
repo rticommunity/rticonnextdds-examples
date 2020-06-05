@@ -41,7 +41,7 @@ FileStreamWriter::FileStreamWriter(const PropertySet &properties)
 };
 
 int FileStreamWriter::write(
-        const std::vector<dds::core::xtypes::*> &samples,
+        const std::vector<dds::core::xtypes::DynamicData *> &samples,
         const std::vector<dds::sub::SampleInfo *> &infos)
 {
     for (auto sample : samples) {
