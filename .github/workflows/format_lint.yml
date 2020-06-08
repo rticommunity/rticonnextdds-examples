@@ -48,4 +48,4 @@ jobs:
         run: npm install markdownlint-cli@0.23.1
       - name: Perform linting
         working-directory: ${{ github.workspace }}
-        run: markdownlint **/*.md
+        run: npx markdownlint **/*.md
