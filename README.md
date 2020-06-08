@@ -1,4 +1,4 @@
-# RTI ConnextDDS examples
+# rticonnextdds-examples
 
 [![Build Status](https://www.travis-ci.org/rticommunity/rticonnextdds-examples.svg?branch=master)](https://www.travis-ci.org/rticommunity/rticonnextdds-examples)
 
