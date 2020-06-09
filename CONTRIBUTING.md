@@ -16,3 +16,10 @@ of any type, including any warranty for fitness for any purpose. RTI is under no
 obligation to maintain or support the Software.  RTI shall not be liable for any
 incidental or consequential damages arising out of the use or inability to use
 the software.
+
+## Branches Management
+
+Pull Requests with new examples should be created in the
+[develop](https://github.com/rticommunity/rticonnextdds-examples/tree/develop) branch.
+Changes to 'master' branch won't be allowed.
+
