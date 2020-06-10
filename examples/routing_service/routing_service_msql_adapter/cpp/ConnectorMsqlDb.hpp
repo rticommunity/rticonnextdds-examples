@@ -43,16 +43,16 @@ private:
     void set_connection_info(const rti::routing::PropertySet &properties);
     void msql_show_error(unsigned int handle_type, const SQLHANDLE &handle);
 
-    SQLHANDLE sql_env_handle { nullptr };
-    SQLHANDLE sql_conn_handle { nullptr };
-    SQLHANDLE sql_stmt_handle { nullptr };
+    SQLHANDLE sql_env_handle_ { nullptr };
+    SQLHANDLE sql_conn_handle_ { nullptr };
+    SQLHANDLE sql_stmt_handle_ { nullptr };
 
-    std::string server { "" };
-    std::string db_name { "" };
-    std::string table_name { "" };
-    std::string user_name { "" };
-    std::string password { "" };
-    std::string connection_info { "" };
+    std::string server_ { "" };
+    std::string db_name_ { "" };
+    std::string table_name_ { "" };
+    std::string user_name_ { "" };
+    std::string password_ { "" };
+    std::string connection_info_ { "" };
 
     unsigned int offset_ { 0 }; /* database offset */
 };

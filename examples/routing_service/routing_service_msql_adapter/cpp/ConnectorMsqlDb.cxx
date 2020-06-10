@@ -46,7 +46,7 @@ auto ConnectorMsqlDb::connect() -> bool
     SQLRETURN ret_code;
 
     /* Allocates the environment handle */
-    ret_code = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_env_handle);
+    ret_code = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_env_handle_);
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
         throw dds::core::Error(
@@ -55,7 +55,7 @@ auto ConnectorMsqlDb::connect() -> bool
 
     /* Set the ODBC version environment attribute */
     ret_code = SQLSetEnvAttr(
-            sql_env_handle,
+            sql_env_handle_,
             SQL_ATTR_ODBC_VERSION,
             (SQLPOINTER) SQL_OV_ODBC3,
             0);
@@ -66,7 +66,7 @@ auto ConnectorMsqlDb::connect() -> bool
     }
 
     /* Allocates the connection handle */
-    ret_code = SQLAllocHandle(SQL_HANDLE_DBC, sql_env_handle, &sql_conn_handle);
+    ret_code = SQLAllocHandle(SQL_HANDLE_DBC, sql_env_handle_, &sql_conn_handle_);
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
         throw dds::core::Error(
@@ -75,7 +75,7 @@ auto ConnectorMsqlDb::connect() -> bool
 
     /* Sets login timeout to 5 seconds */
     ret_code = SQLSetConnectAttr(
-            sql_conn_handle,
+            sql_conn_handle_,
             SQL_LOGIN_TIMEOUT,
             (SQLPOINTER) TIMEOUT,
             0);
@@ -87,9 +87,9 @@ auto ConnectorMsqlDb::connect() -> bool
     SQLCHAR retconstring[SQL_BUFF_LEN];
     /* connect to SQL Server */
     ret_code = SQLDriverConnect(
-            sql_conn_handle,
+            sql_conn_handle_,
             NULL,
-            (SQLCHAR *) connection_info.data(),
+            (SQLCHAR *) connection_info_.data(),
             SQL_NTS,
             retconstring,
             SQL_BUFF_LEN,
@@ -97,17 +97,17 @@ auto ConnectorMsqlDb::connect() -> bool
             SQL_DRIVER_NOPROMPT);
 
     if (ret_code == SQL_ERROR) {
-        msql_show_error(SQL_HANDLE_DBC, sql_conn_handle);
+        msql_show_error(SQL_HANDLE_DBC, sql_conn_handle_);
         disconnect();
         throw dds::core::Error("SQL Error - Connection to SQL Server failed");
     }
 
-    RTI_RS_LOG(connection_info.data());
+    RTI_RS_LOG(connection_info_.data());
     RTI_RS_LOG("SQL connection to database successful");
     connected_ = true;
 
     ret_code =
-            SQLAllocHandle(SQL_HANDLE_STMT, sql_conn_handle, &sql_stmt_handle);
+            SQLAllocHandle(SQL_HANDLE_STMT, sql_conn_handle_, &sql_stmt_handle_);
 
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
@@ -124,10 +124,10 @@ void ConnectorMsqlDb::disconnect()
 {
     RTI_RS_LOG_FN(disconnect_db);
 
-    SQLFreeHandle(SQL_HANDLE_STMT, sql_stmt_handle);
-    SQLDisconnect(sql_conn_handle);
-    SQLFreeHandle(SQL_HANDLE_DBC, sql_conn_handle);
-    SQLFreeHandle(SQL_HANDLE_ENV, sql_env_handle);
+    SQLFreeHandle(SQL_HANDLE_STMT, sql_stmt_handle_);
+    SQLDisconnect(sql_conn_handle_);
+    SQLFreeHandle(SQL_HANDLE_DBC, sql_conn_handle_);
+    SQLFreeHandle(SQL_HANDLE_ENV, sql_env_handle_);
 
     connected_ = false;
 }
@@ -141,41 +141,41 @@ void ConnectorMsqlDb::set_connection_info(const PropertySet &properties)
 
     auto it = properties.find("msql.db.servername");
     if (it != properties.end()) {
-        server = it->second;
+        server_ = it->second;
     } else {
         throw dds::core::Error("Server name not found in properties");
     }
 
     it = properties.find("msql.db.dbname");
     if (it != properties.end()) {
-        db_name = it->second;
+        db_name_ = it->second;
     } else {
         throw dds::core::Error("Database name not found in properties");
     }
 
     it = properties.find("msql.db.tablename");
     if (it != properties.end()) {
-        table_name = it->second;
+        table_name_ = it->second;
     } else {
         throw dds::core::Error("Table name not found in properties");
     }
 
     it = properties.find("msql.db.username");
     if (it != properties.end()) {
-        user_name = it->second;
+        user_name_ = it->second;
     } else {
         throw dds::core::Error("Username name not found in properties");
     }
 
     it = properties.find("msql.db.password");
     if (it != properties.end()) {
-        password = it->second;
+        password_ = it->second;
     } else {
         throw dds::core::Error("Password name not found in properties");
     }
 
-    connection_info = "DRIVER={SQL Server}; SERVER=" + server + "; DATABASE="
-            + db_name + "; UID=" + user_name + "; PWD=" + password + ";";
+    connection_info_ = "DRIVER={SQL Server}; SERVER=" + server_ + "; DATABASE="
+            + db_name_ + "; UID=" + user_name_ + "; PWD=" + password_ + ";";
 }
 
 /*
@@ -215,7 +215,7 @@ auto ConnectorMsqlDb::write_data(const DynamicData &sample) -> bool
     std::ostringstream cmd(std::ostringstream::ate);
 
     /* write the data to the database*/
-    cmd << "INSERT INTO " << db_name << ".dbo." << table_name
+    cmd << "INSERT INTO " << db_name_ << ".dbo." << table_name_
         << "(topicname, color, x, y, shapesize, angle, fillkind) VALUES ('"
         << topic_name_ << "','" << sample.value<std::string>("color") << "',"
         << sample.value<int32_t>("x") << "," << sample.value<int32_t>("y")
@@ -227,11 +227,11 @@ auto ConnectorMsqlDb::write_data(const DynamicData &sample) -> bool
     /* std::cout << cmd.str(); */
 
     SQLRETURN retcode = SQLExecDirect(
-            sql_stmt_handle,
+            sql_stmt_handle_,
             (SQLCHAR *) cmd.str().c_str(),
             SQL_NTS);
     if (retcode == SQL_ERROR) {
-        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle);
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         success = false;
     }
 
@@ -251,7 +251,7 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
 
     /* get one record from the database at the offset specified using ascending
      * order */
-    cmd << "SELECT * FROM " << table_name << " WHERE topicname = '"
+    cmd << "SELECT * FROM " << table_name_ << " WHERE topicname = '"
         << topic_name_ << "' ORDER BY id ASC OFFSET " << offset_
         << " ROWS FETCH FIRST 1 ROWS ONLY";
 
@@ -260,24 +260,24 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
 
     if (SQL_SUCCESS
         != SQLExecDirect(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 (SQLCHAR *) cmd.str().c_str(),
                 SQL_NTS)) {
-        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle);
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         return count;
     }
 
-    while (SQLFetch(sql_stmt_handle) == SQL_SUCCESS) {
+    while (SQLFetch(sql_stmt_handle_) == SQL_SUCCESS) {
         /* start at column 3 since column 1 is an auto incremented id and column
          * 2 is the topicname which we already know */
         char color[128];
         int value = 0;
         float angle = 0.0;
 
-        SQLGetData(sql_stmt_handle, 3, SQL_C_CHAR, &color, 128, NULL);
+        SQLGetData(sql_stmt_handle_, 3, SQL_C_CHAR, &color, 128, NULL);
         sample->value("color", std::string(color));
         SQLGetData(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 4,
                 SQL_C_DEFAULT,
                 &value,
@@ -285,7 +285,7 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("x", value);
         SQLGetData(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 5,
                 SQL_C_DEFAULT,
                 &value,
@@ -293,7 +293,7 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("y", value);
         SQLGetData(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 6,
                 SQL_C_DEFAULT,
                 &value,
@@ -301,7 +301,7 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("shapesize", value);
         SQLGetData(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 7,
                 SQL_C_DEFAULT,
                 &angle,
@@ -309,7 +309,7 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("angle", angle);
         SQLGetData(
-                sql_stmt_handle,
+                sql_stmt_handle_,
                 8,
                 SQL_C_DEFAULT,
                 &value,
@@ -322,8 +322,8 @@ auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
     }
 
     /* Close Cursor before next iteration starts */
-    if (SQL_SUCCESS != SQLCloseCursor(sql_stmt_handle)) {
-        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle);
+    if (SQL_SUCCESS != SQLCloseCursor(sql_stmt_handle_)) {
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         return count;
     }
 
