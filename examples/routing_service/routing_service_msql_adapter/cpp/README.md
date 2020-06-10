@@ -23,9 +23,9 @@ This example requires a Microsoft SQL Server Database.
 There are two folders to build examples.
 
 1. rs_dll - This folder contains the artifacts to create a Release version of
-    the msqladapter.dll.
+the msqladapter.dll.
 
 2. rs_main - This folder contains the artifacts to create a Debug version of
-    an executable that can be used to debug the adapter code.
+an executable that can be used to debug the adapter code.
 
 

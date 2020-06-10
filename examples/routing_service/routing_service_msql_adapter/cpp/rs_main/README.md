@@ -16,7 +16,9 @@ The example code should build and run with the following environment.
 - Microsoft SQL Server Management Studio (SSMS)
 
 There are two xml files in the rs_dds_msql_adapter\rs_main directory.
+
 - MainRsMsqlShapesAdapter_w_types uses defined XML types to get the type.
+
 - MainRsMsqlShapesAdapter_wo_types uses discovery to get the type.
 
 ## Logging
@@ -29,10 +31,10 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
 ## Building Debug executable:
 
-1. Create rs_dds_msql_adapter\rs_main\build directory. Everything in this
+1.  Create rs_dds_msql_adapter\rs_main\build directory. Everything in this
     directory is ignored by git.
 
-2. From rs_dds_msql_adapter\rs_main\build type the following.
+2.  From rs_dds_msql_adapter\rs_main\build type the following.
     Enter **-G "Visual Studio 16 2019"** for Visual Studio 2019.
 
 ```bash
@@ -43,32 +45,32 @@ cmake -DBUILD_SHARED_LIBS=ON
 -G "Visual Studio 15 2017" -A x64 ..
 ```
 
-3. The project can be built from Visual Studio or from the command line.
+3.  The project can be built from Visual Studio or from the command line.
     - In Visual Studio open RSMain.sln and select **Debug** build
         configuration and build.
     - Or type the following command.
 
-```bash
-cmake --build . --config Debug
-```
+        ```bash
+        cmake --build . --config Debug
+        ```
 
 ## Read DDS data and write to a MSQL database:
 
-1. Publish any shapes on Domain 0
+1.  Publish any shapes on Domain 0
 
-2. From rs_dds_msql_adapter\rs_main\build run one of the commands below.
+2.  From rs_dds_msql_adapter\rs_main\build run one of the commands below.
 
-* To use the XML types defined in the XML file:
+    * To use the XML types defined in the XML file:
 
-```bash
-rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL
-```
+    ```bash
+    rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL
+    ```
 
-* To use DDS discovery to discover the types:
+    * To use DDS discovery to discover the types:
 
-```bash
-rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL
-```
+    ```bash
+    rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL
+    ```
 
 ## Read from MSQL database and publish to DDS domain:
 
@@ -79,17 +81,17 @@ database and publish them to DDS domain 0.
 
 2. From rs_dds_msql_adapter\rs_main\build run one of the commands below.
 
-* To use the XML types defined in the XML file:
+    * To use the XML types defined in the XML file:
 
-```bash
-rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS
-```
+    ```bash
+    rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS
+    ```
 
-* To use DDS discovery to discover the types:
+    * To use DDS discovery to discover the types:
 
-```bash
-rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS
-```
+    ```bash
+    rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS
+    ```
 
 ## Debugging the Examples:
 

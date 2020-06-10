@@ -33,10 +33,10 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 6.0.x and therefore only the Release mode DLL will work correctly.
 To Debug the adapter code see the README.md in rs_main directory.
 
-1. Create rs_dds_msql_adapter\rs_dll\build directory. Everything in this
+1.  Create rs_dds_msql_adapter\rs_dll\build directory. Everything in this
     directory is ignored by git.
 
-2. From rs_dds_msql_adapter\rs_dll\build type the following. Enter
+2.  From rs_dds_msql_adapter\rs_dll\build type the following. Enter
     **-G "Visual Studio 16 2019"** for Visual Studio 2019.
 
 ```bash
@@ -46,7 +46,7 @@ cmake -DBUILD_SHARED_LIBS=ON
 -G "Visual Studio 15 2017" -A x64 ..
 ```
 
-3. The project can be build from Visual Studio or from the command line.
+3.  The project can be build from Visual Studio or from the command line.
 
     - In Visual Studio open MsqlAdapter.sln, select **Release** build
         configuration and build.
@@ -58,9 +58,9 @@ cmake --build . --config Release
 
 ## Read DDS data and write to a MSQL database:
 
-1. Publish any shapes on Domain 0
+1.  Publish any shapes on Domain 0
 
-2. From rs_dds_msql_adapter\rs_dll\build run one of the commands below.
+2.  From rs_dds_msql_adapter\rs_dll\build run one of the commands below.
 
     - To run the routing service using the XML types defined in the XML file:
 
@@ -83,9 +83,9 @@ rtiroutingservice
 This example requires data in the database. It will get records from the
 database and publish them to DDS domain 0.
 
-1. Subscribe to all shapes on Domain 0
+1.  Subscribe to all shapes on Domain 0
 
-2. From rs_dds_msql_adapter\rs_main\build run one of the commands below.
+2.  From rs_dds_msql_adapter\rs_main\build run one of the commands below.
 
     - To use the XML types defined in the XML file:
 
