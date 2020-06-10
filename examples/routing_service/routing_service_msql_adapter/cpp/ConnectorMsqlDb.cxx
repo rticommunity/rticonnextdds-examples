@@ -46,7 +46,8 @@ auto ConnectorMsqlDb::connect() -> bool
     SQLRETURN ret_code;
 
     /* Allocates the environment handle */
-    ret_code = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_env_handle_);
+    ret_code =
+            SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_env_handle_);
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
         throw dds::core::Error(
@@ -66,7 +67,8 @@ auto ConnectorMsqlDb::connect() -> bool
     }
 
     /* Allocates the connection handle */
-    ret_code = SQLAllocHandle(SQL_HANDLE_DBC, sql_env_handle_, &sql_conn_handle_);
+    ret_code =
+            SQLAllocHandle(SQL_HANDLE_DBC, sql_env_handle_, &sql_conn_handle_);
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
         throw dds::core::Error(
@@ -106,8 +108,10 @@ auto ConnectorMsqlDb::connect() -> bool
     RTI_RS_LOG("SQL connection to database successful");
     connected_ = true;
 
-    ret_code =
-            SQLAllocHandle(SQL_HANDLE_STMT, sql_conn_handle_, &sql_stmt_handle_);
+    ret_code = SQLAllocHandle(
+            SQL_HANDLE_STMT,
+            sql_conn_handle_,
+            &sql_stmt_handle_);
 
     if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();

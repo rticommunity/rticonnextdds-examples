@@ -46,9 +46,9 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
     ```
 
 3.  The project can be built from Visual Studio or from the command line.
-    - In Visual Studio open RSMain.sln and select **Debug** build
+    -   In Visual Studio open RSMain.sln and select **Debug** build
         configuration and build.
-    - Or type the following command.
+    -   Or type the following command.
 
         ```bash
         cmake --build . --config Debug
@@ -60,17 +60,17 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
 2.  From rs_dds_msql_adapter\rs_main\build run one of the commands below.
 
-    * To use the XML types defined in the XML file:
+    *   To use the XML types defined in the XML file:
 
-    ```bash
-    rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL
-    ```
+        ```bash
+        rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL
+        ```
 
-    * To use DDS discovery to discover the types:
+    *   To use DDS discovery to discover the types:
 
-    ```bash
-    rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL
-    ```
+        ```bash
+        rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL
+        ```
 
 ## Read from MSQL database and publish to DDS domain:
 
@@ -81,17 +81,17 @@ database and publish them to DDS domain 0.
 
 2. From rs_dds_msql_adapter\rs_main\build run one of the commands below.
 
-    * To use the XML types defined in the XML file:
+    *   To use the XML types defined in the XML file:
 
-    ```bash
-    rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS
-    ```
+        ```bash
+        rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS
+        ```
 
-    * To use DDS discovery to discover the types:
+    *   To use DDS discovery to discover the types:
 
-    ```bash
-    rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS
-    ```
+        ```bash
+        rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS
+        ```
 
 ## Debugging the Examples:
 

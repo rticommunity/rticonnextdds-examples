@@ -39,12 +39,12 @@ To Debug the adapter code see the README.md in rs_main directory.
 2.  From rs_dds_msql_adapter\rs_dll\build type the following. Enter
     **-G "Visual Studio 16 2019"** for Visual Studio 2019.
 
-```bash
-cmake -DBUILD_SHARED_LIBS=ON
--DCONNEXTDDS_ARCH=x64Win64VS2017
--DCMAKE_BUILD_TYPE=Release
--G "Visual Studio 15 2017" -A x64 ..
-```
+    ```bash
+    cmake -DBUILD_SHARED_LIBS=ON
+    -DCONNEXTDDS_ARCH=x64Win64VS2017
+    -DCMAKE_BUILD_TYPE=Release
+    -G "Visual Studio 15 2017" -A x64 ..
+    ```
 
 3.  The project can be build from Visual Studio or from the command line.
 
@@ -52,9 +52,9 @@ cmake -DBUILD_SHARED_LIBS=ON
         configuration and build.
     - Or type the following command.
 
-```bash
-cmake --build . --config Release
-```
+    ```bash
+    cmake --build . --config Release
+    ```
 
 ## Read DDS data and write to a MSQL database:
 
@@ -64,19 +64,19 @@ cmake --build . --config Release
 
     - To run the routing service using the XML types defined in the XML file:
 
-```bash
-rtiroutingservice
--cfgFile ../RsMsqlShapesAdapter_w_types.xml
--cfgName RS_DDS_To_MSQL
-```
+    ```bash
+    rtiroutingservice
+    -cfgFile ../RsMsqlShapesAdapter_w_types.xml
+    -cfgName RS_DDS_To_MSQL
+    ```
 
     - To run the routing service using DDS discovery to discover the types:
 
-```bash
-rtiroutingservice
--cfgFile ../RsMsqlShapesAdapter_wo_types.xml
--cfgName RS_DDS_To_MSQL
-```
+    ```bash
+    rtiroutingservice
+    -cfgFile ../RsMsqlShapesAdapter_wo_types.xml
+    -cfgName RS_DDS_To_MSQL
+    ```
 
 ## Read from MSQL database and publish to DDS domain:
 
@@ -89,15 +89,16 @@ database and publish them to DDS domain 0.
 
     - To use the XML types defined in the XML file:
 
-```bashrtiroutingservice
--cfgFile ../RsMsqlShapesAdapter_w_types.xml
--cfgName RS_MSQL_To_DDS
-```
+    ```bash
+    rtiroutingservice
+    -cfgFile ../RsMsqlShapesAdapter_w_types.xml
+    -cfgName RS_MSQL_To_DDS
+    ```
 
     - To use DDS discovery to discover the types:
 
-```bash
-rtiroutingservice
--cfgFile ../RsMsqlShapesAdapter_wo_types.xml
--cfgName RS_MSQL_To_DDS
-```
+    ```bash
+    rtiroutingservice
+    -cfgFile ../RsMsqlShapesAdapter_wo_types.xml
+    -cfgName RS_MSQL_To_DDS
+    ```
