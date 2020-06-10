@@ -1,7 +1,7 @@
 # C++11 Routing Service Adapter - DDS <--> MSQL Database
 
 This windows example uses Routing Service 6.0.0 to route ShapeType DDS data on
-Domain 0 to a Microsoft MSQL Database. It also reads from the MSQL database 
+Domain 0 to a Microsoft MSQL Database. It also reads from the MSQL database
 and publishes the records as DDS data on domain 0.
 
 ## Environment
@@ -23,9 +23,9 @@ This example requires a Microsoft SQL Server Database.
 There are two folders to build examples.
 
 1. rs_dll - This folder contains the artifacts to create a Release version of
-the msqladapter.dll.
+    the msqladapter.dll.
 
 2. rs_main - This folder contains the artifacts to create a Debug version of
-an executable that can be used to debug the adapter code.
+    an executable that can be used to debug the adapter code.
 
 

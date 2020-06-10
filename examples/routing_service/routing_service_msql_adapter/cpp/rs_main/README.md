@@ -35,14 +35,22 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 2. From rs_dds_msql_adapter\rs_main\build type the following.
     Enter **-G "Visual Studio 16 2019"** for Visual Studio 2019.
 
-`cmake -DBUILD_SHARED_LIBS=ON -DCONNEXTDDS_ARCH=x64Win64VS2017 -DCONNEXTDDS_IMPORTED_TARGETS_DEBUG=ON -DCMAKE_BUILD_TYPE=Debug -G "Visual Studio 15 2017" -A x64 ..`
+```bash
+cmake -DBUILD_SHARED_LIBS=ON
+-DCONNEXTDDS_ARCH=x64Win64VS2017
+-DCONNEXTDDS_IMPORTED_TARGETS_DEBUG=ON
+-DCMAKE_BUILD_TYPE=Debug
+-G "Visual Studio 15 2017" -A x64 ..
+```
 
 3. The project can be built from Visual Studio or from the command line.
     - In Visual Studio open RSMain.sln and select **Debug** build
         configuration and build.
     - Or type the following command.
 
-`cmake --build . --config Debug`
+```bash
+cmake --build . --config Debug
+```
 
 ## Read DDS data and write to a MSQL database:
 
@@ -52,11 +60,15 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
 * To use the XML types defined in the XML file:
 
-`rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL`
+```bash
+rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_DDS_To_MSQL
+```
 
 * To use DDS discovery to discover the types:
 
-`rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL`
+```bash
+rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_DDS_To_MSQL
+```
 
 ## Read from MSQL database and publish to DDS domain:
 
@@ -69,11 +81,15 @@ database and publish them to DDS domain 0.
 
 * To use the XML types defined in the XML file:
 
-`rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS`
+```bash
+rsmain.exe ../MainRsMsqlShapesAdapter_w_types.xml RS_MSQL_To_DDS
+```
 
 * To use DDS discovery to discover the types:
 
-`rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS`
+```bash
+rsmain.exe ../MainRsMsqlShapesAdapter_wo_types.xml RS_MSQL_To_DDS
+```
 
 ## Debugging the Examples:
 
@@ -84,8 +100,8 @@ This will allow you to run the examples from Visual Studio, set breakpoints
 and debug your adapter.
 
 **Note 1:** In order to debug your example with Visual Studio you will have to
-make a small change to a file in order to work around a known issue with 
-Connext DDS Professional 6.0.0 and 6.0.1. 
+make a small change to a file in order to work around a known issue with
+Connext DDS Professional 6.0.0 and 6.0.1.
 Open **%NDDSHOME%\include\rti\routing\adapter\detail\StreamReaderForwarder.hpp**
 and around line 428 change the following:
 
