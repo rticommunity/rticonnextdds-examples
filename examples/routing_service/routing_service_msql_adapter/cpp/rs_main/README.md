@@ -49,7 +49,7 @@ target_compile_definitions(rsmain PUBLIC RTI_RS_USE_LOG) # if defined use loggin
 
     -   In Visual Studio open RSMain.sln and select **Debug** build
         configuration and build.
-        
+
     -   Or type the following command.
 
         ```bash
