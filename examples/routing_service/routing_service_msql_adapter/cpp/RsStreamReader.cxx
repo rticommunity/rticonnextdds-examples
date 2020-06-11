@@ -22,27 +22,29 @@ using namespace dds::sub;
 
 RsStreamReader::RsStreamReader(
         RsConnection *connection,
-        const StreamInfo &info,
+        const StreamInfo &stream_info,
         const PropertySet &properties,
         StreamReaderListener *listener)
-        : samplingPeriod_(50),
-          streamInfo_(info.stream_name(), info.type_info().type_name())
+        : sampling_period_(50),
+          stream_info_(
+                  stream_info.stream_name(),
+                  stream_info.type_info().type_name()),
+          connection_(connection),
+          reader_listener_(listener),
+          adapter_type_(static_cast<DynamicType *>(
+                  stream_info.type_info().type_representation())),
+          conn_reader_(
+                  new ConnectorMsqlDb(stream_info.stream_name(), properties))
 {
-    connection_ = connection;
-    readerListener_ = listener;
-    adapterType_ =
-            static_cast<DynamicType *>(info.type_info().type_representation());
-
-    connReader_ = new ConnectorMsqlDb(info.stream_name(), properties);
-    if (connReader_->connected()) {
-        readerThread_ = std::thread(&RsStreamReader::readDataThread, this);
+    if (conn_reader_->connected()) {
+        reader_thread_ = std::thread(&RsStreamReader::read_data_thread, this);
     }
 }
 
 RsStreamReader::~RsStreamReader()
 {
-    shutdownReaderThread();
-    delete connReader_;
+    shutdown_reader_thread();
+    delete conn_reader_;
 }
 
 void RsStreamReader::take(
@@ -59,7 +61,7 @@ void RsStreamReader::take(
 
     /*
      * Note that we read one record at a time from the in the
-     * function readDataThread()
+     * function read_data_thread()
      */
     samples.resize(1);
     infos.resize(1);
@@ -92,11 +94,11 @@ void RsStreamReader::return_loan(
     infos.clear();
 }
 
-void RsStreamReader::readDataThread()
+void RsStreamReader::read_data_thread()
 {
-    RTI_RS_LOG_FN(readDataThread);
+    RTI_RS_LOG_FN(read_data_thread);
 
-    while (!stopThread_) {
+    while (!stop_thread_) {
         unsigned int numRecords = 0;
         {
             /*
@@ -108,27 +110,27 @@ void RsStreamReader::readDataThread()
 
             /* Destroys the object currently managed by the unique_ptr (if any)
              * and takes ownership */
-            sample_.reset(new DynamicData(*adapterType_));
+            sample_.reset(new DynamicData(*adapter_type_));
 
             /* read data from the input connector */
-            numRecords = connReader_->readData(sample_);
+            numRecords = conn_reader_->read_data(sample_);
         }
         if (numRecords > 0) {
-            readerListener_->on_data_available(this);
-            std::this_thread::sleep_for(samplingPeriod_);
+            reader_listener_->on_data_available(this);
+            std::this_thread::sleep_for(sampling_period_);
         } else {
-            stopThread_ = true;
+            stop_thread_ = true;
         }
     }
-    std::cout << "Reached end of " << streamInfo_.stream_name()
+    std::cout << "Reached end of " << stream_info_.stream_name()
               << " database records" << std::endl;
-    connection_->dispose_discovery_stream(streamInfo_);
+    connection_->dispose_discovery_stream(stream_info_);
 }
 
-void RsStreamReader::shutdownReaderThread()
+void RsStreamReader::shutdown_reader_thread()
 {
-    RTI_RS_LOG_FN(shutdownReaderThread);
+    RTI_RS_LOG_FN(shutdown_reader_thread);
 
-    stopThread_ = true;
-    readerThread_.join();
+    stop_thread_ = true;
+    reader_thread_.join();
 }

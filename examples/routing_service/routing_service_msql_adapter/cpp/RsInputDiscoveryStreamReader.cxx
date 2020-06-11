@@ -33,29 +33,29 @@ constexpr auto TRIANGLE = "Triangle";
  */
 
 RsInputDiscoveryStreamReader::RsInputDiscoveryStreamReader(
-        const PropertySet &,
-        StreamReaderListener *inputStreamDiscoveryListener)
+        const PropertySet &properties,
+        StreamReaderListener *input_stream_discovery_listener)
 {
-    inputStreamDiscoveryListener_ = inputStreamDiscoveryListener;
+    input_stream_discovery_listener_ = input_stream_discovery_listener;
 
-    this->dataSamples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
+    data_samples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
             new StreamInfo(SQUARE, RTI_STREAM_TYPE)));
 
-    this->dataSamples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
+    data_samples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
             new StreamInfo(CIRCLE, RTI_STREAM_TYPE)));
 
-    this->dataSamples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
+    data_samples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
             new StreamInfo(TRIANGLE, RTI_STREAM_TYPE)));
 
     /*
      * Once the RsInputDiscoveryStreamReader is initialized, we trigger an
      * event to notify that the streams are ready.
      */
-    inputStreamDiscoveryListener_->on_data_available(this);
+    input_stream_discovery_listener_->on_data_available(this);
 }
 
 void RsInputDiscoveryStreamReader::take(
-        std::vector<rti::routing::StreamInfo *> &stream)
+        std::vector<rti::routing::StreamInfo *> &stream_info)
 {
     RTI_RS_LOG_FN(take);
 
@@ -66,19 +66,19 @@ void RsInputDiscoveryStreamReader::take(
      * thread. Since the take() and return_loan() operations also need to access
      * the data_samples_ list this protection is required.
      */
-    std::lock_guard<std::mutex> guard(dataSamplesMutex_);
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
     std::transform(
-            dataSamples_.begin(),
-            dataSamples_.end(),
-            std::back_inserter(stream),
+            data_samples_.begin(),
+            data_samples_.end(),
+            std::back_inserter(stream_info),
             [](const std::unique_ptr<rti::routing::StreamInfo> &element) {
                 return element.get();
             });
 }
 
 void RsInputDiscoveryStreamReader::return_loan(
-        std::vector<rti::routing::StreamInfo *> &stream)
+        std::vector<rti::routing::StreamInfo *> &stream_info)
 {
     RTI_RS_LOG_FN(return_loan);
 
@@ -89,21 +89,21 @@ void RsInputDiscoveryStreamReader::return_loan(
      * thread. Since the take() and return_loan() operations also need to access
      * the data_samples_ list this protection is required.
      */
-    std::lock_guard<std::mutex> guard(dataSamplesMutex_);
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
     /*
      * For discovery streams there will never be any outstanding return_loan().
      * Thus we can be sure that each take() will be followed by a call to
      * return_loan(), before the next take() executes.
      */
-    this->dataSamples_.erase(
-            dataSamples_.begin(),
-            dataSamples_.begin() + stream.size());
-    stream.clear();
+    data_samples_.erase(
+            data_samples_.begin(),
+            data_samples_.begin() + stream_info.size());
+    stream_info.clear();
 }
 
 void RsInputDiscoveryStreamReader::dispose(
-        const rti::routing::StreamInfo &streamInfo)
+        const rti::routing::StreamInfo &stream_info)
 {
     RTI_RS_LOG_FN(dispose);
 
@@ -114,13 +114,14 @@ void RsInputDiscoveryStreamReader::dispose(
      * thread. Since the take() and return_loan() operations also need to access
      * the data_samples_ list this protection is required.
      */
-    std::lock_guard<std::mutex> guard(dataSamplesMutex_);
+    std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
-    std::unique_ptr<rti::routing::StreamInfo> streamInfoDisposed(new StreamInfo(
-            streamInfo.stream_name(),
-            streamInfo.type_info().type_name()));
-    streamInfoDisposed.get()->disposed(true);
+    std::unique_ptr<rti::routing::StreamInfo> stream_info_disposed(
+            new StreamInfo(
+                    stream_info.stream_name(),
+                    stream_info.type_info().type_name()));
+    stream_info_disposed.get()->disposed(true);
 
-    this->dataSamples_.push_back(std::move(streamInfoDisposed));
-    inputStreamDiscoveryListener_->on_data_available(this);
+    data_samples_.push_back(std::move(stream_info_disposed));
+    input_stream_discovery_listener_->on_data_available(this);
 }

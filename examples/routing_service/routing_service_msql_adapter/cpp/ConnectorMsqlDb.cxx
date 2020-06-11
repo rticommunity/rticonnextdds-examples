@@ -22,11 +22,11 @@ using namespace rti::routing;
 using namespace dds::core::xtypes;
 
 ConnectorMsqlDb::ConnectorMsqlDb(
-        const std::string topicName,
+        const std::string &topic_name,
         const PropertySet &properties)
-        : ConnectorBase(topicName)
+        : ConnectorBase(topic_name)
 {
-    setConnectionInfo(properties);
+    set_connection_info(properties);
     connect();
 }
 
@@ -43,77 +43,80 @@ auto ConnectorMsqlDb::connect() -> bool
 {
     RTI_RS_LOG_FN(connect_db);
 
-    SQLRETURN retcode;
+    SQLRETURN ret_code;
 
     /* Allocates the environment handle */
-    retcode = SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sqlEnvHandle);
-    if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO) {
-        RTI_RS_ERROR("SQL Error - Allocating the environment handle failed");
+    ret_code =
+            SQLAllocHandle(SQL_HANDLE_ENV, SQL_NULL_HANDLE, &sql_env_handle_);
+    if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
-        return connected_;
+        throw dds::core::Error(
+                "SQL Error - Allocating the environment handle failed");
     }
 
     /* Set the ODBC version environment attribute */
-    retcode = SQLSetEnvAttr(
-            sqlEnvHandle,
+    ret_code = SQLSetEnvAttr(
+            sql_env_handle_,
             SQL_ATTR_ODBC_VERSION,
             (SQLPOINTER) SQL_OV_ODBC3,
             0);
-    if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO) {
-        RTI_RS_ERROR(
-                "SQL Error - Setting the ODBC version environment attribute");
+    if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
-        return connected_;
+        throw dds::core::Error(
+                "SQL Error - Setting the ODBC version environment attribute");
     }
 
     /* Allocates the connection handle */
-    retcode = SQLAllocHandle(SQL_HANDLE_DBC, sqlEnvHandle, &sqlConnHandle);
-    if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO) {
-        RTI_RS_ERROR("SQL Error - Allocating SQL database connection failed");
+    ret_code =
+            SQLAllocHandle(SQL_HANDLE_DBC, sql_env_handle_, &sql_conn_handle_);
+    if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
-        return connected_;
+        throw dds::core::Error(
+                "SQL Error - Allocating SQL database connection failed");
     }
 
     /* Sets login timeout to 5 seconds */
-    retcode = SQLSetConnectAttr(
-            sqlConnHandle,
+    ret_code = SQLSetConnectAttr(
+            sql_conn_handle_,
             SQL_LOGIN_TIMEOUT,
             (SQLPOINTER) TIMEOUT,
             0);
-    if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO) {
-        RTI_RS_ERROR("SQL Error - Setting connection timeout failed");
+    if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
-        return connected_;
+        throw dds::core::Error("SQL Error - Setting connection timeout failed");
     }
 
     SQLCHAR retconstring[SQL_BUFF_LEN];
     /* connect to SQL Server */
-    retcode = SQLDriverConnect(
-            sqlConnHandle,
+    ret_code = SQLDriverConnect(
+            sql_conn_handle_,
             NULL,
-            (SQLCHAR *) connectionInfo.data(),
+            (SQLCHAR *) connection_info_.data(),
             SQL_NTS,
             retconstring,
             SQL_BUFF_LEN,
             NULL,
             SQL_DRIVER_NOPROMPT);
 
-    if (retcode == SQL_ERROR) {
-        msqlShowError(SQL_HANDLE_DBC, sqlConnHandle);
+    if (ret_code == SQL_ERROR) {
+        msql_show_error(SQL_HANDLE_DBC, sql_conn_handle_);
         disconnect();
-        return connected_;
-    } else {
-        RTI_RS_LOG(connectionInfo.data());
-        RTI_RS_LOG("SQL connection to database successful");
-        connected_ = true;
+        throw dds::core::Error("SQL Error - Connection to SQL Server failed");
     }
 
-    retcode = SQLAllocHandle(SQL_HANDLE_STMT, sqlConnHandle, &sqlStmtHandle);
+    RTI_RS_LOG(connection_info_.data());
+    RTI_RS_LOG("SQL connection to database successful");
+    connected_ = true;
 
-    if (retcode != SQL_SUCCESS && retcode != SQL_SUCCESS_WITH_INFO) {
-        RTI_RS_ERROR("SQL Error - Allocating the statement handle failed");
+    ret_code = SQLAllocHandle(
+            SQL_HANDLE_STMT,
+            sql_conn_handle_,
+            &sql_stmt_handle_);
+
+    if (ret_code != SQL_SUCCESS && ret_code != SQL_SUCCESS_WITH_INFO) {
         disconnect();
-        return connected_;
+        throw dds::core::Error(
+                "SQL Error - Allocating the statement handle failed");
     }
     return connected_;
 }
@@ -125,10 +128,10 @@ void ConnectorMsqlDb::disconnect()
 {
     RTI_RS_LOG_FN(disconnect_db);
 
-    SQLFreeHandle(SQL_HANDLE_STMT, sqlStmtHandle);
-    SQLDisconnect(sqlConnHandle);
-    SQLFreeHandle(SQL_HANDLE_DBC, sqlConnHandle);
-    SQLFreeHandle(SQL_HANDLE_ENV, sqlEnvHandle);
+    SQLFreeHandle(SQL_HANDLE_STMT, sql_stmt_handle_);
+    SQLDisconnect(sql_conn_handle_);
+    SQLFreeHandle(SQL_HANDLE_DBC, sql_conn_handle_);
+    SQLFreeHandle(SQL_HANDLE_ENV, sql_env_handle_);
 
     connected_ = false;
 }
@@ -136,75 +139,70 @@ void ConnectorMsqlDb::disconnect()
 /*
  * Set connection information and form connection string
  */
-void ConnectorMsqlDb::setConnectionInfo(const PropertySet &properties)
+void ConnectorMsqlDb::set_connection_info(const PropertySet &properties)
 {
-    RTI_RS_LOG_FN(setConnectionInfo);
+    RTI_RS_LOG_FN(set_connection_info);
 
     auto it = properties.find("msql.db.servername");
     if (it != properties.end()) {
-        server = it->second;
+        server_ = it->second;
     } else {
-        RTI_RS_ERROR("Server name not found in properties");
-        return;
+        throw dds::core::Error("Server name not found in properties");
     }
 
     it = properties.find("msql.db.dbname");
     if (it != properties.end()) {
-        dbName = it->second;
+        db_name_ = it->second;
     } else {
-        RTI_RS_ERROR("Database name not found in properties");
-        return;
+        throw dds::core::Error("Database name not found in properties");
     }
 
     it = properties.find("msql.db.tablename");
     if (it != properties.end()) {
-        tableName = it->second;
+        table_name_ = it->second;
     } else {
-        RTI_RS_ERROR("Table name not found in properties");
-        return;
+        throw dds::core::Error("Table name not found in properties");
     }
 
     it = properties.find("msql.db.username");
     if (it != properties.end()) {
-        userName = it->second;
+        user_name_ = it->second;
     } else {
-        RTI_RS_ERROR("Username name not found in properties");
-        return;
+        throw dds::core::Error("Username name not found in properties");
     }
 
     it = properties.find("msql.db.password");
     if (it != properties.end()) {
-        password = it->second;
+        password_ = it->second;
     } else {
-        RTI_RS_ERROR("Password name not found in properties");
-        return;
+        throw dds::core::Error("Password name not found in properties");
     }
 
-    connectionInfo = "DRIVER={SQL Server}; SERVER=" + server + "; DATABASE="
-            + dbName + "; UID=" + userName + "; PWD=" + password + ";";
+    connection_info_ = "DRIVER={SQL Server}; SERVER=" + server_ + "; DATABASE="
+            + db_name_ + "; UID=" + user_name_ + "; PWD=" + password_ + ";";
 }
 
 /*
  * Utility method to provide MSQL error information
  */
-void ConnectorMsqlDb::msqlShowError(
-        unsigned int handletype,
+void ConnectorMsqlDb::msql_show_error(
+        unsigned int handle_type,
         const SQLHANDLE &handle)
 {
-    SQLCHAR sqlstate[SQL_BUFF_LEN];
+    SQLCHAR sql_state[SQL_BUFF_LEN];
     SQLCHAR message[SQL_BUFF_LEN];
 
     if (SQL_SUCCESS
         == SQLGetDiagRec(
-                handletype,
+                handle_type,
                 handle,
                 1,
-                sqlstate,
+                sql_state,
                 NULL,
                 message,
                 SQL_BUFF_LEN,
                 NULL)) {
-        std::cout << "Message: " << message << "\nSQLSTATE: " << sqlstate
+        std::cout << "Message: " << message << "\nSQLSTATE: " << sql_state
                   << std::endl;
     }
 }
@@ -213,7 +211,7 @@ void ConnectorMsqlDb::msqlShowError(
  * Write the data to the database
  * return true on success, otherwise failure
  */
-auto ConnectorMsqlDb::writeData(const DynamicData *sample) -> bool
+auto ConnectorMsqlDb::write_data(const DynamicData &sample) -> bool
 {
     bool success = true;
 
@@ -221,23 +219,23 @@ auto ConnectorMsqlDb::writeData(const DynamicData *sample) -> bool
     std::ostringstream cmd(std::ostringstream::ate);
 
     /* write the data to the database*/
-    cmd << "INSERT INTO " << dbName << ".dbo." << tableName
+    cmd << "INSERT INTO " << db_name_ << ".dbo." << table_name_
         << "(topicname, color, x, y, shapesize, angle, fillkind) VALUES ('"
-        << topicName_ << "','" << sample->value<std::string>("color") << "',"
-        << sample->value<int32_t>("x") << "," << sample->value<int32_t>("y")
-        << "," << sample->value<int32_t>("shapesize") << ","
-        << sample->value<float>("angle") << ","
-        << sample->value<int32_t>("fillKind") << ")";
+        << topic_name_ << "','" << sample.value<std::string>("color") << "',"
+        << sample.value<int32_t>("x") << "," << sample.value<int32_t>("y")
+        << "," << sample.value<int32_t>("shapesize") << ","
+        << sample.value<float>("angle") << ","
+        << sample.value<int32_t>("fillKind") << ")";
 
     /* write cmd to stdout */
     /* std::cout << cmd.str(); */
 
     SQLRETURN retcode = SQLExecDirect(
-            sqlStmtHandle,
+            sql_stmt_handle_,
             (SQLCHAR *) cmd.str().c_str(),
             SQL_NTS);
     if (retcode == SQL_ERROR) {
-        msqlShowError(SQL_HANDLE_STMT, sqlStmtHandle);
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         success = false;
     }
 
@@ -247,18 +245,18 @@ auto ConnectorMsqlDb::writeData(const DynamicData *sample) -> bool
 /*
  * returns the number of records read from the database
  */
-auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
+auto ConnectorMsqlDb::read_data(std::unique_ptr<DynamicData> &sample)
         -> unsigned int
 {
     unsigned int count = 0; /* number of records read */
 
     /* write to end position */
-    std::ostringstream cmd(std::ostringstream::ate);  
+    std::ostringstream cmd(std::ostringstream::ate);
 
     /* get one record from the database at the offset specified using ascending
      * order */
-    cmd << "SELECT * FROM " << tableName << " WHERE topicname = '" << topicName_
-        << "' ORDER BY id ASC OFFSET " << offset_
+    cmd << "SELECT * FROM " << table_name_ << " WHERE topicname = '"
+        << topic_name_ << "' ORDER BY id ASC OFFSET " << offset_
         << " ROWS FETCH FIRST 1 ROWS ONLY";
 
     /* write cmd to stdout */
@@ -266,24 +264,24 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
 
     if (SQL_SUCCESS
         != SQLExecDirect(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 (SQLCHAR *) cmd.str().c_str(),
                 SQL_NTS)) {
-        msqlShowError(SQL_HANDLE_STMT, sqlStmtHandle);
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         return count;
     }
 
-    while (SQLFetch(sqlStmtHandle) == SQL_SUCCESS) {
+    while (SQLFetch(sql_stmt_handle_) == SQL_SUCCESS) {
         /* start at column 3 since column 1 is an auto incremented id and column
          * 2 is the topicname which we already know */
         char color[128];
         int value = 0;
         float angle = 0.0;
 
-        SQLGetData(sqlStmtHandle, 3, SQL_C_DEFAULT, &color, 128, NULL);
+        SQLGetData(sql_stmt_handle_, 3, SQL_C_CHAR, &color, 128, NULL);
         sample->value("color", std::string(color));
         SQLGetData(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 4,
                 SQL_C_DEFAULT,
                 &value,
@@ -291,7 +289,7 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("x", value);
         SQLGetData(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 5,
                 SQL_C_DEFAULT,
                 &value,
@@ -299,7 +297,7 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("y", value);
         SQLGetData(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 6,
                 SQL_C_DEFAULT,
                 &value,
@@ -307,7 +305,7 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("shapesize", value);
         SQLGetData(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 7,
                 SQL_C_DEFAULT,
                 &angle,
@@ -315,7 +313,7 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
                 NULL);
         sample->value("angle", angle);
         SQLGetData(
-                sqlStmtHandle,
+                sql_stmt_handle_,
                 8,
                 SQL_C_DEFAULT,
                 &value,
@@ -328,8 +326,8 @@ auto ConnectorMsqlDb::readData(std::unique_ptr<DynamicData> &sample)
     }
 
     /* Close Cursor before next iteration starts */
-    if (SQL_SUCCESS != SQLCloseCursor(sqlStmtHandle)) {
-        msqlShowError(SQL_HANDLE_STMT, sqlStmtHandle);
+    if (SQL_SUCCESS != SQLCloseCursor(sql_stmt_handle_)) {
+        msql_show_error(SQL_HANDLE_STMT, sql_stmt_handle_);
         return count;
     }
 

@@ -21,11 +21,11 @@
 
 /*
  * MSQL implementation of a connector
-*/
+ */
 class ConnectorMsqlDb : public ConnectorBase {
 public:
     ConnectorMsqlDb(
-            const std::string topicName,
+            const std::string &topic_name,
             const rti::routing::PropertySet &properties);
     virtual ~ConnectorMsqlDb();
 
@@ -33,28 +33,28 @@ public:
     void disconnect();
 
     /* write data to the database*/
-    auto writeData(const dds::core::xtypes::DynamicData *sample) -> bool;
+    auto write_data(const dds::core::xtypes::DynamicData &sample) -> bool;
 
     /* read data from the database */
-    auto readData(std::unique_ptr<dds::core::xtypes::DynamicData> &sample)
+    auto read_data(std::unique_ptr<dds::core::xtypes::DynamicData> &sample)
             -> unsigned int;
 
 private:
-    void setConnectionInfo(const rti::routing::PropertySet &properties);
-    void msqlShowError(unsigned int handletype, const SQLHANDLE &handle);
+    void set_connection_info(const rti::routing::PropertySet &properties);
+    void msql_show_error(unsigned int handle_type, const SQLHANDLE &handle);
 
-    SQLHANDLE sqlEnvHandle { nullptr };
-    SQLHANDLE sqlConnHandle { nullptr };
-    SQLHANDLE sqlStmtHandle { nullptr };
+    SQLHANDLE sql_env_handle_ { nullptr };
+    SQLHANDLE sql_conn_handle_ { nullptr };
+    SQLHANDLE sql_stmt_handle_ { nullptr };
 
-    std::string server { "" };
-    std::string dbName { "" };
-    std::string tableName { "" };
-    std::string userName { "" };
-    std::string password { "" };
-    std::string connectionInfo { "" };
+    std::string server_ { "" };
+    std::string db_name_ { "" };
+    std::string table_name_ { "" };
+    std::string user_name_ { "" };
+    std::string password_ { "" };
+    std::string connection_info_ { "" };
 
-    unsigned int offset_ { 0 };  /* database offset */
+    unsigned int offset_ { 0 }; /* database offset */
 };
 
-#endif  /* CONNECTOR_MSQLDB_HPP_ */
+#endif /* CONNECTOR_MSQLDB_HPP_ */

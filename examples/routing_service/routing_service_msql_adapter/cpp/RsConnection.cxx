@@ -22,10 +22,12 @@ using namespace rti::routing::adapter;
 using namespace rti::routing::adapter::detail;
 
 RsConnection::RsConnection(
-        StreamReaderListener *inputStreamDiscoveryListener,
-        StreamReaderListener *outputStreamDiscoveryListener,
+        StreamReaderListener *input_stream_discovery_listener,
+        StreamReaderListener *output_stream_discovery_listener,
         const PropertySet &properties)
-        : inputDiscoveryStreamReader_(properties, inputStreamDiscoveryListener)
+        : input_discovery_stream_reader_(
+                properties,
+                input_stream_discovery_listener)
 {
 }
 
@@ -38,12 +40,12 @@ RsConnection::RsConnection(
  */
 auto RsConnection::create_stream_writer(
         Session *session,
-        const StreamInfo &streamInfo,
+        const StreamInfo &stream_info,
         const PropertySet &properties) -> StreamWriter *
 {
     RTI_RS_LOG_FN(create_stream_writer);
 
-    return new RsStreamWriter(streamInfo, properties);
+    return new RsStreamWriter(stream_info, properties);
 }
 
 void RsConnection::delete_stream_writer(StreamWriter *stream_writer)
@@ -62,13 +64,13 @@ void RsConnection::delete_stream_writer(StreamWriter *stream_writer)
  */
 auto RsConnection::create_stream_reader(
         Session *session,
-        const StreamInfo &streamInfo,
+        const StreamInfo &stream_info,
         const PropertySet &properties,
         StreamReaderListener *listener) -> StreamReader *
 {
     RTI_RS_LOG_FN(create_stream_reader);
 
-    return new RsStreamReader(this, streamInfo, properties, listener);
+    return new RsStreamReader(this, stream_info, properties, listener);
 }
 
 void RsConnection::delete_stream_reader(StreamReader *stream_reader)
@@ -82,12 +84,12 @@ auto RsConnection::input_stream_discovery_reader() -> DiscoveryStreamReader *
 {
     RTI_RS_LOG_FN(input_stream_discovery_reader);
 
-    return &inputDiscoveryStreamReader_;
+    return &input_discovery_stream_reader_;
 };
 
-void RsConnection::dispose_discovery_stream(const StreamInfo &streamInfo)
+void RsConnection::dispose_discovery_stream(const StreamInfo &stream_info)
 {
     RTI_RS_LOG_FN(dispose_discovery_stream);
 
-    inputDiscoveryStreamReader_.dispose(streamInfo);
+    input_discovery_stream_reader_.dispose(stream_info);
 }

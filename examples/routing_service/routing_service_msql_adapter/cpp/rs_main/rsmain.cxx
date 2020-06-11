@@ -21,68 +21,70 @@
 
 #define RTI_RS_LOG_ARGS "rsmain"
 
-HANDLE g_hTerminateEvent;
+HANDLE g_h_terminate_event;
 
-BOOL WINAPI RsCtrlHandler(DWORD dwCtrlType)
+BOOL WINAPI rs_ctrl_handler(DWORD dw_ctrl_type)
 {
-    if (dwCtrlType == CTRL_C_EVENT || dwCtrlType == CTRL_BREAK_EVENT
-        || dwCtrlType == CTRL_CLOSE_EVENT) {
+    if (dw_ctrl_type == CTRL_C_EVENT || dw_ctrl_type == CTRL_BREAK_EVENT
+        || dw_ctrl_type == CTRL_CLOSE_EVENT) {
         std::cout << "Terminating" << std::endl;
-        SetEvent(g_hTerminateEvent);
+        SetEvent(g_h_terminate_event);
 
         return TRUE;
     }
     return FALSE;
 }
 
-inline bool exists(const std::string &filename)
+inline bool exists(const std::string &file_name)
 {
     struct stat buffer;
-    return (stat(filename.c_str(), &buffer) == 0);
+    return (stat(file_name.c_str(), &buffer) == 0);
+}
+
+void verify_args(int argc, char *argv[])
+{
+    if (argc != 3) {
+        throw dds::core::Error(
+                "Usage: rsmain.exe <xml_file> <routing_service_name>");
+    } else if (!exists(argv[1])) {
+        throw dds::core::Error("Error: XML file does not exist");
+    }
 }
 
 using namespace rti::routing;
 int main(int argc, char *argv[])
 {
-    if (argc != 3) {
-        RTI_RS_ERROR("Usage: rsmain.exe <xml_file> <routing_service_name>");
-    } else if (!exists(argv[1])) {
-        RTI_RS_ERROR("Error: XML file does not exist");
-    } else {
+    try {
+        verify_args(argc, argv);
+
         PropertySet properties;
-        ServiceProperty serviceProperty;
+        ServiceProperty service_property;
 
-        g_hTerminateEvent = ::CreateEvent(NULL, FALSE, FALSE, NULL);
-        SetConsoleCtrlHandler(RsCtrlHandler, TRUE);
+        g_h_terminate_event = ::CreateEvent(NULL, FALSE, FALSE, NULL);
+        SetConsoleCtrlHandler(rs_ctrl_handler, TRUE);
 
-        try {
-            serviceProperty.cfg_file(argv[1]);
-            serviceProperty.service_name(argv[2]);
-            RoutingService service(serviceProperty);
-            RsAdapterPlugin *myRsAdapterPlugin =
-                    new RsAdapterPlugin(properties);
-            /* plugin object is owned by the RS once attach_adapter_plugin()
-             * is called. Do not delete this plugin object. */
-            service.attach_adapter_plugin(myRsAdapterPlugin, "myMsqlAdapter");
-            service.start();
+        service_property.cfg_file(argv[1]);
+        service_property.service_name(argv[2]);
+        RoutingService service(service_property);
+        RsAdapterPlugin *rs_adapter_plugin = new RsAdapterPlugin(properties);
+        /* plugin object is owned by the RS once attach_adapter_plugin()
+         * is called. Do not delete this plugin object. */
+        service.attach_adapter_plugin(rs_adapter_plugin, "myMsqlAdapter");
+        service.start();
 
-            std::cout << "Enter Ctrl-C to quit" << std::endl;
+        std::cout << "Enter Ctrl-C to quit" << std::endl;
 
-            /* wait for a Control-C event */
-            if (g_hTerminateEvent) {
-                WaitForSingleObject(g_hTerminateEvent, INFINITE);
-                CloseHandle(g_hTerminateEvent);
-            }
-
-            service.stop();
-            service.finalize_globals();
-        } catch (dds::core::Exception &ex) {
-            std::cerr << ex.what() << std::endl;
-            return EXIT_FAILURE;
-        } catch (std::runtime_error &ex) {
-            std::cerr << ex.what() << std::endl;
-            return EXIT_FAILURE;
+        /* wait for a Control-C event */
+        if (g_h_terminate_event) {
+            WaitForSingleObject(g_h_terminate_event, INFINITE);
+            CloseHandle(g_h_terminate_event);
         }
+
+        service.stop();
+        service.finalize_globals();
+    } catch (dds::core::Error &ex) {
+        std::cerr << ex.what() << std::endl;
+        return EXIT_FAILURE;
     }
 
     return EXIT_SUCCESS;

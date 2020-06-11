@@ -9,17 +9,8 @@
 #  not be liable for any incidental or consequential damages arising out of the
 #  use or inability to use the software.
 
-
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.12)
 project (RSMain)
-
-if(DEFINED ENV{NDDSHOME})
-	# NDDSHOME is set
-else()
-    set(msg
-        "NDDSHOME environment variable must be set")
-    message(FATAL_ERROR ${msg})
-endif()
 
 if(NOT BUILD_SHARED_LIBS)
     set(msg
@@ -77,8 +68,8 @@ set_target_properties(rsmain
 
 target_link_libraries(rsmain
     RTIConnextDDS::cpp2_api
-	RTIConnextDDS::routing_service
-	ODBC::ODBC)
+    RTIConnextDDS::routing_service
+    ODBC::ODBC)
 
 target_include_directories(rsmain
     PUBLIC

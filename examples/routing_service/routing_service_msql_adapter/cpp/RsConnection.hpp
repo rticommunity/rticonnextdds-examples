@@ -28,16 +28,16 @@ class RsConnection : public rti::routing::adapter::Connection {
 public:
     RsConnection(
             rti::routing::adapter::StreamReaderListener
-                    *inputStreamDiscoveryListener,
+                    *input_stream_discovery_listener,
             rti::routing::adapter::StreamReaderListener
-                    *outputStreamDiscoveryListener,
+                    *output_stream_discovery_listener,
             const rti::routing::PropertySet &properties);
 
     virtual ~RsConnection() = default;
 
     auto create_stream_writer(
             rti::routing::adapter::Session *session,
-            const rti::routing::StreamInfo &streamInfo,
+            const rti::routing::StreamInfo &stream_info,
             const rti::routing::PropertySet &properties)
             -> rti::routing::adapter::StreamWriter *;
 
@@ -46,22 +46,22 @@ public:
 
     auto create_stream_reader(
             rti::routing::adapter::Session *session,
-            const rti::routing::StreamInfo &streamInfo,
+            const rti::routing::StreamInfo &stream_info,
             const rti::routing::PropertySet &properties,
             rti::routing::adapter::StreamReaderListener *listener)
             -> rti::routing::adapter::StreamReader *;
 
     void delete_stream_reader(
-            rti::routing::adapter::StreamReader *streamReader);
+            rti::routing::adapter::StreamReader *stream_reader);
 
     auto RsConnection::input_stream_discovery_reader()
             -> rti::routing::adapter::DiscoveryStreamReader *;
 
     void RsConnection::dispose_discovery_stream(
-            const rti::routing::StreamInfo &streamInfo);
+            const rti::routing::StreamInfo &stream_info);
 
 private:
-    RsInputDiscoveryStreamReader inputDiscoveryStreamReader_;
+    RsInputDiscoveryStreamReader input_discovery_stream_reader_;
 };
 
-#endif  /* RS_CONNECTION_HPP_ */
+#endif /* RS_CONNECTION_HPP_ */

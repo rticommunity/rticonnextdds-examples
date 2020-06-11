@@ -31,13 +31,14 @@ public:
     RsInputDiscoveryStreamReader(
             const rti::routing::PropertySet &properties,
             rti::routing::adapter::StreamReaderListener
-                    *inputStreamDiscoveryListener);
+                    *input_stream_discovery_listener);
 
     virtual ~RsInputDiscoveryStreamReader() = default;
 
-    void take(std::vector<rti::routing::StreamInfo *> &streamInfo) final;
+    void take(std::vector<rti::routing::StreamInfo *> &stream_info) final;
 
-    void return_loan(std::vector<rti::routing::StreamInfo *> &streamInfo) final;
+    void return_loan(
+            std::vector<rti::routing::StreamInfo *> &stream_info) final;
 
     /*
      * @brief Custom operation defined to indicate disposing off an <input>
@@ -54,9 +55,9 @@ public:
     void dispose(const rti::routing::StreamInfo &stream_info);
 
 private:
-    std::mutex dataSamplesMutex_;
-    std::vector<std::unique_ptr<rti::routing::StreamInfo>> dataSamples_;
-    rti::routing::adapter::StreamReaderListener *inputStreamDiscoveryListener_;
+    std::mutex data_samples_mutex_;
+    std::vector<std::unique_ptr<rti::routing::StreamInfo>> data_samples_;
+    rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener_;
 };
 
 #endif /* RS_INPUT_DISCOVERY_STREAM_READER_HPP_ */

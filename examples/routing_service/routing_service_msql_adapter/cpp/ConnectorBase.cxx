@@ -12,8 +12,8 @@
 
 #include "ConnectorBase.hpp"
 
-ConnectorBase::ConnectorBase(const std::string topicName)
-        : topicName_(topicName)
+ConnectorBase::ConnectorBase(const std::string topic_name)
+        : topic_name_(topic_name)
 {
 }
 

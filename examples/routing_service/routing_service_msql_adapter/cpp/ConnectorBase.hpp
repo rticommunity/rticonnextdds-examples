@@ -20,7 +20,7 @@
  */
 class ConnectorBase {
 public:
-    ConnectorBase(const std::string topicName);
+    ConnectorBase(const std::string topic_name);
     virtual ~ConnectorBase() = 0;
 
     /* default implementations */
@@ -29,14 +29,14 @@ public:
     virtual auto connected() -> bool;
 
     /* must be implemented by derived connectors */
-    virtual auto writeData(const dds::core::xtypes::DynamicData *sample)
+    virtual auto write_data(const dds::core::xtypes::DynamicData &sample)
             -> bool = 0;
     virtual auto
-            readData(std::unique_ptr<dds::core::xtypes::DynamicData> &sample)
+            read_data(std::unique_ptr<dds::core::xtypes::DynamicData> &sample)
                     -> unsigned int = 0;
 
 protected:
-    std::string topicName_ { "" }; /* topic name */
+    std::string topic_name_ { "" }; /* topic name */
     bool connected_ { false };
 };
 
