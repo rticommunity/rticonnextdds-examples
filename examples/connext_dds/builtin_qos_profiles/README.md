@@ -5,7 +5,7 @@
 *RTI Connext DDS* provides *Quality of Service* (QoS) that controls the behavior
 of the different DDS entities, and allows you to configure the *middleware* to
 enable features such as monitoring. To make this process easier, RTI includes a
-set of built-in QoS profiles that provide useful *functionality, such as
+set of built-in QoS profiles that provide useful functionality, such as
 enabling monitoring or configuring *DataWriters* and *DataReaders* to be
 strictly reliable.
 

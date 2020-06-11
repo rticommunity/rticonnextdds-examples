@@ -60,5 +60,5 @@ Note that using instance access_scope does not guarantee that samples will be
 read or taken from the queue in a particular manner. Subscriber 0 returns all of
 Instance 0's samples, then all of Instance 1's samples. However, it would also
 be valid to return samples in the same order as Subscriber 1. To guarantee that
-samples from the same instance are return together, use the take/read_*instance
+samples from the same instance are return together, use the take/read_\*instance
 calls. See the on-line API for *FooDataReader* for more information.
