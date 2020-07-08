@@ -16,7 +16,7 @@ This example illustrates the realization of two common enterprise patterns:
 aggregation and splitting. There is a two plug-in implementations, one for
 each type of *Processor*:
 
--   *ShapesAggregator*: *Processor* implementation that performs the 
+-   *ShapesAggregator*: *Processor* implementation that performs the
     aggregation of two *ShapeType* objects into a single *ShapeType* object.
 
 -   *ShapesSplitter*: *Processor* implementation that performs the separation of
@@ -28,7 +28,7 @@ Adapter StreamReader* and *StreamWriter*, respectively.
 
 In this example you will find files for the following elements:
 
--   `ShapesAggregator`and ``ShapesSplitter``: the custom *Processor* plug-ins, 
+-   `ShapesAggregator`and ``ShapesSplitter``: the custom *Processor* plug-ins,
     generated as a shared library for each plugin.
 
 -   Configurations for the *RoutingService* that loads the custom *Processor* and
@@ -38,7 +38,7 @@ The *Processor* implementations in this example do not receive any configuration
 properties, yet your own implementation can do so. You can specify configuration
 properties using the ``<property`` tag under the configuration of your
 plugin and processor, and receive those values as ``PropertySet`` upon object
-creation (currently that parameter is commented out to avoid compilation 
+creation (currently that parameter is commented out to avoid compilation
 warnings).
 
 ### ShapesAggregator
