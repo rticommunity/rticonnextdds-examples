@@ -13,12 +13,11 @@ This example shows how to implement a custom *Processor* plug-in, build it into
 a shared library and load it with *RoutingService*.
 
 This example illustrates the realization of two common enterprise patterns:
-aggregation and splitting. There is a single plug-in implementation,
-*ShapesProcessor* that is factory of three types of *Processor*\s:
+aggregation and splitting. There is a two plug-in implementations, one for
+each type of *Processor*:
 
--   *ShapesAggregatorSimple* and *ShapesAggregatorAdv*: *Processor*
-    implementations that performs the aggregation of two *ShapeType* objects
-    into a single *ShapeType* object.
+-   *ShapesAggregator*: *Processor* implementation that performs the 
+    aggregation of two *ShapeType* objects into a single *ShapeType* object.
 
 -   *ShapesSplitter*: *Processor* implementation that performs the separation of
     a single *ShapeType* object into two  *ShapeType* objects.
@@ -29,34 +28,20 @@ Adapter StreamReader* and *StreamWriter*, respectively.
 
 In this example you will find files for the following elements:
 
--   `ShapesProcessor`: the custom *Processor* plug-in, generated as a shared
-    library, that contains the implementation for both aggregation and split
-    processors.
+-   `ShapesAggregator`and ``ShapesSplitter``: the custom *Processor* plug-ins, 
+    generated as a shared library for each plugin.
 
--   Configuration for the *RoutingService* that loads the custom *Processor* and
+-   Configurations for the *RoutingService* that loads the custom *Processor* and
     provides the communication between publisher and subscriber applications.
 
-This *Processor* implementation can receive the following properties:
-
--   `shapes_processor.kind` (`<enum>`):
-    -   *aggregator_simple*: Indicates the plug-in to instantiate a
-        ShapesAggregatoSimpler.
-    -   *aggregator_adv*: Indicates the plug-in to instantiate a
-        ShapesAggregatorAdv.
-    -   *splittler*: Indicates the plug-in to instantiate a ShapesSplitter.
-        If a different value other than the ones above is specified, the
-        creation of the will throw an exception. If this property is not
-        specified, it will create a *ShapesSplitter*.
--   `shapes_processor.leading_input_index` (`<integer>`):
-    -   Only applicable to *ShapesAggregatorAdv*. Indicates the index of the
-        leading input. In this example, only 0 and 1 are valid values.
+The *Processor* implementations in this example do not receive any configuration
+properties, yet your own implementation can do so. You can specify configuration
+properties using the ``<property`` tag under the configuration of your
+plugin and processor, and receive those values as ``PropertySet`` upon object
+creation (currently that parameter is commented out to avoid compilation 
+warnings).
 
 ### ShapesAggregator
-
-There are two implementations of aggregation intended to show different
-approaches to access and manipulate data.
-
-#### ShapesAggregatorSimple
 
 This implementation shows very basic usage of the capabilities *Processor* where
 inputs and outputs are accessed by their configuration names (which also match
@@ -71,23 +56,10 @@ hardcoded into the plug-in implementation. A recommended approach is to make
 this value as arguments to the *Processor* creation, or use an algorithm
 independent of these values, as shown in *ShapesAggregatorAdv*.
 
-#### ShapesAggregatorAdv
-
-The data processing is tied to a *leading input*, that represents the input from
-which the processor reads *new* data first. For each instance found in the data
-read from the leading input, the processor reads *any* existing data for the
-equivalent instance.
-
-The aggregation algorithm consists of simply an average of the values `x` and
-`y` of all inputs. The remaining elements are set equal to the values of the
-data read from the leading input.
-
->**Note**:
->
-> For the proper behavior of both *Processor*\s it's required for the DDS inputs
-> to be configured with a history policy that preserves only the last sample.
-> This guarantees that memory doesn't grow unbounded since the processor will
-> never remove the samples from the StreamReader's cache.
+For the proper behavior of this *Processor* it's required for the DDS inputs
+to be configured with a history policy that preserves only the last sample.
+This guarantees that memory doesn't grow unbounded since the processor will
+never remove the samples from the StreamReader's cache.
 
 ### ShapesSplitter
 
