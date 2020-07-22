@@ -15,7 +15,7 @@
 #include <stdexcept>
 #include <thread>
 
-#include <rti/recording/RecordingService.hpp>
+#include <rti/recording/Service.hpp>
 #include <rti/recording/ServiceProperty.hpp>
 
 
@@ -105,7 +105,7 @@ int main(int argc, char *argv[])
          * Create the instance of the Recording Service. It won't start
          * executing until we call the start() method.
          */
-        rti::recording::RecordingService embedded_service(service_property);
+        rti::recording::Service embedded_service(service_property);
         embedded_service.start();
         // Wait for 'running_seconds' seconds
         std::this_thread::sleep_for(std::chrono::seconds(running_seconds));
