@@ -25,10 +25,10 @@
     </qos_library>
 
     <plugin_library name="ShapesPluginLib">
-        <processor_plugin name="ShapesProcessor">
-            <dll>shapesprocessor</dll>
+        <processor_plugin name="ShapesAggregator">
+            <dll>shapesaggregator</dll>
             <create_function>
-                ShapesProcessorPlugin_create_processor_plugin
+                ShapesAggregatorPlugin_create_processor_plugin
             </create_function>
         </processor_plugin>
     </plugin_library>
@@ -69,20 +69,7 @@
                 </auto_topic_route>
                 
                 <topic_route name="SquaresAndCirclestoTriangles">
-                    <processor plugin_name="ShapesPluginLib::ShapesProcessor">
-                        <property>
-                            <value>
-                                <element>
-                                    <name>shapes_processor.kind</name>
-                                    <value>$(SHAPES_PROC_KIND)</value>
-                                </element>
-                                <element>
-                                    <name>shapes_processor.leading_input_index</name>
-                                    <value>0</value>
-                                </element>
-                            </value>
-                        </property>
-                    </processor>
+                    <processor plugin_name="ShapesPluginLib::ShapesAggregator"/>
                     <input name="Square" participant="domain0">
                         <registered_type_name>ShapeType</registered_type_name>
                         <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
@@ -103,63 +90,6 @@
 
         </domain_route>
         
-    </routing_service>
-
-
-    <routing_service name="RsShapesSplitter">
-
-        <annotation>
-            <documentation>
-                Splits Squares from domain 0 into Circles and Trinagles on domain 1
-            </documentation>
-        </annotation>
-
-        <administration>
-            <domain_id>0</domain_id>
-        </administration>
-        
-        <domain_route>
-
-            <participant name="domain0">
-                <domain_id>0</domain_id>
-            </participant>
-            
-            <participant name="domain1">
-                <domain_id>1</domain_id>
-            </participant>
-
-            <session>
-                <auto_topic_route>
-                    <input participant="domain0">
-                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
-                        <allow_registered_type_name_filter>ShapeType</allow_registered_type_name_filter>
-                        <datareader_qos base_name="RsShapesQosLib::RsShapesQosProfile"/>
-                    </input>
-                    <output participant="domain1">
-                        <deny_topic_name_filter>Triangle,rti/*</deny_topic_name_filter>
-                    </output>
-                </auto_topic_route>
-                
-                <topic_route name="SquaresToCirclesAndTriangles">
-                    <processor plugin_name="ShapesPluginLib::ShapesProcessor"/>
-                    <input name="Square" participant="domain0">
-                        <registered_type_name>ShapeType</registered_type_name>
-                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
-                    </input>
-                    <output name="Circle" participant="domain1">
-                        <registered_type_name>ShapeType</registered_type_name>
-                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
-                    </output>
-                    <output name="Triangle" participant="domain1">
-                        <registered_type_name>ShapeType</registered_type_name>
-                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
-                    </output>
-                </topic_route>
-
-            </session>
-
-        </domain_route>
-
-    </routing_service>
+    </routing_service>    
 
 </dds>

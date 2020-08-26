@@ -25,47 +25,6 @@
 #include <rti/routing/processor/Processor.hpp>
 #include <rti/routing/processor/ProcessorPlugin.hpp>
 
-class ShapesAggregatorSimple : public rti::routing::processor::NoOpProcessor {
-public:
-    void on_data_available(rti::routing::processor::Route &);
-
-    void on_output_enabled(
-            rti::routing::processor::Route &route,
-            rti::routing::processor::Output &output);
-
-    ShapesAggregatorSimple();
-
-    ~ShapesAggregatorSimple();
-
-private:
-    // Optional member for deferred initialization: this object can be created
-    // only when the output is enabled.
-    // You can use std::optional if supported in your platform
-    dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
-};
-
-
-class ShapesAggregatorAdv : public rti::routing::processor::NoOpProcessor {
-public:
-    void on_data_available(rti::routing::processor::Route &);
-
-    void on_output_enabled(
-            rti::routing::processor::Route &route,
-            rti::routing::processor::Output &output);
-
-    ShapesAggregatorAdv(int32_t leading_input_index);
-
-    ~ShapesAggregatorAdv();
-
-private:
-    // Optional member for deferred initialization: this object can be created
-    // only when the output is enabled.
-    // You can use std::optional if supported in your platform
-    dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
-    // index of leading input from which data is read first
-    int32_t leading_input_index_;
-};
-
 class ShapesSplitter : public rti::routing::processor::NoOpProcessor {
 public:
     void on_data_available(rti::routing::processor::Route &) override;
@@ -85,13 +44,8 @@ private:
     dds::core::optional<dds::core::xtypes::DynamicData> output_data_;
 };
 
-class ShapesProcessorPlugin : public rti::routing::processor::ProcessorPlugin {
+class ShapesSplitterPlugin : public rti::routing::processor::ProcessorPlugin {
 public:
-    static const std::string PROCESSOR_KIND_PROPERTY_NAME;
-    static const std::string PROCESSOR_LEADING_INPUT_PROPERTY_NAME;
-    static const std::string PROCESSOR_AGGREGATOR_SIMPLE_NAME;
-    static const std::string PROCESSOR_AGGREGATOR_ADV_NAME;
-    static const std::string PROCESSOR_SPLITTER_NAME;
 
     rti::routing::processor::Processor *create_processor(
             rti::routing::processor::Route &route,
@@ -101,7 +55,7 @@ public:
             rti::routing::processor::Route &route,
             rti::routing::processor::Processor *processor) override;
 
-    ShapesProcessorPlugin(const rti::routing::PropertySet &properties);
+    ShapesSplitterPlugin(const rti::routing::PropertySet &properties);
 };
 
 
@@ -112,9 +66,9 @@ public:
  * The generated symbol has the name:
  *
  * \code
- * ShapesProcessorPlugin_create_processor_plugin
+ * ShapesSplitter_create_processor_plugin
  * \endcode
  */
-RTI_PROCESSOR_PLUGIN_CREATE_FUNCTION_DECL(ShapesProcessorPlugin);
+RTI_PROCESSOR_PLUGIN_CREATE_FUNCTION_DECL(ShapesSplitterPlugin);
 
 #endif

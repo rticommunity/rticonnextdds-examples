@@ -19,6 +19,10 @@ build/
 # Visual Studio Code
 .vscode/
 
+# Netbeans
+nbproject
+.nbproject
+
 # C output files of Code Generator
 *Impl.*
 *Support.*
