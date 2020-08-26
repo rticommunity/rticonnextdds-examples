@@ -30,7 +30,7 @@
 # Also, the version consistency across all the requested components can be
 # checked. If the version between the components missmatch,
 # `RTIConnextDDS_FOUND` will be set to `FALSE`. This feature can be enabled
-# setting `CONNEXTDDS_ENABLE_VERSION_CHECK` to `TRUE`.
+# setting `ENABLE_VERSION_CONSISTENCY_CHECK` to `TRUE`.
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
@@ -1592,7 +1592,7 @@ string(REGEX MATCH
     RTICONNEXTDDS_VERSION
     "${CONNEXTDDS_BUILD_ID}")
 
-if(CONNEXTDDS_ENABLE_VERSION_CHECK)
+if(ENABLE_VERSION_CONSISTENCY_CHECK)
     # Verify that all the components specified have the same version
     file(READ "${CONNEXTDDS_DIR}/rti_versions.xml" xml_file)
     # Verify host components
