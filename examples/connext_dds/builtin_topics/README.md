@@ -5,7 +5,7 @@
 *Built-in Topics* are a special kind of topics that are used by *RTI Connext
 *DDS* applications to discover each other. These *Topics* are handled
 automatically by the middleware, but in certain scenarios it is useful to
-*access to them. For instance, these *Topics* allow us to access some relevant
+access to them. For instance, these *Topics* allow us to access some relevant
 information about Connext entities, such as:
 
 - The publications and subscriptions available.

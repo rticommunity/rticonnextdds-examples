@@ -10,7 +10,8 @@ instructions on our [RTI Connext DDS Examples
 Wiki](https://github.com/rticommunity/rticonnextdds-examples/wiki). Your
 contributions will be reviewed and as soon as they are approved they will
 automatically be included in the [RTI Community Portal Examples
-Section](http://community.rti.com).
+Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
+for further information about how to contribute with new examples to this repository.
 
 The examples contained in the
 [master](https://github.com/rticommunity/rticonnextdds-examples/tree/master) and
@@ -23,3 +24,4 @@ versions of RTI Connext DDS, please check out the appropriate branch:
 - [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
 - [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
 - [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
+
