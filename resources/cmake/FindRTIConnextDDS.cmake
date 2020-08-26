@@ -27,10 +27,10 @@
 # find_package invocation for this module to set variables for the different
 # libraries associated with them.
 #
-# Also, the version consistency across all the requested components will be
+# Also, the version consistency across all the requested components can be
 # checked. If the version between the components missmatch,
-# `RTIConnextDDS_FOUND` will be set to `FALSE`. This feature can be disabled
-# setting `CONNEXTDDS_DISABLE_VERSION_CHECK` to `TRUE`.
+# `RTIConnextDDS_FOUND` will be set to `FALSE`. This feature can be enabled
+# setting `ENABLE_VERSION_CONSISTENCY_CHECK` to `TRUE`.
 #
 # Imported Targets
 # ^^^^^^^^^^^^^^^^
@@ -42,8 +42,8 @@
 #   The nddscpp library if found (nddscore and nddsc will be linked as part of
 #   this target).
 # - ``RTIConnextDDS::cpp2_api``
-#   The nddscpp2 library if found (nddscore and nddsc will be linked as part of
-#   this target).
+#   The nddscpp2 library if found (nddscore and nddsc will be linked as part
+#   of this target).
 # - ``RTIConnextDDS::distributed_logger_c``
 #   The C API library for Distributed Logger if found.
 # - ``RTIConnextDDS::distributed_logger_cpp``
@@ -53,11 +53,7 @@
 # - ``RTIConnextDDS::routing_service_infrastructure``
 #   The infrastructure library for Routing Service if found.
 # - ``RTIConnextDDS::routing_service_c``
-#   The C API library for Routing Service if found (includes rtiroutingservice,
-#   rtirsinfrastructure, rtixml2 and rticonnextmsgc. Also nddsmetp and
-#   rticonnextmsgc if found).
-# - ``RTIConnextDDS::routing_service_cpp2``
-#   The CPP2 API library for Routing Service if found (includes
+#   The C API library for Routing Service if found (includes
 #   rtiroutingservice, rtirsinfrastructure, rtixml2 and rticonnextmsgc. Also
 #   nddsmetp and rticonnextmsgc if found).
 # - ``RTIConnextDDS::routing_service``
@@ -276,13 +272,13 @@
 #   the name of the architecture. For example:
 #       cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 #
-# - If you are building against the security_plugins compoment, this module
+# - If you are building against the security_plugins component, this module
 #   will try to find OpenSSL in your system using find_package(OpenSSL). If you
 #   want to build against a specific installation of OpenSSL, you must set the
 #   ``CONNEXTDDS_OPENSSL_DIR`` to provide this module with the path to your
 #   installation of OpenSSL.
 #
-# - Likewise, if you are building against the security_plugins compoment and
+# - Likewise, if you are building against the security_plugins component and
 #   you want to ensure that you are using a specific OpenSSL version, you must
 #   set the ``CONNEXTDDS_OPENSSL_VERSION`` so that it can be added to the
 #   find_package(OpenSSL) invocation.
@@ -374,6 +370,8 @@
 # - ``DEBUG``
 #   This last mode will show messages from all previous levels and ``DEBUG``.
 
+include(CMakeParseArguments)
+
 #####################################################################
 # Logging Macros                                                    #
 #####################################################################
@@ -460,20 +458,40 @@ if(NOT CONNEXTDDS_DIR)
 
     if (CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(connextdds_root_hints
-            "$ENV{HOME}/rti_connext_dds-${folder_version}")
+            "$ENV{HOME}/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "$ENV{HOME}/rti_connext_dds-*"
+        )
 
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Windows")
         set(connextdds_root_hints
             "C:/Program Files (x86)/rti_connext_dds-${folder_version}"
             "C:/Program Files/rti_connext_dds-${folder_version}"
-            "C:/rti_connext_dds-${folder_version}")
+            "C:/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "C:/Program Files (x86)/rti_connext_dds-*"
+            "C:/Program Files/rti_connext_dds-*"
+            "C:/rti_connext_dds-*"
+        )
 
     elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
         set(connextdds_root_hints
-            "/Applications/rti_connext_dds-${folder_version}")
+            "/Applications/rti_connext_dds-${folder_version}"
+        )
+        set(connextdds_root_paths
+            "/Applications/rti_connext_dds-*"
+        )
     endif()
 
+    file(GLOB connextdds_root_paths_expanded
+        LIST_DIRECTORIES TRUE
+        ${connextdds_root_paths}
+    )
+
     connextdds_log_debug("Root hints: ${connextdds_root_hints}")
+    connextdds_log_debug("Root paths: ${connextdds_root_paths_expanded}")
 endif()
 
 # We require having an rti_versions file under the installation directory
@@ -482,7 +500,12 @@ find_path(CONNEXTDDS_DIR
     NAMES rti_versions.xml
     HINTS
         ENV NDDSHOME
-        ${connextdds_root_hints})
+        "${NDDSHOME}"
+        ${connextdds_root_hints}
+    PATHS
+        ${connextdds_root_paths_expanded}
+
+)
 
 if(NOT CONNEXTDDS_DIR)
     set(error
@@ -507,7 +530,8 @@ find_path(RTICODEGEN_DIR
 if(NOT RTICODEGEN_DIR)
     set(warning
         "Codegen was not found. Please, check if rtiddsgen is under your "
-        "NDDSHOME/bin directory or provide it to CMake using -DRTICODEGEN_DIR")
+        "NDDSHOME/bin directory or provide it to CMake using -DRTICODEGEN_DIR"
+    )
         message(WARNING ${warning})
 else()
     set(RTICODEGEN
@@ -528,11 +552,10 @@ else()
 endif()
 
 # Find RTI Connext DDS architecture if CONNEXTDDS_ARCH is unset
-if(NOT DEFINED CONNEXTDDS_ARCH)
+if(NOT CONNEXTDDS_ARCH)
     connextdds_log_verbose("CONNEXTDDS_ARCH was not provided")
-    connextdds_log_verbose("CONNEXTDDS_ARCH trying to guess the RTI Architecture")
-
     # Guess the RTI Connext DDS architecture
+
     if(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
         string(REGEX REPLACE "^([0-9]+).*$" "\\1"
             major_version
@@ -589,7 +612,7 @@ if(NOT DEFINED CONNEXTDDS_ARCH)
 
     connextdds_log_verbose("Guessed RTI architecture: ${guessed_architecture}")
 
-    if(DEFINED ENV{CONNEXTDDS_ARCH})
+    if(ENV{CONNEXTDDS_ARCH})
         set(CONNEXTDDS_ARCH $ENV{CONNEXTDDS_ARCH})
     elseif(EXISTS "${CONNEXTDDS_DIR}/lib/${guessed_architecture}")
         set(CONNEXTDDS_ARCH "${guessed_architecture}")
@@ -749,13 +772,7 @@ function(connextdds_check_component_field_version
         return()
     endif()
 
-    if(NOT DEFINED RTICONNEXTDDS_VERSION)
-        # If the variable version RTICONNEXTDDS_VERSION has not been set, we
-        # set it here in the scope of the caller to store the value that has
-        # been detected.
-        set(RTICONNEXTDDS_VERSION ${field_version_number} PARENT_SCOPE)
-        connextdds_log_verbose("Found ConnextDDS version: ${field_version_number}")
-    elseif(NOT RTICONNEXTDDS_VERSION STREQUAL field_version_number)
+    if(NOT "${RTICONNEXTDDS_VERSION}" VERSION_EQUAL "${field_version_number}")
         # Otherwise, if the detected version is inconsistent with the previous
         # value of RTICONNEXTDDS_VERSION, we throw an error.
         set(warning
@@ -876,6 +893,115 @@ function(get_all_library_variables
         "====================================================================")
 endfunction()
 
+
+# This function helps to create a ConnextDDS CMake imported target.
+# Arguments:
+# - TARGET: the name of the target to be created. Note that the prefix
+#   `RTIConnextDDS::` will be added.
+# - VAR: name of the variable where the library and its dependencies were
+#   stored. The library we want to use for the imported target must be at the
+#   0 position. Note the dependencies included in this variable will not be
+#   used for the creation of the imported target. The `DEPENDENCIES` argument
+#   is for that purpose.
+# - DEPENDENCIES: other imported targets or libraries that are dependencies.
+# Returns:
+# - A new target called `RTIConnextDDS::<TARGET>`, set to work properly with
+#   the desired ConnextDDS library, using the DEPENDENCIES as interface
+#   dependencies.
+#   If the target was created previusly or the library was not found, nothing
+#   will happen.
+function(create_connext_imported_target)
+    set(options "")
+    set(single_value_args "TARGET" "VAR")
+    set(multi_value_args "DEPENDENCIES")
+    cmake_parse_arguments(_CONNEXT
+        "${options}"
+        "${single_value_args}"
+        "${multi_value_args}"
+        ${ARGN}
+    )
+
+    if(WIN32
+        AND NOT BUILD_SHARED_LIBS
+        AND ${_CONNEXT_TARGET} STREQUAL "routing_service_c")
+        # ROUTING-276: Routing Service is not available as a static library
+        # for Windows
+        return()
+    endif()
+
+    set(target_name RTIConnextDDS::${_CONNEXT_TARGET})
+    if(TARGET ${target_name})
+        return() # Nothing to be done
+    endif()
+
+    if(NOT ${_CONNEXT_VAR}_FOUND)
+        return() # Nothing to be done
+    endif()
+
+    set(imported_lib "${_CONNEXT_VAR}_LIBRARIES")
+
+    # Get the library for the non multiconfiguration generators
+    if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
+        set(imported_lib "${imported_lib}_DEBUG")
+    else()
+        set(imported_lib "${imported_lib}_RELEASE")
+    endif()
+
+    if(BUILD_SHARED_LIBS)
+        set(link_mode "SHARED")
+    else()
+        set(link_mode "STATIC")
+    endif()
+
+    list(GET ${imported_lib}_${link_mode} 0
+        module_library
+    )
+
+    # Create the library
+    add_library(${target_name} UNKNOWN IMPORTED)
+
+
+    if(WIN32 AND BUILD_SHARED_LIBS)
+        set(location_property IMPORTED_IMPLIB)
+    else()
+        set(location_property IMPORTED_LOCATION)
+    endif()
+
+    # Set properties for all the targets
+    set_target_properties(${target_name}
+        PROPERTIES
+            ${location_property} ${module_library}
+            IMPORTED_NO_SONAME TRUE
+            MAP_IMPORTED_CONFIG_MINSIZEREL Release
+            MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
+    )
+
+    # Add dependencies
+    if(_CONNEXT_DEPENDENCIES)
+        set_target_properties(${target_name}
+            PROPERTIES
+                INTERFACE_LINK_LIBRARIES
+                   "${_CONNEXT_DEPENDENCIES}"
+        )
+    endif()
+
+    
+    # Set properties per configuration
+    foreach(build_mode "RELEASE" "DEBUG")
+
+        list(GET ${_CONNEXT_VAR}_LIBRARIES_${build_mode}_${link_mode} 0
+            imported_library
+        )
+
+        set_target_properties(${target_name}
+            PROPERTIES
+                ${location_property}_${build_mode}
+                    "${imported_library}"
+        )
+    endforeach()
+endfunction()
+
+
 #####################################################################
 # Platform-specific Definitions                                     #
 #####################################################################
@@ -914,7 +1040,6 @@ else()
         "${CMAKE_HOST_SYSTEM} is not supported as host architecture")
 endif()
 
-# Platform-Specific Definitions
 if(CONNEXTDDS_ARCH MATCHES "Linux")
     # Linux Platforms
     set(CONNEXTDDS_EXTERNAL_LIBS -ldl -lm -lpthread -lrt)
@@ -990,6 +1115,9 @@ set(CONNEXTDDS_INCLUDE_DIRS
     ${CONNEXTDDS_INCLUDE_DIRS}
     "${CONNEXTDDS_DIR}/include/ndds/hpp")
 
+# Find all flavors of nddscore
+get_all_library_variables("nddscore" "CONNEXTDDS_CORE")
+
 # Find all flavors of nddsc and nddscore
 set(c_api_libs "nddsc" "nddscore")
 get_all_library_variables("${c_api_libs}" "CONNEXTDDS_C_API")
@@ -1002,8 +1130,7 @@ get_all_library_variables("${cpp_api_libs}" "CONNEXTDDS_CPP_API")
 set(cpp2_api_libs "nddscpp2" "nddsc" "nddscore")
 get_all_library_variables("${cpp2_api_libs}" "CONNEXTDDS_CPP2_API")
 
-if(CONNEXTDDS_C_API_FOUND AND CONNEXTDDS_CPP_API_FOUND AND
-    CONNEXTDDS_CPP2_API_FOUND)
+if(CONNEXTDDS_CORE_FOUND AND CONNEXTDDS_C_API_FOUND)
     set(RTIConnextDDS_core_FOUND TRUE)
 else()
     set(RTIConnextDDS_core_FOUND FALSE)
@@ -1189,7 +1316,14 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         "secure_target_libraries")
 
     # Find all flavors of libnddssecurity
-    get_all_library_variables("nddssecurity" "SECURITY_PLUGINS")
+    set(security_plugins_libs
+        "nddssecurity"
+        "nddsc"
+        "nddscore")
+    get_all_library_variables(
+        "${security_plugins_libs}" 
+        "SECURITY_PLUGINS"
+    )
 
     if(SECURITY_PLUGINS_FOUND)
         if(CONNEXTDDS_OPENSSL_DIR)
@@ -1197,7 +1331,7 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
                 REQUIRED ${CONNEXTDDS_OPENSSL_VERSION}
                 PATHS
                     "${CONNEXTDDS_OPENSSL_DIR}")
-        elseif(DEFINED CONNEXTDDS_OPENSSL_VERSION)
+        elseif(CONNEXTDDS_OPENSSL_VERSION)
             find_package(OpenSSL REQUIRED ${CONNEXTDDS_OPENSSL_VERSION})
         else()
             find_package(OpenSSL REQUIRED)
@@ -1439,19 +1573,28 @@ endif()
 #####################################################################
 # Version Variables                                                 #
 #####################################################################
-# Verify that all the components specified have the same version
-file(READ "${CONNEXTDDS_DIR}/rti_versions.xml" xml_file)
 
-if(CONNEXTDDS_DISABLE_VERSION_CHECK)
-    # If the version check is disabled, the method to check the component field
-    # version is called one time. That method will return the version described
-    # in the rti_versions.xml for a given component. When the check is
-    # disabled, the returned version is the core libraries version.
-    connextdds_check_component_field_version(
-        "header_files"
-        ${xml_file}
-        connextdds_host_arch)
-else()
+# In the header files, there is a variable that contains the BUILD ID of the
+# release. From the BUILD ID, we can get the version.
+set(regex_for_build "NDDSCORE_BUILD_.*_RTI_REL")
+file(STRINGS
+    "${CONNEXTDDS_DIR}/include/ndds/core_version/core_version_buildid.h"
+    build_id_line
+    REGEX ${regex_for_build}
+)
+string(REGEX MATCH
+    ${regex_for_build}
+    CONNEXTDDS_BUILD_ID
+    "${build_id_line}"
+)
+string(REGEX MATCH
+    "[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+"
+    RTICONNEXTDDS_VERSION
+    "${CONNEXTDDS_BUILD_ID}")
+
+if(ENABLE_VERSION_CONSISTENCY_CHECK)
+    # Verify that all the components specified have the same version
+    file(READ "${CONNEXTDDS_DIR}/rti_versions.xml" xml_file)
     # Verify host components
     foreach(field IN LISTS rti_versions_field_names_host)
         connextdds_check_component_field_version(
@@ -1489,450 +1632,308 @@ find_package_handle_standard_args(RTIConnextDDS
         RTICONNEXTDDS_VERSION
     HANDLE_COMPONENTS)
 
+
 #####################################################################
-# Create imported targets                                           #
+# Create the imported targets                                       #
 #####################################################################
-set(location_property IMPORTED_LOCATION)
-if(RTIConnextDDS_FOUND AND RTIConnextDDS_core_FOUND)
-    if(${BUILD_SHARED_LIBS})
-        set(link_type SHARED)
+
+if(RTIConnextDDS_FOUND)
+    #################### Core and APIs imported targets #####################
+    # Core
+    create_connext_imported_target(
+        TARGET "core"
+        VAR "CONNEXTDDS_CORE"
+        DEPENDENCIES
+            ${CONNEXTDDS_EXTERNAL_LIBS}
+    )
+
+    set(target_definitions ${CONNEXTDDS_COMPILE_DEFINITIONS})
+    if(BUILD_SHARED_LIBS)
         set(target_definitions
             ${CONNEXTDDS_COMPILE_DEFINITIONS}
             ${CONNEXTDDS_DLL_EXPORT_MACRO})
-        if(WIN32)
-            set(location_property IMPORTED_IMPLIB)
-        endif()
-    else()
-        set(link_type STATIC)
-        set(target_definitions ${CONNEXTDDS_COMPILE_DEFINITIONS})
     endif()
 
-    if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
-        set(build_type "DEBUG")
-    else()
-        set(build_type "RELEASE")
+    set_target_properties(RTIConnextDDS::core
+        PROPERTIES
+            INTERFACE_INCLUDE_DIRECTORIES
+                "${CONNEXTDDS_INCLUDE_DIRS}"
+            INTERFACE_LINK_DIRECTORIES
+                "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
+            INTERFACE_COMPILE_DEFINITIONS
+                "${target_definitions}"
+    )
+
+    # C API
+    create_connext_imported_target(
+        TARGET "c_api"
+        VAR "CONNEXTDDS_C_API"
+        DEPENDENCIES
+            RTIConnextDDS::core
+    )
+
+    # CPP API
+    create_connext_imported_target(
+        TARGET "cpp_api"
+        VAR "CONNEXTDDS_CPP_API"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Modern CPP API
+    create_connext_imported_target(
+        TARGET "cpp2_api"
+        VAR "CONNEXTDDS_CPP2_API"
+        DEPENDENCIES
+            RTIConnextDDS::cpp_api
+    )
+
+    # Metp
+    create_connext_imported_target(
+        TARGET "metp"
+        VAR "METP"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Metp
+    create_connext_imported_target(
+        TARGET "rtixml2"
+        VAR "RTIXML2"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+
+    ###################### Distributed Logger targets ######################
+    # Distributed Logger C API
+    create_connext_imported_target(
+        TARGET "distributed_logger_c"
+        VAR "DISTRIBUTED_LOGGER_C"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Distributed Logger CPP API
+    create_connext_imported_target(
+        TARGET "distributed_logger_cpp"
+        VAR "DISTRIBUTED_LOGGER_CPP"
+        DEPENDENCIES
+            RTIConnextDDS::distributed_logger_c
+    )
+
+
+    ############## Messaging (Request-Reply) imported targets ###############
+    # C Messaging API
+    create_connext_imported_target(
+        TARGET "messaging_c_api"
+        VAR "MESSAGING_C_API"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # CPP Messaging API
+    create_connext_imported_target(
+        TARGET "messaging_cpp_api"
+        VAR "MESSAGING_CPP_API"
+        DEPENDENCIES
+            RTIConnextDDS::cpp_api
+    )
+
+    # Modern CPP Messaging API
+    create_connext_imported_target(
+        TARGET "messaging_cpp_api"
+        VAR "MESSAGING_CPP2_API"
+        DEPENDENCIES
+            RTIConnextDDS::cpp2_api
+    )
+
+
+    ################## Security plugins imported targets ###################
+    # Security plugins
+    set(dependencies RTIConnextDDS::c_api)
+
+    # The OpenSSL imported targets are created by find_package(OpenSSL).
+    if(TARGET OpenSSL::SSL)
+        set(dependencies ${dependencies} OpenSSL::SSL)
     endif()
 
-    if(NOT TARGET RTIConnextDDS::c_api)
-        list(GET CONNEXTDDS_C_API_LIBRARIES_${build_type}_${link_type} 0
-            c_api_library)
-        list(GET CONNEXTDDS_C_API_LIBRARIES_${build_type}_${link_type} 1
-             core_library)
+    if(TARGET OpenSSL::Crypto)
+        set(dependencies ${dependencies} OpenSSL::Crypto)
+    endif()
 
+    create_connext_imported_target(
+        TARGET "security_plugins"
+        VAR "SECURITY_PLUGINS"
+        DEPENDENCIES
+            ${dependencies}
+    )
+
+
+    ################ Monitoring libraries imported targets ##################
+    create_connext_imported_target(
+        TARGET "monitoring"
+        VAR "MONITORING"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+
+    ###################### Transports imported targets ######################
+    # TLS library
+    create_connext_imported_target(
+        TARGET "nddstls"
+        VAR "NDDSTLS"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # TCP
+    create_connext_imported_target(
+        TARGET "transport_tcp"
+        VAR "TRANSPORT_TCP"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Transport TLS
+    create_connext_imported_target(
+        TARGET "transport_tls"
+        VAR "TRANSPORT_TLS"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Transport WAN
+    create_connext_imported_target(
+        TARGET "transport_wan"
+        VAR "TRANSPORT_WAN"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+
+    ######################## Low bandwidth plugins #########################
+    # Discovery Static
+    create_connext_imported_target(
+        TARGET "low_bandwidth_discovery_static"
+        VAR "LOW_BANDWIDTH_DISCOVERY_STATIC"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # EDISC
+    create_connext_imported_target(
+        TARGET "low_bandwidth_discovery_static"
+        VAR "LOW_BANDWIDTH_EDISC"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # PDISC
+    create_connext_imported_target(
+        TARGET "low_bandwidth_pdisc"
+        VAR "LOW_BANDWIDTH_PDISC"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # RTPS
+    create_connext_imported_target(
+        TARGET "low_bandwidth_rtps"
+        VAR "LOW_BANDWIDTH_RTPS"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # SM
+    create_connext_imported_target(
+        TARGET "low_bandwidth_sm"
+        VAR "LOW_BANDWIDTH_SM"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # ST
+    create_connext_imported_target(
+        TARGET "low_bandwidth_st"
+        VAR "LOW_BANDWIDTH_ST_LIBRARIES_RELEASE_STATIC"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # RTIRTPS
+    create_connext_imported_target(
+        TARGET "rtirtps"
+        VAR "RTIRTPS"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+
+    ####################### Services imported targets #######################
+    # Infrastructure
+    create_connext_imported_target(
+        TARGET "routing_service_infrastructure"
+        VAR "ROUTING_SERVICE_INFRASTRUCTURE"
+        DEPENDENCIES
+            RTIConnextDDS::c_api
+    )
+
+    # Routing Service C API
+    set(dependencies RTIConnextDDS::c_api)
+
+    if(TARGET RTIConnextDDS::distributed_logger_c)
         set(dependencies
-            ${core_library}
-            ${CONNEXTDDS_EXTERNAL_LIBS})
-
-        add_library(RTIConnextDDS::c_api ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::c_api
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${c_api_library}"
-                INTERFACE_INCLUDE_DIRECTORIES
-                    "${CONNEXTDDS_INCLUDE_DIRS}"
-                INTERFACE_COMPILE_DEFINITIONS
-                    "${target_definitions}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-
+            ${dependencies}
+            RTIConnextDDS::distributed_logger_c
+        )
     endif()
 
-    if(NOT TARGET RTIConnextDDS::cpp_api)
-        list(GET CONNEXTDDS_CPP_API_LIBRARIES_${build_type}_${link_type} 0
-            cpp_api_library)
-        list(GET CONNEXTDDS_CPP_API_LIBRARIES_${build_type}_${link_type} 1
-            c_api_library)
-        list(GET CONNEXTDDS_CPP_API_LIBRARIES_${build_type}_${link_type} 2
-            core_library)
-
-        add_library(RTIConnextDDS::cpp_api ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::cpp_api
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${cpp_api_library}"
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api)
+    if(TARGET RTIConnextDDS::metp)
+        set(dependencies 
+            ${dependencies} 
+            RTIConnextDDS::metp
+        )
     endif()
 
-    if(NOT TARGET RTIConnextDDS::cpp2_api)
-        list(GET CONNEXTDDS_CPP2_API_LIBRARIES_${build_type}_${link_type} 0
-            cpp2_api_library)
-        list(GET CONNEXTDDS_CPP2_API_LIBRARIES_${build_type}_${link_type} 1
-            c_api_library)
-        list(GET CONNEXTDDS_CPP2_API_LIBRARIES_${build_type}_${link_type} 2
-            core_library)
-
-        add_library(RTIConnextDDS::cpp2_api ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::cpp2_api
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${cpp2_api_library}"
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api)
+    if(TARGET RTIConnextDDS::messaging_c_api)
+        set(dependencies 
+            ${dependencies} 
+            RTIConnextDDS::messaging_c_api
+        )
     endif()
 
-    if(RTIConnextDDS_distributed_logger_FOUND)
-        if(NOT TARGET RTIConnextDDS::distributed_logger_c)
-            list(GET DISTRIBUTED_LOGGER_C_LIBRARIES_${build_type}_${link_type} 0
-                distributed_logger_c_lib)
-
-            add_library(RTIConnextDDS::distributed_logger_c
-                ${link_type}
-                IMPORTED)
-            set_target_properties(RTIConnextDDS::distributed_logger_c
-                PROPERTIES
-                    IMPORTED_NO_SONAME TRUE
-                    ${location_property}
-                        "${distributed_logger_c_lib}"
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::c_api)
-        endif()
-
-        if(NOT TARGET RTIConnextDDS::distributed_logger_cpp)
-            list(GET
-                DISTRIBUTED_LOGGER_CPP_LIBRARIES_${build_type}_${link_type} 0
-                distributed_logger_cpp_lib)
-
-            add_library(RTIConnextDDS::distributed_logger_cpp
-                ${link_type}
-                IMPORTED)
-            set_target_properties(RTIConnextDDS::distributed_logger_cpp
-                PROPERTIES
-                    IMPORTED_NO_SONAME TRUE
-                    ${location_property}
-                        "${distributed_logger_cpp_lib}"
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::cpp_api)
-        endif()
-    endif()
-
-    if(RTIConnextDDS_metp_FOUND AND NOT TARGET RTIConnextDDS::metp)
-        list(GET METP_LIBRARIES_${build_type}_${link_type} 0 rtimetp_library)
-
-        add_library(RTIConnextDDS::metp ${link_type} IMPORTED)
-
-        set_target_properties(RTIConnextDDS::metp
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtimetp_library}"
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api)
-    endif()
-
-    if(RTIConnextDDS_routing_service_FOUND AND
-            NOT TARGET RTIConnextDDS::routing_service_infrastructure)
-
-        list(GET
-            ROUTING_SERVICE_INFRASTRUCTURE_LIBRARIES_${build_type}_${link_type}
-            0
-            rtirsinfrastructure_library)
-
-        add_library(
-            RTIConnextDDS::routing_service_infrastructure
-            ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::routing_service_infrastructure
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtirsinfrastructure_library}"
-                INTERFACE_LINK_LIBRARIES
-                    RTIConnextDDS::c_api)
-    endif()
-
-
-    if(RTIConnextDDS_routing_service_FOUND AND
-        NOT TARGET RTIConnextDDS::routing_service_c)
-
-        list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
-            rtirroutingservice_library)
-
+    if(TARGET RTIConnextDDS::rtixml2)
         set(dependencies
-            RTIConnextDDS::routing_service_infrastructure)
-
-        if(RTIConnextDDS_metp_FOUND)
-            set(dependencies ${dependencies} "RTIConnextDDS::metp")
-        endif()
-
-        if(RTIConnextDDS_distributed_loger_FOUND)
-            set(dependencies
-                ${dependencies}
-                "RTIConnextDDS::distributed_logger_c")
-        endif()
-
-        add_library(RTIConnextDDS::routing_service_c ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::routing_service_c
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtirroutingservice_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-
-        add_library(RTIConnextDDS::routing_service ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::routing_service
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtirroutingservice_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
+            ${dependencies}
+            RTIConnextDDS::rtixml2
+        )
     endif()
 
-    if(RTIConnextDDS_routing_service_FOUND AND
-            NOT TARGET RTIConnextDDS::routing_service_cpp2 AND
-            RTICONNEXTDDS_VERSION VERSION_GREATER_EQUAL "6.0.0")
+    create_connext_imported_target(
+        TARGET "routing_service_c"
+        VAR "ROUTING_SERVICE_API_LIBRARIES"
+        DEPENDENCIES
+            ${dependencies}
+    )
 
-        list(GET ROUTING_SERVICE_API_LIBRARIES_${build_type}_${link_type} 0
-            rtirroutingservice_library)
-
-        set(dependencies
-            RTIConnextDDS::routing_service_infrastructure
-            RTIConnextDDS::cpp2_api)
-
-        if(RTIConnextDDS_metp_FOUND)
-            set(dependencies ${dependencies} "RTIConnextDDS::metp")
-        endif()
-
-        if(RTIConnextDDS_distributed_loger_FOUND)
-            set(dependencies
-                ${dependencies}
-                "RTIConnextDDS::distributed_logger_cpp")
-        endif()
-
-        add_library(RTIConnextDDS::routing_service_cpp2 ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::routing_service_cpp2
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtirroutingservice_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_assign_transformation_FOUND AND
-            NOT TARGET RTIConnextDDS::assign_transformation)
-        list(GET ASSIGN_TRANSFORMATION_LIBRARIES_${build_type}_${link_type} 0
-            rtiassigntransf_library)
-        add_library(RTIConnextDDS::assign_transformation ${link_type} IMPORTED)
-        set(dependencies
+    # Routing Service Assign Transformation
+    create_connext_imported_target(
+        TARGET "assign_transformation"
+        VAR "ASSIGN_TRANSFORMATION"
+        DEPENDENCIES
             RTIConnextDDS::routing_service_c
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::assign_transformation
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtiassigntransf_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
+    )
 
-    if(RTIConnextDDS_messaging_api_FOUND)
-        if(NOT TARGET RTIConnextDDS::messaging_c_api)
-            list(GET MESSAGING_C_API_LIBRARIES_${build_type}_${link_type} 0
-                messaging_c_lib)
-            add_library(RTIConnextDDS::messaging_c_api ${link_type} IMPORTED)
-            set_target_properties(RTIConnextDDS::messaging_c_api
-                PROPERTIES
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::c_api
-                    IMPORTED_NO_SONAME TRUE
-                    ${location_property}
-                        "${messaging_c_lib}")
-        endif()
-
-        if(NOT TARGET RTIConnextDDS::messaging_cpp_api)
-            list(GET MESSAGING_CPP_API_LIBRARIES_${build_type}_${link_type} 0
-                messaging_cpp_lib)
-            add_library(RTIConnextDDS::messaging_cpp_api ${link_type} IMPORTED)
-            set_target_properties(RTIConnextDDS::messaging_cpp_api
-                PROPERTIES
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::cpp_api
-                    IMPORTED_NO_SONAME TRUE
-                    ${location_property}
-                        "${messaging_cpp_lib}")
-        endif()
-
-        if(NOT TARGET RTIConnextDDS::messaging_cpp2_api)
-            list(GET MESSAGING_CPP2_API_LIBRARIES_${build_type}_${link_type} 0
-                messaging_cpp2_lib)
-            add_library(RTIConnextDDS::messaging_cpp2_api
-                ${link_type}
-                IMPORTED)
-            set_target_properties(RTIConnextDDS::messaging_cpp2_api
-                PROPERTIES
-                    INTERFACE_LINK_LIBRARIES
-                        RTIConnextDDS::cpp2_api
-                    IMPORTED_NO_SONAME TRUE
-                    ${location_property}
-                        "${messaging_cpp2_lib}")
-        endif()
-    endif()
-
-    if(RTIConnextDDS_security_plugins_FOUND AND
-            NOT TARGET RTIConnextDDS::security_plugins)
-        add_library(RTIConnextDDS::security_plugins ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::security_plugins
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${SECURITY_PLUGINS_LIBRARIES_${build_type}_${link_type}}")
-    endif()
-
-    if(RTIConnextDDS_monitoring_libraries_FOUND AND
-            NOT TARGET RTIConnextDDS::monitoring)
-        add_library(RTIConnextDDS::monitoring ${link_type} IMPORTED)
-        set_target_properties(RTIConnextDDS::monitoring
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${MONITORING_LIBRARIES_${build_type}_${link_type}}")
-    endif()
-
-    if(RTIConnextDDS_nddstls_FOUND AND
-            NOT TARGET RTIConnextDDS::nddstls)
-        list(GET NDDSTLS_LIBRARIES_${build_type}_${link_type} 0
-            nddstls_library)
-        add_library(RTIConnextDDS::nddstls ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::nddstls
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${nddstls_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_transport_tcp_FOUND AND
-            NOT TARGET RTIConnextDDS::transport_tcp)
-        list(GET TRANSPORT_TCP_LIBRARIES_${build_type}_${link_type} 0
-            transport_tcp_library)
-        add_library(RTIConnextDDS::transport_tcp ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::transport_tcp
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${transport_tcp_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_transport_tls_FOUND AND
-            NOT TARGET RTIConnextDDS::transport_tls)
-        list(GET TRANSPORT_TLS_LIBRARIES_${build_type}_${link_type} 0
-            transport_tls_library)
-        add_library(RTIConnextDDS::transport_tls ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::transport_tls
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${transport_tls_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_transport_wan_FOUND AND
-            NOT TARGET RTIConnextDDS::transport_wan)
-        list(GET TRANSPORT_WAN_LIBRARIES_${build_type}_${link_type} 0
-            transport_wan_library)
-        add_library(RTIConnextDDS::transport_wan ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::transport_tls
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::transport_wan
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${transport_wan_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_recording_service_FOUND AND
-            NOT TARGET RTIConnextDDS::recording_service)
-        list(GET RECORDING_SERVICE_LIBRARIES_${build_type}_${link_type} 0
-            recording_service_library)
-        add_library(RTIConnextDDS::recording_service ${link_type} IMPORTED)
-        set(dependencies
+    # Recording Service
+    create_connext_imported_target(
+        TARGET "recording_service"
+        VAR "RECORDING_SERVICE"
+        DEPENDENCIES
             RTIConnextDDS::routing_service_c
             RTIConnextDDS::routing_service_infrastructure
             RTIConnextDDS::cpp2_api
-            RTIConnextDDS::distributed_logger_c
-            RTIConnextDDS::metp
-            RTIConnextDDS::messaging_c_api
-            RTIConnextDDS::rtixml2
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::recording_service
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${recording_service_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_rtixml2_FOUND AND
-            NOT TARGET RTIConnextDDS::rtixml2)
-        list(GET RTIXML2_LIBRARIES_${build_type}_${link_type} 0
-            rtixml2_library)
-        add_library(RTIConnextDDS::rtixml2 ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::rtixml2
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtixml2_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_low_bandwidth_plugins_FOUND AND
-            NOT TARGET RTIConnextDDS::low_bandwidth_plugins)
-        list(GET LOW_BANDWIDTH_PLUGINS_LIBRARIES_${build_type}_${link_type} 0
-            low_bandwidth_plugins_library)
-        add_library(RTIConnextDDS::low_bandwidth_plugins ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::low_bandwidth_discovery_static
-            RTIConnextDDS::low_bandwidth_edisc
-            RTIConnextDDS::low_bandwidth_pdisc
-            RTIConnextDDS::low_bandwidth_rtps
-            RTIConnextDDS::low_bandwidth_sm
-            RTIConnextDDS::low_bandwidth_st
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::low_bandwidth_plugins
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${low_bandwidth_plugins_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
-
-    if(RTIConnextDDS_rtirtps_FOUND AND
-            NOT TARGET RTIConnextDDS::rtirtps)
-        list(GET RTIRTPS_LIBRARIES_${build_type}_${link_type} 0
-            rtirtps_library)
-        add_library(RTIConnextDDS::rtirtps ${link_type} IMPORTED)
-        set(dependencies
-            RTIConnextDDS::c_api)
-        set_target_properties(RTIConnextDDS::rtirtps
-            PROPERTIES
-                IMPORTED_NO_SONAME TRUE
-                ${location_property}
-                    "${rtirtps_library}"
-                INTERFACE_LINK_LIBRARIES
-                    "${dependencies}")
-    endif()
+    )
 
 endif()
