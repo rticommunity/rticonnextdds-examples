@@ -34,8 +34,7 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
 #        "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
 #        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx"
-)
+        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx")
 
 # Set target properties for lang requirement output library name
 set_target_properties(mongodbadapter
@@ -63,33 +62,36 @@ target_link_libraries(
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
-## Copy the sample data files into the binary directory
-#configure_file(
-#    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"
-#    "${CMAKE_BINARY_DIR}/Input_Circle.csv"
-#    COPYONLY
-#)
-#
-#configure_file(
-#    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Square.csv"
-#    "${CMAKE_BINARY_DIR}/Input_Square.csv"
-#    COPYONLY
-#)
-#
-#configure_file(
-#    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Triangle.csv"
-#    "${CMAKE_BINARY_DIR}/Input_Triangle.csv"
-#    COPYONLY
-#)
-#
-#configure_file(
-#    "${CMAKE_CURRENT_SOURCE_DIR}/ShapeType.xml"
-#    "${CMAKE_BINARY_DIR}/ShapeType.xml"
-#    COPYONLY
-#)
-#
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/RsMongoGateway.xml"
     "${CMAKE_BINARY_DIR}/RsMongoGateway.xml"
     COPYONLY
 )
+
+
+
+add_executable(
+    mongotest
+    "${CMAKE_BINARY_DIR}/ComplexType.cxx"
+    "${CMAKE_BINARY_DIR}/ComplexTypePlugin.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/DynamicDataConverter.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/MongoTest.cpp")
+
+target_link_libraries(
+    mongotest
+    mongo::mongocxx_shared
+    mongo::bsoncxx_shared
+    RTIConnextDDS::cpp2_api
+    ${CONNEXTDDS_EXTERNAL_LIBS}
+)
+
+target_include_directories(
+    mongotest
+    PUBLIC
+        "${CMAKE_BINARY_DIR}"
+)
+
+set_target_properties(mongotest
+    PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED ON)

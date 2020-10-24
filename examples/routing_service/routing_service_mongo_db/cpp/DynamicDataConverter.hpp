@@ -14,6 +14,7 @@
 #define DYNAMICDATACONVERTER_HPP
 
 #include <unordered_map>
+#include <vector>
 
 #include <dds/core/xtypes/DynamicData.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
@@ -74,9 +75,9 @@ struct element_setter<ElementType, bsoncxx::builder::stream::array> {
     static void set(
             ElementType& element,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info,
-            bsoncxx::builder::stream::array& doc_or_array)
+            bsoncxx::builder::stream::array& array)
     {
-        doc_or_array << element;
+        array << element;
     }
 };
 
@@ -85,9 +86,9 @@ struct element_setter<ElementType, bsoncxx::builder::stream::document> {
     static void set(
             ElementType& element,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info,
-            bsoncxx::builder::stream::document& doc_or_array)
+            bsoncxx::builder::stream::document& document)
     {
-        doc_or_array << member_info.member_name()
+        document << member_info.member_name()
                      << element;
     }
 };
@@ -235,7 +236,29 @@ public:
 };
 
 typedef TypedContext<bsoncxx::builder::stream::document> DocumentContext;
-typedef TypedContext<bsoncxx::builder::stream::array> ArrayContext;
+
+class ArrayContext : public TypedContext<bsoncxx::builder::stream::array>
+{
+public:
+
+    ArrayContext(
+            uint32_t the_member_index = 1,
+            std::vector<uint32_t> the_dimensions = {},
+            uint32_t the_dimension_index = 0,
+            uint32_t the_element_index = 1)
+            : TypedContext<bsoncxx::builder::stream::array>(the_member_index),
+              dimensions(the_dimensions),
+              dimension_index(the_dimension_index),
+              element_index(the_element_index)
+    {
+        member_index = the_member_index;
+    }
+
+    uint32_t dimension_index;
+    std::vector<uint32_t> dimensions;
+    uint32_t element_index;
+};
+
 
 class DynamicDataConverter {
 public:
@@ -269,7 +292,6 @@ public:
         array << data.value<T>(member_info.member_index());
     }
 
-private:
 
 };
 
