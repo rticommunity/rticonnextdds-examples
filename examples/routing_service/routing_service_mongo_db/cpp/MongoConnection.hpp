@@ -17,47 +17,70 @@
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/Connection.hpp>
 #include <mongocxx/pool.hpp>
+#include <mongocxx/database.hpp>
 
 #include "MongoConfig.hpp"
-#include "FileInputDiscoveryStreamReader.hpp"
-
 
 namespace rti { namespace community { namespace examples {
 
-
 class MongoStreamWriter;
 
+/***
+ * @brief Implementation of the adapter Connection. Represents a pool of client
+ * connections to MongoDB.
+ *
+ * This is a key class since it establishes the actual connection to a specific MongoDB
+ * database, given a user-provided URI.
+ *
+ * It uses a pool of clients to read and write from the DB. This is required to support
+ * concurrency between the created StreamReaders and StreamWriters, that can operate
+ * under multiple threads–either within the same Session's thread pool or separate
+ * Sessions-.
+ *
+ * The current strategy is to have StreamReaders and StreamWriters to ask for an available
+ * client database connection for the current calling context, using the database()
+ * operation.
+ *
+ * The MongoConnection can receive the following configuration properties:
+ *
+ *  - MongoConfig::CLUSTER_ADDRESS
+ *  - MongoConfig::DB_NAME
+ *  - MongoConfig::USER_AND_PASS
+ *  - MongoConfig::URI_PARAMS
+ *
+ *  @see MongoConfig
+ */
 class MongoConnection : public rti::routing::adapter::Connection {
 public:
 
-    MongoConnection(
-            rti::routing::adapter::StreamReaderListener *input_stream_discovery_listener,
-            rti::routing::adapter::StreamReaderListener *output_stream_discovery_listener,
-            const rti::routing::PropertySet &properties);
+    /**
+     * @brief Creates the connection given its configuration properites
+     * @param properties
+     *      Configuration properites provided by the <property> tag within
+     *      <connection>.
+     *
+     */
+    MongoConnection(const rti::routing::PropertySet &properties);
 
-    rti::routing::adapter::StreamReader *create_stream_reader(
-            rti::routing::adapter::Session *session,
-            const rti::routing::StreamInfo &info,
-            const rti::routing::PropertySet &properties,
-            rti::routing::adapter::StreamReaderListener *listener) final;
-
-    void delete_stream_reader(rti::routing::adapter::StreamReader *reader) final;
-
+    /*
+     * --- Connection interface ---------------------------------------------------------
+     */
     rti::routing::adapter::StreamWriter *create_stream_writer(
             rti::routing::adapter::Session *session,
             const rti::routing::StreamInfo &info,
             const rti::routing::PropertySet &properties) final;
 
-    void delete_stream_writer(rti::routing::adapter::StreamWriter *writer) final;
+    void delete_stream_writer(rti::routing::adapter::StreamWriter *writer) override final;
 
-    rti::routing::adapter::DiscoveryStreamReader *input_stream_discovery_reader() final;
-
-    rti::routing::adapter::DiscoveryStreamReader *output_stream_discovery_reader() final;
-
-    
+    /*
+     * --- Private Interface ------------------------------------------------------------
+     */
 private:
     friend MongoStreamWriter;
-    //FileInputDiscoveryStreamReader input_discovery_reader_;
+
+    mongocxx::database database();
+
+private:
     mongocxx::pool client_pool_;
     std::string db_name_;
 };

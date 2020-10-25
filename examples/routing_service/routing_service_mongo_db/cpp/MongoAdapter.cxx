@@ -18,31 +18,21 @@ using namespace rti::routing;
 using namespace rti::routing::adapter;
 
 
-
 MongoAdapter::MongoAdapter(PropertySet&)
     :instance_{}
 {
 }
 
 Connection *MongoAdapter::create_connection(
-        rti::routing::adapter::detail::StreamReaderListener
-                *input_stream_discovery_listener,
-        rti::routing::adapter::detail::StreamReaderListener
-                *output_stream_discovery_listener,
+        rti::routing::adapter::detail::StreamReaderListener*,
+        rti::routing::adapter::detail::StreamReaderListener*,
         const PropertySet &properties)
 {
-
-    return new MongoConnection(
-            input_stream_discovery_listener,
-            output_stream_discovery_listener,
-            properties);
+    return new MongoConnection(properties);
 }
 
 void MongoAdapter::delete_connection(Connection *connection)
 {
-    /**
-     * Perform cleanup pertaining to the connection object here.
-     */
     delete connection;
 }
 

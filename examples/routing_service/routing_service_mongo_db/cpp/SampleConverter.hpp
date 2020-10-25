@@ -17,30 +17,57 @@
 #include <vector>
 
 #include <dds/core/xtypes/DynamicData.hpp>
+#include <dds/sub/SampleInfo.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/array.hpp>
 
-namespace rti {
-namespace community {
-namespace examples {
+namespace rti { namespace community { namespace examples {
 
-
-class DynamicDataConverter {
+/**
+ * @brief Helper to convert data from the DDS space to the MongoDB space.
+ *
+ */
+class SampleConverter {
 public:
 
+    /**
+     * @brief Converts a DynamicData object into a BSON document.
+     *
+     * The general mapping is:
+     * - Structure -> bsoncxx::document
+     * - Sequences and multi-dimensional arrays -> bsoncxx::array
+     * - String -> bsoncxx::utf8
+     * - primitive types: A corresponding bson primitive, except:
+     *   + uint32_t -> bsoncxx::b_int64
+     *   + enum -> bsoncxx::b_int64
+     *
+     * Unions and wide strings are not currently supported.
+     */
     static bsoncxx::document::value to_document(
             const dds::core::xtypes::DynamicData& data);
 
+    /**
+     * @brief Converts a SampleInfo object into a BSON document
+     *
+     * The general mapping is:
+     * - InstanceHandle -> bsoncxx::binary (md5)
+     * - GUID -> bsoncxx::binary (md5)
+     * - Sequence Number -> {high:int32, low:int64}
+     * - Time_t -> {sec:int32, low:int64}
+     *
+     * Only a subset of fields are currently converted.
+     */
+    static bsoncxx::document::value to_document(
+            const dds::sub::SampleInfo& info);
+
 private:
-    DynamicDataConverter();
+    SampleConverter();
 };
 
 
-class SampleInfoConverter {
-
-};
-
-} } }
+}  // namespace examples
+}  // namespace community
+}  // namespace rti
 
 #endif /* DYNAMICDATACONVERTER_HPP */
 

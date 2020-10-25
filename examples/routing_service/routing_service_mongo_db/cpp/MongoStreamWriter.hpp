@@ -18,35 +18,73 @@
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamWriter.hpp>
-#include <mongocxx/database.hpp>
 
 #include "MongoConnection.hpp"
 
 namespace rti { namespace community { namespace examples {
 
+/***
+ * @brief Implementation of the adapter StreamWriter to write DDS samples as MongoDB
+ *        objects.
+ *
+ * This class is responsible for inserting DDS samples into a MongoDB database as
+ * as part of a collection identified by the associated stream name. This class
+ * is responsible for converting a DDS sample (represented as DynamicData:SampleInfo)
+ * into a mongocxx::document.
+ *
+ * To perform database insertions, this class obtains a handle to the database through
+ * the parent factory MongoConnection, which is provided on object construction.
+ */
 class MongoStreamWriter : public rti::routing::adapter::DynamicDataStreamWriter {
     
 public:
+
+    /**
+     * @brief Creates the StreamWriter from the required parameters.
+     *
+     * @param connection
+     *      The parent factory connection
+     * @param stream_info
+     *      Information for the associated Stream, provided by Routing Service.
+     * @param properties
+     *      Configuration properites provided by the <property> tag within
+     *      <output>.
+     */
     MongoStreamWriter(
             MongoConnection& connection,
             const rti::routing::StreamInfo& stream_info,
-            const std::string& db_name,
             const rti::routing::PropertySet &properties);
 
-    ~MongoStreamWriter();
-
-
+    /*
+     * --- Connection interface ---------------------------------------------------------
+     */
+    /**
+     * @brief Performs the insertion of DDS samples into MongoDB.
+     *
+     * For each sample DynamicData::SampleInfo, a new document object is added to
+     * the collection whose name is the name of the associated stream. Each sample
+     * _i_ is represented as:
+     *
+     * ```
+     *     {
+     *          data: bson{samples[i]}
+     *          info: bson{infos[i]}
+     *     }
+     * ```
+     *
+     * where _bson{samples[i]}_ is the BSON representation of a DDS data item and
+     * _bson_{infos[i]} is the BSON representation of a DDS info item.
+     *
+     * @see SampleConverter
+     *
+     */
     int write(
             const std::vector<dds::core::xtypes::DynamicData *> &samples,
             const std::vector<dds::sub::SampleInfo *> &infos) override final;
-
-private:
-    mongocxx::database database();
     
 private:
-    std::string db_name_;
-    std::string stream_name_;
     MongoConnection& connection_;
+    std::string stream_name_;
 };
 
 }}}  // namespace rti::community::examples

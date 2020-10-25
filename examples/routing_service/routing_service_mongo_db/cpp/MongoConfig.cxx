@@ -15,28 +15,78 @@
 
 using namespace rti::community::examples;
 
+/*
+ *  --- Cluster address -----------------------------------------------------------------
+ */
 template<>
-const std::string& MongoConfig::name<MongoConfig::URI>()
+const std::string& MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>()
 {
-    static std::string __name("mongo.uri");
+    static std::string __name("mongo.cluster_address");
     return __name;
 }
 
 template<>
-std::string MongoConfig::parse<MongoConfig::URI>(
+std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
         const rti::routing::PropertySet& properties)
 {
-    // URI
     rti::routing::PropertySet::const_iterator it = properties.find(
-            MongoConfig::name<MongoConfig::URI>());
+            MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>());
     if (it != properties.end()) {
         return it->second;
     }
 
-    return mongocxx::uri::k_default_uri;
+    return "localhost:27017";
 }
 
+/*
+ *  --- User & Pass ---------------------------------------------------------------------
+ */
+template<>
+const std::string& MongoConfig::name<MongoConfig::USER_AND_PASS>()
+{
+    static std::string __name("mongo.uri_params");
+    return __name;
+}
 
+template<>
+std::string MongoConfig::parse<MongoConfig::USER_AND_PASS>(
+        const rti::routing::PropertySet& properties)
+{
+    rti::routing::PropertySet::const_iterator it = properties.find(
+            MongoConfig::name<MongoConfig::USER_AND_PASS>());
+    if (it != properties.end()) {
+        return it->second;
+    }
+
+    return "rti_example:adapter";
+}
+
+/*
+ *  ---  Uri params ---------------------------------------------------------------------
+ */
+template<>
+const std::string& MongoConfig::name<MongoConfig::URI_PARAMS>()
+{
+    static std::string __name("mongo.uri_params");
+    return __name;
+}
+
+template<>
+std::string MongoConfig::parse<MongoConfig::URI_PARAMS>(
+        const rti::routing::PropertySet& properties)
+{
+    rti::routing::PropertySet::const_iterator it = properties.find(
+            MongoConfig::name<MongoConfig::URI_PARAMS>());
+    if (it != properties.end()) {
+        return it->second;
+    }
+
+    return "retryWrites=true&w=majority";
+}
+
+/*
+ *  --- Database name -------------------------------------------------------------------
+ */
 template<>
 const std::string& MongoConfig::name<MongoConfig::DB_NAME>()
 {
@@ -48,7 +98,6 @@ template<>
 std::string MongoConfig::parse<MongoConfig::DB_NAME>(
         const rti::routing::PropertySet& properties)
 {
-    // URI
     rti::routing::PropertySet::const_iterator it = properties.find(
              MongoConfig::name<MongoConfig::DB_NAME>());
     if (it == properties.end()) {

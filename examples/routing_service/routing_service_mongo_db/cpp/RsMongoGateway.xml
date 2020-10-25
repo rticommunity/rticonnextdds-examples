@@ -2,6 +2,19 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/latest/rti_routing_service.xsd">
 
+    <configuration_variables>
+        <value>
+            <element>
+                <name>CLUSTER_ADDRESS</name>
+                <value>cluster0.uy7w6.mongodb.net</value>
+            </element>
+            <element>
+                <name>DB_NAME</name>
+                <value>dds_space</value>
+            </element>
+        </value>
+    </configuration_variables>
+
     <plugin_library name="AdapterLib">
         <adapter_plugin name="MongoAdapter">
             <dll>mongodbadapter</dll>
@@ -11,30 +24,40 @@
     
     <routing_service name="MongoGateway">
         <domain_route name="DdsMongo">
+            <!-- Define a single MongoDB connection to a specific cluster and database -->
             <connection name="MongoConnection" plugin_name="AdapterLib::MongoAdapter">
                 <property>
                     <value>
                         <element>
-                            <name>mongo.uri</name>
-                            <value>
-                                mongodb+srv://router_test:router_test@cluster0.uy7w6.mongodb.net/dds_space?retryWrites=true&#38;w=majority
-                            </value>
+                            <name>mongo.cluster_address</name>
+                            <value>$(CLUSTER_ADDRESS)</value>
                         </element>
-                        <element>                    
+                        <element>
                             <name>mongo.db_name</name>
-                            <value>dds_space</value>
+                            <value>$(DB_NAME)</value>
+                        </element>
+                        <!--
+                             For security, this value shall provided through the
+                             command-line -D option.
+                        -->
+                        <element>
+                            <name>mongo.user_and_pass</name>
+                            <value>$(USER_AND_PASS)</value>
                         </element>
                     </value>
                 </property>
             </connection>
+
             <participant name="DdsDomain">
                 <domain_id>0</domain_id>
             </participant>
             
             <session>
+                <!-- Use a several address to serve all the Topcs -->
                 <thread_pool>
-                    <size>1</size>
+                    <size>4</size>
                 </thread_pool>
+                <!-- Establish a simple DDS Topic -> MongoDB Collection mapping -->
                 <auto_route>
                     <dds_input participant="DdsDomain">
                         <allow_topic_name_filter>*</allow_topic_name_filter>

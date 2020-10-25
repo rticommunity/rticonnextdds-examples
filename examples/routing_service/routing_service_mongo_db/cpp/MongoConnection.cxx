@@ -10,8 +10,10 @@
  * use or inability to use the software.
  */
 
+
+#include <mongocxx/client.hpp>
+
 #include "MongoConnection.hpp"
-//#include "FileStreamReader.hpp"
 #include "MongoStreamWriter.hpp"
 
 using namespace rti::community::examples;
@@ -19,44 +21,42 @@ using namespace rti::routing;
 using namespace rti::routing::adapter;
 
 
-
 /*
  * --- MongoConnection -------------------------------------------------------
  */
 
+std::string build_uri(const PropertySet &properties)
+{
+    std::string cluster_addr = MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(properties);
+    std::string user_and_pass = MongoConfig::parse<MongoConfig::USER_AND_PASS>(properties);
+    std::string uri_params = MongoConfig::parse<MongoConfig::URI_PARAMS>(properties);
+
+    return "mongodb+srv://"
+            + user_and_pass
+            + "@" + cluster_addr
+            + "/<database>?"
+            + uri_params;
+}
+
 MongoConnection::MongoConnection(
-        StreamReaderListener *input_stream_discovery_listener,
-        StreamReaderListener *output_stream_discovery_listener,
         const PropertySet &properties)
-        : client_pool_(mongocxx::uri(MongoConfig::parse<MongoConfig::URI>(properties))),
+        : client_pool_(mongocxx::uri(build_uri(properties))),
           db_name_(MongoConfig::parse<MongoConfig::DB_NAME>(properties))
-//        ,input_discovery_reader_(
-//                properties,
-//                input_stream_discovery_listener),
 {
 }
                 
-/* --- Private interface ---*/       
+/* --- Private interface ---*/
+
+mongocxx::database MongoConnection::database()
+{
+    auto client = client_pool_.acquire();
+
+    return client->database(db_name_);
+}
 
 
 /* --- Adapter Interface --- */
 
-StreamReader *MongoConnection::create_stream_reader(
-        Session *session,
-        const StreamInfo &info,
-        const PropertySet &properties,
-        StreamReaderListener *listener)       
-{
-    //return new FileStreamReader(this, info, properties, listener);
-    return nullptr;
-};
-
-void MongoConnection::delete_stream_reader(StreamReader *reader)
-{
-//    FileStreamReader *file_reader = dynamic_cast<FileStreamReader *>(reader);
-//    file_reader->shutdown_file_reader_thread();
-    delete reader;
-}
 
 StreamWriter *MongoConnection::create_stream_writer(
         Session *session,
@@ -66,7 +66,6 @@ StreamWriter *MongoConnection::create_stream_writer(
     return new MongoStreamWriter(
             *this,
             stream_info,
-            db_name_,
             properties);
 };
 
@@ -74,20 +73,3 @@ void MongoConnection::delete_stream_writer(StreamWriter *writer)
 {
     delete writer;
 }
-
-DiscoveryStreamReader *MongoConnection::output_stream_discovery_reader()
-{
-    return nullptr;
-};
-
-DiscoveryStreamReader *MongoConnection::input_stream_discovery_reader()
-{
-    //return &input_discovery_reader_;
-    return nullptr;
-};
-
-//void MongoConnection::dispose_discovery_stream(
-//        const rti::routing::StreamInfo &stream_info)
-//{
-//    //input_discovery_reader_.dispose(stream_info);
-//}

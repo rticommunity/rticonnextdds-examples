@@ -17,12 +17,38 @@
 
 namespace rti { namespace community { namespace examples {
 
+/**
+ * @brief Static class that represents a directory for all configuration properties
+ * part of the MongoDB adapter.
+ *
+ * This class provides operations to obtain property names and their associated value
+ * when they are present in a PropertySet.
+ */
+
 class MongoConfig {
 public:
 
     enum property {
-        URI,
-        DB_NAME
+        /*
+         * @brief Host address to a specific cluster or database.
+         * Optional. Default: localhost:27017
+         */
+        CLUSTER_ADDRESS,
+        /*
+         * @brief Name of the database to connect and access.
+         * Required.
+         */
+        DB_NAME,
+        /**
+         * @brief User name and passwored in format <user>:<password>
+         * Required.
+         */
+        USER_AND_PASS,
+        /**
+         * @brief Additional DB connection options in MongoDB URI parameters format.
+         * Optional. Default: retryWrites=true&w=majority
+         */
+        URI_PARAMS
     };
 
     template <MongoConfig::property Prop, typename Type=std::string>
@@ -33,7 +59,9 @@ public:
 
 };
 
-} } }
+}  // namespace examples
+}  // namespace community
+}  // namespace rti
 
 #endif /* MONGO_CONFIG_HPP */
 

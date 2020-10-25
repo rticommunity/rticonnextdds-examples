@@ -32,8 +32,6 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConfig.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
-#        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx")
 
 # Set target properties for lang requirement output library name
@@ -57,6 +55,7 @@ target_link_libraries(
     mongodbadapter
     mongo::mongocxx_shared
     mongo::bsoncxx_shared
+    RTIConnextDDS::routing_service
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
@@ -69,29 +68,29 @@ configure_file(
 )
 
 
-
-add_executable(
-    mongotest
-    "${CMAKE_BINARY_DIR}/ComplexType.cxx"
-    "${CMAKE_BINARY_DIR}/ComplexTypePlugin.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/SampleConverter.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/MongoTest.cpp")
-
-target_link_libraries(
-    mongotest
-    mongo::mongocxx_shared
-    mongo::bsoncxx_shared
-    RTIConnextDDS::cpp2_api
-    ${CONNEXTDDS_EXTERNAL_LIBS}
-)
-
-target_include_directories(
-    mongotest
-    PUBLIC
-        "${CMAKE_BINARY_DIR}"
-)
-
-set_target_properties(mongotest
-    PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED ON)
+#
+#add_executable(
+#    mongotest
+#    "${CMAKE_BINARY_DIR}/ComplexType.cxx"
+#    "${CMAKE_BINARY_DIR}/ComplexTypePlugin.cxx"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/SampleConverter.cxx"
+#    "${CMAKE_CURRENT_SOURCE_DIR}/MongoTest.cpp")
+#
+#target_link_libraries(
+#    mongotest
+#    mongo::mongocxx_shared
+#    mongo::bsoncxx_shared
+#    RTIConnextDDS::cpp2_api
+#    ${CONNEXTDDS_EXTERNAL_LIBS}
+#)
+#
+#target_include_directories(
+#    mongotest
+#    PUBLIC
+#        "${CMAKE_BINARY_DIR}"
+#)
+#
+#set_target_properties(mongotest
+#    PROPERTIES
+#    CXX_STANDARD 11
+#    CXX_STANDARD_REQUIRED ON)

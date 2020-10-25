@@ -11,6 +11,7 @@
  */
 
 #include <dds/core/xtypes/CollectionTypes.hpp>
+#include <rti/routing/Logger.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/array.hpp>
 
@@ -28,18 +29,39 @@ using namespace rti::community::examples;
 
 /* --- DynamicData --------------------------------------------------------------------*/
 
+/**
+ * @brief Helper to add a primitive member to either a document or an array
+ *
+ * Template specializations are expected to have a single static set() operation
+ * to perform the insertion.
+ *
+ * @tparam Primitive
+ *      one of the valid DDS primitive types
+ * @tparam DocOrArray
+ *      Either a bsoncxx::document or  bsoncxx::array.
+ */
 template<typename Primitive, typename DocOrArray>
 struct primitive_setter;
 
 template<typename Primitive>
 struct primitive_setter<Primitive, bsoncxx::builder::stream::document> {
 
+    /**
+     * @brief Obtains the value for the specified primitive member from _data_ and
+     * adds it to a document.
+     *
+     * @param[in] data
+     *      DynamicData complex member containing the primitive member
+     * @param[in] member_info
+     *      Description of the primitive member. Must hold a valid member index and name.
+     * @param[out] document
+     *      Output document
+     */
     static void set(
             const dds::core::xtypes::DynamicData& data,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info,
             bsoncxx::builder::stream::document& document)
     {
-
         document << member_info.member_name()
                  << data.value<Primitive>(member_info.member_index());
     }
@@ -49,7 +71,17 @@ struct primitive_setter<Primitive, bsoncxx::builder::stream::document> {
 
 template<typename Primitive>
 struct primitive_setter<Primitive, bsoncxx::builder::stream::array> {
-
+    /**
+     * @brief Obtains the value for the specified sequence/array item from _data_ and
+     * adds it to an array.
+     *
+     * @param[in] data
+     *      DynamicData sequence.array member containing the primitive element.
+     * @param[in] member_info
+     *      Description of the primitive element. Must contain a valid member index.
+     * @param[out] array
+     *      Output array
+     */
     static void set(
             const dds::core::xtypes::DynamicData& data,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info,
@@ -59,6 +91,10 @@ struct primitive_setter<Primitive, bsoncxx::builder::stream::array> {
     }
 };
 
+/**
+ * @brief Helper function to extra a primitive member or element from DynamicData and
+ * inset it into a BSON document or array.
+ */
 template<typename Primitive, typename DocOrArray = bsoncxx::builder::stream::document>
 void from_primitive(
         const dds::core::xtypes::DynamicData& data,
@@ -68,33 +104,14 @@ void from_primitive(
     primitive_setter<Primitive, DocOrArray>::set(data, member_info, doc_or_array);
 }
 
-template<typename ElementType, typename DocOrArray>
-struct element_setter;
-
-template<typename ElementType>
-struct element_setter<ElementType, bsoncxx::builder::stream::array> {
-    static void set(
-            ElementType& element,
-            const rti::core::xtypes::DynamicDataMemberInfo& member_info,
-            bsoncxx::builder::stream::array& array)
-    {
-        array << element;
-    }
-};
-
-template<typename ElementType>
-struct element_setter<ElementType, bsoncxx::builder::stream::document> {
-    static void set(
-            ElementType& element,
-            const rti::core::xtypes::DynamicDataMemberInfo& member_info,
-            bsoncxx::builder::stream::document& document)
-    {
-        document << member_info.member_name()
-                 << element;
-    }
-};
-
-
+/**
+ * @brief Helper function that obtains the value from the specified primitive
+ * member and adds it to a bson document or an array.
+ *
+ * This operation selects the appropriate primitive_setter based on the TypeKind
+ * of the primitive member. If the specified member is of an unsupported type, this
+ * operation simply logs a message and returns.
+ */
 template<typename DocOrArray = bsoncxx::builder::stream::document>
 void demultiplex_primitive_member(
         const dds::core::xtypes::DynamicData& data,
@@ -164,46 +181,161 @@ void demultiplex_primitive_member(
             demux_table.find(member_info.member_kind().underlying());
     if (it == demux_table.end()) {
         // log unsupported
+        std::ostringstream string_stream;
+        string_stream << "unsupported type for member=" << member_info.member_name();
+        rti::routing::Logger::instance().debug(string_stream.str());
         return;
     }
 
     it->second(data, member_info, doc_or_array);
 }
 
-class Context {
+/**
+ * @brief Helper to add a BSON element to either a document or an array
+ *
+ * Template specializations are expected to have a single static set() operation
+ * to perform the insertion.
+ *
+ * @tparam ElementType
+ *      one of the valid bsoncxx::types
+ * @tparam DocOrArray
+ *      Either a bsoncxx::document or  bsoncxx::array.
+ */
+template<typename ElementType, typename DocOrArray>
+struct element_setter;
+
+template<typename ElementType>
+struct element_setter<ElementType, bsoncxx::builder::stream::array> {
+    /**
+     * @brief Adds the specified element to a bson array.
+     *
+     * @param[in] element
+     *      Instance of a a valid BSON type.
+     * @param[in] member_info
+     *      Description of the element, as its associated DynamicData member
+     * @param[out] array
+     *      Output array
+     */
+    static void set(
+            ElementType& element,
+            const rti::core::xtypes::DynamicDataMemberInfo&,
+            bsoncxx::builder::stream::array& array)
+    {
+        array << element;
+    }
+};
+
+template<typename ElementType>
+struct element_setter<ElementType, bsoncxx::builder::stream::document> {
+
+    /**
+     * @brief Adds the specified element to a bson document.
+     *
+     * @param[in] element
+     *      Instance of a a valid BSON type.
+     * @param[in] member_info
+     *      Description of the element, as its associated DynamicData member
+     * @param[out] document
+     *      Output document
+     */
+    static void set(
+            ElementType& element,
+            const rti::core::xtypes::DynamicDataMemberInfo& member_info,
+            bsoncxx::builder::stream::document& document)
+    {
+        document << member_info.member_name()
+                 << element;
+    }
+};
+
+/**
+ * @brief Abstract class that represent a member context, used to build
+ * a bsoncxx::document or bsoncxx::array from DynamicData.
+ *
+ * This class defines the behavior required by the build_document() operation in order
+ * to keep track of the nesting level of a member and perform the proper operation to
+ * add the member into an output bson document and array.
+ */
+class ComplexMemberContext {
 public:
 
-    Context(uint32_t the_member_count)
+    /**
+     * @brief Creates the context given the total number of members.
+     * The underlying _member_index_ is set to 1, the minimum valid index for a DynamicData
+     * member.
+     */
+    ComplexMemberContext(uint32_t the_member_count)
             : member_index(1),
               member_count(the_member_count)
     {}
 
+    /**
+     * @brief Sets the primitive member for this  context.
+     *
+     * @param[in] data
+     *      The source DynamicData object
+     * @param[in] member_info
+     *      Description of the member inside _data_
+     */
     virtual void set_primitive(
             const dds::core::xtypes::DynamicData& data,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) = 0;
 
+    /**
+     * @brief Sets a bson document in this context.
+     *
+     * @param[in] document
+     *      The source bson document
+     * @param[in] member_info
+     *      Description of the complex member
+     */
     virtual void set_document(
             bsoncxx::builder::stream::document& document,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) = 0;
 
+    /**
+     * @brief Sets a bson array in this context.
+     *
+     * @param[in] array
+     *      The source bson array
+     * @param[in] member_info
+     *      Description of the array/sequence member
+     */
     virtual void set_array(
             bsoncxx::builder::stream::array& array,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) = 0;
 
-
+    // @brief index of the member whose value is retrieved from the DynData object
     uint32_t member_index;
+    // @brief total number of members belonging to this complex member context.
     uint32_t member_count;
 };
 
+/**
+ * @brief Implementation of the ComplexMemberContext that chooses the proper setter
+ * specialization based on the destination document or array.
+ *
+ * The class provides a holder to a destination object instance that is either bson
+ * document or array, based on the specialization.
+ *
+ * @tparam DocOrArray
+ *      The type of the destination where members are set.
+ */
 template<typename DocOrArray>
-class TypedContext : public Context {
+class TypedComplexMemberContext : public ComplexMemberContext {
 public:
-    TypedContext(uint32_t the_member_count)
-            : Context(the_member_count)
+    /**
+     * @see  ComplexMemberContext(uint32_t)
+     */
+    TypedComplexMemberContext(uint32_t the_member_count)
+            : ComplexMemberContext(the_member_count)
     {
 
     }
 
+    /**
+     * @brief calls demultiplex_primitive_member
+     */
     void set_primitive(
             const dds::core::xtypes::DynamicData& data,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) override
@@ -211,6 +343,9 @@ public:
         demultiplex_primitive_member(data, member_info, doc_or_array);
     }
 
+    /**
+     * @brief calls element_setter<array>set()
+     */
     void set_array(
             bsoncxx::builder::stream::array& array,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) override
@@ -222,6 +357,9 @@ public:
                 doc_or_array);
     }
 
+    /***
+     * @brief calls element_setter<document>set()
+     */
     void set_document(
             bsoncxx::builder::stream::document& document,
             const rti::core::xtypes::DynamicDataMemberInfo& member_info) override
@@ -233,12 +371,22 @@ public:
                 doc_or_array);
     }
 
+    // @brief instance to the bson object destination
     DocOrArray doc_or_array;
 };
 
-typedef TypedContext<bsoncxx::builder::stream::document> DocumentContext;
+/**
+ * @brief Specializaiton of TypedComplexMemberContext for a bson document
+ */
+typedef TypedComplexMemberContext<bsoncxx::builder::stream::document> DocumentContext;
 
-class ArrayContext : public TypedContext<bsoncxx::builder::stream::array>
+/**
+ * @brief Specializaiton of TypedComplexMemberContext for a bson array.
+ *
+ * The class also adds additional state needed to properly set items within the destination
+ * array.
+ */
+class ArrayContext : public TypedComplexMemberContext<bsoncxx::builder::stream::array>
 {
 public:
 
@@ -247,7 +395,7 @@ public:
             std::vector<uint32_t> the_dimensions = {},
             uint32_t the_dimension_index = 0,
             uint32_t the_element_index = 1)
-            : TypedContext<bsoncxx::builder::stream::array>(the_member_index),
+            : TypedComplexMemberContext<bsoncxx::builder::stream::array>(the_member_index),
               dimensions(the_dimensions),
               dimension_index(the_dimension_index),
               element_index(the_element_index)
@@ -255,14 +403,34 @@ public:
         member_index = the_member_index;
     }
 
+    // @brief current dimension for which elements are set
     uint32_t dimension_index;
+    // @brief list of dimensions
     std::vector<uint32_t> dimensions;
+    // @brief index within the destination array where the element is set
     uint32_t element_index;
 };
 
+/***
+ * @brief Builds a document from the content of the specified DynamicData object.
+ *
+ * This is a recursive operation that traverses a DynamicData object using DFS approach.
+ * It automatically generates the appropriate complex member–either document or array–
+ * based on the type of each member.
+ *
+ * It is expected that the first call to this operation receives a DocumentContext
+ * and the top-level DynamicData object. Subsequent operations are self-made to build
+ * the full bson document.
+ *
+ * @param[in] context
+ *      Current complex member context
+ * @param[in] data
+ *      DynamicData object holding the content for the complex or array member. In
+ *      recursive calls, this will be a loaned member.
+ */
 inline
 void build_document(
-        Context& context,
+        ComplexMemberContext& context,
         DynamicData &data)
 {
     using rti::core::xtypes::LoanedDynamicData;
@@ -401,13 +569,34 @@ bsoncxx::document::value SampleConverter::to_document(
 
 /* --- SampleInfo --------------------------------------------------------------------*/
 
-
+/**
+ * @brief Helper to add a DDS info member to either a document or an array
+ *
+ * Template specializations are expected to have a single static set() operation
+ * to perform the insertion.
+ *
+ * @tparam InfoType
+ *      one of the valid DDS infrastructure types (e.g., Guid, InstanceHandle, Time_t, etc).
+ * @tparam DocOrArray
+ *      Either a bsoncxx::document or bsoncxx::array.
+ */
 template<typename InfoType, typename DocOrArray = bsoncxx::builder::stream::document>
 struct info_member_setter;
 
 
 template<typename DocOrArray>
 struct info_member_setter<dds::core::InstanceHandle, DocOrArray> {
+        /**
+         * @brief Sets the specified handle as an MD5 binary element into a destination
+         * document or array.
+         *
+         * @param[in] name
+         *      Name of the member. Can be empty for array destinations.
+         * @param[in] handle
+         *      InstanceHandle to be set
+         * @param[out] doc_or_array
+         *      Destination object
+         */
         static void set(
                 const std::string& name,
                 const dds::core::InstanceHandle& handle,
@@ -422,6 +611,17 @@ struct info_member_setter<dds::core::InstanceHandle, DocOrArray> {
 
 template<typename DocOrArray>
 struct info_member_setter<rti::core::Guid, DocOrArray> {
+    /**
+     * @brief Sets the specified guid as an MD5 binary element into a destination
+     * document or array.
+     *
+     * @param[in] name
+     *      Name of the member. Can be empty for array destinations.
+     * @param[in] guid
+     *      Guid to be set
+     * @param[out] doc_or_array
+     *      Destination object
+     */
     static void set(
             const std::string& name,
             const rti::core::Guid& guid,
@@ -437,6 +637,17 @@ struct info_member_setter<rti::core::Guid, DocOrArray> {
 
 template<typename DocOrArray>
 struct info_member_setter<rti::core::SequenceNumber, DocOrArray> {
+    /**
+     * @brief Sets the specified sequence number as a document element into a destination
+     * document or array.
+     *
+     * @param[in] name
+     *      Name of the member. Can be empty for array destinations.
+     * @param[in] sn
+     *      SequenceNumber to be set
+     * @param[out] doc_or_array
+     *      Destination object
+     */
     static void set(
             const std::string& name,
             const rti::core::SequenceNumber& sn,
@@ -452,6 +663,17 @@ struct info_member_setter<rti::core::SequenceNumber, DocOrArray> {
 
 template<typename DocOrArray>
 struct info_member_setter<dds::core::Time, DocOrArray> {
+    /**
+     * @brief Sets the specified time as a document element into a destination
+     * document or array.
+     *
+     * @param[in] name
+     *      Name of the member. Can be empty for array destinations.
+     * @param[in] time
+     *      Time to be set
+     * @param[out] doc_or_array
+     *      Destination object
+     */
     static void set(
             const std::string& name,
             const dds::core::Time& time,
@@ -478,7 +700,7 @@ bsoncxx::document::value SampleConverter::to_document(
     {                                                   \
         info_member_setter<TYPE>::set(                  \
                 #MEMBER,                                \
-                info->MEMBER(),                          \
+                info->MEMBER(),                         \
                 info_doc);                              \
     }
 

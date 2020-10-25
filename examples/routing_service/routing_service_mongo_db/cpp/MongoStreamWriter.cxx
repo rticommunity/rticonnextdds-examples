@@ -13,7 +13,6 @@
 
 #include <rti/core/Exception.hpp>
 #include <rti/topic/to_string.hpp>
-#include <mongocxx/client.hpp>
 #include <mongocxx/database.hpp>
 #include <mongocxx/collection.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
@@ -29,30 +28,13 @@ using namespace bsoncxx;
 MongoStreamWriter::MongoStreamWriter(
         MongoConnection& connection,
         const StreamInfo& stream_info,
-        const std::string& db_name,
         const PropertySet &)
         : connection_(connection),
-        db_name_(db_name),
         stream_name_(stream_info.stream_name())
 {
    
-};
-
-MongoStreamWriter::~MongoStreamWriter()
-{
-
-};
-
-mongocxx::database MongoStreamWriter::database()
-{
-    auto client = connection_.client_pool_.acquire();
-
-    return client->database(db_name_);
 }
 
-/*
- * --- Private Interface ------------------------------------------------------
- */
 
 /*
  * --- Adapter Interface ------------------------------------------------------
@@ -67,7 +49,7 @@ int MongoStreamWriter::write(
      * mongo pool and wait until a client is available.
      * We will keep the obtained client locked to write all the sample sequence
      */
-    mongocxx::collection db_collection = database()[stream_name_];
+    mongocxx::collection db_collection = connection_.database()[stream_name_];
 
     for (uint32_t i = 0; i < samples.size(); i++) {
 
