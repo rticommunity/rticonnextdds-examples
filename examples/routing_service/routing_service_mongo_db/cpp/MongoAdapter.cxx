@@ -9,7 +9,10 @@
  * not be liable for any incidental or consequential damages arising out of the
  * use or inability to use the software.
  */
+#include <memory>
 
+#include <rti/routing/Logger.hpp>
+#include <mongocxx/logger.hpp>
 #include "MongoAdapter.hpp"
 #include "MongoConnection.hpp"
 
@@ -17,9 +20,52 @@ using namespace rti::community::examples;
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 
+/**
+ * @brief Implementation of the MongoDB driver logger that redirects messages to the
+ * Connext logger.
+ */
+class MongoLogger : public mongocxx::logger
+{
+public:
+
+    void operator()(mongocxx::log_level level,
+            mongocxx::stdx::string_view domain,
+            mongocxx::stdx::string_view message) noexcept override final
+    {
+        using mongocxx::log_level;
+
+        switch(level) {
+        case log_level::k_debug:
+        case log_level::k_trace:
+            rti::routing::Logger::instance().debug(
+                    domain.to_string() + ":" + message.to_string());
+            break;
+
+        case log_level::k_info:
+            rti::routing::Logger::instance().remote(
+                    domain.to_string() + ":" + message.to_string());
+            break;
+
+        case log_level::k_message:
+            rti::routing::Logger::instance().local(
+                    domain.to_string() + ":" + message.to_string());
+            break;
+
+        case log_level::k_warning:
+            rti::routing::Logger::instance().warn(
+                    domain.to_string() + ":" + message.to_string());
+            break;
+
+        default:
+            rti::routing::Logger::instance().error(
+                    domain.to_string() + ":" + message.to_string());
+            break;
+        }
+    }
+};
 
 MongoAdapter::MongoAdapter(PropertySet&)
-    :instance_{}
+    :instance_(std::unique_ptr<MongoLogger>())
 {
 }
 
