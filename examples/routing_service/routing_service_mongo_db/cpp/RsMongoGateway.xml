@@ -6,7 +6,7 @@
         <value>
             <element>
                 <name>CLUSTER_ADDRESS</name>
-                <value>cluster0.uy7w6.mongodb.net</value>
+                <value>cluster0.8u6dg.mongodb.net</value>
             </element>
             <element>
                 <name>DB_NAME</name>
@@ -62,10 +62,12 @@
                     <dds_input participant="DdsDomain">
                         <allow_topic_name_filter>*</allow_topic_name_filter>
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
                     </dds_input>
                     <output connection="MongoConnection">
                         <allow_stream_name_filter>*</allow_stream_name_filter>
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
                     </output>
                 </auto_route>
             </session>

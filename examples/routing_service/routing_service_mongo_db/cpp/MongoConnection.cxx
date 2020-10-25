@@ -10,9 +10,6 @@
  * use or inability to use the software.
  */
 
-
-#include <mongocxx/client.hpp>
-
 #include "MongoConnection.hpp"
 #include "MongoStreamWriter.hpp"
 
@@ -47,13 +44,15 @@ MongoConnection::MongoConnection(
                 
 /* --- Private interface ---*/
 
-mongocxx::database MongoConnection::database()
+const std::string& MongoConnection::db_name() const
 {
-    auto client = client_pool_.acquire();
-
-    return client->database(db_name_);
+    return db_name_;
 }
 
+mongocxx::pool::entry MongoConnection::client()
+{
+    return client_pool_.acquire();
+}
 
 /* --- Adapter Interface --- */
 

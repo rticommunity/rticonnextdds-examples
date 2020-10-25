@@ -13,8 +13,10 @@
 
 #include <rti/core/Exception.hpp>
 #include <rti/topic/to_string.hpp>
+#include <rti/routing/Logger.hpp>
 #include <mongocxx/database.hpp>
 #include <mongocxx/collection.hpp>
+#include <mongocxx/client.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
 
 #include "MongoStreamWriter.hpp"
@@ -32,7 +34,8 @@ MongoStreamWriter::MongoStreamWriter(
         : connection_(connection),
         stream_name_(stream_info.stream_name())
 {
-   
+   rti::routing::Logger::instance().local(
+           "created StreamWriter for stream: " + stream_info.stream_name());
 }
 
 
@@ -49,7 +52,9 @@ int MongoStreamWriter::write(
      * mongo pool and wait until a client is available.
      * We will keep the obtained client locked to write all the sample sequence
      */
-    mongocxx::collection db_collection = connection_.database()[stream_name_];
+    auto client = connection_.client();
+    mongocxx::database database = client->database(connection_.db_name());
+    mongocxx::collection db_collection = database[stream_name_];
 
     for (uint32_t i = 0; i < samples.size(); i++) {
 

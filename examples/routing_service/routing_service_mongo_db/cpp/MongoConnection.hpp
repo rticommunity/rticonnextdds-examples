@@ -75,10 +75,12 @@ public:
     /*
      * --- Private Interface ------------------------------------------------------------
      */
+    const std::string& db_name() const;
+
+    mongocxx::pool::entry client();
+
 private:
     friend MongoStreamWriter;
-
-    mongocxx::database database();
 
 private:
     mongocxx::pool client_pool_;
