@@ -28,7 +28,7 @@ find_package(mongocxx REQUIRED)
 
 add_library(
     mongodbadapter
-        "${CMAKE_CURRENT_SOURCE_DIR}/DynamicDataConverter.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/SampleConverter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConfig.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
@@ -74,7 +74,7 @@ add_executable(
     mongotest
     "${CMAKE_BINARY_DIR}/ComplexType.cxx"
     "${CMAKE_BINARY_DIR}/ComplexTypePlugin.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/DynamicDataConverter.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/SampleConverter.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/MongoTest.cpp")
 
 target_link_libraries(

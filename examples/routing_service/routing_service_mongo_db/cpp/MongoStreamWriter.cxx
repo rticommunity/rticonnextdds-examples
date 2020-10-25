@@ -19,7 +19,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 
 #include "MongoStreamWriter.hpp"
-#include "DynamicDataConverter.hpp"
+#include "SampleConverter.hpp"
 
 using namespace rti::routing;
 using namespace rti::routing::adapter;
@@ -59,8 +59,8 @@ mongocxx::database MongoStreamWriter::database()
  */
 
 int MongoStreamWriter::write(
-        const std::vector<dds::core::xtypes::DynamicData *> &samples,
-        const std::vector<dds::sub::SampleInfo *> &infos)
+        const std::vector<dds::core::xtypes::DynamicData *>& samples,
+        const std::vector<dds::sub::SampleInfo *>& infos)
 {
     /*
      * This is a blocking operation: calling database() will query the
@@ -69,16 +69,25 @@ int MongoStreamWriter::write(
      */
     mongocxx::collection db_collection = database()[stream_name_];
 
-    builder::stream::document document_sample{};
-    document_sample
-            << "data"
-            << types::b_document{DynamicDataConverter::to_document(*samples[0])}
-            << "info" << builder::stream::open_document << builder::stream::close_document;
+    for (uint32_t i = 0; i < samples.size(); i++) {
 
-    db_collection.insert_one(
-            document_sample << builder::stream::finalize);
+        builder::stream::document document_sample{};
+        document_sample
+                << "data"
+                << types::b_document{
+                    SampleConverter::to_document(*samples[i])};
+        if (infos[i] != NULL) {
+            document_sample
+                    << "info"
+                    << types::b_document{
+                        SampleConverter::to_document(*infos[i])};
+        }
+
+        db_collection.insert_one(
+                document_sample << builder::stream::finalize);
+    }
             
-    return 0;
+    return samples.size();
 }
 
 
