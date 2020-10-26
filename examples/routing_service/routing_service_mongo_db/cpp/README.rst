@@ -164,8 +164,8 @@ Requirements
 
 To run this example you will need:
 
-- RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher.
+- RTI Connext Professional version 6.1.0 or higher.
+- CMake version 3.11 or higher.
 - A target platform with support for RTI Routing Service and C++11.
 - A running MongoDB cluster or local database
 - MongoDB C++ driver v3 installed in the build machine.
