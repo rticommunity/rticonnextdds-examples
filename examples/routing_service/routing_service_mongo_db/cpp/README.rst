@@ -7,9 +7,9 @@ Building
 In order to build this example, you need to provide the following variables to
 ``CMake``:
 
-- ``CONNEXTDDS_DIR``: path to the connext installation root folder
+- ``CONNEXTDDS_DIR``: path to the ``Connext`` installation root folder
 - ``CONNEXTDDS_ARCH``: target architecture
-- ``MONGODB_DIR``: path to the mongodbcxx installation root folder
+- ``MONGODB_DIR``: path to the ``mongodbcxx`` installation root folder
 
 .. code::
 
@@ -57,21 +57,19 @@ that you can reuse to run this example:
 - user and pass: ``rti_example:adapter``
 
 This example can work with any DDS topic and we will use RTI Shapes Demo, shipped with
-*RTI Connext DDS* installer bundle. We provide a single ``RoutingService``
+*RTI Connext Professional* installer bundle. We provide a single ``RoutingService``
 configuration that defines entities to forward incoming DDS traffic from any Topic
 to a configurable MongoDB database.
 
 
-
 For reusability of the configuration, we define the following XML configuration variables:
 
-- ``CLUSTER_ADDRESS``: cluster address where the MongoDB instance runs. The default value
-  points to the pre-onfigured public cluster.
+- ``CLUSTER_ADDRESS``: address where the MongoDB instance runs. The default value
+  points to the pre-configured public cluster.
 - ``DB_NAME``: name of the database. The default value points to the default database in
   the preconfigured cluster.
 - ``USER_AND_PASS``: user name and password, specified as ``<user>:<pass>``. No default
-  value provided in XML, so you must provide it via command-line (or through the equivalent
-  method if using the Service API.
+  value provided in XML, so you must always provide it.
 
 To run Routing Service, you will need first to set up your environment as follows:
 
@@ -90,9 +88,9 @@ And then you can run the following command, providing the domain ID of your choi
             -DUSER_AND_PASS=rti_example:adapter
             -domainId=<your_domain>
 
-You can then run `ShapesDemo` on the selected domain and publish ``Squares``,
-``Circles``, and ``Triangles``. You can start `ShapesDemo` from the command line
-and select the domain and publication rate to one second as follows:
+Run `ShapesDemo` on the selected domain and publish ``Squares``, ``Circles``, and
+``Triangles``. You can start `ShapesDemo` from the command line and select the domain and
+publication rate to one second as follows:
 
 .. code::
 
@@ -104,10 +102,9 @@ You can then connect to the ``MongoDB`` using the shell:
 
     mongo "mongodb+srv://cluster0.8u6dg.mongodb.net/<dbname>" --username rti_example
 
-You will then be prompted to introduce the user password (above mentioned). The you
-can inspect the items that have been created. You can run the following commands
+You will be prompted to introduce the user password (above mentioned). Within the shell,
+can inspect the items that have been created. For example, run the following commands
 to select the database, see the collections (Topics), and documents inserted:
-
 
 .. code::
 
