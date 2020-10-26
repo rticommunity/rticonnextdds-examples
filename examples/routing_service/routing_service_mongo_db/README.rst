@@ -8,9 +8,9 @@ This example leverages the `RTI Routing Service Adapter SDK` to integrate DDS wi
 `MongoDB`. It shows to how to build an adapter the uses the MongoDB C++ Driver to
 perform operations in a running instance of a MongoDB database.
 
-.. raw:: html
-
-    <p style="text-align:center;"><img src="images/RouterMongoDBExample.svg" height="500px"></p>
+.. figure:: images/RouterMongoDBExample.svg
+    :figwidth: 60 %
+    :align: center
 
 This example assumes that you are familiar with both `Routing Service` and `MongoDB`.
 You can find the reference documentation for both these products following the links
