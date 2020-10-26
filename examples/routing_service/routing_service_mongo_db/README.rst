@@ -10,7 +10,7 @@ perform operations in a running instance of a MongoDB database.
 
 .. raw:: html
 
-    <img src="images/RouterMongoDBExample.svg" height="400px">
+    <img src="images/RouterMongoDBExample.svg" height="400px" class="center">
 
 This example assumes that you are familiar with both `Routing Service` and `MongoDB`.
 You can find the reference documentation for both these products following the links
