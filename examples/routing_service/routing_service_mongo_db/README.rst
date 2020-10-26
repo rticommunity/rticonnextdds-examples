@@ -9,9 +9,7 @@ This example leverages the `RTI Routing Service Adapter SDK` to integrate DDS wi
 perform operations in a running instance of a MongoDB database.
 
 .. figure:: images/RouterMongoDBExample.svg
-    :figwidth: 100 %
-
-    MongoDB adapter integration concept
+    :figwidth: 70 %
 
 This example assumes that you are familiar with both `Routing Service` and `MongoDB`.
 You can find the reference documentation for both these products following the links
@@ -29,6 +27,7 @@ The example provides two main components:
 
 - A `RoutingService` adapter library that links with the ``MongoDB`` C++ driver library
   (``mongocxx``).
+
 - A `RoutingService` configuration that instantiates this example adapter and a DDS
   participant, and establishes an automatic route to integrate usert `Topic` data with
   a ``MongoDB`` database.
@@ -42,10 +41,18 @@ DDS Mapping
 
 The mapping between DDS and MongoDB select in this example consists of the following
 items:
-- A DDS `domain` maps into a single database. Domain in this context does not reflect
-  a single domain ID but instead a cohesive system domain, which may be comprised of
-  one or more domain IDs,
-- A DDS `Topic` maps
+
+- A DDS `domain` maps into a single `Database`, whose name is arbitrary and user provided.
+  Domain in this context does not reflect a single domain ID but instead a cohesive
+  system domain, which may be comprised of one or more domain IDs.
+
+- A DDS `Topic` maps into a single database `Collection`, whose name is the actual
+  name of the `Topic`.
+
+- `Topic` samples map into individual `Document` objects. An object for a sample always
+  contains two top-level members: a ``data`` item that contains the user data (whose
+  content depends on the actual user-defined type) and an ``info`` item that contains the
+  associated metadata (``SampleInfo``).
 
 Adapter Architecture
 --------------------
@@ -60,6 +67,9 @@ require performing the following operations:
 With these operations in mind and considering some of the restrictions integrating the
 driver in the application–such as the threading model-, we propose the following model
 for the adapter:
+
+.. figure:: images/RouterMongoDBAdapterClass.svg
+    :figwidth: 70 %
 
 - ``AdaterPlugin``: keeps a reference to the ``mongocxx::instance``, which is the
   singleton unit for the driver. It is hence equivalent to the plugin instance, which
