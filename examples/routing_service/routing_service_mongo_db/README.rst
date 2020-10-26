@@ -1,4 +1,4 @@
-#Example Code: MongoDB Adapter
+Example Code: MongoDB Adapter
 ==============================
 
 Concept
@@ -9,7 +9,7 @@ This example leverages the `RTI Routing Service Adapter SDK` to integrate DDS wi
 perform operations in a running instance of a MongoDB database.
 
 .. figure:: images/RouterMongoDBExample.svg
-    :figwidth: 70 %
+    :figwidth: 50 %
 
 This example assumes that you are familiar with both `Routing Service` and `MongoDB`.
 You can find the reference documentation for both these products following the links
