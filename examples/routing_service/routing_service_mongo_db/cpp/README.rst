@@ -111,11 +111,16 @@ to select the database, see the collections (Topics), and documents inserted:
 
 .. code::
 
+    # Select database
     MongoDB Enterprise atlas-bo2ggf-shard-0:PRIMARY> use dds_space
+
+    # List current collections
     MongoDB Enterprise atlas-bo2ggf-shard-0:PRIMARY> show collections
     Circle
     Square
     Triangle
+
+    # Display all data in a collection
     MongoDB Enterprise atlas-bo2ggf-shard-0:PRIMARY> db.Square.find({}).pretty()
     {
 	"_id" : ObjectId("5f95fc093c475a08726ab5b5"),
@@ -163,4 +168,5 @@ To run this example you will need:
 - CMake version 3.10 or higher.
 - A target platform with support for RTI Routing Service and C++11.
 - A running MongoDB cluster or local database
+- MongoDB C++ driver v3 installed in the build machine.
 - MongoDB shell.
