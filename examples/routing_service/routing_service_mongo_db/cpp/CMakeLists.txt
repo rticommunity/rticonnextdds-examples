@@ -32,7 +32,7 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConfig.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx")
+        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx" MongoStreamReader.cpp MongoStreamReader.hpp)
 
 # Set target properties for lang requirement output library name
 set_target_properties(mongodbadapter
@@ -68,7 +68,7 @@ configure_file(
 )
 
 
-#
+
 #add_executable(
 #    mongotest
 #    "${CMAKE_BINARY_DIR}/ComplexType.cxx"
@@ -81,6 +81,7 @@ configure_file(
 #    mongo::mongocxx_shared
 #    mongo::bsoncxx_shared
 #    RTIConnextDDS::cpp2_api
+#    RTIConnextDDS::routing_service
 #    ${CONNEXTDDS_EXTERNAL_LIBS}
 #)
 #

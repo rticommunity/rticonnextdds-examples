@@ -14,7 +14,6 @@
 #define MONGO_STREAMWRITER_HPP
 
 #include <iostream>
-#include <fstream>
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamWriter.hpp>

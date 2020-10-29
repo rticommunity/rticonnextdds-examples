@@ -68,10 +68,18 @@ public:
     rti::routing::adapter::StreamWriter *create_stream_writer(
             rti::routing::adapter::Session *session,
             const rti::routing::StreamInfo &info,
-            const rti::routing::PropertySet &properties) final;
+            const rti::routing::PropertySet &properties) override final;
 
     void delete_stream_writer(rti::routing::adapter::StreamWriter *writer) override final;
 
+
+    rti::routing::adapter::StreamReader *create_stream_reader(
+            rti::routing::adapter::Session *session,
+            const rti::routing::StreamInfo &info,
+            const rti::routing::PropertySet &properties,
+            rti::routing::adapter::StreamReaderListener *listener) override final;
+
+    void delete_stream_reader(rti::routing::adapter::StreamReader *reader) override final;
     /*
      * --- Private Interface ------------------------------------------------------------
      */

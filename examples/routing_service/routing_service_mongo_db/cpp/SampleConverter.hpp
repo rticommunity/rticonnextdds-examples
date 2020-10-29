@@ -53,12 +53,28 @@ public:
      * - InstanceHandle -> bsoncxx::binary (md5)
      * - GUID -> bsoncxx::binary (md5)
      * - Sequence Number -> {high:int32, low:int64}
-     * - Time_t -> {sec:int32, low:int64}
+     * - Time_t -> Date
      *
      * Only a subset of fields are currently converted.
      */
     static bsoncxx::document::value to_document(
             const dds::sub::SampleInfo& info);
+
+    /**
+     * @brief Converts a bson Document into a DynamicData object.
+     *
+     * It expected that the DynamiData object has a type compatible with the Document,
+     * that is, it's either a subset or superset of the document.
+     *
+     * This operation attempts to set members existing in the input document into
+     * members in DynamicData that are present.
+     *
+     * @param data destination typed DynamicData
+     * @param document input document
+     */
+     static dds::core::xtypes::DynamicData & from_document(
+             dds::core::xtypes::DynamicData& data,
+             bsoncxx::document::view document);
 
 private:
     SampleConverter();

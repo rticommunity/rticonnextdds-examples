@@ -12,6 +12,10 @@
                 <name>DB_NAME</name>
                 <value>dds_space</value>
             </element>
+            <element>
+                <name>URI_PARAMS</name>
+                <value>retryWrites=true&amp;w=majority&amp;waitqueuetimeoutms=10000</value>
+            </element>
         </value>
     </configuration_variables>
 
@@ -35,6 +39,10 @@
                         <element>
                             <name>mongo.db_name</name>
                             <value>$(DB_NAME)</value>
+                        </element>
+                        <element>
+                            <name>mongo.uri_params</name>
+                            <value>$(URI_PARAMS)</value>
                         </element>
                         <!--
                              For security, this value shall provided through the
@@ -69,6 +77,78 @@
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <deny_stream_name_filter>rti/*</deny_stream_name_filter>
                     </output>
+                </auto_route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+
+    <routing_service name="MongoGatewayEcho">
+        <domain_route name="DdsMongo">
+            <!-- Define a single MongoDB connection to a specific cluster and database -->
+            <connection name="MongoConnection" plugin_name="AdapterLib::MongoAdapter">
+                <property>
+                    <value>
+                        <element>
+                            <name>mongo.cluster_address</name>
+                            <value>$(CLUSTER_ADDRESS)</value>
+                        </element>
+                        <element>
+                            <name>mongo.db_name</name>
+                            <value>$(DB_NAME)</value>
+                        </element>
+                        <!--
+                             For security, this value shall provided through the
+                             command-line -D option.
+                        -->
+                        <element>
+                            <name>mongo.user_and_pass</name>
+                            <value>$(USER_AND_PASS)</value>
+                        </element>
+                    </value>
+                </property>
+            </connection>
+
+            <participant name="DdsInput">
+                <domain_id>0</domain_id>
+            </participant>
+
+            <participant name="DdsOutput">
+                <domain_id>1</domain_id>
+            </participant>
+            <session>
+                <!-- Use a several address to serve all the Topcs -->
+                <thread_pool>
+                    <size>4</size>
+                </thread_pool>
+                <!-- Establish a simple DDS Topic -> MongoDB Collection mapping -->
+                <auto_route>
+                    <dds_input participant="DdsInput">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </dds_input>
+                    <output connection="MongoConnection">
+                        <allow_stream_name_filter>*</allow_stream_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
+                    </output>
+                </auto_route>
+                <auto_route>
+                    <periodic_action>
+                        <sec>0</sec>
+                        <nanosec>100000000</nanosec>
+                    </periodic_action>
+                    <input connection="MongoConnection">
+                        <allow_stream_name_filter>*</allow_stream_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
+                    </input>
+                    <dds_output participant="DdsOutput">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </dds_output>
                 </auto_route>
             </session>
         </domain_route>

@@ -12,6 +12,7 @@
 
 #include "MongoConnection.hpp"
 #include "MongoStreamWriter.hpp"
+#include "MongoStreamReader.hpp"
 
 using namespace rti::community::examples;
 using namespace rti::routing;
@@ -58,7 +59,7 @@ mongocxx::pool::entry MongoConnection::client()
 
 
 StreamWriter *MongoConnection::create_stream_writer(
-        Session *session,
+        Session *,
         const StreamInfo &stream_info,
         const PropertySet &properties)
 {
@@ -71,4 +72,21 @@ StreamWriter *MongoConnection::create_stream_writer(
 void MongoConnection::delete_stream_writer(StreamWriter *writer)
 {
     delete writer;
+}
+
+rti::routing::adapter::StreamReader *MongoConnection::create_stream_reader(
+        rti::routing::adapter::Session *,
+        const StreamInfo& stream_info,
+        const PropertySet& properties,
+        rti::routing::adapter::StreamReaderListener *)
+{
+    return new MongoStreamReader(
+            *this,
+            stream_info,
+            properties);
+}
+
+void MongoConnection::delete_stream_reader(rti::routing::adapter::StreamReader *reader)
+{
+    delete reader;
 }
