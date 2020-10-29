@@ -256,7 +256,7 @@ struct element_setter<ElementType, bsoncxx::builder::stream::document> {
  * to keep track of the nesting level of a member and perform the proper operation to
  * add the member into an output bson document and array.
  */
-class ComplexElementSetContext {
+class ToBsonContext {
 public:
 
     /**
@@ -264,7 +264,7 @@ public:
      * The underlying _member_index_ is set to 1, the minimum valid index for a DynamicData
      * member.
      */
-    ComplexElementSetContext(uint32_t the_member_count)
+    ToBsonContext(uint32_t the_member_count)
             : member_index(1),
               member_count(the_member_count)
     {}
@@ -312,7 +312,7 @@ public:
 };
 
 /**
- * @brief Implementation of the ComplexElementSetContext that chooses the proper setter
+ * @brief Implementation of the ToBsonContext that chooses the proper setter
  * specialization based on the destination document or array.
  *
  * The class provides a holder to a destination object instance that is either bson
@@ -322,13 +322,13 @@ public:
  *      The type of the destination where members are set.
  */
 template<typename DocOrArray>
-class TypedComplexElementSetContext : public ComplexElementSetContext {
+class ToBsonTypedContext : public ToBsonContext {
 public:
     /**
-     * @see  ComplexElementSetContext(uint32_t)
+     * @see  ToBsonContext(uint32_t)
      */
-    TypedComplexElementSetContext(uint32_t the_member_count)
-            : ComplexElementSetContext(the_member_count)
+    ToBsonTypedContext(uint32_t the_member_count)
+            : ToBsonContext(the_member_count)
     {
 
     }
@@ -376,26 +376,26 @@ public:
 };
 
 /**
- * @brief Specialization of TypedComplexElementSetContext for a bson document
+ * @brief Specialization of ToBsonTypedContext for a bson document
  */
-typedef TypedComplexElementSetContext<bsoncxx::builder::stream::document> DocumentSetContext;
+typedef ToBsonTypedContext<bsoncxx::builder::stream::document> ToDocumentContext;
 
 /**
- * @brief Specialization of TypedComplexElementSetContext for a bson array.
+ * @brief Specialization of ToBsonTypedContext for a bson array.
  *
  * The class also adds additional state needed to properly set items within the destination
  * array.
  */
-class ArraySetContext : public TypedComplexElementSetContext<bsoncxx::builder::stream::array>
+class ToArrayContext : public ToBsonTypedContext<bsoncxx::builder::stream::array>
 {
 public:
 
-    ArraySetContext(
+    ToArrayContext(
             uint32_t the_member_index = 1,
             std::vector<uint32_t> the_dimensions = {},
             uint32_t the_dimension_index = 0,
             uint32_t the_element_index = 1)
-            : TypedComplexElementSetContext<bsoncxx::builder::stream::array>(the_member_index),
+            : ToBsonTypedContext<bsoncxx::builder::stream::array>(the_member_index),
               dimensions(the_dimensions),
               dimension_index(the_dimension_index),
               element_index(the_element_index)
@@ -418,7 +418,7 @@ public:
  * It automatically generates the appropriate complex member–either document or array–
  * based on the type of each member.
  *
- * It is expected that the first call to this operation receives a DocumentSetContext
+ * It is expected that the first call to this operation receives a ToDocumentContext
  * and the top-level DynamicData object. Subsequent operations are self-made to build
  * the full bson document.
  *
@@ -430,7 +430,7 @@ public:
  */
 inline
 void build_document(
-        ComplexElementSetContext& context,
+        ToBsonContext& context,
         DynamicData &data)
 {
     using rti::core::xtypes::LoanedDynamicData;
@@ -444,9 +444,9 @@ void build_document(
     }
 
     // Handle sub-array state
-    if (typeid(context) == typeid(ArraySetContext)) {
-        ArraySetContext& as_array_context =
-                static_cast<ArraySetContext&>(context);
+    if (typeid(context) == typeid(ToArrayContext)) {
+        ToArrayContext& as_array_context =
+                static_cast<ToArrayContext&>(context);
         if (as_array_context.dimension_index <
                 as_array_context.dimensions.size()) {
             uint32_t current_dimension = as_array_context.dimension_index;
@@ -457,7 +457,7 @@ void build_document(
                  ++i) {
                 if (as_array_context.dimension_index
                         < as_array_context.dimensions.size() - 1) {
-                    ArraySetContext nested_context(
+                    ToArrayContext nested_context(
                             as_array_context.element_index,
                             as_array_context.dimensions,
                             as_array_context.dimension_index + 1,
@@ -496,7 +496,7 @@ void build_document(
 
         LoanedDynamicData loaned_member =
                 data.loan_value(member_info.member_index());
-        DocumentSetContext nested_context(
+        ToDocumentContext nested_context(
                 loaned_member.get().member_count());
         build_document(nested_context,loaned_member.get());
         context.set_document(
@@ -512,7 +512,7 @@ void build_document(
                 data.loan_value(member_info.member_name());
         // Sequences can have too many elements for a recursive approach, hence
         // we iterate on the elements to avoid stack overflow
-        ArraySetContext nested_context(1);
+        ToArrayContext nested_context(1);
         for (uint32_t i = 0; i < member_info.element_count(); ++i) {
             // Set member_count to allow only one recursion
             nested_context.member_count = i;
@@ -537,7 +537,7 @@ void build_document(
             dimensions[j] = array_type.dimension(j);
         }
 
-        ArraySetContext nested_context(1, dimensions);
+        ToArrayContext nested_context(1, dimensions);
         build_document(nested_context, loaned_array.get());
         context.set_array(
                 nested_context.doc_or_array,
@@ -560,7 +560,7 @@ bsoncxx::document::value SampleConverter::to_document(
 {
     dds::core::xtypes::DynamicData& casted_data =
             const_cast<dds::core::xtypes::DynamicData&>(data);
-    DocumentSetContext context(data.member_count());
+    ToDocumentContext context(data.member_count());
     build_document(context,casted_data);
 
     return (context.doc_or_array << builder::stream::finalize);
@@ -734,8 +734,29 @@ bsoncxx::document::value SampleConverter::to_document(
 /*
  * -- From MongoDB to DDS conversion ----------------------------------------------------
  */
+
+
+/* --- DynamicData --------------------------------------------------------------------*/
+
+/**
+ * @brief Helper obtain the primitive value from a Cursor iterator, either array or
+ * document.
+ *
+ * Template specializations are expected to have a single static get() operation
+ * to obtain the value
+ *
+ * @tparam Primitive
+ *      one of the valid element primitive types. Default behavior assumes the element
+ *      value is an int32_t.
+ * @tparam ItType
+ *      Either a document::view::iterator or  array::view::iterator.
+ */
 template<typename Primitive, typename ItType>
 struct cursor_get {
+    /**
+     * @brief Returns the element value to which the iterator pints.
+     * @param it Iterator positioned to the element whose value is returned
+     */
     static Primitive get(ItType it)
     {
         return static_cast<Primitive>(it->get_int32());
@@ -744,15 +765,13 @@ struct cursor_get {
 
 
 template<typename ItType>
-struct cursor_get<int32_t, ItType> {
-    static int32_t get(ItType it)
-    {
-        return it->get_int32().value;
-    }
-};
-
-template<typename ItType>
 struct cursor_get<int64_t, ItType> {
+    /**
+     * @brief Returns the value of an element that holds an 64-bit integer from its
+     * positioned iterator.
+     *
+     * @param it Iterator positioned to the element whose value is returned
+     */
     static int64_t get(ItType it)
     {
         return it->get_int64().value;
@@ -761,6 +780,12 @@ struct cursor_get<int64_t, ItType> {
 
 template<typename ItType>
 struct cursor_get<std::string, ItType> {
+    /**
+    * @brief Returns the value of an element that holds a string from its
+    * positioned iterator.
+    *
+    * @param it Iterator positioned to the element whose value is returned
+    */
     static std::string get(ItType it)
     {
         return it->get_utf8().value.to_string();
@@ -769,6 +794,12 @@ struct cursor_get<std::string, ItType> {
 
 template<typename ItType>
 struct cursor_get<float, ItType> {
+    /**
+    * @brief Returns the value of an element that holds a float from its
+    * positioned iterator.
+    *
+    * @param it Iterator positioned to the element whose value is returned
+    */
     static float get(ItType it)
     {
         return static_cast<float>(it->get_double());
@@ -777,6 +808,12 @@ struct cursor_get<float, ItType> {
 
 template<typename ItType>
 struct cursor_get<double, ItType> {
+    /**
+    * @brief Returns the value of an element that holds a double from its
+    * positioned iterator.
+    *
+    * @param it Iterator positioned to the element whose value is returned
+    */
     static double get(ItType it)
     {
         return it->get_double();
@@ -785,12 +822,32 @@ struct cursor_get<double, ItType> {
 
 template<typename ItType>
 struct cursor_get<DDS_Boolean, ItType> {
+    /**
+    * @brief Returns the value of an element that holds a bolean from its
+    * positioned iterator.
+    *
+    * @param it Iterator positioned to the element whose value is returned
+    */
     static DDS_Boolean get(ItType it)
     {
         return static_cast<DDS_Boolean>(it->get_bool());
     }
 };
 
+/**
+ * @brief Helper function to set a primitive member in a DynamicData object, provided
+ * a document or array positioned iterator
+ * @tparam Primitive
+ *      Primitive type
+ * @tparam ItType
+ *      Iterator type (document or array it)
+ * @param data
+ *      Destination DynamicData object
+ * @param member_info
+ *      Information of the destination member within _data_
+ * @param it
+ *      Iterator positioned
+ */
 template<typename Primitive, typename ItType>
 void from_primitive_element(
         dds::core::xtypes::DynamicData& data,
@@ -800,8 +857,21 @@ void from_primitive_element(
     data.value(member_info.member_index(), cursor_get<Primitive, ItType>::get(it));
 }
 
+/**
+ * @brief Helper function that selects the proper cursor getter function based on the
+ * type of the destination DynamicData member
+
+ * @tparam ItType
+ *      Iterator type (document or array it)
+ * @param data
+ *      Destination DynamicData object
+ * @param member_info
+ *      Information of the destination member within _data_
+ * @param it
+ *      Iterator positioned
+ */
 template<typename ItType>
-void from_primitive_element(
+void demultiplex_primitive_element(
         dds::core::xtypes::DynamicData& data,
         const rti::core::xtypes::DynamicDataMemberInfo& member_info,
         ItType it)
@@ -873,11 +943,30 @@ void from_primitive_element(
     table_it->second(data, member_info, it);
 }
 
+
+/**
+ * @brief Helper obtain the associated member info from an array or document element,
+ * represnted by a positioned iterator.
+ *
+ * Template specializations are expected to have a single static get() operation
+ * to obtain the member info
+ *
+ * @tparam DocOrArray
+ *      Either a document::view or  array::view.
+ */
 template<typename DocOrArray>
 struct member_info_from_element;
 
 template<>
 struct member_info_from_element<document::view> {
+    /**
+     * @brief Returns the member info for an iterator belonging to a document element.
+     *
+     * @param data
+     *      associated DynamicData object
+     * @param it
+     *      iterator positioned
+     */
     rti::core::xtypes::DynamicDataMemberInfo get(
             dds::core::xtypes::DynamicData& data,
             document::view::const_iterator& it)
@@ -888,6 +977,14 @@ struct member_info_from_element<document::view> {
 
 template<>
 struct member_info_from_element<array::view> {
+    /**
+     * @brief Returns the member info for an iterator belonging to an array element.
+     *
+     * @param data
+     *      associated DynamicData object
+     * @param it
+     *      iterator positioned
+     */
     rti::core::xtypes::DynamicDataMemberInfo get(
             dds::core::xtypes::DynamicData& data,
             array::view::const_iterator& it)
@@ -896,7 +993,10 @@ struct member_info_from_element<array::view> {
     }
 };
 
-
+/**
+ * @brief Represents of the context used to set a DynamicData element given a Document
+ * or Array element.
+*/
 class FromBsonContext {
 public:
     virtual rti::core::xtypes::DynamicDataMemberInfo member_info(
@@ -916,10 +1016,10 @@ public:
 };
 
 template<typename DocOrArray>
-class TypedFromBsonContext : public FromBsonContext {
+class FromBsonTypedContext : public FromBsonContext {
 public:
 
-    TypedFromBsonContext(
+    FromBsonTypedContext(
             DocOrArray the_doc_or_array,
             int32_t the_element_index = 1)
             :doc_or_array(the_doc_or_array),
@@ -940,7 +1040,7 @@ public:
 
     void from_primitive(dds::core::xtypes::DynamicData& data) override
     {
-        from_primitive_element(data, member_info(data), it);
+        demultiplex_primitive_element(data, member_info(data), it);
     }
 
     enum type type() override
@@ -963,10 +1063,10 @@ public:
     int32_t element_index;
 };
 
-class DocumentFromContext : public TypedFromBsonContext<document::view>{
+class FromDocumentContext : public FromBsonTypedContext<document::view>{
 public:
-    DocumentFromContext(document::view document)
-            : TypedFromBsonContext<document::view>(document)
+    FromDocumentContext(document::view document)
+            : FromBsonTypedContext<document::view>(document)
     {}
 
     rti::core::xtypes::DynamicDataMemberInfo member_info(
@@ -976,24 +1076,24 @@ public:
     }
 };
 
-class ArrayFromContext : public TypedFromBsonContext<array::view>{
+class FromArrayContext : public FromBsonTypedContext<array::view>{
 public:
-    ArrayFromContext(
+    FromArrayContext(
             array::view array,
             int32_t the_element_index = 1)
-            : TypedFromBsonContext<array::view>(array, the_element_index),
+            : FromBsonTypedContext<array::view>(array, the_element_index),
               is_new_context(true),
               finished(false)
     {}
 
     bool end() override
     {
-        return TypedFromBsonContext<array::view>::end() || finished;
+        return FromBsonTypedContext<array::view>::end() || finished;
     }
 
     void operator++() override
     {
-        TypedFromBsonContext<array::view>::operator++();
+        FromBsonTypedContext<array::view>::operator++();
         finished = true;
     }
 
@@ -1007,7 +1107,24 @@ public:
     bool finished;
 };
 
-void populate_dynamic_data_member(
+/***
+ * @brief Builds a DynamicData object from the content of the specified bson object.
+ *
+ * This is a recursive operation that traverses a bson document/array using DFS approach.
+ * It automatically sets the appropriate member based on the type of each element.
+ *
+ * It is expected that the first call to this operation receives a FromDocumentContext
+ * and the top-level DynamicData object. Subsequent operations are self-made to
+ * populate the DynamicData object.
+ *
+ *
+ * @param[in] data
+ *      DynamicData object destination the content for the current element context. In
+ *      recursive calls, this will be a loaned member.
+ * @param[in] context
+ *      Current from-element context
+ */
+void build_dynamic_data(
         dds::core::xtypes::DynamicData& data,
         FromBsonContext& context)
 {
@@ -1025,22 +1142,22 @@ void populate_dynamic_data_member(
         // has a nested element structure whereas DynamicData is all represented in a single
         // multidimensional array. Hence, we need to create ArrayContext for each array
         // element while using the same DynamicData loaned array member.
-        if (typeid(context) == typeid(ArrayFromContext)) {
-            auto& array_context = dynamic_cast<ArrayFromContext&>(context);
+        if (typeid(context) == typeid(FromArrayContext)) {
+            auto& array_context = dynamic_cast<FromArrayContext&>(context);
             if (array_context.is_new_context) {
                 array_context.is_new_context = false;
                 // iteratively set each member, to avoid stack overlow on big sequences/arrays
                 while (!context.end()) {
                     if (context.type() == type::k_array) {
                         // need to set an array and start a new context
-                        ArrayFromContext nested_context(
+                        FromArrayContext nested_context(
                                 context.array(),
                                 array_context.element_index);
-                        populate_dynamic_data_member(data, nested_context);
+                        build_dynamic_data(data, nested_context);
                         array_context.element_index = nested_context.element_index - 1;
                         ++array_context;
                     } else  {
-                        populate_dynamic_data_member(data, array_context);
+                        build_dynamic_data(data, array_context);
                     }
                     // reset the context, so it can move to the next available item
                     array_context.finished = false;
@@ -1055,8 +1172,8 @@ void populate_dynamic_data_member(
         case TypeKind::STRUCTURE_TYPE: {
             // need to set a complex member and start a new context
             LoanedDynamicData loaned_member = data.loan_value(member_info.member_index());
-            DocumentFromContext nested_context(context.document());
-            populate_dynamic_data_member(loaned_member.get(), nested_context);
+            FromDocumentContext nested_context(context.document());
+            build_dynamic_data(loaned_member.get(), nested_context);
         }
             break;
 
@@ -1064,8 +1181,8 @@ void populate_dynamic_data_member(
         case TypeKind::ARRAY_TYPE: {
             // need to set an array and start a new context
             LoanedDynamicData loaned_member = data.loan_value(member_info.member_index());
-            ArrayFromContext nested_context(context.array());
-            populate_dynamic_data_member(loaned_member.get(), nested_context);
+            FromArrayContext nested_context(context.array());
+            build_dynamic_data(loaned_member.get(), nested_context);
         }
             break;
 
@@ -1081,14 +1198,14 @@ void populate_dynamic_data_member(
 
     // move to the next
     ++context;
-    populate_dynamic_data_member(data, context);
+    build_dynamic_data(data, context);
 }
 
 dds::core::xtypes::DynamicData& SampleConverter::from_document(
         dds::core::xtypes::DynamicData& data,
         const document::view document)
 {
-    DocumentFromContext context(document);
-    populate_dynamic_data_member(data, context);
+    FromDocumentContext context(document);
+    build_dynamic_data(data, context);
     return data;
 }

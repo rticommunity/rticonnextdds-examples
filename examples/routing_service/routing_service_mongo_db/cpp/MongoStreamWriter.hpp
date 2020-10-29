@@ -22,16 +22,16 @@
 
 namespace rti { namespace community { namespace examples {
 
-/***
+/**
  * @brief Implementation of the adapter StreamWriter to write DDS samples as MongoDB
  *        objects.
  *
- * This class is responsible for inserting DDS samples into a MongoDB database as
+ * This class is responsible for inserting samples into a MongoDB database as
  * as part of a collection identified by the associated stream name. This class
- * is responsible for converting a DDS sample (represented as DynamicData:SampleInfo)
- * into a mongocxx::document.
+ * is responsible for converting a stream sample (represented as a pair
+ * [DynamicData,SampleInfo]) into a mongocxx::document.
  *
- * To perform database insertions, this class obtains a handle to the database through
+ * To perform database insertions, this class obtains a client handle through
  * the parent factory MongoConnection, which is provided on object construction.
  */
 class MongoStreamWriter : public rti::routing::adapter::DynamicDataStreamWriter {
@@ -55,7 +55,7 @@ public:
             const rti::routing::PropertySet &properties);
 
     /*
-     * --- Connection interface ---------------------------------------------------------
+     * --- StreamWriter interface ---------------------------------------------------------
      */
     /**
      * @brief Performs the insertion of DDS samples into MongoDB.
