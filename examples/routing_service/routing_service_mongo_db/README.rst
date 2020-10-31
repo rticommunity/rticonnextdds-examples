@@ -82,6 +82,14 @@ for the adapter:
   and insert `Document` objects in the write operation. The ``StreamWriter`` uses the
   ``SampleConverter`` helper functions to convert ``DynamicData`` and ``Info`` samples
   to ``MongoDB`` objects.
+- ``StreamReader``: uses the parent ``Connection`` to obtain a client database handle
+  and read ``Document`` objects in the read operation. The ``StreamReader`` uses the
+  ``SampleConverter`` helper functions to convert ``MongoDB`` document objects into
+  ``DynamicData``. ``Info`` samples are not converted and it relies on the output
+  adapter to generate the proper metadata based on the provided data. An important
+  detail to consider is that the ``StreamReader`` does not provide asynchronous event
+  notifications of data arrival. This means that a periodic event must be set in the
+  parent ``Route`` or ``AutoRoute`` as the polling period.
 
 The source code contains additional documentation with more implementation details.
 

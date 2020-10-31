@@ -25,7 +25,7 @@
             <create_function>MongoAdapter_create_adapter_plugin</create_function>
         </adapter_plugin>
     </plugin_library>
-    
+
     <routing_service name="MongoGateway">
         <domain_route name="DdsMongo">
             <!-- Define a single MongoDB connection to a specific cluster and database -->
@@ -40,10 +40,6 @@
                             <name>mongo.db_name</name>
                             <value>$(DB_NAME)</value>
                         </element>
-                        <element>
-                            <name>mongo.uri_params</name>
-                            <value>$(URI_PARAMS)</value>
-                        </element>
                         <!--
                              For security, this value shall provided through the
                              command-line -D option.
@@ -56,74 +52,29 @@
                 </property>
             </connection>
 
-            <participant name="DdsDomain">
-                <domain_id>0</domain_id>
-            </participant>
-            
-            <session>
-                <!-- Use a several address to serve all the Topcs -->
-                <thread_pool>
-                    <size>4</size>
-                </thread_pool>
-                <!-- Establish a simple DDS Topic -> MongoDB Collection mapping -->
-                <auto_route>
-                    <dds_input participant="DdsDomain">
-                        <allow_topic_name_filter>*</allow_topic_name_filter>
-                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
-                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
-                    </dds_input>
-                    <output connection="MongoConnection">
-                        <allow_stream_name_filter>*</allow_stream_name_filter>
-                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
-                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
-                    </output>
-                </auto_route>
-            </session>
-        </domain_route>
-    </routing_service>
-
-
-    <routing_service name="MongoGatewayEcho">
-        <domain_route name="DdsMongo">
-            <!-- Define a single MongoDB connection to a specific cluster and database -->
-            <connection name="MongoConnection" plugin_name="AdapterLib::MongoAdapter">
-                <property>
-                    <value>
-                        <element>
-                            <name>mongo.cluster_address</name>
-                            <value>$(CLUSTER_ADDRESS)</value>
-                        </element>
-                        <element>
-                            <name>mongo.db_name</name>
-                            <value>$(DB_NAME)</value>
-                        </element>
-                        <!--
-                             For security, this value shall provided through the
-                             command-line -D option.
-                        -->
-                        <element>
-                            <name>mongo.user_and_pass</name>
-                            <value>$(USER_AND_PASS)</value>
-                        </element>
-                    </value>
-                </property>
-            </connection>
-
-            <participant name="DdsInput">
+            <!-- This is the domain where samples are read from DDS -->
+            <participant name="InputDomain">
                 <domain_id>0</domain_id>
             </participant>
 
+            <!-- This is the domain where samples are written to DDS -->
             <participant name="DdsOutput">
                 <domain_id>1</domain_id>
             </participant>
             <session>
-                <!-- Use a several address to serve all the Topcs -->
+                <!-- Use a several address to serve all the routes/Topics  -->
                 <thread_pool>
                     <size>4</size>
                 </thread_pool>
-                <!-- Establish a simple DDS Topic -> MongoDB Collection mapping -->
-                <auto_route>
-                    <dds_input participant="DdsInput">
+
+                <!--
+                    Establish a simple DDS Topic -> MongoDB Collection mapping
+
+                    This auto route creates a route for each new Topic, and will insert
+                    all DDS data into MongoDB
+                 -->
+                <auto_route name="fromDdsToMongo">
+                    <dds_input participant="InputDomain">
                         <allow_topic_name_filter>*</allow_topic_name_filter>
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <deny_topic_name_filter>rti/*</deny_topic_name_filter>
@@ -134,7 +85,14 @@
                         <deny_stream_name_filter>rti/*</deny_stream_name_filter>
                     </output>
                 </auto_route>
-                <auto_route>
+
+                <!--
+                    Establish a simple MongoDB Collection -> DDS Topic mapping
+
+                    This auto route creates a route for each new Topic, and will retrieve
+                    documents from MongoDB and write them as samples to DDS
+                 -->
+                <auto_route name="fromMongoToDds">
                     <periodic_action>
                         <sec>0</sec>
                         <nanosec>100000000</nanosec>
@@ -144,7 +102,7 @@
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <deny_stream_name_filter>rti/*</deny_stream_name_filter>
                     </input>
-                    <dds_output participant="DdsOutput">
+                    <dds_output participant="OutputDomain">
                         <allow_topic_name_filter>*</allow_topic_name_filter>
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <deny_topic_name_filter>rti/*</deny_topic_name_filter>

@@ -58,9 +58,27 @@ that you can reuse to run this example:
 
 This example can work with any DDS topic and we will use RTI Shapes Demo, shipped with
 *RTI Connext Professional* installer bundle. We provide a single ``RoutingService``
-configuration that defines entities to forward incoming DDS traffic from any Topic
-to a configurable MongoDB database.
+that acts as a *gateway* between DDS and MongoDB. This configuration allows simultaneous
+two-way communication between DDS and MongoDB, considering two separate DDS domains to
+avoid feedback loops:
 
+- An input DDS domain from where data from each Topic is inserted to the corresponding
+  database collection.
+- An output DDS domain to where data from MongoDB is sent, demultiplexing each collection
+  into its corresponding Topic.
+
+The domain IDs for these domain are 0 and 1, respectively. This is done for convenience
+so that we can later on provide the ``-domainIdBase`` as the ID offset in order to select
+different domain ID values.
+
+When you run this configuration, you will observe an echo-like effect. The samples
+generated from the input DDS domain are first stored in MongoDB. This data flow is
+provided by the ``fromDdsToMongo`` *AutoRoute*, which generate routes with an input
+*DataReader* and an output *StreamWriter* from the ``MongoConnection``. Alternatively,
+the ``fromMongoToDds`` *AutoRoute* generates routes with an input *StreamReader* from
+the ``MongoConnection`` and an output *DataWriter*. Both *AutoRoutes* are configured
+with the default *Processor* that simply forwards all the data from the inputs to the
+outputs.
 
 For reusability of the configuration, we define the following XML configuration variables:
 
@@ -86,15 +104,15 @@ And then you can run the following command, providing the domain ID of your choi
             -cfgFile RsMongoGateway.xml \
             -cfgName MongoGateway \
             -DUSER_AND_PASS=rti_example:adapter
-            -domainId=<your_domain>
+            -domainIdBase=<domain_id_offset>
 
-Run `ShapesDemo` on the selected domain and publish ``Squares``, ``Circles``, and
-``Triangles``. You can start `ShapesDemo` from the command line and select the domain and
-publication rate to one second as follows:
+Run a publication `ShapesDemo` on the selected domain (0 + ``domain_id_offset``) and
+publish ``Squares``, ``Circles``, and ``Triangles``. You can start `ShapesDemo` from the
+command line and select the domain and publication rate to one second as follows:
 
 .. code::
 
-    $<Connext DDS Directory>/bin/rtishapesdemo -domainId <your_domain> -pubInterval 1000
+    $<Connext DDS Directory>/bin/rtishapesdemo -domainId <input_domain> -pubInterval 1000
 
 You can then connect to the ``MongoDB`` using the shell:
 
@@ -154,7 +172,19 @@ to select the database, see the collections (Topics), and documents inserted:
     }
     ...
 
+To verify the downlink communication, run a subscription `ShapesDemo` on the selected
+domain (1 + ``domain_id_offset``) and subscribe to ``Squares``, ``Circles``, and
+``Triangles``. You can start `ShapesDemo` from the command line and select the domain as
+follows:
 
+.. code::
+
+    $<Connext DDS Directory>/bin/rtishapesdemo -domainId <output_domain>
+
+You should see data being displayed at the polling period specified in the
+``fromMongoToDds``. Note that this *AutoRoute* has a ``<periodic_action>`` tag set, which
+establishes the rate at which samples are read from the database. This required since
+this adapter implementation relies on a polling mechanism from *RoutingService*.
 
 Requirements
 ------------

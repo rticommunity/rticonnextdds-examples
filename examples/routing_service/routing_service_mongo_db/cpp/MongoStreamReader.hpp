@@ -44,6 +44,16 @@ namespace rti { namespace community { namespace examples {
  * the parent factory MongoConnection, which is provided on object construction, an uses
  * a cursor with a filter to satisfy the time condition above.
  *
+ * A key behavior aspect of this class is its absence of asynchronous data available
+ * notifications. The current implementation relies on periodic polling from the
+ * parent Route, which must enable the periodic action and have a Processor that class
+ * take() upon dispatch of such event.
+ *
+ * Therefore, this class makes no use of the StreamReaderListener that RoutingService
+ * provides to listen for asynchronous notifications. A possible enhancement of this
+ * implementation could be to create a mongocxx::change_stream to listen for changes in
+ * the DB, and generate data available notifications based on that. 
+ *
  */
 class MongoStreamReader : public rti::routing::adapter::DynamicDataStreamReader {
 
