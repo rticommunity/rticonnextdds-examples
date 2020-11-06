@@ -35,9 +35,7 @@ public:
 };
 
 
-}  // namespace examples
-}  // namespace community
-}  // namespace rti
+}}}  // namespace rti::community::examples
 
 /**
  * This macro defines a C-linkage symbol that can be used as create function

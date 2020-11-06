@@ -38,7 +38,7 @@ FileStreamWriter::FileStreamWriter(const PropertySet &properties)
     } else {
         std::cout << "Output file name: " << output_file_name << std::endl;
     }
-};
+}
 
 int FileStreamWriter::write(
         const std::vector<dds::core::xtypes::DynamicData *> &samples,
@@ -59,4 +59,4 @@ int FileStreamWriter::write(
 FileStreamWriter::~FileStreamWriter()
 {
     output_file_.close();
-};
+}

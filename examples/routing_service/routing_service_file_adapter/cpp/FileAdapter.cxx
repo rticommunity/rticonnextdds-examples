@@ -33,7 +33,7 @@ Connection *FileAdapter::create_connection(
             output_stream_discovery_listener,
             properties);
     return fc;
-};
+}
 
 void FileAdapter::delete_connection(Connection *connection)
 {
@@ -46,6 +46,6 @@ void FileAdapter::delete_connection(Connection *connection)
 rti::config::LibraryVersion FileAdapter::get_version() const
 {
     return { 1, 0, 0, 'r' };
-};
+}
 
 RTI_ADAPTER_PLUGIN_CREATE_FUNCTION_DEF(FileAdapter)
