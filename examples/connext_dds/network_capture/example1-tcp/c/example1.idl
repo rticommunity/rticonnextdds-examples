@@ -1,0 +1,3 @@
+struct example1 {
+    string<128> msg;
+};

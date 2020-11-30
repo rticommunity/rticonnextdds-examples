@@ -1,0 +1,130 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----881DE478779F4E53D49D3F6D0075FE6F"
+
+This is an S/MIME signed message
+
+------881DE478779F4E53D49D3F6D0075FE6F
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="ParticipantA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexample/emailAddress=me@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2023-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id>0</id>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>Cir*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P1*</partition>
+                    </partitions>
+                </publish>
+                <subscribe>
+                    <topics>
+                        <topic>Sq*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P2*</partition>
+                    </partitions>
+                </subscribe>
+                <subscribe>
+                    <topics>
+                        <topic>Triangle</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="ParticipantA_DSA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampledsa/emailAddress=medsa@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2023-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id>0</id>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>Cir*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P1*</partition>
+                    </partitions>
+                </publish>
+                <subscribe>
+                    <topics>
+                        <topic>Sq*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P2*</partition>
+                    </partitions>
+                </subscribe>
+                <subscribe>
+                    <topics>
+                        <topic>Triangle</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="ParticipantA_ECDSA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampleECdsa/emailAddress=meECdsa@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2034-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
+------881DE478779F4E53D49D3F6D0075FE6F
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEFgYJKoZIhvcNAQcCoIIEBzCCBAMCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggH3MIIB8zCCAZgCCQCT75AfqK6VHTAKBggqhkjOPQQDAjCBgDEL
+MAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW50YSBDbGFyYTEe
+MBwGA1UECgwVUmVhbCBUaW1lIElubm92YXRpb25zMQ8wDQYDVQQDDAZSVEkgQ0Ex
+HTAbBgkqhkiG9w0BCQEWDnNlY3VyZUBydGkuY29tMB4XDTE5MDMwMTA2MTQ1MFoX
+DTI0MDIyODA2MTQ1MFowgYAxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEUMBIG
+A1UEBwwLU2FudGEgQ2xhcmExHjAcBgNVBAoMFVJlYWwgVGltZSBJbm5vdmF0aW9u
+czEPMA0GA1UEAwwGUlRJIENBMR0wGwYJKoZIhvcNAQkBFg5zZWN1cmVAcnRpLmNv
+bTBZMBMGByqGSM49AgEGCCqGSM49AwEHA0IABBi7KqeRwaoRYsPkvGSkmJcsnGGJ
+XpUfOMDHqZmy80NEMU5g01OxEF7k8ZYKx7gfEGWvp+OswbifqTjVRF1G/BAwCgYI
+KoZIzj0EAwIDSQAwRgIhANzXyCgSoXeaLkHVg2yl3+y3jQQ5REVVsNrgf2V/WknM
+AiEA7D10J/uQl8i6BlNW1iIVIf4fQr3w5eeLQd7h1Mw61nwxggHjMIIB3wIBATCB
+jjCBgDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW50YSBD
+bGFyYTEeMBwGA1UECgwVUmVhbCBUaW1lIElubm92YXRpb25zMQ8wDQYDVQQDDAZS
+VEkgQ0ExHTAbBgkqhkiG9w0BCQEWDnNlY3VyZUBydGkuY29tAgkAk++QH6iulR0w
+DQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkq
+hkiG9w0BCQUxDxcNMjAwMTI0MTgxOTA2WjAvBgkqhkiG9w0BCQQxIgQgRe9Io1X3
+KxWF6WBGQ/bbwUJIi1ditalO0BwoRK+gqHQweQYJKoZIhvcNAQkPMWwwajALBglg
+hkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAO
+BggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcN
+AwICASgwCgYIKoZIzj0EAwIERzBFAiAQVjD1LNd5dZ5xFbkdcRutRBiWrgKuCS5D
+ft1gS6lyAgIhAIc6Sx3i+TjjSkrR62itXp6vxGFM+LZrvNAmSy38iQFE
+
+------881DE478779F4E53D49D3F6D0075FE6F--
+
