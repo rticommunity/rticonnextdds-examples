@@ -40,5 +40,5 @@ scenarios.
 ## TODO
 
 - Add links
-- Complete readme files with building and running instructions (cmake?)
-- At the end they will probably be under the [github repository](https://github.com/rticommunity/rticonnextdds-examples)
+- Complete readme files
+- Test the c# example in Windows with the new build system

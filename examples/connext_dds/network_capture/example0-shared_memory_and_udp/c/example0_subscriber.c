@@ -122,7 +122,6 @@ void example0Listener_on_data_available(
 static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
     int status = 0;
 
     if (participant != NULL) {
@@ -146,8 +145,7 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
      * This must be:
      *   - The last network capture function that is called.
      */
-    success = NDDS_Utility_disable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_disable_network_capture()) {
         fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
@@ -166,7 +164,6 @@ int subscriber_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t poll_period = {1, 0}; /* 1 s */
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
 
     /*
      * Enable network capture
@@ -175,8 +172,7 @@ int subscriber_main(int domainId, int sample_count)
      *   - Any other network capture function is called.
      *   - Creating the participants for which we want to capture traffic.
      */
-    success = NDDS_Utility_enable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_enable_network_capture()) {
         fprintf(stderr, "Error enabling network capture");
         return -1;
     }
@@ -191,8 +187,7 @@ int subscriber_main(int domainId, int sample_count)
      * will start with the prefix "subscriber" and continue with a suffix
      * dependent on the participant's GUID.
      */
-    success = NDDS_Utility_start_network_capture("subscriber");
-    if (!success) {
+    if (!NDDS_Utility_start_network_capture("subscriber")) {
         fprintf(stderr, "Error starting network capture for all participants\n");
         return -1;
     }
@@ -234,7 +229,7 @@ int subscriber_main(int domainId, int sample_count)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "Example example0 using network capture",
+            "example0 using network capture C API",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -280,8 +275,7 @@ int subscriber_main(int domainId, int sample_count)
      * But before deleting the participants that are capturing, we must stop
      * network capture for them.
      */
-    success = NDDS_Utility_stop_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_stop_network_capture()) {
         fprintf(stderr, "Error stopping network capture for all participants\n");
     }
 

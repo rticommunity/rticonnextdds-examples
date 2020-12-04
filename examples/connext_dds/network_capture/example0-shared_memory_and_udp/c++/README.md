@@ -37,25 +37,25 @@ regular build process.
 
 In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
-application loads the QoS defined in USER_QOS_PROFILES.xml):
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-On Windows systems run:
-
-```sh
-msg_publisher.exe  <domain_id> <samples_to_send>
-msg_subscriber.exe <domain_id>  <samples_to_send>
-```
-
-UNIX systems:
+On *Windows* systems run:
 
 ```sh
-./msg_publisher  <domain_id> <samples_to_send>
-./msg_subscriber <domain_id> <samples_to_send>
+example0_publisher.exe  <domain_id> <samples_to_send>
+example0_subscriber.exe <domain_id> <sleep_periods>
 ```
 
-The applications accept up to two arguments:
+On *UNIX* systems run:
 
-1.  The `<domain #>`. Both applications must use the same domain # in order to
+```sh
+./example0_publisher  <domain_id> <samples_to_send>
+./example0_subscriber <domain_id> <sleep_periods>
+```
+
+The applications accept up to three arguments:
+
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples for the publisher and

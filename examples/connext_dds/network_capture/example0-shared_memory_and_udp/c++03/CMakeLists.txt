@@ -15,5 +15,7 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "example0"
-    LANG "C"
+    LANG "C++03"
+    CODEGEN_ARGS
+        LEGACY_PLUGIN
 )

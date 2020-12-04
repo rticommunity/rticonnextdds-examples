@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2012.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -122,7 +122,6 @@ void example1Listener_on_data_available(
 static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
     int status = 0;
 
     if (participant != NULL) {
@@ -146,8 +145,7 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
      * This must be:
      *   - The last network capture function that is called.
      */
-    success = NDDS_Utility_disable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_disable_network_capture()) {
         fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
@@ -166,7 +164,6 @@ int subscriber_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t poll_period = {1, 0}; /* 1 s */
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
 
     /*
      * Enable network capture
@@ -175,8 +172,7 @@ int subscriber_main(int domainId, int sample_count)
      *   - Any other network capture function is called.
      *   - Creating the participants for which we want to capture traffic.
      */
-    success = NDDS_Utility_enable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_enable_network_capture()) {
         fprintf(stderr, "Error enabling network capture");
         return -1;
     }
@@ -191,8 +187,7 @@ int subscriber_main(int domainId, int sample_count)
      * will start with the prefix "subscriber" and continue with a suffix
      * dependent on the participant's GUID.
      */
-    success = NDDS_Utility_start_network_capture("subscriber");
-    if (!success) {
+    if (!NDDS_Utility_start_network_capture("subscriber")) {
         fprintf(stderr, "Error starting network capture for all participants\n");
         return -1;
     }
@@ -284,8 +279,7 @@ int subscriber_main(int domainId, int sample_count)
      * But before deleting the participants that are capturing, we must stop
      * network capture for them.
      */
-    success = NDDS_Utility_stop_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_stop_network_capture()) {
         fprintf(stderr, "Error stopping network capture for all participants\n");
     }
 

@@ -1,10 +1,10 @@
-# (c) 2020 Copyright, Real-Time Innovations, Inc. All rights reserved.
+# (c) 2018 Copyright, Real-Time Innovations, Inc. All rights reserved.
 # No duplications, whole or partial, manual or electronic, may be made
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.7)
-project(rtiexamples-network-capture)
+project(rtiexamples-builtin-topics)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../resources/cmake"
@@ -14,6 +14,6 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
-    IDL "example0"
+    IDL "example3"
     LANG "C"
 )

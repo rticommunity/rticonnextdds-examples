@@ -1,4 +1,16 @@
 /*
+* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* RTI grants Licensee a license to use, modify, compile, and create derivative
+* works of the software solely for use with RTI Connext DDS. Licensee may
+* redistribute copies of the software provided that all such copies are subject
+* to this license. The software is provided "as is", with no warranty of any
+* type, including any warranty for fitness for any purpose. RTI is under no
+* obligation to maintain or support the software. RTI shall not be liable for
+* any incidental or consequential damages arising out of the use or inability
+* to use the software.
+*/
+
+/*
  * A simple secure HelloWorld using network capture to save DomainParticipant
  * traffic.
  *
@@ -45,7 +57,6 @@ static int publisher_shutdown(
         DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
     int status = 0;
 
     if (participant != NULL) {
@@ -76,15 +87,14 @@ static int publisher_shutdown(
      * This must be:
      *   - The last network capture function that is called.
      */
-    success = NDDS_Utility_disable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_disable_network_capture()) {
         fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
     return status;
 }
 
-static int publisher_main(int domainId, int sample_count, const char *profile)
+static int publisher_main(int domainId, int sample_count)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
@@ -97,7 +107,6 @@ static int publisher_main(int domainId, int sample_count, const char *profile)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t send_period = {1, 0}; /* 1 s */
-    DDS_Boolean success = DDS_BOOLEAN_FALSE;
     NDDS_Utility_NetworkCaptureParams_t params =
             NDDS_UTILITY_NETWORK_CAPTURE_PARAMETERS_DEFAULT;
 
@@ -108,8 +117,7 @@ static int publisher_main(int domainId, int sample_count, const char *profile)
      *   - Any other network capture function is called.
      *   - Creating the participants for which we want to capture traffic.
      */
-    success = NDDS_Utility_enable_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_enable_network_capture()) {
         fprintf(stderr, "Error enabling network capture");
         return -1;
     }
@@ -138,7 +146,7 @@ static int publisher_main(int domainId, int sample_count, const char *profile)
             DDS_TheParticipantFactory,
             &participant_qos,
             "SecurityExampleProfiles",
-            profile);
+            "B");
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "Unable to get participant qos from profile");
         return -1;
@@ -164,7 +172,7 @@ static int publisher_main(int domainId, int sample_count, const char *profile)
             DDS_TheParticipantFactory,
             domainId,
             "SecurityExampleProfiles",
-            profile,
+            "B",
             NULL,
             DDS_STATUS_MASK_NONE);
 #endif
@@ -260,8 +268,7 @@ static int publisher_main(int domainId, int sample_count, const char *profile)
      * Before deleting the participants that are capturing, we must stop
      * network capture for them.
      */
-    success = NDDS_Utility_stop_network_capture();
-    if (!success) {
+    if (!NDDS_Utility_stop_network_capture()) {
         fprintf(stderr, "Error stopping network capture for all participants\n");
     }
 
@@ -278,7 +285,6 @@ int main(int argc, char *argv[])
 {
     int domainId = 0;
     int sample_count = 0; /* infinite loop */
-    const char *profile = "B";
 
     if (argc >= 2) {
         domainId = atoi(argv[1]);
@@ -286,15 +292,7 @@ int main(int argc, char *argv[])
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
-    if (argc >= 4) {
-        if (strcmp(argv[3], "dsa") == 0) {
-            profile = "DSA_B";
-        }
-        else if (strcmp(argv[3], "rsa") == 0) {
-            profile = "RSA_B";
-        }
-    }
 
-    return publisher_main(domainId, sample_count, profile);
+    return publisher_main(domainId, sample_count);
 }
 

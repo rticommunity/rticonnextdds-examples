@@ -15,5 +15,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "example0"
-    LANG "C"
+    LANG "C++"
 )
