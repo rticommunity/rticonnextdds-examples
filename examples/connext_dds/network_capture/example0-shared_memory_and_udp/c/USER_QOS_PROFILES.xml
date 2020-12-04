@@ -12,23 +12,33 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/rti_dds_qos_profiles.xsd"
      version="6.0.1">
-    <qos_library name="Library">
-        <qos_profile name="Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
-            <participant_qos>
-                <!--
-                This property breaks compatibility with 6.0.0 but without it
-                the source PID for inbound traffic is not populated.
-                -->
-                <property>
-                    <value>
-                        <element>
-                          <name>dds.transport.minimum_compatibility_version</name>
-                          <value>6.1.0</value>
-                          <propagate>false</propagate>
-                        </element>
-                    </value>
-                </property>
-          </participant_qos>
-        </qos_profile>
-    </qos_library>
+  <qos_library name="Library">
+    <qos_profile name="Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
+      <participant_qos>
+        <!--
+        This property breaks compatibility with 6.0.0 but without it
+        the source PID for inbound traffic is not populated.
+        -->
+        <property>
+          <value>
+            <element>
+              <name>dds.transport.minimum_compatibility_version</name>
+              <value>6.1.0</value>
+              <propagate>false</propagate>
+            </element>
+          </value>
+        </property>
+        <!--
+        This is just to simplify the traffic a bit, so that we can
+        easily compare between wireshark and network capture.
+        -->
+        <discovery>
+          <initial_peers>
+            <element>0@builtin.udpv4://127.0.0.1</element>
+            <element>0@builtin.shmem://</element>
+          </initial_peers>
+        </discovery>
+      </participant_qos>
+    </qos_profile>
+  </qos_library>
 </dds>

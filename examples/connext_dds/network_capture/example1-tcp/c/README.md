@@ -42,15 +42,15 @@ application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 ```sh
-msg_publisher.exe  <domain_id> <samples_to_send>
-msg_subscriber.exe <domain_id>  <samples_to_send>
+example1_publisher.exe  <domain_id> <samples_to_send>
+example1_subscriber.exe <domain_id>  <samples_to_send>
 ```
 
 UNIX systems:
 
 ```sh
-./msg_publisher  <domain_id> <samples_to_send>
-./msg_subscriber <domain_id> <samples_to_send>
+./example1_publisher  <domain_id> <samples_to_send> <mode>
+./example1_subscriber <domain_id> <samples_to_send> <mode>
 ```
 
 The applications accept up to two arguments:
@@ -61,6 +61,8 @@ The applications accept up to two arguments:
 2.  How long the examples should run, measured in samples for the publisher and
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
+
+3.  lan, wanSym, wanAsym, tls
 
 ## Customizing the Build
 

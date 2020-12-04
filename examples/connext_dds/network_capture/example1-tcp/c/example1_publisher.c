@@ -84,7 +84,7 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
     return status;
 }
 
-int publisher_main(int domainId, int sample_count)
+int publisher_main(int domainId, int sample_count, const char *profile)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
@@ -133,7 +133,7 @@ int publisher_main(int domainId, int sample_count)
             DDS_TheParticipantFactory,
             domainId,
             "Library",
-            "Publisher",
+            profile,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
@@ -254,6 +254,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
+    const char *profile = "LANpublisher";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -261,7 +262,24 @@ int main(int argc, char *argv[])
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
+    if (argc >= 4) {
+        if (strcmp(argv[3], "lan") == 0) {
+            profile = "LANpublisher";
+        }
+        else if (strcmp(argv[3], "wanSym") == 0) {
+            profile = "WANsymPublisher";
+        }
+        else if (strcmp(argv[3], "wanAsym") == 0) {
+            profile = "WANasymPublisher";
+        } 
+        else if (strcmp(argv[3], "tls") == 0) {
+            profile = "TLSpublisher";
+        } else {
+            fprintf(stderr, "Mode must be one of: {lan, wanSym, wanAsym, tls}\n");
+        }
+    }
+    
 
-    return publisher_main(domain_id, sample_count);
+    return publisher_main(domain_id, sample_count, profile);
 }
 

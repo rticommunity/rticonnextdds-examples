@@ -152,7 +152,7 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
     return status;
 }
 
-int subscriber_main(int domainId, int sample_count)
+int subscriber_main(int domainId, int sample_count, const char *profile)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;
@@ -200,7 +200,7 @@ int subscriber_main(int domainId, int sample_count)
             DDS_TheParticipantFactory,
             domainId,
             "Library",
-            "Subscriber",
+            profile,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
@@ -290,6 +290,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
+    const char *profile = "LANsubscriber";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -297,7 +298,23 @@ int main(int argc, char *argv[])
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
+    if (argc >= 4) {
+        if (strcmp(argv[3], "lan") == 0) {
+            profile = "LANsubscriber";
+        }
+        else if (strcmp(argv[3], "wanSym") == 0) {
+            profile = "WANsymSubscriber";
+        }
+        else if (strcmp(argv[3], "wanAsym") == 0) {
+            profile = "WANasymSubscriber";
+        } 
+        else if (strcmp(argv[3], "tls") == 0) {
+            profile = "TLSsubscriber";
+        } else {
+            fprintf(stderr, "Mode must be one of: {lan, wanSym, wanAsym, tls}\n");
+        }
+    }
 
-    return subscriber_main(domain_id, sample_count);
+    return subscriber_main(domain_id, sample_count, profile);
 }
 
