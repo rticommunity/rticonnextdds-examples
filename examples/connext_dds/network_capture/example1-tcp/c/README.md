@@ -42,8 +42,8 @@ application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 ```sh
-example1_publisher.exe  <domain_id> <samples_to_send>
-example1_subscriber.exe <domain_id>  <samples_to_send>
+example1_publisher.exe  <domain_id> <samples_to_send> <mode>
+example1_subscriber.exe <domain_id>  <samples_to_send> <mode>
 ```
 
 UNIX systems:

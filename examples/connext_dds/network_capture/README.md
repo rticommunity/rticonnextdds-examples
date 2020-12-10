@@ -28,17 +28,34 @@ resume capturing traffic for one or all *DomainParticipants*.
 
 ## Example description
 
-The examples illustrate how to use network capture through some common
-scenarios.
+These examples illustrate how to use network capture through some common
+scenarios. Each example is independent of the rest, so you can jump directly to
+a particular one. However, they are ordered in increasing complexity, so in
+order to better learn about the feature, it is recommended to start at the
+beginning. The first example is a hello world with the default transport
+protocols (UDPv4 and Shared Memory). The second example is the same application
+but running over TCP LAN, WAN or TLS. Then we have an example running with the
+Security Plugins enabled. More advanced scenarios are considered in the
+remaining examples.
+
+Running each example generates a set of .pcap capture files that can then be
+opened with Wireshark (if the right dissector is installed). Therefore, even if
+*Connext DDS* can generate the capture files, we still require Wireshark as a
+tool for analyzing the output files.
+
+For learning purposes, it is also recommended to capture the traffic from the
+examples with Wireshark. That way, you can better understand the differences
+between the resulting capture files (and therefore, when it makes more sense to
+use one tool over the other for capturing traffic).
 
 ## References
 
-1. [RTI Core Libraries User Manual](add_link_here)
+1. [RTI Core Libraries User Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds/html_files/RTI_ConnextDDS_CoreLibraries_UsersManual/index.htm#users_manual/NetworkCapture.htm)
 
-2. [RTI C API Reference](add_link_here)
+2. [RTI Modern C++ API Reference](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__NDDSNetworkCaptureModule.html)
 
 ## TODO
 
-- Add links
+- Check links once Connext 6.1.0 is released.
 - Complete readme files
 - Test the c# example in Windows with the new build system

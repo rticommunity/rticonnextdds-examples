@@ -212,11 +212,11 @@ int publisher_main(int domainId, int sample_count, const char *profile)
          * Here we are going to pause capturing for some samples.
          * The resulting pcap file will not contain them.
          */
-        if (count == 300) {
+        if (count == 4) {
             if (!NDDS_Utility_pause_network_capture()) {
                 fprintf(stderr, "Error pausing network capture\n");
             }
-        } else if (count == 400) {
+        } else if (count == 6) {
             if (!NDDS_Utility_resume_network_capture()) {
                 fprintf(stderr, "Error resuming network capture\n");
             }
