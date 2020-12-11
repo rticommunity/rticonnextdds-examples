@@ -4,8 +4,8 @@ This example is a secure Hello World application between a publisher and a
 subscriber. It also generates two capture files (one for the publisher and one
 for the subscriber) with the RTPS traffic exchanged between them.
 
-In this example we are capturing traffic globally (for all participants).
-However, this time we are also using parameters to configure the capture:
+In this example we are capturing traffic globally (for all participants), and
+using parameters to configure the capture:
 
 * The publisher will use the default parameters except for the traffic
   direction. Instead of capturing both the inboud and outbound traffic, only

@@ -42,10 +42,8 @@ This is normal and is only informing you that the subscriber/publisher code has
 not been replaced, which is fine since all the source files for the example are
 already provided.
 
-*rtiddsgen* generates two solutions for *Visual Studio C++* and *C#*, that you
-will use to build the types and the C# example, respectively. First open
-*example0_type-dotnet4.0.sln* and build the solution. Once you've done that,
-open *example0_example-csharp.sln* and build the C# example.
+*rtiddsgen* generates a solution for *Visual Studio* (e.g.
+example0-i86Win32VS2010.sln) that you will use to build the example.
 
 ## Running C# Example
 
