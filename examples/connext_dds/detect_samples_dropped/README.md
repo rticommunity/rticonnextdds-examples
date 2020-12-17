@@ -27,14 +27,16 @@ documentation or the User Manuals.
 ## Example Description
 
 In this example, we illustrate how to detect samples dropped for two reasons:
+
 -   Exclusive Ownership.
 -   Content Filter Topic.
 
 In order to force the samples dropped we will need to:
+
 -   In the publisher side:
 
-    - Create two DataWriters with different Exclusive Ownerships.
-    - Both DataWriters write samples using different values for the element X,
+    -    Create two DataWriters with different Exclusive Ownerships.
+    -    Both DataWriters write samples using different values for the element X,
     which we will filter out.
 -   In the subscriber side:
 

@@ -72,7 +72,7 @@ The goal of this example is to understand the different fields of
     #09    ./logging_publisher() [0x403039]
 ```
 
--   **Timestamp**: The time when the message was logged.
+- **Timestamp**: The time when the message was logged.
 
 ```plaintext
 [2020-11-27 13:51:52.503762]
@@ -89,33 +89,33 @@ U00007f753124c700_logging_publish
 -   **Activity Context**: Activity Context provides more context about a logging
 message. It is a group of resources and activities associated with an action.
 In the following example, the context is "a DataWriter is writing a sample".
-    - Resource: the DataWriter writing the sample. The attributes of the DataWriter
+    -   Resource: the DataWriter writing the sample. The attributes of the DataWriter
     will be guid, name, kind, topic, type and the domain id.
-    - Activity will be “write a sample”.
+    -   Activity will be “write a sample”.
 
 ```plaintext
 [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
 ```
 
--   **Module**: Id representing the module
+- **Module**: Id representing the module
 
 ```plaintext
 Mx16
 ```
 
--   **File and Line**
+- **File and Line**
 
 ```plaintext
 writer_history.1.0/srcC/memory/Memory.c:7411
 ```
 
--   **Method** name where the message is logged
+- **Method** name where the message is logged
 
 ```plaintext
 WriterHistoryMemoryPlugin_addSample:RTI0x2161002:out of order
 ```
 
--   **Message Id**: It is a identification of the message.
+- **Message Id**: It is a identification of the message.
 
 ```plaintext
 RTI0x2161002
