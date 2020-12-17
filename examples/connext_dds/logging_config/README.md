@@ -15,7 +15,6 @@ information.
     thread Name, Activity Context, Module, File and Line, Method, Message Id and
     Backtrace.
 
-
 ## Example Description
 
 In this example we illustrate how to use the Logging API. As in other examples
@@ -59,6 +58,7 @@ timestamp is older than in previous write warnings message will be logged.
 
 The goal of this example is to understand the different fields of
 **NDDS_Config_LogPrintFormat**. Reviwing the firt warning:
+
 -   **Backtrace**: It is a list of the function calls that are currently active in
   a thread.
 
@@ -89,9 +89,9 @@ U00007f753124c700_logging_publish
 -   **Activity Context**: Activity Context provides more context about a logging
 message. It is a group of resources and activities associated with an action.
 In the following example, the context is "a DataWriter is writing a sample".
-  -   Resource: the DataWriter writing the sample. The attributes of the DataWriter
+    - Resource: the DataWriter writing the sample. The attributes of the DataWriter
     will be guid, name, kind, topic, type and the domain id.
-  -   Activity will be “write a sample”.
+    - Activity will be “write a sample”.
 
 ```plaintext
 [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]

@@ -33,13 +33,13 @@ In this example, we illustrate how to detect samples dropped for two reasons:
 In order to force the samples dropped we will need to:
 -   In the publisher side:
 
-    -   Create two DataWriters with different Exclusive Ownerships.
-    -   Both DataWriters write samples using different values for the element X,
+    - Create two DataWriters with different Exclusive Ownerships.
+    - Both DataWriters write samples using different values for the element X,
     which we will filter out.
 -   In the subscriber side:
 
-    -   Create a Content Filter Topic, filtering out specific values of element X.
-    -   Create a DataReader enabling Exclusive Ownership.
+    - Create a Content Filter Topic, filtering out specific values of element X.
+    - Create a DataReader enabling Exclusive Ownership.
 
 The output of the subscriber application will look like:
 

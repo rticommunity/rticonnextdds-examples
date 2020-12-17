@@ -8,7 +8,7 @@ RTI Connext DDS provides you the possibility to print the following Qos objects:
 `DataReaderQos`, `DataWriterQos`, `PublisherQos`, `SubscriberQos`, `TopicQos`,
 `DomainParticipantQos` and `DomainParticipantFactoryQos`.
 
- -   In C, there are three new APIs per top-level QoS object (DataWriterQos is
+-    In C, there are three new APIs per top-level QoS object (DataWriterQos is
  used as an example below):
 
 ```plaintext
@@ -17,7 +17,7 @@ DDS_DataWriterQos_to_string(const struct DDS_DataWriterQos *self, char *string, 
 DDS_DataWriterQos_to_string_w_params(const struct DDS_DataWriterQos *self, char *string, DDS_UnsignedLong *string_size, const struct DDS_DataWriterQos *base, const struct DDS_QosPrintFormat *format)
 ```
 
- -   In Traditional C++, the same functionality is achieved through overloads:
+-    In Traditional C++, the same functionality is achieved through overloads:
 
 ```plaintext
 DDS_DataWriterQos::print()
@@ -27,7 +27,7 @@ DDS_DataWriterQos::to_string(char *string, DDS_UnsignedLong& string_size, const 
 DDS_DataWriterQos::to_string(char *string, DDS_UnsignedLong& string_size, const DDS_DataWriterQos &format, const DDS_QosPrintFormat &format)
 ```
 
- -   In Modern C++, the to_string APIs are free-standing functions:
+-    In Modern C++, the to_string APIs are free-standing functions:
 
 ```plaintext
 std::string to_string(const DataWriterQos& qos, const QosPrintFormat& format = QosPrintFormat())
@@ -36,7 +36,7 @@ std::string to_string(const DataWriterQos& qos, const qos_print_all_t& qos_print
 std::ostream& operator<<(std::ostream& out, const DataWriterQos& qos)
 ```
 
- -   In Java, Object.toString is overridden, and additional overloads are available:
+-    In Java, Object.toString is overridden, and additional overloads are available:
 
 ```plaintext
 String DataWriterQos.toString()
@@ -45,7 +45,7 @@ String DataWriterQos.toString(QosPrintFormat format)
 String DataWriterQos.toString(DataWriterQos baseQos)
 ```
 
- -   In .NET, Object.ToString is overridden, and additional overloads are available:
+-   In .NET, Object.ToString is overridden, and additional overloads are available:
 
 ```plaintext
 String ^DataWriterQos::ToString()
@@ -59,15 +59,16 @@ Reference HTML documentation.
 
 ## Example Description
 
-In this example, we illustrate how to use the printing QoS APIs.
+In this example, we illustrate how to use the printing QoS APIs:
+
 -   In the `printing_publisher` file we demostrate how to use:
-    -   `DDS_PublisherQos_to_string_w_params`
-    -   `DDS_TopicQos_to_string`
-    -   `DDS_DataWriterQos_print`
+    - `DDS_PublisherQos_to_string_w_params`
+    - `DDS_TopicQos_to_string`
+    - `DDS_DataWriterQos_print`
 -   In the `printing_subscriber` file we demostrate how to use:
-    -   `DDS_DomainParticipantQos_to_string`
-    -   `DDS_SubscriberQos_to_string_w_params`
-    -   `DDS_DataReaderQos_print`
+    - `DDS_DomainParticipantQos_to_string`
+    - `DDS_SubscriberQos_to_string_w_params`
+    - `DDS_DataReaderQos_print`
 
 For example the output of the PublisherQos will be:
 
