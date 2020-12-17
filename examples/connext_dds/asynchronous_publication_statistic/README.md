@@ -27,7 +27,7 @@ asynchronous publisher.
 
 The output of the subscriber application will look like:
 
-```
+```plaintext
 Asynchronous Publisher Statistics:
      received_sample_count 25
      received_fragment_count 75
@@ -35,7 +35,7 @@ Asynchronous Publisher Statistics:
 
 The output of the publisher application will look like:
 
-```
+```plaintext
 Asynchronous Publisher Statistics:
      pushed_sample_count 44
      pulled_sample_count 0

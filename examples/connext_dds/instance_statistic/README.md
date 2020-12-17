@@ -28,7 +28,7 @@ different instances.
 
 The output of the subscriber application will look like:
 
-```
+```plaintext
 Instance statistic:
      alive_instance_count 16
      no_writers_instance_count 0
@@ -38,7 +38,7 @@ Instance statistic:
 
 The output of the publisher application will look like:
 
-```
+```plaintext
 Instance statistic:
      alive_instance_count 15
      unregistered_instance_count 1

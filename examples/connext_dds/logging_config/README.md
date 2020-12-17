@@ -5,13 +5,13 @@ how much debugging information is reported during runtime.
 
 ## Concept
 
-- **NDDS_Config_LogVerbosity**: The verbosities at which RTI Connext diagnostic
+-   **NDDS_Config_LogVerbosity**: The verbosities at which RTI Connext diagnostic
 information is logged.
-- **NDDS_Config_LogLevel**: Level category assigned to RTI Connext log messages
+-   **NDDS_Config_LogLevel**: Level category assigned to RTI Connext log messages
 returned to an output device.
-- **NDDS_Config_LogPrintFormat**: The format used to output RTI Connext diagnostic
+-   **NDDS_Config_LogPrintFormat**: The format used to output RTI Connext diagnostic
 information.
-- **NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL**: Print all available fields: timestamp,
+-   **NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL**: Print all available fields: timestamp,
     thread Name, Activity Context, Module, File and Line, Method, Message Id and
     Backtrace.
 
@@ -32,7 +32,7 @@ Two sample is writen and then in the second ond we force the write opperation to
 fail: when using *DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS*, if source
 timestamp is older than in previous write warnings message will be logged.
 
-```
+```plaintext
     Backtrace:
     #4    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
     #5    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
@@ -59,10 +59,10 @@ timestamp is older than in previous write warnings message will be logged.
 
 The goal of this example is to understand the different fields of
 **NDDS_Config_LogPrintFormat**. Reviwing the firt warning:
-- **Backtrace**: It is a list of the function calls that are currently active in
+-   **Backtrace**: It is a list of the function calls that are currently active in
   a thread.
 
-```
+```plaintext
     Backtrace:
     #4    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
     #5    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
@@ -72,51 +72,51 @@ The goal of this example is to understand the different fields of
     #09    ./logging_publisher() [0x403039]
 ```
 
-- **Timestamp**: The time when the message was logged.
+-   **Timestamp**: The time when the message was logged.
 
-```
+```plaintext
 [2020-11-27 13:51:52.503762]
 ```
 
-- **Thread Name**: Thread identification strings uniquely identify active threads
+-   **Thread Name**: Thread identification strings uniquely identify active threads
 when a message is output to the console. A thread may be a user (application)
 thread or one of several types of internal threads.
 
-```
+```plaintext
 U00007f753124c700_logging_publish
 ```
 
-- **Activity Context**: Activity Context provides more context about a logging
+-   **Activity Context**: Activity Context provides more context about a logging
 message. It is a group of resources and activities associated with an action.
 In the following example, the context is "a DataWriter is writing a sample".
-  - Resource: the DataWriter writing the sample. The attributes of the DataWriter
+  -   Resource: the DataWriter writing the sample. The attributes of the DataWriter
     will be guid, name, kind, topic, type and the domain id.
-  - Activity will be “write a sample”.
+  -   Activity will be “write a sample”.
 
-```
+```plaintext
 [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
 ```
 
-- **Module**: Id representing the module
+-   **Module**: Id representing the module
 
-```
+```plaintext
 Mx16
 ```
 
-- **File and Line**
+-   **File and Line**
 
-```
+```plaintext
 writer_history.1.0/srcC/memory/Memory.c:7411
 ```
 
-- **Method** name where the message is logged
+-   **Method** name where the message is logged
 
-```
+```plaintext
 WriterHistoryMemoryPlugin_addSample:RTI0x2161002:out of order
 ```
 
-- **Message Id**: It is a identification of the message.
+-   **Message Id**: It is a identification of the message.
 
-```
+```plaintext
 RTI0x2161002
 ```
