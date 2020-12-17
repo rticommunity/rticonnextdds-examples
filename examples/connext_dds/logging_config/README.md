@@ -33,22 +33,22 @@ fail: when using *DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS*, if source
 timestamp is older than in previous write warnings message will be logged.
 
 ```
-	Backtrace:
-	#4	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
-	#5	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
-	#6	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
-	#7	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
-	#08	/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
-	#09	./logging_publisher() [0x403039]
+    Backtrace:
+    #4    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
+    #5    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
+    #6    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
+    #7    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
+    #08    /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
+    #09    ./logging_publisher() [0x403039]
 [2020-11-27 13:51:52.503762] U00007f753124c700_logging_publish [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
   Mx16:/home/writer_history.1.0/srcC/memory/Memory.c:7411:WriterHistoryMemoryPlugin_addSample:RTI0x2161002:out of order
-	Backtrace:
-	#4	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_getAndLogCollatorFailReason+0xc9) [0x7f753022df79]
-	#5	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xd5e) [0x7f7530239eeb]
-	#6	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
-	#7	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
-	#08	/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
-	#09	./logging_publisher() [0x403039]
+    Backtrace:
+    #4    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_getAndLogCollatorFailReason+0xc9) [0x7f753022df79]
+    #5    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xd5e) [0x7f7530239eeb]
+    #6    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
+    #7    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
+    #08    /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
+    #09    ./logging_publisher() [0x403039]
 [2020-11-27 13:51:52.504785] U00007f753124c700_logging_publish [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
   Mx0D:/home/pres.1.0/srcC/writerHistoryDriver/WriterHistoryDriver.c:782:PRESWriterHistoryDriver_addWrite:RTI0x20d9006:!timestamp order in topic 'Example logging'
 [2020-11-27 13:51:52.504805] U00007f753124c700_logging_publish [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
@@ -61,25 +61,31 @@ The goal of this example is to understand the different fields of
 **NDDS_Config_LogPrintFormat**. Reviwing the firt warning:
 - **Backtrace**: It is a list of the function calls that are currently active in
   a thread.
+
 ```
-	Backtrace:
-	#4	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
-	#5	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
-	#6	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
-	#7	/home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
-	#08	/lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
-	#09	./logging_publisher() [0x403039]
+    Backtrace:
+    #4    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(WriterHistoryMemoryPlugin_addSample+0x68f) [0x7f752ff1f00d]
+    #5    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESWriterHistoryDriver_addWrite+0xca7) [0x7f7530239e34]
+    #6    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscored.so(PRESPsWriter_writeInternal+0x2222) [0x7f75300e112e]
+    #7    /home/rti_connext_dds-6.1.0/lib/x64Linux3gcc5.4.0/libnddscd.so(DDS_DataWriter_write_w_timestamp_untyped_generalI+0x9a0) [0x7f7530ab1a35]
+    #08    /lib/x86_64-linux-gnu/libc.so.6(__libc_start_main+0xf0) [0x7f752f6ba840]
+    #09    ./logging_publisher() [0x403039]
 ```
+
 - **Timestamp**: The time when the message was logged.
+
 ```
 [2020-11-27 13:51:52.503762]
 ```
+
 - **Thread Name**: Thread identification strings uniquely identify active threads
 when a message is output to the console. A thread may be a user (application)
 thread or one of several types of internal threads.
+
 ```
 U00007f753124c700_logging_publish
 ```
+
 - **Activity Context**: Activity Context provides more context about a logging
 message. It is a group of resources and activities associated with an action.
 In the following example, the context is "a DataWriter is writing a sample".
@@ -90,19 +96,27 @@ In the following example, the context is "a DataWriter is writing a sample".
 ```
 [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
 ```
+
 - **Module**: Id representing the module
+
 ```
 Mx16
 ```
+
 - **File and Line**
+
 ```
 writer_history.1.0/srcC/memory/Memory.c:7411
 ```
+
 - **Method** name where the message is logged
+
 ```
 WriterHistoryMemoryPlugin_addSample:RTI0x2161002:out of order
 ```
+
 - **Message Id**: It is a identification of the message.
+
 ```
 RTI0x2161002
 ```

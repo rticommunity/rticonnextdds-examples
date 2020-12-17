@@ -168,11 +168,16 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     /* Create data sample for writing */
-
     instance = asyncTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-
     if (instance == NULL) {
         printf("asyncTypeSupport_create_data error\n");
+        publisher_shutdown(participant);
+        return -1;
+    }
+
+    /* Create the data to be written, ensuring it is larger than message_size_max */
+    if (!DDS_OctetSeq_ensure_length(&instance->data, 8000, 8000)) {
+        printf("DDS_OctetSeq_ensure_length error\n");
         publisher_shutdown(participant);
         return -1;
     }
@@ -184,12 +189,7 @@ static int publisher_main(int domainId, int sample_count)
         instance_handle = asyncDataWriter_register_instance(
             async_writer, instance);
     */
-    /* Create the data to be written, ensuring it is larger than message_size_max */
-    if (!DDS_OctetSeq_ensure_length(&instance->data, 8000, 8000)) {
-        printf("DDS_OctetSeq_ensure_length error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
+
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
@@ -266,4 +266,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domain_id, sample_count);
 }
-

@@ -21,29 +21,32 @@ DataReaderProtocolStatus:
 | replaced_dropped_sample_count | The number of samples replaced by the DataReader due to DDS_KEEP_LAST_HISTORY_QOS replacement. |
 | writer_removed_batch_sample_dropped_sample_count | The number of batch samples received by the DataReader that were marked as removed by the DataWriter. |
 
-For more information about the counters, please refer to the API Reference HTML documentation or the User Manuals.
-
+For more information about the counters, please refer to the API Reference HTML
+documentation or the User Manuals.
 
 ## Example Description
 
-In this example we illustrate how to detect samples dropped for two reasons:
- - Exclusive Ownership.
- - Content Filter Topic.
+In this example, we illustrate how to detect samples dropped for two reasons:
+- Exclusive Ownership.
+- Content Filter Topic.
 
 In order to force the samples dropped we will need to:
 - In the publisher side:
-  - Create two DataWriters with different Exclusive Ownerships.
-  - Both DataWriters write samples using different values for the element X,
+
+    - Create two DataWriters with different Exclusive Ownerships.
+    - Both DataWriters write samples using different values for the element X,
     which we will filter out.
 - In the subscriber side:
-  - Create a Content Filter Topic, filtering out specific values of element X.
-  - Create a DataReader enabling Exclusive Ownership.
+
+    - Create a Content Filter Topic, filtering out specific values of element X.
+    - Create a DataReader enabling Exclusive Ownership.
 
 The output of the subscriber application will look like:
+
 ```
 Samples dropped:
-	 ownership_dropped_sample_count 4
-	 content_filter_dropped_sample_count 3
+     ownership_dropped_sample_count 4
+     content_filter_dropped_sample_count 3
 ```
 
 It means that four samples were dropped due to Exclusive Ownership and three samples
