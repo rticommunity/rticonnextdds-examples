@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2012.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
