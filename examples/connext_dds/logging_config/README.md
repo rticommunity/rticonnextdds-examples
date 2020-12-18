@@ -1,7 +1,7 @@
 # Example Code: Use the Logging API and explanation of NDDS_Config_LogPrintFormat
 
-Logging is the most basic and important debuggability feature. You can control
-how much debugging information is reported during runtime.
+Logging is the most basic and important debuggability feature. It allows you to
+control how much debugging information is reported during runtime.
 
 ## Concept
 
@@ -53,13 +53,15 @@ timestamp is older than in previous write warnings message will be logged.
 [2020-11-27 13:51:52.504805] U00007f753124c700_logging_publish [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
   Mx0D:/home/pres.1.0/srcC/psService/PsReaderWriter.c:3850:PRESPsWriter_writeInternal:RTI0x2000008:!timestamp order
 ```
+For more information about the APIs, please refer to the API Reference HTML
+documentation or the User Manuals.
 
 ## Goal of the Example
 
 The goal of this example is to understand the different fields of
-**NDDS_Config_LogPrintFormat**. Reviwing the firt warning:
+**NDDS_Config_LogPrintFormat**. Reviewing the first warning:
 
--   **Backtrace**: It is a list of the function calls that are currently active in
+-   **Backtrace**: A list of the function calls that are currently active in
   a thread.
 
 ```plaintext

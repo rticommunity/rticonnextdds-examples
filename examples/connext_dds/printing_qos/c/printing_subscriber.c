@@ -229,6 +229,13 @@ int subscriber_main(int domainId, int sample_count)
                 &reader_qos);
         return -1;
     }
+    /*
+     * First, we pass NULL for the str argument. This will cause the API to update
+     * the strSize argument to contain the required size of the str buffer.
+     * We then allocate a buffer of that size and obtain the QoS string.
+     * The DDS_DomainParticipantQos_to_string API only prints differences with
+     * respect to the document default values for the DomainParticipantQos object.
+     */
     retcode = DDS_DomainParticipantQos_to_string(
             &participant_qos,
             str,
@@ -296,6 +303,13 @@ int subscriber_main(int domainId, int sample_count)
                 &reader_qos);
         return -1;
     }
+    /*
+     * First, we pass NULL for the str argument. This will cause the API to update
+     * the strSize argument to contain the required size of the str buffer.
+     * We then allocate a buffer of that size and obtain the QoS string.
+     * The DDS_SubscriberQos_to_string_w_params API prints all the QoS values for
+     * the SubscriberQos object.
+     */
     retcode = DDS_SubscriberQos_to_string_w_params(
             &subscriber_qos,
             str,

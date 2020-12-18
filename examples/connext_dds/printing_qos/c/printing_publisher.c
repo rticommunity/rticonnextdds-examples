@@ -147,6 +147,13 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant, &topic_qos, &publisher_qos, &writer_qos);
         return -1;
     }
+    /*
+     * First, we pass NULL for the str argument. This will cause the API to update
+     * the strSize argument to contain the required size of the str buffer.
+     * We then allocate a buffer of that size and obtain the QoS string.
+     * The DDS_PublisherQos_to_string_w_params API prints all the QoS values for
+     * the PublisherQos object.
+     */
     retcode = DDS_PublisherQos_to_string_w_params(
             &publisher_qos,
             str,
@@ -209,6 +216,13 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant, &topic_qos, &publisher_qos, &writer_qos);
         return -1;
     }
+    /*
+     * First, we pass NULL for the str argument. This will cause the API to update
+     * the strSize argument to contain the required size of the str buffer.
+     * We then allocate a buffer of that size and obtain the QoS string.
+     * The DDS_TopicQos_to_string API only prints differences with respect to
+     * the document default values for the TopicQos object.
+     */
     retcode = DDS_TopicQos_to_string(&topic_qos, str, &strSize);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "topic qos to string");

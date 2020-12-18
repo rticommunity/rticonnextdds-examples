@@ -207,7 +207,7 @@ int publisher_main(int domainId, int sample_count)
             publisher_shutdown(participant);
             return -1;
         }
-        printf("Instance statistic:\n"
+        printf("Instance statistics:\n"
                 "\t alive_instance_count %lld\n"
                 "\t unregistered_instance_count %lld\n"
                 "\t disposed_instance_count %lld\n",

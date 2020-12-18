@@ -1,4 +1,4 @@
-# Example Code: instance Configuration
+# Example Code: Fragmented Data Statistics
 
 ## Building the Example :wrench:
 
@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-instance_publisher.exe  <domain_id> <samples_to_send>
-instance_subscriber.exe  <domain_id> <sleep_periods>
+fragment_publisher.exe  <domain_id> <samples_to_send>
+fragment_subscriber.exe <domain_id>  <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./instance_publisher  <domain_id> <samples_to_send>
-./instance_subscriber  <domain_id> <sleep_periods>
+./fragment_publisher  <domain_id> <samples_to_send>
+./fragment_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:

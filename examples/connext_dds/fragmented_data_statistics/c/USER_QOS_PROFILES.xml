@@ -17,18 +17,18 @@
 
         A QoS library is a named set of QoS profiles.
     -->
-    <qos_library name="async_Library">
+    <qos_library name="fragment_Library">
 
         <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
-        <qos_profile name="async_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
+        <qos_profile name="fragment_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
             <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
 
-                <!-- QoS for asynchronous publishing -->
+                <!-- QoS for fragmenthronous publishing -->
                 <publish_mode>
                     <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
                     <flow_controller_name>DDS_FIXED_RATE_FLOW_CONTROLLER_NAME</flow_controller_name>

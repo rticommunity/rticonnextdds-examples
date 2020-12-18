@@ -1,6 +1,6 @@
-# Example Code: Print QoS
+# Example Code: Instance Statistics
 
-Example about getting instance statistic.
+Example about getting instance statistics.
 
 ## Concept
 
@@ -21,26 +21,30 @@ documentation or the User Manuals.
 
 ## Example Description
 
-In this example, we illustrate how to access the instance statistic:
+In this example, we illustrate how to access the instance statistics:
 
-In order to update the instance statistic we have write, dispose and unregister
+In order to update the instance statistics we have write, dispose and unregister
 different instances.
 
-The output of the subscriber application will look like:
+On the subscriber application we expect:
 
 ```plaintext
-Instance statistic:
+Instance statistics:
      alive_instance_count 16
      no_writers_instance_count 0
      detached_instance_count 22
      disposed_instance_count 7
 ```
 
-The output of the publisher application will look like:
+On the publisher application we expect:
 
 ```plaintext
-Instance statistic:
+Instance statistics:
      alive_instance_count 15
      unregistered_instance_count 1
      disposed_instance_count 7
 ```
+
+In the example we are viewing the statistics by obtain the DataReader and
+DataWriter cache statuses. These statistics are also published by the
+monitoring libraries, and thus can be viewed through RTI monitor.

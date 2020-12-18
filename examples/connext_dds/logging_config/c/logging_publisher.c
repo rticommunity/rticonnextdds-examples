@@ -105,8 +105,9 @@ int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Start - modifying the generated example to showcase the usage of
-     * the Logging API
+    /*
+     * Start - modifying the generated example to showcase the usage of
+     * the Logging API.
      */
 
     /*
@@ -191,10 +192,10 @@ int publisher_main(int domainId, int sample_count)
     }
 
     /*
-     * Force an warning writing:
-     * When using DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS:
-     * If source timestamp is older than in previous write a warnings message
-     * will be logged.
+     * Force a warning by wring a sample where the source time stamp is older
+     * than that of a previously sent sample. When using
+     * DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS: If source timestamp is
+     * older than in previous write a warnings message will be logged.
      */
     retcode = loggingDataWriter_write_w_timestamp(
         logging_writer, instance, &instance_handle, &sourceTimestamp);
@@ -202,8 +203,9 @@ int publisher_main(int domainId, int sample_count)
         fprintf(stderr, "write error %d\n", retcode);
     }
 
-    /* End - modifying the generated example to showcase the usage of
-     * the get_publishers API
+    /*
+     * End - modifying the generated example to showcase the usage of
+     * the Logging API.
      */
 
     /* Delete data sample */

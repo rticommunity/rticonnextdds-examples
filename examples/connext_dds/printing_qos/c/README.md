@@ -1,4 +1,4 @@
-# Example Code: printing Configuration
+# Example Code: Printing QoS
 
 ## Building the Example :wrench:
 

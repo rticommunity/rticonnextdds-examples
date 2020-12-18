@@ -1,4 +1,4 @@
-# Example Code: Print QoS
+# Example Code: Detect Samples Dropped
 
 Example about detecting sample dropped.
 
@@ -31,11 +31,12 @@ In this example, we illustrate how to detect samples dropped for two reasons:
 - Exclusive Ownership.
 - Content Filter Topic.
 
-In order to force the samples dropped we will need to:
+In order to force the samples to be dropped we will need to:
 
 -   In the publisher side:
 
-    -   Create two DataWriters with different Exclusive Ownerships.
+    -   Create two DataWriters with Exclusive Ownership and different values for
+    the Ownership Strength.
     -   Both DataWriters write samples using different values for the element X,
     which we will filter out.
 -   In the subscriber side:
@@ -43,7 +44,7 @@ In order to force the samples dropped we will need to:
     - Create a Content Filter Topic, filtering out specific values of element X.
     - Create a DataReader enabling Exclusive Ownership.
 
-The output of the subscriber application will look like:
+On the subscriber application we expect:
 
 ```plaintext
 Samples dropped:
@@ -53,3 +54,7 @@ Samples dropped:
 
 It means that four samples were dropped due to Exclusive Ownership and three samples
 dropped due to Content Filter Topic.
+
+In the example we are viewing the statistics by obtain the DataReader cache status.
+These statistics are also published by the monitoring libraries, and thus can be
+viewed through RTI monitor.

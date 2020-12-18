@@ -263,7 +263,7 @@ int subscriber_main(int domainId, int sample_count)
             subscriber_shutdown(participant);
             return -1;
         }
-        printf("Instance statistic:\n"
+        printf("Instance statistics:\n"
                 "\t alive_instance_count %lld\n"
                 "\t no_writers_instance_count %lld\n"
                 "\t detached_instance_count %lld\n"

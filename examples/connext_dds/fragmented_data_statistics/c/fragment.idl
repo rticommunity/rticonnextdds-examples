@@ -10,7 +10,7 @@
  * use or inability to use the software.
  */
 
- struct async {
+ struct fragment {
     int32 x;
     sequence<octet, 100000> data;
 };
