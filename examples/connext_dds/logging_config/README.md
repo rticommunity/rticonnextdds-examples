@@ -55,7 +55,7 @@ timestamp is older than in previous write warnings message will be logged.
 ```
 
 For more information about the APIs, please refer to the API Reference HTML
-documentation or the User Manuals.
+documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Controlling_Messages_from_.htm).
 
 ## Goal of the Example
 

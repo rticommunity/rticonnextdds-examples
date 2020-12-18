@@ -22,7 +22,7 @@ DataReaderProtocolStatus:
 | writer_removed_batch_sample_dropped_sample_count | The number of batch samples received by the DataReader that were marked as removed by the DataWriter. |
 
 For more information about the counters, please refer to the API Reference HTML
-documentation or the User Manuals.
+documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataReaders.htm).
 
 ## Example Description
 
