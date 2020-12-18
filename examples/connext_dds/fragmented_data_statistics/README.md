@@ -17,7 +17,6 @@ RTI Connext DDS provides information about fragmented data statistics.
 | DataReaderProtocolStatus | sent_nack_fragment_count | The number of NACK fragments that have been sent from a DataReader to a DataWriter. |
 | DataReaderProtocolStatus | sent_nack_fragment_bytes | The number of NACK fragment bytes that have been sent from a DataReader to a DataWriter. |
 
-
 For more information about the counters, please refer to the API Reference HTML
 documentation or the User Manuals.
 
