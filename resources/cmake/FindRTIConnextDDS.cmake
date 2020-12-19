@@ -949,8 +949,10 @@ function(create_connext_imported_target)
 
     if(BUILD_SHARED_LIBS)
         set(link_mode "SHARED")
+        set(extra_options IMPORTED_NO_SONAME TRUE)
     else()
         set(link_mode "STATIC")
+        set(extra_options)
     endif()
 
     list(GET ${imported_lib}_${link_mode} 0
@@ -958,8 +960,7 @@ function(create_connext_imported_target)
     )
 
     # Create the library
-    add_library(${target_name} UNKNOWN IMPORTED)
-
+    add_library(${target_name} ${link_mode} IMPORTED)
 
     if(WIN32 AND BUILD_SHARED_LIBS)
         set(location_property IMPORTED_IMPLIB)
@@ -971,7 +972,7 @@ function(create_connext_imported_target)
     set_target_properties(${target_name}
         PROPERTIES
             ${location_property} ${module_library}
-            IMPORTED_NO_SONAME TRUE
+            ${extra_options}
             MAP_IMPORTED_CONFIG_MINSIZEREL Release
             MAP_IMPORTED_CONFIG_RELWITHDEBINFO Release
     )
@@ -985,7 +986,6 @@ function(create_connext_imported_target)
         )
     endif()
 
-    
     # Set properties per configuration
     foreach(build_mode "RELEASE" "DEBUG")
 
@@ -1891,15 +1891,15 @@ if(RTIConnextDDS_FOUND)
     endif()
 
     if(TARGET RTIConnextDDS::metp)
-        set(dependencies 
-            ${dependencies} 
+        set(dependencies
+            ${dependencies}
             RTIConnextDDS::metp
         )
     endif()
 
     if(TARGET RTIConnextDDS::messaging_c_api)
-        set(dependencies 
-            ${dependencies} 
+        set(dependencies
+            ${dependencies}
             RTIConnextDDS::messaging_c_api
         )
     endif()
