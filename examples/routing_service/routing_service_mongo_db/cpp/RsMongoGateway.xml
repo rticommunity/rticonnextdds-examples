@@ -1,0 +1,115 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/latest/rti_routing_service.xsd">
+
+    <configuration_variables>
+        <value>
+            <element>
+                <name>CLUSTER_ADDRESS</name>
+                <value>cluster0.8u6dg.mongodb.net</value>
+            </element>
+            <element>
+                <name>DB_NAME</name>
+                <value>dds_space</value>
+            </element>
+            <element>
+                <name>URI_PARAMS</name>
+                <value>retryWrites=true&amp;w=majority&amp;waitqueuetimeoutms=10000</value>
+            </element>
+        </value>
+    </configuration_variables>
+
+    <plugin_library name="AdapterLib">
+        <adapter_plugin name="MongoAdapter">
+            <dll>mongodbadapter</dll>
+            <create_function>MongoAdapter_create_adapter_plugin</create_function>
+        </adapter_plugin>
+    </plugin_library>
+
+    <routing_service name="MongoGateway">
+        <domain_route name="DdsMongo">
+            <!-- Define a single MongoDB connection to a specific cluster and database -->
+            <connection name="MongoConnection" plugin_name="AdapterLib::MongoAdapter">
+                <property>
+                    <value>
+                        <element>
+                            <name>mongo.cluster_address</name>
+                            <value>$(CLUSTER_ADDRESS)</value>
+                        </element>
+                        <element>
+                            <name>mongo.db_name</name>
+                            <value>$(DB_NAME)</value>
+                        </element>
+                        <!--
+                             For security, this value shall provided through the
+                             command-line -D option.
+                        -->
+                        <element>
+                            <name>mongo.user_and_pass</name>
+                            <value>$(USER_AND_PASS)</value>
+                        </element>
+                    </value>
+                </property>
+            </connection>
+
+            <!-- This is the domain where samples are read from DDS -->
+            <participant name="InputDomain">
+                <domain_id>0</domain_id>
+            </participant>
+
+            <!-- This is the domain where samples are written to DDS -->
+            <participant name="DdsOutput">
+                <domain_id>1</domain_id>
+            </participant>
+            <session>
+                <!-- Use a several address to serve all the routes/Topics  -->
+                <thread_pool>
+                    <size>4</size>
+                </thread_pool>
+
+                <!--
+                    Establish a simple DDS Topic -> MongoDB Collection mapping
+
+                    This auto route creates a route for each new Topic, and will insert
+                    all DDS data into MongoDB
+                 -->
+                <auto_route name="fromDdsToMongo">
+                    <dds_input participant="InputDomain">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </dds_input>
+                    <output connection="MongoConnection">
+                        <allow_stream_name_filter>*</allow_stream_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
+                    </output>
+                </auto_route>
+
+                <!--
+                    Establish a simple MongoDB Collection -> DDS Topic mapping
+
+                    This auto route creates a route for each new Topic, and will retrieve
+                    documents from MongoDB and write them as samples to DDS
+                 -->
+                <auto_route name="fromMongoToDds">
+                    <periodic_action>
+                        <sec>0</sec>
+                        <nanosec>100000000</nanosec>
+                    </periodic_action>
+                    <input connection="MongoConnection">
+                        <allow_stream_name_filter>*</allow_stream_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_stream_name_filter>rti/*</deny_stream_name_filter>
+                    </input>
+                    <dds_output participant="OutputDomain">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                    </dds_output>
+                </auto_route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+</dds>
