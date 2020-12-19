@@ -11,8 +11,8 @@
  */
 
 #include "MongoConnection.hpp"
-#include "MongoStreamWriter.hpp"
 #include "MongoStreamReader.hpp"
+#include "MongoStreamWriter.hpp"
 
 using namespace rti::community::examples;
 using namespace rti::routing;
@@ -25,27 +25,26 @@ using namespace rti::routing::adapter;
 
 std::string build_uri(const PropertySet &properties)
 {
-    std::string cluster_addr = MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(properties);
-    std::string user_and_pass = MongoConfig::parse<MongoConfig::USER_AND_PASS>(properties);
-    std::string uri_params = MongoConfig::parse<MongoConfig::URI_PARAMS>(properties);
+    std::string cluster_addr =
+            MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(properties);
+    std::string user_and_pass =
+            MongoConfig::parse<MongoConfig::USER_AND_PASS>(properties);
+    std::string uri_params =
+            MongoConfig::parse<MongoConfig::URI_PARAMS>(properties);
 
-    return "mongodb+srv://"
-            + user_and_pass
-            + "@" + cluster_addr
-            + "/<database>?"
-            + uri_params;
+    return "mongodb+srv://" + user_and_pass + "@" + cluster_addr
+            + "/<database>?" + uri_params;
 }
 
-MongoConnection::MongoConnection(
-        const PropertySet &properties)
+MongoConnection::MongoConnection(const PropertySet &properties)
         : client_pool_(mongocxx::uri(build_uri(properties))),
           db_name_(MongoConfig::parse<MongoConfig::DB_NAME>(properties))
 {
 }
-                
+
 /* --- Private interface ---*/
 
-const std::string& MongoConnection::db_name() const
+const std::string &MongoConnection::db_name() const
 {
     return db_name_;
 }
@@ -63,10 +62,7 @@ StreamWriter *MongoConnection::create_stream_writer(
         const StreamInfo &stream_info,
         const PropertySet &properties)
 {
-    return new MongoStreamWriter(
-            *this,
-            stream_info,
-            properties);
+    return new MongoStreamWriter(*this, stream_info, properties);
 };
 
 void MongoConnection::delete_stream_writer(StreamWriter *writer)
@@ -76,17 +72,15 @@ void MongoConnection::delete_stream_writer(StreamWriter *writer)
 
 rti::routing::adapter::StreamReader *MongoConnection::create_stream_reader(
         rti::routing::adapter::Session *,
-        const StreamInfo& stream_info,
-        const PropertySet& properties,
+        const StreamInfo &stream_info,
+        const PropertySet &properties,
         rti::routing::adapter::StreamReaderListener *)
 {
-    return new MongoStreamReader(
-            *this,
-            stream_info,
-            properties);
+    return new MongoStreamReader(*this, stream_info, properties);
 }
 
-void MongoConnection::delete_stream_reader(rti::routing::adapter::StreamReader *reader)
+void MongoConnection::delete_stream_reader(
+        rti::routing::adapter::StreamReader *reader)
 {
     delete reader;
 }

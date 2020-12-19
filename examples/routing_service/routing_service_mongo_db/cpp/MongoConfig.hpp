@@ -18,16 +18,15 @@
 namespace rti { namespace community { namespace examples {
 
 /**
- * @brief Static class that represents a directory for all configuration properties
- * part of the MongoDB adapter.
+ * @brief Static class that represents a directory for all configuration
+ * properties part of the MongoDB adapter.
  *
- * This class provides operations to obtain property names and their associated value
- * when they are present in a PropertySet.
+ * This class provides operations to obtain property names and their associated
+ * value when they are present in a PropertySet.
  */
 
 class MongoConfig {
 public:
-
     enum property {
         /*
          * @brief Host address to a specific cluster or database.
@@ -45,23 +44,19 @@ public:
          */
         USER_AND_PASS,
         /**
-         * @brief Additional DB connection options in MongoDB URI parameters format.
-         * Optional. Default: retryWrites=true&w=majority
+         * @brief Additional DB connection options in MongoDB URI parameters
+         * format. Optional. Default: retryWrites=true&w=majority
          */
         URI_PARAMS
     };
 
-    template <MongoConfig::property Prop, typename Type=std::string>
-    static Type parse(const rti::routing::PropertySet& properties);
+    template <MongoConfig::property Prop, typename Type = std::string>
+    static Type parse(const rti::routing::PropertySet &properties);
 
     template <MongoConfig::property Prop>
-    static const std::string& name();
-
+    static const std::string &name();
 };
 
-}  // namespace examples
-}  // namespace community
-}  // namespace rti
+}}}  // namespace rti::community::examples
 
 #endif /* MONGO_CONFIG_HPP */
-

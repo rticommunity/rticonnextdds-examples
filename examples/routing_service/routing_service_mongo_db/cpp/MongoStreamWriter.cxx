@@ -10,14 +10,13 @@
  * use or inability to use the software.
  */
 
-
-#include <rti/core/Exception.hpp>
-#include <rti/topic/to_string.hpp>
-#include <rti/routing/Logger.hpp>
-#include <mongocxx/database.hpp>
-#include <mongocxx/collection.hpp>
-#include <mongocxx/client.hpp>
 #include <bsoncxx/builder/stream/document.hpp>
+#include <mongocxx/client.hpp>
+#include <mongocxx/collection.hpp>
+#include <mongocxx/database.hpp>
+#include <rti/core/Exception.hpp>
+#include <rti/routing/Logger.hpp>
+#include <rti/topic/to_string.hpp>
 
 #include "MongoStreamWriter.hpp"
 #include "SampleConverter.hpp"
@@ -28,14 +27,13 @@ using namespace rti::community::examples;
 using namespace bsoncxx;
 
 MongoStreamWriter::MongoStreamWriter(
-        MongoConnection& connection,
-        const StreamInfo& stream_info,
+        MongoConnection &connection,
+        const StreamInfo &stream_info,
         const PropertySet &)
-        : connection_(connection),
-        stream_name_(stream_info.stream_name())
+        : connection_(connection), stream_name_(stream_info.stream_name())
 {
-   rti::routing::Logger::instance().local(
-           "created StreamWriter for stream: " + stream_info.stream_name());
+    rti::routing::Logger::instance().local(
+            "created StreamWriter for stream: " + stream_info.stream_name());
 }
 
 
@@ -44,8 +42,8 @@ MongoStreamWriter::MongoStreamWriter(
  */
 
 int MongoStreamWriter::write(
-        const std::vector<dds::core::xtypes::DynamicData *>& samples,
-        const std::vector<dds::sub::SampleInfo *>& infos)
+        const std::vector<dds::core::xtypes::DynamicData *> &samples,
+        const std::vector<dds::sub::SampleInfo *> &infos)
 {
     /*
      * This is a blocking operation: calling database() will query the
@@ -57,24 +55,18 @@ int MongoStreamWriter::write(
     mongocxx::collection db_collection = database[stream_name_];
 
     for (uint32_t i = 0; i < samples.size(); i++) {
-
-        builder::stream::document document_sample{};
-        document_sample
-                << "data"
-                << types::b_document{
-                    SampleConverter::to_document(*samples[i])};
+        builder::stream::document document_sample {};
+        document_sample << "data"
+                        << types::b_document { SampleConverter::to_document(
+                                   *samples[i]) };
         if (infos[i] != NULL) {
-            document_sample
-                    << "info"
-                    << types::b_document{
-                        SampleConverter::to_document(*infos[i])};
+            document_sample << "info"
+                            << types::b_document { SampleConverter::to_document(
+                                       *infos[i]) };
         }
 
-        db_collection.insert_one(
-                document_sample << builder::stream::finalize);
+        db_collection.insert_one(document_sample << builder::stream::finalize);
     }
-            
+
     return samples.size();
 }
-
-

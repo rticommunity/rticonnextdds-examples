@@ -15,43 +15,44 @@
 
 #include <dds/core/corefwd.hpp>
 #include <dds/core/macros.hpp>
+#include <mongocxx/instance.hpp>
 #include <rti/routing/PropertySet.hpp>
 #include <rti/routing/RoutingService.hpp>
 #include <rti/routing/adapter/AdapterPlugin.hpp>
-#include <mongocxx/instance.hpp>
 
 namespace rti { namespace community { namespace examples {
 
 /**
- * @brief Implementation of the AdapterPlugin plugin entry point to provide access
- * to MongoDB using the mongocxx driver.
+ * @brief Implementation of the AdapterPlugin plugin entry point to provide
+ * access to MongoDB using the mongocxx driver.
  *
- * The implementation represents a holder to the mongocxx::instance, which is a singleton
- * that shall be instantiated before performing any other operation on the driver. This
- * implies that in a given Routing Service, only one instance of this plugin can be
- * loaded, that is, only one <plugin> entry is allowed (or one call to
- * rti::routing::Service::register_plugin() when embedding the service into your
- * application).
+ * The implementation represents a holder to the mongocxx::instance, which is a
+ * singleton that shall be instantiated before performing any other operation on
+ * the driver. This implies that in a given Routing Service, only one instance
+ * of this plugin can be loaded, that is, only one <plugin> entry is allowed (or
+ * one call to rti::routing::Service::register_plugin() when embedding the
+ * service into your application).
  *
- * Other than that, this class purely implements the AdapterPlugin interface behavior
- * to create and delete connections. There are currently no configuration properties for
- * this class.
+ * Other than that, this class purely implements the AdapterPlugin interface
+ * behavior to create and delete connections. There are currently no
+ * configuration properties for this class.
  *
  */
 class MongoAdapter : public rti::routing::adapter::AdapterPlugin {
 public:
-
     explicit MongoAdapter(rti::routing::PropertySet &);
 
     /*
-     * --- AdapterPlugin interface ------------------------------------------------------
+     * --- AdapterPlugin interface
+     * ------------------------------------------------------
      */
     rti::routing::adapter::Connection *create_connection(
             rti::routing::adapter::detail::StreamReaderListener *,
             rti::routing::adapter::detail::StreamReaderListener *,
             const rti::routing::PropertySet &) final;
 
-    void delete_connection(rti::routing::adapter::Connection *connection) override final;
+    void delete_connection(
+            rti::routing::adapter::Connection *connection) override final;
 
     rti::config::LibraryVersion get_version() const override final;
 
@@ -60,9 +61,7 @@ private:
 };
 
 
-}  // namespace examples
-}  // namespace community
-}  // namespace rti
+}}}  // namespace rti::community::examples
 
 /**
  * This macro defines a C-linkage symbol that can be used as create function

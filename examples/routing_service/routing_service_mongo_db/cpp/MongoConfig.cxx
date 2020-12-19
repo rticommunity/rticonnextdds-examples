@@ -16,21 +16,22 @@
 using namespace rti::community::examples;
 
 /*
- *  --- Cluster address -----------------------------------------------------------------
+ *  --- Cluster address
+ * -----------------------------------------------------------------
  */
-template<>
-const std::string& MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>()
+template <>
+const std::string &MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>()
 {
     static std::string __name("mongo.cluster_address");
     return __name;
 }
 
-template<>
+template <>
 std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
-        const rti::routing::PropertySet& properties)
+        const rti::routing::PropertySet &properties)
 {
-    rti::routing::PropertySet::const_iterator it = properties.find(
-            MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>());
+    rti::routing::PropertySet::const_iterator it =
+            properties.find(MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>());
     if (it != properties.end()) {
         return it->second;
     }
@@ -39,21 +40,22 @@ std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
 }
 
 /*
- *  --- User & Pass ---------------------------------------------------------------------
+ *  --- User & Pass
+ * ---------------------------------------------------------------------
  */
-template<>
-const std::string& MongoConfig::name<MongoConfig::USER_AND_PASS>()
+template <>
+const std::string &MongoConfig::name<MongoConfig::USER_AND_PASS>()
 {
     static std::string __name("mongo.uri_params");
     return __name;
 }
 
-template<>
+template <>
 std::string MongoConfig::parse<MongoConfig::USER_AND_PASS>(
-        const rti::routing::PropertySet& properties)
+        const rti::routing::PropertySet &properties)
 {
-    rti::routing::PropertySet::const_iterator it = properties.find(
-            MongoConfig::name<MongoConfig::USER_AND_PASS>());
+    rti::routing::PropertySet::const_iterator it =
+            properties.find(MongoConfig::name<MongoConfig::USER_AND_PASS>());
     if (it != properties.end()) {
         return it->second;
     }
@@ -62,21 +64,22 @@ std::string MongoConfig::parse<MongoConfig::USER_AND_PASS>(
 }
 
 /*
- *  ---  Uri params ---------------------------------------------------------------------
+ *  ---  Uri params
+ * ---------------------------------------------------------------------
  */
-template<>
-const std::string& MongoConfig::name<MongoConfig::URI_PARAMS>()
+template <>
+const std::string &MongoConfig::name<MongoConfig::URI_PARAMS>()
 {
     static std::string __name("mongo.uri_params");
     return __name;
 }
 
-template<>
+template <>
 std::string MongoConfig::parse<MongoConfig::URI_PARAMS>(
-        const rti::routing::PropertySet& properties)
+        const rti::routing::PropertySet &properties)
 {
-    rti::routing::PropertySet::const_iterator it = properties.find(
-            MongoConfig::name<MongoConfig::URI_PARAMS>());
+    rti::routing::PropertySet::const_iterator it =
+            properties.find(MongoConfig::name<MongoConfig::URI_PARAMS>());
     if (it != properties.end()) {
         return it->second;
     }
@@ -85,21 +88,22 @@ std::string MongoConfig::parse<MongoConfig::URI_PARAMS>(
 }
 
 /*
- *  --- Database name -------------------------------------------------------------------
+ *  --- Database name
+ * -------------------------------------------------------------------
  */
-template<>
-const std::string& MongoConfig::name<MongoConfig::DB_NAME>()
+template <>
+const std::string &MongoConfig::name<MongoConfig::DB_NAME>()
 {
-     static std::string __name("mongo.db_name");
-     return __name;
+    static std::string __name("mongo.db_name");
+    return __name;
 }
 
-template<>
+template <>
 std::string MongoConfig::parse<MongoConfig::DB_NAME>(
-        const rti::routing::PropertySet& properties)
+        const rti::routing::PropertySet &properties)
 {
-    rti::routing::PropertySet::const_iterator it = properties.find(
-             MongoConfig::name<MongoConfig::DB_NAME>());
+    rti::routing::PropertySet::const_iterator it =
+            properties.find(MongoConfig::name<MongoConfig::DB_NAME>());
     if (it == properties.end()) {
         throw dds::core::InvalidArgumentError(
                 "database name is mandatory (property name: "

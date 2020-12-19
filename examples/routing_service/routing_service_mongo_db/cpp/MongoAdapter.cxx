@@ -11,30 +11,29 @@
  */
 #include <memory>
 
-#include <rti/routing/Logger.hpp>
-#include <mongocxx/logger.hpp>
 #include "MongoAdapter.hpp"
 #include "MongoConnection.hpp"
+#include <mongocxx/logger.hpp>
+#include <rti/routing/Logger.hpp>
 
 using namespace rti::community::examples;
 using namespace rti::routing;
 using namespace rti::routing::adapter;
 
 /**
- * @brief Implementation of the MongoDB driver logger that redirects messages to the
- * Connext logger.
+ * @brief Implementation of the MongoDB driver logger that redirects messages to
+ * the Connext logger.
  */
-class MongoLogger : public mongocxx::logger
-{
+class MongoLogger : public mongocxx::logger {
 public:
-
-    void operator()(mongocxx::log_level level,
+    void operator()(
+            mongocxx::log_level level,
             mongocxx::stdx::string_view domain,
             mongocxx::stdx::string_view message) noexcept override final
     {
         using mongocxx::log_level;
 
-        switch(level) {
+        switch (level) {
         case log_level::k_debug:
         case log_level::k_trace:
             rti::routing::Logger::instance().debug(
@@ -64,14 +63,14 @@ public:
     }
 };
 
-MongoAdapter::MongoAdapter(PropertySet&)
-    :instance_(std::unique_ptr<MongoLogger>())
+MongoAdapter::MongoAdapter(PropertySet &)
+        : instance_(std::unique_ptr<MongoLogger>())
 {
 }
 
 Connection *MongoAdapter::create_connection(
-        rti::routing::adapter::detail::StreamReaderListener*,
-        rti::routing::adapter::detail::StreamReaderListener*,
+        rti::routing::adapter::detail::StreamReaderListener *,
+        rti::routing::adapter::detail::StreamReaderListener *,
         const PropertySet &properties)
 {
     return new MongoConnection(properties);

@@ -14,10 +14,10 @@
 #define MONGO_CONNECTION_HPP
 
 #include <dds/core/macros.hpp>
+#include <mongocxx/database.hpp>
+#include <mongocxx/pool.hpp>
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/Connection.hpp>
-#include <mongocxx/pool.hpp>
-#include <mongocxx/database.hpp>
 
 #include "MongoConfig.hpp"
 
@@ -29,17 +29,17 @@ class MongoStreamWriter;
  * @brief Implementation of the adapter Connection. Represents a pool of client
  * connections to MongoDB.
  *
- * This is a key class since it establishes the actual connection to a specific MongoDB
- * database, given a user-provided URI.
+ * This is a key class since it establishes the actual connection to a specific
+ * MongoDB database, given a user-provided URI.
  *
- * It uses a pool of clients to read and write from the DB. This is required to support
- * concurrency between the created StreamReaders and StreamWriters, that can operate
- * under multiple threads–either within the same Session's thread pool or separate
- * Sessions-.
+ * It uses a pool of clients to read and write from the DB. This is required to
+ * support concurrency between the created StreamReaders and StreamWriters, that
+ * can operate under multiple threads–either within the same Session's thread
+ * pool or separate Sessions-.
  *
- * The current strategy is to have StreamReaders and StreamWriters to ask for an available
- * client database connection for the current calling context, using the database()
- * operation.
+ * The current strategy is to have StreamReaders and StreamWriters to ask for an
+ * available client database connection for the current calling context, using
+ * the database() operation.
  *
  * The MongoConnection can receive the following configuration properties:
  *
@@ -52,7 +52,6 @@ class MongoStreamWriter;
  */
 class MongoConnection : public rti::routing::adapter::Connection {
 public:
-
     /**
      * @brief Creates the connection given its configuration properites
      * @param properties
@@ -63,27 +62,32 @@ public:
     MongoConnection(const rti::routing::PropertySet &properties);
 
     /*
-     * --- Connection interface ---------------------------------------------------------
+     * --- Connection interface
+     * ---------------------------------------------------------
      */
     rti::routing::adapter::StreamWriter *create_stream_writer(
             rti::routing::adapter::Session *session,
             const rti::routing::StreamInfo &info,
             const rti::routing::PropertySet &properties) override final;
 
-    void delete_stream_writer(rti::routing::adapter::StreamWriter *writer) override final;
+    void delete_stream_writer(
+            rti::routing::adapter::StreamWriter *writer) override final;
 
 
     rti::routing::adapter::StreamReader *create_stream_reader(
             rti::routing::adapter::Session *session,
             const rti::routing::StreamInfo &info,
             const rti::routing::PropertySet &properties,
-            rti::routing::adapter::StreamReaderListener *listener) override final;
+            rti::routing::adapter::StreamReaderListener *listener)
+            override final;
 
-    void delete_stream_reader(rti::routing::adapter::StreamReader *reader) override final;
+    void delete_stream_reader(
+            rti::routing::adapter::StreamReader *reader) override final;
     /*
-     * --- Private Interface ------------------------------------------------------------
+     * --- Private Interface
+     * ------------------------------------------------------------
      */
-    const std::string& db_name() const;
+    const std::string &db_name() const;
 
     mongocxx::pool::entry client();
 
@@ -95,8 +99,6 @@ private:
     std::string db_name_;
 };
 
-}  // namespace examples
-}  // namespace community
-}  // namespace rti
+}}}  // namespace rti::community::examples
 
 #endif
