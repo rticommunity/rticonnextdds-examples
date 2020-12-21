@@ -23,7 +23,7 @@ documentation or the [User Manuals](https://community.rti.com/static/documentati
 
 In this example, we illustrate how to access the instance statistics:
 
-In order to update the instance statistics we have write, dispose and unregister
+In order to update the instance statistics we write, dispose and unregister
 different instances.
 
 On the subscriber application we expect:
@@ -45,6 +45,6 @@ Instance statistics:
      disposed_instance_count 7
 ```
 
-In the example we are viewing the statistics by obtain the DataReader and
+In the example we are viewing the statistics by obtainign the DataReader and
 DataWriter cache statuses. These statistics are also published by the
 monitoring libraries, and thus can be viewed through RTI monitor.

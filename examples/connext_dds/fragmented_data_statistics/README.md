@@ -53,6 +53,6 @@ Fragmented Data Statistics:
      received_nack_fragment_bytes 0
 ```
 
-In the example we are viewing the statistics by obtain the DataReader and
+In the example we are viewing the statistics by obtainign the DataReader and
 DataWriter protocol statuses. These statistics are also published by the
 monitoring libraries, and thus can be viewed through RTI monitor.

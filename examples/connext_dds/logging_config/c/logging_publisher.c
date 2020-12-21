@@ -192,7 +192,7 @@ int publisher_main(int domainId, int sample_count)
     }
 
     /*
-     * Force a warning by wring a sample where the source time stamp is older
+     * Force a warning by writing a sample where the source time stamp is older
      * than that of a previously sent sample. When using
      * DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS: If source timestamp is
      * older than in previous write a warnings message will be logged.

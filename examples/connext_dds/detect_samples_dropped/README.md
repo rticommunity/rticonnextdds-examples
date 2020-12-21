@@ -55,6 +55,6 @@ Samples dropped:
 It means that four samples were dropped due to Exclusive Ownership and three samples
 dropped due to Content Filter Topic.
 
-In the example we are viewing the statistics by obtain the DataReader cache status.
-These statistics are also published by the monitoring libraries, and thus can be
-viewed through RTI monitor.
+In the example we are viewing the statistics by obtaining the DataReader cache
+status. These statistics are also published by the monitoring libraries, and
+thus can be viewed through RTI monitor.
