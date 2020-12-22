@@ -64,6 +64,11 @@ operation).
 
 ## Example Description
 
+RTI Connext DDS provides you the possibility to print the following Qos objects:
+`DataReaderQos`, `DataWriterQos`, `PublisherQos`, `SubscriberQos`, `TopicQos`,
+`DomainParticipantQos` and `DomainParticipantFactoryQos`. It is possible to log
+all the XML or just the differences with regards to the documented defaults.
+
 In this example, we illustrate how to use the printing QoS APIs:
 
 -   In the `printing_publisher` file we demostrate how to use:

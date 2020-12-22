@@ -26,7 +26,8 @@ In this example, we illustrate how to access the instance statistics:
 In order to update the instance statistics we write, dispose and unregister
 different instances.
 
-On the subscriber application we expect:
+In the subscriber application, we retrieve the DataReader Cache Status and log
+the relevant values. The expected output is:
 
 ```plaintext
 Instance statistics:
@@ -36,7 +37,8 @@ Instance statistics:
      disposed_instance_count 7
 ```
 
-On the publisher application we expect:
+In the publisher application, we retrieve the DataWriter Cache Status and log
+the relevant values. The expected output is:
 
 ```plaintext
 Instance statistics:
@@ -45,6 +47,6 @@ Instance statistics:
      disposed_instance_count 7
 ```
 
-In the example we are viewing the statistics by obtainign the DataReader and
+In the example we are viewing the statistics by obtaining the DataReader and
 DataWriter cache statuses. These statistics are also published by the
 monitoring libraries, and thus can be viewed through RTI monitor.

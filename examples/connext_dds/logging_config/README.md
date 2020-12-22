@@ -27,9 +27,9 @@ The **NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL** is set in the *NDDS_Config_LogLevel
 **NDDS_CONFIG_LOG_LEVEL_WARNING**, it means that all the warnings message will
 be composed wit all the available RTI Connext diagnostic fields.
 
-Two sample is writen and then in the second ond we force the write opperation to
-fail: when using *DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS*, if source
-timestamp is older than in previous write warnings message will be logged.
+Two samples are written and then for the second one we force the write operation
+to fail: when using *DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS*, if source
+timestamp is older than the one from a previous write, a warning  will be logged.
 
 ```plaintext
     Backtrace:

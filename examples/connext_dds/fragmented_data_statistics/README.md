@@ -31,7 +31,8 @@ The configuration we are using results in each sample being made up of 3
 fragments. Assuming no repairs are sent, this means that the fragment counters
 should be three times higher than the sample counters.
 
-On the subscriber application we expect:
+In the subscriber application, we retrieve the DataReader Protocol Status and
+log the relevant values. The expected output is:
 
 ```plaintext
 Fragmented Data Statistics:
@@ -41,7 +42,8 @@ Fragmented Data Statistics:
      sent_nack_fragment_bytes 0
 ```
 
-On the publisher application we expect:
+In the publisher application, we retrieve the DataWriter Protocol Status and
+log the relevant values. The expected output is:
 
 ```plaintext
 Fragmented Data Statistics:
@@ -53,6 +55,6 @@ Fragmented Data Statistics:
      received_nack_fragment_bytes 0
 ```
 
-In the example we are viewing the statistics by obtainign the DataReader and
+In the example we are viewing the statistics by obtaining the DataReader and
 DataWriter protocol statuses. These statistics are also published by the
 monitoring libraries, and thus can be viewed through RTI monitor.
