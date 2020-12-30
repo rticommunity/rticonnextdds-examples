@@ -1,0 +1,99 @@
+<?xml version="1.0"?>
+<!--
+Description
+XML QoS Profile for logging
+
+(c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are
+subject to this license. The software is provided "as is", with no warranty
+of any type, including any warranty for fitness for any purpose. RTI is
+under no obligation to maintain or support the software. RTI shall not be
+liable for any incidental or consequential damages arising out of the use
+or inability to use the software.
+
+The QoS configuration of the DDS entities in the generated example is loaded
+from this file.
+
+This file is used only when it is in the current working directory or when the
+environment variable NDDS_QOS_PROFILES is defined and points to this file.
+
+The profile in this file inherits from the builtin QoS profile
+BuiltinQosLib::Generic.StrictReliable. That profile, along with all of the
+other built-in QoS profiles can be found in the
+BuiltinProfiles.documentationONLY.xml file located in the
+$NDDSHOME/resource/xml/ directory.
+
+You may use any of these QoS configurations in your application simply by
+referring to them by the name shown in the
+BuiltinProfiles.documentationONLY.xml file.
+
+Also, following the QoS Profile composition pattern you can use QoS Snippets
+to easily create your final QoS Profile. For further information visit:
+https://community.rti.com/best-practices/qos-profile-inheritance-and-composition-guidance
+
+There is a QoS Snippet library that contains a collection of
+QoS Snippets that set some specific features or configurations. You can find
+them in the BuiltinProfiles.documentationONLY.xml file as well.
+
+You should not edit the file BuiltinProfiles.documentationONLY.xml directly.
+However, if you wish to modify any of the values in a built-in profile, the
+recommendation is to create a profile of your own and inherit from the built-in
+profile you wish to modify. The NDDS_QOS_PROFILES.example.xml file (contained in
+the same directory as the BuiltinProfiles.documentationONLY.xml file) shows how
+to inherit from the built-in profiles.
+
+For more information about XML QoS Profiles see the "Configuring QoS with
+XML" chapter in the RTI Connext DDS Core Libraries User's Manual.
+-->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="logging_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="logging_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>loggingDataWriter</name>
+                </publication_name>
+                <destination_order>
+                    <kind>BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS</kind>
+                </destination_order>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>loggingDataReader</name>
+                </subscription_name>
+                <destination_order>
+                    <kind>BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS</kind>
+                </destination_order>
+            </datareader_qos>
+            <participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>loggingParticipant</name>
+                    <role_name>loggingParticipantRole</role_name>
+                </participant_name>
+
+            </participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
