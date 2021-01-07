@@ -152,7 +152,7 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant, &writer_qos);
         return -1;
     }
-    /* Use batching in order to evalute the CFT in the reader side */
+    /* Use batching in order to evaluate the CFT in the reader side */
     writer_qos.batch.enable = DDS_BOOLEAN_TRUE;
     writer_qos.batch.max_samples = 1;
     writer_qos.ownership.kind = DDS_EXCLUSIVE_OWNERSHIP_QOS;

@@ -46,6 +46,7 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::pub::qos::DataWriterQos writer_qos;
     participant->default_datawriter_qos(writer_qos);
 
+    /* Use batching in order to evaluate the CFT in the reader side */
     rti::core::policy::Batch batch;
     batch.enable(true).max_samples(1);
     writer_qos << batch;

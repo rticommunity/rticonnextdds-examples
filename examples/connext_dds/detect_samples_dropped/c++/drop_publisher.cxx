@@ -72,7 +72,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "get_default_datawriter_qos error", EXIT_FAILURE);
     }
-    /* Use batching in order to evalute the CFT in the reader side */
+    /* Use batching in order to evaluate the CFT in the reader side */
     writer_qos.batch.enable = DDS_BOOLEAN_TRUE;
     writer_qos.batch.max_samples = 1;
     writer_qos.ownership.kind = DDS_EXCLUSIVE_OWNERSHIP_QOS;
