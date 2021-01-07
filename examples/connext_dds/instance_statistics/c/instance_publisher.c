@@ -186,14 +186,14 @@ int publisher_main(int domainId, int sample_count)
         if (count % 2 == 0) {
             /* Unregister the instance */
             retcode = instanceDataWriter_unregister_instance(
-                instance_writer, instance, &instance_handle);
+                    instance_writer, instance, &instance_handle);
             if (retcode != DDS_RETCODE_OK) {
                 fprintf(stderr, "unregister instance error %d\n", retcode);
             }
         } else if (count % 3 == 0) {
             /* Dispose the instance */
             retcode = instanceDataWriter_dispose(
-                instance_writer, instance, &instance_handle);
+                    instance_writer, instance, &instance_handle);
             if (retcode != DDS_RETCODE_OK) {
                 fprintf(stderr, "unregister instance error %d\n", retcode);
             }
