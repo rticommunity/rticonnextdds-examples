@@ -1,6 +1,6 @@
 # Example Code: Detect Samples Dropped by the DataReader
 
-Example about detecting sample dropped.
+Example about detecting samples dropped.
 
 ## Concept
 
@@ -54,8 +54,8 @@ Samples dropped:
      content_filter_dropped_sample_count 3
 ```
 
-It means that four samples were dropped due to Exclusive Ownership and three samples
-dropped due to Content Filter Topic.
+The above output informs us that samples were dropped due to Exclusive Ownership
+and three samples dropped due to Content Filter Topic.
 
 In the example we are viewing the statistics by obtaining the DataReader cache
 status. These statistics are also published by the monitoring libraries, and

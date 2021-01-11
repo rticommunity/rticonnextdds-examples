@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -98,10 +98,10 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
         status = reader->datareader_cache_status();
-        std::cout << "Samples dropped:" << std::endl
-                  << "\t ownership_dropped_sample_count "
-                  << status.ownership_dropped_sample_count() << std::endl
-                  << "\t content_filter_dropped_sample_count "
+        std::cout << "Samples dropped:"
+                  << "\n\t ownership_dropped_sample_count "
+                  << status.ownership_dropped_sample_count()
+                  << "\n\t content_filter_dropped_sample_count "
                   << status.content_filter_dropped_sample_count() << std::endl;
 
     }
