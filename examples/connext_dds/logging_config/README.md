@@ -107,7 +107,7 @@ In the following example, the context is "a DataWriter is writing a sample".
 Mx16
 ```
 
-- **File and Line**: The file name (including the path to the file) and line
+-   **File and Line**: The file name (including the path to the file) and line
 number where to log message was printed.
 
 ```plaintext
