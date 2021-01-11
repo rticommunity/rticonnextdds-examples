@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -121,7 +121,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             EXIT_FAILURE);
     }
 
-    /* Write data */
+    // Write data
     retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "write error " << retcode << std::endl;

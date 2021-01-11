@@ -25,11 +25,12 @@ warnings and erros will be filter in and will be logged in the terminal.
 
 The **NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL** is set in the *NDDS_Config_LogLevel*
 **NDDS_CONFIG_LOG_LEVEL_WARNING**, it means that all the warnings message will
-be composed wit all the available RTI Connext diagnostic fields.
+be composed with all the available RTI Connext diagnostic fields.
 
 Two samples are written and then for the second one we force the write operation
 to fail: when using *DDS_BY_SOURCE_TIMESTAMP_DESTINATIONORDER_QOS*, if source
 timestamp is older than the one from a previous write, a warning  will be logged.
+The expected output is:
 
 ```plaintext
     Backtrace:
@@ -100,25 +101,26 @@ In the following example, the context is "a DataWriter is writing a sample".
 [0x01016FA9,0xB965C9C1,0x4E59B461:0x80000003{E=DW,T=Example logging,C=logging,D=0}|WRITE]
 ```
 
-- **Module**: Id representing the module
+- **Module**: Id representing the module.
 
 ```plaintext
 Mx16
 ```
 
-- **File and Line**
+- **File and Line**: The file name (including the path to the file) and line
+number where to log message was printed.
 
 ```plaintext
 writer_history.1.0/srcC/memory/Memory.c:7411
 ```
 
-- **Method** name where the message is logged
+- **Method**: The method name where the message was logged.
 
 ```plaintext
 WriterHistoryMemoryPlugin_addSample:RTI0x2161002:out of order
 ```
 
-- **Message Id**: It is a identification of the message.
+- **Message Id**: The unique identifier of the logged message.
 
 ```plaintext
 RTI0x2161002
