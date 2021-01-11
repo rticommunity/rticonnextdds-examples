@@ -1,11 +1,11 @@
 # Example Code: Instance Statistics
 
-Example about getting instance statistics.
+Example showing how to obtain instance statistics.
 
 ## Concept
 
 RTI Connext DDS provides information about the instances that are currently
-being maintained by that DataReader or DataWriter.
+being maintained by a DataReader or DataWriter.
 
 | Structure | Field Name | Description |
 | --------- | ---------- | ----------- |
@@ -21,10 +21,10 @@ documentation or the [User Manuals](https://community.rti.com/static/documentati
 
 ## Example Description
 
-In this example, we illustrate how to access the instance statistics:
+In this example, we illustrate how to access the instance statistics.
 
 In order to update the instance statistics we write, dispose and unregister
-different instances.
+different instances from a DataWriter.
 
 In the subscriber application, we retrieve the DataReader Cache Status and log
 the relevant values. The expected output is:

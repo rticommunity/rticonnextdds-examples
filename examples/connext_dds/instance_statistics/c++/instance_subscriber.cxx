@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -70,7 +70,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     DDSTheParticipantFactory->create_participant(
         domain_id,
         DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
@@ -79,7 +79,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
         DDS_SUBSCRIBER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         return shutdown_participant(participant, "create_subscriber error", EXIT_FAILURE);
@@ -98,7 +98,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
         "Example instance",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
@@ -159,14 +159,14 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "get_datareader_cache_status error " << retcode << std::endl;
         }
-        std::cout << "Instance statistics:" << std::endl
-                  << "\t alive_instance_count "
-                  << status.alive_instance_count << std::endl
-                  << "\t no_writers_instance_count "
-                  << status.no_writers_instance_count << std::endl
-                  << "\t detached_instance_count "
-                  << status.detached_instance_count << std::endl
-                  << "\t disposed_instance_count "
+        std::cout << "Instance statistics:"
+                  << "\n\t alive_instance_count "
+                  << status.alive_instance_count
+                  << "\n\t no_writers_instance_count "
+                  << status.no_writers_instance_count
+                  << "\n\t detached_instance_count "
+                  << status.detached_instance_count
+                  << "\n\t disposed_instance_count "
                   << status.disposed_instance_count << std::endl;
     }
 

@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -85,14 +85,14 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
         status = reader->datareader_cache_status();
-        std::cout << "Instance statistics:" << std::endl
-                  << "\t alive_instance_count "
-                  << status.alive_instance_count() << std::endl
-                  << "\t no_writers_instance_count "
-                  << status.no_writers_instance_count() << std::endl
-                  << "\t detached_instance_count "
-                  << status.detached_instance_count() << std::endl
-                  << "\t disposed_instance_count "
+        std::cout << "Instance statistics:"
+                  << "\n\t alive_instance_count "
+                  << status.alive_instance_count()
+                  << "\n\t no_writers_instance_count "
+                  << status.no_writers_instance_count()
+                  << "\n\t detached_instance_count "
+                  << status.detached_instance_count()
+                  << "\n\t disposed_instance_count "
                   << status.disposed_instance_count() << std::endl;
     }
 }

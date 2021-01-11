@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -69,12 +69,12 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
             writer.dispose_instance(instance_handle);
         }
         status = writer->datawriter_cache_status();
-        std::cout << "Instance statistics:" << std::endl
-                  << "\t alive_instance_count "
-                  << status.alive_instance_count() << std::endl
-                  << "\t unregistered_instance_count "
-                  << status.unregistered_instance_count() << std::endl
-                  << "\t disposed_instance_count "
+        std::cout << "Instance statistics:"
+                  << "\n\t alive_instance_count "
+                  << status.alive_instance_count()
+                  << "\n\t unregistered_instance_count "
+                  << status.unregistered_instance_count()
+                  << "\n\t disposed_instance_count "
                   << status.disposed_instance_count() << std::endl;
 
     }
