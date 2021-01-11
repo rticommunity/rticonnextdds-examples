@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -33,7 +33,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     DDSTheParticipantFactory->create_participant(
         domain_id,
         DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
@@ -42,7 +42,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
         DDS_PUBLISHER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         return shutdown_participant(participant, "create_publisher error", EXIT_FAILURE);
@@ -85,7 +85,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         "Example printing",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
@@ -117,7 +117,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
         topic,
         DDS_DATAWRITER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (untyped_writer == NULL) {
         return shutdown_participant(participant, "create_datawriter error", EXIT_FAILURE);

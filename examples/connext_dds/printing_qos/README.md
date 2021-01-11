@@ -4,7 +4,7 @@ Example showing how to print the QoS in use by DDS Entities.
 
 ## Concept
 
-RTI Connext DDS provides you the possibility to print the following QoS objects:
+RTI Connext DDS provides the possibility to print the following QoS objects:
 `DataReaderQos`, `DataWriterQos`, `PublisherQos`, `SubscriberQos`, `TopicQos`,
 `DomainParticipantQos` and `DomainParticipantFactoryQos`.
 
@@ -59,7 +59,7 @@ Reference HTML documentation or the [User Manuals](https://community.rti.com/sta
 
 In addition to new APIs, when logging verbosity is set to at least LOCAL, and
 category is set to API, the QoS configuration being used by an entity is logged
-when the entity is created and when the QoS is updated (via the set_qos
+when the entity is created or when the QoS is updated (via the set_qos
 operation).
 
 ## Example Description

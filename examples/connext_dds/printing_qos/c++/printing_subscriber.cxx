@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -70,7 +70,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     DDSTheParticipantFactory->create_participant(
         domain_id,
         DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
@@ -104,7 +104,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
         DDS_SUBSCRIBER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         return shutdown_participant(participant, "create_subscriber error", EXIT_FAILURE);
@@ -144,7 +144,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
         "Example printing",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
