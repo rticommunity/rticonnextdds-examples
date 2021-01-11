@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -33,7 +33,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     DDSTheParticipantFactory->create_participant(
         domain_id,
         DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
@@ -42,7 +42,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
         DDS_PUBLISHER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         return shutdown_participant(participant, "create_publisher error", EXIT_FAILURE);
@@ -61,7 +61,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         "Example fragment",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
@@ -71,7 +71,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
         topic,
         DDS_DATAWRITER_QOS_DEFAULT,
-        NULL /* listener */,
+        NULL, // listener
         DDS_STATUS_MASK_NONE);
     if (untyped_writer == NULL) {
         return shutdown_participant(participant, "create_datawriter error", EXIT_FAILURE);
@@ -93,7 +93,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             EXIT_FAILURE);
     }
 
-    /* Create the data to be written, ensuring it is larger than message_size_max */
+    // Create the data to be written, ensuring it is larger than message_size_max */
     if (!data->data.ensure_length(8000, 8000)) {
         return shutdown_participant(
             participant,
@@ -125,18 +125,18 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "get_datawriter_protocol_status error " << retcode << std::endl;
         }
-        std::cout << "Fragmented Data Statistics:" << std::endl
-                  << "\t pushed_fragment_count "
-                  << status.pushed_fragment_count << std::endl
-                  << "\t pushed_fragment_bytes "
-                  << status.pushed_fragment_bytes << std::endl
-                  << "\t pulled_fragment_count "
-                  << status.pulled_fragment_count << std::endl
-                  << "\t pulled_fragment_bytes "
-                  <<  status.pulled_fragment_bytes << std::endl
-                  << "\t received_nack_fragment_count "
-                  << status.received_nack_fragment_count << std::endl
-                  << "\t received_nack_fragment_bytes "
+        std::cout << "Fragmented Data Statistics:"
+                  << "\n\t pushed_fragment_count "
+                  << status.pushed_fragment_count
+                  << "\n\t pushed_fragment_bytes "
+                  << status.pushed_fragment_bytes
+                  << "\n\t pulled_fragment_count "
+                  << status.pulled_fragment_count
+                  << "\n\t pulled_fragment_bytes "
+                  <<  status.pulled_fragment_bytes
+                  << "\n\t received_nack_fragment_count "
+                  << status.received_nack_fragment_count
+                  << "\n\t received_nack_fragment_bytes "
                   << status.received_nack_fragment_bytes << std::endl;
     }
 

@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -46,7 +46,7 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::pub::DataWriter<fragment> writer(publisher, topic);
 
     fragment data;
-    /* Create the data to be written, ensuring it is larger than message_size_max */
+    // Create the data to be written, ensuring it is larger than message_size_max */
     data.data().resize(8000);
 
     rti::core::status::DataWriterProtocolStatus status;
@@ -65,18 +65,18 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
         rti::util::sleep(dds::core::Duration(1));
 
         status = writer->datawriter_protocol_status();
-        std::cout << "Fragmented Data Statistics:" << std::endl
-                  << "\t pushed_fragment_count "
-                  << status.pushed_fragment_count() << std::endl
-                  << "\t pushed_fragment_bytes "
-                  << status.pushed_fragment_bytes() << std::endl
-                  << "\t pulled_fragment_count "
-                  << status.pulled_fragment_count() << std::endl
-                  << "\t pulled_fragment_bytes "
-                  <<  status.pulled_fragment_bytes() << std::endl
-                  << "\t received_nack_fragment_count "
-                  << status.received_nack_fragment_count() << std::endl
-                  << "\t received_nack_fragment_bytes "
+        std::cout << "Fragmented Data Statistics:"
+                  << "\n\t pushed_fragment_count "
+                  << status.pushed_fragment_count()
+                  << "\n\t pushed_fragment_bytes "
+                  << status.pushed_fragment_bytes()
+                  << "\n\t pulled_fragment_count "
+                  << status.pulled_fragment_count()
+                  << "\n\t pulled_fragment_bytes "
+                  <<  status.pulled_fragment_bytes()
+                  << "\n\t received_nack_fragment_count "
+                  << status.received_nack_fragment_count()
+                  << "\n\t received_nack_fragment_bytes "
                   << status.received_nack_fragment_bytes() << std::endl;
     }
 }

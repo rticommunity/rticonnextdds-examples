@@ -1,6 +1,6 @@
 # Example Code: Fragmented Data Statistics
 
-Example about getting fragmented data statistics.
+Example demonstrating how to obtain statistics relating to fragmented data.
 
 ## Concept
 
@@ -22,10 +22,10 @@ documentation or the [User Manuals](https://community.rti.com/static/documentati
 
 ## Example Description
 
-In this example, we illustrate how to access the fragmented data statistics:
+In this example, we show how to access the fragmented data statistics:
 
-In order to update the statistics we have written large data samples, which is
-fragmented.
+In order to update the fragmented data statistics we write large data samples,
+which are fragmented.
 
 The configuration we are using results in each sample being made up of 3
 fragments. Assuming no repairs are sent, this means that the fragment counters

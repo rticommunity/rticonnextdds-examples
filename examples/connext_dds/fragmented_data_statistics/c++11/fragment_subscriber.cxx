@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -86,14 +86,14 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
         status = reader->datareader_protocol_status();
-        std::cout << "Fragmented Data Statistics:" << std::endl
-                  << "\t received_fragment_count "
-                  << status.received_fragment_count() << std::endl
-                  << "\t dropped_fragment_count "
-                  << status.dropped_fragment_count() << std::endl
-                  << "\t sent_nack_fragment_count "
-                  << status.sent_nack_fragment_count() << std::endl
-                  << "\t sent_nack_fragment_bytes "
+        std::cout << "Fragmented Data Statistics:"
+                  << "\n\t received_fragment_count "
+                  << status.received_fragment_count()
+                  << "\n\t dropped_fragment_count "
+                  << status.dropped_fragment_count()
+                  << "\n\t sent_nack_fragment_count "
+                  << status.sent_nack_fragment_count()
+                  << "\n\t sent_nack_fragment_bytes "
                   <<  status.sent_nack_fragment_bytes() << std::endl;
     }
 }
