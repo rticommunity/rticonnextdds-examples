@@ -97,7 +97,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
 
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
-        status = reader->datareader_cache_status();
+        status = reader.extensions().datareader_cache_status();
         std::cout << "Samples dropped:"
                   << "\n\t ownership_dropped_sample_count "
                   << status.ownership_dropped_sample_count()
