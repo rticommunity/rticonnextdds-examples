@@ -84,7 +84,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
 
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
-        status = reader->datareader_cache_status();
+        status = reader.extensions().datareader_cache_status();
         std::cout << "Instance statistics:"
                   << "\n\t alive_instance_count "
                   << status.alive_instance_count()

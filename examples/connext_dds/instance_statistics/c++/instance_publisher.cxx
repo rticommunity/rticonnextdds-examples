@@ -116,30 +116,32 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         NDDSUtility::sleep(send_period);
         if (samples_written % 2 == 0) {
             // Unregister the instance
-            retcode = typed_writer->unregister_instance(
-                    *data, instance_handle);
+            retcode = typed_writer->unregister_instance(*data, instance_handle);
             if (retcode != DDS_RETCODE_OK) {
-                std::cerr << "register_instance error " << retcode << std::endl;
+                std::cerr << "unregister_instance error " << retcode << std::endl;
             }
         } else if (samples_written % 3 == 0) {
             // Dispose the instance
-            retcode = typed_writer->dispose(
-                    *data, instance_handle);
+            retcode = typed_writer->dispose(*data, instance_handle);
             if (retcode != DDS_RETCODE_OK) {
-                std::cerr << "dispose error " << retcode << std::endl;
+                std::cerr << "dispose instance error " << retcode << std::endl;
             }
         }
         retcode = typed_writer->get_datawriter_cache_status(status);
         if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "get_datawriter_cache_status error " << retcode << std::endl;
+            return shutdown_participant(
+                participant,
+                "get_datawriter_cache_status error",
+                EXIT_FAILURE);
         }
-        std::cout << "Instance statistics:"
-                  << "\n\t alive_instance_count "
-                  << status.alive_instance_count
-                  << "\n\t unregistered_instance_count "
-                  << status.unregistered_instance_count
-                  << "\n\t disposed_instance_count "
-                  << status.disposed_instance_count << std::endl;
+            std::cout << "Instance statistics:"
+                    << "\n\t alive_instance_count "
+                    << status.alive_instance_count
+                    << "\n\t unregistered_instance_count "
+                    << status.unregistered_instance_count
+                    << "\n\t disposed_instance_count "
+                    << status.disposed_instance_count << std::endl;
+        }
 
     }
 

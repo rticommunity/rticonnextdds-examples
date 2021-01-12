@@ -68,7 +68,7 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
             /* Dispose the instance */
             writer.dispose_instance(instance_handle);
         }
-        status = writer->datawriter_cache_status();
+        status = writer.extensions().datawriter_cache_status();
         std::cout << "Instance statistics:"
                   << "\n\t alive_instance_count "
                   << status.alive_instance_count()

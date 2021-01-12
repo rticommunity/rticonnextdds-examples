@@ -157,7 +157,10 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
         }
         retcode = untyped_reader->get_datareader_cache_status(status);
         if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "get_datareader_cache_status error " << retcode << std::endl;
+            return shutdown_participant(
+                    participant,
+                    "get_datareader_cache_status error",
+                    EXIT_FAILURE);
         }
         std::cout << "Instance statistics:"
                   << "\n\t alive_instance_count "
