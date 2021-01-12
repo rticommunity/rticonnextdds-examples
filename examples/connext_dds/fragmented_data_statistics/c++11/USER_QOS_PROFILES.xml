@@ -28,7 +28,7 @@
             <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
 
-                <!-- QoS for fragmenthronous publishing -->
+                <!-- QoS for asynchronous publishing -->
                 <publish_mode>
                     <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
                     <flow_controller_name>DDS_FIXED_RATE_FLOW_CONTROLLER_NAME</flow_controller_name>
