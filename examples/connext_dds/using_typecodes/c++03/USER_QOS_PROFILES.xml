@@ -25,7 +25,7 @@
         -->
         <qos_profile name="msg_Profile" is_default_qos="true">
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!-- The default value for
                     resource_limits.type_code_max_serialized_length (2048 bytes)
                     is an insufficient size to hold the type codes correctly for
@@ -38,7 +38,7 @@
                         3070
                     </type_code_max_serialized_length>
                 </resource_limits>
-               </participant_qos>
+               </domain_participant_qos>
             <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <reliability>
@@ -64,7 +64,7 @@
 
             </datareader_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!--
                 The participant name, if it is set, will be displayed in the
                 RTI Analyzer tool, making it easier for you to tell one
@@ -74,7 +74,7 @@
                     <name>RTI Using Typecodes C++03 Example</name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
     </qos_library>

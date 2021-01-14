@@ -52,7 +52,7 @@ RTI Connext user manual.
                 </reliability>
             </datareader_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!--
                 The participant name, if it is set, will be displayed in the
                 RTI Analyzer tool, making it easier for you to tell one
@@ -62,7 +62,7 @@ RTI Connext user manual.
                     <name>RTI Poll With QueryCondition Java Example</name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
     </qos_library>

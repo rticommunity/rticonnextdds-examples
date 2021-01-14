@@ -38,7 +38,7 @@
                 </subscription_name>
             </datareader_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!-- The participant name, if it is set, will be displayed 
                     in the RTI tools, making it easier for you to tell one application from another 
                     when you're debugging. -->
@@ -47,7 +47,7 @@
                     <role_name>ordered_groupParticipantRole</role_name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
 
             <!-- Set presentation QoS in publisher and subscriber. Selected 
                 GROUP access scope and ORDERED access -->

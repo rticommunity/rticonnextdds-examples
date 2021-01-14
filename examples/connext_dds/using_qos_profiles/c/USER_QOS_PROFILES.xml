@@ -27,11 +27,11 @@
 			Volatile (default configuration), so late-joiner subscribers won't 
 			get samples sent by DataWriters in the past. -->
 		<qos_profile name="volatile_profile" is_default_qos="true">
-			<participant_qos>
+			<domain_participant_qos>
 				<participant_name>
 					<name>RTI Profiles Example C</name>
 				</participant_name>
-			</participant_qos>
+			</domain_participant_qos>
 
 			<datawriter_qos>
 				<reliability>
