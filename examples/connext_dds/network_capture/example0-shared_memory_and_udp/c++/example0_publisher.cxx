@@ -191,9 +191,11 @@ extern "C" int publisher_main(int domainId, int sample_count)
          */
         if (count == 4 && !NDDSUtilityNetworkCapture::pause()) {
             fprintf(stderr, "Error pausing network capture");
+            publisher_shutdown(participant);
             return -1;
         } else if (count == 6 && !NDDSUtilityNetworkCapture::resume()) {
             fprintf(stderr, "Error resuming network capture");
+            publisher_shutdown(participant);
             return -1;
         }
 
@@ -223,6 +225,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
      */
     if (!NDDSUtilityNetworkCapture::stop()) {
         fprintf(stderr, "Error stopping network capture");
+        publisher_shutdown(participant);
         return -1;
     }
     return publisher_shutdown(participant);

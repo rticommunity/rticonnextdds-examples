@@ -84,19 +84,18 @@ int main(array<System::String^>^ argv) {
     return 0;
 }
 
-void example0Subscriber::subscribe(
-		int domain_id, int sample_count)
+void example0Subscriber::subscribe(int domain_id, int sample_count)
 {
-	/*
-	* Enable network capture.
-	*
-	* This must be called before:
-	*   - Any other network capture function is called.
-	*   - Creating the participants for which we want to capture traffic.
-	*/
-	if (!NDDS::NetworkCapture::enable()) {
-		throw gcnew ApplicationException("Error enabling network capture");
-	}
+    /*
+    * Enable network capture.
+    *
+    * This must be called before:
+    *   - Any other network capture function is called.
+    *   - Creating the participants for which we want to capture traffic.
+    */
+    if (!NDDS::NetworkCapture::enable()) {
+        throw gcnew ApplicationException("Error enabling network capture");
+    }
 
     DDS::DomainParticipant^ participant =
     DDS::DomainParticipantFactory::get_instance()->create_participant(
@@ -109,16 +108,16 @@ void example0Subscriber::subscribe(
         throw gcnew ApplicationException("create_participant error");
     }
 
-	/* Start capturing traffic for the participant. */
-	String^ filename = gcnew String("subscriber");
-	if (!NDDS::NetworkCapture::start(participant, filename)) {
-		throw gcnew ApplicationException("Error starting network capture");
-	}
+    /* Start capturing traffic for the participant. */
+    String^ filename = gcnew String("subscriber");
+    if (!NDDS::NetworkCapture::start(participant, filename)) {
+        throw gcnew ApplicationException("Error starting network capture");
+    }
 
     DDS::Subscriber^ subscriber = participant->create_subscriber(
-			DDS::DomainParticipant::SUBSCRIBER_QOS_DEFAULT,
-			nullptr, /* listener */
-			DDS::StatusMask::STATUS_MASK_NONE);
+            DDS::DomainParticipant::SUBSCRIBER_QOS_DEFAULT,
+            nullptr, /* listener */
+            DDS::StatusMask::STATUS_MASK_NONE);
     if (subscriber == nullptr) {
         shutdown(participant);
         throw gcnew ApplicationException("create_subscriber error");
@@ -133,11 +132,11 @@ void example0Subscriber::subscribe(
     }
 
     DDS::Topic^ topic = participant->create_topic(
-			"example0 using network capture C# API",
-			type_name,
-			DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
-			nullptr, /* listener */
-			DDS::StatusMask::STATUS_MASK_NONE);
+            "example0 using network capture C# API",
+            type_name,
+            DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
+            nullptr, /* listener */
+            DDS::StatusMask::STATUS_MASK_NONE);
     if (topic == nullptr) {
         shutdown(participant);
         throw gcnew ApplicationException("create_topic error");
@@ -157,35 +156,37 @@ void example0Subscriber::subscribe(
     const System::Int32 receive_period = 4000; // milliseconds
     for (int count=0; (sample_count == 0) || (count < sample_count); ++count) {
         Console::WriteLine(
-				"example0 subscriber sleeping for {0} sec...",
-				receive_period / 1000);
+                "example0 subscriber sleeping for {0} sec...",
+                receive_period / 1000);
 
-		/*
-		* Here we are going to pause capturing for some samples.
-		* The resulting pcap file will not contain them.
-		*/
-		if (count == 5) {
-			if (!NDDS::NetworkCapture::pause(participant)) {
-				throw gcnew ApplicationException("Error pausing network capture");
-			}
-		}
-		else if (count == 10) {
-			if (!NDDS::NetworkCapture::resume(participant)) {
-				throw gcnew ApplicationException("Error resuming network capture");
-			}
-		}
+        /*
+        * Here we are going to pause capturing for some samples.
+        * The resulting pcap file will not contain them.
+        */
+        if (count == 5) {
+            if (!NDDS::NetworkCapture::pause(participant)) {
+                shutdown(participant);
+                throw gcnew ApplicationException("Error pausing network capture");
+            }
+        }
+        else if (count == 10) {
+            if (!NDDS::NetworkCapture::resume(participant)) {
+                shutdown(participant);
+                throw gcnew ApplicationException("Error resuming network capture");
+            }
+        }
 
         System::Threading::Thread::Sleep(receive_period);
     }
 
-	/*
-	* Before deleting the participants that are capturing, we must stop
-	* network capture for them.
-	*/
-	if (!NDDS::NetworkCapture::stop(participant)) {
-		shutdown(participant);
-		throw gcnew ApplicationException("Error stopping network capture");
-	}
+    /*
+    * Before deleting the participants that are capturing, we must stop
+    * network capture for them.
+    */
+    if (!NDDS::NetworkCapture::stop(participant)) {
+        shutdown(participant);
+        throw gcnew ApplicationException("Error stopping network capture");
+    }
     shutdown(participant);
 }
 
@@ -198,15 +199,15 @@ void example0Subscriber::shutdown(
             participant);
     }
 
-	/*
-	* Disable network capture.
-	*
-	* This must be:
-	*   - The last network capture function that is called.
-	*/
-	if (!NDDS::NetworkCapture::disable()) {
-		throw gcnew ApplicationException("Error disabling network capture");
-	}
+    /*
+    * Disable network capture.
+    *
+    * This must be:
+    *   - The last network capture function that is called.
+    */
+    if (!NDDS::NetworkCapture::disable()) {
+        throw gcnew ApplicationException("Error disabling network capture");
+    }
 
     DDS::DomainParticipantFactory::finalize_instance();
 }

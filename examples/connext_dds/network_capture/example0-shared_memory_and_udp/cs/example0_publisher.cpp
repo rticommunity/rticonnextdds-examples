@@ -48,30 +48,29 @@ int main(array<System::String^>^ argv) {
 }
 
 void example0Publisher::publish(int domain_id, int sample_count) {
+    /*
+    * Enable network capture.
+    *
+    * This must be called before:
+    *   - Any other network capture function is called.
+    *   - Creating the participants for which we want to capture traffic.
+    */
+    if (!NDDS::NetworkCapture::enable()) {
+        throw gcnew ApplicationException("Error enabling network capture");
+    }
 
-	/*
-	* Enable network capture.
-	*
-	* This must be called before:
-	*   - Any other network capture function is called.
-	*   - Creating the participants for which we want to capture traffic.
-	*/
-	if (!NDDS::NetworkCapture::enable()) {
-		throw gcnew ApplicationException("Error enabling network capture");
-	}
+    /* Start capturing traffic for all participants. */
+    String^ filename = gcnew String("publisher");
 
-	/* Start capturing traffic for all participants. */
-	String^ filename = gcnew String("publisher");
+    NDDS::NetworkCaptureParams_t^ params = gcnew NDDS::NetworkCaptureParams_t();
+    params->traffic = NDDS::NetworkCaptureTrafficKind::TRAFFIC_OUT;
+    params->transports->ensure_length(2, 128);
+    params->transports->set_at(0, "shmem");
+    params->transports->set_at(1, "udpv4");
 
-	NDDS::NetworkCaptureParams_t^ params = gcnew NDDS::NetworkCaptureParams_t();
-	params->traffic = NDDS::NetworkCaptureTrafficKind::TRAFFIC_OUT;
-	params->transports->ensure_length(2, 128);
-	params->transports->set_at(0, "shmem");
-	params->transports->set_at(1, "udpv4");
-
-	if (!NDDS::NetworkCapture::start(filename, params)) {
-		throw gcnew ApplicationException("Error starting network capture");
-	}
+    if (!NDDS::NetworkCapture::start(filename, params)) {
+        throw gcnew ApplicationException("Error starting network capture");
+    }
 
     DDS::DomainParticipant^ participant =
         DDS::DomainParticipantFactory::get_instance()->create_participant(
@@ -103,20 +102,20 @@ void example0Publisher::publish(int domain_id, int sample_count) {
 
     DDS::Topic^ topic = participant->create_topic(
             "example0 using network capture C# API",
-			type_name,
-			DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
-			nullptr /* listener */,
-			DDS::StatusMask::STATUS_MASK_NONE);
+            type_name,
+            DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
+            nullptr /* listener */,
+            DDS::StatusMask::STATUS_MASK_NONE);
     if (topic == nullptr) {
         shutdown(participant);
         throw gcnew ApplicationException("create_topic error");
     }
 
     DDS::DataWriter^ writer = publisher->create_datawriter(
-			topic,
-			DDS::Publisher::DATAWRITER_QOS_DEFAULT,
-			nullptr, /* listener */
-			DDS::StatusMask::STATUS_MASK_NONE);
+            topic,
+            DDS::Publisher::DATAWRITER_QOS_DEFAULT,
+            nullptr, /* listener */
+            DDS::StatusMask::STATUS_MASK_NONE);
     if (writer == nullptr) {
         shutdown(participant);
         throw gcnew ApplicationException("create_datawriter error");
@@ -145,20 +144,22 @@ void example0Publisher::publish(int domain_id, int sample_count) {
             Console::WriteLine("write error: {0}", e);
         }
 
-		/*
-		* Here we are going to pause capturing for some samples.
-		* The resulting pcap file will not contain them.
-		*/
-		if (count == 5) {
-			if (!NDDS::NetworkCapture::pause()) {
-				throw gcnew ApplicationException("Error pausing network capture");
-			}
-		}
-		else if (count == 10) {
-			if (!NDDS::NetworkCapture::resume()) {
-				throw gcnew ApplicationException("Error resuming network capture");
-			}
-		}
+        /*
+        * Here we are going to pause capturing for some samples.
+        * The resulting pcap file will not contain them.
+        */
+        if (count == 5) {
+            if (!NDDS::NetworkCapture::pause()) {
+                shutdown(participant);
+                throw gcnew ApplicationException("Error pausing network capture");
+            }
+        }
+        else if (count == 10) {
+            if (!NDDS::NetworkCapture::resume()) {
+                shutdown(participant);
+                throw gcnew ApplicationException("Error resuming network capture");
+            }
+        }
 
         System::Threading::Thread::Sleep(send_period);
     }
@@ -170,14 +171,14 @@ void example0Publisher::publish(int domain_id, int sample_count) {
         Console::WriteLine("example0TypeSupport::delete_data error: {0}", e);
     }
 
-	/*
-	* Before deleting the participants that are capturing, we must stop
-	* network capture for them.
-	*/
-	if (!NDDS::NetworkCapture::stop()) {
-		shutdown(participant);
-		throw gcnew ApplicationException("Error stopping network capture");
-	}
+    /*
+    * Before deleting the participants that are capturing, we must stop
+    * network capture for them.
+    */
+    if (!NDDS::NetworkCapture::stop()) {
+        shutdown(participant);
+        throw gcnew ApplicationException("Error stopping network capture");
+    }
     shutdown(participant);
 }
 
@@ -189,15 +190,15 @@ void example0Publisher::shutdown(
         DDS::DomainParticipantFactory::get_instance()->delete_participant(participant);
     }
 
-	/*
-	* Disable network capture.
-	*
-	* This must be:
-	*   - The last network capture function that is called.
-	*/
-	if (!NDDS::NetworkCapture::disable()) {
-		throw gcnew ApplicationException("Error disabling network capture");
-	}
+    /*
+    * Disable network capture.
+    *
+    * This must be:
+    *   - The last network capture function that is called.
+    */
+    if (!NDDS::NetworkCapture::disable()) {
+        throw gcnew ApplicationException("Error disabling network capture");
+    }
 
     DDS::DomainParticipantFactory::finalize_instance();
 }
