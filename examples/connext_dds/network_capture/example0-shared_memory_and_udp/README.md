@@ -18,7 +18,7 @@ For the sake of simplicity, this example:
 * Starts network capture globally (i.e., for all participants). That way we
   don't have to specify the particular DomainParticipant as an input to the
   function for starting the capture. Note that this also means that if we add
-  new Domain Participants, their traffic will be captured as well.
+  new DomainParticipants, their traffic will be captured as well.
 
 * Uses the default parameters for the capture. This example does not configure
   the capture (besides choosing the name for the output .pcap files).
