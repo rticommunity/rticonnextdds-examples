@@ -12,15 +12,7 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/rti_dds_qos_profiles.xsd"
      version="6.0.1">
-
     <qos_library name="SecurityExampleProfiles">
-    
-        <!-- Default QoS:
-
-             This profile contains the QoS that applications would use by
-             default. We can use it as a base profile to inherit from and
-             override some parameters.
-         -->
         <qos_profile name="A" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
           <participant_qos>
             <property>

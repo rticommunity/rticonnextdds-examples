@@ -146,17 +146,16 @@ static int subscriber_shutdown(
             fprintf(stderr, "finalize_instance error %d\n", retcode);
             status = -1;
         }
-    }
-
-    /*
-     * Disable network capture.
-     *
-     * This must be:
-     *   - The last network capture function that is called.
-     */
-    if (!NDDS_Utility_disable_network_capture()) {
-        fprintf(stderr, "Error disabling network capture\n");
-        status = -1;
+        /*
+        * Disable network capture.
+        *
+        * This must be:
+        *   - The last network capture function that is called.
+        */
+        if (!NDDS_Utility_disable_network_capture()) {
+            fprintf(stderr, "Error disabling network capture\n");
+            status = -1;
+        }
     }
     return status;
 }
