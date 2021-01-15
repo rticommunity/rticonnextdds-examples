@@ -83,10 +83,8 @@ static int publisher_main(int domainId, int sample_count)
     example3DataWriter *example3_writer = NULL;
     example3DataWriter *example3_writer2 = NULL;
     example3 *instance = NULL;
-    example3 *instance2 = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
-    DDS_InstanceHandle_t instance_handle2 = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     const char *type_name2 = NULL;
     int count = 0;
@@ -141,6 +139,7 @@ static int publisher_main(int domainId, int sample_count)
             &participant_qos,
             NULL,
             DDS_STATUS_MASK_NONE);
+    DDS_DomainParticipantQos_finalize(&participant_qos);
 #else
     participant = DDS_DomainParticipantFactory_create_participant_with_profile(
             DDS_TheParticipantFactory,
@@ -224,7 +223,7 @@ static int publisher_main(int domainId, int sample_count)
     topic2 = DDS_DomainParticipant_create_topic(
             participant2,
             "Example3 [2nd Participant]",
-            type_name,
+            type_name2,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
@@ -281,13 +280,6 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
-    instance2 = example3TypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
-    if (instance2 == NULL) {
-        fprintf(stderr, "example3TypeSupport_create_data error\n");
-        publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
-        publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
-        return -1;
-    }
 
     /*
      * Start capturing for all participants and then stop capturing for the
@@ -311,12 +303,7 @@ static int publisher_main(int domainId, int sample_count)
         RTIOsapiUtility_snprintf(
                 instance->msg,
                 128,
-                "Hello World Secure [1st participant] (%d)",
-                count);
-        RTIOsapiUtility_snprintf(
-                instance2->msg,
-                128,
-                "Hello World Secure [2nd participant] (%d)",
+                "Hello World Secure (%d)",
                 count);
 
         retcode = example3DataWriter_write(
@@ -328,8 +315,8 @@ static int publisher_main(int domainId, int sample_count)
         }
         retcode = example3DataWriter_write(
                 example3_writer2,
-                instance2,
-                &instance_handle2);
+                instance,
+                &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
@@ -338,10 +325,6 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     retcode = example3TypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "example3TypeSupport_delete_data error %d\n", retcode);
-    }
-    retcode = example3TypeSupport_delete_data_ex(instance2, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "example3TypeSupport_delete_data error %d\n", retcode);
     }
@@ -354,10 +337,6 @@ static int publisher_main(int domainId, int sample_count)
 
     /* Finalize the parameters to free allocated memory */
     NDDS_Utility_NetworkCaptureParams_t_finalize(&params);
-
-#ifdef RTI_STATIC
-    DDS_DomainParticipantQos_finalize(&participant_qos);
-#endif
 
     return publisher_shutdown(participant, DDS_BOOLEAN_FALSE)
             && publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);

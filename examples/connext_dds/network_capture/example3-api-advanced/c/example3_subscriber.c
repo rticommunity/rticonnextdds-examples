@@ -256,6 +256,7 @@ static int subscriber_main(int domainId, int sample_count)
             &participant_qos,
             NULL,
             DDS_STATUS_MASK_NONE);
+    DDS_DomainParticipantQos_finalize(&participant_qos);
 #else
     participant = DDS_DomainParticipantFactory_create_participant_with_profile(
             DDS_TheParticipantFactory,
@@ -461,9 +462,6 @@ static int subscriber_main(int domainId, int sample_count)
     /* Finalize the parameters to free allocated memory */
     NDDS_Utility_NetworkCaptureParams_t_finalize(&params);
 
-#ifdef RTI_STATIC
-    DDS_DomainParticipantQos_finalize(&participant_qos);
-#endif
     return subscriber_shutdown(participant, DDS_BOOLEAN_FALSE)
             && subscriber_shutdown(participant2, DDS_BOOLEAN_TRUE);
 }
