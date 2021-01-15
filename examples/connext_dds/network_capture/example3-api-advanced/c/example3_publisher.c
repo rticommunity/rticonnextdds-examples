@@ -27,23 +27,6 @@
 #include "security/security_default.h"
 #endif
 
-int RTI_SNPRINTF (
-   char *buffer,
-   size_t count,
-   const char *format, ...)
-{
-    int length;
-    va_list ap;
-    va_start(ap, format);
-#ifdef RTI_WIN32
-    length = _vsnprintf_s(buffer, count, count, format, ap);
-#else
-    length = vsnprintf(buffer, count, format, ap);
-#endif
-     va_end(ap);
-     return length;
-}
-
 static int publisher_shutdown(
         DDS_DomainParticipant *participant,
         DDS_Boolean last_participant)
@@ -326,12 +309,12 @@ static int publisher_main(int domainId, int sample_count)
         printf("Writing example3 Secure, count %d\n", count);
         fflush(stdout);
 
-        RTI_SNPRINTF(
+        RTIOsapiUtility_snprintf(
                 instance->msg,
                 128,
                 "Hello World Secure [1st participant] (%d)",
                 count);
-        RTI_SNPRINTF(
+        RTIOsapiUtility_snprintf(
                 instance2->msg,
                 128,
                 "Hello World Secure [2nd participant] (%d)",

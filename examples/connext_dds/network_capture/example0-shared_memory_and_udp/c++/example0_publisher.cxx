@@ -183,7 +183,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
         printf("Writing example0, count %d\n", count);
-        snprintf(instance->msg, 128, "Hello World (%d)", count);
+        RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
         /*
          * Here we are going to pause capturing for some samples.

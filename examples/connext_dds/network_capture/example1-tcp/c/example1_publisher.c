@@ -30,21 +30,6 @@
 #include "example1.h"
 #include "example1Support.h"
 
-int RTI_SNPRINTF (char *buffer, size_t count, const char *format, ...)
-{
-    int length;
-    va_list ap;
-    va_start(ap, format);
-#ifdef RTI_WIN32
-    length = _vsnprintf_s(buffer, count, count, format, ap);
-#else
-    length = vsnprintf(buffer, count, format, ap);
-#endif
-    va_end(ap);
-    return length;
-}
-
-
 static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
@@ -206,7 +191,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         printf("Writing example1, count %d\n", count);
         fflush(stdout);
 
-        RTI_SNPRINTF(instance->msg, 128, "Hello World (%d)", count);
+        RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
         /*
          * Here we are going to pause capturing for some samples.

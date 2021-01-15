@@ -142,8 +142,6 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     int count = 0;
     DDS_Duration_t receive_period = {1, 0};
     int status = 0;
-    NDDS_Utility_NetworkCaptureParams_t params =
-            NDDS_UTILITY_NETWORK_CAPTURE_PARAMETERS_DEFAULT;
     DDS_Boolean success = DDS_BOOLEAN_FALSE;
 
     /*
