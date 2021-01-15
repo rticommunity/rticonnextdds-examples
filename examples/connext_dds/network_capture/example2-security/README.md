@@ -15,4 +15,3 @@ using parameters to configure the capture:
     include the results of decrypting the RTPS message, and it will exclude the
     encrypted contents. Excluding the encrypted contents but including the results
     of the decryption is done to reduce the filesize.
-    
