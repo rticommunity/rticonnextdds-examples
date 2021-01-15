@@ -50,6 +50,6 @@ use one tool over the other for capturing traffic).
 
 ## References
 
-1. [RTI Core Libraries User Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds/html_files/RTI_ConnextDDS_CoreLibraries_UsersManual/index.htm#users_manual/NetworkCapture.htm)
+1.  [RTI Core Libraries User Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds/html_files/RTI_ConnextDDS_CoreLibraries_UsersManual/index.htm#users_manual/NetworkCapture.htm)
 
-2. [RTI Modern C++ API Reference](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__NDDSNetworkCaptureModule.html)
+2.  [RTI Modern C++ API Reference](https://community.rti.com/static/documentation/connext-dds/current/doc/api/connext_dds/api_cpp2/group__NDDSNetworkCaptureModule.html)
