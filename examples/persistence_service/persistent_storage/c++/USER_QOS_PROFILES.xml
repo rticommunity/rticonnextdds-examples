@@ -47,23 +47,23 @@
                 </protocol>
 
             </datareader_qos>
-            <participant_qos>
+            <domain_participant_qos>
                 <participant_name>
                     <name>Persistent Storage C++ example</name>
                     <role_name>persistence_serviceParticipantRole</role_name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
         <!-- QoS profile used to configure the Durable Writer History scenario -->
         <qos_profile name="durable_writer_history_Profile"
             base_name="BuiltinQosLibExp::Generic.StrictReliable">
-            <participant_qos>
+            <domain_participant_qos>
                 <participant_name>
                     <name>Durable Writer History C++ example</name>
                 </participant_name>
-            </participant_qos>
+            </domain_participant_qos>
 
             <datawriter_qos name="writer_dwh"
                 base_name="BuiltinQosLibExp::Generic.StrictReliable">
@@ -100,11 +100,11 @@
         <!-- QoS profile used to configure the Durable Reader State scenario -->
         <qos_profile name="durable_reader_state_Profile"
             base_name="BuiltinQosLibExp::Generic.StrictReliable">
-            <participant_qos>
+            <domain_participant_qos>
                 <participant_name>
                     <name>Durable Reader State C++ example</name>
                 </participant_name>
-            </participant_qos>
+            </domain_participant_qos>
 
             <datareader_qos name="reader_drs"
                 base_name="BuiltinQosLibExp::Generic.StrictReliable">

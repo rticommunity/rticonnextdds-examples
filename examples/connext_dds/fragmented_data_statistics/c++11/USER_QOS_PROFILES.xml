@@ -34,14 +34,14 @@
                     <flow_controller_name>DDS_FIXED_RATE_FLOW_CONTROLLER_NAME</flow_controller_name>
                 </publish_mode>
             </datawriter_qos>
-            <participant_qos>
+            <domain_participant_qos>
                 <transport_builtin>
                     <shmem>
                         <!-- Reduce message_size_max in order to fragment data -->
                         <message_size_max>4192</message_size_max>
                     </shmem>
                 </transport_builtin>
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
     </qos_library>

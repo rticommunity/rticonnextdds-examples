@@ -31,14 +31,14 @@ RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Gu
           KeepLastReliable is used as the base profile. -->
   <qos_library name="Qos_Library">
     <qos_profile name="DefaultProfile">
-	      <participant_qos base_name="BuiltinQosLibExp::Generic.KeepLastReliable">
+	      <domain_participant_qos base_name="BuiltinQosLibExp::Generic.KeepLastReliable">
         <!-- The participant name, if it is set, will be displayed in the RTI
                     Analyzer tool, making it easier for you to tell one application
                     from another when you're debugging. -->
         <participant_name>
           <name>XML Application Creation C++11 Example</name>
         </participant_name>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
 
   </qos_library>
@@ -84,4 +84,3 @@ RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Gu
   </domain_participant_library>
 
 </dds>
-

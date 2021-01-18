@@ -73,7 +73,7 @@ inherit from two different built-in profiles.
     is independent of the reader, and writer-specific streaming reliability QoS:
 
     ```xml
-    <participant_qos base_name="BuiltinQosLib::Generic.Monitoring.Common">
+    <domain_participant_qos base_name="BuiltinQosLib::Generic.Monitoring.Common">
     ```
 
 In this example, the *DomainParticipant* is configured to enable monitoring out

@@ -38,11 +38,11 @@
                 -->
             </participant_factory_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <resource_limits>
                     <participant_user_data_max_length>1024</participant_user_data_max_length>
                 </resource_limits>
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
     </qos_library>
