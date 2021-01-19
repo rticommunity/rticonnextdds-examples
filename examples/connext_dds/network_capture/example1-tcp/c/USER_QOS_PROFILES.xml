@@ -10,11 +10,11 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.1/rti_dds_qos_profiles.xsd"
-     version="6.0.1">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd"
+     version="6.1.0">
     <qos_library name="Library">
       <qos_profile name="Default" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
-        <participant_qos>
+        <domain_participant_qos>
           <property>
             <value>
               <element>
@@ -40,10 +40,10 @@
               </element>
             </value>
           </property>
-        </participant_qos>
+        </domain_participant_qos>
       </qos_profile>
       <qos_profile name="LANdefault" base_name="Default">
-          <participant_qos>
+          <domain_participant_qos>
             <property>
               <value>
                 <element>
@@ -52,7 +52,7 @@
               </element>
           </value>
         </property>
-      </participant_qos>
+      </domain_participant_qos>
       <datawriter_qos>
         <transport_selection>
                   <enabled_transports>
@@ -62,7 +62,7 @@
       </datawriter_qos>
     </qos_profile>
     <qos_profile name="LANpublisher" base_name="LANdefault">
-      <participant_qos>
+      <domain_participant_qos>
         <property>
           <value>
             <element>
@@ -74,10 +74,10 @@
         <discovery>
           <initial_peers>tcpv4_lan://localhost:7402</initial_peers>
         </discovery>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="LANsubscriber" base_name="LANdefault">
-        <participant_qos>
+        <domain_participant_qos>
           <property>
             <value>
               <element>
@@ -89,10 +89,10 @@
           <discovery>
             <initial_peers>tcpv4_lan://localhost:7401</initial_peers>
           </discovery>
-        </participant_qos>
+        </domain_participant_qos>
       </qos_profile>
       <qos_profile name="WANdefault" base_name="Default">
-          <participant_qos>
+          <domain_participant_qos>
             <property>
               <value>
                 <element>
@@ -101,7 +101,7 @@
               </element>
           </value>
         </property>
-      </participant_qos>
+      </domain_participant_qos>
       <datawriter_qos>
         <transport_selection>
                   <enabled_transports>
@@ -111,7 +111,7 @@
       </datawriter_qos>
     </qos_profile>
     <qos_profile name="WANsymPublisher" base_name="WANdefault">
-      <participant_qos>
+      <domain_participant_qos>
         <property>
           <value>
             <element>
@@ -127,10 +127,10 @@
         <discovery>
           <initial_peers>tcpv4_wan://localhost:7402</initial_peers>
         </discovery>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="WANsymSubscriber" base_name="WANdefault">
-        <participant_qos>
+        <domain_participant_qos>
           <property>
             <value>
               <element>
@@ -146,13 +146,13 @@
           <discovery>
             <initial_peers>tcpv4_wan://localhost:7401</initial_peers>
           </discovery>
-        </participant_qos>
+        </domain_participant_qos>
     </qos_profile>
     <!--
     Asymmetric: one (the client) starts the connection with the other (server)
     -->
     <qos_profile name="WANasymPublisher" base_name="WANdefault">
-      <participant_qos>
+      <domain_participant_qos>
         <property>
           <value>
             <element>
@@ -164,10 +164,10 @@
         <discovery>
           <initial_peers>tcpv4_wan://localhost:7402</initial_peers>
         </discovery>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="WANasymSubscriber" base_name="WANdefault">
-        <participant_qos>
+        <domain_participant_qos>
           <property>
             <value>
               <element>
@@ -180,10 +180,10 @@
               </element>
             </value>
           </property>
-        </participant_qos>
+        </domain_participant_qos>
     </qos_profile>
     <qos_profile name="TLSdefault" base_name="Default">
-      <participant_qos>
+      <domain_participant_qos>
         <property>
           <value>
             <element>
@@ -200,10 +200,10 @@
             </element>
           </value>
         </property>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="TLSpublisher" base_name="TLSdefault">
-      <participant_qos>
+      <domain_participant_qos>
         <property>
           <value>
             <element>
@@ -215,10 +215,10 @@
         <discovery>
           <initial_peers>tlsv4_lan://localhost:7402</initial_peers>
         </discovery>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="TLSsubscriber" base_name="TLSdefault">
-        <participant_qos>
+        <domain_participant_qos>
           <property>
             <value>
               <element>
@@ -230,7 +230,7 @@
           <discovery>
             <initial_peers>tlsv4_lan://localhost:7402</initial_peers>
           </discovery>
-        </participant_qos>
+        </domain_participant_qos>
       </qos_profile>
     </qos_library>
 </dds>

@@ -1,15 +1,15 @@
 MIME-Version: 1.0
-Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----A490B47A61F3B085EFF329D214F9C412"
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----66AB3FA02A445F90C80742D1282F6938"
 
 This is an S/MIME signed message
 
-------A490B47A61F3B085EFF329D214F9C412
+------66AB3FA02A445F90C80742D1282F6938
 Content-Type: text/plain
 
 <?xml version="1.0" encoding="UTF-8"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/dds_security_permissions.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/dds_security_permissions.xsd">
     <permissions>
         <grant name="ParticipantA_ECDSA">
             <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampleECdsa/emailAddress=meECdsa@rti.com</subject_name>
@@ -23,7 +23,7 @@ Content-Type: text/plain
     </permissions>
 </dds>
 
-------A490B47A61F3B085EFF329D214F9C412
+------66AB3FA02A445F90C80742D1282F6938
 Content-Type: application/x-pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -44,12 +44,12 @@ jjCBgDELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW50YSBD
 bGFyYTEeMBwGA1UECgwVUmVhbCBUaW1lIElubm92YXRpb25zMQ8wDQYDVQQDDAZS
 VEkgQ0ExHTAbBgkqhkiG9w0BCQEWDnNlY3VyZUBydGkuY29tAgkAk++QH6iulR0w
 DQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkq
-hkiG9w0BCQUxDxcNMjAxMjA0MTMxMjI5WjAvBgkqhkiG9w0BCQQxIgQgSnBwB20W
-DCEEnNEL1kVnFlDshJmHcAL/+b1fmNBx5gwweQYJKoZIhvcNAQkPMWwwajALBglg
+hkiG9w0BCQUxDxcNMjEwMTE5MTcxNzU5WjAvBgkqhkiG9w0BCQQxIgQgvkVlw8HV
+VIfn59zEelAgjnv/SNJebV1HLgpoJMCTUpoweQYJKoZIhvcNAQkPMWwwajALBglg
 hkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzAO
 BggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYIKoZIhvcN
-AwICASgwCgYIKoZIzj0EAwIERzBFAiBkCoKOqLW4jDQn076sTyLSWkAGXBAGLM79
-9D9K/roUowIhAID8Lk5trRgOovDLtpjlngkSGu+6noMGxTNsRc5nlYqP
+AwICASgwCgYIKoZIzj0EAwIERzBFAiEAtlH6sZCpCU+qCzkvm0TvmumApYMUV1IY
+uV0/PXrFTNgCIBqJDHTA7BTAjIJTsvYhcw3MJsbefaUksNaJ6/mgz8jh
 
-------A490B47A61F3B085EFF329D214F9C412--
+------66AB3FA02A445F90C80742D1282F6938--
 
