@@ -49,7 +49,7 @@ void subscriber_main(int domain_id, int sample_count)
     // will start with the prefix "publisher" and continue with a suffix
     // dependent on the participant's GUID.
     if (!network_capture::start("subscriber")) {
-        std::cout << "Error starting network capture" << std::endl;
+        std::cerr << "Error starting network capture" << std::endl;
     }
 
     DomainParticipant participant(domain_id);
@@ -79,7 +79,7 @@ void subscriber_main(int domain_id, int sample_count)
     // Before deleting the participants that are capturing, we must stop
     // network capture for them.
     if (!network_capture::stop()) {
-        std::cout << "Error stopping network capture" << std::endl;
+        std::cerr << "Error stopping network capture" << std::endl;
     }
 }
 
@@ -102,7 +102,7 @@ int main(int argc, char *argv[])
     //   - Any other network capture function is called.
     //   - Creating the participants for which we want to capture traffic.
     if (!network_capture::enable()) {
-        std::cout << "Error enabling network capture" << std::endl;
+        std::cerr << "Error enabling network capture" << std::endl;
     }
 
     try {
@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
     // This must be:
     //   - The last network capture function that is called.
     if (!network_capture::disable()) {
-        std::cout << "Error disabling network capture" << std::endl;
+        std::cerr << "Error disabling network capture" << std::endl;
     }
 
     return 0;
