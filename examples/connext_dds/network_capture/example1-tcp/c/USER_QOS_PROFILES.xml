@@ -17,6 +17,10 @@
         <domain_participant_qos>
           <property>
             <value>
+              <!--
+              This property breaks compatibility with 6.0.0 but without it
+              the source PID for inbound traffic is not populated.
+              -->
               <element>
                 <name>dds.transport.minimum_compatibility_version</name>
                 <value>6.1.0</value>
@@ -42,40 +46,40 @@
         </domain_participant_qos>
       </qos_profile>
       <qos_profile name="LANdefault" base_name="Default">
-          <domain_participant_qos>
-            <property>
-              <value>
-                <element>
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
                 <name>dds.transport.TCPv4.tcp1.parent.classid</name>
                 <value>NDDS_TRANSPORT_CLASSID_TCPV4_LAN</value>
               </element>
-          </value>
-        </property>
-      </domain_participant_qos>
-      <datawriter_qos>
-        <transport_selection>
-                  <enabled_transports>
-                      <element>DDS_TCPv4</element>
-                  </enabled_transports>
-              </transport_selection>
-      </datawriter_qos>
-    </qos_profile>
-    <qos_profile name="LANpublisher" base_name="LANdefault">
-      <domain_participant_qos>
-        <property>
-          <value>
-            <element>
-              <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-              <value>7401</value>
-            </element>
-          </value>
-        </property>
-        <discovery>
-          <initial_peers>tcpv4_lan://localhost:7402</initial_peers>
-        </discovery>
-      </domain_participant_qos>
-    </qos_profile>
-    <qos_profile name="LANsubscriber" base_name="LANdefault">
+            </value>
+          </property>
+        </domain_participant_qos>
+        <datawriter_qos>
+          <transport_selection>
+            <enabled_transports>
+              <element>DDS_TCPv4</element>
+            </enabled_transports>
+          </transport_selection>
+        </datawriter_qos>
+      </qos_profile>
+      <qos_profile name="LANpublisher" base_name="LANdefault">
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
+                <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
+                <value>7401</value>
+              </element>
+            </value>
+          </property>
+          <discovery>
+            <initial_peers>tcpv4_lan://localhost:7402</initial_peers>
+          </discovery>
+        </domain_participant_qos>
+      </qos_profile>
+      <qos_profile name="LANsubscriber" base_name="LANdefault">
         <domain_participant_qos>
           <property>
             <value>
@@ -91,22 +95,22 @@
         </domain_participant_qos>
       </qos_profile>
       <qos_profile name="WANdefault" base_name="Default">
-          <domain_participant_qos>
-            <property>
-              <value>
-                <element>
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
                 <name>dds.transport.TCPv4.tcp1.parent.classid</name>
                 <value>NDDS_TRANSPORT_CLASSID_TCPV4_WAN</value>
               </element>
-          </value>
-        </property>
-      </domain_participant_qos>
+            </value>
+          </property>
+        </domain_participant_qos>
       <datawriter_qos>
         <transport_selection>
-                  <enabled_transports>
-                      <element>DDS_TCPv4</element>
-                  </enabled_transports>
-              </transport_selection>
+          <enabled_transports>
+            <element>DDS_TCPv4</element>
+          </enabled_transports>
+        </transport_selection>
       </datawriter_qos>
     </qos_profile>
     <qos_profile name="WANsymPublisher" base_name="WANdefault">
@@ -129,23 +133,23 @@
       </domain_participant_qos>
     </qos_profile>
     <qos_profile name="WANsymSubscriber" base_name="WANdefault">
-        <domain_participant_qos>
-          <property>
-            <value>
-              <element>
-                <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value>
-              </element>
-              <element>
-                <name>dds.transport.TCPv4.tcp1.public_address</name>
-                <value>127.0.0.1:7402</value>
-              </element>
-            </value>
-          </property>
-          <discovery>
-            <initial_peers>tcpv4_wan://localhost:7401</initial_peers>
-          </discovery>
-        </domain_participant_qos>
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
+              <value>7402</value>
+            </element>
+            <element>
+              <name>dds.transport.TCPv4.tcp1.public_address</name>
+              <value>127.0.0.1:7402</value>
+            </element>
+          </value>
+        </property>
+        <discovery>
+          <initial_peers>tcpv4_wan://localhost:7401</initial_peers>
+        </discovery>
+      </domain_participant_qos>
     </qos_profile>
     <!--
     Asymmetric: one (the client) starts the connection with the other (server)
@@ -166,20 +170,20 @@
       </domain_participant_qos>
     </qos_profile>
     <qos_profile name="WANasymSubscriber" base_name="WANdefault">
-        <domain_participant_qos>
-          <property>
-            <value>
-              <element>
-                <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value>
-              </element>
-              <element>
-                <name>dds.transport.TCPv4.tcp1.public_address</name>
-                <value>127.0.0.1:7402</value>
-              </element>
-            </value>
-          </property>
-        </domain_participant_qos>
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
+              <value>7402</value>
+            </element>
+            <element>
+              <name>dds.transport.TCPv4.tcp1.public_address</name>
+              <value>127.0.0.1:7402</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
     </qos_profile>
     <qos_profile name="TLSdefault" base_name="Default">
       <domain_participant_qos>

@@ -199,6 +199,8 @@ void example0Subscriber::shutdown(
             participant);
     }
 
+    DDS::DomainParticipantFactory::finalize_instance();
+
     /*
     * Disable network capture.
     *
@@ -208,8 +210,6 @@ void example0Subscriber::shutdown(
     if (!NDDS::NetworkCapture::disable()) {
         throw gcnew ApplicationException("Error disabling network capture");
     }
-
-    DDS::DomainParticipantFactory::finalize_instance();
 }
 
 void example0Listener::on_data_available(DDS::DataReader^ reader) {

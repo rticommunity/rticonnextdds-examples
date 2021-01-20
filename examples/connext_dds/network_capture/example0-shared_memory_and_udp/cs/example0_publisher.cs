@@ -186,6 +186,13 @@ public class example0Publisher {
                     ref participant);
         }
 
+        try {
+            DDS.DomainParticipantFactory.finalize_instance();
+        } catch (DDS.Exception e) {
+            Console.WriteLine("finalize_instance error: {0}", e);
+            throw e;
+        }
+
         /*
          * Disable network capture.
          *
@@ -194,13 +201,6 @@ public class example0Publisher {
          */
         if (!NDDS.NetworkCapture.disable()) {
             throw new ApplicationException("Error disabling network capture");
-        }
-
-        try {
-            DDS.DomainParticipantFactory.finalize_instance();
-        } catch (DDS.Exception e) {
-            Console.WriteLine("finalize_instance error: {0}", e);
-            throw e;
         }
     }
 }

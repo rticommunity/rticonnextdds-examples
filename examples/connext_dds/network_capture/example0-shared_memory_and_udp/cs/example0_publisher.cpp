@@ -190,6 +190,8 @@ void example0Publisher::shutdown(
         DDS::DomainParticipantFactory::get_instance()->delete_participant(participant);
     }
 
+    DDS::DomainParticipantFactory::finalize_instance();
+
     /*
     * Disable network capture.
     *
@@ -199,6 +201,4 @@ void example0Publisher::shutdown(
     if (!NDDS::NetworkCapture::disable()) {
         throw gcnew ApplicationException("Error disabling network capture");
     }
-
-    DDS::DomainParticipantFactory::finalize_instance();
 }

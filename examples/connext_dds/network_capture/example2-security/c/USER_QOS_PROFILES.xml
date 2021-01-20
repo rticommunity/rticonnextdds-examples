@@ -40,12 +40,14 @@
                   <name>dds.sec.access.permissions</name>
                   <value>file:../../resources/xml/signed/signed_Permissions1.p7s</value>
                 </element>
-                <!-- -->
+                <!--
+                This property breaks compatibility with 6.0.0 but without it
+                the source PID for inbound traffic is not populated.
+                -->
                 <element>
                   <name>dds.transport.minimum_compatibility_version</name>
                   <value>6.1.0</value>
                 </element>
-                <!-- -->
               </value>
             </property>
           </domain_participant_qos>
