@@ -192,11 +192,15 @@
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.tls.verify.ca_file</name>
-              <value>../resources/cacert.pem</value>
+              <value>../../resources/caCert.pem</value>
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.tls.identity.certificate_chain_file</name>
-              <value>../resources/peer1.pem</value>
+              <value>../../resources/peer1Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.transport.TCPv4.tcp1.tls.identity.private_key_file</name>
+              <value>../../resources/peer1Key.pem</value>
             </element>
           </value>
         </property>
