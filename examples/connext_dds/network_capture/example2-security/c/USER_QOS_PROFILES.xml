@@ -18,27 +18,27 @@
               <value>
                 <element>
                   <name>dds.sec.auth.identity_ca</name>
-                  <value>file:../resources/cert/cacertECdsa.pem</value>
+                  <value>file:../../resources/cert/caCert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.auth.identity_certificate</name>
-                  <value>file:../resources/cert/peer1ECdsa.pem</value>
+                  <value>file:../../resources/cert/peer1Cert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.auth.private_key</name>
-                  <value>file:../resources/cert/peer1keyECdsa.pem</value>
+                  <value>file:../../resources/cert/peer1Key.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions_ca</name>
-                  <value>file:../resources/cert/cacertECdsa.pem</value>
+                  <value>file:../../resources/cert/caCert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.access.governance</name>
-                  <value>file:../resources/xml/signed/signed_Governance.p7s</value>
+                  <value>file:../../resources/xml/signed/signed_Governance.p7s</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions</name>
-                  <value>file:../resources/xml/signed/signed_PermissionsA.p7s</value>
+                  <value>file:../../resources/xml/signed/signed_Permissions1.p7s</value>
                 </element>
                 <!-- -->
                 <element>
@@ -57,19 +57,15 @@
             <value>
               <element>
                 <name>dds.sec.auth.identity_certificate</name>
-                <value>file:../resources/cert/peer2ECdsa.pem</value>
+                <value>file:../../resources/cert/peer2Cert.pem</value>
               </element>
               <element>
                 <name>dds.sec.auth.private_key</name>
-                <value>file:../resources/cert/peer2keyECdsa.pem</value>
-              </element>
-              <element>
-                <name>dds.sec.auth.password</name>
-                <value>VG9tQjEy</value>
+                <value>file:../../resources/cert/peer2Key.pem</value>
               </element>
               <element>
                 <name>dds.sec.access.permissions</name>
-                <value>file:../resources/xml/signed/signed_PermissionsB.p7s</value>
+                <value>file:../../resources/xml/signed/signed_Permissions2.p7s</value>
               </element>
             </value>
           </property>
