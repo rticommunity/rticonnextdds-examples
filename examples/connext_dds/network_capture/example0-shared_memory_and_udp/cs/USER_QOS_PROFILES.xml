@@ -56,7 +56,6 @@
                         <element>
                           <name>dds.transport.minimum_compatibility_version</name>
                           <value>6.1.0</value>
-                          <propagate>false</propagate>
                         </element>
                     </value>
                 </property>

@@ -20,7 +20,6 @@
               <element>
                 <name>dds.transport.minimum_compatibility_version</name>
                 <value>6.1.0</value>
-                <propagate>false</propagate>
               </element>
               <element>
                 <name>dds.transport.load_plugins</name>
@@ -67,7 +66,7 @@
           <value>
             <element>
               <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-              <value>7401</value> 
+              <value>7401</value>
             </element>
           </value>
         </property>
@@ -82,7 +81,7 @@
             <value>
               <element>
                 <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value> 
+                <value>7402</value>
               </element>
             </value>
           </property>
@@ -116,7 +115,7 @@
           <value>
             <element>
               <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-              <value>7401</value> 
+              <value>7401</value>
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.public_address</name>
@@ -135,7 +134,7 @@
             <value>
               <element>
                 <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value> 
+                <value>7402</value>
               </element>
               <element>
                 <name>dds.transport.TCPv4.tcp1.public_address</name>
@@ -157,7 +156,7 @@
           <value>
             <element>
               <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-              <value>0</value> 
+              <value>0</value>
             </element>
           </value>
         </property>
@@ -172,7 +171,7 @@
             <value>
               <element>
                 <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value> 
+                <value>7402</value>
               </element>
               <element>
                 <name>dds.transport.TCPv4.tcp1.public_address</name>
@@ -212,7 +211,7 @@
           <value>
             <element>
               <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-              <value>7401</value> 
+              <value>7401</value>
             </element>
           </value>
         </property>
@@ -227,7 +226,7 @@
             <value>
               <element>
                 <name>dds.transport.TCPv4.tcp1.server_bind_port</name>
-                <value>7402</value> 
+                <value>7402</value>
               </element>
             </value>
           </property>
