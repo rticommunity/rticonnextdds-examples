@@ -173,7 +173,7 @@ int subscriber_main(int domainId, int sample_count)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDS_Utility_enable_network_capture()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -265,8 +265,7 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("example0 subscriber sleeping for %d sec...\n",
-        poll_period.sec);
+        printf("example0 subscriber sleeping for %d sec...\n", poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }

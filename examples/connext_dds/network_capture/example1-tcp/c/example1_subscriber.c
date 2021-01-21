@@ -173,7 +173,7 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDS_Utility_enable_network_capture()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 

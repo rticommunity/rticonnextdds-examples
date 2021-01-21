@@ -91,7 +91,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDS_Utility_enable_network_capture()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -189,7 +189,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
         printf("Writing example1, count %d\n", count);
-        fflush(stdout);
 
         RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 

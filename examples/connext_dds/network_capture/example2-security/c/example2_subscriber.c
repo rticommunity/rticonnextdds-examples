@@ -113,7 +113,6 @@ void example2Listener_on_data_available(
             printf("Received data:\n");
             example2TypeSupport_print_data(
                     example2Seq_get_reference(&data_seq, i));
-            fflush(stdout);
         }
     }
 
@@ -190,7 +189,7 @@ static int subscriber_main(int domainId, int sample_count)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDS_Utility_enable_network_capture()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -221,7 +220,7 @@ static int subscriber_main(int domainId, int sample_count)
             "SecurityExampleProfiles",
             "A");
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "Unable to get default participant qos");
+        fprintf(stderr, "Unable to get default participant qos\n");
         return -1;
     }
     retcode = DDS_PropertyQosPolicyHelper_assert_pointer_property(
@@ -229,7 +228,7 @@ static int subscriber_main(int domainId, int sample_count)
             RTI_SECURITY_BUILTIN_PLUGIN_PROPERTY_NAME ".create_function_ptr",
             RTI_Security_PluginSuite_create);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "Unable to assert create_function_ptr property");
+        fprintf(stderr, "Unable to assert create_function_ptr property\n");
         return -1;
     }
 
@@ -317,7 +316,6 @@ static int subscriber_main(int domainId, int sample_count)
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("example2 subscriber sleeping for %d sec...\n",
             poll_period.sec);
-        fflush(stdout);
 
         NDDS_Utility_sleep(&poll_period);
     }

@@ -101,7 +101,7 @@ static int publisher_main(int domainId, int sample_count)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDS_Utility_enable_network_capture()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -115,7 +115,7 @@ static int publisher_main(int domainId, int sample_count)
             "SecurityExampleProfiles",
             "B");
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "Unable to get participant qos from profile");
+        fprintf(stderr, "Unable to get participant qos from profile\n");
         return -1;
     }
     retcode = DDS_PropertyQosPolicyHelper_assert_pointer_property(
@@ -123,7 +123,7 @@ static int publisher_main(int domainId, int sample_count)
             RTI_SECURITY_BUILTIN_PLUGIN_PROPERTY_NAME ".create_function_ptr",
             RTI_Security_PluginSuite_create);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "Unable to assert create_function_ptr property");
+        fprintf(stderr, "Unable to assert create_function_ptr property\n");
         return -1;
     }
 
@@ -298,7 +298,6 @@ static int publisher_main(int domainId, int sample_count)
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing example3 Secure, count %d\n", count);
-        fflush(stdout);
 
         RTIOsapiUtility_snprintf(
                 instance->msg,

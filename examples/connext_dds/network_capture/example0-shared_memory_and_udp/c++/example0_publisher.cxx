@@ -64,7 +64,7 @@ static int publisher_shutdown(
      *   - The last network capture function that is called.
      */
     if (!NDDSUtilityNetworkCapture::disable()) {
-        fprintf(stderr, "Error disabling network capture");
+        fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
 
@@ -93,7 +93,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDSUtilityNetworkCapture::enable()) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -119,7 +119,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
      * dependent on the participant's GUID.
      */
     if (!NDDSUtilityNetworkCapture::start("publisher")) {
-        fprintf(stderr, "Error starting network capture");
+        fprintf(stderr, "Error starting network capture\n");
         return -1;
     }
 
@@ -190,11 +190,11 @@ extern "C" int publisher_main(int domainId, int sample_count)
          * The resulting pcap file will not contain them.
          */
         if (count == 4 && !NDDSUtilityNetworkCapture::pause()) {
-            fprintf(stderr, "Error pausing network capture");
+            fprintf(stderr, "Error pausing network capture\n");
             publisher_shutdown(participant);
             return -1;
         } else if (count == 6 && !NDDSUtilityNetworkCapture::resume()) {
-            fprintf(stderr, "Error resuming network capture");
+            fprintf(stderr, "Error resuming network capture\n");
             publisher_shutdown(participant);
             return -1;
         }
@@ -224,7 +224,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
      * network capture for them.
      */
     if (!NDDSUtilityNetworkCapture::stop()) {
-        fprintf(stderr, "Error stopping network capture");
+        fprintf(stderr, "Error stopping network capture\n");
         publisher_shutdown(participant);
         return -1;
     }

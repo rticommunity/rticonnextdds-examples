@@ -124,7 +124,7 @@ static int subscriber_shutdown(
     }
 
     if (!NDDSUtilityNetworkCapture::disable()) {
-        fprintf(stderr, "Error disabling network capture");
+        fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
     return status;
@@ -153,7 +153,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::enable();
     if (!success) {
-        fprintf(stderr, "Error enabling network capture");
+        fprintf(stderr, "Error enabling network capture\n");
         return -1;
     }
 
@@ -169,7 +169,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::start("subscriber");
     if (!success) {
-        fprintf(stderr, "Error starting network capture");
+        fprintf(stderr, "Error starting network capture\n");
         return -1;
     }
 
@@ -242,7 +242,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::stop();
     if (!success) {
-        fprintf(stderr, "Error stopping network capture");
+        fprintf(stderr, "Error stopping network capture\n");
         publisher_shutdown(participant);
         return -1;
     }
