@@ -243,7 +243,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     success = NDDSUtilityNetworkCapture::stop();
     if (!success) {
         fprintf(stderr, "Error stopping network capture\n");
-        publisher_shutdown(participant);
+        subscriber_shutdown(participant);
         return -1;
     }
 
