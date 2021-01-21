@@ -4,11 +4,10 @@
     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/dds_security_permissions.xsd">
     <permissions>
         <grant name="ParticipantA_ECDSA">
-            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampleECdsa/emailAddress=meECdsa@rti.com</subject_name>
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=securityExample/emailAddress=security-example1@rti.com</subject_name>
             <validity>
-                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
-                <not_before>2014-06-01T13:00:00</not_before>
-                <not_after>2034-06-01T13:00:00</not_after>
+                <not_before>2021-01-20T00:00:00</not_before>
+                <not_after>2031-01-20T00:00:00</not_after>
             </validity>
             <default>ALLOW</default>
         </grant>
