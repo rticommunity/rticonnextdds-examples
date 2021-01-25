@@ -21,8 +21,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
-#include "example3.h"
-#include "example3Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 #ifdef RTI_STATIC
 #include "security/security_default.h"
 #endif
@@ -80,9 +80,9 @@ static int publisher_main(int domainId, int sample_count)
     DDS_Topic *topic2 = NULL;
     DDS_DataWriter *writer = NULL;
     DDS_DataWriter *writer2 = NULL;
-    example3DataWriter *example3_writer = NULL;
-    example3DataWriter *example3_writer2 = NULL;
-    example3 *instance = NULL;
+    NetworkCaptureDataWriter *NetworkCapture_writer = NULL;
+    NetworkCaptureDataWriter *NetworkCapture_writer2 = NULL;
+    NetworkCapture *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
@@ -186,8 +186,8 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    type_name = example3TypeSupport_get_type_name();
-    retcode = example3TypeSupport_register_type(
+    type_name = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(
             participant,
             type_name);
     if (retcode != DDS_RETCODE_OK) {
@@ -196,8 +196,8 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
-    type_name2 = example3TypeSupport_get_type_name();
-    retcode = example3TypeSupport_register_type(
+    type_name2 = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(
             participant2,
             type_name2);
     if (retcode != DDS_RETCODE_OK) {
@@ -209,7 +209,7 @@ static int publisher_main(int domainId, int sample_count)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "Example3 [1st Participant]",
+            "NetworkCapture [1st Participant]",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -222,7 +222,7 @@ static int publisher_main(int domainId, int sample_count)
     }
     topic2 = DDS_DomainParticipant_create_topic(
             participant2,
-            "Example3 [2nd Participant]",
+            "NetworkCapture [2nd Participant]",
             type_name2,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -246,8 +246,8 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
-    example3_writer = example3DataWriter_narrow(writer);
-    if (example3_writer == NULL) {
+    NetworkCapture_writer = NetworkCaptureDataWriter_narrow(writer);
+    if (NetworkCapture_writer == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
@@ -265,17 +265,17 @@ static int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
-    example3_writer2 = example3DataWriter_narrow(writer2);
-    if (example3_writer2 == NULL) {
+    NetworkCapture_writer2 = NetworkCaptureDataWriter_narrow(writer2);
+    if (NetworkCapture_writer2 == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
 
-    instance = example3TypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance = NetworkCaptureTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance == NULL) {
-        fprintf(stderr, "example3TypeSupport_create_data error\n");
+        fprintf(stderr, "NetworkCaptureTypeSupport_create_data error\n");
         publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
         publisher_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
@@ -297,7 +297,7 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("Writing example3 Secure, count %d\n", count);
+        printf("Writing NetworkCapture Secure, count %d\n", count);
 
         RTIOsapiUtility_snprintf(
                 instance->msg,
@@ -305,15 +305,15 @@ static int publisher_main(int domainId, int sample_count)
                 "Hello World Secure (%d)",
                 count);
 
-        retcode = example3DataWriter_write(
-                example3_writer,
+        retcode = NetworkCaptureDataWriter_write(
+                NetworkCapture_writer,
                 instance,
                 &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
-        retcode = example3DataWriter_write(
-                example3_writer2,
+        retcode = NetworkCaptureDataWriter_write(
+                NetworkCapture_writer2,
                 instance,
                 &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -323,9 +323,9 @@ static int publisher_main(int domainId, int sample_count)
         NDDS_Utility_sleep(&send_period);
     }
 
-    retcode = example3TypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = NetworkCaptureTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "example3TypeSupport_delete_data error %d\n", retcode);
+        fprintf(stderr, "NetworkCaptureTypeSupport_delete_data error %d\n", retcode);
     }
 
     /* After a global start, use a global stop. This stops the 2nd participant */

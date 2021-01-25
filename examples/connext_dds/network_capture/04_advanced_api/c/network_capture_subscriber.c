@@ -21,72 +21,72 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
-#include "example3.h"
-#include "example3Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 #ifdef RTI_STATIC
 #include "security/security_default.h"
 #endif
 
-void example3Listener_on_requested_deadline_missed(
+void NetworkCaptureListener_on_requested_deadline_missed(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
-void example3Listener_on_requested_incompatible_qos(
+void NetworkCaptureListener_on_requested_incompatible_qos(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
-void example3Listener_on_sample_rejected(
+void NetworkCaptureListener_on_sample_rejected(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
-void example3Listener_on_liveliness_changed(
+void NetworkCaptureListener_on_liveliness_changed(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
-void example3Listener_on_sample_lost(
+void NetworkCaptureListener_on_sample_lost(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
-void example3Listener_on_subscription_matched(
+void NetworkCaptureListener_on_subscription_matched(
         void* listener_data,
         DDS_DataReader* reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
-void example3Listener_on_data_available(
+void NetworkCaptureListener_on_data_available(
         void* listener_data,
         DDS_DataReader* reader)
 {
-    example3DataReader *example3_reader = NULL;
-    struct example3Seq data_seq = DDS_SEQUENCE_INITIALIZER;
+    NetworkCaptureDataReader *NetworkCapture_reader = NULL;
+    struct NetworkCaptureSeq data_seq = DDS_SEQUENCE_INITIALIZER;
     struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
     DDS_ReturnCode_t retcode;
     int i;
 
-    example3_reader = example3DataReader_narrow(reader);
-    if (example3_reader == NULL) {
+    NetworkCapture_reader = NetworkCaptureDataReader_narrow(reader);
+    if (NetworkCapture_reader == NULL) {
         fprintf(stderr, "DataReader narrow error\n");
         return;
     }
 
-    retcode = example3DataReader_take(
-            example3_reader,
+    retcode = NetworkCaptureDataReader_take(
+            NetworkCapture_reader,
             &data_seq,
             &info_seq,
             DDS_LENGTH_UNLIMITED,
@@ -99,16 +99,16 @@ void example3Listener_on_data_available(
         return;
     }
 
-    for (i = 0; i < example3Seq_get_length(&data_seq); ++i) {
+    for (i = 0; i < NetworkCaptureSeq_get_length(&data_seq); ++i) {
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             printf("Received data:\n");
-            example3TypeSupport_print_data(
-                    example3Seq_get_reference(&data_seq, i));
+            NetworkCaptureTypeSupport_print_data(
+                    NetworkCaptureSeq_get_reference(&data_seq, i));
         }
     }
 
-    retcode = example3DataReader_return_loan(
-            example3_reader,
+    retcode = NetworkCaptureDataReader_return_loan(
+            NetworkCapture_reader,
             &data_seq,
             &info_seq);
     if (retcode != DDS_RETCODE_OK) {
@@ -313,16 +313,16 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    type_name = example3TypeSupport_get_type_name();
-    retcode = example3TypeSupport_register_type(participant, type_name);
+    type_name = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
         subscriber_shutdown(participant2, DDS_BOOLEAN_TRUE);
         return -1;
     }
-    type_name2 = example3TypeSupport_get_type_name();
-    retcode = example3TypeSupport_register_type(participant2, type_name2);
+    type_name2 = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(participant2, type_name2);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -332,7 +332,7 @@ static int subscriber_main(int domainId, int sample_count)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "Example3 [1st Participant]",
+            "NetworkCapture [1st Participant]",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -345,7 +345,7 @@ static int subscriber_main(int domainId, int sample_count)
     }
     topic2 = DDS_DomainParticipant_create_topic(
             participant2,
-            "Example3 [2nd Participant]",
+            "NetworkCapture [2nd Participant]",
             type_name2,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -378,19 +378,19 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     reader_listener.on_requested_deadline_missed  =
-    example3Listener_on_requested_deadline_missed;
+    NetworkCaptureListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-    example3Listener_on_requested_incompatible_qos;
+    NetworkCaptureListener_on_requested_incompatible_qos;
     reader_listener.on_sample_rejected =
-    example3Listener_on_sample_rejected;
+    NetworkCaptureListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
-    example3Listener_on_liveliness_changed;
+    NetworkCaptureListener_on_liveliness_changed;
     reader_listener.on_sample_lost =
-    example3Listener_on_sample_lost;
+    NetworkCaptureListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-    example3Listener_on_subscription_matched;
+    NetworkCaptureListener_on_subscription_matched;
     reader_listener.on_data_available =
-    example3Listener_on_data_available;
+    NetworkCaptureListener_on_data_available;
 
     reader = DDS_Subscriber_create_datareader(
         subscriber, DDS_Topic_as_topicdescription(topic),
@@ -421,7 +421,7 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("example3 subscriber sleeping for %d sec...\n", poll_period.sec);
+        printf("NetworkCapture subscriber sleeping for %d sec...\n", poll_period.sec);
 
         /*
          * Here we are going to pause capturing for the second participant

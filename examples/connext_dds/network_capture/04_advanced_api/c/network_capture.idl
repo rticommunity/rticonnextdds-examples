@@ -9,6 +9,6 @@
  * not be liable for any incidental or consequential damages arising out of the
  * use or inability to use the software.
  */
-struct example3 {
+struct NetworkCapture {
     string<128> msg;
 };
