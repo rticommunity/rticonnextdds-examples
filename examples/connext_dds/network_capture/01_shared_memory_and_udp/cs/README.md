@@ -43,7 +43,7 @@ not been replaced, which is fine since all the source files for the example are
 already provided.
 
 *rtiddsgen* generates a solution for *Visual Studio* (e.g.
-NetworkCapture-i86Win32VS2010.sln) that you will use to build the example.
+network_capture-i86Win32VS2010.sln) that you will use to build the example.
 
 ## Running C# Example
 
