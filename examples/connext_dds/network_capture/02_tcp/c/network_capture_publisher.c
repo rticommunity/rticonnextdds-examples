@@ -14,8 +14,8 @@
  * A simple HelloWorld using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (example1_publisher.c).and a subscriber participant
- * (example1_subscriber.c).
+ * publisher participant (network_capture_publisher.c).and a subscriber participant
+ * (network_capture_subscriber.c).
  * It shows the basic flow when working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
@@ -27,8 +27,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
-#include "example1.h"
-#include "example1Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 
 static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
@@ -75,8 +75,8 @@ int publisher_main(int domainId, int sample_count, const char *profile)
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
     DDS_DataWriter *writer = NULL;
-    example1DataWriter *example1_writer = NULL;
-    example1 *instance = NULL;
+    NetworkCaptureDataWriter *NetworkCapture_writer = NULL;
+    NetworkCapture *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
@@ -138,8 +138,8 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    type_name = example1TypeSupport_get_type_name();
-    retcode = example1TypeSupport_register_type(
+    type_name = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(
             participant,
             type_name);
     if (retcode != DDS_RETCODE_OK) {
@@ -150,7 +150,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "Example example1 using network capture",
+            "Example NetworkCapture using TCP",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -172,23 +172,23 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         publisher_shutdown(participant);
         return -1;
     }
-    example1_writer = example1DataWriter_narrow(writer);
-    if (example1_writer == NULL) {
+    NetworkCapture_writer = NetworkCaptureDataWriter_narrow(writer);
+    if (NetworkCapture_writer == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    instance = example1TypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance = NetworkCaptureTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance == NULL) {
-        fprintf(stderr, "example1TypeSupport_create_data error\n");
+        fprintf(stderr, "NetworkCaptureTypeSupport_create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-        printf("Writing example1, count %d\n", count);
+        printf("Writing NetworkCapture, count %d\n", count);
 
         RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
@@ -206,8 +206,8 @@ int publisher_main(int domainId, int sample_count, const char *profile)
             }
         }
 
-        retcode = example1DataWriter_write(
-                example1_writer,
+        retcode = NetworkCaptureDataWriter_write(
+                NetworkCapture_writer,
                 instance,
                 &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -218,9 +218,9 @@ int publisher_main(int domainId, int sample_count, const char *profile)
 
     }
 
-    retcode = example1TypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = NetworkCaptureTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "example1TypeSupport_delete_data error %d\n", retcode);
+        fprintf(stderr, "NetworkCaptureTypeSupport_delete_data error %d\n", retcode);
     }
 
     /*
