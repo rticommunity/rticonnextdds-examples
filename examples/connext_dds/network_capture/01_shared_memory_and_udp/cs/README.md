@@ -14,14 +14,14 @@ procedure to generate the code and build the examples. **Do not use the
 *i86Win32VS2010* run:
 
 ```sh
-rtiddsgen -language C# -example i86Win32VS2010 -ppDisable NetworkCapture.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable network_capture.idl
 ```
 
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
 
 ```sh
-rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable NetworkCapture.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable network_capture.idl
 ```
 
 You will see messages that look like this:
@@ -54,8 +54,8 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On Windows systems run:
 
 ```sh
-bin\<build_type>-VS2010\NetworkCapture_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\NetworkCapture_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\network_capturepublisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\network_capture_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:

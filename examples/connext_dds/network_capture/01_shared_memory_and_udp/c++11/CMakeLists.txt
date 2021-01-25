@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-network-capture)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -14,8 +14,6 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
-    IDL "example0"
-    LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
+    IDL "network_capture"
+    LANG "C++11"
 )
