@@ -11,11 +11,11 @@
 */
 
 /*
- * A simple example0 using network capture to save DomainParticipant traffic.
+ * A simple NetworkCapture using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (example0_publisher.cxx).and a subscriber participant
- * (example0_subscriber.cxx).
+ * publisher participant (network_capture_publisher.cxx).and a subscriber participant
+ * (network_capture_subscriber.cxx).
  * It shows the basic flow when working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
@@ -26,11 +26,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "example0.h"
-#include "example0Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 #include "ndds/ndds_cpp.h"
 
-class example0Listener : public DDSDataReaderListener {
+class NetworkCaptureListener : public DDSDataReaderListener {
   public:
     virtual void on_requested_deadline_missed(
         DDSDataReader* /*reader*/,
@@ -59,21 +59,21 @@ class example0Listener : public DDSDataReaderListener {
     virtual void on_data_available(DDSDataReader* reader);
 };
 
-void example0Listener::on_data_available(DDSDataReader* reader)
+void NetworkCaptureListener::on_data_available(DDSDataReader* reader)
 {
-    example0DataReader *example0_reader = NULL;
-    example0Seq data_seq;
+    NetworkCaptureDataReader *NetworkCapture_reader = NULL;
+    NetworkCaptureSeq data_seq;
     DDS_SampleInfoSeq info_seq;
     DDS_ReturnCode_t retcode;
     int i;
 
-    example0_reader = example0DataReader::narrow(reader);
-    if (example0_reader == NULL) {
+    NetworkCapture_reader = NetworkCaptureDataReader::narrow(reader);
+    if (NetworkCapture_reader == NULL) {
         fprintf(stderr, "DataReader narrow error\n");
         return;
     }
 
-    retcode = example0_reader->take(
+    retcode = NetworkCapture_reader->take(
         data_seq, info_seq, DDS_LENGTH_UNLIMITED,
         DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
 
@@ -87,11 +87,11 @@ void example0Listener::on_data_available(DDSDataReader* reader)
     for (i = 0; i < data_seq.length(); ++i) {
         if (info_seq[i].valid_data) {
             printf("Received data\n");
-            example0TypeSupport::print_data(&data_seq[i]);
+            NetworkCaptureTypeSupport::print_data(&data_seq[i]);
         }
     }
 
-    retcode = example0_reader->return_loan(data_seq, info_seq);
+    retcode = NetworkCapture_reader->return_loan(data_seq, info_seq);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "return loan error %d\n", retcode);
     }
@@ -135,7 +135,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
     DDSTopic *topic = NULL;
-    example0Listener *reader_listener = NULL;
+    NetworkCaptureListener *reader_listener = NULL;
     DDSDataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
@@ -194,8 +194,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    type_name = example0TypeSupport::get_type_name();
-    retcode = example0TypeSupport::register_type(
+    type_name = NetworkCaptureTypeSupport::get_type_name();
+    retcode = NetworkCaptureTypeSupport::register_type(
         participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
@@ -204,7 +204,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     topic = participant->create_topic(
-            "Example0 using network capture C++ API",
+            "NetworkCapture using C++ API",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -215,7 +215,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    reader_listener = new example0Listener();
+    reader_listener = new NetworkCaptureListener();
     reader = subscriber->create_datareader(
             topic,
             DDS_DATAREADER_QOS_DEFAULT,
@@ -230,7 +230,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-        printf("example0 subscriber sleeping for %d sec...\n",
+        printf("NetworkCapture subscriber sleeping for %d sec...\n",
         receive_period.sec);
 
         NDDSUtility::sleep(receive_period);

@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-example0_publisher.exe  <domain_id> <samples_to_send>
-example0_subscriber.exe <domain_id> <sleep_periods>
+network_capture_publisher.exe  <domain_id> <samples_to_send>
+network_capture_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./example0_publisher  <domain_id> <samples_to_send>
-./example0_subscriber <domain_id> <sleep_periods>
+./network_capture_publisher  <domain_id> <samples_to_send>
+./network_capture_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:

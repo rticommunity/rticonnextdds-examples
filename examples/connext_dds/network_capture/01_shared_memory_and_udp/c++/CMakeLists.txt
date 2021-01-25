@@ -14,6 +14,6 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
-    IDL "example0"
+    IDL "network_capture"
     LANG "C++"
 )

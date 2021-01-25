@@ -14,8 +14,8 @@
  * A simple HelloWorld using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (example0_publisher.cxx).and a subscriber participant
- * (example0_subscriber.cxx).
+ * publisher participant (network_capture_publisher.cxx).and a subscriber participant
+ * (network_capture_subscriber.cxx).
  * It shows the basic flow when working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
@@ -27,8 +27,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "example0.h"
-#include "example0Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 #include "ndds/ndds_cpp.h"
 
 static int publisher_shutdown(
@@ -77,8 +77,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    example0DataWriter * example0_writer = NULL;
-    example0 *instance = NULL;
+    NetworkCaptureDataWriter * NetworkCapture_writer = NULL;
+    NetworkCapture *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
@@ -134,8 +134,8 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    type_name = example0TypeSupport::get_type_name();
-    retcode = example0TypeSupport::register_type(
+    type_name = NetworkCaptureTypeSupport::get_type_name();
+    retcode = NetworkCaptureTypeSupport::register_type(
             participant,
             type_name);
     if (retcode != DDS_RETCODE_OK) {
@@ -145,7 +145,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     topic = participant->create_topic(
-            "Example0 using network capture C++ API",
+            "NetworkCapture using C++ API",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -166,23 +166,23 @@ extern "C" int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant);
         return -1;
     }
-    example0_writer = example0DataWriter::narrow(writer);
-    if (example0_writer == NULL) {
+    NetworkCapture_writer = NetworkCaptureDataWriter::narrow(writer);
+    if (NetworkCapture_writer == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    instance = example0TypeSupport::create_data();
+    instance = NetworkCaptureTypeSupport::create_data();
     if (instance == NULL) {
-        fprintf(stderr, "example0TypeSupport::create_data error\n");
+        fprintf(stderr, "NetworkCaptureTypeSupport::create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-        printf("Writing example0, count %d\n", count);
+        printf("Writing NetworkCapture, count %d\n", count);
         RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
         /*
@@ -199,7 +199,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
             return -1;
         }
 
-        retcode = example0_writer->write(*instance, instance_handle);
+        retcode = NetworkCapture_writer->write(*instance, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
@@ -207,16 +207,16 @@ extern "C" int publisher_main(int domainId, int sample_count)
         NDDSUtility::sleep(send_period);
     }
 
-    retcode = example0_writer->unregister_instance(
+    retcode = NetworkCapture_writer->unregister_instance(
             *instance,
             instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "unregister instance error %d\n", retcode);
     }
 
-    retcode = example0TypeSupport::delete_data(instance);
+    retcode = NetworkCaptureTypeSupport::delete_data(instance);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "example0TypeSupport::delete_data error %d\n", retcode);
+        fprintf(stderr, "NetworkCaptureTypeSupport::delete_data error %d\n", retcode);
     }
 
     /*
