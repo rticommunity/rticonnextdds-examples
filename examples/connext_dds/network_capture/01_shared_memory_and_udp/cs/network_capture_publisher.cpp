@@ -10,14 +10,14 @@
 * to use the software.
 */
 
-#ifndef IMPORT_example0
-#include "example0Support.h"
+#ifndef IMPORT_NetworkCapture
+#include "NetworkCaptureSupport.h"
 #endif
 
 using namespace System;
 
 
-public ref class example0Publisher {
+public ref class NetworkCapturePublisher {
 public:
     static void publish(int domain_id, int sample_count);
 
@@ -38,7 +38,7 @@ int main(array<System::String^>^ argv) {
     }
 
     try {
-        example0Publisher::publish(
+        NetworkCapturePublisher::publish(
             domain_id, sample_count);
     }
     catch(DDS::Exception^) {
@@ -47,7 +47,7 @@ int main(array<System::String^>^ argv) {
     return 0;
 }
 
-void example0Publisher::publish(int domain_id, int sample_count) {
+void NetworkCapturePublisher::publish(int domain_id, int sample_count) {
     /*
     * Enable network capture.
     *
@@ -92,16 +92,16 @@ void example0Publisher::publish(int domain_id, int sample_count) {
         throw gcnew ApplicationException("create_publisher error");
     }
 
-    System::String^ type_name = example0TypeSupport::get_type_name();
+    System::String^ type_name = NetworkCaptureTypeSupport::get_type_name();
     try {
-        example0TypeSupport::register_type(participant, type_name);
+        NetworkCaptureTypeSupport::register_type(participant, type_name);
     } catch (DDS::Exception^ e) {
         shutdown(participant);
         throw e;
     }
 
     DDS::Topic^ topic = participant->create_topic(
-            "example0 using network capture C# API",
+            "NetworkCapture using network capture C# API",
             type_name,
             DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
             nullptr /* listener */,
@@ -120,25 +120,25 @@ void example0Publisher::publish(int domain_id, int sample_count) {
         shutdown(participant);
         throw gcnew ApplicationException("create_datawriter error");
     }
-    example0DataWriter^ example0_writer =
-        safe_cast<example0DataWriter^>(writer);
+    NetworkCaptureDataWriter^ NetworkCapture_writer =
+        safe_cast<NetworkCaptureDataWriter^>(writer);
 
-    example0^ instance = example0TypeSupport::create_data();
+    NetworkCapture^ instance = NetworkCaptureTypeSupport::create_data();
     if (instance == nullptr) {
         shutdown(participant);
         throw gcnew ApplicationException(
-            "example0TypeSupport::create_data error");
+            "NetworkCaptureTypeSupport::create_data error");
     }
     DDS::InstanceHandle_t instance_handle = DDS::InstanceHandle_t::HANDLE_NIL;
 
     const System::Int32 send_period = 4000; // milliseconds
     for (int count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        Console::WriteLine("Writing example0, count {0}", count);
+        Console::WriteLine("Writing NetworkCapture, count {0}", count);
 
         instance->msg = "Hello World! (" + count + ")";
 
         try {
-            example0_writer->write(instance, instance_handle);
+            NetworkCapture_writer->write(instance, instance_handle);
         }
         catch(DDS::Exception ^e) {
             Console::WriteLine("write error: {0}", e);
@@ -165,10 +165,10 @@ void example0Publisher::publish(int domain_id, int sample_count) {
     }
 
     try {
-        example0TypeSupport::delete_data(instance);
+        NetworkCaptureTypeSupport::delete_data(instance);
     }
     catch(DDS::Exception ^e) {
-        Console::WriteLine("example0TypeSupport::delete_data error: {0}", e);
+        Console::WriteLine("NetworkCaptureTypeSupport::delete_data error: {0}", e);
     }
 
     /*
@@ -182,7 +182,7 @@ void example0Publisher::publish(int domain_id, int sample_count) {
     shutdown(participant);
 }
 
-void example0Publisher::shutdown(
+void NetworkCapturePublisher::shutdown(
         DDS::DomainParticipant^ participant) {
 
     if (participant != nullptr) {

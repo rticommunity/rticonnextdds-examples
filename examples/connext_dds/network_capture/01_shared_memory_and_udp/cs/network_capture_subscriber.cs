@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2012.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -14,8 +14,8 @@
  * A simple HelloWorld using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (example0_publisher.cs).and a subscriber participant
- * (example0_subscriber.cs).
+ * publisher participant (network_capture_publisher.cs).and a subscriber participant
+ * (network_capture_subscriber.cs).
  * It shows the basic flow when working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
@@ -28,7 +28,71 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-public class example0Publisher {
+public class NetworkCaptureSubscriber {
+
+    public class NetworkCaptureListener : DDS.DataReaderListener {
+        public override void on_requested_deadline_missed(
+            DDS.DataReader reader,
+            ref DDS.RequestedDeadlineMissedStatus status) {}
+        public override void on_requested_incompatible_qos(
+            DDS.DataReader reader,
+            DDS.RequestedIncompatibleQosStatus status) {}
+        public override void on_sample_rejected(
+            DDS.DataReader reader,
+            ref DDS.SampleRejectedStatus status) {}
+        public override void on_liveliness_changed(
+            DDS.DataReader reader,
+            ref DDS.LivelinessChangedStatus status) {}
+        public override void on_sample_lost(
+            DDS.DataReader reader,
+            ref DDS.SampleLostStatus status) {}
+        public override void on_subscription_matched(
+            DDS.DataReader reader,
+            ref DDS.SubscriptionMatchedStatus status) {}
+        public override void on_data_available(DDS.DataReader reader) {
+            NetworkCaptureDataReader NetworkCapture_reader = (NetworkCaptureDataReader) reader;
+
+            try {
+                NetworkCapture_reader.take(
+                        data_seq,
+                        info_seq,
+                        DDS.ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                        DDS.SampleStateKind.ANY_SAMPLE_STATE,
+                        DDS.ViewStateKind.ANY_VIEW_STATE,
+                        DDS.InstanceStateKind.ANY_INSTANCE_STATE);
+            }
+            catch(DDS.Retcode_NoData) {
+                return;
+            }
+            catch(DDS.Exception e) {
+                Console.WriteLine("take error {0}", e);
+                return;
+            }
+
+            System.Int32 data_length = data_seq.length;
+            for (int i = 0; i < data_length; ++i) {
+                if (info_seq.get_at(i).valid_data) {
+                    NetworkCaptureTypeSupport.print_data(data_seq.get_at(i));
+                }
+            }
+
+            try {
+                NetworkCapture_reader.return_loan(data_seq, info_seq);
+            }
+            catch(DDS.Exception e) {
+                Console.WriteLine("return loan error {0}", e);
+            }
+        }
+
+        public NetworkCaptureListener() {
+            data_seq = new NetworkCaptureSeq();
+            info_seq = new DDS.SampleInfoSeq();
+        }
+
+        private NetworkCaptureSeq data_seq;
+        private DDS.SampleInfoSeq info_seq;
+    };
+
     public static void Main(string[] args) {
 
         int domain_id = 0;
@@ -42,13 +106,15 @@ public class example0Publisher {
         }
 
         try {
-            example0Publisher.publish(domain_id, sample_count);
-        } catch(DDS.Exception) {
-            Console.WriteLine("error in publisher");
+            NetworkCaptureSubscriber.subscribe(domain_id, sample_count);
+        }
+        catch(DDS.Exception) {
+            Console.WriteLine("error in subscriber");
         }
     }
 
-    static void publish(int domain_id, int sample_count) {
+    static void subscribe(int domain_id, int sample_count) {
+
         /*
          * Enable network capture.
          *
@@ -70,9 +136,8 @@ public class example0Publisher {
          * will start with the prefix "publisher" and continue with a suffix
          * dependent on the participant's GUID.
          */
-        if (!NDDS.NetworkCapture.start("publisher")) {
-            throw new ApplicationException(
-                    "Error starting network capture for all participants");
+        if (!NDDS.NetworkCapture.start("subscriber")) {
+            throw new ApplicationException("Error starting network capture for all participants");
         }
 
         DDS.DomainParticipant participant =
@@ -86,18 +151,18 @@ public class example0Publisher {
             throw new ApplicationException("create_participant error");
         }
 
-        DDS.Publisher publisher = participant.create_publisher(
-                DDS.DomainParticipant.PUBLISHER_QOS_DEFAULT,
+        DDS.Subscriber subscriber = participant.create_subscriber(
+                DDS.DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
                 null /* listener */,
                 DDS.StatusMask.STATUS_MASK_NONE);
-        if (publisher == null) {
+        if (subscriber == null) {
             shutdown(participant);
-            throw new ApplicationException("create_publisher error");
+            throw new ApplicationException("create_subscriber error");
         }
 
-        System.String type_name = example0TypeSupport.get_type_name();
+        System.String type_name = NetworkCaptureTypeSupport.get_type_name();
         try {
-            example0TypeSupport.register_type(participant, type_name);
+            NetworkCaptureTypeSupport.register_type(participant, type_name);
         }
         catch(DDS.Exception e) {
             Console.WriteLine("register_type error {0}", e);
@@ -106,7 +171,7 @@ public class example0Publisher {
         }
 
         DDS.Topic topic = participant.create_topic(
-                "Example example0",
+                "Example NetworkCapture",
                 type_name,
                 DDS.DomainParticipant.TOPIC_QOS_DEFAULT,
                 null /* listener */,
@@ -116,55 +181,26 @@ public class example0Publisher {
             throw new ApplicationException("create_topic error");
         }
 
-        DDS.DataWriter writer = publisher.create_datawriter(
+        NetworkCaptureListener reader_listener = new NetworkCaptureListener();
+
+        DDS.DataReader reader = subscriber.create_datareader(
                 topic,
-                DDS.Publisher.DATAWRITER_QOS_DEFAULT,
-                null /* listener */,
-                DDS.StatusMask.STATUS_MASK_NONE);
-        if (writer == null) {
+                DDS.Subscriber.DATAREADER_QOS_DEFAULT,
+                reader_listener,
+                DDS.StatusMask.STATUS_MASK_ALL);
+        if (reader == null) {
             shutdown(participant);
-            throw new ApplicationException("create_datawriter error");
-        }
-        example0DataWriter example0_writer = (example0DataWriter) writer;
-
-        example0 instance = example0TypeSupport.create_data();
-        if (instance == null) {
-            shutdown(participant);
-            throw new ApplicationException(
-                    "example0TypeSupport.create_data error");
+            reader_listener = null;
+            throw new ApplicationException("create_datareader error");
         }
 
-        DDS.InstanceHandle_t instance_handle = DDS.InstanceHandle_t.HANDLE_NIL;
-        const System.Int32 send_period = 4000; // milliseconds
+        const System.Int32 receive_period = 4000; // milliseconds
         for (int count=0; (sample_count == 0) || (count < sample_count); ++count) {
-            Console.WriteLine("Writing example0, count {0}", count);
+            Console.WriteLine(
+                    "NetworkCapture subscriber sleeping for {0} sec...",
+                    receive_period / 1000);
 
-            /*
-            * Here we are going to pause capturing for some samples.
-            * The resulting pcap file will not contain them.
-            */
-            if (count == 4 && !NDDS.NetworkCapture.pause()) {
-                shutdown(participant);
-                throw new ApplicationException("Error pausing network capture");
-            } else if (count == 6 && !NDDS.NetworkCapture.resume()) {
-                shutdown(participant);
-                throw new ApplicationException("Error resuming network capture");
-            }
-
-            try {
-                instance.msg = "Hello World! (" + count + ")";
-                example0_writer.write(instance, ref instance_handle);
-            }
-            catch(DDS.Exception e) {
-                Console.WriteLine("write error {0}", e);
-            }
-            System.Threading.Thread.Sleep(send_period);
-        }
-
-        try {
-            example0TypeSupport.delete_data(instance);
-        } catch(DDS.Exception e) {
-            Console.WriteLine("example0TypeSupport.delete_data error: {0}", e);
+            System.Threading.Thread.Sleep(receive_period);
         }
 
         /*
@@ -176,20 +212,22 @@ public class example0Publisher {
             throw new ApplicationException("Error stopping network capture");
         }
         shutdown(participant);
+        reader_listener = null;
     }
 
-    static void shutdown(DDS.DomainParticipant participant) {
+    static void shutdown(
+        DDS.DomainParticipant participant) {
 
         if (participant != null) {
             participant.delete_contained_entities();
             DDS.DomainParticipantFactory.get_instance().delete_participant(
-                    ref participant);
+                ref participant);
         }
 
         try {
             DDS.DomainParticipantFactory.finalize_instance();
-        } catch (DDS.Exception e) {
-            Console.WriteLine("finalize_instance error: {0}", e);
+        } catch(DDS.Exception e) {
+            Console.WriteLine("finalize_instance error {0}", e);
             throw e;
         }
 
@@ -204,3 +242,4 @@ public class example0Publisher {
         }
     }
 }
+

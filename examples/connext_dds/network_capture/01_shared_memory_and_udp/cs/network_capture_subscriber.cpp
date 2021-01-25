@@ -10,13 +10,13 @@
 * to use the software.
 */
 
-#ifndef IMPORT_example0
-#include "example0Support.h"
+#ifndef IMPORT_NetworkCapture
+#include "NetworkCaptureSupport.h"
 #endif
 
 using namespace System;
 
-public ref class example0Subscriber {
+public ref class NetworkCaptureSubscriber {
   public:
     static void subscribe(int domain_id, int sample_count);
 
@@ -25,7 +25,7 @@ public ref class example0Subscriber {
         DDS::DomainParticipant^ participant);
 };
 
-public ref class example0Listener : public DDS::DataReaderListener {
+public ref class NetworkCaptureListener : public DDS::DataReaderListener {
   public:
     virtual void on_requested_deadline_missed(
         DDS::DataReader^ /*reader*/,
@@ -53,13 +53,13 @@ public ref class example0Listener : public DDS::DataReaderListener {
 
     virtual void on_data_available(DDS::DataReader^ reader) override;
 
-    example0Listener() {
-        data_seq = gcnew example0Seq();
+    NetworkCaptureListener() {
+        data_seq = gcnew NetworkCaptureSeq();
         info_seq = gcnew DDS::SampleInfoSeq();
     }
 
   private:
-    example0Seq^ data_seq;
+    NetworkCaptureSeq^ data_seq;
     DDS::SampleInfoSeq^ info_seq;
 };
 
@@ -75,7 +75,7 @@ int main(array<System::String^>^ argv) {
     }
 
     try {
-        example0Subscriber::subscribe(
+        NetworkCaptureSubscriber::subscribe(
             domain_id, sample_count);
     }
     catch(DDS::Exception^) {
@@ -84,7 +84,7 @@ int main(array<System::String^>^ argv) {
     return 0;
 }
 
-void example0Subscriber::subscribe(int domain_id, int sample_count)
+void NetworkCaptureSubscriber::subscribe(int domain_id, int sample_count)
 {
     /*
     * Enable network capture.
@@ -123,16 +123,16 @@ void example0Subscriber::subscribe(int domain_id, int sample_count)
         throw gcnew ApplicationException("create_subscriber error");
     }
 
-    System::String^ type_name = example0TypeSupport::get_type_name();
+    System::String^ type_name = NetworkCaptureTypeSupport::get_type_name();
     try {
-        example0TypeSupport::register_type(participant, type_name);
+        NetworkCaptureTypeSupport::register_type(participant, type_name);
     } catch (DDS::Exception^ e) {
         shutdown(participant);
         throw e;
     }
 
     DDS::Topic^ topic = participant->create_topic(
-            "example0 using network capture C# API",
+            "NetworkCapture using network capture C# API",
             type_name,
             DDS::DomainParticipant::TOPIC_QOS_DEFAULT,
             nullptr, /* listener */
@@ -142,7 +142,7 @@ void example0Subscriber::subscribe(int domain_id, int sample_count)
         throw gcnew ApplicationException("create_topic error");
     }
 
-    example0Listener^ reader_listener = gcnew example0Listener();
+    NetworkCaptureListener^ reader_listener = gcnew NetworkCaptureListener();
     DDS::DataReader^ reader = subscriber->create_datareader(
         topic,
         DDS::Subscriber::DATAREADER_QOS_DEFAULT,
@@ -156,7 +156,7 @@ void example0Subscriber::subscribe(int domain_id, int sample_count)
     const System::Int32 receive_period = 4000; // milliseconds
     for (int count=0; (sample_count == 0) || (count < sample_count); ++count) {
         Console::WriteLine(
-                "example0 subscriber sleeping for {0} sec...",
+                "NetworkCapture subscriber sleeping for {0} sec...",
                 receive_period / 1000);
 
         /*
@@ -190,7 +190,7 @@ void example0Subscriber::subscribe(int domain_id, int sample_count)
     shutdown(participant);
 }
 
-void example0Subscriber::shutdown(
+void NetworkCaptureSubscriber::shutdown(
     DDS::DomainParticipant^ participant) {
 
     if (participant != nullptr) {
@@ -212,12 +212,12 @@ void example0Subscriber::shutdown(
     }
 }
 
-void example0Listener::on_data_available(DDS::DataReader^ reader) {
-    example0DataReader^ example0_reader =
-    safe_cast<example0DataReader^>(reader);
+void NetworkCaptureListener::on_data_available(DDS::DataReader^ reader) {
+    NetworkCaptureDataReader^ NetworkCapture_reader =
+    safe_cast<NetworkCaptureDataReader^>(reader);
 
     try {
-        example0_reader->take(
+        NetworkCapture_reader->take(
             data_seq,
             info_seq,
             DDS::ResourceLimitsQosPolicy::LENGTH_UNLIMITED,
@@ -236,12 +236,12 @@ void example0Listener::on_data_available(DDS::DataReader^ reader) {
     System::Int32 data_length = data_seq->length;
     for (int i = 0; i < data_length; ++i) {
         if (info_seq->get_at(i)->valid_data) {
-            example0TypeSupport::print_data(data_seq->get_at(i));
+            NetworkCaptureTypeSupport::print_data(data_seq->get_at(i));
         }
     }
 
     try {
-        example0_reader->return_loan(data_seq, info_seq);
+        NetworkCapture_reader->return_loan(data_seq, info_seq);
     }
     catch(DDS::Exception ^e) {
         Console::WriteLine("return loan error {0}", e);

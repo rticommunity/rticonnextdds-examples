@@ -112,8 +112,8 @@ static int publisher_main(int domainId, int sample_count)
     retcode = DDS_DomainParticipantFactory_get_participant_qos_from_profile(
             DDS_TheParticipantFactory,
             &participant_qos,
-            "SecurityExampleProfiles",
-            "B");
+            "network_capture_Library",
+            "network_capture_ProfileB");
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "Unable to get participant qos from profile\n");
         return -1;
@@ -144,15 +144,15 @@ static int publisher_main(int domainId, int sample_count)
     participant = DDS_DomainParticipantFactory_create_participant_with_profile(
             DDS_TheParticipantFactory,
             domainId,
-            "SecurityExampleProfiles",
-            "B",
+            "network_capture_Library",
+            "network_capture_ProfileB",
             NULL,
             DDS_STATUS_MASK_NONE);
     participant2 = DDS_DomainParticipantFactory_create_participant_with_profile(
             DDS_TheParticipantFactory,
             domainId,
-            "SecurityExampleProfiles",
-            "B",
+            "network_capture_Library",
+            "network_capture_ProfileB",
             NULL,
             DDS_STATUS_MASK_NONE);
 #endif

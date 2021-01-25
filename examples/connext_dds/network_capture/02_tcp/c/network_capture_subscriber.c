@@ -199,7 +199,7 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
     participant = DDS_DomainParticipantFactory_create_participant_with_profile(
             DDS_TheParticipantFactory,
             domainId,
-            "Library",
+            "network_capture_Library",
             profile,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);

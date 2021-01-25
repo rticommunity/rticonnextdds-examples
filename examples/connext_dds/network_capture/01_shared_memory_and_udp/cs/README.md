@@ -14,26 +14,26 @@ procedure to generate the code and build the examples. **Do not use the
 *i86Win32VS2010* run:
 
 ```sh
-rtiddsgen -language C# -example i86Win32VS2010 -ppDisable example0.idl
+rtiddsgen -language C# -example i86Win32VS2010 -ppDisable NetworkCapture.idl
 ```
 
 **Note**: If you are using *Visual Studio Express* add the `-express` option to
 the command, i.e.:
 
 ```sh
-rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable example0.idl
+rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable NetworkCapture.idl
 ```
 
 You will see messages that look like this:
 
 ```plaintext
-File C:\local\example0\cs\example0_subscriber.cs already exists and
+File C:\local\NetworkCapture\cs\network_capture_subscriber.cs already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\example0\cs\example0_publisher.cs already exists and
+File C:\local\NetworkCapture\cs\network_capture_publisher.cs already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\example0\cs\USER_QOS_PROFILES.xml already exists and
+File C:\local\NetworkCapture\cs\USER_QOS_PROFILES.xml already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
 ```
@@ -43,7 +43,7 @@ not been replaced, which is fine since all the source files for the example are
 already provided.
 
 *rtiddsgen* generates a solution for *Visual Studio* (e.g.
-example0-i86Win32VS2010.sln) that you will use to build the example.
+NetworkCapture-i86Win32VS2010.sln) that you will use to build the example.
 
 ## Running C# Example
 
@@ -54,8 +54,8 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On Windows systems run:
 
 ```sh
-bin\<build_type>-VS2010\example0_publisher.exe  <domain_id> <samples_to_send>
-bin\<build_type>-VS2010\example0_subscriber.exe <domain_id> <sleep_periods>
+bin\<build_type>-VS2010\NetworkCapture_publisher.exe  <domain_id> <samples_to_send>
+bin\<build_type>-VS2010\NetworkCapture_subscriber.exe <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:
