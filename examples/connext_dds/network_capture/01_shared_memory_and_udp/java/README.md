@@ -14,19 +14,19 @@ use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 
 ```sh
-rtiddsgen -language Java -example i86Win32VS2010 example0.idl
+rtiddsgen -language Java -example i86Win32VS2010 network_capture.idl
 ```
 
 You will see messages that look like this:
 
 ```plaintext
-File C:\local\example0\java\example0Subscriber.java already exists and
+File C:\local\01_shared_memory_and_udp\java\NetworkCaptureSubscriber.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\example0\java\example0Publisher.java already exists and
+File C:\local\01_shared_memory_and_udp\java\NetworkCapturePublisher.java already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
-File C:\local\example0\java\USER_QOS_PROFILES.xml already exists and
+File C:\local\01_shared_memory_and_udp\java\USER_QOS_PROFILES.xml already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
 ```
@@ -59,15 +59,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" example0Publisher  <domain_id> <samples_to_send>
-java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" example0Subscriber <domain_id> <sleep_periods>
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" NetworkCapturePublisher  <domain_id> <samples_to_send>
+java -cp ".;%NDDSHOME%\lib\java\nddsjava.jar" NetworkCaptureSubscriber <domain_id> <sleep_periods>
 ```
 
 On *Unix* systems run:
 
 ```sh
-java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" example0Publisher  <domain_id> <samples_to_send>
-java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" example0Subscriber <domain_id> <sleep_periods>
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" NetworkCapturePublisher  <domain_id> <samples_to_send>
+java -cp ".:$NDDSHOME/lib/java/nddsjava.jar" NetworkCaptureSubscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:

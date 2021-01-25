@@ -18,11 +18,10 @@ import com.rti.dds.infrastructure.*;
 import com.rti.dds.publication.*;
 import com.rti.dds.topic.*;
 import com.rti.ndds.config.*;
-import com.rti.ndds.utility.*;
 
 // ===========================================================================
 
-public class example0Publisher {
+public class NetworkCapturePublisher {
     // -----------------------------------------------------------------------
     // Public Methods
     // -----------------------------------------------------------------------
@@ -33,7 +32,7 @@ public class example0Publisher {
         // This must be called before:
         //   - Any other network capture function is called.
         //   - Creating the participants for which we want to capture traffic.
-        if (!NetworkCapture.enable()) {
+        if (!com.rti.ndds.utility.NetworkCapture.enable()) {
             System.err.println("Error enabling network capture");
         }
 
@@ -54,7 +53,7 @@ public class example0Publisher {
         // This must be:
         //   - The last network capture function that is called.
         //
-        if (!NetworkCapture.disable()) {
+        if (!com.rti.ndds.utility.NetworkCapture.disable()) {
             System.err.println("Error disabling network capture");
         }
     }
@@ -64,7 +63,7 @@ public class example0Publisher {
     // -----------------------------------------------------------------------
 
     // --- Constructors: -----------------------------------------------------
-    private example0Publisher() {
+    private NetworkCapturePublisher() {
         super();
     }
 
@@ -74,7 +73,7 @@ public class example0Publisher {
         DomainParticipant participant = null;
         Publisher publisher = null;
         Topic topic = null;
-        example0DataWriter writer = null;
+        NetworkCaptureDataWriter writer = null;
 
         try {
             // Start capturing traffic for all participants.
@@ -86,7 +85,7 @@ public class example0Publisher {
             // A capture file will be created for each participant. The capture
             // file will start with the prefix "publisher" and continue with a
             // suffix dependent on the participant's GUID.
-            if (!NetworkCapture.start("publisher")) {
+            if (!com.rti.ndds.utility.NetworkCapture.start("publisher")) {
                 System.err.println("Error starting network capture");
             }
 
@@ -102,36 +101,38 @@ public class example0Publisher {
                     null, /* listener */
                     StatusKind.STATUS_MASK_NONE);
 
-            String typeName = example0TypeSupport.get_type_name();
-            example0TypeSupport.register_type(participant, typeName);
+            String typeName = NetworkCaptureTypeSupport.get_type_name();
+            NetworkCaptureTypeSupport.register_type(participant, typeName);
 
             topic = participant.create_topic(
-                    "example0 using network capture Java API",
+                    "NetworkCapture using Java API",
                     typeName,
                     DomainParticipant.TOPIC_QOS_DEFAULT,
                     null, /* listener */
                     StatusKind.STATUS_MASK_NONE);
 
-            writer = (example0DataWriter) publisher.create_datawriter(
+            writer = (NetworkCaptureDataWriter) publisher.create_datawriter(
                         topic,
                         Publisher.DATAWRITER_QOS_DEFAULT,
                         null, /* listener */
                         StatusKind.STATUS_MASK_NONE);
 
-            example0 instance = new example0();
+            NetworkCapture instance = new NetworkCapture();
             InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
 
             for (int count = 0;
                     (sampleCount == 0) || (count < sampleCount);
                     ++count) {
-                System.out.println("Writing example0, count " + count);
+                System.out.println("Writing NetworkCapture, count " + count);
                 instance.msg = "Hello World! (" + count + ")";
 
                // Here we are going to pause capturing for some samples.
                // The resulting pcap file will not contain them.
-                if (count == 4 && !NetworkCapture.pause()) {
+                if (count == 4
+                        && !com.rti.ndds.utility.NetworkCapture.pause()) {
                     System.err.println("Error pausing network capture");
-                } else if (count == 6 && !NetworkCapture.resume()) {
+                } else if (count == 6
+                        && !com.rti.ndds.utility.NetworkCapture.resume()) {
                     System.err.println("Error resuming network capture");
                 }
 
@@ -147,7 +148,7 @@ public class example0Publisher {
 
             // Before deleting the participants that are capturing, we must stop
             // network capture for them.
-            if (!NetworkCapture.stop()) {
+            if (!com.rti.ndds.utility.NetworkCapture.stop()) {
                 System.err.println("Error stopping network capture");
             }
             if(participant != null) {

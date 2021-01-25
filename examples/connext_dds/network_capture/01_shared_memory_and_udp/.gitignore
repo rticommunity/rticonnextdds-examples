@@ -3,10 +3,10 @@
 *.vcxproj
 
 # Java
-java/
-!example0.idl
-!example0Publisher.java
-!example0Subscriber.java
+java/*
+!network_capture.idl
+!NetworkCapturePublisher.java
+!NetworkCaptureSubscriber.java
 !README.md
 !USER_QOS_PROFILES.xml
 
