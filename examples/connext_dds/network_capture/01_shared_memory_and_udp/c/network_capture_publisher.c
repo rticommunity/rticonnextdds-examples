@@ -14,8 +14,8 @@
  * A simple HelloWorld using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (example0_publisher.c).and a subscriber participant
- * (example0_subscriber.c).
+ * publisher participant (network_capture_publisher.c).and a subscriber participant
+ * (network_capture_subscriber.c).
  * It shows the basic flow when working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
@@ -27,8 +27,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
-#include "example0.h"
-#include "example0Support.h"
+#include "network_capture.h"
+#include "network_captureSupport.h"
 
 static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
@@ -75,8 +75,8 @@ int publisher_main(int domainId, int sample_count)
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
     DDS_DataWriter *writer = NULL;
-    example0DataWriter *example0_writer = NULL;
-    example0 *instance = NULL;
+    NetworkCaptureDataWriter *NetworkCapture_writer = NULL;
+    NetworkCapture *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
@@ -137,8 +137,8 @@ int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    type_name = example0TypeSupport_get_type_name();
-    retcode = example0TypeSupport_register_type(
+    type_name = NetworkCaptureTypeSupport_get_type_name();
+    retcode = NetworkCaptureTypeSupport_register_type(
             participant,
             type_name);
     if (retcode != DDS_RETCODE_OK) {
@@ -149,7 +149,7 @@ int publisher_main(int domainId, int sample_count)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "example0 using network capture C API",
+            "NetworkCapture using C API",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
@@ -171,23 +171,23 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant);
         return -1;
     }
-    example0_writer = example0DataWriter_narrow(writer);
-    if (example0_writer == NULL) {
+    NetworkCapture_writer = NetworkCaptureDataWriter_narrow(writer);
+    if (NetworkCapture_writer == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
-    instance = example0TypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance = NetworkCaptureTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance == NULL) {
-        fprintf(stderr, "example0TypeSupport_create_data error\n");
+        fprintf(stderr, "NetworkCaptureTypeSupport_create_data error\n");
         publisher_shutdown(participant);
         return -1;
     }
 
     for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
 
-        printf("Writing example0, count %d\n", count);
+        printf("Writing NetworkCapture, count %d\n", count);
 
         RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
@@ -201,8 +201,8 @@ int publisher_main(int domainId, int sample_count)
             fprintf(stderr, "Error resuming network capture\n");
         }
 
-        retcode = example0DataWriter_write(
-                example0_writer,
+        retcode = NetworkCaptureDataWriter_write(
+                NetworkCapture_writer,
                 instance,
                 &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
@@ -213,9 +213,9 @@ int publisher_main(int domainId, int sample_count)
 
     }
 
-    retcode = example0TypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = NetworkCaptureTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "example0TypeSupport_delete_data error %d\n", retcode);
+        fprintf(stderr, "NetworkCaptureTypeSupport_delete_data error %d\n", retcode);
     }
 
     /*
