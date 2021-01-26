@@ -255,14 +255,13 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[3], "wanAsym") == 0) {
             profile = "WANasymPublisher";
-        } 
+        }
         else if (strcmp(argv[3], "tls") == 0) {
             profile = "TLSpublisher";
         } else {
             fprintf(stderr, "Mode must be one of: {lan, wanSym, wanAsym, tls}\n");
         }
     }
-    
 
     return publisher_main(domain_id, sample_count, profile);
 }

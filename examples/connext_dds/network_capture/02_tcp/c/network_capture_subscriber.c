@@ -307,7 +307,7 @@ int main(int argc, char *argv[])
         }
         else if (strcmp(argv[3], "wanAsym") == 0) {
             profile = "WANasymSubscriber";
-        } 
+        }
         else if (strcmp(argv[3], "tls") == 0) {
             profile = "TLSsubscriber";
         } else {
