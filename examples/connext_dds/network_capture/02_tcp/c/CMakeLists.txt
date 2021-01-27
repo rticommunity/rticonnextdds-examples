@@ -17,3 +17,6 @@ connextdds_add_example(
     IDL "network_capture"
     LANG "C"
 )
+
+include (ConnextDdsAddSecurityArtifacts)
+connextdds_add_security_artifacts()
