@@ -2,6 +2,11 @@
 
 ## Building the Example :wrench:
 
+TODO: Mention about
+```sh
+export OPENSSL_ROOT_DIR=/local/rti/openssl-1.1.1d/x64Linux3gcc4.8.2/debug/ssl
+```
+
 To build this example, first run CMake to generate the corresponding build
 files. We recommend you use a separate directory to store all the generated
 files (e.g., ./build).
