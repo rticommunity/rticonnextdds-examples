@@ -98,7 +98,7 @@ function(_hex2dec output_var hex)
     elseif(hex MATCHES "[0-9]")
         set(num ${hex})
     else()
-        connextdds_log_message(FATAL_ERROR "Invalid hexadecimal char")
+        message("Invalid hexadecimal char")
     endif()
 
     set(${output_var} ${num} PARENT_SCOPE)
@@ -120,7 +120,7 @@ function(_rtiopenssl_get_shared_library_id library outvar)
                 DOC "The otool program"
             )
             if(NOT OTOOL)
-                connextdds_log_message(FATAL_ERROR "otool not found")
+                message("otool not found")
             endif()
 
             execute_process(
@@ -133,7 +133,7 @@ function(_rtiopenssl_get_shared_library_id library outvar)
 
             # If everything goes properly, the return code is 0
             if(otool_retcode)
-                connextdds_log_message(FATAL_ERROR "Failed to run otool")
+                message("Failed to run otool")
             endif()
 
             string(REPLACE "\n" "" shared_library_id ${otool_output})
@@ -146,16 +146,10 @@ function(_rtiopenssl_get_shared_library_id library outvar)
             )
             set(${outvar} ${resolved_library_full} PARENT_SCOPE)
         else()
-            connextdds_log_message(
-                FATAL_ERROR
-                "This functionality is not supported in Windows"
-            )
+            message("This functionality is not supported in Windows")
         endif()
     else()
-        connextdds_log_message(
-            FATAL_ERROR
-            "This functionality is only supported for shared libs"
-        )
+        message("This functionality is only supported for shared libs")
     endif()
 endfunction()
 
@@ -307,9 +301,7 @@ macro(_rtiopenssl_find_program)
         )
 
     if(OPENSSL_EXECUTABLE)
-        connextdds_log_message(STATUS
-            "Found OpenSSL program: ${OPENSSL_EXECUTABLE}"
-        )
+        message("Found OpenSSL program: ${OPENSSL_EXECUTABLE}")
     endif()
 
     # Get the path to the dynamic libraries to which the OpenSSL program may
@@ -341,9 +333,7 @@ macro(_rtiopenssl_find_program)
     )
 
     if(NOT OPENSSL_DEFAULT_CONFIG_FILE)
-        connextdds_log_message(WARNING
-            "Cannot find the default OpenSSL config file"
-        )
+        message("Cannot find the default OpenSSL config file")
     endif()
 
     ######### Get the version
@@ -379,17 +369,14 @@ macro(_rtiopenssl_find_program)
                 "${CMAKE_MATCH_1}.${CMAKE_MATCH_2}.${CMAKE_MATCH_3}${CMAKE_MATCH_4}"
             )
             if(NOT OPENSSL_EXECUTABLE_VERSION STREQUAL OPENSSL_VERSION)
-                connextdds_log_message(WARNING
-                    "OpenSSL executable version "
+                message("OpenSSL executable version "
                     "(${OPENSSL_EXECUTABLE_VERSION}) is different to the "
                     "library version (${OPENSSL_VERSION})"
                 )
             endif()
         endif()
     else()
-        connextdds_log_message(WARNING
-            "Cannot run OpenSSL: '${OPENSSL_EXECUTABLE}'"
-        )
+        message("Cannot run OpenSSL: '${OPENSSL_EXECUTABLE}'")
     endif()
 endmacro()
 
@@ -465,12 +452,10 @@ if(OPENSSL_INCLUDE_DIR)
     ######### Check if the found library is the one we want to find
     if(OPENSSL_FULL_VERSION)
         if(NOT OPENSSL_VERSION STREQUAL OPENSSL_FULL_VERSION)
-            connextdds_log_message(FATAL_ERROR
-                "Invalid OpenSSL version '${OPENSSL_VERSION}' detected. "
+            message("Invalid OpenSSL version '${OPENSSL_VERSION}' detected. "
                 "Expecting version '${OPENSSL_FULL_VERSION}'. "
                 "Try to download it from Conan or set the -DOPENSSL_ROOT_DIR "
-                "CMake parameter to the correct version."
-            )
+                "CMake parameter to the correct version.")
         endif()
     endif()
 
@@ -652,10 +637,7 @@ if(RTIOPENSSL_FOUND)
                     IMPORTED_SONAME ${ssl_soname}
             )
         else()
-            connextdds_log_message(
-                WARNING
-                "It was not possible to determine ssl shared library id"
-            )
+            message("It was not possible to determine ssl shared library id")
         endif()
 
         # In UNIX, shared libraries found by the find_library are usually
@@ -679,10 +661,7 @@ if(RTIOPENSSL_FOUND)
                     IMPORTED_SONAME ${crypto_soname}
             )
         else()
-            connextdds_log_message(WARNING
-                "It was not possible to determine crypto shared library "
-                "ID"
-            )
+            message("It was not possible to determine crypto shared library ID")
 
             if(crypto_shared_library_id)
                 # Get the soname
@@ -697,10 +676,7 @@ if(RTIOPENSSL_FOUND)
                     IMPORTED_SONAME ${crypto_soname}
                 )
             else()
-                connextdds_log_message(WARNING
-                    "It was not possible to determine crypto shared library "
-                    "ID"
-                )
+                message("It was not possible to determine crypto shared library ID")
             endif()
         endif()
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux" AND NOT BUILD_SHARED_LIBS)

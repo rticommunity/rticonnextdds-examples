@@ -97,9 +97,7 @@ elseif(CMAKE_HOST_SYSTEM_NAME STREQUAL "Darwin")
     set(PLATFORM_LIBRARY_SEARCH_PATH_CTEST_SEP "${PLATFORM_LIBRARY_SEARCH_PATH_SEP}")
     set(PLATFORM_LIBRARY_SEARCH_PATH_VAR "$$${PLATFORM_LIBRARY_SEARCH_PATH_NAME}")
 else()
-    connextdds_log_message(FATAL_ERROR
-        "Missing library search path config for the platform"
-    )
+    message("Missing library search path config for the platform")
 endif()
 
 function(connextdds_get_library_search_path_definition)

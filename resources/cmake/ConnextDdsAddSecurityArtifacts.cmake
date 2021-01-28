@@ -4,13 +4,38 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
+#[[.rst:
+.. _connextdds_add_security_artifacts:
+
+ConnextDdsAddSecurityArtifacts
+------------------------------
+
+Generate the artifacts needed for secure examples.
+
+``connextdds_add_security_artifacts()``
+
+It is based on:
+ - The OpenSSL configuration files in the resources/security/<ca> directory.
+
+ - The Governance and Permissions files in the resources/xml directory.
+
+So far this means:
+
+ - One ECDSA CA and two peers.
+
+ - RTPS and metadata protection kind set to ENCRYPT.
+
+ - Publishing and subscribing to any domain and topic is allowed, only for those
+   peers.
+
+#]]
+
 include(UseOpenSSL)
 
 
 function(connextdds_add_security_artifacts)
     # Directory where the security artifacts are.
-    set(
-        SECURITY_RESOURCES_PATH
+    set(SECURITY_RESOURCES_PATH
         ${SECURITY_RESOURCES_PATH}
         "${CMAKE_MODULE_PATH}/../security"
     )
@@ -22,18 +47,16 @@ function(connextdds_add_security_artifacts)
     #   |- temporary_files/
     #   |- xml/
     #   |   |- signed/
-    # 
+    #
     # ##########################################################################
     # security.
-    set(
-        security_root_directory
+    set(security_root_directory
         ${security_root_directory}
         "${CMAKE_CURRENT_BINARY_DIR}/security"
     )
     file(MAKE_DIRECTORY ${security_root_directory})
     # ecdsa01. Copied from the repository resources.
-    set(
-        openssl_working_directory
+    set(openssl_working_directory
         ${openssl_working_directory}
         "${security_root_directory}/ecdsa01"
     )
@@ -42,15 +65,13 @@ function(connextdds_add_security_artifacts)
         DESTINATION ${security_root_directory}
     )
     # certs. Output OpenSSL files. This must match the value in ca.cnf.
-    set(
-        certificates_output_directory
+    set(certificates_output_directory
         ${certificates_output_directory}
         "${openssl_working_directory}/certs"
     )
     file(MAKE_DIRECTORY ${certificates_output_directory})
     # temporary_files. This must match the value in ca.cnf.
-    set(
-        EXAMPLE_OPENSSL_TEMPORARY
+    set(EXAMPLE_OPENSSL_TEMPORARY
         ${EXAMPLE_OPENSSL_TEMPORARY}
         "${openssl_working_directory}/temporary_files"
     )

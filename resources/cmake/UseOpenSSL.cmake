@@ -330,12 +330,11 @@ Arguments:
 
 #]]
 
-include(ConnextDdsLog)
 include(FindRTIOpenSSL)
 
 # For this module we only need the openssl executable
 if(NOT OPENSSL_EXECUTABLE)
-    connextdds_log_message(FATAL_ERROR "OpenSSL executable not found. Make "
+    message("OpenSSL executable not found. Make "
         "sure the variable OPENSSL_EXECUTABLE is properly defined. If you use "
         "an external OpenSSL intallation, make sure you ran "
         "find_package(RTIOpenSSL [version]) before including this file. In "

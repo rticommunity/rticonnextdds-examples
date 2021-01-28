@@ -1,4 +1,4 @@
-# (c) 2018 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 # No duplications, whole or partial, manual or electronic, may be made
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
@@ -69,15 +69,11 @@ function(connextdds_create_imported_target)
 
     if(NOT _IMPORTED_STATIC AND NOT _IMPORTED_SHARED AND NOT _IMPORTED_UNKNOWN
             AND NOT _IMPORTED_INTERFACE)
-        connextdds_log_message(FATAL_ERROR
-            "Missing library type: static / shared / unknown / interface"
-        )
+        message("Missing library type: static / shared / unknown / interface")
     endif()
 
     if(NOT ${_IMPORTED_BASENAME}_LIBRARY AND NOT _IMPORTED_INCLUDE_DIRS)
-        connextdds_log_message(FATAL_ERROR
-            "Missing libraries/headers for imported target ${_IMPORTED_TARGET}"
-        )
+        message("Missing libraries/headers for imported target ${_IMPORTED_TARGET}")
     endif()
 
     # If it already exists, nothing to do.
@@ -97,8 +93,7 @@ function(connextdds_create_imported_target)
         # UNKNOWN reprents that we don't know if it's static or shared.
         set(library_type UNKNOWN)
     else()
-        connextdds_log_message(FATAL_ERROR
-            "Missing library type for '${_IMPORTED_TARGET}'. "
+        message("Missing library type for '${_IMPORTED_TARGET}'. "
             "Valid types are: STATIC, SHARED, UNKNOWN or INTERFACE"
         )
     endif()
