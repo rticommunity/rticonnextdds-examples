@@ -69,7 +69,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataReader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<tbf>> reader_listener =
+    ListenerBinder<DataReader<tbf> > reader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new tbfReaderListener,

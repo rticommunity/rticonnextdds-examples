@@ -350,7 +350,7 @@ public class waitsetsSubscriber {
 	                                continue;
 	                            }
 	                            waitsetsTypeSupport.print_data(
-	                                data_seq.get_at(i));
+	                                data_seq.get_at(j));
 	                        }
 	                    } catch (DDS.Retcode_NoData) {
 	                        /* When there isn't data, the subscriber stop to

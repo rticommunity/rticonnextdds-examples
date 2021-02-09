@@ -33,7 +33,7 @@ StreamReader *FileConnection::create_stream_reader(
         StreamReaderListener *listener)
 {
     return new FileStreamReader(this, info, properties, listener);
-};
+}
 
 void FileConnection::delete_stream_reader(StreamReader *reader)
 {
@@ -48,7 +48,7 @@ StreamWriter *FileConnection::create_stream_writer(
         const PropertySet &properties)
 {
     return new FileStreamWriter(properties);
-};
+}
 
 void FileConnection::delete_stream_writer(StreamWriter *writer)
 {
@@ -58,12 +58,12 @@ void FileConnection::delete_stream_writer(StreamWriter *writer)
 DiscoveryStreamReader *FileConnection::output_stream_discovery_reader()
 {
     return nullptr;
-};
+}
 
 DiscoveryStreamReader *FileConnection::input_stream_discovery_reader()
 {
     return &input_discovery_reader_;
-};
+}
 
 void FileConnection::dispose_discovery_stream(
         const rti::routing::StreamInfo &stream_info)

@@ -121,7 +121,7 @@ void publisher_main(int domain_id, int sample_count)
     // By using ListenerBinder (a RAII) it will take care of setting the
     // listener to NULL on destruction.
     DataWriter<listeners> writer(publisher, topic);
-    rti::core::ListenerBinder<DataWriter<listeners>> writer_listener =
+    rti::core::ListenerBinder<DataWriter<listeners> > writer_listener =
             rti::core::bind_and_manage_listener(
                     writer,
                     new MyDataWriterListener,

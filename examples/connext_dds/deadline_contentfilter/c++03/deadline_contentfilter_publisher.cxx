@@ -65,7 +65,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataWriter using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataWriter<deadline_contentfilter>> listener =
+    rti::core::ListenerBinder<DataWriter<deadline_contentfilter> > listener =
             rti::core::bind_and_manage_listener(
                     writer,
                     new DeadlineWriterListener,

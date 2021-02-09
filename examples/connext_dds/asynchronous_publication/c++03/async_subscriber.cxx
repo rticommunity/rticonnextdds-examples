@@ -69,7 +69,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    rti::core::ListenerBinder<DataReader<async>> scoped_listener =
+    rti::core::ListenerBinder<DataReader<async> > scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new AsyncListener,
