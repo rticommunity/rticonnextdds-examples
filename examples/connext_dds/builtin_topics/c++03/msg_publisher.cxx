@@ -158,29 +158,29 @@ void publisher_main(int domain_id, int sample_count)
     Subscriber builtin_subscriber = dds::sub::builtin_subscriber(participant);
 
     // Then get builtin subscriber's datareader for participants.
-    std::vector<DataReader<ParticipantBuiltinTopicData>> participant_reader;
-    find<DataReader<ParticipantBuiltinTopicData>>(
+    std::vector<DataReader<ParticipantBuiltinTopicData> > participant_reader;
+    find<DataReader<ParticipantBuiltinTopicData> >(
             builtin_subscriber,
             dds::topic::participant_topic_name(),
             std::back_inserter(participant_reader));
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL and deleting it.
-    rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData>>
+    rti::core::ListenerBinder<DataReader<ParticipantBuiltinTopicData> >
             participant_listener = rti::core::bind_and_manage_listener(
                     participant_reader[0],
                     new BuiltinParticipantListener,
                     dds::core::status::StatusMask::data_available());
 
     // Get builtin subscriber's datareader for subscribers.
-    std::vector<DataReader<SubscriptionBuiltinTopicData>> subscription_reader;
-    find<DataReader<SubscriptionBuiltinTopicData>>(
+    std::vector<DataReader<SubscriptionBuiltinTopicData> > subscription_reader;
+    find<DataReader<SubscriptionBuiltinTopicData> >(
             builtin_subscriber,
             dds::topic::subscription_topic_name(),
             std::back_inserter(subscription_reader));
 
     // Install our listener using ListenerBinder.
-    rti::core::ListenerBinder<DataReader<SubscriptionBuiltinTopicData>>
+    rti::core::ListenerBinder<DataReader<SubscriptionBuiltinTopicData> >
             subscriber_listener = rti::core::bind_and_manage_listener(
                     subscription_reader[0],
                     new BuiltinSubscriberListener,

@@ -249,7 +249,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create the DataReader and associate a listener
     DataReader<listeners> reader(subscriber, topic);
-    ListenerBinder<DataReader<listeners>> datareader_listener =
+    ListenerBinder<DataReader<listeners> > datareader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new MyDataReaderListener,
