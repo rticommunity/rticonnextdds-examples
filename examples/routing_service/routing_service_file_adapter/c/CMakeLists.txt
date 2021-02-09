@@ -36,17 +36,14 @@ find_package(
         routing_service
 )
 
-add_library(
-    fileadapter
-        "${CMAKE_CURRENT_SOURCE_DIR}/directory_reading.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/line_conversion.c"
-        "${CMAKE_CURRENT_SOURCE_DIR}/file_adapter.c"
+add_library(fileadapter
+    "${CMAKE_CURRENT_SOURCE_DIR}/directory_reading.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/line_conversion.c"
+    "${CMAKE_CURRENT_SOURCE_DIR}/file_adapter.c"
 )
 
-target_link_libraries(
-    fileadapter
-        RTIConnextDDS::routing_service_infrastructure
-        ${CONNEXTDDS_EXTERNAL_LIBS}
+target_link_libraries(fileadapter
+    RTIConnextDDS::routing_service_infrastructure
 )
 
 # To differentiate between debug and release builds
@@ -55,8 +52,9 @@ set_target_properties(fileadapter
         OUTPUT_NAME_DEBUG fileadapterd
 )
 
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/file_bridge.xml"
-    "${CMAKE_BINARY_DIR}/file_bridge.xml"
-    COPYONLY
+ADD_CUSTOM_COMMAND(TARGET fileadapter
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/file_bridge.xml"
+        "${CMAKE_BINARY_DIR}/file_bridge.xml"
 )
