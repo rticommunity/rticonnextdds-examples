@@ -90,7 +90,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<cft>> scoped_listener = bind_and_manage_listener(
+    ListenerBinder<DataReader<cft> > scoped_listener = bind_and_manage_listener(
             reader,
             new cftReaderListener,
             StatusMask::data_available());
