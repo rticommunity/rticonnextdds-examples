@@ -35,8 +35,8 @@ In order to build this example, you need to provide the following variables to
 - `CONNEXTDDS_ARCH`
 
 ```bash
-mkdir build
-cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
+$mkdir build
+$cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
 -DCONNEXTDDS_ARCH=<Connext DDS Architecture>
 -DBUILD_SHARED_LIBS=ON|OFF
 -DCMAKE_BUILD_TYPE=Debug|Release ..

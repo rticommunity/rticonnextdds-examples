@@ -259,7 +259,7 @@ void RTI_RoutingServiceFileStreamReader_read(
             (*sample_list)[*count] = streaminfo;
             /*
              * we increment the count of the sample info generated and returned
-             * inside the sampli_list dynamic array.
+             * inside the sample_list dynamic array.
              */
             (*count)++;
             /*

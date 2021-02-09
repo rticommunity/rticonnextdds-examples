@@ -22,7 +22,7 @@ endif()
 if (NOT UNIX)
     set(msg 
         "This example uses the pthreads library "
-        "which is only available on UNIX like systems")
+        "which is only available on UNIX-like systems")
     message(FATAL_ERROR ${msg})
 endif()
 
