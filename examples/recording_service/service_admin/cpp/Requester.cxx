@@ -107,12 +107,91 @@ void ArgumentsParser::print_usage(const std::string &program_name)
             << std::endl
             << "                sending the command. Description is optional."
             << std::endl;
+    std::cout << "        --add-breakpoint:" << std::endl;
+    std::cout << "            Format: --add-breakpoint <timestamp> [<label>]"
+              << std::endl;
+    std::cout
+            << "            Description: the breakpoint to be added in the replay."
+            << std::endl
+            << "                The timestamp have to be provided in nanosecond "
+            << std::endl
+            << "                format. Label is optional."
+            << std::endl;
+    std::cout << "        --remove-breakpoint:" << std::endl;
+    std::cout << "            Format: --remove-breakpoint <timestamp>|<label>"
+              << std::endl;
+    std::cout
+            << "            Description: the breakpoint to be removed of the replay."
+            << std::endl
+            << "                You can specify the breakpoint to be removed by"
+            << std::endl
+            << "                timestamp or by label."
+            << std::endl;
+    std::cout << "        --goto-breakpoint:" << std::endl;
+    std::cout << "            Format: --goto-breakpoint <timestamp>|<label>"
+              << std::endl;
+    std::cout
+            << "            Description: Jump to an existed breakpoint"
+            << std::endl
+            << "                You can jump by the breakpoint timestamp"
+            << std::endl
+            << "                or by the breakpoint label."
+            << std::endl;
+    std::cout << "        --continue-seconds:" << std::endl;
+    std::cout << "            Format: --continue-seconds <seconds>"
+              << std::endl;
+    std::cout
+            << "            Description: To resume the replay after hit a "
+            << std::endl
+            << "                breakpoint. You can resume the replay for "
+            << std::endl
+            << "                a number of seconds. "
+            << std::endl;
+    std::cout << "        --continue-slices:" << std::endl;
+    std::cout << "            Format: --continue-slices <slices>"
+              << std::endl;
+    std::cout
+            << "            Description: To resume the replay after hit a "
+            << std::endl
+            << "                breakpoint. You can resume the replay for "
+            << std::endl
+            << "                a number of slices. "
+            << std::endl;
+    std::cout << "        --current-timestamp:" << std::endl;
+    std::cout << "            Format: --current-timestamp <timestamp_nanos>"
+              << std::endl;
+    std::cout
+            << "            Description: To jump in time during the replay. "
+            << std::endl
+            << "                The timestamp have to be provided in nanosecond "
+            << std::endl
+            << "                format. "
+            << std::endl;
 }
 
-ArgumentsParser::ArgumentsParser(int argc, char *argv[]) : admin_domain_id_(0)
+void ArgumentsParser::report_argument_error(
+        const std::string& program_name,
+        const std::string& tag,
+        const std::string& error)
+{
+    print_usage(program_name);
+    std::stringstream error_stream;
+    error_stream << "Error: "<< error << tag << " parameter";
+    throw std::runtime_error(error_stream.str());
+}
+
+ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
+    admin_domain_id_(0),
+    octet_kind_(OctetKind::NONE)
 {
     const std::string DOMAIN_ID_ARG_NAME("--domain-id");
     const std::string TIME_TAG_ARG_NAME("--time-tag");
+    const std::string ADD_BR_ARG_NAME("--add-breakpoint");
+    const std::string RM_BR_ARG_NAME("--remove-breakpoint");
+    const std::string GOTO_BR_ARG_NAME("--goto-breakpoint");
+    const std::string CONTINUE_SEC_ARG_NAME("--continue-seconds");
+    const std::string CONTINUE_SLICE_ARG_NAME("--continue-slices");
+    const std::string JUMP_TIME_ARG_NAME("--current-timestamp");
 
     int current_arg = 0;
     // Parse mandatory arguments, we at least need 4 (includes program name)
@@ -128,7 +207,13 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) : admin_domain_id_(0)
     if (argc > 3) {
         // Command parameters; it's optional
         if (DOMAIN_ID_ARG_NAME.compare(argv[3]) != 0
-            && TIME_TAG_ARG_NAME.compare(argv[3]) != 0) {
+            && TIME_TAG_ARG_NAME.compare(argv[3]) != 0
+            && ADD_BR_ARG_NAME.compare(argv[3]) != 0
+            && RM_BR_ARG_NAME.compare(argv[3]) != 0
+            && GOTO_BR_ARG_NAME.compare(argv[3]) != 0
+            && CONTINUE_SEC_ARG_NAME.compare(argv[3]) != 0
+            && CONTINUE_SLICE_ARG_NAME.compare(argv[3]) != 0
+            && JUMP_TIME_ARG_NAME.compare(argv[3]) != 0) {
             /*
              * If this parameter is not one of the extra arguments, it has to be
              * the optional command parameters string
@@ -154,21 +239,115 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) : admin_domain_id_(0)
             } else if (TIME_TAG_ARG_NAME.compare(argv[current_arg]) == 0) {
                 // This parameter may use one or two arguments
                 if (current_arg + 1 < argc) {
-                    time_tag_params_.name = argv[current_arg + 1];
+                    octet_kind_ = OctetKind::DATATAG;
+                    data_tag_params_.tag_name(argv[current_arg + 1]);
+                    data_tag_params_.timestamp_offset(0);
                     // Check if a description has been provided
                     if (current_arg + 2 < argc) {
-                        time_tag_params_.description = argv[current_arg + 2];
+                        data_tag_params_.tag_description(argv[current_arg + 2]);
                         current_arg += 3;
                     } else {
                         current_arg += 2;
                     }
                 } else {
-                    // No name provided for the time tag
-                    print_usage(argv[0]);
-                    std::stringstream error_stream;
-                    error_stream << "Error: no name provided for "
-                                 << TIME_TAG_ARG_NAME << " parameter";
-                    throw std::runtime_error(error_stream.str());
+                     // No name provided for the time tag
+                    report_argument_error(
+                            argv[0],
+                            TIME_TAG_ARG_NAME,
+                            "no name provided for ");
+                }
+            } else if (ADD_BR_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::BREAKPOINT;
+                    // This parameter may use one or two arguments
+                    br_params_.value().timestamp_nanos(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    // Check if a label has been provided
+                    if (current_arg + 2 < argc) {
+                        br_params_.label(std::string(argv[current_arg + 2]));
+                        current_arg += 3;
+                    } else {
+                        current_arg += 2;
+                    }
+                } else {
+                    // No timestamp provided for the breakpoint
+                    report_argument_error(
+                            argv[0],
+                            ADD_BR_ARG_NAME,
+                            "no timestamp provided for ");
+                }
+            } else if (RM_BR_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::BREAKPOINT;
+                    // This parameter may use one or two arguments
+                    br_params_.value().timestamp_nanos(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    // Check if a label has been provided
+                    if (current_arg + 2 < argc) {
+                        br_params_.label(std::string(argv[current_arg + 2]));
+                        current_arg += 3;
+                    } else {
+                        current_arg += 2;
+                    }
+                } else {
+                    // No information for the breakpoint
+                    report_argument_error(
+                            argv[0],
+                            RM_BR_ARG_NAME,
+                            "no information provided for ");
+                }
+            } else if (GOTO_BR_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::BREAKPOINT;
+                    br_params_.value().timestamp_nanos(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    current_arg += 2;
+                } else {
+                    // No information for the breakpoint
+                    report_argument_error(
+                            argv[0],
+                            GOTO_BR_ARG_NAME,
+                            "no information provided for ");
+                }
+
+            } else if (CONTINUE_SEC_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::CONTINUE;
+                    continue_params_.value().offset(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    current_arg += 2;
+                } else {
+                    // No number of seconds for the continue param
+                    report_argument_error(
+                            argv[0],
+                            CONTINUE_SEC_ARG_NAME,
+                            "no number of seconds provided for ");
+                }
+            } else if (CONTINUE_SLICE_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::CONTINUE;
+                    continue_params_.value().slices(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    current_arg += 2;
+                } else {
+                    // No number of slices for the continue param
+                    report_argument_error(
+                            argv[0],
+                            CONTINUE_SLICE_ARG_NAME,
+                            "no number of slices provided for ");
+                }
+            } else if (JUMP_TIME_ARG_NAME.compare(argv[current_arg]) == 0) {
+                if (current_arg + 1 < argc) {
+                    octet_kind_ = OctetKind::TIMESTAMPHOLDER;
+                    timestamp_holder_.timestamp_nanos(
+                            strtoll(argv[current_arg + 1], NULL, 10));
+                    current_arg += 2;
+                } else {
+                    // No timestamp for the jump in time
+                    report_argument_error(
+                            argv[0],
+                            JUMP_TIME_ARG_NAME,
+                            "no timestamp provided for ");
                 }
             } else {
                 // Unrecognised parameter
@@ -206,9 +385,29 @@ uint32_t ArgumentsParser::admin_domain_id() const
     return admin_domain_id_;
 }
 
-const ArgumentsParser::TimeTagParams &ArgumentsParser::time_tag_params() const
+const DataTagParams& ArgumentsParser::data_tag_params() const
 {
-    return time_tag_params_;
+    return data_tag_params_;
+}
+
+OctetKind ArgumentsParser::octet_kind()
+{
+    return octet_kind_;
+}
+
+const BreakpointParams& ArgumentsParser::br_params() const
+{
+    return br_params_;
+}
+
+const ContinueParams& ArgumentsParser::continue_params() const
+{
+    return continue_params_;
+}
+
+const TimestampHolder& ArgumentsParser::timestamp_holder() const
+{
+    return timestamp_holder_;
 }
 
 Application::Application(ArgumentsParser &args_parser)
@@ -247,17 +446,36 @@ Application::Application(ArgumentsParser &args_parser)
     CommandRequest command_request;
 
     // Check if we have time tag parameters
-    const ArgumentsParser::TimeTagParams &time_tag_params =
-            args_parser_.time_tag_params();
-    if (!time_tag_params.name.empty()) {
-        DataTagParams data_tag_params;
-        data_tag_params.tag_name(time_tag_params.name);
-        data_tag_params.tag_description(time_tag_params.description);
-        data_tag_params.timestamp_offset(0);
+    OctetKind kind = args_parser.octet_kind();
+    switch(kind) {
+    case OctetKind::DATATAG:
         dds::topic::topic_type_support<DataTagParams>::to_cdr_buffer(
                 reinterpret_cast<std::vector<char> &>(
                         command_request.octet_body()),
-                data_tag_params);
+                args_parser_.data_tag_params());
+        break;
+    case OctetKind::BREAKPOINT:
+        dds::topic::topic_type_support<BreakpointParams>::to_cdr_buffer(
+                reinterpret_cast<std::vector<char> &>(
+                        command_request.octet_body()),
+                args_parser_.br_params());
+        break;
+    case OctetKind::CONTINUE:
+        dds::topic::topic_type_support<ContinueParams>::to_cdr_buffer(
+                reinterpret_cast<std::vector<char> &>(
+                        command_request.octet_body()),
+                args_parser_.continue_params());
+        break;
+    case OctetKind::TIMESTAMPHOLDER:
+        dds::topic::topic_type_support<TimestampHolder>::to_cdr_buffer(
+                reinterpret_cast<std::vector<char> &>(
+                        command_request.octet_body()),
+                args_parser_.timestamp_holder());
+        break;
+
+    case OctetKind::NONE:
+    default:
+        break;
     }
 
     command_request.action(args_parser_.command_kind());

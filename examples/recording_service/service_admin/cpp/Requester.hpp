@@ -15,9 +15,17 @@
 #include <dds/domain/domainfwd.hpp>
 #include <rti/request/Requester.hpp>
 
-#include "RecordingServiceTypes.hpp"
-#include "ServiceAdmin.hpp"
-#include "ServiceCommon.hpp"
+#include "rti/idlgen/RecordingServiceTypes.hpp"
+#include "rti/idlgen/ServiceAdmin.hpp"
+#include "rti/idlgen/ServiceCommon.hpp"
+
+enum OctetKind {
+    DATATAG,
+    BREAKPOINT,
+    CONTINUE,
+    TIMESTAMPHOLDER,
+    NONE
+};
 
 /*
  * This class acts as an interpreter between the command-line arguments provided
@@ -36,12 +44,15 @@ public:
 
     uint32_t admin_domain_id() const;
 
-    struct TimeTagParams {
-        std::string name;
-        std::string description;
-    };
+    const RTI::RecordingService::DataTagParams& data_tag_params() const;
 
-    const TimeTagParams &time_tag_params() const;
+    OctetKind octet_kind();
+
+    const RTI::RecordingService::BreakpointParams& br_params() const;
+
+    const RTI::RecordingService::ContinueParams& continue_params() const;
+
+    const RTI::RecordingService::TimestampHolder& timestamp_holder() const;
 
 private:
     RTI::Service::Admin::CommandActionKind command_kind_;
@@ -52,9 +63,22 @@ private:
 
     uint32_t admin_domain_id_;
 
-    TimeTagParams time_tag_params_;
+    OctetKind octet_kind_;
 
-    void print_usage(const std::string &program_name);
+    RTI::RecordingService::DataTagParams data_tag_params_;
+
+    RTI::RecordingService::TimestampHolder timestamp_holder_;
+
+    RTI::RecordingService::ContinueParams continue_params_;
+
+    RTI::RecordingService::BreakpointParams br_params_;
+
+    void print_usage(const std::string& program_name);
+
+    void report_argument_error(
+            const std::string& program_name,
+            const std::string& tag,
+            const std::string& error);
 
     static RTI::Service::Admin::CommandActionKind parse_command_kind(char *arg);
 

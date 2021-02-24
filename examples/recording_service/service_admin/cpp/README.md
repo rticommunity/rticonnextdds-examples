@@ -34,6 +34,12 @@ The following files are part of the example:
     profiles in both the application and the *Recording Service* we ensure the
     QoS matching and the reliability of the communication.
 
+-   `replay_remote_admin.xml`: this is a configuration file for Replay
+    Service that enables remote administration, and uses the QoS profiles
+    defined in the XML QoS profiles file defined above. By using the same QoS
+    profiles in both the application and the *Replay Service* we ensure the
+    QoS matching and the reliability of the communication.
+
 ## Building the Example
 
 In order to build this example, you need to provide the following variables to
@@ -111,8 +117,15 @@ $(CONNEXTDDS_DIR)/bin/rtirecordingservice
         -cfgFile recorder_remote_admin.xml -cfgName remote_admin
 ```
 
+Or in the case of *Replay Service*:
+```sh
+cd <binary directory>
+$(CONNEXTDDS_DIR)/bin/rtireplayservice
+        -cfgFile replay_remote_admin.xml -cfgName remote_admin
+```
+
 Note: you can run from other directory, just make sure the
-`recorder_remote_admin.xml` and `USER_QOS_PROFILES.xml`
+`recorder_remote_admin.xml`, `replay_remote_admin.xml` and `USER_QOS_PROFILES.xml`
 
 Once the *Recording Service* instance is running, it is ready to receive remote
 command requests. The administration app receives the following command-line
@@ -122,7 +135,7 @@ parameters:
     UPDATE, DELETE).
 
 -   The identifier of the resource we're accessing, e.g.
-    `recording_services/remote_admin/state`
+    `recording_services/remote_admin/state` or `/replay_services/remote_admin/playback:continue`
 
 -   [Optional] The arguments that the command kind needs for performing the
     action, e.g. `paused` (if the objective state of the service is *paused*)
@@ -141,6 +154,32 @@ parameters:
     symbolically define time ranges to be replayed or converted. This command
     requires a name parameter and optionally, a description (remember to use
     quotes for multi-word descriptions).
+
+-   [Optional] `--add-breakpoint`: this command-line parameter allows the user
+    to define a breakpoint for *Replay Service*. These breakpoint will be used
+    in the debug mode of Replay. This command requires a timestamp in nanosecond
+    form and optionally, a breakpoint name.
+
+-   [Optional] `--remove-breakpoint`: it will allow the user to remove an existed
+    breakpoint of the replay. This command requires the timestamp or name of the
+    breakpoint to be removed.
+
+-   [Optional] `--goto-breakpoint`: this command-line parameter the user to jump
+    to a existed breakpoint. This command requires the timestamp or name of the
+    specific breakpoint.
+
+-   [Optional] `--continue-seconds`: this command-line parameter allows the user
+    to continue the replay for a specific amount of seconds. This command requires
+    the number of seconds to be replayed.
+
+-   [Optional] `--continue-slices`: it will allow the user to continue the replay
+    for a specific amount of slices. This command requires the number of slices to
+    be replayed.
+
+-   [Optional] `--current-timestamp`: it will allow the user to jump in time
+    forward and backward in *Replay Service*. This command requires a timestamp in nanosecond format.
+
+Note: In order to run the *Replay Service* debug mode commands you should uncomment the debug mode configuration inside `replay_remote_admin.xml`.
 
 To run the administration app, you should go to the binary directory, or if you
 run from other directories, make sure the `USER_QOS_PROFILES.xml` file is
@@ -166,9 +205,21 @@ different commands to the service.
     Requester DELETE /recording_services/remote_admin
     ```
 
+4.  Sending an add breakpoint command
+
+    ```plaintext
+    Requester UPDATE /replay_services/remote_admin/playback:add_breakpoint --add-breakpoint 1613896947838268998 "breakpoint_1"
+    ```
+
+5.  Sending a Continue command
+
+    ```plaintext
+    Requester UPDATE /replay_services/remote_admin/playback:continue
+    ```
+
 ## Requirements
 
 To run this example you will need:
 
-- RTI Connext Professional version 6.0.0 or higher.
+- RTI Connext Professional version 6.1.0 or higher.
 - CMake version 3.11 or higher
