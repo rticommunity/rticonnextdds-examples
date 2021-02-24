@@ -135,7 +135,8 @@ parameters:
     UPDATE, DELETE).
 
 -   The identifier of the resource we're accessing, e.g.
-    `recording_services/remote_admin/state` or `/replay_services/remote_admin/playback:continue`
+    `recording_services/remote_admin/state` or
+    `/replay_services/remote_admin/playback:continue`
 
 -   [Optional] The arguments that the command kind needs for performing the
     action, e.g. `paused` (if the objective state of the service is *paused*)
@@ -160,26 +161,28 @@ parameters:
     in the debug mode of Replay. This command requires a timestamp in nanosecond
     form and optionally, a breakpoint name.
 
--   [Optional] `--remove-breakpoint`: it will allow the user to remove an existed
-    breakpoint of the replay. This command requires the timestamp or name of the
-    breakpoint to be removed.
+-   [Optional] `--remove-breakpoint`: it will allow the user to remove an
+    existed breakpoint of the replay. This command requires the timestamp or
+    name of the breakpoint to be removed.
 
 -   [Optional] `--goto-breakpoint`: this command-line parameter the user to jump
     to a existed breakpoint. This command requires the timestamp or name of the
     specific breakpoint.
 
 -   [Optional] `--continue-seconds`: this command-line parameter allows the user
-    to continue the replay for a specific amount of seconds. This command requires
-    the number of seconds to be replayed.
+    to continue the replay for a specific amount of seconds. This command
+    requires the number of seconds to be replayed.
 
--   [Optional] `--continue-slices`: it will allow the user to continue the replay
-    for a specific amount of slices. This command requires the number of slices to
-    be replayed.
+-   [Optional] `--continue-slices`: it will allow the user to continue the
+    replay for a specific amount of slices. This command requires the number of
+    slices to be replayed.
 
 -   [Optional] `--current-timestamp`: it will allow the user to jump in time
-    forward and backward in *Replay Service*. This command requires a timestamp in nanosecond format.
+    forward and backward in *Replay Service*. This command requires a timestamp
+    in nanosecond format.
 
-Note: In order to run the *Replay Service* debug mode commands you should uncomment the debug mode configuration inside `replay_remote_admin.xml`.
+Note: In order to run the *Replay Service* debug mode commands you should
+uncomment the debug mode configuration inside `replay_remote_admin.xml`.
 
 To run the administration app, you should go to the binary directory, or if you
 run from other directories, make sure the `USER_QOS_PROFILES.xml` file is

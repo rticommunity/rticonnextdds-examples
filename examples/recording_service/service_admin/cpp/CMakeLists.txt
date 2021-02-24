@@ -16,12 +16,25 @@ project (RecorderRemoteAdmin)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core
         messaging_api
+        routing_service
 )
+
+# Select the adequate version of the Recording Service library depending on the
+# build type
+set(recording_lib "rtirecordingservicecore")
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(recording_lib "${recording_lib}d")
+endif()
+
+find_library(
+    recordingservicelib
+    NAMES ${recording_lib}
+    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
 
 # Create the directory that's going to contain the generated code files
 add_custom_target(
@@ -123,5 +136,6 @@ target_include_directories(
 target_link_libraries(
     Requester
     RTIConnextDDS::messaging_cpp2_api
+    "${recordingservicelib}"
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
