@@ -1,0 +1,7 @@
+module InstanceStatisticsExample {
+
+    struct HelloWorld {
+        @key string<128> message;
+    };
+
+};
