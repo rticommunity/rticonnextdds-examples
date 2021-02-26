@@ -26,13 +26,13 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-
 ```sh
 dotnet run -- --pub -domain-id <domain_id> --sample-count <samples_to_send>
 dotnet run -- --sub -domain-id <domain_id> --sample-count <samples_to_receive>
 ```
 
 For the full list of arguments:
+
 ```sh
 dotnet run -- -h
 ```
