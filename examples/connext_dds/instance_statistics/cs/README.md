@@ -8,7 +8,7 @@ If you haven't used the RTI Connext C# API before, first check the
 First use **rtiddsgen** to generate the C# type and project files from
 `InstanceStatisticsExample.idl`:
 
-```
+```sh
 <install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles InstanceStatisticsExample.idl
 ```
 
@@ -16,7 +16,7 @@ Where `<install dir>` refers to your RTI Connext installation.
 
 Then build it using the dotnet CLI:
 
-```
+```sh
 dotnet build
 ```
 
@@ -27,12 +27,12 @@ following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 
-```
+```sh
 dotnet run -- --pub -domain-id <domain_id> --sample-count <samples_to_send>
 dotnet run -- --sub -domain-id <domain_id> --sample-count <samples_to_receive>
 ```
 
 For the full list of arguments:
-```
+```sh
 dotnet run -- -h
 ```
