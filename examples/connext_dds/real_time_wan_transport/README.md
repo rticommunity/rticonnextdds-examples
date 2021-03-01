@@ -18,14 +18,15 @@ Discovery Service, is available as an optional add-on.
 
 Real-Time WAN Transport provides the following capabilities:
 
-* **NAT (Network Address Translator) traversal:** Ability to communicate between
-DomainParticipants running in a Local Area Network (LAN) that is behind a
-NAT-enabled router, and DomainParticipants on the outside of the NAT across a
-WAN. This functionality is provided in combination with Cloud Discovery Service.
-* **IP mobility:** Support for network transitions and changes in IP addresses
-in any of the DomainParticipants participating in the communication
-* **Security:** Secure communications between DomainParticipants using Security
-Plugins.
+-   **NAT (Network Address Translator) traversal:** Ability to communicate
+    between DomainParticipants running in a Local Area Network (LAN) that is
+    behind a NAT-enabled router, and DomainParticipants on the outside of the
+    NAT across a WAN. This functionality is provided in combination with Cloud
+    Discovery Service.
+-   **IP mobility:** Support for network transitions and changes in IP addresses
+    in any of the DomainParticipants participating in the communication.
+-   **Security:** Secure communications between DomainParticipants using
+    Security Plugins.
 
 Real-Time WAN Transport does not require third-party components, such as STUN
 servers, or protocols like SIP to handle session establishment. Using a single
@@ -36,30 +37,31 @@ distributed systems that communicate across wide area networks.
 
 ## Definitions
 
-* **External DomainParticipant:** A DomainParticipant using a Real-Time WAN
-Transport that is publicly reachable at a public address. Being reachable at a
-public IP address does not mean that the DomainParticipant is not behind a
-NAT-enabled router. It is possible that an external DomainParticipant is behind
-a NAT-enabled router if the network administrator configures a static NAT
-mapping between the DomainParticipant private address and a public address.
+-   **External DomainParticipant:** A DomainParticipant using a Real-Time WAN
+    Transport that is publicly reachable at a public address. Being reachable at
+    a public IP address does not mean that the DomainParticipant is not behind a
+    NAT-enabled router. It is possible that an external DomainParticipant is
+    behind a NAT-enabled router if the network administrator configures a static
+    NAT mapping between the DomainParticipant private address and a public 
+    address.
 
 ## Example Description
 
 The main goal of this Example is to test connectivity under the following WAN
 communication scenarios:
 
-* **Scenario 1 (default):** Non-secure communication between an internal
-Participant using default UDP port mapping and an External Participant using a
-single UDP port.
-* **Scenario 2:** Secure communication between an internal Participant
-using default UDP port mapping and an External Participant using a single UDP
-port.
-* **Scenario 3:** Non-secure communication between two internal Participants
-behind Cone-NATs using default UDP port mapping. This scenario requires running
-Cloud Discovery Service.
-* **Scenario 4:** Secure communication between two internal Participants behind
-Cone-NATs using default UDP port mapping. This scenario requires running Cloud
-Discovery Service.
+-   **Scenario 1 (default):** Non-secure communication between an internal
+    Participant using default UDP port mapping and an External Participant using
+    a single UDP port.
+-   **Scenario 2:** Secure communication between an internal Participant using
+    default UDP port mapping and an External Participant using a single UDP
+    port.
+-   **Scenario 3:** Non-secure communication between two internal Participants
+    behind Cone-NATs using default UDP port mapping. This scenario requires
+    running Cloud Discovery Service.
+-   **Scenario 4:** Secure communication between two internal Participants
+    behind Cone-NATs using default UDP port mapping. This scenario requires
+    running Cloud Discovery Service.
 
 Scenario 1 and Scenario 2 require one External Participant reachable in a public
 IP address and port as shown in the Figure below. If the External Participant is
