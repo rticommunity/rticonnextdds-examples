@@ -16,7 +16,7 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "real_time_wan_transport"
     LANG "C++"
-    REQUIRE_SECURITY TRUE
+    REQUIRE_SECURITY
 )
 
 configure_file(
