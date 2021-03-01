@@ -124,8 +124,8 @@ External Participant.
     port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
 
 2)  Set the environment variable PUBLIC_ADDRESS to be the
-    public IP address in which the application will receive data. Uusally this 
-    is the public IP address of the NAT-enabled router behind which the 
+    public IP address in which the application will receive data. Uusally this
+    is the public IP address of the NAT-enabled router behind which the
     application runs.
 
 `real_time_wan_transport_publisher`
@@ -142,8 +142,8 @@ router.
 
 1)  Make sure that the publisher and subscriber applications are running behind
     a Cone NAT. There are multiple third-party utilities that you can download
-    to find out the NAT type. One example is natat
-    (https://github.com/songjiayang/natat).
+    to find out the NAT type. One example is
+    [natat](https://github.com/songjiayang/natat).
 
 2)  Cloud Discovery Service must be recahable at a public IP address. Create
     a static NAT binding between the (private IP address:UDP port)
@@ -182,7 +182,7 @@ command line option `-h`.
 If communication is established you should see the following messages in the
 `real_time_wan_transport_subscriber` console output.
 
-```
+```plaintext
 Received data
 
    msg: "Hello World 1"
