@@ -72,7 +72,7 @@ IP address:port (50.10.23.45:2345 in the figure below).
 ![Internal to External Participant](resources/images/InternalToExternal.png?raw=true "Internal to External Participant")
 
 Scenarios 3 and 4 require that both Internal Participants are behind a 
-Cone-NAT and they also require running a RTI Cloud Discovery Service instance 
+Cone-NAT and they also require running a Cloud Discovery Service instance 
 reachable in a public address (60.10.23.45:2345 in the Figure below) to 
 facilitate the NAT traversal process. 
 
@@ -131,28 +131,46 @@ External Participant.
 
 ## Prerequisites before running scenario 3 or 4
 
-These scenarios require running RTI Cloud Discovery Service. They also require
+These scenarios require running Cloud Discovery Service. They also require
 that both applications `real_time_wan_transport_subscriber` and 
 `real_time_wan_transport_publisher` are behind Cone (or Assymetric) NAT-enabled 
 router.
 
-1) Make sure your applications are running behind a Cone NAT. There are multiple 
-   third-party utilities that you can download to find out the NAT type. One 
-   example is natat (https://github.com/songjiayang/natat).
+1) Make sure that the publisher and subscriber applications are running behind 
+   a Cone NAT. There are multiple third-party utilities that you can download 
+   to find out the NAT type. One example is natat 
+   (https://github.com/songjiayang/natat).
 
-2) RTI Cloud Discovery Service must be recahable at a public IP address. Create 
+2) Cloud Discovery Service must be recahable at a public IP address. Create 
    a static NAT binding between the (private IP address:UDP port) 
-   in which the RTI Cloud Discovery Service will receive data and a 
+   in which the Cloud Discovery Service will receive data and a 
    (public IP address:UDP port).
 
    For the sake of simplicity, the XML configuration assumes that 
    the UDP port is 7400. If you want to use a different number replace 7400 with 
-   the new number in the XML configuration files `USER_QOS_PROFILES.xml` and `CLOUD_DISCOVERY_SERVICE.xml`
+   the new number in the XML configuration files `USER_QOS_PROFILES.xml` and 
+   `CLOUD_DISCOVERY_SERVICE.xml`.
+
+3) Set the environment variable `PUBLIC_ADDRESS` to the public IP address in 
+   which the Cloud Discovery services runs. This environment variable will
+   have to be set for the publisher and subscriber applications and for RTI
+   Cloud Discovery Service.
+
+## Running Cloud Discovery Service
+
+To run Cloud Discovery Service in scenarios 3 and 4 you can the following 
+command line on Mac OS and Linux:
+
+```sh
+${NDDSHOME}/bin/rticlouddiscoveryservice -cfgFile CLOUD_DISCOVERY_SERVICE.xml -cfgName AllDomains
+```
+
+Use `AllDomains` for scenario 3 and `AllDomainsSecure` for scenario 4.
 
 ## Running the test
 
 To run a specific scenario use the command line option `--scenario <value>`
-in both applications.
+in the publisher and subscriber applications.
 
 You can get a full list of command line parameters by running with the
 command line option `-h`.
