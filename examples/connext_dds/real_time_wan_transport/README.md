@@ -42,7 +42,7 @@ distributed systems that communicate across wide area networks.
     a public IP address does not mean that the DomainParticipant is not behind a
     NAT-enabled router. It is possible that an external DomainParticipant is
     behind a NAT-enabled router if the network administrator configures a static
-    NAT mapping between the DomainParticipant private address and a public 
+    NAT mapping between the DomainParticipant private address and a public
     address.
 
 ## Example Description
@@ -84,27 +84,27 @@ facilitate the NAT traversal process.
 
 ## Prerequisites before running example
 
-1) Before running the example, make sure the environment variable `NDDSHOME` is
-   set to the directory where your version of *RTI Connext* is installed.
+1)  Before running the example, make sure the environment variable `NDDSHOME` is
+    set to the directory where your version of *RTI Connext* is installed.
 
-2) Set the load library path to include the Connext DDS libraries.
+2)  Set the load library path to include the Connext DDS libraries.
 
-   On MacOSX you can do that with the command:
+    On MacOSX you can do that with the command:
 
-   ```sh
-   export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${NDDSHOME}/lib/x64Darwin17clang9.0:${NDDSHOME}/third_party/openssl-1.1.1i/x64Darwin17clang9.0/release/lib
-   ```
+    ```sh
+    export DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH}:${NDDSHOME}/lib/x64Darwin17clang9.0:${NDDSHOME}/third_party/openssl-1.1.1i/x64Darwin17clang9.0/release/lib
+    ```
 
-   On Linux you do it with the command:
+    On Linux you do it with the command:
 
-   ```sh
-   export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${NDDSHOME}/lib/x64Linux4gcc7.3.0:${NDDSHOME}/third_party/openssl-1.1.1i/x64Linux4gcc7.3.0/release/lib
-   ```
+    ```sh
+    export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${NDDSHOME}/lib/x64Linux4gcc7.3.0:${NDDSHOME}/third_party/openssl-1.1.1i/x64Linux4gcc7.3.0/release/lib
+    ```
 
 ## Prerequisites before running example with Security
 
-1) Download and install the RTI Security Plugins in order to run scenarios
-   2 and 4.
+1)  Download and install the RTI Security Plugins in order to run scenarios
+    2 and 4.
 
 ## Prerequisites before running scenario 1 or 2
 
@@ -113,25 +113,25 @@ facilitate the NAT traversal process.
 The `real_time_wan_transport_subscriber` application will create the
 External Participant.
 
-1) Create a static NAT binding between the (private IP address:private UDP port)
-   in which the application will receive data and a
-   (public IP address:public UDP port).
+1)  Create a static NAT binding between the
+    (private IP address:private UDP port) in which the application will receive
+    data and a (public IP address:public UDP port).
 
-   For the sake of simplicity, the XML configuration assumes that
-   the private UDP port and the public UDP port are 16000. If you want to use
-   a different number replace 16000 with the new number in the XML configuration
-   file. You can also use different numbers for the private UDP port
-   (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
+    For the sake of simplicity, the XML configuration assumes that
+    the private UDP port and the public UDP port are 16000. If you want to use
+    a different number replace 16000 with the new number in the XML
+    configuration file. You can also use different numbers for the private UDP
+    port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
 
-2) Set the environment variable PUBLIC_ADDRESS to be the
-   public IP address in which the application will receive data. Uusally this is
-   the public IP address of the NAT-enabled router behind which the application
-   runs.
+2)  Set the environment variable PUBLIC_ADDRESS to be the
+    public IP address in which the application will receive data. Uusally this 
+    is the public IP address of the NAT-enabled router behind which the 
+    application runs.
 
 `real_time_wan_transport_publisher`
 
-1) Set the environment variable PUBLIC_ADDRESS to the public IP address in which
-   the ``real_time_wan_transport_subscriber`` application receives data.
+1)  Set the environment variable PUBLIC_ADDRESS to the public IP address in
+    which the ``real_time_wan_transport_subscriber`` application receives data.
 
 ## Prerequisites before running scenario 3 or 4
 
@@ -140,25 +140,25 @@ that both applications `real_time_wan_transport_subscriber` and
 `real_time_wan_transport_publisher` are behind Cone (or Assymetric) NAT-enabled
 router.
 
-1) Make sure that the publisher and subscriber applications are running behind
-   a Cone NAT. There are multiple third-party utilities that you can download
-   to find out the NAT type. One example is natat
-   (https://github.com/songjiayang/natat).
+1)  Make sure that the publisher and subscriber applications are running behind
+    a Cone NAT. There are multiple third-party utilities that you can download
+    to find out the NAT type. One example is natat
+    (https://github.com/songjiayang/natat).
 
-2) Cloud Discovery Service must be recahable at a public IP address. Create
-   a static NAT binding between the (private IP address:UDP port)
-   in which the Cloud Discovery Service will receive data and a
-   (public IP address:UDP port).
+2)  Cloud Discovery Service must be recahable at a public IP address. Create
+    a static NAT binding between the (private IP address:UDP port)
+    in which the Cloud Discovery Service will receive data and a
+    (public IP address:UDP port).
 
-   For the sake of simplicity, the XML configuration assumes that
-   the UDP port is 7400. If you want to use a different number replace 7400 with
-   the new number in the XML configuration files `USER_QOS_PROFILES.xml` and
-   `CLOUD_DISCOVERY_SERVICE.xml`.
+    For the sake of simplicity, the XML configuration assumes that
+    the UDP port is 7400. If you want to use a different number replace 7400
+    with the new number in the XML configuration files `USER_QOS_PROFILES.xml`
+    and `CLOUD_DISCOVERY_SERVICE.xml`.
 
-3) Set the environment variable `PUBLIC_ADDRESS` to the public IP address in
-   which the Cloud Discovery services runs. This environment variable will
-   have to be set for the publisher and subscriber applications and for RTI
-   Cloud Discovery Service.
+3)  Set the environment variable `PUBLIC_ADDRESS` to the public IP address in
+    which the Cloud Discovery services runs. This environment variable will
+    have to be set for the publisher and subscriber applications and for RTI
+    Cloud Discovery Service.
 
 ## Running Cloud Discovery Service
 
