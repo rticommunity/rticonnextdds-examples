@@ -1,0 +1,140 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----1B4EDBF57A19C3C55B849C665EBD29A1"
+
+This is an S/MIME signed message
+
+------1B4EDBF57A19C3C55B849C665EBD29A1
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../schema/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="ParticipantA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexample/emailAddress=me@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2023-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id>0</id>
+                </domains>
+                <!--
+                Use this to expand the range of domains.
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>
+                    </id_range>
+                </domains>
+                -->
+                <publish>
+                    <topics>
+                        <topic>Cir*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P1*</partition>
+                    </partitions>
+                </publish>
+                <subscribe>
+                    <topics>
+                        <topic>Sq*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P2*</partition>
+                    </partitions>
+                </subscribe>
+                <subscribe>
+                    <topics>
+                        <topic>Triangle</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="ParticipantA_DSA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampledsa/emailAddress=medsa@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2023-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id>0</id>
+                </domains>
+                <publish>
+                    <topics>
+                        <topic>Cir*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P1*</partition>
+                    </partitions>
+                </publish>
+                <subscribe>
+                    <topics>
+                        <topic>Sq*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P2*</partition>
+                    </partitions>
+                </subscribe>
+                <subscribe>
+                    <topics>
+                        <topic>Triangle</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="ParticipantA_ECDSA">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, CN=dtlsexampleECdsa/emailAddress=meECdsa@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2034-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
+------1B4EDBF57A19C3C55B849C665EBD29A1
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEKwYJKoZIhvcNAQcCoIIEHDCCBBgCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggIBMIIB/TCCAaMCFAEbYbCztvRjFUR5EM2fCDL9Q9CqMAoGCCqG
+SM49BAMCMIGAMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1Nh
+bnRhIENsYXJhMR4wHAYDVQQKDBVSZWFsIFRpbWUgSW5ub3ZhdGlvbnMxDzANBgNV
+BAMMBlJUSSBDQTEdMBsGCSqGSIb3DQEJARYOc2VjdXJlQHJ0aS5jb20wHhcNMjEw
+MTI5MjMzNDE3WhcNMjYwMTI4MjMzNDE3WjCBgDELMAkGA1UEBhMCVVMxCzAJBgNV
+BAgMAkNBMRQwEgYDVQQHDAtTYW50YSBDbGFyYTEeMBwGA1UECgwVUmVhbCBUaW1l
+IElubm92YXRpb25zMQ8wDQYDVQQDDAZSVEkgQ0ExHTAbBgkqhkiG9w0BCQEWDnNl
+Y3VyZUBydGkuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE9Qx7OevNzBKi
+uRkHm0wZEnp5ZbfEsFHy81q0Z5FOTyWR1pfYiuYkXwDoJhXWuC2RzJqoPFWtwje3
+w13bHxhIAzAKBggqhkjOPQQDAgNIADBFAiBvZhnSuLdcylEbA/Yw3P9JvHAxbhim
+1ecvXA8uX7RdigIhAKkmpOLHfnbRCkIQQj/YdfqR758AoSDu0Up87/5pFwRTMYIB
+7jCCAeoCAQEwgZkwgYAxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEUMBIGA1UE
+BwwLU2FudGEgQ2xhcmExHjAcBgNVBAoMFVJlYWwgVGltZSBJbm5vdmF0aW9uczEP
+MA0GA1UEAwwGUlRJIENBMR0wGwYJKoZIhvcNAQkBFg5zZWN1cmVAcnRpLmNvbQIU
+ARthsLO29GMVRHkQzZ8IMv1D0KowDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcN
+AQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjEwMTI5MjMzNDMxWjAv
+BgkqhkiG9w0BCQQxIgQg1ZQ1TKuejYPcL8Dk44QEaVkUWCj7inoqu3A3UCclj74w
+eQYJKoZIhvcNAQkPMWwwajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCG
+SAFlAwQBAjAKBggqhkiG9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwIC
+AUAwBwYFKw4DAgcwDQYIKoZIhvcNAwICASgwCgYIKoZIzj0EAwIERzBFAiEA8ert
+O4yGM5Myz10Idzav/u1fb31SAIBR41i3UvAX8+UCICBQX7tVhenuUwdAt9z6XMBP
+cCtfgj3GehnI9DKu0p98
+
+------1B4EDBF57A19C3C55B849C665EBD29A1--
+
