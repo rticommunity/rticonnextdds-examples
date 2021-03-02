@@ -633,6 +633,10 @@ function(connextdds_rtiddsgen_run)
         list(APPEND extra_flags "-example" ${CONNEXTDDS_ARCH})
     endif()
 
+    if(_CODEGEN_UNPARSED_ARGUMENTS)
+        list(APPEND extra_flags "${_CODEGEN_UNPARSED_ARGUMENTS}")
+    endif()
+
     # Call CodeGen
     add_custom_command(
         OUTPUT
