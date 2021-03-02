@@ -87,15 +87,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL, *publisher2 = NULL;
     DDSPublisherSeq publisherSeq;
-    DDSTopic *topic = NULL;
-    DDSDataWriter *writer = NULL;
-    FooDataWriter *Foo_writer = NULL;
-    Foo *instance = NULL;
     DDS_ReturnCode_t retcode;
-    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
-    const char *type_name = NULL;
-    int count = 0;
-    DDS_Duration_t send_period = { 4, 0 };
 
     /* To customize participant QoS, use
      * the configuration file USER_QOS_PROFILES.xml */
