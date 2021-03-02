@@ -50,10 +50,7 @@ data.
 
 ## Code generation
 
-If the lines of the input file are bigger than 1024 bytes the code must be
-generated with `-stringSize` option with the maximun lengh line. Otherwise,
-lines with higher lengh will not be sent and an error will be printed.
-
-For example, a maximum length line of 4096:
-`$NDDSHOME/bin/rtiddsgen -stringSize 4096 -example x64Linux4gcc7.3.0 -language C++ compression.idl`
-
+The current limit for each line of the input file is 4096 bytes long. If you
+want to change this value you need to edit the CMakeLists file
+`examples/connext_dds/compression/c++/CMakeLists.txt` and modify the value
+under `CODEGEN_ARGS`
