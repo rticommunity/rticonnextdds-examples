@@ -47,7 +47,7 @@
                 </subscription_name>
             </datareader_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!-- Create custom flowcontroller -->
                 <property>
                     <value>
@@ -91,7 +91,7 @@
                 <transport_builtin>
                     <mask>UDPv4</mask>
                 </transport_builtin>
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
     </qos_library>
 </dds>

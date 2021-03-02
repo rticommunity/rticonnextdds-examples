@@ -1,0 +1,51 @@
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.md'
+      - '**/*.py'
+
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.md'
+      - '**/*.py'
+
+jobs:
+  lint-python:
+    runs-on: ubuntu-18.04
+    name: Python code format check"
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install necessary tools
+        run: pip install black
+      - name: Perform format check
+        working-directory: ${{ github.workspace }}
+        run: black -l 79 --diff --check .
+
+  lint-markdown:
+    runs-on: ubuntu-18.04
+    name: Markdown documents lint
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Node
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '14'
+      - name: Install necessary tools
+        run: npm install markdownlint-cli@0.23.1
+      - name: Perform linting
+        working-directory: ${{ github.workspace }}
+        run: npx markdownlint --ignore node_modules .

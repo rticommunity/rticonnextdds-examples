@@ -64,7 +64,7 @@
                     </value>
                </property>
             </datareader_qos>
-            <participant_qos>
+            <domain_participant_qos>
                 <!--
                 The participant name, if it is set, will be displayed in the
                 RTI tools, making it easier for you to tell one
@@ -75,7 +75,7 @@
                     <role_name>RecursiveTypeParticipantRole</role_name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
     </qos_library>

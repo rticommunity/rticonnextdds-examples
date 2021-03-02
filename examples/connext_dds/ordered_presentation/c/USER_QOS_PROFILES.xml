@@ -67,7 +67,7 @@ xsi:noNamespaceSchemaLocation to point to
                 </presentation>
             </subscriber_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!-- The participant name, if it is set, will be displayed 
                     in the RTI tools, making it easier for you to tell one application from another 
                     when you're debugging. -->
@@ -75,7 +75,7 @@ xsi:noNamespaceSchemaLocation to point to
                     <name>Orderer presentation C example</name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
 
         <qos_profile name="ordered_Profile_subscriber_topic"
@@ -101,7 +101,7 @@ xsi:noNamespaceSchemaLocation to point to
                 </presentation>
             </subscriber_qos>
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!-- The participant name, if it is set, will be displayed 
                     in the RTI tools, making it easier for you to tell one application from another 
                     when you're debugging. -->
@@ -109,7 +109,7 @@ xsi:noNamespaceSchemaLocation to point to
                     <name>Orderer presentation C example</name>
                 </participant_name>
 
-            </participant_qos>
+            </domain_participant_qos>
         </qos_profile>
     </qos_library>
 </dds>

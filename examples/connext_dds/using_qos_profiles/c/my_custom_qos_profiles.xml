@@ -23,11 +23,11 @@
 		get the last 10 samples of each instance from DataWriters using this 
 		profile. -->
 		<qos_profile name="transient_local_profile">
-			<participant_qos>
+			<domain_participant_qos>
 				<participant_name>
 					<name>RTI Profiles Example -- Transient Local Profile</name>
 				</participant_name>
-			</participant_qos>
+			</domain_participant_qos>
 
 			<datawriter_qos>
 				<reliability>
@@ -61,11 +61,11 @@
 		transient_local_profile, and changes the participant_name and the 
 		durability of the DataReader and DataWriter to TRANSIENT_DURABILITY. -->
 		<qos_profile name="transient_profile" base_name="transient_local_profile">
-			<participant_qos>
+			<domain_participant_qos>
 				<participant_name>
 					<name>RTI Profiles Example -- Transient Profile</name>
 				</participant_name>
-			</participant_qos>
+			</domain_participant_qos>
 			
 			<datawriter_qos>
 				<durability>

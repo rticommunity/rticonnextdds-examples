@@ -5,7 +5,7 @@
 *RTI Connext DDS* provides *Quality of Service* (QoS) that controls the behavior
 of the different DDS entities, and allows you to configure the *middleware* to
 enable features such as monitoring. To make this process easier, RTI includes a
-set of built-in QoS profiles that provide useful *functionality, such as
+set of built-in QoS profiles that provide useful functionality, such as
 enabling monitoring or configuring *DataWriters* and *DataReaders* to be
 strictly reliable.
 
@@ -73,7 +73,7 @@ inherit from two different built-in profiles.
     is independent of the reader, and writer-specific streaming reliability QoS:
 
     ```xml
-    <participant_qos base_name="BuiltinQosLib::Generic.Monitoring.Common">
+    <domain_participant_qos base_name="BuiltinQosLib::Generic.Monitoring.Common">
     ```
 
 In this example, the *DomainParticipant* is configured to enable monitoring out

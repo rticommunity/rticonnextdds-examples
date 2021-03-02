@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project (ShapesProcessor)
 
 if(NOT BUILD_SHARED_LIBS)
@@ -41,30 +41,44 @@ find_package(
         routing_service
 )
 
-# Define the library that will provide the  Processor plugin
-add_library(shapesprocessor
-    "${CMAKE_CURRENT_SOURCE_DIR}/ShapesProcessor.cxx")
+# Define the library that will provide the Aggregator Processor plugin
+set(AGGREGATOR_LIB "shapesaggregator")
+add_library(${AGGREGATOR_LIB}
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShapesAggregator.cxx")
 
-# Set target properties for lang requirement output library name
-set_target_properties(shapesprocessor
-    PROPERTIES
-        CXX_STANDARD 11
-        OUTPUT_NAME_DEBUG shapesprocessord
-        LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
-        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-        ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
-        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
-        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-)
+set(SPLITTER_LIB "shapessplitter")
+add_library(${SPLITTER_LIB}
+    "${CMAKE_CURRENT_SOURCE_DIR}/ShapesSplitter.cxx")
 
-target_link_libraries(shapesprocessor
-    RTIConnextDDS::cpp2_api
-    RTIConnextDDS::routing_service_infrastructure)
+set(PROCESSORS ${AGGREGATOR_LIB} ${SPLITTER_LIB})
 
-target_include_directories(shapesprocessor
-    PUBLIC
-        "${CMAKE_CURRENT_SOURCE_DIR}")
+foreach (proc ${PROCESSORS})
+
+    # Set target properties for lang requirement output library name
+    set_target_properties(
+        ${proc}
+        PROPERTIES
+            CXX_STANDARD 11
+            OUTPUT_NAME_DEBUG ${proc}d
+            LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+            LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+            LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+            ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+            ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+            ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+            RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+            RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+            RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+    )
+        
+    target_link_libraries(${proc}
+        RTIConnextDDS::cpp2_api
+        RTIConnextDDS::routing_service_infrastructure
+        RTIConnextDDS::routing_service)
+        
+    target_include_directories(${proc}
+        PUBLIC
+            "${CMAKE_CURRENT_SOURCE_DIR}")
+
+endforeach()
+
