@@ -37,7 +37,6 @@ loop until hits the sample count (--sample-count). The selected compression
 A generic text file has been added along with this examples, you can find it
 under `resource/messages/text_payload.txt`.
 
-
 Execute the publisher with `--help` command line parameter for more information.
 
 Example of a publisher execution:
