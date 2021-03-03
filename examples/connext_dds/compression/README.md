@@ -42,7 +42,9 @@ Execute the publisher with `--help` command line parameter for more information.
 
 Example of a publisher execution:
 
-- `compression_publisher -c ZLIB -i ../../../../../resources/messages/text_payload.txt -s 100`
+```shell
+compression_publisher -c ZLIB -i ../../../../../resources/messages/text_payload.txt -s 100
+```
 
 ## Subscriber
 
