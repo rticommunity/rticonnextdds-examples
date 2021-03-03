@@ -27,20 +27,20 @@ static int shutdown_participant(
     int status);
 
 // Process data. Returns number of samples processed.
-unsigned int process_data(string_1kDataReader *typed_reader)
+unsigned int process_data(StringLineDataReader *typed_reader)
 {
-    string_1kSeq data_seq;     // Sequence of received data
+    StringLineSeq data_seq;     // Sequence of received data
     DDS_SampleInfoSeq info_seq; // Metadata associated with samples in data_seq
     unsigned int samples_read = 0;
 
     // Take available data from DataReader's queue
     typed_reader->take(
-        data_seq,
-        info_seq,
-        DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE,
-        DDS_ANY_VIEW_STATE,
-        DDS_ANY_INSTANCE_STATE);
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     // Iterate over all available data
     for (int i = 0; i < data_seq.length(); ++i) {
@@ -48,7 +48,7 @@ unsigned int process_data(string_1kDataReader *typed_reader)
         if (info_seq[i].valid_data) {
             // Uncomment if you want to print the received data.
             // std::cout << "Received data" << std::endl;
-            // string_1kTypeSupport::print_data(&data_seq[i]);
+            // StringLineTypeSupport::print_data(&data_seq[i]);
             samples_read++;
         } else {  // This is an instance lifecycle event with no data payload.
             std::cout << "Received instance state notification" << std::endl;
@@ -67,65 +67,65 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 {
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
-    DDSTheParticipantFactory->create_participant(
-        domain_id,
-        DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
     }
 
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         return shutdown_participant(participant, "create_subscriber error", EXIT_FAILURE);
     }
 
     // Register the datatype to use when creating the Topic
-    const char *type_name = string_1kTypeSupport::get_type_name();
+    const char *type_name = StringLineTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    string_1kTypeSupport::register_type(participant, type_name);
+    StringLineTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
     }
 
     // Create a Topic with a name and a datatype
     DDSTopic *topic = participant->create_topic(
-        "Example string_1k",
-        type_name,
-        DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example StringLine",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
     }
 
-    // This DataReader reads data on "Example string_1k" Topic
+    // This DataReader reads data on "Example StringLine" Topic
     DDSDataReader *untyped_reader = subscriber->create_datareader(
-        topic,
-        DDS_DATAREADER_QOS_DEFAULT,
-        NULL,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            NULL,
+            DDS_STATUS_MASK_NONE);
     if (untyped_reader == NULL) {
         return shutdown_participant(participant, "create_datareader error", EXIT_FAILURE);
     }
 
     // Narrow casts from a untyped DataReader to a reader of your type
-    string_1kDataReader *typed_reader =
-    string_1kDataReader::narrow(untyped_reader);
+    StringLineDataReader *typed_reader =
+    StringLineDataReader::narrow(untyped_reader);
     if (typed_reader == NULL) {
         return shutdown_participant(participant, "DataReader narrow error", EXIT_FAILURE);
     }
 
     // Create ReadCondition that triggers when unread data in reader's queue
     DDSReadCondition *read_condition = typed_reader->create_readcondition(
-        DDS_NOT_READ_SAMPLE_STATE,
-        DDS_ANY_VIEW_STATE,
-        DDS_ANY_INSTANCE_STATE);
+            DDS_NOT_READ_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (read_condition == NULL) {
         return shutdown_participant(participant, "create_readcondition error", EXIT_FAILURE);
     }

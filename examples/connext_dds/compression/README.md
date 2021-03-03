@@ -15,8 +15,8 @@ user-manual for more information):
 
 This example shows how to use compression. You will learn how to:
 
-- Configure the compression feature by Qos
-- How the Bandwidth saving is affected by each compression algorithm.
+-   Configure the compression feature by Qos
+-   How the Bandwidth saving is affected by each compression algorithm.
 Configurable by the command line parameter `--compression-id`.
 
 This test measures the number of bytes received at UDP transport-level on
@@ -34,7 +34,15 @@ fill with zeros if no file is provided). Then will send all the samples on a
 loop until hits the sample count (--sample-count). The selected compression
 (--compression-id) will apply to each of the samples.
 
+A generic text file has been added along with this examples, you can find it
+under `resource/messages/text_payload.txt`.
+
+
 Execute the publisher with `--help` command line parameter for more information.
+
+Example of a publisher execution:
+
+- `compression_publisher -c ZLIB -i ../../../../../resources/messages/text_payload.txt -s 100`
 
 ## Subscriber
 
@@ -47,6 +55,9 @@ information about when a sample is eligible or not to be compressed), also the
 amount of bytes received at UDP transport level will be printed, with this we
 can compare how compression affects the bandwidth usage over the given input
 data.
+To finalize the subscriber either set the `--sample-count` option or send
+a SIGINT/SIGTERM signal that will be handler by the application printing the
+final report and finishing gratefully.
 
 ## Code generation
 

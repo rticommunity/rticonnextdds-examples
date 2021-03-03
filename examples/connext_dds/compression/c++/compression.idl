@@ -10,6 +10,6 @@
  * use or inability to use the software.
  */
 
-struct string_1k {
+struct StringLine {
     string str;
 };

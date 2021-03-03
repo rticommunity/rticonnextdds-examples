@@ -32,43 +32,43 @@ int run_publisher_application(
         unsigned int domain_id,
         unsigned int sample_count,
         std::string compression_id,
-        std::string input_file)
+        const std::string input_file)
 {
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
-    DDSTheParticipantFactory->create_participant(
-        domain_id,
-        DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
     }
 
     // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         return shutdown_participant(participant, "create_publisher error", EXIT_FAILURE);
     }
 
     // Register the datatype to use when creating the Topic
-    const char *type_name = string_1kTypeSupport::get_type_name();
+    const char *type_name = StringLineTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    string_1kTypeSupport::register_type(participant, type_name);
+    StringLineTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
     }
 
     // Create a Topic with a name and a datatype
     DDSTopic *topic = participant->create_topic(
-        "Example string_1k",
-        type_name,
-        DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example StringLine",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
     }
@@ -97,24 +97,24 @@ int run_publisher_application(
                 DDS_COMPRESSION_ID_LZ4_BIT;
     }
 
-    // This DataWriter writes data on "Example string_1k" Topic
+    // This DataWriter writes data on "Example StringLine" Topic
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
-        topic,
-        datawriter_qos,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            datawriter_qos,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (untyped_writer == NULL) {
         return shutdown_participant(participant, "create_datawriter error", EXIT_FAILURE);
     }
 
     // Narrow casts from an untyped DataWriter to a writer of your type
-    string_1kDataWriter *typed_writer =
-    string_1kDataWriter::narrow(untyped_writer);
+    StringLineDataWriter *typed_writer =
+    StringLineDataWriter::narrow(untyped_writer);
     if (typed_writer == NULL) {
         return shutdown_participant(participant, "DataWriter narrow error", EXIT_FAILURE);
     }
 
-    std::vector<string_1k> samples;
+    std::vector<StringLine> samples;
     if (!input_file.empty()) {
         // Open file to compress
         std::ifstream fileToCompress(input_file.c_str());
@@ -125,13 +125,13 @@ int run_publisher_application(
 
         std::string new_line;
         while (!std::getline(fileToCompress,new_line).eof()) {
-            string_1k new_sample;
+            StringLine new_sample;
             new_sample.str = DDS_String_dup(new_line.c_str());
             samples.push_back(new_sample);
         }
     } else {
         // Create a sample fill with 1024 zeros to send if no file has been provided
-        string_1k new_sample;
+        StringLine new_sample;
         new_sample.str = DDS_String_dup(std::string(1024,'0').c_str());
         samples.push_back(new_sample);
     }
@@ -140,7 +140,7 @@ int run_publisher_application(
     DDS_Duration_t discovery_period = { 1, 0 };
     NDDSUtility::sleep(discovery_period);
 
-    std::vector<string_1k>::iterator it = samples.begin();
+    std::vector<StringLine>::iterator it = samples.begin();
 
     // Main loop, write data
     for (unsigned int samples_written = 0;
@@ -152,7 +152,7 @@ int run_publisher_application(
             it = samples.begin();
         }
         if (!(samples_written%10)) {
-            std::cout << "Writing string_1k, count " << samples_written
+            std::cout << "Writing StringLine, count " << samples_written
                       << std::endl;
         }
 
@@ -166,7 +166,7 @@ int run_publisher_application(
         NDDSUtility::sleep(send_period);
     }
 
-    for (std::vector<string_1k>::iterator it = samples.begin() ; it != samples.end(); ++it) {
+    for (std::vector<StringLine>::iterator it = samples.begin() ; it != samples.end(); ++it) {
         // Delete previously allocated strings
         DDS_String_free((*it).str);
     }

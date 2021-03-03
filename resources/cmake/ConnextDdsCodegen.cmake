@@ -511,7 +511,8 @@ function(connextdds_rtiddsgen_run)
         OPTIMIZE_ALIGNMENT NO_TYPECODE DISABLE_PREPROCESSOR LEGACY_PLUGIN
         STANDALONE USE_CODEGEN1 DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE
     )
-    set(single_value_args LANG OUTPUT_DIRECTORY IDL_FILE VAR PACKAGE)
+    set(single_value_args
+        LANG OUTPUT_DIRECTORY IDL_FILE VAR PACKAGE STRING_SIZE)
     set(multi_value_args INCLUDE_DIRS DEFINES EXTRA_ARGS)
     cmake_parse_arguments(_CODEGEN
         "${options}"
@@ -633,8 +634,8 @@ function(connextdds_rtiddsgen_run)
         list(APPEND extra_flags "-example" ${CONNEXTDDS_ARCH})
     endif()
 
-    if(_CODEGEN_UNPARSED_ARGUMENTS)
-        list(APPEND extra_flags "${_CODEGEN_UNPARSED_ARGUMENTS}")
+    if(_CODEGEN_STRING_SIZE)
+        list(APPEND extra_flags "-stringSize" "${_CODEGEN_STRING_SIZE}")
     endif()
 
     # Call CodeGen

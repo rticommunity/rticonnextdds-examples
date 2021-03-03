@@ -20,9 +20,10 @@ find_package(RTIConnextDDS
         core
 )
 
+
 connextdds_add_example(
     IDL "compression"
     LANG "C++"
     CODEGEN_ARGS
-        -stringSize 4096
+        STRING_SIZE 4096 # NOTE: Modify this value to change the lengh line limit
 )
