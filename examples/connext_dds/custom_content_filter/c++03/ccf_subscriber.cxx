@@ -72,7 +72,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<Foo>> scoped_listener =
+    rti::core::ListenerBinder<DataReader<Foo> > scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new CcfListener,

@@ -77,7 +77,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the datareader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<keys>> reader_listener = bind_and_manage_listener(
+    ListenerBinder<DataReader<keys> > reader_listener = bind_and_manage_listener(
             reader,
             new KeysReaderListener,
             dds::core::status::StatusMask::all());
