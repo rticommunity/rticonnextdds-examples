@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -31,8 +31,8 @@ static int shutdown_participant(
 int run_publisher_application(
         unsigned int domain_id,
         unsigned int sample_count,
-        std::string compression_id,
-        const std::string input_file)
+        const std::string &compression_id,
+        const std::string &input_file)
 {
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =

@@ -27,6 +27,7 @@ Generate a source files using RTI Codegen::
         [VAR variable]
         [NOT_REPLACE]
         [PACKAGE package]
+        [STRING_SIZE size]
         [DISABLE_PREPROCESSOR]
         [INCLUDE_DIRS ...]
         [DEFINES ...]
@@ -71,6 +72,9 @@ Arguments:
 
 ``PACKAGE`` (optional)
     Specify the package name for Java source type files.
+
+``PACKAGE`` (optional)
+    Specify the size of the unbounded strings type.
 
 ``IGNORE_ALIGNMENT`` (optional)
     Generate type files with -ignoreAlignment flag enabled
@@ -512,7 +516,12 @@ function(connextdds_rtiddsgen_run)
         STANDALONE USE_CODEGEN1 DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE
     )
     set(single_value_args
-        LANG OUTPUT_DIRECTORY IDL_FILE VAR PACKAGE STRING_SIZE)
+        LANG
+        OUTPUT_DIRECTORY
+        IDL_FILE
+        VAR
+        PACKAGE STRING_SIZE
+        )
     set(multi_value_args INCLUDE_DIRS DEFINES EXTRA_ARGS)
     cmake_parse_arguments(_CODEGEN
         "${options}"

@@ -7,9 +7,9 @@ The compression feature allows compressing the *USER_DATA* samples sent by a
 Compression can be configured by 3 QoSs (Check the ConnextDDS_CoreLibraries
 user-manual for more information):
 
-- compression_ids.
-- writer_compression_threshold.
-- writer_compression_level
+- `compression_ids.`
+- `writer_compression_threshold`
+- `writer_compression_level`
 
 ## Example description
 
@@ -47,15 +47,15 @@ compression_publisher -c ZLIB -i ../../../../../resources/messages/text_payload.
 
 ## Subscriber
 
-The subscriber is base on default configuration (which will match a compressed
-DataWriter by default), will receive the compressed samples and decompress them
-automatically. A final report will be print showing the number of samples
-received and how many of them have been compressed (Check the
-`writer_compression_threshold` section on the ConnextDDS user manual for more
-information about when a sample is eligible or not to be compressed), also the
-amount of bytes received at UDP transport level will be printed, with this we
-can compare how compression affects the bandwidth usage over the given input
-data.
+The subscriber is based on the default configuration (which will match a
+DataWriter with compression enabled by default). This subscriber will receive
+the compressed samples and decompress them automatically. A final report will be
+print showing the number of samples received and how many of them have been
+compressed (Check the `writer_compression_threshold` section on the ConnextDDS
+user manual for more information about when a sample is eligible or not to be
+compressed), also the number of bytes received at UDP transport level will be
+printed, with this we can compare how compression affects the bandwidth usage
+over the given input data.
 To finalize the subscriber either set the `--sample-count` option or send
 a SIGINT/SIGTERM signal that will be handler by the application printing the
 final report and finishing gratefully.
