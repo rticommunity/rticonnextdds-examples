@@ -1,23 +1,23 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /*
  * A simple secure HelloWorld using network capture to save DomainParticipant
  * traffic.
  *
  * This example is a simple secure hello world running network capture for both
- * a publisher participant (network_capture_publisher.c).and a subscriber participant
- * (network_capture_subscriber.c).
- * It shows the basic flow when working with network capture:
+ * a publisher participant (network_capture_publisher.c).and a subscriber
+ * participant (network_capture_subscriber.c). It shows the basic flow when
+ * working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
  *   - Pause/resume capturing traffic (for one or all participants).
@@ -27,60 +27,60 @@
  * and finalizes when they are no longer in use.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ndds/ndds_c.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
+#include <stdio.h>
+#include <stdlib.h>
 #ifdef RTI_STATIC
-#include "security/security_default.h"
+    #include "security/security_default.h"
 #endif
 
 void NetworkCaptureListener_on_requested_deadline_missed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_requested_incompatible_qos(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_sample_rejected(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_liveliness_changed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_sample_lost(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_subscription_matched(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_data_available(
-        void* listener_data,
-        DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     NetworkCaptureDataReader *NetworkCapture_reader = NULL;
     struct NetworkCaptureSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -100,7 +100,8 @@ void NetworkCaptureListener_on_data_available(
             &info_seq,
             DDS_LENGTH_UNLIMITED,
             DDS_ANY_SAMPLE_STATE,
-            DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -125,8 +126,7 @@ void NetworkCaptureListener_on_data_available(
     }
 }
 
-static int subscriber_shutdown(
-        DDS_DomainParticipant *participant)
+static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -172,12 +172,12 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {1, 0}; /* 1 s */
+    struct DDS_Duration_t poll_period = { 1, 0 }; /* 1 s */
     NDDS_Utility_NetworkCaptureParams_t params =
             NDDS_UTILITY_NETWORK_CAPTURE_PARAMETERS_DEFAULT;
 
@@ -203,7 +203,8 @@ static int subscriber_main(int domainId, int sample_count)
     params.dropped_content =
             NDDS_UTILITY_NETWORK_CAPTURE_CONTENT_ENCRYPTED_DATA;
     if (!NDDS_Utility_start_network_capture_w_params("subscriber", &params)) {
-        fprintf(stderr, "Error enabling network monitor for all participants\n");
+        fprintf(stderr,
+                "Error enabling network monitor for all participants\n");
     }
 
     /*
@@ -286,20 +287,19 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    reader_listener.on_requested_deadline_missed  =
-    NetworkCaptureListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            NetworkCaptureListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-    NetworkCaptureListener_on_requested_incompatible_qos;
+            NetworkCaptureListener_on_requested_incompatible_qos;
     reader_listener.on_sample_rejected =
-    NetworkCaptureListener_on_sample_rejected;
+            NetworkCaptureListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
-    NetworkCaptureListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-    NetworkCaptureListener_on_sample_lost;
+            NetworkCaptureListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = NetworkCaptureListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-    NetworkCaptureListener_on_subscription_matched;
+            NetworkCaptureListener_on_subscription_matched;
     reader_listener.on_data_available =
-    NetworkCaptureListener_on_data_available;
+            NetworkCaptureListener_on_data_available;
 
     reader = DDS_Subscriber_create_datareader(
             subscriber,
@@ -313,9 +313,9 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("NetworkCapture subscriber sleeping for %d sec...\n",
-            poll_period.sec);
+               poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }
@@ -325,7 +325,8 @@ static int subscriber_main(int domainId, int sample_count)
      * network capture for them.
      */
     if (!NDDS_Utility_stop_network_capture()) {
-        fprintf(stderr, "Error stopping network capture for all participants\n");
+        fprintf(stderr,
+                "Error stopping network capture for all participants\n");
     }
 
     /* Finalize the parameters to free allocated memory */
@@ -348,4 +349,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domainId, sample_count);
 }
-

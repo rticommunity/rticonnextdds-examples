@@ -1,22 +1,23 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /*
- * A simple NetworkCapture using network capture to save DomainParticipant traffic.
+ * A simple NetworkCapture using network capture to save DomainParticipant
+ * traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (network_capture_publisher.cxx).and a subscriber participant
- * (network_capture_subscriber.cxx).
- * It shows the basic flow when working with network capture:
+ * publisher participant (network_capture_publisher.cxx).and a subscriber
+ * participant (network_capture_subscriber.cxx). It shows the basic flow when
+ * working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
  *   - Pause/resume capturing traffic (for one or all participants).
@@ -26,40 +27,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ndds/ndds_cpp.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
-#include "ndds/ndds_cpp.h"
 
 class NetworkCaptureListener : public DDSDataReaderListener {
-  public:
+public:
     virtual void on_requested_deadline_missed(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedDeadlineMissedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedDeadlineMissedStatus & /*status*/)
+    {
+    }
 
     virtual void on_requested_incompatible_qos(
-        DDSDataReader* /*reader*/,
-        const DDS_RequestedIncompatibleQosStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_RequestedIncompatibleQosStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_rejected(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleRejectedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleRejectedStatus & /*status*/)
+    {
+    }
 
     virtual void on_liveliness_changed(
-        DDSDataReader* /*reader*/,
-        const DDS_LivelinessChangedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_LivelinessChangedStatus & /*status*/)
+    {
+    }
 
     virtual void on_sample_lost(
-        DDSDataReader* /*reader*/,
-        const DDS_SampleLostStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SampleLostStatus & /*status*/)
+    {
+    }
 
     virtual void on_subscription_matched(
-        DDSDataReader* /*reader*/,
-        const DDS_SubscriptionMatchedStatus& /*status*/) {}
+            DDSDataReader * /*reader*/,
+            const DDS_SubscriptionMatchedStatus & /*status*/)
+    {
+    }
 
-    virtual void on_data_available(DDSDataReader* reader);
+    virtual void on_data_available(DDSDataReader *reader);
 };
 
-void NetworkCaptureListener::on_data_available(DDSDataReader* reader)
+void NetworkCaptureListener::on_data_available(DDSDataReader *reader)
 {
     NetworkCaptureDataReader *NetworkCapture_reader = NULL;
     NetworkCaptureSeq data_seq;
@@ -74,8 +87,12 @@ void NetworkCaptureListener::on_data_available(DDSDataReader* reader)
     }
 
     retcode = NetworkCapture_reader->take(
-        data_seq, info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
@@ -97,8 +114,7 @@ void NetworkCaptureListener::on_data_available(DDSDataReader* reader)
     }
 }
 
-static int subscriber_shutdown(
-    DDSDomainParticipant *participant)
+static int subscriber_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -140,7 +156,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t receive_period = {1, 0};
+    DDS_Duration_t receive_period = { 1, 0 };
     int status = 0;
     DDS_Boolean success = DDS_BOOLEAN_FALSE;
 
@@ -195,8 +211,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     type_name = NetworkCaptureTypeSupport::get_type_name();
-    retcode = NetworkCaptureTypeSupport::register_type(
-        participant, type_name);
+    retcode = NetworkCaptureTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         subscriber_shutdown(participant);
@@ -228,10 +243,9 @@ extern "C" int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("NetworkCapture subscriber sleeping for %d sec...\n",
-        receive_period.sec);
+               receive_period.sec);
 
         NDDSUtility::sleep(receive_period);
     }
@@ -267,4 +281,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domain_id, sample_count);
 }
-

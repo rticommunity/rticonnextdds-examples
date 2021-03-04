@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /*
  * A simple secure Hello World using network capture to save DomainParticipant
@@ -18,60 +18,60 @@
  * we want to capture traffic and when.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ndds/ndds_c.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
+#include <stdio.h>
+#include <stdlib.h>
 #ifdef RTI_STATIC
-#include "security/security_default.h"
+    #include "security/security_default.h"
 #endif
 
 void NetworkCaptureListener_on_requested_deadline_missed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_requested_incompatible_qos(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_sample_rejected(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_liveliness_changed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_sample_lost(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_subscription_matched(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void NetworkCaptureListener_on_data_available(
-        void* listener_data,
-        DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     NetworkCaptureDataReader *NetworkCapture_reader = NULL;
     struct NetworkCaptureSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -91,7 +91,8 @@ void NetworkCaptureListener_on_data_available(
             &info_seq,
             DDS_LENGTH_UNLIMITED,
             DDS_ANY_SAMPLE_STATE,
-            DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -146,11 +147,11 @@ static int subscriber_shutdown(
             status = -1;
         }
         /*
-        * Disable network capture.
-        *
-        * This must be:
-        *   - The last network capture function that is called.
-        */
+         * Disable network capture.
+         *
+         * This must be:
+         *   - The last network capture function that is called.
+         */
         if (!NDDS_Utility_disable_network_capture()) {
             fprintf(stderr, "Error disabling network capture\n");
             status = -1;
@@ -169,7 +170,7 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_Topic *topic = NULL;
     DDS_Topic *topic2 = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_DataReader *reader2 = NULL;
     DDS_DataReader *reader3 = NULL;
@@ -177,7 +178,7 @@ static int subscriber_main(int domainId, int sample_count)
     const char *type_name = NULL;
     const char *type_name2 = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {0, 10000000}; /* 10 ms */
+    struct DDS_Duration_t poll_period = { 0, 10000000 }; /* 10 ms */
     DDS_Boolean success = DDS_BOOLEAN_FALSE;
     NDDS_Utility_NetworkCaptureParams_t params =
             NDDS_UTILITY_NETWORK_CAPTURE_PARAMETERS_DEFAULT;
@@ -377,24 +378,26 @@ static int subscriber_main(int domainId, int sample_count)
         fprintf(stderr, "Error starting network monitor for 2nd participant\n");
     }
 
-    reader_listener.on_requested_deadline_missed  =
-    NetworkCaptureListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            NetworkCaptureListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-    NetworkCaptureListener_on_requested_incompatible_qos;
+            NetworkCaptureListener_on_requested_incompatible_qos;
     reader_listener.on_sample_rejected =
-    NetworkCaptureListener_on_sample_rejected;
+            NetworkCaptureListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
-    NetworkCaptureListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-    NetworkCaptureListener_on_sample_lost;
+            NetworkCaptureListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = NetworkCaptureListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-    NetworkCaptureListener_on_subscription_matched;
+            NetworkCaptureListener_on_subscription_matched;
     reader_listener.on_data_available =
-    NetworkCaptureListener_on_data_available;
+            NetworkCaptureListener_on_data_available;
 
     reader = DDS_Subscriber_create_datareader(
-        subscriber, DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+            subscriber,
+            DDS_Topic_as_topicdescription(topic),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -402,8 +405,11 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
     reader2 = DDS_Subscriber_create_datareader(
-        subscriber2, DDS_Topic_as_topicdescription(topic2),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+            subscriber2,
+            DDS_Topic_as_topicdescription(topic2),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader2 == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -411,8 +417,11 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
     reader3 = DDS_Subscriber_create_datareader(
-        subscriber3, DDS_Topic_as_topicdescription(topic2),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+            subscriber3,
+            DDS_Topic_as_topicdescription(topic2),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader3 == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -420,8 +429,9 @@ static int subscriber_main(int domainId, int sample_count)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("NetworkCapture subscriber sleeping for %d sec...\n", poll_period.sec);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("NetworkCapture subscriber sleeping for %d sec...\n",
+               poll_period.sec);
 
         /*
          * Here we are going to pause capturing for the second participant
@@ -430,8 +440,9 @@ static int subscriber_main(int domainId, int sample_count)
          * Note: the count here is independent of the count in the publisher, so
          * the numbers will not exactly match.
          */
-        if (count == 4 && !NDDS_Utility_pause_network_capture_for_participant(
-                participant2)) {
+        if (count == 4
+            && !NDDS_Utility_pause_network_capture_for_participant(
+                    participant2)) {
             fprintf(stderr, "Error pausing network capture\n");
         } else if (count == 6 && !NDDS_Utility_resume_network_capture()) {
             /*
@@ -477,4 +488,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domainId, sample_count);
 }
-

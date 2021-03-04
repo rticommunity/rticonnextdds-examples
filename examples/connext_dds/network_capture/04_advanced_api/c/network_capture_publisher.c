@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /*
  * A simple secure HelloWorld using network capture to save DomainParticipant
@@ -18,13 +18,13 @@
  * we want to capture traffic and when.
  */
 
-#include <stdio.h>
-#include <stdlib.h>
 #include "ndds/ndds_c.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
+#include <stdio.h>
+#include <stdlib.h>
 #ifdef RTI_STATIC
-#include "security/security_default.h"
+    #include "security/security_default.h"
 #endif
 
 static int publisher_shutdown(
@@ -57,11 +57,11 @@ static int publisher_shutdown(
             status = -1;
         }
         /*
-        * Disable network capture.
-        *
-        * This must be:
-        *   - The last network capture function that is called.
-        */
+         * Disable network capture.
+         *
+         * This must be:
+         *   - The last network capture function that is called.
+         */
         if (!NDDS_Utility_disable_network_capture()) {
             fprintf(stderr, "Error disabling network capture\n");
             status = -1;
@@ -88,7 +88,7 @@ static int publisher_main(int domainId, int sample_count)
     const char *type_name = NULL;
     const char *type_name2 = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = {0, 10000000}; /* 10 ms */
+    struct DDS_Duration_t send_period = { 0, 10000000 }; /* 10 ms */
     DDS_Boolean success = DDS_BOOLEAN_FALSE;
     NDDS_Utility_NetworkCaptureParams_t params =
             NDDS_UTILITY_NETWORK_CAPTURE_PARAMETERS_DEFAULT;
@@ -187,9 +187,7 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     type_name = NetworkCaptureTypeSupport_get_type_name();
-    retcode = NetworkCaptureTypeSupport_register_type(
-            participant,
-            type_name);
+    retcode = NetworkCaptureTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -197,9 +195,7 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
     type_name2 = NetworkCaptureTypeSupport_get_type_name();
-    retcode = NetworkCaptureTypeSupport_register_type(
-            participant2,
-            type_name2);
+    retcode = NetworkCaptureTypeSupport_register_type(participant2, type_name2);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant, DDS_BOOLEAN_FALSE);
@@ -296,7 +292,7 @@ static int publisher_main(int domainId, int sample_count)
         fprintf(stderr, "Error stopping network capture for 1st participant\n");
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing NetworkCapture Secure, count %d\n", count);
 
         RTIOsapiUtility_snprintf(
@@ -323,12 +319,17 @@ static int publisher_main(int domainId, int sample_count)
         NDDS_Utility_sleep(&send_period);
     }
 
-    retcode = NetworkCaptureTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = NetworkCaptureTypeSupport_delete_data_ex(
+            instance,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "NetworkCaptureTypeSupport_delete_data error %d\n", retcode);
+        fprintf(stderr,
+                "NetworkCaptureTypeSupport_delete_data error %d\n",
+                retcode);
     }
 
-    /* After a global start, use a global stop. This stops the 2nd participant */
+    /* After a global start, use a global stop. This stops the 2nd participant
+     */
     success = NDDS_Utility_stop_network_capture();
     if (!success) {
         fprintf(stderr, "Error stopping network capture\n");
@@ -355,4 +356,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domainId, sample_count);
 }
-

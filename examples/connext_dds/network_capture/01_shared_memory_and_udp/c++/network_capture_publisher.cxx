@@ -1,22 +1,22 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /*
  * A simple HelloWorld using network capture to save DomainParticipant traffic.
  *
  * This example is a simple hello world running network capture for both a
- * publisher participant (network_capture_publisher.cxx).and a subscriber participant
- * (network_capture_subscriber.cxx).
- * It shows the basic flow when working with network capture:
+ * publisher participant (network_capture_publisher.cxx).and a subscriber
+ * participant (network_capture_subscriber.cxx). It shows the basic flow when
+ * working with network capture:
  *   - Enabling before anything else.
  *   - Start capturing traffic (for one or all participants).
  *   - Pause/resume capturing traffic (for one or all participants).
@@ -27,12 +27,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "ndds/ndds_cpp.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
-#include "ndds/ndds_cpp.h"
 
-static int publisher_shutdown(
-        DDSDomainParticipant *participant)
+static int publisher_shutdown(DDSDomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -77,13 +76,13 @@ extern "C" int publisher_main(int domainId, int sample_count)
     DDSPublisher *publisher = NULL;
     DDSTopic *topic = NULL;
     DDSDataWriter *writer = NULL;
-    NetworkCaptureDataWriter * NetworkCapture_writer = NULL;
+    NetworkCaptureDataWriter *NetworkCapture_writer = NULL;
     NetworkCapture *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    DDS_Duration_t send_period = {1, 0};
+    DDS_Duration_t send_period = { 1, 0 };
 
     /*
      * Enable network capture.
@@ -135,9 +134,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     }
 
     type_name = NetworkCaptureTypeSupport::get_type_name();
-    retcode = NetworkCaptureTypeSupport::register_type(
-            participant,
-            type_name);
+    retcode = NetworkCaptureTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -180,8 +177,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing NetworkCapture, count %d\n", count);
         RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
 
@@ -216,7 +212,9 @@ extern "C" int publisher_main(int domainId, int sample_count)
 
     retcode = NetworkCaptureTypeSupport::delete_data(instance);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "NetworkCaptureTypeSupport::delete_data error %d\n", retcode);
+        fprintf(stderr,
+                "NetworkCaptureTypeSupport::delete_data error %d\n",
+                retcode);
     }
 
     /*
@@ -245,4 +243,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domain_id, sample_count);
 }
-
