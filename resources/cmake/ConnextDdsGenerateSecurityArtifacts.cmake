@@ -5,26 +5,23 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
 #[[.rst:
-.. _connextdds_add_security_artifacts:
+.. _connextdds_generate_security_artifacts:
 
-ConnextDdsAddSecurityArtifacts
-------------------------------
+ConnextDdsGenerateSecurityArtifacts
+-----------------------------------
 
 Generate the artifacts needed for secure examples.
 
-``connextdds_add_security_artifacts()``
+``connextdds_generate_security_artifacts()``
 
 It is based on:
- - The OpenSSL configuration files in the resources/security/<ca> directory.
-
- - The Governance and Permissions files in the resources/xml directory.
+ - The OpenSSL configuration files in the `resources/security/<ca>` directory.
+ - The Governance and Permissions files in the `resources/xml` directory.
 
 So far this means:
 
  - One ECDSA CA and two peers.
-
  - RTPS and metadata protection kind set to ENCRYPT.
-
  - Publishing and subscribing to any domain and topic is allowed, only for those
    peers.
 
@@ -33,15 +30,15 @@ So far this means:
 include(UseOpenSSL)
 
 
-function(connextdds_add_security_artifacts)
-    # Directory where the security artifacts are.
-    set(SECURITY_RESOURCES_PATH
-        ${SECURITY_RESOURCES_PATH}
-        "${CMAKE_MODULE_PATH}/../security"
-    )
+function(connextdds_generate_security_artifacts)
+    # Directory where the source files used to generate the security artifacts
+    # are. These are the .cnf openssl configuration files that will be used to
+    # generate the certificates, and the XML Governance/Permission Documents
+    # that will be signed.
+    set(SECURITY_RESOURCES_PATH "${CMAKE_MODULE_PATH}/../security")
 
     # ##########################################################################
-    # Generate the structure for the directory with the security artifacts.
+    # Create the directory structure for the generated security artifacts.
     # <example/<CMAKE_CURRENT_BINARY_DIR>/security/ecdsa01
     #   |- certs/
     #   |- temporary_files/
@@ -49,40 +46,27 @@ function(connextdds_add_security_artifacts)
     #   |   |- signed/
     #
     # ##########################################################################
-    # security.
-    set(security_root_directory
-        ${security_root_directory}
-        "${CMAKE_CURRENT_BINARY_DIR}/security"
-    )
+    set(security_root_directory "${CMAKE_CURRENT_BINARY_DIR}/security")
     file(MAKE_DIRECTORY ${security_root_directory})
     # ecdsa01. Copied from the repository resources.
-    set(openssl_working_directory
-        ${openssl_working_directory}
-        "${security_root_directory}/ecdsa01"
-    )
+    set(openssl_working_directory "${security_root_directory}/ecdsa01")
     file(COPY
         "${SECURITY_RESOURCES_PATH}/ecdsa01"
         DESTINATION ${security_root_directory}
     )
-    # certs. Output OpenSSL files. This must match the value in ca.cnf.
-    set(certificates_output_directory
-        ${certificates_output_directory}
-        "${openssl_working_directory}/certs"
-    )
-    file(MAKE_DIRECTORY ${certificates_output_directory})
-    # temporary_files. This must match the value in ca.cnf.
-    set(EXAMPLE_OPENSSL_TEMPORARY
-        ${EXAMPLE_OPENSSL_TEMPORARY}
-        "${openssl_working_directory}/temporary_files"
-    )
-    file(MAKE_DIRECTORY ${EXAMPLE_OPENSSL_TEMPORARY})
     # xml. Copied from the repository resources.
     file(COPY
         "${SECURITY_RESOURCES_PATH}/xml"
         DESTINATION ${openssl_working_directory}
     )
-    # xml/signed.
+    # certs. Output OpenSSL files. This must match the value in ca.cnf.
+    set(certificates_output_directory "${openssl_working_directory}/certs")
+    file(MAKE_DIRECTORY ${certificates_output_directory})
+    # xml/signed. This is where the result of signing the xml files will be.
     file(MAKE_DIRECTORY "${openssl_working_directory}/xml/signed")
+    # temporary_files. This must match the value in ca.cnf.
+    set(openssl_temporary_directory "${openssl_working_directory}/temporary_files")
+    file(MAKE_DIRECTORY ${openssl_temporary_directory})
 
     # ##########################################################################
     # Openssl configuration.
@@ -102,7 +86,7 @@ function(connextdds_add_security_artifacts)
 
 
     # Set configuration options for the certificates.
-    set(expiration_days 3650)
+    set(expiration_days 3650)  # Almost 10 years
 
     # ##########################################################################
     # Generate the certificates.
@@ -111,12 +95,12 @@ function(connextdds_add_security_artifacts)
     connextdds_openssl_generate_selfsigned_ca(
         OUTPUT_KEY_FILE "${ca_key_file}"
         OUTPUT_CERT_FILE "${ca_cert_file}"
-        CRL_NUMBER_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/crlNumber"
+        CRL_NUMBER_FILE "${openssl_temporary_directory}/crlNumber"
         TEXT
         DIGEST SHA256
         DAYS ${expiration_days}
         ECPARAM_NAME prime256v1
-        ECPARAM_OUTPUT_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/ecdsaparam"
+        ECPARAM_OUTPUT_FILE "${openssl_temporary_directory}/ecdsaparam"
         CONFIG_FILE "${ca_config_file}"
         WORKING_DIRECTORY "${openssl_working_directory}"
     )
@@ -124,11 +108,11 @@ function(connextdds_add_security_artifacts)
     # RootCa signs Peer01Cert
     connextdds_openssl_generate_signed_certificate(
         OUTPUT_CERT_FILE "${peer1_cert_file}"
-        OUTPUT_CERT_REQUEST_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/peer1_req_cert.pem"
+        OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_directory}/peer1_req_cert.pem"
         OUTPUT_KEY_FILE "${peer1_key_file}"
         TEXT
         ECPARAM_NAME "prime256v1"
-        ECPARAM_OUTPUT_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/ecdsaparam1"
+        ECPARAM_OUTPUT_FILE "${openssl_temporary_directory}/ecdsaparam1"
         CONFIG_FILE "${peer1_config_file}"
         CA_KEY_FILE "${ca_key_file}"
         CA_CONFIG_FILE "${ca_config_file}"
@@ -139,11 +123,11 @@ function(connextdds_add_security_artifacts)
 
     connextdds_openssl_generate_signed_certificate(
         OUTPUT_CERT_FILE "${peer2_cert_file}"
-        OUTPUT_CERT_REQUEST_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/peer2_req_cert.pem"
+        OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_directory}/peer2_req_cert.pem"
         OUTPUT_KEY_FILE "${peer2_key_file}"
         TEXT
         ECPARAM_NAME "prime256v1"
-        ECPARAM_OUTPUT_FILE "${EXAMPLE_OPENSSL_TEMPORARY}/ecdsaparam1"
+        ECPARAM_OUTPUT_FILE "${openssl_temporary_directory}/ecdsaparam1"
         CONFIG_FILE "${peer2_config_file}"
         CA_KEY_FILE "${ca_key_file}"
         CA_CONFIG_FILE "${ca_config_file}"
@@ -181,6 +165,6 @@ function(connextdds_add_security_artifacts)
             "${peer1_cert_file}"
             "${peer2_key_file}"
             "${peer2_cert_file}"
-            "${signed_xmls}"
+            ${signed_xmls}
     )
 endfunction()

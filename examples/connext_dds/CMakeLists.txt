@@ -182,6 +182,14 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++03")
 
+# network capture
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/02_tcp/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/03_security/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/04_advanced_api/c")
+
 # ordered_presentation
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c++")

@@ -18,5 +18,5 @@ connextdds_add_example(
     LANG "C"
 )
 
-include (ConnextDdsAddSecurityArtifacts)
-connextdds_add_security_artifacts()
+include (ConnextDdsGenerateSecurityArtifacts)
+connextdds_generate_security_artifacts()
