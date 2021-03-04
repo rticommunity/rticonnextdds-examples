@@ -190,7 +190,18 @@ function(connextdds_generate_security_artifacts)
     # ##########################################################################
     # Add custom target.
     # ##########################################################################
-    add_custom_target(securityArtifacts
+    # We prefix the target with the name of the example because it must be
+    # unique.
+    get_filename_component(
+        folder_name
+        "${CMAKE_CURRENT_SOURCE_DIR}"
+        DIRECTORY)
+    get_filename_component(
+        folder_name
+        "${folder_name}"
+        NAME)
+        message("Folder: ${folder_name}")
+    add_custom_target("${folder_name}_securityArtifacts"
         ALL
         DEPENDS
             ${artifacts_input_files}
