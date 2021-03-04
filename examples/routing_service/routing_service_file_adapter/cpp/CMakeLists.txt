@@ -48,7 +48,7 @@ target_link_libraries(fileadapter
 # To differentiate between debug and release builds
 set_target_properties(fileadapter
     PROPERTIES
-        OUTPUT_NAME_DEBUG fileadapterd
+        DEBUG_POSTFIX "d"
 )
 
 # Copy the sample data files into the binary directory
