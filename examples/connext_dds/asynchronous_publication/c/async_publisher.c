@@ -151,6 +151,9 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
+
+
+
     /* To customize topic QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
