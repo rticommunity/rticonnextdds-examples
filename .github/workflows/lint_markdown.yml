@@ -31,8 +31,14 @@ jobs:
         uses: actions/setup-node@v2-beta
         with:
           node-version: '14'
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
       - name: Install necessary tools
-        run: npm install markdownlint-cli@0.23.1
+        run: |
+          pip install sultan
+          npm install markdownlint-cli@0.23.1
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'
         working-directory: ${{ github.workspace }}
