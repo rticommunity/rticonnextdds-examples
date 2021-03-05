@@ -1,0 +1,33 @@
+name: C/C++ source code lint
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.[ch]x?x?'
+
+jobs:
+  lint-sourcecode:
+    runs-on: ubuntu-18.04
+    name: Lint job
+    steps:
+      - uses: actions/checkout@v2
+      - name: Add scripts to the PATH
+        run: echo "${{ github.workspace }}/resources/ci_cd/" >> $GITHUB_PATH
+      - name: Install necessary tools
+      - run: |
+          wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
+          deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main
+          sudo apt install clang-format-9
+      - name: Perform linting
+        working-directory: ${{ github.workspace }}
+        run: |
+          base_commit=$(git merge-base --fork-point $GITHUB_BASE_REF)
+          head_commit=$(git rev-parse $GITHUB_HEAD_REF)
+          linux_format.py -md -py -r "${base_commit}...${head_commit}"
