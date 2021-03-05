@@ -10,18 +10,18 @@ following files:
 -   `linux_install.py`: performs an installation of a minimun RTI ConnextDDS
     package to build and perform static analysis of the examples.
 
--   `linux_static_analysis.py`: run static analysis after building the examples.
+-   `linux_static_analysis.py`: run static analysis after building the
+    examples.
 
--   `diff_clang_format.sh`: this is a helper script used in `linux_format.py` to
-    run diffs between the source code and the `clang-format`'s changes to the same
-    source code.
+-   `diff_clang_format.sh`: this is a helper script used in `linux_format.py`
+    to run diffs between the source code and the `clang-format`'s changes to
+    the same source code.
 
-To be able to run `linux_static_analysis.py` script you will need to install the
-[*Sultan*] and [*scan-build*] Python packages.
+To be able to run `linux_static_analysis.py` script you will need to install
+the [*Sultan*] and [*scan-build*] Python packages.
 
-For `linux_format.py` apart from [*Sultan*] you will also need the [*Black*]
-Python package, [*clang-format*] tool and the [*markdownlint-cli*] utility for
-the `linux_format.py` script.
+For `linux_format.py`, apart from [*Sultan*], you will also need the [*Black*]
+Python package, [*clang-format*] tool and the [*markdownlint-cli*] utility.
 
 [*Sultan*]: https://pypi.org/project/sultan/
 [*scan-build*]: https://pypi.org/project/scan-build/
