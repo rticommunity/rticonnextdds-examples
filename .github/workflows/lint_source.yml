@@ -28,6 +28,6 @@ jobs:
       - name: Perform linting
         working-directory: ${{ github.workspace }}
         run: |
-          base_commit=$(git merge-base --fork-point origin/$GITHUB_BASE_REF)
-          head_commit=$(git rev-parse $GITHUB_HEAD_REF)
+          base_commit="${{ github.event.pull_request.base.sha }}"
+          head_commit="${{ github.event.pull_request.head.sha }}"
           linux_format.py -md -py -r "${base_commit}...${head_commit}"
