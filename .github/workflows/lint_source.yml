@@ -21,7 +21,7 @@ jobs:
       - name: Add scripts to the PATH
         run: echo "${{ github.workspace }}/resources/ci_cd/" >> $GITHUB_PATH
       - name: Install necessary tools
-      - run: |
+        run: |
           wget -O - https://apt.llvm.org/llvm-snapshot.gpg.key | sudo apt-key add -
           deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main
           sudo apt install clang-format-9
