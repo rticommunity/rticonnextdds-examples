@@ -18,6 +18,8 @@ jobs:
     name: Lint job
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Add scripts to the PATH
         run: echo "${{ github.workspace }}/resources/ci_cd/" >> $GITHUB_PATH
       - name: Set up Python
