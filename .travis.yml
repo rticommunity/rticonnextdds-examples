@@ -16,16 +16,16 @@ before_install:
 install:
   - |
     if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
-      resources/travis/linux_install.py
+      resources/ci_cd/linux_install.py
     fi
 script:
   - |
     if [ -n "$TRAVIS_COMMIT_RANGE" ]; then
-      resources/travis/linux_format.py -md -py -r $TRAVIS_COMMIT_RANGE
+      resources/ci_cd/linux_format.py -md -py -r $TRAVIS_COMMIT_RANGE
     else
-      resources/travis/linux_format.py -md -py -c $TRAVIS_COMMIT
+      resources/ci_cd/linux_format.py -md -py -c $TRAVIS_COMMIT
     fi
   - |
     if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
-      resources/travis/linux_static_analysis.py
+      resources/ci_cd/linux_static_analysis.py
     fi
