@@ -94,7 +94,7 @@ namespace MarketDataExample
                     // On t = 3 we add the symbol 'D' to the filter parameter
                     // to match 'A' and 'D'.
                     filteredTopic.AppendToExpressionParameter(0, "D");
-                    Console.WriteLine("Changed filter to Symbol MATCH 'AD'");
+                    Console.WriteLine("Changed filter to Symbol MATCH 'A,D'");
                 }
                 else if (t == 6)
                 {
