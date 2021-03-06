@@ -10,7 +10,11 @@
  * use or inability to use the software.
  */
 
-struct market_data {
-    @key string<256> Symbol;
-    double Price;
+module MarketDataExample {
+    
+    struct StockPrice {
+        @key string<256> Symbol;
+        double Price;
+    };
+
 };
