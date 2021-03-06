@@ -1,7 +1,7 @@
 # Example Code: Access Union Discriminator In Dynamic Data
 
-:warning: This example uses the Legacy .NET API. Until it is updated, you can
-learn more about the new .NET API in the
+:warning: **Note**: This example uses the **Legacy .NET API**. Until it is updated, you can
+learn more about the **new Connext DDS C# API** in the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.0.1/doc/manuals/connext_dds/getting_started/index.html).
 ## Building C# Example
 
