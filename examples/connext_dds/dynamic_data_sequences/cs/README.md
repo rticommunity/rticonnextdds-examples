@@ -1,5 +1,9 @@
 # Example Code: Sequences In Dynamic Data
 
+:warning: **Note**: This example uses the **Legacy .NET API**. Until it is updated, you can
+learn more about the **new Connext DDS C# API** in the
+[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds/getting_started/index.html).
+
 ## Building C# Example
 
 The example is contained in the *dynamic_data_sequences.cs* file. Before
