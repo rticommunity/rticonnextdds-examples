@@ -10,6 +10,10 @@
  * use or inability to use the software.
  */
 
-struct partitions {
-    int32 x;
+module PartitionsExample {
+
+    struct HelloWorld {
+        int32 x;
+    };
+
 };
