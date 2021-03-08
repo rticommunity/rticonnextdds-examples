@@ -14,11 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "application.h"
 #include "ndds/ndds_cpp.h"
 #include "ndds/ndds_namespace_cpp.h"
 #include "real_time_wan_transport.h"
 #include "real_time_wan_transportSupport.h"
-#include "application.h"
 
 using namespace DDS;
 
