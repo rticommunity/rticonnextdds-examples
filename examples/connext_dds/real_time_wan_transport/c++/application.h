@@ -117,19 +117,19 @@ inline void
     }
     if (show_usage) {
         std::cout << "Usage:\n"
-            "    -d, --domain       <int>   Domain ID this application will\n"
-            "                               subscribe in.  \n"
-            "                               Default: 0\n"\
-            "    -s, --sample_count <int>   Number of samples to receive before\n"
-            "                               cleanly shutting down. \n"
-            "                               Default: infinite\n"
-            "    -c, --scenario <int>       Test scenario\n"
-            "                               Range: 1-4 \n"
-            "                               Default: 1\n"
-            "    -v, --verbosity    <int>   How much debugging output to show.\n"
-            "                               Range: 0-3 \n"
-            "                               Default: 1"
-            << std::endl;
+        "    -d, --domain       <int>   Domain ID this application will\n"
+        "                               subscribe in.\n"
+        "                               Default: 0\n"
+        "    -s, --sample_count <int>   Number of samples to receive before\n"
+        "                               cleanly shutting down.\n"
+        "                               Default: infinite\n"
+        "    -c, --scenario <int>       Test scenario\n"
+        "                               Range: 1-4\n"
+        "                               Default: 1\n"
+        "    -v, --verbosity    <int>   How much debugging output to show.\n"
+        "                               Range: 0-3\n"
+        "                               Default: 1"
+        << std::endl;
     }
 }
 
