@@ -135,7 +135,7 @@ External Participant.
 
 These scenarios require running Cloud Discovery Service. They also require
 that both applications `real_time_wan_transport_subscriber` and
-`real_time_wan_transport_publisher` are behind Cone (or Assymetric) NAT-enabled
+`real_time_wan_transport_publisher` are behind Cone (or Asymmetric) NAT-enabled
 router.
 
 1)  Make sure that the publisher and subscriber applications are running behind
@@ -143,7 +143,7 @@ router.
     to find out the NAT type. One example is
     [natat](https://github.com/songjiayang/natat).
 
-2)  Cloud Discovery Service must be recahable at a public IP address. Create
+2)  Cloud Discovery Service must be reachable at a public IP address. Create
     a static NAT binding between the (private IP address:UDP port)
     in which the Cloud Discovery Service will receive data and a
     (public IP address:UDP port).
