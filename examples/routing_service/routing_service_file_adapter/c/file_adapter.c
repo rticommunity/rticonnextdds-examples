@@ -70,7 +70,7 @@ DDS_TypeCode *RTI_RoutingServiceFileAdapter_create_type_code()
             &member_seq,
             &ex);
     if (ex != DDS_NO_EXCEPTION_CODE) {
-        fprintf(stderr, "Unable to create struct typecode, error = %d \n", ex);
+        fprintf(stderr, "Unable to create struct typecode, error = %d\n", ex);
         goto done;
     }
 
@@ -110,7 +110,7 @@ void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode *type_code)
     factory = DDS_TypeCodeFactory_get_instance();
     if (factory == NULL) {
         fprintf(stdout,
-                "ERROR getting instance DDS_TypeCodeFactory deleting typecode");
+                "ERROR getting instance DDS_TypeCodeFactory deleting typecode\n");
         return;
     } else {
         if (type_code != NULL) {
@@ -174,8 +174,8 @@ void RTI_RoutingServiceFileStreamReader_freeDynamicDataArray(
 
 /*
  * The read function gets called every time the routing service
- *  gets notified of data available by the function on_data_available
- *  of every stream reader's listener
+ * gets notified of data available by the function on_data_available
+ * of every stream reader's listener
  */
 void RTI_RoutingServiceFileStreamReader_read(
         RTI_RoutingServiceStreamReader stream_reader,
@@ -259,7 +259,7 @@ void RTI_RoutingServiceFileStreamReader_read(
             (*sample_list)[*count] = streaminfo;
             /*
              * we increment the count of the sample info generated and returned
-             * inside the sampli_list dynamic array.
+             * inside the sample_list dynamic array.
              */
             (*count)++;
             /*
@@ -433,7 +433,7 @@ RTI_RoutingServiceSession RTI_RoutingServiceFileConnection_create_session(
         if (pthread_create(
                     &file_connection->tid,
                     NULL,
-                    RTI_RoutingServiceFileAdpater_checking_thread,
+                    RTI_RoutingServiceFileAdapter_discovery_thread,
                     (void *) file_connection)
             < 0) {
             RTI_RoutingServiceEnvironment_set_error(
@@ -516,7 +516,7 @@ RTI_RoutingServiceStreamReader
     /* Get the configuration properties in <route>/<input>/<property> */
     read_period_property = RTI_RoutingServiceProperties_lookup_property(
             properties,
-            "ReadPeriod");
+            FILE_ADAPTER_READ_PERIOD);
     if (read_period_property == NULL) {
         read_period = 1000;
     } else {
@@ -531,7 +531,7 @@ RTI_RoutingServiceStreamReader
 
     samples_per_read_property = RTI_RoutingServiceProperties_lookup_property(
             properties,
-            "SamplesPerRead");
+            FILE_ADAPTER_SAMPLES_PER_READ);
     if (samples_per_read_property == NULL) {
         samples_per_read = 1;
     } else {
@@ -673,15 +673,16 @@ RTI_RoutingServiceStreamWriter
 
     mode_property = RTI_RoutingServiceProperties_lookup_property(
             properties,
-            "WriteMode");
+            FILE_ADAPTER_WRITE_MODE);
     if (mode_property != NULL) {
         if (strcmp(mode_property, "overwrite")
             && strcmp(mode_property, "append")
             && strcmp(mode_property, "keep")) {
             RTI_RoutingServiceEnvironment_set_error(
                     env,
-                    "Invalid value for WriteMode (%s). "
+                    "Invalid value for %s (%s). "
                     "Allowed values: keep (default), overwrite, append",
+                    FILE_ADAPTER_WRITE_MODE,
                     mode_property);
             return NULL;
         }
@@ -691,8 +692,9 @@ RTI_RoutingServiceStreamWriter
 
     /* Get the configuration properties in <route>/<output>/<property> */
 
-    flush_property =
-            RTI_RoutingServiceProperties_lookup_property(properties, "Flush");
+    flush_property = RTI_RoutingServiceProperties_lookup_property(
+            properties, 
+            FILE_ADAPTER_FLUSH);
     if (flush_property != NULL) {
         if (!strcmp(flush_property, "yes") || !strcmp(flush_property, "true")
             || !strcmp(flush_property, "1")) {
@@ -811,7 +813,7 @@ RTI_RoutingServiceConnection
 
     sleep_period = RTI_RoutingServiceProperties_lookup_property(
             properties,
-            "sleepPeriod");
+            FILE_ADAPTER_CONNECTION_DISCOVERY_THREAD_SLEEP_PERIOD);
     if (sleep_period == NULL) {
         connection->sleep_period = 5;
     } else {
@@ -824,7 +826,9 @@ RTI_RoutingServiceConnection
         }
     }
 
-    path = RTI_RoutingServiceProperties_lookup_property(properties, "path");
+    path = RTI_RoutingServiceProperties_lookup_property(
+            properties, 
+            FILE_ADAPTER_CONNECTION_FOLDER_PATH);
     /*
      * if the property is not found, then we are going to assign default value.
      * As the default value is different depending of the connection, so we
@@ -835,13 +839,15 @@ RTI_RoutingServiceConnection
     /* we recover properties from the xml file configuration */
     is_input_connection = RTI_RoutingServiceProperties_lookup_property(
             properties,
-            "direction");
+            FILE_ADAPTER_CONNECTION_DIRECTION);
     /*
      * now we check if it is the connection that we use as
      * input connection or not
      */
     if ((is_input_connection != NULL)
-        && !strcmp(is_input_connection, "input")) {
+        && !strcmp(
+                is_input_connection, 
+                FILE_ADAPTER_CONNECTION_DIRECTION_INPUT)) {
         fprintf(stdout, "Connection: This is an input connection\n");
         connection->is_input = 1;
         connection->is_running_enabled = 1;

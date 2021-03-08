@@ -146,7 +146,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
     printf("I found %d publisher on this participant!\n",
            publisherSeq.length());
 
-    for (count = 0; count < publisherSeq.length(); count++) {
+    for (size_t count = 0; count < publisherSeq.length(); count++) {
         DDSPublisher *tmp = publisherSeq[count];
         printf("The %d publisher I found is: %p\n", count, tmp);
     }
