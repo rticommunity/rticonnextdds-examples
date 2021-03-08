@@ -87,7 +87,10 @@ facilitate the NAT traversal process.
 1)  Before running the example, make sure the environment variable `NDDSHOME` is
     set to the directory where your version of *RTI Connext* is installed.
 
-2)  Set the load library path to include the Connext DDS libraries.
+2)  Download and install the RTI Security Plugins in order to run scenarios
+    2 and 4.
+
+3)  Set the load library path to include the Connext DDS libraries and OpenSSL
 
     On MacOSX you can do that with the command:
 
@@ -100,11 +103,6 @@ facilitate the NAT traversal process.
     ```sh
     export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${NDDSHOME}/lib/x64Linux4gcc7.3.0:${NDDSHOME}/third_party/openssl-1.1.1i/x64Linux4gcc7.3.0/release/lib
     ```
-
-## Prerequisites before running example with Security
-
-1)  Download and install the RTI Security Plugins in order to run scenarios
-    2 and 4.
 
 ## Prerequisites before running scenario 1 or 2
 
@@ -124,7 +122,7 @@ External Participant.
     port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
 
 2)  Set the environment variable PUBLIC_ADDRESS to be the
-    public IP address in which the application will receive data. Uusally this
+    public IP address in which the application will receive data. Usually this
     is the public IP address of the NAT-enabled router behind which the
     application runs.
 
