@@ -43,7 +43,7 @@ endif()
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core
