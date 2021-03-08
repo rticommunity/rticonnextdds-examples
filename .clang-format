@@ -32,7 +32,8 @@ AllowAllArgumentsOnNextLine: false
 AlwaysBreakAfterReturnType: None
 BinPackParameters: false
 BinPackArguments: false
-ExperimentalAutoDetectBinPacking: false
+PenaltyReturnTypeOnItsOwnLine: 9999
+#ExperimentalAutoDetectBinPacking: false
 
 # CFR1-06: Comments
 AlignTrailingComments: true
@@ -122,8 +123,10 @@ BreakBeforeInheritanceComma: false
 ConstructorInitializerAllOnOneLineOrOnePerLine: true
 ConstructorInitializerIndentWidth: 8
 
+SpaceAfterTemplateKeyword: false
+
 BreakStringLiterals: true
-IndentWrappedFunctionNames: true
+IndentWrappedFunctionNames: false
 
 # This one is interesting
 MaxEmptyLinesToKeep: 2
@@ -131,3 +134,7 @@ MaxEmptyLinesToKeep: 2
 Cpp11BracedListStyle: false
 
 BreakBeforeBinaryOperators: NonAssignment
+
+# Do not sort include files, it breaks the build. Some includes need to appear
+# at the beginning
+SortIncludes: false
