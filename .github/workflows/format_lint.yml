@@ -22,7 +22,7 @@ on:
 jobs:
   lint-python:
     runs-on: ubuntu-18.04
-    name: Python code format check"
+    name: Python code format check
     steps:
       - uses: actions/checkout@v2
       - name: Set up Python
