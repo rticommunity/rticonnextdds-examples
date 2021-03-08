@@ -20,7 +20,6 @@ Function to build the examples.
         [PREFIX prefix]
         [DISABLE_SUBSCRIBER]
         [NO_REQUIRE_QOS]
-        [REQUIRE_SECURITY]
         [DEPENDENCIES ...]
         [CODEGEN_ARGS ...]
     )
@@ -41,9 +40,6 @@ CMake targets and set the dependencies.
 ``NO_REQUIRE_QOS``:
     If present, the function will copy the USER_QOS_PROFILES.xml file from the
     source directory to the binary directory.
-``REQUIRE_SECURITY``:
-    If present, the function will copy the dds_security directory containing 
-    security artifacts from the source directory to the binary directory.
 ``DEPENDENCIES``:
     Other target dependencies.
 ``CODEGEN_ARGS``:
@@ -132,7 +128,6 @@ Function to build an example.
         [OUTPUT_NAME output_name]
         [QOS_FILENAME]
         [NO_REQUIRE_QOS]
-        [REQUIRE_SECURITY]
         [DEPENDENCIES ...]
     )
 
@@ -153,9 +148,6 @@ This method will create the executables from chosen sources.
     is used.
 ``NO_REQUIRE_QOS``:
     If present, the QoS file will not be copied to the binary dir.
-``REQUIRE_SECURITY``:
-    If present, the function will copy the dds_security directory containing 
-    security artifacts to the binary dir.
 ``DEPENDENCIES``:
     Other libraries to link.
 
@@ -179,7 +171,7 @@ include(ConnextDdsCodegen)
 
 
 function(connextdds_add_example)
-    set(optional_args DISABLE_SUBSCRIBER NO_REQUIRE_QOS REQUIRE_SECURITY)
+    set(optional_args DISABLE_SUBSCRIBER NO_REQUIRE_QOS)
     set(single_value_args IDL LANG PREFIX)
     set(multi_value_args CODEGEN_ARGS DEPENDENCIES)
     cmake_parse_arguments(_CONNEXT
@@ -232,12 +224,6 @@ function(connextdds_add_example)
         set(no_require_qos)
     endif()
 
-    # Copy dds_security directory if required
-    if(_CONNEXT_REQUIRE_SECURITY)
-        set(require_security REQUIRE_SECURITY)
-    else()
-        set(require_security)
-    endif()
 
     # If the GENERATE_EXAMPLE option was provided, Codegen will generate the
     # source code for the publisher and the subscriber applications
@@ -271,7 +257,6 @@ function(connextdds_add_example)
         PREFIX ${prefix}
         OUTPUT_NAME "${_CONNEXT_IDL}_publisher"
         ${no_require_qos}
-        ${require_security}
         SOURCES
             $<TARGET_OBJECTS:${prefix}_${lang_var}_obj>
             "${publisher_src}"
@@ -286,7 +271,6 @@ function(connextdds_add_example)
             PREFIX ${prefix}
             OUTPUT_NAME "${_CONNEXT_IDL}_subscriber"
             ${no_require_qos}
-            ${require_security}
             SOURCES
                 $<TARGET_OBJECTS:${prefix}_${lang_var}_obj>
                 "${subscriber_src}"
@@ -452,50 +436,9 @@ function(connextdds_copy_qos_profile)
 
 endfunction()
 
-function(connextdds_copy_dds_security)
-    set(optional_args)
-    set(single_value_args TARGET_PREFIX DEPENDANT_TARGET)
-    set(multi_value_args)
-
-    cmake_parse_arguments(_EXAMPLE_SECURITY
-        "${optional_args}"
-        "${single_value_args}"
-        "${multi_value_args}"
-        ${ARGN}
-    )
-
-    set(dds_security_dir "${CMAKE_CURRENT_SOURCE_DIR}/../../../dds_security")
-    set(output_dds_security_dir "${CMAKE_CURRENT_BINARY_DIR}/dds_security")
-
-    set(target_security "${_EXAMPLE_SECURITY_TARGET_PREFIX}security")
-
-    if(NOT TARGET ${target_security})
-        add_custom_target(${target_security}
-            DEPENDS
-                ${output_dds_security_dir}
-        )
-
-        add_custom_command(
-            OUTPUT
-                ${output_dds_security_dir}
-            COMMAND
-                ${CMAKE_COMMAND} -E copy_directory
-                    ${dds_security_dir}
-                    ${output_dds_security_dir}
-            COMMENT "Copying ${dds_security_dir}"
-            DEPENDS
-                ${dds_security_dir}
-            VERBATIM
-        )
-    endif()
-
-    add_dependencies(${_EXAMPLE_SECURITY_DEPENDANT_TARGET}
-        ${target_security}
-    )
-endfunction()
 
 function(connextdds_add_application)
-    set(optional_args NO_REQUIRE_QOS REQUIRE_SECURITY)
+    set(optional_args NO_REQUIRE_QOS)
     set(single_value_args TARGET LANG PREFIX OUTPUT_NAME QOS_FILENAME)
     set(multi_value_args SOURCES DEPENDENCIES)
 
@@ -527,12 +470,10 @@ function(connextdds_add_application)
         set(target_name "${_CONNEXT_PREFIX}_${_CONNEXT_TARGET}_${api}")
         set(qos_target "${_CONNEXT_PREFIX}_qos_${api}")
         set(qos_prefix "${_CONNEXT_PREFIX}_${api}")
-        set(security_prefix "${_CONNEXT_PREFIX}_${api}")
     else()
         set(target_name "${_CONNEXT_TARGET}_${api}")
         set(qos_target "qos_${api}")
         set(qos_prefix "${api}")
-        set(security_prefix "${api}")
     endif()
 
     # Create the target
@@ -573,10 +514,4 @@ function(connextdds_add_application)
 
     endif()
 
-    if(_CONNEXT_REQUIRE_SECURITY)
-        connextdds_copy_dds_security(
-            TARGET_PREFIX "${security_prefix}_"
-            DEPENDANT_TARGET "${target_name}")
-    endif()
-    
 endfunction()
