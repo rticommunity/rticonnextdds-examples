@@ -22,9 +22,10 @@ endif()
 
 if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
     set(msg
-        "You have selected to build the library in debug mode. It's recommended "
-        "to run the debug version of Routing Service or otherwise you may run "
-        "into undefined behavior")
+        "You have selected to build the library in debug mode. It's "
+        "recommended to run the debug version of Routing Service or "
+        "otherwise you may run into undefined behavior"
+    )
     message(WARNING ${msg})
 endif()
 
@@ -42,81 +43,91 @@ find_package(
     )
 
 # Generate type plug-in files for conversion types
-add_custom_command(OUTPUT
-    SensorData.idl
-    SensorData.cxx
-    SensorDataPlugin.cxx
-    COMMAND ${RTICODEGEN} -language C++11 -stl -replace -d ${CMAKE_BINARY_DIR} ${CMAKE_SOURCE_DIR}/SensorData.idl)
+add_custom_command(
+    DEPENDS
+        "${CMAKE_CURRENT_SOURCE_DIR}/SensorData.idl"
+    OUTPUT
+        "${CMAKE_CURRENT_BINARY_DIR}/SensorData.cxx"
+        "${CMAKE_CURRENT_BINARY_DIR}/SensorDataPlugin.cxx"
+        "${CMAKE_CURRENT_BINARY_DIR}/SensorData.hpp"
+        "${CMAKE_CURRENT_BINARY_DIR}/SensorDataPlugin.hpp"
+    COMMAND
+        ${RTICODEGEN}
+            -language C++11
+            -stl
+            -replace -d ${CMAKE_CURRENT_BINARY_DIR}
+            "${CMAKE_CURRENT_SOURCE_DIR}/SensorData.idl"
+)
 
 # Define the library that will provide the  Transformation plugin
 add_library(structarraytransf SHARED
-    ${CMAKE_SOURCE_DIR}/StructArrayTransformation.cxx
-    ${CMAKE_BINARY_DIR}/SensorData.cxx
-    ${CMAKE_BINARY_DIR}/SensorDataPlugin.cxx)
+    "${CMAKE_CURRENT_SOURCE_DIR}/StructArrayTransformation.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorData.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorDataPlugin.cxx"
+)
 
 target_include_directories(structarraytransf
-    PUBLIC ${CMAKE_BINARY_DIR}
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 set_target_properties(structarraytransf
     PROPERTIES
-    CXX_STANDARD 11
-    OUTPUT_NAME_DEBUG structarraytransfd
-    LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
-    LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-    LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-    ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
-    ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-    ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-    RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
-    RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
-    RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
-    )
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED ON
+        DEBUG_POSTFIX "d"
+        LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+)
 
 target_link_libraries(structarraytransf
     RTIConnextDDS::routing_service_infrastructure
-    RTIConnextDDS::cpp2_api)
+    RTIConnextDDS::cpp2_api
+)
 
 
 # Define the Publisher application
 add_executable(SensorAttributesCollectionPublisher
-    ${CMAKE_SOURCE_DIR}/SensorAttributesCollectionPublisher.cxx
-    ${CMAKE_BINARY_DIR}/SensorData.cxx
-    ${CMAKE_BINARY_DIR}/SensorDataPlugin.cxx)
+    "${CMAKE_CURRENT_SOURCE_DIR}/SensorAttributesCollectionPublisher.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorData.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorDataPlugin.cxx"
+)
 
 target_include_directories(SensorAttributesCollectionPublisher
-    PUBLIC ${CMAKE_BINARY_DIR}
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
-
-target_compile_definitions(SensorAttributesCollectionPublisher
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
+    PUBLIC
+        ${CMAKE_CURRENT_BINARY_DIR}
+)
 
 target_link_libraries(SensorAttributesCollectionPublisher
     RTIConnextDDS::cpp2_api
-    RTIConnextDDS::c_api
-    ${CONNEXTDDS_EXTERNAL_LIBS})
+)
 
 
 # Define the Subscriber application
 add_executable(SensorDataSubscriber
-    ${CMAKE_SOURCE_DIR}/SensorDataSubscriber.cxx
-    ${CMAKE_BINARY_DIR}/SensorData.cxx
-    ${CMAKE_BINARY_DIR}/SensorDataPlugin.cxx)
+    "${CMAKE_CURRENT_SOURCE_DIR}/SensorDataSubscriber.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorData.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/SensorDataPlugin.cxx"
+)
 
 target_include_directories(SensorDataSubscriber
-    PUBLIC ${CMAKE_BINARY_DIR}
-    PUBLIC ${CONNEXTDDS_INCLUDE_DIRS})
-
-target_compile_definitions(SensorDataSubscriber
-    PUBLIC ${CONNEXTDDS_COMPILE_DEFINITIONS})
+    PUBLIC
+        "${CMAKE_CURRENT_BINARY_DIR}"
+)
 
 target_link_libraries(SensorDataSubscriber
     RTIConnextDDS::cpp2_api
-    RTIConnextDDS::c_api
-    ${CONNEXTDDS_EXTERNAL_LIBS})
-    
+)
+
 set_target_properties(SensorDataSubscriber
     PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED ON
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED ON
 )
