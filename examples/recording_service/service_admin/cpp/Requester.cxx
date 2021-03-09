@@ -42,18 +42,28 @@ CommandActionKind ArgumentsParser::parse_command_kind(char *arg)
     return command_kind;
 }
 
-uint32_t ArgumentsParser::parse_domain_id(char *arg)
+uint64_t ArgumentsParser::parse_number(char *arg)
 {
     std::stringstream stream(arg);
-    uint32_t domain_id;
-    stream >> domain_id;
-    if (stream.bad()) {
+    uint64_t value;
+    if (!(stream >> value)) {
         std::stringstream error_stream;
-        error_stream << "Error: could not parse uint32 value provided, '" << arg
+        error_stream << "Error: could not parse uint64 value provided, '" << arg
                      << "'";
         throw std::runtime_error(error_stream.str());
     }
-    return domain_id;
+    return value;
+}
+
+bool ArgumentsParser::is_number(char *arg)
+{
+    bool value = true;
+    std::stringstream stream(arg);
+    uint64_t value_number;
+    if (!(stream >> value_number)) {
+        value = false;
+    }
+    return value;
 }
 
 void ArgumentsParser::print_usage(const std::string &program_name)
@@ -234,7 +244,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                                  << DOMAIN_ID_ARG_NAME << " parameter";
                     throw std::runtime_error(error_stream.str());
                 }
-                admin_domain_id_ = parse_domain_id(argv[current_arg + 1]);
+                admin_domain_id_ = parse_number(argv[current_arg + 1]);
                 current_arg += 2;
             } else if (TIME_TAG_ARG_NAME.compare(argv[current_arg]) == 0) {
                 // This parameter may use one or two arguments
@@ -261,7 +271,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                     octet_kind_ = OctetKind::BREAKPOINT;
                     // This parameter may use one or two arguments
                     br_params_.value().timestamp_nanos(
-                            strtoll(argv[current_arg + 1], NULL, 10));
+                            parse_number(argv[current_arg + 1]));
                     // Check if a label has been provided
                     if (current_arg + 2 < argc) {
                         br_params_.label(std::string(argv[current_arg + 2]));
@@ -277,18 +287,21 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                             "no timestamp provided for ");
                 }
             } else if (RM_BR_ARG_NAME.compare(argv[current_arg]) == 0) {
-                if (current_arg + 1 < argc) {
-                    octet_kind_ = OctetKind::BREAKPOINT;
+                octet_kind_ = OctetKind::BREAKPOINT;
+                if (current_arg + 2 == argc) {
                     // This parameter may use one or two arguments
-                    br_params_.value().timestamp_nanos(
-                            strtoll(argv[current_arg + 1], NULL, 10));
-                    // Check if a label has been provided
-                    if (current_arg + 2 < argc) {
-                        br_params_.label(std::string(argv[current_arg + 2]));
-                        current_arg += 3;
+                    if (is_number(argv[current_arg + 1])) {
+                        br_params_.value().timestamp_nanos(
+                                parse_number(argv[current_arg + 1]));
                     } else {
-                        current_arg += 2;
+                        br_params_.label(std::string(argv[current_arg + 1]));
                     }
+                    current_arg += 2;
+                } else if (current_arg + 2 < argc) {
+                    br_params_.value().timestamp_nanos(
+                            parse_number(argv[current_arg + 1]));
+                    br_params_.label(std::string(argv[current_arg + 2]));
+                    current_arg += 3;
                 } else {
                     // No information for the breakpoint
                     report_argument_error(
@@ -297,11 +310,21 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                             "no information provided for ");
                 }
             } else if (GOTO_BR_ARG_NAME.compare(argv[current_arg]) == 0) {
-                if (current_arg + 1 < argc) {
-                    octet_kind_ = OctetKind::BREAKPOINT;
-                    br_params_.value().timestamp_nanos(
-                            strtoll(argv[current_arg + 1], NULL, 10));
+                octet_kind_ = OctetKind::BREAKPOINT;
+                if (current_arg + 2 == argc) {
+                    // This parameter may use one or two arguments
+                     if (is_number(argv[current_arg + 1])) {
+                        br_params_.value().timestamp_nanos(
+                                parse_number(argv[current_arg + 1]));
+                    } else {
+                        br_params_.label(std::string(argv[current_arg + 1]));
+                    }
                     current_arg += 2;
+                } else if (current_arg + 2 < argc) {
+                        br_params_.value().timestamp_nanos(
+                                parse_number(argv[current_arg + 1]));
+                        br_params_.label(std::string(argv[current_arg + 2]));
+                        current_arg += 3;
                 } else {
                     // No information for the breakpoint
                     report_argument_error(
@@ -314,7 +337,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::CONTINUE;
                     continue_params_.value().offset(
-                            strtoll(argv[current_arg + 1], NULL, 10));
+                            parse_number(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No number of seconds for the continue param
@@ -327,7 +350,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::CONTINUE;
                     continue_params_.value().slices(
-                            strtoll(argv[current_arg + 1], NULL, 10));
+                            parse_number(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No number of slices for the continue param
@@ -340,7 +363,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::TIMESTAMPHOLDER;
                     timestamp_holder_.timestamp_nanos(
-                            strtoll(argv[current_arg + 1], NULL, 10));
+                            parse_number(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No timestamp for the jump in time
@@ -390,7 +413,7 @@ const DataTagParams& ArgumentsParser::data_tag_params() const
     return data_tag_params_;
 }
 
-OctetKind ArgumentsParser::octet_kind()
+OctetKind ArgumentsParser::octet_kind() const
 {
     return octet_kind_;
 }
