@@ -113,14 +113,15 @@ shipped with the example, called `recorder_remote_admin.xml`:
 
 ```sh
 cd <binary directory>
-$(CONNEXTDDS_DIR)/bin/rtirecordingservice
+$(NDDSHOME)/bin/rtirecordingservice
         -cfgFile recorder_remote_admin.xml -cfgName remote_admin
 ```
 
 Or in the case of *Replay Service*:
+
 ```sh
 cd <binary directory>
-$(CONNEXTDDS_DIR)/bin/rtireplayservice
+$(NDDSHOME)/bin/rtireplayservice
         -cfgFile replay_remote_admin.xml -cfgName remote_admin
 ```
 
@@ -157,15 +158,15 @@ parameters:
     quotes for multi-word descriptions).
 
 -   [Optional] `--add-breakpoint`: this command-line parameter allows the user
-    to define a breakpoint for *Replay Service*. These breakpoint will be used
+    to define a breakpoint for *Replay Service*. These breakpoints will be used
     in the debug mode of Replay. This command requires a timestamp in nanosecond
     form and optionally, a breakpoint name.
 
--   [Optional] `--remove-breakpoint`: it will allow the user to remove an
-    existed breakpoint of the replay. This command requires the timestamp or
+-   [Optional] `--remove-breakpoint`: it allows the user to remove an
+    existing breakpoint of the replay. This command requires the timestamp or
     name of the breakpoint to be removed.
 
--   [Optional] `--goto-breakpoint`: this command-line parameter the user to jump
+-   [Optional] `--goto-breakpoint`: this command-line parameter is used to jump
     to a existed breakpoint. This command requires the timestamp or name of the
     specific breakpoint.
 
@@ -173,15 +174,15 @@ parameters:
     to continue the replay for a specific amount of seconds. This command
     requires the number of seconds to be replayed.
 
--   [Optional] `--continue-slices`: it will allow the user to continue the
+-   [Optional] `--continue-slices`: it allows the user to continue the
     replay for a specific amount of slices. This command requires the number of
     slices to be replayed.
 
--   [Optional] `--current-timestamp`: it will allow the user to jump in time
+-   [Optional] `--current-timestamp`: it allows the user to jump in time
     forward and backward in *Replay Service*. This command requires a timestamp
     in nanosecond format.
 
-Note: In order to run the *Replay Service* debug mode commands you should
+Note: In order to run the *Replay Service* debug mode commands you must
 uncomment the debug mode configuration inside `replay_remote_admin.xml`.
 
 To run the administration app, you should go to the binary directory, or if you

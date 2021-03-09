@@ -413,7 +413,7 @@ const DataTagParams& ArgumentsParser::data_tag_params() const
     return data_tag_params_;
 }
 
-OctetKind ArgumentsParser::octet_kind() const
+const OctetKind ArgumentsParser::octet_kind() const
 {
     return octet_kind_;
 }

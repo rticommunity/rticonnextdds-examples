@@ -46,7 +46,7 @@ public:
 
     const RTI::RecordingService::DataTagParams& data_tag_params() const;
 
-    OctetKind octet_kind() const;
+    const OctetKind octet_kind() const;
 
     const RTI::RecordingService::BreakpointParams& br_params() const;
 
