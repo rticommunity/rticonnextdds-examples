@@ -9,7 +9,7 @@ First use **rtiddsgen** to generate the C# type and project files from
 `MarketData.idl`:
 
 ```sh
-<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles MarketData.idl
+<install dir>/bin/rtiddsgen -language c# -example net5 MarketData.idl
 ```
 
 Where `<install dir>` refers to your RTI Connext installation.
