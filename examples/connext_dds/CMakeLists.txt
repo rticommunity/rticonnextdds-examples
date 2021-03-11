@@ -219,11 +219,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c++")
 
-# recursive_data_type
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++03")
-
 # time_based_filter
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c++")

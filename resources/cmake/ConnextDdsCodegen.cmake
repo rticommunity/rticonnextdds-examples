@@ -36,7 +36,6 @@ Generate a source files using RTI Codegen::
         [IGNORE_ALIGNMENT]
         [USE42_ALIGNMENT]
         [OPTIMIZE_ALIGNMENT]
-        [LEGACY_PLUGIN]
         [STANDALONE]
         [EXTRA_ARGS ...]
         [USE_CODEGEN1]
@@ -91,8 +90,6 @@ Arguments:
 ``DISABLE_PREPROCESSOR`` (optional)
     Disable the use of a preprocessor in Codegen
 
-``LEGACY_PLUGIN`` (optional)
-    Use the legacy types for C++ 03 and C++ 11.
 
 ``STANDALONE`` (optional)
     Generate typecode files independant to RTI Connext DDS libraries.
@@ -321,7 +318,7 @@ endmacro()
 # Helper function to determine the generated files based on the language
 # Supported languages are: C C++ Java C++/CLI C++03 C++11 C#
 function(_connextdds_codegen_get_generated_file_list)
-    set(options LEGACY_PLUGIN STANDALONE DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE)
+    set(options STANDALONE DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE)
     set(single_value_args VAR LANG PACKAGE IDL_BASENAME OUTPUT_DIR)
     set(multi_value_args "")
     cmake_parse_arguments(_CODEGEN
@@ -427,27 +424,14 @@ function(_connextdds_codegen_get_generated_file_list)
         endif()
     elseif("${_CODEGEN_LANG}" STREQUAL "C++03"
             OR "${_CODEGEN_LANG}" STREQUAL "C++11")
-        if(_CODEGEN_LEGACY_PLUGIN)
-            set(sources
-                "${path_base}.cxx"
-                "${path_base}Impl.cxx"
-                "${path_base}ImplPlugin.cxx"
-            )
-            set(${_CODEGEN_VAR}_HEADERS
-                "${path_base}.hpp"
-                "${path_base}Impl.h"
-                "${path_base}ImplPlugin.h"
-                PARENT_SCOPE)
-        else()
-            set(sources
-                "${path_base}.cxx"
-                "${path_base}Plugin.cxx"
-            )
-            set(${_CODEGEN_VAR}_HEADERS
-                "${path_base}.hpp"
-                "${path_base}Plugin.hpp"
-                PARENT_SCOPE)
-        endif()
+        set(sources
+            "${path_base}.cxx"
+            "${path_base}Plugin.cxx"
+        )
+        set(${_CODEGEN_VAR}_HEADERS
+            "${path_base}.hpp"
+            "${path_base}Plugin.hpp"
+            PARENT_SCOPE)
 
         if(${_CODEGEN_GENERATE_EXAMPLE})
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCE
@@ -512,7 +496,7 @@ endfunction()
 function(connextdds_rtiddsgen_run)
     set(options
         NOT_REPLACE UNBOUNDED IGNORE_ALIGNMENT USE42_ALIGNMENT
-        OPTIMIZE_ALIGNMENT NO_TYPECODE DISABLE_PREPROCESSOR LEGACY_PLUGIN
+        OPTIMIZE_ALIGNMENT NO_TYPECODE DISABLE_PREPROCESSOR
         STANDALONE USE_CODEGEN1 DEBUG NO_CODE_GENERATION GENERATE_EXAMPLE
     )
     set(single_value_args
@@ -555,9 +539,6 @@ function(connextdds_rtiddsgen_run)
     get_filename_component(idl_basename "${_CODEGEN_IDL_FILE}" NAME_WE)
 
     set(list_extra_args)
-    if(_CODEGEN_LEGACY_PLUGIN)
-        list(APPEND list_extra_args LEGACY_PLUGIN)
-    endif()
     if(_CODEGEN_STANDALONE)
         list(APPEND list_extra_args STANDALONE)
     endif()
@@ -596,10 +577,6 @@ function(connextdds_rtiddsgen_run)
     set(extra_flags "${_CODEGEN_EXTRA_ARGS}")
     if(_CODEGEN_IGNORE_ALIGNMENT)
         list(APPEND extra_flags "-ignoreAlignment")
-    endif()
-
-    if(_CODEGEN_LEGACY_PLUGIN)
-        list(APPEND extra_flags "-legacyPlugin")
     endif()
 
     if(_CODEGEN_USE42_ALIGNMENT)
