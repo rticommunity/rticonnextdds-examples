@@ -31,7 +31,9 @@ Examples: Run linters on staged changes::
 
     Run linters for changes in between two commits::
 
-        ./linux_format.py -r 8c0859a 487df86
+        ./linux_format.py -r "8c0859a 487df86"
+
+        ./linux_format.py -r 8c0859a...487df86
 
     Disable on linter::
 
@@ -78,6 +80,13 @@ def get_argument_parser() -> ArgumentParser:
         dest="commit",
         help="Store commit hash.",
     )
+    mutual.add_argument(
+        "-a",
+        "--all",
+        action="store_true",
+        dest="all_files",
+        help="Run the linters for all the files.",
+    )
     parser.add_argument(
         "-md",
         "--disable-markdownlint",
@@ -122,8 +131,10 @@ def show_sultan_output(result: Result) -> None:
         print(line)
 
 
-def get_changed_files(
-    repo_root: Path, commits: Optional[List[str]] = None
+def get_git_files(
+    repo_root: Path,
+    commits: Optional[List[str]] = None,
+    all_files: bool = False,
 ) -> List[str]:
     """Obtain changed files.
 
@@ -132,15 +143,21 @@ def get_changed_files(
     :returns: List of staged files.
 
     """
-    command = ["diff", "--no-commit-id", "--name-only", "-r"]
+    command = []
 
-    if commits:
-        command.extend([*commits])
-        print(f"Checking file changes in the commit range: {commits}.")
+    if all_files:
+        command.append("ls-files")
+        print("Getting all the repository files.")
     else:
-        command.insert(3, "--cached")
-        command.append("HEAD")
-        print(f"Checking local changed files...")
+        command = ["diff", "--no-commit-id", "--name-only", "-r"]
+
+        if commits:
+            command.extend([*commits])
+            print(f"Checking file changes in the commit range: {commits}.")
+        else:
+            command.insert(3, "--cached")
+            command.append("HEAD")
+            print("Checking local changed files...")
 
     with Sultan.load(cwd=repo_root) as s:
         changed_files = (
@@ -185,9 +202,9 @@ def perform_linting(repo_root: Path, command: List[str]) -> None:
 
 if __name__ == "__main__":
     args: Namespace = get_argument_parser().parse_args()
-    script_path: Path = Path(__file__)
+    current_script_dir: Path = Path(__file__).parent.resolve()
 
-    with Sultan.load(logging=False, cwd=script_path.parent) as s:
+    with Sultan.load(logging=False, cwd=current_script_dir) as s:
         result: Result = s.git("rev-parse", "--show-toplevel").run(
             halt_on_nonzero=False, quiet=True
         )
@@ -206,22 +223,26 @@ if __name__ == "__main__":
     print("Starting format checker...")
 
     commits: Optional[List[str]] = None
+    exit_error: bool = False
 
     if args.commit_range:
-        commits = args.commit_range.split("...")
+        commits = args.commit_range.replace("...", " ").split()
     elif args.commit:
         commits = [args.commit + "^", args.commit]
 
-    exit_error: bool = False
-    file_list: List[str] = get_changed_files(repo_root, commits)
+    file_list: List[str] = get_git_files(repo_root, commits, args.all_files)
 
     if not file_list:
-        sys.exit("No changes found.")
+        sys.exit("Couldn't find files matching the required query.")
 
     # Markdownlint
     if "markdownlint" not in args.disabled_linters:
         markdownlint_suffix_list: Set = {".md"}
-        markdownlint_cmd: List[str] = ["mdl", "--style", ".mdl.rb"]
+        markdownlint_cmd: List[str] = [
+            "npx",
+            "markdownlint",
+            ".",
+        ]
         markdownlint_filtered_file_list: List[str] = filter_files(
             file_list, markdownlint_suffix_list
         )
@@ -247,7 +268,15 @@ if __name__ == "__main__":
     # Clang-format
     if "clang-format" not in args.disabled_linters:
         clang_format_suffix_list: Set = {".h", ".hxx", ".c", ".cxx"}
-        clang_format_cmd: List[str] = ["git", "clang-format", "--diff"]
+        clang_format_cmd: List[str]
+
+        if args.all_files:
+            clang_format_cmd = [
+                str(current_script_dir.joinpath("diff_clang_format.sh"))
+            ]
+        else:
+            clang_format_cmd = ["git", "clang-format", "--diff"]
+
         clang_format_filtered_file_list: List[str] = filter_files(
             file_list, clang_format_suffix_list
         )
