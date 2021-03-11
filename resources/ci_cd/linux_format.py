@@ -241,8 +241,6 @@ if __name__ == "__main__":
         markdownlint_cmd: List[str] = [
             "npx",
             "markdownlint",
-            "--ignore",
-            "node_modules",
             ".",
         ]
         markdownlint_filtered_file_list: List[str] = filter_files(
