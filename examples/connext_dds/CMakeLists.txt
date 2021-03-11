@@ -107,7 +107,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
 
 # custom_transport
-if(NOT WIN32)
+if(NOT WIN32 AND BUILD_SHARED_LIBS)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
 else()
     message(

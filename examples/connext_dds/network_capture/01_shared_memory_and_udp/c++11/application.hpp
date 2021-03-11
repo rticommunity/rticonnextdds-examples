@@ -16,6 +16,7 @@
 #include <iostream>
 #include <csignal>
 #include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>
 
 namespace application {
 
@@ -91,7 +92,7 @@ namespace application {
         rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
 
         while (arg_processing < argc) {
-            if ((argc > arg_processing + 1) 
+            if ((argc > arg_processing + 1)
             && (strcmp(argv[arg_processing], "-d") == 0
             || strcmp(argv[arg_processing], "--domain") == 0)) {
                 domain_id = atoi(argv[arg_processing + 1]);
