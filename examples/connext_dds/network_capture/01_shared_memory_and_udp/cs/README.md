@@ -1,15 +1,15 @@
-# Example Code: Instance Statistics
+# Example Code: Network capture example
 
 If you haven't used the RTI Connext C# API before, first check the
-[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.0.1/doc/manuals/connext_dds/getting_started/index.html).
+[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
 ## Building the Example :wrench:
 
 First use **rtiddsgen** to generate the C# type and project files from
-`network_capture.idl`:
+`NetworkCapture.idl`:
 
 ```sh
-<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles network_capture.idl
+<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles NetworkCapture.idl
 ```
 
 Where `<install dir>` refers to your RTI Connext installation.
