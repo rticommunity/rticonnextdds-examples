@@ -17,7 +17,5 @@ connextdds_add_example(
     IDL "Foo"
     LANG "C++03"
     DISABLE_SUBSCRIBER
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
     NO_REQUIRE_QOS
 )
