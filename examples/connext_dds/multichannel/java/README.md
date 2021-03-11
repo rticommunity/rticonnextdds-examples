@@ -115,7 +115,7 @@ filter is Symbol MATCH 'A'
 
    Symbol: "A"
    Price: 104.000000
-changed filter to Symbol MATCH 'AD'
+changed filter to Symbol MATCH 'A,D'
 
    Symbol: "A"
    Price: 130.000000
