@@ -61,12 +61,12 @@ namespace NetworkCaptureExample
 
             // A Topic has a name and a datatype.
             Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>(
-                "Network capture shared memory example");
+                    "Network capture shared memory example");
 
             // Create a Publisher
             Publisher publisher = participant.CreatePublisher();
 
-            // Create a DataWriter, loading QoS profile from USER_QOS_PROFILES.xml
+            // Create a DataWriter, loading QoS profile from USER_QOS_PROFILES.xml, and
             writer = publisher.CreateDataWriter(topic);
         }
 
@@ -82,9 +82,9 @@ namespace NetworkCaptureExample
             for (int count = 0; count < sampleCount && continueRunning; count++)
             {
                 // Modify the data to be sent here
-                sample.message =  $"Hello {count}";
+                sample.msg = $"Hello {count}";
 
-                Console.WriteLine($"Writing NetworkCaptureData, count {count}");
+                Console.WriteLine($"Writing HelloWorld, count {count}");
 
                 if (count == 4)
                 {

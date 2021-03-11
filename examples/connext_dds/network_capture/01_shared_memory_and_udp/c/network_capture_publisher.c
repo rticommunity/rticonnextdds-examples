@@ -149,7 +149,7 @@ int publisher_main(int domainId, int sample_count)
 
     topic = DDS_DomainParticipant_create_topic(
             participant,
-            "NetworkCapture using C API",
+            "Network capture shared memory example",
             type_name,
             &DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */

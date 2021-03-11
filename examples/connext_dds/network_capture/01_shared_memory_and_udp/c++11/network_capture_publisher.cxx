@@ -12,11 +12,12 @@
 
 #include <iostream>
 
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
+
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "network_capture.hpp"
-#include <dds/pub/ddspub.hpp>
-#include <rti/config/Logger.hpp>  // for logging
-#include <rti/util/util.hpp>      // for sleep()
 
 void run_publisher_application(
         unsigned int domain_id,
@@ -39,7 +40,7 @@ void run_publisher_application(
     dds::domain::DomainParticipant participant(domain_id);
     dds::topic::Topic<NetworkCapture> topic(
             participant,
-            "Example NetworkCapture");
+            "Network capture shared memory example");
     dds::pub::Publisher publisher(participant);
     dds::pub::DataWriter<NetworkCapture> writer(publisher, topic);
 

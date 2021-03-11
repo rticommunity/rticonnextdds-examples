@@ -12,7 +12,7 @@
 module NetworkCaptureExample {
 
     struct HelloWorld {
-        @key string<128> message;
+        string<128> msg;
     };
 
 };
