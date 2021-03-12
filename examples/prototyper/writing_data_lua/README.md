@@ -2,8 +2,7 @@
 
 ## Concept
 
-This example is generating data and writing it over DDS using Lua.  This example
-uses RTI Connext DDS 5.2.0.
+This example is generating data and writing it over DDS using Lua.
 
 This is interesting for two reasons:
 

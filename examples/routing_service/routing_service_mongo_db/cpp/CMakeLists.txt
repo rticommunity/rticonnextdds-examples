@@ -15,7 +15,7 @@ project (MongoDBAdapter)
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 find_package(
-    RTIConnextDDS "6.0.1"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core

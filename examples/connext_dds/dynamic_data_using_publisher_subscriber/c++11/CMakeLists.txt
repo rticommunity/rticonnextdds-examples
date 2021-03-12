@@ -16,7 +16,5 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "Shapes"
     LANG "C++11"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
     NO_REQUIRE_QOS
 )

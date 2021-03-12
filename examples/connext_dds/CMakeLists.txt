@@ -107,7 +107,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
 
 # custom_transport
-if(NOT WIN32)
+if(NOT WIN32 AND BUILD_SHARED_LIBS)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
 else()
     message(
@@ -218,11 +218,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
 # property_qos
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c++")
-
-# recursive_data_type
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++03")
 
 # time_based_filter
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c")

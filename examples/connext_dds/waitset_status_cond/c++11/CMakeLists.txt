@@ -17,6 +17,4 @@ connextdds_add_example(
     IDL "waitset_cond_modern"
     LANG "C++11"
     PREFIX "waitset_cond_modern11"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

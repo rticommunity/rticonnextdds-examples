@@ -17,6 +17,4 @@ connextdds_add_example(
     IDL "AwsExample"
     LANG "C++03"
     NO_REQUIRE_QOS
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )
