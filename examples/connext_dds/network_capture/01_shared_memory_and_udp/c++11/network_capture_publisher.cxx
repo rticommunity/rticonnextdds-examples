@@ -12,11 +12,12 @@
 
 #include <iostream>
 
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
+
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "network_capture.hpp"
-#include <dds/pub/ddspub.hpp>
-#include <rti/config/Logger.hpp>  // for logging
-#include <rti/util/util.hpp>      // for sleep()
 
 void run_publisher_application(
         unsigned int domain_id,
