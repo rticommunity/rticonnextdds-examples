@@ -13,11 +13,11 @@
 #include <algorithm>
 #include <iostream>
 
-#include "application.hpp"  // for command line parsing and ctrl-c
-#include "network_capture.hpp"
-#include <dds/core/ddscore.hpp>
 #include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
 #include <rti/config/Logger.hpp>  // for logging
+#include "network_capture.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
 int process_data(dds::sub::DataReader<NetworkCapture> reader)
 {
