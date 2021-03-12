@@ -12,12 +12,12 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
-     version="6.0.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd"
+     version="6.1.0">
 	<qos_library name="partitions_Library">
 
 		<qos_profile name="partitions_Profile" is_default_qos="true">
-		
+
 			<!-- Here we set two partitions the Publisher is going to be
 				 member of: "ABC" and "foo" -->
 			<publisher_qos>
@@ -28,7 +28,7 @@
 					</name>
 				</partition>
 			</publisher_qos>
-			
+
 			<!--  Here we set two partitions the Subscriber is going to
 				be member of: "ABC" and "X*Z" -->
 			<subscriber_qos>
@@ -39,8 +39,8 @@
 					</name>
 				</partition>
 			</subscriber_qos>
-			
-			<!-- In this example we set a Reliable Data Writer with a history 
+
+			<!-- In this example we set a Reliable Data Writer with a history
 			    depth of 3 samples and Transient Local durability. -->
 			<datawriter_qos>
 				<reliability>
@@ -56,7 +56,7 @@
 					<kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
 				</durability>
 			</datawriter_qos>
-			
+
 			<!-- And a Reliable Data Reader with keep all history and Transient
 			     local durability. -->
 			<datareader_qos>
@@ -74,8 +74,8 @@
 			</datareader_qos>
 
 			<domain_participant_qos>
-				<!-- The participant name, if it is set, will be displayed in the RTI 
-					Analyzer tool, making it easier for you to tell one application from another 
+				<!-- The participant name, if it is set, will be displayed in the RTI
+					Analyzer tool, making it easier for you to tell one application from another
 					when you're debugging. -->
 				<participant_name>
 					<name>RTI Partitions C# Example</name>

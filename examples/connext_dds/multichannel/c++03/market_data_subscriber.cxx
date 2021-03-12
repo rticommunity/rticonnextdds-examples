@@ -78,9 +78,9 @@ void subscriber_main(int domain_id, int sample_count)
             // On t=3 we add the symbol 'D' to the filter parameter
             // to match 'A' and 'D'.
             cft_topic->append_to_expression_parameter(0, "D");
-            std::cout << "changed filter to Symbol MATCH 'AD'" << std::endl;
+            std::cout << "changed filter to Symbol MATCH 'A,D'" << std::endl;
         } else if (count == 6) {
-            // On t=6 we remove the symbol 'A' to the filter paramter
+            // On t=6 we remove the symbol 'A' to the filter parameter
             // to match only 'D'.
             cft_topic->remove_from_expression_parameter(0, "A");
             std::cout << "changed filter to Symbol MATCH 'D'" << std::endl;

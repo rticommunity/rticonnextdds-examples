@@ -214,7 +214,7 @@ public class market_dataSubscriber {
                  */
                 if (count == 3) {
                     filteredTopic.append_to_expression_parameter(0, "D");
-                    System.out.println("changed filter to Symbol MATCH 'AD'");
+                    System.out.println("changed filter to Symbol MATCH 'A,D'");
                 }
                 if (count == 6) {
                     filteredTopic.remove_from_expression_parameter(0, "A");
