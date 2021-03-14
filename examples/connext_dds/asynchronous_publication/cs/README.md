@@ -6,10 +6,10 @@ If you haven't used the RTI Connext C# API before, first check the
 ## Building the Example :wrench:
 
 First use **rtiddsgen** to generate the C# type and project files from
-`AsynchronousPublicationExample.idl`:
+`AsyncPublicationExample.idl`:
 
 ```sh
-<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles AsynchronousPublicationExample.idl
+<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles AsyncPublicationExample.idl
 ```
 
 Where `<install dir>` refers to your RTI Connext installation.
