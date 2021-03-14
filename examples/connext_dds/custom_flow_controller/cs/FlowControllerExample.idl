@@ -1,5 +1,5 @@
 /*
- * (c) 2014-2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -10,7 +10,11 @@
  * use or inability to use the software.
  */
 
-struct cfc {
-    int32 x;
-    string<1000> str;
+module FlowControllerExample {
+
+    struct HelloWorld {
+        int32 x;
+        string<1000> str;
+    };
+
 };
