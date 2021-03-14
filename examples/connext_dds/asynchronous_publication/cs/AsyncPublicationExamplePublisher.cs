@@ -12,7 +12,6 @@
 
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 using Omg.Dds.Core;
 using Rti.Dds.Core;
 using Rti.Dds.Core.Policy;
@@ -20,27 +19,30 @@ using Rti.Dds.Domain;
 using Rti.Dds.Publication;
 using Rti.Dds.Topics;
 
-namespace AsynchronousPublicationExample
+namespace AsyncPublicationExample
 {
     /// <summary>
-    /// Example application that publishes HelloWorld
+    /// Example application that publishes AsyncPublicationExample.HelloWorld.
     /// </summary>
-    public sealed class HelloWorldPublisher : IHelloWorldApplication
+    public static class HelloWorldPublisher
     {
-        private readonly DomainParticipant participant;
-        private readonly DataWriter<HelloWorld> writer;
-
         /// <summary>
-        /// Creates a DomainParticipant, Topic, Publisher and DataWriter<HelloWorld>.
+        /// Runs the publisher example.
         /// </summary>
-        public HelloWorldPublisher(int domainId, bool useXmlQos = true)
+        public static void RunPublisher(
+            int domainId,
+            int sampleCount,
+            CancellationToken cancellationToken,
+            bool useXmlQos = false)
         {
             // Start communicating in a domain, usually one participant per application
             // Load default QoS profile from USER_QOS_PROFILES.xml file
-            participant = DomainParticipantFactory.Instance.CreateParticipant(domainId);
+            using DomainParticipant participant =
+                DomainParticipantFactory.Instance.CreateParticipant(domainId);
 
             // A Topic has a name and a datatype.
-            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example async");
+            Topic<HelloWorld> topic =
+                participant.CreateTopic<HelloWorld>("Example async");
 
             // Create a Publisher
             Publisher publisher = participant.CreatePublisher();
@@ -69,46 +71,44 @@ namespace AsynchronousPublicationExample
                     })
                     .WithProtocol(policy =>
                     {
-                        policy.RtpsReliableWriter = policy.RtpsReliableWriter.With(rtpsReliableWriter =>
-                        {
-                            rtpsReliableWriter.MinSendWindowSize = 50;
-                            rtpsReliableWriter.MaxSendWindowSize = 50;
-                        });
+                        policy.RtpsReliableWriter.MinSendWindowSize = 50;
+                        policy.RtpsReliableWriter.MaxSendWindowSize = 50;
                     })
                     .WithPublishMode(policy =>
                     {
                         policy.Kind = PublishModeKind.Asynchronous;
-                        policy.FlowControllerName = "DDS_FIXED_RATE_FLOW_CONTROLLER_NAME";
+
+                        // The built-in fixed-rate flow controller publishes
+                        // all written samples once per second
+                        policy.FlowControllerName = PublishMode.FixedRateFlowControllerName;
                     });
             }
 
-            writer = publisher.CreateDataWriter(topic, writerQos);
-        }
+            DataWriter<HelloWorld> writer =
+                publisher.CreateDataWriter(topic, writerQos);
 
-        /// <summary>
-        /// Publishes the data
-        /// </summary>
-        public async Task Run(int sampleCount, CancellationToken cancellationToken)
-        {
             var sample = new HelloWorld();
-            for (int count = 0; 
+            for (int count = 0;
                 count < sampleCount && !cancellationToken.IsCancellationRequested;
                 count++)
             {
                 // Modify the data to be sent here
                 sample.x = count;
 
-                Console.WriteLine($"Writing HelloWorld, count {count}");
+                Console.WriteLine($"Writing x={sample.x}");
 
+                // With asynchronous publish mode, the Write() puts the sample
+                // in the queue but doesn't send it until the flow controller
+                // indicates so.
                 writer.Write(sample);
 
-                await Task.Delay(100, cancellationToken);
+                Thread.Sleep(100);
             }
-        }
 
-        /// <summary>
-        /// Disposes all DDS entities created by this application.
-        /// </summary>
-        public void Dispose() => participant.Dispose();
+            // You can wait until all written samples have been actually published
+            // (note that this doesn't ensure that they have actually been received
+            // if the sample required retransmission)
+            writer.WaitForAsynchronousPublishing(Duration.FromSeconds(10));
+        }
     }
-} // namespace AsynchronousPublicationExample
+} // namespace AsyncPublicationExample

@@ -11,26 +11,10 @@
 */
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using Rti.Config;
 
-namespace AsynchronousPublicationExample
+namespace AsyncPublicationExample
 {
-    /// <summary>
-    /// Interface shared by HelloWorldPublisher and HelloWorldSubscriber.
-    /// </summary>
-    public interface IHelloWorldApplication : IDisposable
-    {
-        /// <summary>
-        /// Returns a task that writes or reads a number of samples before
-        //  completing. The task can be cancelled.
-        /// </summary>
-        Task Run(int sampleCount, CancellationToken cancellationToken);
-    }
-
     /// <summary>
     /// Runs HelloWorldPublisher or HelloWorldSubscriber.
     /// </summary>
@@ -39,31 +23,12 @@ namespace AsynchronousPublicationExample
         /// <summary>
         /// The Main function runs the publisher or the subscriber.
         /// </summary>
-        public static async Task Main(string[] args)
+        public static void Main(string[] args)
         {
             var arguments = ParseArguments(args);
             if (arguments == null)
             {
                 return;
-            }
-
-            if (arguments.Verbose)
-            {
-                Logger.Instance.SetVerbosity(Verbosity.Warning);
-            }
-
-            // Run the publisher, the subscriber, or both.
-            var applications = new List<IHelloWorldApplication>();
-            if (arguments.Pub)
-            {
-                Console.WriteLine($"Running HelloWorldPublisher on domain {arguments.Domain}");
-                applications.Add(new HelloWorldPublisher(arguments.Domain));
-            }
-
-            if (arguments.Sub)
-            {
-                Console.WriteLine($"Running HelloWorldSubscriber on domain {arguments.Domain}");
-                applications.Add(new HelloWorldSubscriber(arguments.Domain));
             }
 
             // Set up signal handler to Dispose the DDS entities
@@ -75,25 +40,22 @@ namespace AsynchronousPublicationExample
                 cancellationSource.Cancel();
             };
 
-            try
+
+            if (arguments.Pub)
             {
-                // Run the applications and await until they finish.
-                await Task.WhenAll(
-                    applications.Select(
-                        app => app.Run(arguments.SampleCount, cancellationSource.Token)
-                        ).ToArray()
-                        );
+                Console.WriteLine($"Running HelloWorldPublisher on domain {arguments.Domain}");
+                HelloWorldPublisher.RunPublisher(
+                    arguments.Domain,
+                    arguments.SampleCount,
+                    cancellationSource.Token);
             }
-            catch (TaskCanceledException)
+            else
             {
-                // ignore
-            }
-            finally
-            {
-                foreach (var app in applications)
-                {
-                    app.Dispose();
-                }
+                Console.WriteLine($"Running HelloWorldSubscriber on domain {arguments.Domain}");
+                HelloWorldSubscriber.RunSubscriber(
+                    arguments.Domain,
+                    arguments.SampleCount,
+                    cancellationSource.Token).Wait();
             }
         }
 
@@ -103,7 +65,6 @@ namespace AsynchronousPublicationExample
             public bool Sub { get; set; }
             public int Domain { get; set; }
             public int SampleCount { get; set; } = int.MaxValue;
-            public bool Verbose { get; set; }
             public bool Version { get; set; }
         }
 
@@ -115,28 +76,24 @@ namespace AsynchronousPublicationExample
             {
                 new System.CommandLine.Option<bool>(
                     new string[] { "--pub", "-p" },
-                description: "Whether to run the publisher application"),
+                    description: "Whether to run the publisher application"),
                 new System.CommandLine.Option<bool>(
                     new string[] { "--sub", "-s" },
-                description: "Whether to run the subscriber application"),
+                    description: "Whether to run the subscriber application"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--domain", "-d" },
-                getDefaultValue: () => 0,
-                description: "Domain ID used to create the DomainParticipant"),
+                    getDefaultValue: () => 0,
+                    description: "Domain ID used to create the DomainParticipant"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--sample-count", "-c" },
-                getDefaultValue: () => int.MaxValue,
-                description: "Number of samples to publish or subscribe to"),
+                    getDefaultValue: () => int.MaxValue,
+                    description: "Number of samples to publish or subscribe to"),
                 new System.CommandLine.Option<bool>(
-                    "--verbose",
-                    description: "Increases the RTI Connext logging verbosity"),
-                    new System.CommandLine.Option<bool>(
-                        "--version",
-                        description: "Displays the RTI Connext version")
-                    };
+                    "--version",
+                    description: "Displays the RTI Connext version"),
+            };
 
-            rootCommand.Description = "Example RTI Connext Publisher and Subscriber."
-            + "\nSee README.txt for more information";
+            rootCommand.Description = "Asynchronous Publication Example";
 
             Arguments result = null;
             rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create(
@@ -173,4 +130,4 @@ namespace AsynchronousPublicationExample
             return result;
         }
     }
-} // namespace AsynchronousPublicationExample
+} // namespace AsyncPublicationExample

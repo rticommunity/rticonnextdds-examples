@@ -19,28 +19,30 @@ using Rti.Dds.Domain;
 using Rti.Dds.Subscription;
 using Rti.Dds.Topics;
 
-namespace AsynchronousPublicationExample
+namespace AsyncPublicationExample
 {
     /// <summary>
-    /// Example application that subscribes to HelloWorld.
+    /// Example application that publishes AsyncPublicationExample.HelloWorld.
     /// </summary>
-    public sealed class HelloWorldSubscriber : IHelloWorldApplication
+    public static class HelloWorldSubscriber
     {
-        private readonly DomainParticipant participant;
-        private readonly DataReader<HelloWorld> reader;
-        private int samplesRead;
-
         /// <summary>
-        /// Creates a DomainParticipant, Topic, Subscriber and DataReader<HelloWorld>.
+        /// Runs the subscriber example.
         /// </summary>
-        public HelloWorldSubscriber(int domainId, bool useXmlQos = true)
+        public static async Task RunSubscriber(
+            int domainId,
+            int sampleCount,
+            CancellationToken cancellationToken,
+            bool useXmlQos = false)
         {
             // Start communicating in a domain, usually one participant per application
             // Load default QoS profile from USER_QOS_PROFILES.xml file
-            participant = DomainParticipantFactory.Instance.CreateParticipant(domainId);
+            using DomainParticipant participant =
+                DomainParticipantFactory.Instance.CreateParticipant(domainId);
 
             // A Topic has a name and a datatype.
-            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example async");
+            Topic<HelloWorld> topic =
+                participant.CreateTopic<HelloWorld>("Example async");
 
             // Create a subscriber
             Subscriber subscriber = participant.CreateSubscriber();
@@ -60,19 +62,16 @@ namespace AsynchronousPublicationExample
                     .WithReliability(policy => policy.Kind = ReliabilityKind.Reliable)
                     .WithHistory(policy => policy.Kind = HistoryKind.KeepAll);
             }
-            reader = subscriber.CreateDataReader(topic, readerQos);
-        }
 
-        /// <summary>
-        /// Processes the data received by the DataReader.
-        /// </summary>
-        public async Task Run(int sampleCount, CancellationToken cancellationToken)
-        {
+            DataReader<HelloWorld> reader =
+                subscriber.CreateDataReader(topic, readerQos);
+
             var beginTime = DateTime.Now;
 
             // TakeAsync provides an IAsyncEnumerable that returns new data
             // samples when they are available, awaiting as necessary. The
             // cancellation token allows stopping the loop.
+            int samplesRead = 0;
             await foreach (var sample in reader
                 .TakeAsync()
                 .WithCancellation(cancellationToken))
@@ -90,10 +89,5 @@ namespace AsynchronousPublicationExample
                 }
             }
         }
-
-        /// <summary>
-        /// Disposes all DDS entities created by this application.
-        /// </summary>
-        public void Dispose() => participant.Dispose();
     }
-} // namespace AsynchronousPublicationExample
+} // namespace AsyncPublicationExample
