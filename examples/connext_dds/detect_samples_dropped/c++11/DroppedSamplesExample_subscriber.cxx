@@ -66,8 +66,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // Create a Subscriber and DataReader with default Qos
     dds::sub::Subscriber subscriber(participant);
 
-    dds::sub::qos::DataReaderQos reader_qos =
-        participant.extensions().default_datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos = subscriber.default_datareader_qos();
 
     reader_qos << dds::core::policy::Ownership::Exclusive();
 
@@ -81,10 +80,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     dds::sub::cond::ReadCondition read_condition(
         reader,
         dds::sub::status::DataState::any(),
-        [reader, &samples_read]() {
-        // If we wake up, process data
-        samples_read += process_data(reader);
-    });
+        [reader, &samples_read]() { samples_read += process_data(reader); });
 
     waitset += read_condition;
 
