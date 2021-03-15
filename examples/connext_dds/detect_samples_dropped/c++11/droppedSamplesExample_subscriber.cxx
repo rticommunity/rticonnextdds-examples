@@ -26,14 +26,14 @@
 // For information on how to use extensions, see:
 //    https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html
 
-#include "drop.hpp"
+#include "droppedSamplesExample.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
 
-int process_data(dds::sub::DataReader<drop> reader)
+int process_data(dds::sub::DataReader<droppedSamplesExample> reader)
 {
     // Take all samples
     int count = 0;
-    dds::sub::LoanedSamples<drop> samples = reader.take();
+    dds::sub::LoanedSamples<droppedSamplesExample> samples = reader.take();
     for (const auto& sample : samples) {
         if (sample.info().valid()) {
             count++;
@@ -56,24 +56,22 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic with a name and a datatype
-    dds::topic::Topic<drop> topic(participant, "Example drop");
+    dds::topic::Topic<droppedSamplesExample> topic(participant, "Example droppedSamplesExample");
 
-    dds::topic::ContentFilteredTopic<drop> cft(
+    dds::topic::ContentFilteredTopic<droppedSamplesExample> cft(
             topic,
-            "Example drop CFT",
+            "Example droppedSamplesExample CFT",
             dds::topic::Filter("x < 4"));
 
     // Create a Subscriber and DataReader with default Qos
     dds::sub::Subscriber subscriber(participant);
 
-    dds::sub::qos::DataReaderQos reader_qos;
-    participant->default_datareader_qos(reader_qos);
+    dds::sub::qos::DataReaderQos reader_qos =
+        participant.extensions().default_datareader_qos();
 
-    dds::core::policy::Ownership ownership;
-    ownership.kind(dds::core::policy::Ownership::Exclusive().kind());
-    reader_qos << ownership;
+    reader_qos << dds::core::policy::Ownership::Exclusive();
 
-    dds::sub::DataReader<drop> reader(subscriber, cft, reader_qos);
+    dds::sub::DataReader<droppedSamplesExample> reader(subscriber, cft, reader_qos);
 
     // WaitSet will be woken when the attached condition is triggered
     dds::core::cond::WaitSet waitset;
@@ -93,9 +91,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     rti::core::status::DataReaderCacheStatus status;
     while (!application::shutdown_requested && samples_read < sample_count) {
 
-        std::cout << "drop subscriber sleeping up to 1 sec..." << std::endl;
+        std::cout << "droppedSamplesExample subscriber sleeping up to 1 sec..." << std::endl;
 
-        // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
         status = reader.extensions().datareader_cache_status();
         std::cout << "Samples dropped:"

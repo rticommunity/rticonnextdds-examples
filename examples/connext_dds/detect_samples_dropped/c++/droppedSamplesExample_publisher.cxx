@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "drop.h"
-#include "dropSupport.h"
+#include "droppedSamplesExample.h"
+#include "droppedSamplesExampleSupport.h"
 #include "ndds/ndds_cpp.h"
 #include "application.h"
 
@@ -49,16 +49,16 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     }
 
     // Register the datatype to use when creating the Topic
-    const char *type_name = dropTypeSupport::get_type_name();
+    const char *type_name = droppedSamplesExampleTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    dropTypeSupport::register_type(participant, type_name);
+    droppedSamplesExampleTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
     }
 
     // Create a Topic with a name and a datatype
     DDSTopic *topic = participant->create_topic(
-        "Example drop",
+        "Example droppedSamplesExample",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
         NULL, // listener
@@ -67,7 +67,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
     }
 
-    // Start changes for detecting samples dropped
+    // Start changes for detecting samples droppedSamplesExampleped
 
     DDS_DataWriterQos writer_qos;
     retcode = publisher->get_default_datawriter_qos(writer_qos);
@@ -80,7 +80,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     writer_qos.ownership.kind = DDS_EXCLUSIVE_OWNERSHIP_QOS;
     writer_qos.ownership_strength.value = 1;
 
-    // This DataWriter writes data on "Example drop" Topic
+    // This DataWriter writes data on "Example droppedSamplesExample" Topic
     DDSDataWriter *untyped_writer1 = publisher->create_datawriter(
         topic,
         writer_qos,
@@ -91,15 +91,15 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     }
 
     // Narrow casts from an untyped DataWriter to a writer of your type
-    dropDataWriter *typed_writer1 =
-    dropDataWriter::narrow(untyped_writer1);
+    droppedSamplesExampleDataWriter *typed_writer1 =
+    droppedSamplesExampleDataWriter::narrow(untyped_writer1);
     if (typed_writer1 == NULL) {
         return shutdown_participant(participant, "DataWriter narrow error", EXIT_FAILURE);
     }
 
     writer_qos.ownership_strength.value = 2;
 
-    // This DataWriter writes data on "Example drop" Topic
+    // This DataWriter writes data on "Example droppedSamplesExample" Topic
     DDSDataWriter *untyped_writer2 = publisher->create_datawriter(
         topic,
         writer_qos,
@@ -110,18 +110,18 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     }
 
     // Narrow casts from an untyped DataWriter to a writer of your type
-    dropDataWriter *typed_writer2 =
-    dropDataWriter::narrow(untyped_writer2);
+    droppedSamplesExampleDataWriter *typed_writer2 =
+    droppedSamplesExampleDataWriter::narrow(untyped_writer2);
     if (typed_writer2 == NULL) {
         return shutdown_participant(participant, "DataWriter narrow error", EXIT_FAILURE);
     }
 
     // Create data for writing, allocating all members
-    drop *data = dropTypeSupport::create_data();
+    droppedSamplesExample *data = droppedSamplesExampleTypeSupport::create_data();
     if (data == NULL) {
         return shutdown_participant(
             participant,
-            "dropTypeSupport::create_data error",
+            "droppedSamplesExampleTypeSupport::create_data error",
             EXIT_FAILURE);
     }
 
@@ -133,7 +133,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         // Modify the data to be written here
         data->x = static_cast<DDS_Short>(samples_written);
 
-        std::cout << "Writing drop, count " << samples_written 
+        std::cout << "Writing droppedSamplesExample, count " << samples_written 
         << std::endl;
         retcode = typed_writer1->write(*data, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
@@ -150,12 +150,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         NDDSUtility::sleep(send_period);
     }
 
-    // End changes for detecting samples dropped
+    // End changes for detecting samples droppedSamplesExampleped
 
-    // Delete previously allocated drop, including all contained elements
-    retcode = dropTypeSupport::delete_data(data);
+    // Delete previously allocated droppedSamplesExample, including all contained elements
+    retcode = droppedSamplesExampleTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "dropTypeSupport::delete_data error " << retcode
+        std::cerr << "droppedSamplesExampleTypeSupport::delete_data error " << retcode
         << std::endl;
     }
 

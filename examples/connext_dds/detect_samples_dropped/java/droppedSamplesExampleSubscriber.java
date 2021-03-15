@@ -22,11 +22,11 @@ import com.rti.dds.topic.*;
 /**
 * Simple example showing all Connext code in one place for readability.
 */
-public class dropSubscriber extends Application implements AutoCloseable {
+public class droppedSamplesExampleSubscriber extends Application implements AutoCloseable {
 
     private DomainParticipant participant = null; // Usually one per application
-    private dropDataReader reader = null;
-    private final dropSeq dataSeq = new dropSeq();
+    private droppedSamplesExampleDataReader reader = null;
+    private final droppedSamplesExampleSeq dataSeq = new droppedSamplesExampleSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
     private int processData() {
@@ -75,13 +75,13 @@ public class dropSubscriber extends Application implements AutoCloseable {
                 StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
-        String typeName = dropTypeSupport.get_type_name();
-        dropTypeSupport.register_type(participant, typeName);
+        String typeName = droppedSamplesExampleTypeSupport.get_type_name();
+        droppedSamplesExampleTypeSupport.register_type(participant, typeName);
 
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(
             participant.create_topic(
-                "Example drop",
+                "Example droppedSamplesExample",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null, // listener
@@ -90,7 +90,7 @@ public class dropSubscriber extends Application implements AutoCloseable {
         StringSeq parameters = new StringSeq();
         ContentFilteredTopic cft = Objects.requireNonNull(
                 participant.create_contentfilteredtopic(
-                    "Example drop CFT",
+                    "Example droppedSamplesExample CFT",
                     topic,
                     "x < 4",
                     parameters));
@@ -99,8 +99,8 @@ public class dropSubscriber extends Application implements AutoCloseable {
         participant.get_default_datareader_qos(reader_qos);
         reader_qos.ownership.kind = OwnershipQosPolicyKind.EXCLUSIVE_OWNERSHIP_QOS;
 
-        // This DataReader reads data on "Example drop" Topic
-        reader = (dropDataReader) Objects.requireNonNull(
+        // This DataReader reads data on "Example droppedSamplesExample" Topic
+        reader = (droppedSamplesExampleDataReader) Objects.requireNonNull(
             subscriber.create_datareader(
                 cft,
                 reader_qos,
@@ -159,7 +159,7 @@ public class dropSubscriber extends Application implements AutoCloseable {
     public static void main(String[] args) {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (dropSubscriber subscriberApplication = new dropSubscriber()) {
+        try (droppedSamplesExampleSubscriber subscriberApplication = new droppedSamplesExampleSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();

@@ -10,6 +10,6 @@
  * use or inability to use the software.
  */
 
-struct drop {
+struct droppedSamplesExample {
     int16 x;
 };

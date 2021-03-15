@@ -21,7 +21,7 @@ import com.rti.dds.topic.Topic;
 /** 
 * Simple example showing all Connext code in one place for readability.
 */
-public class dropPublisher extends Application implements AutoCloseable {
+public class droppedSamplesExamplePublisher extends Application implements AutoCloseable {
 
     // Usually one per application
     private DomainParticipant participant = null;
@@ -43,13 +43,13 @@ public class dropPublisher extends Application implements AutoCloseable {
                 StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
-        String typeName = dropTypeSupport.get_type_name();
-        dropTypeSupport.register_type(participant, typeName);
+        String typeName = droppedSamplesExampleTypeSupport.get_type_name();
+        droppedSamplesExampleTypeSupport.register_type(participant, typeName);
 
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(
             participant.create_topic(
-                "Example drop",
+                "Example droppedSamplesExample",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null, // listener
@@ -62,15 +62,15 @@ public class dropPublisher extends Application implements AutoCloseable {
         writer_qos.batch.max_samples = 1;
         writer_qos.ownership.kind = OwnershipQosPolicyKind.EXCLUSIVE_OWNERSHIP_QOS;
         writer_qos.ownership_strength.value = 1;
-        // This DataWriter writes data on "Example drop" Topic
-        dropDataWriter writer1 = (dropDataWriter) Objects.requireNonNull(
+        // This DataWriter writes data on "Example droppedSamplesExample" Topic
+        droppedSamplesExampleDataWriter writer1 = (droppedSamplesExampleDataWriter) Objects.requireNonNull(
             publisher.create_datawriter(
                 topic,
                 writer_qos,
                 null, // listener
                 StatusKind.STATUS_MASK_NONE));
         writer_qos.ownership_strength.value = 2;
-        dropDataWriter writer2 = (dropDataWriter) Objects.requireNonNull(
+        droppedSamplesExampleDataWriter writer2 = (droppedSamplesExampleDataWriter) Objects.requireNonNull(
             publisher.create_datawriter(
                 topic,
                 writer_qos,
@@ -78,7 +78,7 @@ public class dropPublisher extends Application implements AutoCloseable {
                 StatusKind.STATUS_MASK_NONE));
 
         // Create data sample for writing
-        drop data = new drop();
+        droppedSamplesExample data = new droppedSamplesExample();
 
         for (int samplesWritten = 0; !isShutdownRequested()
         && samplesWritten < getMaxSampleCount(); samplesWritten++) {
@@ -86,7 +86,7 @@ public class dropPublisher extends Application implements AutoCloseable {
             // Modify the data to be written here
             data.x = (short) samplesWritten;
 
-            System.out.println("Writing drop, count " + samplesWritten);
+            System.out.println("Writing droppedSamplesExample, count " + samplesWritten);
 
             writer1.write(data, InstanceHandle_t.HANDLE_NIL);
             writer2.write(data, InstanceHandle_t.HANDLE_NIL);
@@ -114,7 +114,7 @@ public class dropPublisher extends Application implements AutoCloseable {
     public static void main(String[] args) {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
-        try (dropPublisher publisherApplication = new dropPublisher()) {
+        try (droppedSamplesExamplePublisher publisherApplication = new droppedSamplesExamplePublisher()) {
             publisherApplication.parseArguments(args);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();

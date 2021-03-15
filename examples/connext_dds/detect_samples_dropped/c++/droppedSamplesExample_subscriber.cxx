@@ -14,8 +14,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include "drop.h"
-#include "dropSupport.h"
+#include "droppedSamplesExample.h"
+#include "droppedSamplesExampleSupport.h"
 #include "ndds/ndds_cpp.h"
 #include "application.h"
 
@@ -27,9 +27,9 @@ static int shutdown_participant(
     int status);
 
 // Process data. Returns number of samples processed.
-unsigned int process_data(dropDataReader *typed_reader)
+unsigned int process_data(droppedSamplesExampleDataReader *typed_reader)
 {
-    dropSeq data_seq;     // Sequence of received data
+    droppedSamplesExampleSeq data_seq;     // Sequence of received data
     DDS_SampleInfoSeq info_seq; // Metadata associated with samples in data_seq
     unsigned int samples_read = 0;
 
@@ -48,7 +48,7 @@ unsigned int process_data(dropDataReader *typed_reader)
         if (info_seq[i].valid_data) {
             // Print data
             std::cout << "Received data" << std::endl;
-            dropTypeSupport::print_data(&data_seq[i]);
+            droppedSamplesExampleTypeSupport::print_data(&data_seq[i]);
             samples_read++;
         } else {  // This is an instance lifecycle event with no data payload.
             std::cout << "Received instance state notification" << std::endl;
@@ -86,16 +86,16 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     }
 
     // Register the datatype to use when creating the Topic
-    const char *type_name = dropTypeSupport::get_type_name();
+    const char *type_name = droppedSamplesExampleTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    dropTypeSupport::register_type(participant, type_name);
+    droppedSamplesExampleTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
     }
 
     // Create a Topic with a name and a datatype
     DDSTopic *topic = participant->create_topic(
-        "Example drop",
+        "Example droppedSamplesExample",
         type_name,
         DDS_TOPIC_QOS_DEFAULT,
         NULL, // listener
@@ -107,7 +107,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     DDS_StringSeq parameters(0);
     parameters.length(0);
     DDSContentFilteredTopic *cft = participant->create_contentfilteredtopic(
-            "Example drop CFT",
+            "Example droppedSamplesExample CFT",
             topic,
             "x < 4",
             parameters);
@@ -122,7 +122,7 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     }
     reader_qos.ownership.kind = DDS_EXCLUSIVE_OWNERSHIP_QOS;
 
-    // This DataReader reads data on "Example drop" Topic
+    // This DataReader reads data on "Example droppedSamplesExample" Topic
     DDSDataReader *untyped_reader = subscriber->create_datareader(
         cft,
         reader_qos,
@@ -133,8 +133,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     }
 
     // Narrow casts from a untyped DataReader to a reader of your type
-    dropDataReader *typed_reader =
-    dropDataReader::narrow(untyped_reader);
+    droppedSamplesExampleDataReader *typed_reader =
+    droppedSamplesExampleDataReader::narrow(untyped_reader);
     if (typed_reader == NULL) {
         return shutdown_participant(participant, "DataReader narrow error", EXIT_FAILURE);
     }
@@ -161,7 +161,6 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     while (!shutdown_requested && samples_read < sample_count) {
         DDSConditionSeq active_conditions_seq;
 
-        // Wait for data and report if it does not arrive in 1 second
         DDS_Duration_t wait_timeout = { 1, 0 };
         retcode = waitset.wait(active_conditions_seq, wait_timeout);
 
