@@ -1,4 +1,4 @@
-# Example Code: droppedSamplesExample Configuration
+# Example Code: DroppedSamplesExample Configuration
 
 ## Building the Example :wrench:
 
@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-droppedSamplesExample_publisher.exe  <domain_id> <samples_to_send>
-droppedSamplesExample_subscriber.exe  <domain_id> <sleep_periods>
+DroppedSamplesExample_publisher.exe  <domain_id> <samples_to_send>
+DroppedSamplesExample_subscriber.exe  <domain_id> <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./droppedSamplesExample_publisher  <domain_id> <samples_to_send>
-./droppedSamplesExample_subscriber  <domain_id> <sleep_periods>
+./DroppedSamplesExample_publisher  <domain_id> <samples_to_send>
+./DroppedSamplesExample_subscriber  <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
