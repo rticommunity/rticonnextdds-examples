@@ -1,0 +1,20 @@
+struct CheckpointPlace {
+    @key
+    int32 competitor_id;
+    @key
+    int32 checkpoint;
+    int16 place;
+};
+
+struct Time {
+    int32 sec;
+    uint32 nsec;
+};
+
+struct CheckpointTime {
+    @key
+    int32 competitor_id;
+    @key
+    int32 checkpoint;
+    Time time;
+};
