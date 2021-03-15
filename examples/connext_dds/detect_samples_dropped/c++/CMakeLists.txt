@@ -14,7 +14,7 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
-    IDL "drop"
+    IDL "DroppedSamplesExample"
     LANG "C++"
     NO_REQUIRE_QOS
 )

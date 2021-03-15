@@ -14,19 +14,19 @@ use the `-replace` option.** Assuming you want to generate an example for
 *i86Win32VS2010* run:
 
 ```sh
-rtiddsgen -language Java -example i86Win32VS2010 drop.idl
+rtiddsgen -language Java -example i86Win32VS2010 DroppedSamplesExample.idl
 ```
 
 You will see messages that look like this:
 
 ```plaintext
-File C:\local\drop_Presentation\java\dropSubscriber.java already exists
+File C:\local\DroppedSamplesExample_Presentation\java\DroppedSamplesExampleSubscriber.java already exists
 and will not be replaced with updated content. If you would like to get a new
 file with the new content, either remove this file or supply -replace option.
-File C:\local\drop_Presentation\java\dropPublisher.java already exists
+File C:\local\DroppedSamplesExample_Presentation\java\DroppedSamplesExamplePublisher.java already exists
 and will not be replaced with updated content. If you would like to get a new
 file with the new content, either remove this file or supply -replace option.
-File C:\local\drop_Presentation\java\USER_QOS_PROFILES.xml already exists and
+File C:\local\DroppedSamplesExample_Presentation\java\USER_QOS_PROFILES.xml already exists and
 will not be replaced with updated content. If you would like to get a new file
 with the new content, either remove this file or supply -replace option.
 ```
@@ -59,13 +59,13 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar dropPublisher  <domain_id> <samples_to_send>
+java -cp .;%NDDSHOME%\lib\java\nddsjava.jar DroppedSamplesExamplePublisher  <domain_id> <samples_to_send>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar dropPublisher  <domain_id> <samples_to_send>
+java -cp .:$NDDSHOME/lib/java/nddsjava.jar DroppedSamplesExamplePublisher  <domain_id> <samples_to_send>
 ```
 
 The applications accept up to two arguments:
