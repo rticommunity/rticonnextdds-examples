@@ -34,7 +34,7 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core

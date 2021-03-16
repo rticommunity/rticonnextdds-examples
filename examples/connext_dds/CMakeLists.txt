@@ -11,7 +11,7 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(RTIConnextDDS
-    "6.0.0"
+    "6.1.0"
     REQUIRED
     COMPONENTS
         core
@@ -107,7 +107,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
 
 # custom_transport
-if(NOT WIN32)
+if(NOT WIN32 AND BUILD_SHARED_LIBS)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
 else()
     message(
@@ -182,6 +182,14 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++03")
 
+# network capture
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/02_tcp/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/03_security/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/04_advanced_api/c")
+
 # ordered_presentation
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c++")
@@ -210,11 +218,6 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
 # property_qos
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c++")
-
-# recursive_data_type
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recursive_data_type/c++03")
 
 # time_based_filter
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c")
@@ -253,3 +256,10 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
 
 # xml application
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
+
+# compression
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
+
+# real time wan transport
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
+

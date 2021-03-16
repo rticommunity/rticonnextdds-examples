@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH
 # Find the ConnextDDS libraries. This will look fo the core and API libraries
 # only
 find_package(RTIConnextDDS
-    "5.3.0"
+    "6.1.0"
     REQUIRED
     COMPONENTS
         core

@@ -16,6 +16,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "waitset_query_cond"
     LANG "C++11"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

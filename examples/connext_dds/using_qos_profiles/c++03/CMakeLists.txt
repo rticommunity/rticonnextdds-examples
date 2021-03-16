@@ -16,8 +16,6 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "profiles"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )
 
 add_custom_command(

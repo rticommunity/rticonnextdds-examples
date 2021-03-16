@@ -16,6 +16,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "ordered"
     LANG "C++11"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

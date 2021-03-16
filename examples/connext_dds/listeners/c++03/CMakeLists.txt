@@ -16,7 +16,5 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "listeners"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
     NO_REQUIRE_QOS
 )

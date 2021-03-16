@@ -10,64 +10,63 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (FileAdapter)
+project(FileAdapterC++11)
+
+if(NOT DEFINED CONNEXTDDS_DIR)
+    set(msg 
+        "Please set the CMake variable CONNEXTDDS_DIR "
+        "to point to your installation of RTI Connext DDS")
+    message(FATAL_ERROR ${msg})
+endif()
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
 )
 
-add_library(
-    fileadapter
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileAdapter.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileConnection.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamWriter.cxx"
+add_library(fileadapter
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileAdapter.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileConnection.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamReader.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamWriter.cxx"
 )
 
 set_property(TARGET fileadapter PROPERTY CXX_STANDARD 11)
 set_property(TARGET fileadapter PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(
-    fileadapter
+target_link_libraries(fileadapter
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
-    ${CONNEXTDDS_EXTERNAL_LIBS}
+)
+
+# To differentiate between debug and release builds
+set_target_properties(fileadapter
+    PROPERTIES
+        DEBUG_POSTFIX "d"
 )
 
 # Copy the sample data files into the binary directory
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"
-    "${CMAKE_BINARY_DIR}/Input_Circle.csv"
-    COPYONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Square.csv"
-    "${CMAKE_BINARY_DIR}/Input_Square.csv"
-    COPYONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/Input_Triangle.csv"
-    "${CMAKE_BINARY_DIR}/Input_Triangle.csv"
-    COPYONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/ShapeType.xml"
-    "${CMAKE_BINARY_DIR}/ShapeType.xml"
-    COPYONLY
-)
-
-configure_file(
-    "${CMAKE_CURRENT_SOURCE_DIR}/RsFileAdapter.xml"
-    "${CMAKE_BINARY_DIR}/RsFileAdapter.xml"
-    COPYONLY
+ADD_CUSTOM_COMMAND(TARGET fileadapter
+    POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"
+        "${CMAKE_BINARY_DIR}/Input_Circle.csv"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/Input_Triangle.csv"
+        "${CMAKE_BINARY_DIR}/Input_Triangle.csv"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/Input_Square.csv"
+        "${CMAKE_BINARY_DIR}/Input_Square.csv"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/ShapeType.xml"
+        "${CMAKE_BINARY_DIR}/ShapeType.xml"
+    COMMAND ${CMAKE_COMMAND} -E copy
+        "${CMAKE_CURRENT_SOURCE_DIR}/RsFileAdapter.xml"
+        "${CMAKE_BINARY_DIR}/RsFileAdapter.xml"
 )

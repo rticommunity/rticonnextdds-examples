@@ -14,6 +14,10 @@ if(WIN32)
     message(FATAL_ERROR "This example is not supported in Windows.")
 endif()
 
+if(NOT BUILD_SHARED_LIBS)
+    message(FATAL_ERROR "Static linking is not supported for this example")
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 

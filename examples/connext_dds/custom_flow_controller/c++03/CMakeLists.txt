@@ -16,6 +16,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "cfc"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

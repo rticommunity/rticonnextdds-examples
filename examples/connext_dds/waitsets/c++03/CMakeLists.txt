@@ -16,6 +16,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "waitsets"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )
