@@ -42,10 +42,9 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     // Create a Publisher
     dds::pub::Publisher publisher(participant);
 
-
     dds::pub::qos::DataWriterQos writer_qos = publisher.default_datawriter_qos();
 
-    /* Use batching in order to evaluate the CFT in the reader side */
+    // Use batching in order to evaluate the CFT in the reader side
     writer_qos << rti::core::policy::Batch().enable(true).max_samples(1)
                <<  dds::core::policy::Ownership::Exclusive()
                <<  dds::core::policy::OwnershipStrength(1);
