@@ -120,7 +120,7 @@ void run_publisher_application(
             // that triggered it
             {
                 dds::pub::CoherentSet coherent_set(publisher);  // Start a
-                                                                //coherent set
+                                                                // coherent set
                 heart_rate_writer.write(heart_rate_data);
                 temperature_writer.write(temperature_data);
 
