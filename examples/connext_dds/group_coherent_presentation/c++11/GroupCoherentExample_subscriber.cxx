@@ -18,7 +18,7 @@
 #include <rti/config/Logger.hpp>
 
 #include "GroupCoherentExample.hpp"
-#include "application.hpp"  
+#include "application.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -27,35 +27,34 @@ using namespace dds::sub::qos;
 using namespace GroupCoherentExample;
 
 template<typename T>
-class PatientDRListener : public dds::sub::NoOpDataReaderListener<T>
-{
+class PatientDRListener : public dds::sub::NoOpDataReaderListener<T> {
 public:
     void on_sample_lost(
             dds::sub::DataReader<T> &,
             const dds::core::status::SampleLostStatus &status)
     {
-        if (status.extensions().last_reason() 
+        if (status.extensions().last_reason()
             == rti::core::status::SampleLostState::
                     lost_by_incomplete_coherent_set()) {
-            std::cout << "Lost " << status.total_count_change() 
+            std::cout << "Lost " << status.total_count_change()
                       << " samples in an incomplete coherent set.\n";
         }
     }
 };
 
-void print_coherent_set_info(const dds::sub::SampleInfo& info)
+void print_coherent_set_info(const dds::sub::SampleInfo &info)
 {
     // The coherent_set_info in the SampleInfo is only present if the sample is
     // part of a coherent set. We therefore need to check if it is present
     // before accessing any of the members
     if (info.extensions().coherent_set_info().has_value()) {
-        const rti::core::CoherentSetInfo& set_info =
+        const rti::core::CoherentSetInfo &set_info =
                 *info.extensions().coherent_set_info();
         std::cout << "Sample is part of "
                   << (set_info.incomplete_coherent_set() ? "an incomplete "
                                                          : "a complete ")
                   << "group coherent set with SN ("
-                  << set_info.group_coherent_set_sequence_number() << ");\n" 
+                  << set_info.group_coherent_set_sequence_number() << ");\n"
                   << std::endl;
     } else {
         std::cout << "Sample is not part of a coherent set.\n" << std::endl;
@@ -65,41 +64,41 @@ void print_coherent_set_info(const dds::sub::SampleInfo& info)
 void process_data(dds::sub::Subscriber subscriber)
 {
     {
-        CoherentAccess coherent_access(subscriber); // Begin coherent access
+        CoherentAccess coherent_access(subscriber);  // Begin coherent access
         std::vector<AnyDataReader> readers;
 
         // Get the list of readers with samples that have not been read yet
-        find(subscriber, 
-             dds::sub::status::SampleState::not_read(), 
+        find(subscriber,
+             dds::sub::status::SampleState::not_read(),
              std::back_inserter(readers));
 
-         // Iterate through the returned readers list and take their samples
-         for (AnyDataReader reader : readers) {
-             if (reader.topic_name() == "Alarm") {
-                 dds::sub::LoanedSamples<Alarm> samples = 
-                         reader.get<Alarm>().take();
-                 for (auto& sample : samples) {
-                     std::cout << sample << std::endl;
-                     print_coherent_set_info(sample.info());
-                 }
-             } else if (reader.topic_name() == "HeartRate") {
-                 dds::sub::LoanedSamples<HeartRate> samples = 
-                         reader.get<HeartRate>().take();
-                 for (auto& sample : samples) {
-                     std::cout << sample << std::endl;
-                     print_coherent_set_info(sample.info());
-                 }
-             } else if (reader.topic_name() == "Temperature") {
-                 dds::sub::LoanedSamples<Temperature> samples = 
-                         reader.get<Temperature>().take();
-                 for (auto& sample : samples) {
-                     std::cout << sample << std::endl;
-                     print_coherent_set_info(sample.info());
+        // Iterate through the returned readers list and take their samples
+        for (AnyDataReader reader : readers) {
+            if (reader.topic_name() == "Alarm") {
+                dds::sub::LoanedSamples<Alarm> samples = 
+                        reader.get<Alarm>().take();
+                for (const auto& sample : samples) {
+                    std::cout << sample << std::endl;
+                    print_coherent_set_info(sample.info());
                 }
-             }
+            } else if (reader.topic_name() == "HeartRate") {
+                dds::sub::LoanedSamples<HeartRate> samples = 
+                        reader.get<HeartRate>().take();
+                for (const auto& sample : samples) {
+                    std::cout << sample << std::endl;
+                    print_coherent_set_info(sample.info());
+                }
+            } else if (reader.topic_name() == "Temperature") {
+                dds::sub::LoanedSamples<Temperature> samples = 
+                        reader.get<Temperature>().take();
+                for (const auto& sample : samples) {
+                    std::cout << sample << std::endl;
+                    print_coherent_set_info(sample.info());
+                }
+            }
         }
-    } // end coherent access
-} 
+    }  // end coherent access
+}
 
 void run_subscriber_application(unsigned int domain_id, bool use_xml_qos)
 {
@@ -109,7 +108,9 @@ void run_subscriber_application(unsigned int domain_id, bool use_xml_qos)
     // Create three Topics with names and a datatypes
     dds::topic::Topic<Alarm> alarm_topic(participant, "Alarm");
     dds::topic::Topic<HeartRate> heart_rate_topic(participant, "HeartRate");
-    dds::topic::Topic<Temperature> temperature_topic(participant, "Temperature");
+    dds::topic::Topic<Temperature> temperature_topic(
+            participant,
+            "Temperature");
 
     SubscriberQos subscriber_qos;
     if (use_xml_qos) {
@@ -118,7 +119,7 @@ void run_subscriber_application(unsigned int domain_id, bool use_xml_qos)
     } else {
         // Set the Subscriber QoS programatically
         subscriber_qos << Presentation::GroupAccessScope(true, true);
-        // Uncomment this line to keep and deliver incomplete coherent sets to 
+        // Uncomment this line to keep and deliver incomplete coherent sets to
         // the application
         // subscriber_qos.policy<Presentation>().extensions().drop_incomplete_coherent_set(false);
     }
@@ -137,7 +138,8 @@ void run_subscriber_application(unsigned int domain_id, bool use_xml_qos)
 
     auto alarm_listener = std::make_shared<PatientDRListener<Alarm>>();
     auto heart_rate_listener = std::make_shared<PatientDRListener<HeartRate>>();
-    auto temperature_listener = std::make_shared<PatientDRListener<Temperature>>();
+    auto temperature_listener = 
+            std::make_shared<PatientDRListener<Temperature>>();
 
     // We are installing a listener for the sample lost status in case an
     // incomplete coherent set is received and dropped (assuming the
@@ -194,10 +196,10 @@ int main(int argc, char *argv[])
 
     if (arguments.set_count != (std::numeric_limits<unsigned int>::max)()) {
         std::cerr << "The -s, --set_count argument is only applicable to the"
-                     " publisher application. It will be ignored." 
+                     " publisher application. It will be ignored."
                   << std::endl;
     }
-    
+
     try {
         run_subscriber_application(arguments.domain_id, arguments.use_xml_qos);
     } catch (const std::exception &ex) {

@@ -27,24 +27,26 @@ using namespace GroupCoherentExample;
 
 // Generate patient data
 std::default_random_engine generator;
-std::uniform_int_distribution<int32_t> distrib(0,3);
+std::uniform_int_distribution<int32_t> distrib(0, 3);
 
 int32_t get_patient_heart_rate()
 {
-    static int32_t heart_rates[4] = {35, 56, 85, 110};
+    static int32_t heart_rates[4] = { 35, 56, 85, 110 };
     int32_t index = distrib(generator);
     return heart_rates[index];
 }
 
 float get_patient_temperature()
 {
-    static float temperatures[4] = {95.0, 98.1, 99.2, 101.7};
+    static float temperatures[4] = { 95.0, 98.1, 99.2, 101.7 };
     int32_t index = distrib(generator);
     return temperatures[index];
 }
 
 void run_publisher_application(
-        unsigned int domain_id, unsigned int set_count, bool use_xml_qos)
+        unsigned int domain_id,
+        unsigned int set_count,
+        bool use_xml_qos)
 {
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
@@ -52,7 +54,9 @@ void run_publisher_application(
     // Create three Topics with names and a datatypes
     dds::topic::Topic<Alarm> alarm_topic(participant, "Alarm");
     dds::topic::Topic<HeartRate> heart_rate_topic(participant, "HeartRate");
-    dds::topic::Topic<Temperature> temperature_topic(participant, "Temperature");
+    dds::topic::Topic<Temperature> temperature_topic(
+            participant,
+            "Temperature");
 
     PublisherQos publisher_qos;
     if (use_xml_qos) {
@@ -65,7 +69,7 @@ void run_publisher_application(
 
     dds::pub::Publisher publisher(participant, publisher_qos);
 
-    DataWriterQos writer_qos; 
+    DataWriterQos writer_qos;
     if (use_xml_qos) {
         // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml.
         writer_qos = QosProvider::Default().datawriter_qos();
@@ -74,16 +78,19 @@ void run_publisher_application(
         writer_qos << Reliability::Reliable() << History::KeepAll();
     }
 
-    // If you want to change the DataWriter's QoS programmatically rather
-    // than using the XML file, you will need to uncomment the following lines.
-
     // Create a DataWriter for each topic
     dds::pub::DataWriter<Alarm> alarm_writer(
-            publisher, alarm_topic, writer_qos);
+            publisher,
+            alarm_topic,
+            writer_qos);
     dds::pub::DataWriter<HeartRate> heart_rate_writer(
-            publisher, heart_rate_topic, writer_qos);
+            publisher,
+            heart_rate_topic,
+            writer_qos);
     dds::pub::DataWriter<Temperature> temperature_writer(
-            publisher, temperature_topic, writer_qos);
+            publisher,
+            temperature_topic,
+            writer_qos);
 
     Alarm alarm_data;
     alarm_data.patient_id(1);
@@ -100,26 +107,25 @@ void run_publisher_application(
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < set_count;
          samples_written++) {
-
         heart_rate_data.beats_per_minute(get_patient_heart_rate());
         temperature_data.temperature(get_patient_temperature());
 
-        if (heart_rate_data.beats_per_minute() >= 100 
-                || heart_rate_data.beats_per_minute() <= 40
-                || temperature_data.temperature() >= 100.0
-                || temperature_data.temperature() <= 95.0) {
-             // Sound an alarm. In this case, we want all of the patients vitals
-             // along with the alarm to be delivered as a single coherent set of
-             // data so that we can correlate the alarm with the set of vitals
-             // that triggered it
-             {
-                 dds::pub::CoherentSet coherent_set(publisher); // Start a
-                                                                //coherent set
-                 heart_rate_writer.write(heart_rate_data);
-                 temperature_writer.write(temperature_data);
+        if (heart_rate_data.beats_per_minute() >= 100
+            || heart_rate_data.beats_per_minute() <= 40
+            || temperature_data.temperature() >= 100.0
+            || temperature_data.temperature() <= 95.0) {
+            // Sound an alarm. In this case, we want all of the patients vitals
+            // along with the alarm to be delivered as a single coherent set of
+            // data so that we can correlate the alarm with the set of vitals
+            // that triggered it
+            {
+                dds::pub::CoherentSet coherent_set(publisher); // Start a
+                                                               //coherent set
+                heart_rate_writer.write(heart_rate_data);
+                temperature_writer.write(temperature_data);
 
-                 alarm_data.alarm_code(AlarmCode::ABNORMAL_READING);
-                 alarm_writer.write(alarm_data);
+                alarm_data.alarm_code(AlarmCode::ABNORMAL_READING);
+                alarm_writer.write(alarm_data);
             }  // end coherent set
         } else {
             // No alarm necessary, publish the patient's vitals as normal

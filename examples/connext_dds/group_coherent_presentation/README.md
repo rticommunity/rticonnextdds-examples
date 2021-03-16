@@ -17,20 +17,19 @@ so that we can interpret all of the data as a cohesive unit. Otherwise, we may
 incorrectly attribute an older (or more recent) temperature/heart rate reading
 to the alarm and react incorrectly.
 
-
 ## Example Description
 
 This example illustrates how to use the PresentationQosPolicy coherent_access,
 GROUP presentation, and ordered_access to force writes across multiple writers
 belonging to the same publisher to be grouped and ordered on the receiving side.
 
-All samples sent between begin_ and end_coherent_changes will be available
-before the readers are notified that there are samples to read. Because we are
-waiting on samples for multiple readers, we wait for the subscriber to notify
-us that at least one of its readers has data to read using the DATA_ON_READERS
-status (as opposed to waiting for the DATA_AVAILABLE status of each reader
-individually). At that time, we can lookup the list of readers with data pending
-to be read and take the samples for the coherent set in order.
+All samples sent between `begin_coherent_changes` and `end_coherent_changes`
+will be available before the readers are notified that there are samples to
+read. Because we are waiting on samples for multiple readers, we wait for the 
+subscriber to notify us that at least one of its readers has data to read using
+the DATA_ON_READERS status (as opposed to waiting for the DATA_AVAILABLE status
+of each reader individually). At that time, we can lookup the list of readers
+with data pending to be read and take the samples for the coherent set in order.
 
 In this example, the subscriber receives updates on two topics: Checkpoint Time
 and Checkpoint Place. Because we request coherent access at the group level,
