@@ -28,41 +28,54 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "DroppedSamplesExample.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
+    // (see
+    // https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
 
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic with a name and a datatype
-    dds::topic::Topic<DroppedSamplesExample> topic(participant, "Example DroppedSamplesExample");
+    dds::topic::Topic<DroppedSamplesExample> topic(
+            participant,
+            "Example DroppedSamplesExample");
 
     // Create a Publisher
     dds::pub::Publisher publisher(participant);
 
-    dds::pub::qos::DataWriterQos writer_qos = publisher.default_datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            publisher.default_datawriter_qos();
 
     // Use batching in order to evaluate the CFT in the reader side
     writer_qos << rti::core::policy::Batch().enable(true).max_samples(1)
-               <<  dds::core::policy::Ownership::Exclusive()
-               <<  dds::core::policy::OwnershipStrength(1);
+               << dds::core::policy::Ownership::Exclusive()
+               << dds::core::policy::OwnershipStrength(1);
 
     // Create a DataWriter with default QoS
-    dds::pub::DataWriter<DroppedSamplesExample> writer1(publisher, topic, writer_qos);
+    dds::pub::DataWriter<DroppedSamplesExample> writer1(
+            publisher,
+            topic,
+            writer_qos);
 
     writer_qos << dds::core::policy::OwnershipStrength(2);
-    dds::pub::DataWriter<DroppedSamplesExample> writer2(publisher, topic, writer_qos);
+    dds::pub::DataWriter<DroppedSamplesExample> writer2(
+            publisher,
+            topic,
+            writer_qos);
 
     DroppedSamplesExample data;
     for (unsigned int samples_written = 0;
-    !application::shutdown_requested && samples_written < sample_count;
-    samples_written++) {
+            !application::shutdown_requested && samples_written < sample_count;
+            samples_written++) {
         // Modify the data to be written here
         data.x(static_cast<int16_t>(samples_written));
 
-        std::cout << "Writing DroppedSamplesExample, count " << samples_written << std::endl;
+        std::cout << "Writing DroppedSamplesExample, count " << samples_written
+                << std::endl;
 
         writer1.write(data);
         writer2.write(data);
@@ -74,7 +87,6 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -91,10 +103,10 @@ int main(int argc, char *argv[])
 
     try {
         run_publisher_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_publisher_application(): " << ex.what()
-        << std::endl;
+                << std::endl;
         return EXIT_FAILURE;
     }
 

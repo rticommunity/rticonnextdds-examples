@@ -34,29 +34,34 @@ int process_data(dds::sub::DataReader<DroppedSamplesExample> reader)
     // Take all samples
     int count = 0;
     dds::sub::LoanedSamples<DroppedSamplesExample> samples = reader.take();
-    for (const auto& sample : samples) {
+    for (const auto &sample : samples) {
         if (sample.info().valid()) {
             count++;
             std::cout << sample.data() << std::endl;
         } else {
             std::cout << "Instance state changed to "
-            << sample.info().state().instance_state() << std::endl;
+                    << sample.info().state().instance_state() << std::endl;
         }
     }
 
-    return count; 
-} // The LoanedSamples destructor returns the loan
+    return count;
+}  // The LoanedSamples destructor returns the loan
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
+    // (see
+    // https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
 
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic with a name and a datatype
-    dds::topic::Topic<DroppedSamplesExample> topic(participant, "Example DroppedSamplesExample");
+    dds::topic::Topic<DroppedSamplesExample> topic(
+            participant,
+            "Example DroppedSamplesExample");
 
     dds::topic::ContentFilteredTopic<DroppedSamplesExample> cft(
             topic,
@@ -66,11 +71,15 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // Create a Subscriber and DataReader with default Qos
     dds::sub::Subscriber subscriber(participant);
 
-    dds::sub::qos::DataReaderQos reader_qos = subscriber.default_datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            subscriber.default_datareader_qos();
 
     reader_qos << dds::core::policy::Ownership::Exclusive();
 
-    dds::sub::DataReader<DroppedSamplesExample> reader(subscriber, cft, reader_qos);
+    dds::sub::DataReader<DroppedSamplesExample> reader(
+            subscriber,
+            cft,
+            reader_qos);
 
     // WaitSet will be woken when the attached condition is triggered
     dds::core::cond::WaitSet waitset;
@@ -78,16 +87,19 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // Create a ReadCondition for any data on this reader, and add to WaitSet
     unsigned int samples_read = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [reader, &samples_read]() { samples_read += process_data(reader); });
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                    samples_read += process_data(reader);
+            });
 
     waitset += read_condition;
 
     rti::core::status::DataReaderCacheStatus status;
     while (!application::shutdown_requested && samples_read < sample_count) {
 
-        std::cout << "DroppedSamplesExample subscriber sleeping up to 1 sec..." << std::endl;
+        std::cout << "DroppedSamplesExample subscriber sleeping up to 1 sec..."
+                << std::endl;
 
         waitset.dispatch(dds::core::Duration(1));
         status = reader.extensions().datareader_cache_status();
@@ -96,13 +108,11 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
                   << status.ownership_dropped_sample_count()
                   << "\n\t content_filter_dropped_sample_count "
                   << status.content_filter_dropped_sample_count() << std::endl;
-
     }
 }
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -119,10 +129,10 @@ int main(int argc, char *argv[])
 
     try {
         run_subscriber_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
-        << std::endl;
+                << std::endl;
         return EXIT_FAILURE;
     }
 

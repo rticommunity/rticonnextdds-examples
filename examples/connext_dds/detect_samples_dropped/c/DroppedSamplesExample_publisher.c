@@ -58,7 +58,8 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -93,19 +94,23 @@ int publisher_main(int domainId, int sample_count)
     DDS_Topic *topic = NULL;
     DDS_DataWriter *writer1 = NULL, *writer2 = NULL;
     struct DDS_DataWriterQos writer_qos = DDS_DataWriterQos_INITIALIZER;
-    DroppedSamplesExampleDataWriter *DroppedSamplesExample_writer1 = NULL, *DroppedSamplesExample_writer2 = NULL;
+    DroppedSamplesExampleDataWriter *DroppedSamplesExample_writer1 = NULL,
+                                    *DroppedSamplesExample_writer2 = NULL;
     DroppedSamplesExample *instance = NULL;
     DDS_ReturnCode_t retcode;
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = { 4, 0 };
 
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -115,8 +120,10 @@ int publisher_main(int domainId, int sample_count)
     /* To customize publisher QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     publisher = DDS_DomainParticipant_create_publisher(
-        participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         fprintf(stderr, "create_publisher error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -136,9 +143,12 @@ int publisher_main(int domainId, int sample_count)
     /* To customize topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example DroppedSamplesExample",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            "Example DroppedSamplesExample",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -161,7 +171,8 @@ int publisher_main(int domainId, int sample_count)
     /* To customize data writer QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     writer1 = DDS_Publisher_create_datawriter(
-            publisher, topic,
+            publisher,
+            topic,
             &writer_qos,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
@@ -170,7 +181,8 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant, &writer_qos);
         return -1;
     }
-    DroppedSamplesExample_writer1 = DroppedSamplesExampleDataWriter_narrow(writer1);
+    DroppedSamplesExample_writer1 =
+            DroppedSamplesExampleDataWriter_narrow(writer1);
     if (DroppedSamplesExample_writer1 == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -191,7 +203,8 @@ int publisher_main(int domainId, int sample_count)
         publisher_shutdown(participant, &writer_qos);
         return -1;
     }
-    DroppedSamplesExample_writer2 = DroppedSamplesExampleDataWriter_narrow(writer2);
+    DroppedSamplesExample_writer2 =
+            DroppedSamplesExampleDataWriter_narrow(writer2);
     if (DroppedSamplesExample_writer2 == NULL) {
         fprintf(stderr, "DataWriter narrow error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -199,7 +212,8 @@ int publisher_main(int domainId, int sample_count)
     }
 
     /* Create data sample for writing */
-    instance = DroppedSamplesExampleTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
+    instance =
+            DroppedSamplesExampleTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance == NULL) {
         fprintf(stderr, "DroppedSamplesExampleTypeSupport_create_data error\n");
         publisher_shutdown(participant, &writer_qos);
@@ -214,21 +228,24 @@ int publisher_main(int domainId, int sample_count)
         DroppedSamplesExample_writer, instance);
     */
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing DroppedSamplesExample, count %d\n", count);
 
         /* Modify the data to be written here */
         instance->x = count;
         /* Write data */
         retcode = DroppedSamplesExampleDataWriter_write(
-            DroppedSamplesExample_writer1, instance, &instance_handle);
+                DroppedSamplesExample_writer1,
+                instance,
+                &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
         /* Write data */
         retcode = DroppedSamplesExampleDataWriter_write(
-            DroppedSamplesExample_writer2, instance, &instance_handle);
+                DroppedSamplesExample_writer2,
+                instance,
+                &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "write error %d\n", retcode);
         }
@@ -244,9 +261,13 @@ int publisher_main(int domainId, int sample_count)
     }
     */
     /* Delete data sample */
-    retcode = DroppedSamplesExampleTypeSupport_delete_data_ex(instance, DDS_BOOLEAN_TRUE);
+    retcode = DroppedSamplesExampleTypeSupport_delete_data_ex(
+            instance,
+            DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "DroppedSamplesExampleTypeSupport_delete_data error %d\n", retcode);
+        fprintf(stderr,
+                "DroppedSamplesExampleTypeSupport_delete_data error %d\n",
+                retcode);
     }
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant, &writer_qos);
