@@ -25,7 +25,7 @@ belonging to the same publisher to be grouped and ordered on the receiving side.
 
 All samples sent between `begin_coherent_changes` and `end_coherent_changes`
 will be available before the readers are notified that there are samples to
-read. Because we are waiting on samples for multiple readers, we wait for the 
+read. Because we are waiting on samples for multiple readers, we wait for the
 subscriber to notify us that at least one of its readers has data to read using
 the DATA_ON_READERS status (as opposed to waiting for the DATA_AVAILABLE status
 of each reader individually). At that time, we can lookup the list of readers

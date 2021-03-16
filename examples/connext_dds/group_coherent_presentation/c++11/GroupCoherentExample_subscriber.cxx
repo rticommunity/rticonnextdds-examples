@@ -75,23 +75,23 @@ void process_data(dds::sub::Subscriber subscriber)
         // Iterate through the returned readers list and take their samples
         for (AnyDataReader reader : readers) {
             if (reader.topic_name() == "Alarm") {
-                dds::sub::LoanedSamples<Alarm> samples = 
+                dds::sub::LoanedSamples<Alarm> samples =
                         reader.get<Alarm>().take();
-                for (const auto& sample : samples) {
+                for (const auto &sample : samples) {
                     std::cout << sample << std::endl;
                     print_coherent_set_info(sample.info());
                 }
             } else if (reader.topic_name() == "HeartRate") {
-                dds::sub::LoanedSamples<HeartRate> samples = 
+                dds::sub::LoanedSamples<HeartRate> samples =
                         reader.get<HeartRate>().take();
-                for (const auto& sample : samples) {
+                for (const auto &sample : samples) {
                     std::cout << sample << std::endl;
                     print_coherent_set_info(sample.info());
                 }
             } else if (reader.topic_name() == "Temperature") {
-                dds::sub::LoanedSamples<Temperature> samples = 
+                dds::sub::LoanedSamples<Temperature> samples =
                         reader.get<Temperature>().take();
-                for (const auto& sample : samples) {
+                for (const auto &sample : samples) {
                     std::cout << sample << std::endl;
                     print_coherent_set_info(sample.info());
                 }
@@ -138,7 +138,7 @@ void run_subscriber_application(unsigned int domain_id, bool use_xml_qos)
 
     auto alarm_listener = std::make_shared<PatientDRListener<Alarm>>();
     auto heart_rate_listener = std::make_shared<PatientDRListener<HeartRate>>();
-    auto temperature_listener = 
+    auto temperature_listener =
             std::make_shared<PatientDRListener<Temperature>>();
 
     // We are installing a listener for the sample lost status in case an

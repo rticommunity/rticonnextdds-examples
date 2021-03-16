@@ -119,8 +119,8 @@ void run_publisher_application(
             // data so that we can correlate the alarm with the set of vitals
             // that triggered it
             {
-                dds::pub::CoherentSet coherent_set(publisher); // Start a
-                                                               //coherent set
+                dds::pub::CoherentSet coherent_set(publisher);  // Start a
+                                                                //coherent set
                 heart_rate_writer.write(heart_rate_data);
                 temperature_writer.write(temperature_data);
 
