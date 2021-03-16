@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <algorithm>
 #include <iostream>
@@ -40,7 +40,7 @@ int process_data(dds::sub::DataReader<DroppedSamplesExample> reader)
             std::cout << sample.data() << std::endl;
         } else {
             std::cout << "Instance state changed to "
-                    << sample.info().state().instance_state() << std::endl;
+                      << sample.info().state().instance_state() << std::endl;
         }
     }
 
@@ -90,7 +90,7 @@ void run_subscriber_application(
             reader,
             dds::sub::status::DataState::any(),
             [reader, &samples_read]() {
-                    samples_read += process_data(reader);
+                samples_read += process_data(reader);
             });
 
     waitset += read_condition;
@@ -99,7 +99,7 @@ void run_subscriber_application(
     while (!application::shutdown_requested && samples_read < sample_count) {
 
         std::cout << "DroppedSamplesExample subscriber sleeping up to 1 sec..."
-                << std::endl;
+                  << std::endl;
 
         waitset.dispatch(dds::core::Duration(1));
         status = reader.extensions().datareader_cache_status();
@@ -132,7 +132,7 @@ int main(int argc, char *argv[])
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
-                << std::endl;
+                  << std::endl;
         return EXIT_FAILURE;
     }
 

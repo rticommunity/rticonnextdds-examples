@@ -1,15 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
-
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 /* DroppedSamplesExample_subscriber.c
 
 A subscription example
@@ -44,49 +43,49 @@ add and remove them dynamically from the domain.
 
 void DroppedSamplesExampleListener_on_requested_deadline_missed(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_requested_incompatible_qos(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_sample_rejected(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_liveliness_changed(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_sample_lost(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_subscription_matched(
         void* listener_data,
-        DDS_DataReader* reader,
+        DDS_DataReader *reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_data_available(
         void* listener_data,
-        DDS_DataReader* reader)
+        DDS_DataReader *reader)
 {
     DroppedSamplesExampleDataReader *DroppedSamplesExample_reader = NULL;
     struct DroppedSamplesExampleSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -120,7 +119,7 @@ void DroppedSamplesExampleListener_on_data_available(
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             printf("Received data\n");
             DroppedSamplesExampleTypeSupport_print_data(
-                DroppedSamplesExampleSeq_get_reference(&data_seq, i));
+                    DroppedSamplesExampleSeq_get_reference(&data_seq, i));
         }
     }
 
@@ -149,7 +148,8 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -260,7 +260,7 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Set up a data reader listener */
-    reader_listener.on_requested_deadline_missed  =
+    reader_listener.on_requested_deadline_missed =
             DroppedSamplesExampleListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
             DroppedSamplesExampleListener_on_requested_incompatible_qos;
@@ -313,10 +313,10 @@ int subscriber_main(int domainId, int sample_count)
             return -1;
         }
         printf("Samples dropped:\n"
-                "\t ownership_dropped_sample_count %lld\n"
-                "\t content_filter_dropped_sample_count %lld\n",
-                cache_status.ownership_dropped_sample_count,
-                cache_status.content_filter_dropped_sample_count);
+               "\t ownership_dropped_sample_count %lld\n"
+               "\t content_filter_dropped_sample_count %lld\n",
+               cache_status.ownership_dropped_sample_count,
+               cache_status.content_filter_dropped_sample_count);
     }
 
     /* Cleanup and delete all entities */

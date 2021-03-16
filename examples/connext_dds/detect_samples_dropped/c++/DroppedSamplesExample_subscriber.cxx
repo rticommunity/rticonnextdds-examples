@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <iostream>
 #include <stdio.h>
@@ -29,8 +29,8 @@ static int shutdown_participant(
 // Process data. Returns number of samples processed.
 unsigned int process_data(DroppedSamplesExampleDataReader *typed_reader)
 {
-    DroppedSamplesExampleSeq data_seq; // Sequence of received data
-    DDS_SampleInfoSeq info_seq; // Metadata associated with samples in data_seq
+    DroppedSamplesExampleSeq data_seq;  // Sequence of received data
+    DDS_SampleInfoSeq info_seq;  // Metadata associated with samples in data_seq
     unsigned int samples_read = 0;
 
     // Take available data from DataReader's queue
@@ -50,7 +50,7 @@ unsigned int process_data(DroppedSamplesExampleDataReader *typed_reader)
             std::cout << "Received data" << std::endl;
             DroppedSamplesExampleTypeSupport::print_data(&data_seq[i]);
             samples_read++;
-        } else { // This is an instance lifecycle event with no data payload.
+        } else {  // This is an instance lifecycle event with no data payload.
             std::cout << "Received instance state notification" << std::endl;
         }
     }
@@ -69,11 +69,11 @@ int run_subscriber_application(
 {
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
-    DDSTheParticipantFactory->create_participant(
-            domain_id,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL, // listener
-            DDS_STATUS_MASK_NONE);
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL,  // listener
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
@@ -84,7 +84,7 @@ int run_subscriber_application(
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
             DDS_SUBSCRIBER_QOS_DEFAULT,
-            NULL, // listener
+            NULL,  // listener
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         return shutdown_participant(
@@ -110,7 +110,7 @@ int run_subscriber_application(
             "Example DroppedSamplesExample",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
-            NULL, // listener
+            NULL,  // listener
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(
@@ -233,7 +233,7 @@ static int shutdown_participant(
         retcode = participant->delete_contained_entities();
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "delete_contained_entities error" << retcode
-                    << std::endl;
+                      << std::endl;
             status = EXIT_FAILURE;
         }
 
