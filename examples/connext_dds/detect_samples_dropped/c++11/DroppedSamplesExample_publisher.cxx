@@ -69,8 +69,8 @@ void run_publisher_application(
 
     DroppedSamplesExample data;
     for (unsigned int samples_written = 0;
-        !application::shutdown_requested && samples_written < sample_count;
-        samples_written++) {
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify the data to be written here
         data.x(static_cast<int16_t>(samples_written));
 

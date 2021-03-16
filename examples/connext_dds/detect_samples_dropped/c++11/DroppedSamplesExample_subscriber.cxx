@@ -97,7 +97,6 @@ void run_subscriber_application(
 
     rti::core::status::DataReaderCacheStatus status;
     while (!application::shutdown_requested && samples_read < sample_count) {
-
         std::cout << "DroppedSamplesExample subscriber sleeping up to 1 sec..."
                   << std::endl;
 

@@ -42,49 +42,49 @@ add and remove them dynamically from the domain.
 #include "DroppedSamplesExampleSupport.h"
 
 void DroppedSamplesExampleListener_on_requested_deadline_missed(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_requested_incompatible_qos(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_sample_rejected(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_liveliness_changed(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_sample_lost(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_subscription_matched(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void DroppedSamplesExampleListener_on_data_available(
-        void* listener_data,
+        void *listener_data,
         DDS_DataReader *reader)
 {
     DroppedSamplesExampleDataReader *DroppedSamplesExample_reader = NULL;

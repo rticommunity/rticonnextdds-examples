@@ -248,7 +248,6 @@ static int shutdown_participant(
 
 int main(int argc, char *argv[])
 {
-
     // Parse arguments and handle control-C
     ApplicationArguments arguments;
     parse_arguments(arguments, argc, argv);

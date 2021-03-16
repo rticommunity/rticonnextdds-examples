@@ -156,8 +156,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     // Main loop, write data
     for (unsigned int samples_written = 0;
-        !shutdown_requested && samples_written < sample_count;
-        ++samples_written) {
+         !shutdown_requested && samples_written < sample_count;
+         ++samples_written) {
         // Modify the data to be written here
         data->x = static_cast<DDS_Short>(samples_written);
 
@@ -184,8 +184,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // contained elements
     retcode = DroppedSamplesExampleTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "DroppedSamplesExampleTypeSupport::delete_data error " << retcode
-                  << std::endl;
+        std::cerr << "DroppedSamplesExampleTypeSupport::delete_data error "
+                  << retcode << std::endl;
     }
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
