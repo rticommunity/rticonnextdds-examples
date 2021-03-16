@@ -120,79 +120,70 @@ void ArgumentsParser::print_usage(const std::string &program_name)
     std::cout << "        --add-breakpoint:" << std::endl;
     std::cout << "            Format: --add-breakpoint <timestamp> [<label>]"
               << std::endl;
-    std::cout
-            << "            Description: the breakpoint to be added in the replay."
-            << std::endl
-            << "                The timestamp have to be provided in nanosecond "
-            << std::endl
-            << "                format. Label is optional."
-            << std::endl;
+    std::cout << "            Description: the breakpoint to be added in the "
+                 "replay."
+              << std::endl
+              << "                The timestamp have to be provided in "
+                 "nanosecond "
+              << std::endl
+              << "                format. Label is optional." << std::endl;
     std::cout << "        --remove-breakpoint:" << std::endl;
     std::cout << "            Format: --remove-breakpoint <timestamp>|<label>"
               << std::endl;
     std::cout
-            << "            Description: the breakpoint to be removed of the replay."
+            << "            Description: the breakpoint to be removed of the "
+               "replay."
             << std::endl
             << "                You can specify the breakpoint to be removed by"
             << std::endl
-            << "                timestamp or by label."
-            << std::endl;
+            << "                timestamp or by label." << std::endl;
     std::cout << "        --goto-breakpoint:" << std::endl;
     std::cout << "            Format: --goto-breakpoint <timestamp>|<label>"
               << std::endl;
-    std::cout
-            << "            Description: Jump to an existed breakpoint"
-            << std::endl
-            << "                You can jump by the breakpoint timestamp"
-            << std::endl
-            << "                or by the breakpoint label."
-            << std::endl;
+    std::cout << "            Description: Jump to an existed breakpoint"
+              << std::endl
+              << "                You can jump by the breakpoint timestamp"
+              << std::endl
+              << "                or by the breakpoint label." << std::endl;
     std::cout << "        --continue-seconds:" << std::endl;
     std::cout << "            Format: --continue-seconds <seconds>"
               << std::endl;
-    std::cout
-            << "            Description: To resume the replay after hit a "
-            << std::endl
-            << "                breakpoint. You can resume the replay for "
-            << std::endl
-            << "                a number of seconds. "
-            << std::endl;
+    std::cout << "            Description: To resume the replay after hit a "
+              << std::endl
+              << "                breakpoint. You can resume the replay for "
+              << std::endl
+              << "                a number of seconds. " << std::endl;
     std::cout << "        --continue-slices:" << std::endl;
-    std::cout << "            Format: --continue-slices <slices>"
-              << std::endl;
-    std::cout
-            << "            Description: To resume the replay after hit a "
-            << std::endl
-            << "                breakpoint. You can resume the replay for "
-            << std::endl
-            << "                a number of slices. "
-            << std::endl;
+    std::cout << "            Format: --continue-slices <slices>" << std::endl;
+    std::cout << "            Description: To resume the replay after hit a "
+              << std::endl
+              << "                breakpoint. You can resume the replay for "
+              << std::endl
+              << "                a number of slices. " << std::endl;
     std::cout << "        --current-timestamp:" << std::endl;
     std::cout << "            Format: --current-timestamp <timestamp_nanos>"
               << std::endl;
-    std::cout
-            << "            Description: To jump in time during the replay. "
-            << std::endl
-            << "                The timestamp have to be provided in nanosecond "
-            << std::endl
-            << "                format. "
-            << std::endl;
+    std::cout << "            Description: To jump in time during the replay. "
+              << std::endl
+              << "                The timestamp have to be provided in "
+                 "nanosecond "
+              << std::endl
+              << "                format. " << std::endl;
 }
 
 void ArgumentsParser::report_argument_error(
-        const std::string& program_name,
-        const std::string& tag,
-        const std::string& error)
+        const std::string &program_name,
+        const std::string &tag,
+        const std::string &error)
 {
     print_usage(program_name);
     std::stringstream error_stream;
-    error_stream << "Error: "<< error << tag << " parameter";
+    error_stream << "Error: " << error << tag << " parameter";
     throw std::runtime_error(error_stream.str());
 }
 
-ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
-    admin_domain_id_(0),
-    octet_kind_(OctetKind::NONE)
+ArgumentsParser::ArgumentsParser(int argc, char *argv[])
+        : admin_domain_id_(0), octet_kind_(OctetKind::NONE)
 {
     const std::string DOMAIN_ID_ARG_NAME("--domain-id");
     const std::string TIME_TAG_ARG_NAME("--time-tag");
@@ -260,7 +251,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                         current_arg += 2;
                     }
                 } else {
-                     // No name provided for the time tag
+                    // No name provided for the time tag
                     report_argument_error(
                             argv[0],
                             TIME_TAG_ARG_NAME,
@@ -313,7 +304,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                 octet_kind_ = OctetKind::BREAKPOINT;
                 if (current_arg + 2 == argc) {
                     // This parameter may use one or two arguments
-                     if (is_number(argv[current_arg + 1])) {
+                    if (is_number(argv[current_arg + 1])) {
                         br_params_.value().timestamp_nanos(
                                 parse_number(argv[current_arg + 1]));
                     } else {
@@ -321,10 +312,10 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                     }
                     current_arg += 2;
                 } else if (current_arg + 2 < argc) {
-                        br_params_.value().timestamp_nanos(
-                                parse_number(argv[current_arg + 1]));
-                        br_params_.label(std::string(argv[current_arg + 2]));
-                        current_arg += 3;
+                    br_params_.value().timestamp_nanos(
+                            parse_number(argv[current_arg + 1]));
+                    br_params_.label(std::string(argv[current_arg + 2]));
+                    current_arg += 3;
                 } else {
                     // No information for the breakpoint
                     report_argument_error(
@@ -346,7 +337,8 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[]) :
                             CONTINUE_SEC_ARG_NAME,
                             "no number of seconds provided for ");
                 }
-            } else if (CONTINUE_SLICE_ARG_NAME.compare(argv[current_arg]) == 0) {
+            } else if (
+                    CONTINUE_SLICE_ARG_NAME.compare(argv[current_arg]) == 0) {
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::CONTINUE;
                     continue_params_.value().slices(
@@ -408,7 +400,7 @@ uint32_t ArgumentsParser::admin_domain_id() const
     return admin_domain_id_;
 }
 
-const DataTagParams& ArgumentsParser::data_tag_params() const
+const DataTagParams &ArgumentsParser::data_tag_params() const
 {
     return data_tag_params_;
 }
@@ -418,17 +410,17 @@ const OctetKind ArgumentsParser::octet_kind() const
     return octet_kind_;
 }
 
-const BreakpointParams& ArgumentsParser::br_params() const
+const BreakpointParams &ArgumentsParser::br_params() const
 {
     return br_params_;
 }
 
-const ContinueParams& ArgumentsParser::continue_params() const
+const ContinueParams &ArgumentsParser::continue_params() const
 {
     return continue_params_;
 }
 
-const TimestampHolder& ArgumentsParser::timestamp_holder() const
+const TimestampHolder &ArgumentsParser::timestamp_holder() const
 {
     return timestamp_holder_;
 }
@@ -470,7 +462,7 @@ Application::Application(ArgumentsParser &args_parser)
 
     // Check if we have time tag parameters
     OctetKind kind = args_parser.octet_kind();
-    switch(kind) {
+    switch (kind) {
     case OctetKind::DATATAG:
         dds::topic::topic_type_support<DataTagParams>::to_cdr_buffer(
                 reinterpret_cast<std::vector<char> &>(

@@ -120,8 +120,12 @@ HelloMsg_publisher <your domain ID>
 To run the example, you just need to run the following command from the `build`
 folder (where the storage writer plugin shared library has been created).
 
+Also, you have to export your architecture. This way the script can use the
+specific target binary instead of using the standard host binary.
+
 ```bash
 cd build
+export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 <connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml
         -cfgName C_StorageExample -domainIdBase <your domain ID>
 ```
