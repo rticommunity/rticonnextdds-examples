@@ -68,6 +68,7 @@ mkdir build
 cd build
 cmake ..
 ```
+
 Once you have run CMake, you will find a number of new files in your build
 directory (the list of generated files will depend on the specific CMake
 Generator). To build the example, run CMake as follows:
