@@ -27,10 +27,10 @@ connextdds_add_example(
 
 target_link_libraries(flat_data_latency_publisher_cpp2
     PRIVATE
-    RTIConnextDDS::metp
+        RTIConnextDDS::metp
 )
 
 target_link_libraries(flat_data_latency_subscriber_cpp2
     PRIVATE
-    RTIConnextDDS::metp
+        RTIConnextDDS::metp
 )
