@@ -15,7 +15,7 @@ Before you submit the Pull Request, please be sure you are using a correct
 code style/format.
 
 -   If you submit changes into a `Python` script or you are adding a new
-one, be aware we will check the style/format with a automatic workflow. If you
+one, be aware we will check the style/format with an automatic workflow. If you
 are not sure you are using a correct style/format, install
 [black](https://pypi.org/project/black/) and execute it in your local machine
 to ensure the correctness of your code.
