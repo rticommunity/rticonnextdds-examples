@@ -188,7 +188,7 @@
     <qos_profile name="Publisher_Scenario_3" base_name="Base_Profile">
       <participant_qos>
         <discovery>
-          <initial_peers>rtps@$(PUBLIC_ADDRESS):7400</initial_peers>
+          <initial_peers>rtps@udpv4_wan://$(PUBLIC_ADDRESS):7400</initial_peers>
         </discovery>
       </participant_qos>
     </qos_profile>
@@ -196,7 +196,7 @@
     <qos_profile name="Subscriber_Scenario_3" base_name="Base_Profile">
       <participant_qos>
         <discovery>
-          <initial_peers>rtps@$(PUBLIC_ADDRESS):7400</initial_peers>
+          <initial_peers>rtps@udpv4_wan://$(PUBLIC_ADDRESS):7400</initial_peers>
         </discovery>
       </participant_qos>
     </qos_profile>

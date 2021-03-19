@@ -1,4 +1,4 @@
-# Example Code: DroppedSamplesExample Configuration
+# Example Code: Group Coherent Presentation
 
 ## Building the Example :wrench:
 
@@ -27,7 +27,7 @@ Studio solutions, you can specify the configuration mode to build as follows:
 cmake --build . --config Release|Debug
 ```
 
-Alternatively, you can use directly the generated infrastructure (e.g.,
+Alternatively, you can directly use the generated infrastructure (e.g.,
 Makefiles or Visual Studio Solutions) to build the example. If you generated
 Makefiles in the configuration process, run make to build the example. Likewise,
 if you generated a Visual Studio solution, open the solution and follow the
@@ -39,28 +39,23 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-On *Windows* systems run:
-
 ```sh
-DroppedSamplesExample_publisher.exe  <domain_id> <samples_to_send>
-DroppedSamplesExample_subscriber.exe  <domain_id> <sleep_periods>
+# Do not forget to replace the path separator to "\" on Windows.
+group_coherent_publisher.exe  -d <domain_id> -s <sets_to_send>
+group_coherent_subscriber.exe -d <domain_id>
 ```
 
-On *UNIX* systems run:
+The applications accept up to four arguments:
 
-```sh
-./DroppedSamplesExample_publisher  <domain_id> <samples_to_send>
-./DroppedSamplesExample_subscriber  <domain_id> <sleep_periods>
-```
+1.  -d: The `<domain_id>`. Both applications must use the same domain ID in
+    order to communicate. The default is 0.
 
-The applications accept up to two arguments:
+2.  -s: (Publisher only) How many coherent sets to publish before cleanly
+    shutting down.
 
-1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
+3.  -v: The logging verbosity to use (range 0-3, default: 1)
 
-2.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+4.  -x: Whether or not to get the QoS from xml (<0|1>, default: 1)
 
 ## Customizing the Build
 
