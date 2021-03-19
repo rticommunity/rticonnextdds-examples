@@ -22,4 +22,3 @@ Run the following command from the example directory:
 ```sh
 dotnet run
 ```
-
