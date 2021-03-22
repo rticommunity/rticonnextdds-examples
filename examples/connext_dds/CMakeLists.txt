@@ -120,6 +120,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++03")
 
+# detect_samples_dropped
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++11")
+
 # dynamic_data_access_union_discriminator
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c")
@@ -127,6 +132,8 @@ add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++")
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++03")
+add_subdirectory(
+    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++11")
 
 # dynamic_data_nested_structs
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c")
@@ -149,6 +156,15 @@ add_subdirectory(
 
 # flat_data_api
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++11")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++98")
+
+# flat_data_latency
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_latency/c++11")
+
+# fragmented_data_statistics
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++11")
 
 # get_publishers
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c")
@@ -158,6 +174,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++03")
 # high_priority_first_flow_controller
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/high_priority_first_flow_controller/c++")
+
+# instance_statistics
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++11")
 
 # keyed_data
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data/c")
@@ -177,12 +198,17 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++03")
 
+# logging_config
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++11")
+
 # multichannel
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++03")
 
-# network capture
+# network_capture
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
@@ -214,6 +240,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
+
+# printing_qos
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++11")
 
 # property_qos
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
@@ -254,12 +285,12 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
 
-# xml application
+# xml_application
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
 
 # compression
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
 
-# real time wan transport
+# real_time_wan_transport
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
 
