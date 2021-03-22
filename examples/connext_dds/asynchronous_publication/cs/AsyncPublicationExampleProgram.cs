@@ -1,18 +1,19 @@
 /*
- * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
- * RTI grants Licensee a license to use, modify, compile, and create derivative
- * works of the software solely for use with RTI Connext DDS. Licensee may
- * redistribute copies of the software provided that all such copies are subject
- * to this license. The software is provided "as is", with no warranty of any
- * type, including any warranty for fitness for any purpose. RTI is under no
- * obligation to maintain or support the software. RTI shall not be liable for
- * any incidental or consequential damages arising out of the use or inability
- * to use the software.
- */
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+* RTI grants Licensee a license to use, modify, compile, and create derivative
+* works of the software solely for use with RTI Connext DDS. Licensee may
+* redistribute copies of the software provided that all such copies are subject
+* to this license. The software is provided "as is", with no warranty of any
+* type, including any warranty for fitness for any purpose. RTI is under no
+* obligation to maintain or support the software. RTI shall not be liable for
+* any incidental or consequential damages arising out of the use or inability
+* to use the software.
+*/
 
 using System;
+using System.Threading;
 
-namespace PartitionsExample
+namespace AsyncPublicationExample
 {
     /// <summary>
     /// Runs HelloWorldPublisher or HelloWorldSubscriber.
@@ -30,17 +31,31 @@ namespace PartitionsExample
                 return;
             }
 
+            // Set up signal handler to Dispose the DDS entities
+            var cancellationSource = new CancellationTokenSource();
+            Console.CancelKeyPress += (_, eventArgs) =>
+            {
+                Console.WriteLine("Shutting down...");
+                eventArgs.Cancel = true;
+                cancellationSource.Cancel();
+            };
+
+
             if (arguments.Pub)
             {
                 Console.WriteLine($"Running HelloWorldPublisher on domain {arguments.Domain}");
-                HelloWorldPublisher.RunPublisher(arguments.Domain, arguments.SampleCount);
+                HelloWorldPublisher.RunPublisher(
+                    arguments.Domain,
+                    arguments.SampleCount,
+                    cancellationSource.Token);
             }
             else
             {
                 Console.WriteLine($"Running HelloWorldSubscriber on domain {arguments.Domain}");
-                HelloWorldSubscriber
-                    .RunSubscriber(arguments.Domain, arguments.SampleCount)
-                    .Wait();
+                HelloWorldSubscriber.RunSubscriber(
+                    arguments.Domain,
+                    arguments.SampleCount,
+                    cancellationSource.Token).Wait();
             }
         }
 
@@ -61,24 +76,24 @@ namespace PartitionsExample
             {
                 new System.CommandLine.Option<bool>(
                     new string[] { "--pub", "-p" },
-                description: "Whether to run the publisher application"),
+                    description: "Whether to run the publisher application"),
                 new System.CommandLine.Option<bool>(
                     new string[] { "--sub", "-s" },
-                description: "Whether to run the subscriber application"),
+                    description: "Whether to run the subscriber application"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--domain", "-d" },
-                getDefaultValue: () => 0,
-                description: "Domain ID used to create the DomainParticipant"),
+                    getDefaultValue: () => 0,
+                    description: "Domain ID used to create the DomainParticipant"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--sample-count", "-c" },
-                getDefaultValue: () => int.MaxValue,
-                description: "Number of samples to publish or subscribe to"),
+                    getDefaultValue: () => int.MaxValue,
+                    description: "Number of samples to publish or subscribe to"),
                 new System.CommandLine.Option<bool>(
                     "--version",
                     description: "Displays the RTI Connext version"),
-                };
+            };
 
-            rootCommand.Description = "Partitions Example";
+            rootCommand.Description = "Asynchronous Publication Example";
 
             Arguments result = null;
             rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create(
@@ -115,4 +130,4 @@ namespace PartitionsExample
             return result;
         }
     }
-} // namespace PartitionsExample
+} // namespace AsyncPublicationExample

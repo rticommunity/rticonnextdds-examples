@@ -66,11 +66,15 @@ void write_data(DynamicData &sample)
     // Write a new struct for each member of the sequence.
     for (int i = 0; i < MAX_SEQ_LEN; i++) {
         // To access the elements of a sequence it is necessary
-        // to use their id. This parameter allows accessing to every element
+        // to use their id. This parameter allows accessing every element
         // of the sequence using a 1-based index.
+        //
+        // The sequence is automatically resized when the index
+        // is larger than the current lenght.
+        //
         // There are two ways of doing this: loan API and value API.
-        // See the dynamic_data_nested_structs for further details about the
-        // differences between these two APIs.
+        // See the dynamic_data_nested_structs example for further details
+        // about the differences between these two APIs.
 
         // **Loan**:
         // Get a reference to the i+1 element (1-based index).
