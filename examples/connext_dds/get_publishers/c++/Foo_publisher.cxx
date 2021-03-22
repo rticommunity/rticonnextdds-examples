@@ -86,6 +86,7 @@ extern "C" int publisher_main(int domainId, int sample_count)
 {
     DDSDomainParticipant *participant = NULL;
     DDSPublisher *publisher = NULL, *publisher2 = NULL;
+    int count = 0;
     DDSPublisherSeq publisherSeq;
     DDS_ReturnCode_t retcode;
 
