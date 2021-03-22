@@ -17,7 +17,7 @@
         <transport_builtin>
           <mask>UDPv4_WAN</mask>
           <udpv4_wan>
-            <binding_ping_period>400000</binding_ping_period>
+            <binding_ping_period>1000</binding_ping_period>
           </udpv4_wan>
         </transport_builtin>
         <discovery_config>
