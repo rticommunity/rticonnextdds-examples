@@ -7,8 +7,6 @@ or check out the
 [Group Coherent Presentation example](../../group_coherent_presentation/cs/),
 which is available in the new API.
 
-
-
 ## Building C# Example
 
 Before compiling or running the example, make sure the environment variable
