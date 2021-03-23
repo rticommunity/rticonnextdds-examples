@@ -3,7 +3,7 @@
 ## How to request a feature or enhacement
 
 If there is a new feature or enhacement that you would like to be added to
-the examples, feel free to open a issue in this repository and we will take
+the examples, feel free to open an issue in this repository and we will take
 a look of your issue as soon as possible. Please, do not forget to use a
 title and clear description about your feature or enhacement you would like
 us to include.
