@@ -1,98 +1,76 @@
 # Example code: Using Dynamic Data to publish and subscribe
 
-:warning: **Note**: This example uses the **Legacy .NET API**. Until it is
-updated, you can learn more about the **new Connext DDS C# API** in the
+If you haven't used the RTI Connext C# API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
-## Building C# Example
+## Building the Example :wrench:
 
-Before compiling or running the example, make sure the environment variable
-`NDDSHOME` is set to the directory where your version of *RTI Connext* is
-installed.
-
-Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2010*). The *RTI Connext Core Libraries and Utilities
-Getting Started Guide* describes this process in detail. Follow the same
-procedure to generate the code and build the examples. **Do not use the
-`-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2010* run:
+First use **rtiddsgen** to generate the C# type and project files from
+`ShapeType.idl`.
 
 ```sh
-rtiddsgen -language C# -example i86Win32VS2010 -ppDisable Shapes.idl
+<install dir>/bin/rtiddsgen -language c# -platform net5 -create typefiles -create makefiles ShapeType.idl
 ```
 
-**Note**: If you are using *Visual Studio Express* add the `-express` option to
-the command, i.e.,
+Where `<install dir>` refers to your RTI Connext installation.
 
-```sh
-rtiddsgen -language C# -example i86Win32VS2010 -express -ppDisable Shapes.idl
-```
-
-You will see messages that look like this:
+You will see messages that look like:
 
 ```plaintext
-File C:\...\cs\Shapes_subscriber.cs already exists and will not
-be replaced with updated content. If you would like to get a new file with the
-new content, either remove this file or supply -replace option.
-File C:\...\cs\Shapes_publisher.cs already exists and will not
-be replaced with updated content. If you would like to get a new file with the
-new content, either remove this file or supply -replace option.
+WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
+overwritten : /some/path/PartitionsExample.csproj
 ```
 
-This is normal and is only informing you that the subscriber/publisher code has
-not been replaced, which is fine since all the source files for the example are
-already provided.
+This is normal and is only informing you that some of the files that
+**rtiddsgen** can generate were already available in the repository.
 
-*rtiddsgen* generates two solutions for *Visual Studio C++* and *C#*, that you
-will use to build the types and the C# example, respectively. First open
-*Shapes_type-dotnet4.0.sln* and build the solution. Once you've done that, open
-*Shapes_example-csharp.sln* and build the C# example.
+Generating code is not necessary to use a DynamicType and
+DynamicData, but this example demonstrates several ways to obtain a DynamicType,
+including from the generated code.
 
-## Running C# Example
-
-### Publisher/Subscriber in command prompt
-
-In two separate command prompt windows for the publisher and subscriber.
-
-On *Windows* systems run:
+Then build it using the dotnet CLI:
 
 ```sh
-bin\<build_type>-VS2010\Shapes_publisher.exe <domain_id> <sample #>
-bin\<build_type>-VS2010\Shapes_subscriber.exe <domain_id> <sample #>
+dotnet build
 ```
 
-The applications accept up to two arguments:
+The project file is configured to build a .NET 5 application. To build for
+a different target, change `<TargetFramework>net5.0</TargetFramework>` in
+the `.csproj` file.
 
-1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
+## Running the Example
 
-2.  How long the examples should run, measured in samples. A value of '0'
-    instructs the application to run forever; this is the default.
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
-### Interconnection between this example and *Shapes Demo* tool
+```sh
+dotnet run -- --pub
+dotnet run -- --sub
+```
 
-First of all, remember that you have to work in the same domain both in *Shape
-Demo* and your command prompt.
+You can change the way the DynamicType is created with the `--type-source`
+argument, for example:
 
-1.  Publish using this example and subscribe using *Shapes Demo*:
+```sh
+dotnet run -- --pub --type-source idl
+```
 
-    1.  Open a new *Shapes Demo* window.
+The following type sources are available:
+* `build`, to build it in code (default)
+* `extended`, to build a version of the type with extra fields
+* `idl`, to obtain it from the code generated from IDL by rtiddsgen
+* `xml`, to load it dynamically from `ShapeType.xml`. To generate this file,
+run the following command:
 
-    2.  Create a new Square subscriber with default options.
+    ```sh
+    <install dir>/bin/rtiddsgen -convertToXml ShapeType.idl
+    ```
 
-    3.  Run the publisher in a new command prompt like explained before (use the
-        `<sample #>` = 0 option to run an indefinitely).
+The implementation of each of these options is in `ShapeTypeHelper.cs`.
 
-        You will see a Square moving from left to right. Also, its size will
-        increase until it reaches a maximum size. When the max size or the end
-        of the canvas are reached, it restarts.
+For the full list of arguments:
 
-2.  Subscribe using this example and publish using *Shapes Demo*:
-
-    1.  Open a new command prompt and create a new subscriber like explained
-        before.
-
-    1.  Create a publisher (Square) in *Shapes Demo*.
-
-        You will see the full description of the data published by *Shapes Demo*
-        in your command prompt.
+```sh
+dotnet run -- -h
+```
