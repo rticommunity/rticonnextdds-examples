@@ -61,12 +61,12 @@ The following type sources are available:
 -   `build`, to build it in code (default)
 -   `extended`, to build a version of the type with extra fields
 -   `idl`, to obtain it from the code generated from IDL by rtiddsgen
--    `xml`, to load it dynamically from `ShapeType.xml`. To generate this file,
+-    `xml`, to load it dynamically from `Shapes.xml`. To generate this file,
 run the following command:
 
-    ```sh
-    <install dir>/bin/rtiddsgen -convertToXml ShapeType.idl
-    ```
+```sh
+<install dir>/bin/rtiddsgen -convertToXml Shapes.idl
+```
 
 The implementation of each of these options is in `ShapeTypeHelper.cs`.
 
