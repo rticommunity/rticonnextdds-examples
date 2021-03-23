@@ -87,11 +87,11 @@ namespace DynamicDataExample
                 .AddMember(new EnumMember("VERTICAL_HATCH_FILL", ordinal: 3))
                 .Create();
 
-            var startingType = GetShapeTypeFromIdlDefinition();
+            var startingType = (StructType) GetShapeTypeFromIdlDefinition();
 
             // Copies the definition of startingType and adds two extra
             // members, creating a new type
-            return factory.BuildStruct((StructType) startingType)
+            return factory.BuildStruct(startingType)
                 .AddMember(new StructMember("fillKind", shapeFillKind))
                 .AddMember(new StructMember("angle", factory.GetPrimitiveType<float>()))
                 .Create();
