@@ -171,6 +171,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++03")
 
+# group_coherent_presentation
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/group_coherent_presentation/c++11")
+
 # high_priority_first_flow_controller
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/high_priority_first_flow_controller/c++")
