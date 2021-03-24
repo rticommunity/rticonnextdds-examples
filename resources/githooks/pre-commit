@@ -34,7 +34,7 @@ def main():
     root = script_path.parents[2]
     os.unsetenv("GIT_DIR")
     formater = root.joinpath("resources", "ci_cd", "linux_format.py")
-    os.system(str(formater) + " -a")
+    os.system(f"{str(formater)} -a")
 
 
 if __name__ == "__main__":
