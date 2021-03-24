@@ -957,9 +957,11 @@ function(create_connext_imported_target)
 
     if(WIN32
         AND NOT BUILD_SHARED_LIBS
-        AND ${_CONNEXT_TARGET} STREQUAL "routing_service_c")
+        AND ${_CONNEXT_TARGET} STREQUAL "routing_service_c"
+        AND RTICONNEXTDDS_VERSION VERSION_LESS "6.0.0"
+    )
         # ROUTING-276: Routing Service is not available as a static library
-        # for Windows
+        # for Windows until 6.0.0
         return()
     endif()
 
@@ -1293,7 +1295,9 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS
         set(RTIConnextDDS_distributed_logger_FOUND TRUE)
 
         if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND
-            CMAKE_COMPILER_VERSION VERSION_GREATER "4.6.0")
+            CMAKE_COMPILER_VERSION VERSION_GREATER "4.6.0" AND
+            RTICONNEXTDDS_VERSION VERSION_LESS "6.1.0"
+        )
            set(CONNEXTDDS_EXTERNAL_LIBS
                -Wl,--no-as-needed  ${CONNEXTDDS_EXTERNAL_LIBS})
         endif()
@@ -1361,7 +1365,7 @@ if(routing_service IN_LIST RTIConnextDDS_FIND_COMPONENTS
         "routing_service_host"
         "routing_service"
     )
-    if(RTIConnextDDS_FIND_VERSION VERSION_GREATER 5.3.0.8)
+    if(RTICONNEXTDDS_VERSION VERSION_GREATER 5.3.0.8)
         list(APPEND rti_versions_field_names_host
             "routing_service_sdk_jars"
         )
@@ -1411,9 +1415,10 @@ if(routing_service IN_LIST RTIConnextDDS_FIND_COMPONENTS
     get_all_library_variables("${routing_service_libs}" "ROUTING_SERVICE_API")
 
     if(WIN32 AND ROUTING_SERVICE_API_RELEASE_STATIC AND
-            ROUTING_SERVICE_API_DEBUG_STATIC)
+        ROUTING_SERVICE_API_DEBUG_STATIC AND
+        RTICONNEXTDDS_VERSION VERSION_LESS "6.0.0")
         # ROUTING-276: Routing Service is not available as a static library
-        # for Windows
+        # for Windows until 6.0.0
         set(ROUTING_SERVICE_API_FOUND TRUE)
     endif()
 
