@@ -131,8 +131,6 @@ add_subdirectory(
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++")
 add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++03")
-add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++11")
 
 # dynamic_data_nested_structs
