@@ -1184,18 +1184,20 @@ list(APPEND rti_versions_field_names_target
     "target_libraries"
 )
 
-# Define CONNEXTDDS_INCLUDE_DIRS
-find_path(CONNEXTDDS_INCLUDE_DIRS
+find_path(CONNEXTDDS_BASE_INCLUDE_DIRS
     NAMES
         "ndds_c.h"
     PATHS
         "${CONNEXTDDS_DIR}/include/ndds"
 )
 
-set(CONNEXTDDS_INCLUDE_DIRS
+# Define CONNEXTDDS_INCLUDE_DIRS
+set(CONNEXTDDS_INCLUDE_DIRS)
+
+list(APPEND CONNEXTDDS_INCLUDE_DIRS
     "${CONNEXTDDS_DIR}/include"
-    ${CONNEXTDDS_INCLUDE_DIRS}
-    "${CONNEXTDDS_INCLUDE_DIRS}/hpp"
+    ${CONNEXTDDS_BASE_INCLUDE_DIRS}
+    "${CONNEXTDDS_BASE_INCLUDE_DIRS}/hpp"
 )
 
 # Find all flavors of nddscore
@@ -1474,9 +1476,9 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
         # Add OpenSSL include directories to the list of
         # CONNEXTDDS_INCLUDE_DIRS
-        set(CONNEXTDDS_INCLUDE_DIRS
+        list(APPEND CONNEXTDDS_INCLUDE_DIRS
             "${OPENSSL_INCLUDE_DIR}"
-            ${CONNEXTDDS_INCLUDE_DIRS})
+        )
 
         # Add OpenSSL libraries to the list of CONNEXTDDS_EXTERNAL_LIBS
         set(CONNEXTDDS_EXTERNAL_LIBS
