@@ -33,21 +33,14 @@ namespace QosPrintingExample
             if (arguments.Pub)
             {
                 Console.WriteLine($"Running HelloWorldPublisher on domain {arguments.Domain}");
-                HelloWorldPublisher.RunPublisher(arguments.Domain, arguments.SampleCount);
-            }
-            else
-            {
-                Console.WriteLine($"Running HelloWorldSubscriber on domain {arguments.Domain}");
-                HelloWorldSubscriber.RunSubscriber(arguments.Domain, arguments.SampleCount);
+                HelloWorldPublisher.RunPublisher(arguments.Domain);
             }
         }
 
         private class Arguments
         {
             public bool Pub { get; set; }
-            public bool Sub { get; set; }
             public int Domain { get; set; }
-            public int SampleCount { get; set; } = int.MaxValue;
             public bool Version { get; set; }
         }
 
@@ -60,23 +53,16 @@ namespace QosPrintingExample
                 new System.CommandLine.Option<bool>(
                     new string[] { "--pub", "-p" },
                 description: "Whether to run the publisher application"),
-                new System.CommandLine.Option<bool>(
-                    new string[] { "--sub", "-s" },
-                description: "Whether to run the subscriber application"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--domain", "-d" },
                 getDefaultValue: () => 0,
                 description: "Domain ID used to create the DomainParticipant"),
-                new System.CommandLine.Option<int>(
-                    new string[] { "--sample-count", "-c" },
-                getDefaultValue: () => int.MaxValue,
-                description: "Number of samples to publish or subscribe to"),
                 new System.CommandLine.Option<bool>(
                     "--version",
                     description: "Displays the RTI Connext version"),
                 };
 
-            rootCommand.Description = "Example RTI Connext Publisher and Subscriber."
+            rootCommand.Description = "Example RTI Connext Publisher."
             + "\nSee README.txt for more information";
 
             Arguments result = null;
@@ -96,19 +82,14 @@ namespace QosPrintingExample
                 return null;
             }
 
-            if (!result.Pub && !result.Sub)
+            if (!result.Pub)
             {
                 Console.WriteLine(rootCommand.Description);
-                Console.WriteLine("\nYou can specify --pub or --sub to choose which application to run (or -h for help).");
-                Console.WriteLine("For example:\n    dotnet run -- --pub\n");
-                Console.Write("Which one do you want to run? Enter 'pub' or 'sub' > ");
+                Console.WriteLine("\nThis example only contains a publisher application.\n");
+                Console.WriteLine("It can be run as:\n    dotnet run -- --pub\n");
+                Console.Write("Would you like to run the Publisher now? (y/n) > ");
                 var choice = Console.ReadLine();
-                result.Pub = choice.StartsWith("p", StringComparison.OrdinalIgnoreCase);
-            }
-
-            if (result.SampleCount < 0)
-            {
-                result.SampleCount = int.MaxValue;
+                result.Pub = choice.StartsWith("y", StringComparison.OrdinalIgnoreCase);
             }
 
             return result;

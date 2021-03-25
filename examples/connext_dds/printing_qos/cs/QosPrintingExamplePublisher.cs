@@ -16,6 +16,7 @@ using Rti.Dds.Core;
 using Rti.Dds.Domain;
 using Rti.Dds.Publication;
 using Rti.Dds.Topics;
+using Omg.Dds.Core.Policy;
 
 namespace QosPrintingExample
 {
@@ -27,7 +28,7 @@ namespace QosPrintingExample
         /// <summary>
         /// Runs the publisher example.
         /// </summary>
-        public static void RunPublisher(int domainId, int sampleCount)
+        public static void RunPublisher(int domainId)
         {
             // A DomainParticipant allows an application to begin communicating in
             // a DDS domain. Typically there is one DomainParticipant per application.
@@ -47,43 +48,48 @@ namespace QosPrintingExample
 
             // This DataWriter will write data on Topic "Example HelloWorld"
             // DataWriter QoS is configured in USER_QOS_PROFILES.xml
-            DataWriter<HelloWorld> writer = publisher.CreateDataWriter(topic);
+            DataWriterQos volatileWriterQos = DataWriterQos.Default.WithDurability(
+                policy => policy.Kind = DurabilityKind.Volatile);
+            DataWriter<HelloWorld> volatileWriter = publisher.CreateDataWriter(topic, volatileWriterQos);
+            DataWriterQos durableWriterQos = DataWriterQos.Default.WithDurability(
+                policy => policy.Kind = DurabilityKind.TransientLocal);
+            DataWriter<HelloWorld> durableWriter = publisher.CreateDataWriter(topic, durableWriterQos);
 
             // --- QosPrintingExample ---
 
             // Qos objects override ToString so can be printed directly
+            Console.WriteLine("Printing TopicQos to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
             Console.WriteLine(topic.Qos);
 
             // The output can be configured using QosPrintFormat
             QosPrintFormat format = new QosPrintFormat
             {
-                Indent = 1
+                Indent = 1,
+                IsStandalone = true
             };
-            Console.WriteLine(writer.Qos.ToString(format));
+            Console.WriteLine("Printing WriterQos with format to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(durableWriter.Qos.ToString(format));
 
             // By default, only the differences with respect to the documented
             // QoS default (the default values as stated in the API reference)
             // are printed. This behavior can be overridden by passing another
             // QoS object to use as the baseQos to the ToString
-            var writerQos = writer.Qos.WithPublicationName(n => n.Name = "Other QoS");
-            Console.WriteLine(writer.Qos.ToString(baseQos: writerQos));
+            Console.WriteLine("Printing WriterQos with respect to another WriterQos object to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(durableWriter.Qos.ToString(baseQos: volatileWriter.Qos));
+
             // Alternatively, pass QosPrintAll.Value as the baseQos to print the entire QoS object
-            Console.WriteLine(writer.Qos.ToString(baseQos: QosPrintAll.Value));
+            Console.WriteLine("Printing all contents of WriterQos to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(durableWriter.Qos.ToString(baseQos: QosPrintAll.Value));
 
             // --- QosPrintingExample ---
-
-            var sample = new HelloWorld();
-            for (int count = 0; count < sampleCount; count++)
-            {
-                // Modify the data to be sent here
-                sample.x =  (short) count;
-
-                Console.WriteLine($"Writing HelloWorld, count {count}");
-
-                writer.Write(sample);
-
-                Thread.Sleep(1000);
-            }
         }
     }
 } // namespace QosPrintingExample
