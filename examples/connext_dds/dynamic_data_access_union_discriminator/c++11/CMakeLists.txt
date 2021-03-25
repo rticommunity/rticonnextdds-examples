@@ -20,21 +20,21 @@ if(NOT RTIConnextDDS_FOUND)
     )
 endif()
 
-add_executable(dynamic_data_union_example_cxx2
+add_executable(dynamic_data_union_example_cxx2_1
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_union_example.cxx"
 )
 
-target_link_libraries(dynamic_data_union_example_cxx2
+target_link_libraries(dynamic_data_union_example_cxx2_1
     PRIVATE
         RTIConnextDDS::cpp2_api
 )
 
-set_target_properties(dynamic_data_union_example_cxx2
+set_target_properties(dynamic_data_union_example_cxx2_1
     PROPERTIES
         OUTPUT_NAME "dynamic_data_union_example")
 
 if(CMAKE_SYSTEM_NAME MATCHES "Linux" AND CMAKE_CXX_COMPILER_ID MATCHES "GNU")
-    set_target_properties(dynamic_data_union_example_cxx2
+    set_target_properties(dynamic_data_union_example_cxx2_1
         PROPERTIES
             LINK_FLAGS -Wl,--no-as-needed)
 endif()
