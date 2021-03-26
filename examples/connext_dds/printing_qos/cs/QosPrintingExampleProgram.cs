@@ -11,88 +11,67 @@
 */
 
 using System;
+using Rti.Dds.Core;
+using Rti.Dds.Domain;
+using Rti.Dds.Publication;
+using Rti.Dds.Topics;
+using Omg.Dds.Core.Policy;
 
 namespace QosPrintingExample
 {
     /// <summary>
-    /// Runs HelloWorldPublisher or HelloWorldSubscriber.
+    /// Runs the QosPrintingExample
     /// </summary>
     public static class HelloWorldProgram
     {
         /// <summary>
-        /// The Main function runs the publisher or the subscriber.
+        /// The Main function runs the Qos printing example.
         /// </summary>
         public static void Main(string[] args)
         {
-            var arguments = ParseArguments(args);
-            if (arguments == null)
+            using DomainParticipant participant = DomainParticipantFactory.Instance.CreateParticipant(0);
+            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example QosPrintingExample_HelloWorld");
+            Publisher publisher = participant.CreatePublisher();
+
+            // In order to demonstrate a possible use-case for the Qos printing APIs
+            // we create a DataWriter and explicitly supply the Qos. We provide
+            // a Qos which differs from that defined in USER_QOS_PROFILES.xml.
+            // In the XML file the DataWriterQos is defined to be have a durability
+            // of Volatile. Here, we override this, supplying a TransientLocal
+            // Durability Qos policy.
+            DataWriterQos writerQos = DataWriterQos.Default.WithDurability(
+                policy => policy.Kind = DurabilityKind.TransientLocal);
+            DataWriter<HelloWorld> writer = publisher.CreateDataWriter(topic, writerQos);
+
+            // There is a defined precedence for Qos, Qos policies set in code
+            // always take precedence over those defined in XML files. Using the
+            // Qos printing APIs it is possible to demonstrate this.
+            Console.WriteLine("Printing DataWriterQos to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(writer.Qos);
+
+            // The output can be configured using QosPrintFormat
+            QosPrintFormat format = new QosPrintFormat
             {
-                return;
-            }
+                Indent = 1,
+                IsStandalone = true
+            };
+            Console.WriteLine("Printing formatted DataWriterQos to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(writer.Qos.ToString(format));
 
-            if (arguments.Pub)
-            {
-                Console.WriteLine($"Running HelloWorldPublisher on domain {arguments.Domain}");
-                HelloWorldPublisher.RunPublisher(arguments.Domain);
-            }
-        }
-
-        private class Arguments
-        {
-            public bool Pub { get; set; }
-            public int Domain { get; set; }
-            public bool Version { get; set; }
-        }
-
-        // Uses the System.CommandLine package to parse the program arguments.
-        private static Arguments ParseArguments(string[] args)
-        {
-            // Create a root command with some options
-            var rootCommand = new System.CommandLine.RootCommand
-            {
-                new System.CommandLine.Option<bool>(
-                    new string[] { "--pub", "-p" },
-                description: "Whether to run the publisher application"),
-                new System.CommandLine.Option<int>(
-                    new string[] { "--domain", "-d" },
-                getDefaultValue: () => 0,
-                description: "Domain ID used to create the DomainParticipant"),
-                new System.CommandLine.Option<bool>(
-                    "--version",
-                    description: "Displays the RTI Connext version"),
-                };
-
-            rootCommand.Description = "Example RTI Connext Publisher."
-            + "\nSee README.txt for more information";
-
-            Arguments result = null;
-            rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create(
-                (Arguments arguments) => result = arguments);
-
-            System.CommandLine.CommandExtensions.Invoke(rootCommand, args);
-
-            if (result == null)
-            {
-                return null;
-            }
-
-            if (result.Version)
-            {
-                Console.WriteLine(Rti.Dds.Core.ServiceEnvironment.Instance.Version);
-                return null;
-            }
-
-            if (!result.Pub)
-            {
-                Console.WriteLine(rootCommand.Description);
-                Console.WriteLine("\nThis example only contains a publisher application.\n");
-                Console.WriteLine("It can be run as:\n    dotnet run -- --pub\n");
-                Console.Write("Would you like to run the Publisher now? (y/n) > ");
-                var choice = Console.ReadLine();
-                result.Pub = choice.StartsWith("y", StringComparison.OrdinalIgnoreCase);
-            }
-
-            return result;
+            // By default, only the differences with respect to the documented
+            // QoS default (the default values as stated in the API reference)
+            // are printed. This behavior can be overridden by passing another
+            // QoS object to use as the baseQos to the ToString, alternatively
+            // the sentinel value QosPrintAll.Value can be provided, which will
+            // printing the entire Qos object (not just the differences).
+            Console.WriteLine("Printing entire DataWriterQos object to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(writer.Qos.ToString(baseQos: QosPrintAll.Value));
         }
     }
 } // namespace QosPrintingExample

@@ -67,6 +67,14 @@ XML" chapter in the RTI Connext DDS Core Libraries User's Manual.
                 <publication_name>
                     <name>QosPrintingExampleDataWriter</name>
                 </publication_name>
+                <!--
+                    For the QoS printing example, We set VOLATILE durability
+                    in the QoS file and TRANSIENT_LOCAL durability programatically in
+                    QosPrintingExampleProgram.cs.
+                -->
+                <durability>
+                    <kind>VOLATILE_DURABILITY_QOS</kind>
+                </durability>
             </datawriter_qos>
 
             <!-- QoS used to configure the data reader created in the example code -->                
