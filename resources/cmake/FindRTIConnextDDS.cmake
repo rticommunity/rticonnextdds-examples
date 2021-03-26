@@ -656,10 +656,14 @@ if(NOT CONNEXTDDS_ARCH)
             "${CONNEXTDDS_DIR}/lib/*")
 
         foreach(architecture_name ${architectures_installed})
-            # Because the lib folder contains both target libraries and
-            # Java JAR files, here we exclude the "java" in our algorithm
-            # to guess the appropriate CONNEXTDDS_ARCH variable.
             if(architecture_name STREQUAL "java")
+                # Because the lib folder contains both target libraries and
+                # Java JAR files, here we exclude the "java" in our algorithm
+                # to guess the appropriate CONNEXTDDS_ARCH variable.
+                continue()
+            elseif(NOT "${architecture_name}" MATCHES "^[A-Za-z0-9]")
+                # Sometimes, some hidden or temporary folders/files are
+                # created. We skip them
                 continue()
             elseif("${architecture_name}" MATCHES ${CMAKE_HOST_SYSTEM_NAME})
                     if(CMAKE_HOST_SYSTEM_NAME MATCHES "Darwin")
