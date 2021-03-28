@@ -22,6 +22,10 @@ authorization string, we allow all *DataReaders* from that *Participant* read
 access. Otherwise, we check the *USER_DATA* from individual *DataReaders* to see
 if it is authorized.
 
+**Note**: RTI Connext DDS provides other secure authentication mechanisms.
+This simple example is only intended to show how to access DDS discovery
+information.
+
 ### Publisher
 
 This publisher example shows how to attach listeners to *Built-in Topics*. Each
