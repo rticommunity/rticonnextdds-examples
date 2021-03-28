@@ -13,25 +13,11 @@ First use **rtiddsgen** to generate the C# type and project files from
 
 Where `<install dir>` refers to your RTI Connext installation.
 
-You will see messages that look like:
-
-```plaintext
-WARN com.rti.ndds.nddsgen.emitters.FileEmitter File exists and will not be
-overwritten : /some/path/PartitionsExample.csproj
-```
-
-This is normal and is only informing you that some of the files that **rtiddsgen**
-can generate were already available in the repository.
-
 Then build it using the dotnet CLI:
 
 ```sh
 dotnet build
 ```
-
-The project file is configured to build a .NET 5 application. To build for
-a different target, change `<TargetFramework>net5.0</TargetFramework>` in
-the `.csproj` file.
 
 ## Running C# Example
 
@@ -47,9 +33,9 @@ The application acceps several arguments:
 1. `--pub` or `--sub` run the publisher or subscriber application.
 
 2. `--password <value>` specifies the password. In the publisher application
-   this is the required password to allow communication with the publisher. In
-   the subscriber application this is the password use to authenticate with
-   the publisher.
+   this is the required password to allow subscribers to receive the published
+   data. In the subscriber application this is the password used to authenticate
+   with the publisher.
 
 For the full list of arguments:
 
