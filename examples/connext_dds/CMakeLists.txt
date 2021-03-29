@@ -219,9 +219,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++03")
 
 # logging_config
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++11")
+endif()
 
 # multichannel
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c")
