@@ -1497,6 +1497,11 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
         return 0;
     }
 
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
+        return 0;
+    }
+
     sendResourceStruct = (struct NDDS_Transport_SendResource_FILE *) calloc(
             1,
             sizeof(*sendResourceStruct));
@@ -1543,6 +1548,11 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
 
     /* multicast not supported */
     if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
+        return 0;
+    }
+
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
         return 0;
     }
 
