@@ -10,9 +10,12 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake"
 )
 
-find_package(RTIConnextDDS
+set(REQUIRED_VERSION
     "6.1.0"
-    REQUIRED
+)
+
+find_package(RTIConnextDDS
+    "6.0.0"
     COMPONENTS
         core
 )
@@ -64,7 +67,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++03")
 
 # build_systems
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build_systems/cmake")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build_systems/cmake")
+endif()
 
 # builtin_qos_profiles
 if(BUILD_SHARED_LIBS)
@@ -121,28 +126,36 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++03")
 
 # detect_samples_dropped
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++11")
+endif()
 
 # dynamic_data_access_union_discriminator
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory(
+        "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c")
+    add_subdirectory(
+        "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++")
+    add_subdirectory(
+        "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++11")
+endif()
 
 # dynamic_data_nested_structs
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++03")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++")
+    add_subdirectory(
+        "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++03")
+endif()
 
 # dynamic_data_sequences
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++03")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++03")
+endif()
 
 # dynamic_data_using_publisher_subscriber
 add_subdirectory(
@@ -160,9 +173,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++98")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_latency/c++11")
 
 # fragmented_data_statistics
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++11")
+endif()
 
 # get_publishers
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c")
@@ -170,16 +185,20 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++03")
 
 # group_coherent_presentation
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/group_coherent_presentation/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/group_coherent_presentation/c++11")
+endif()
 
 # high_priority_first_flow_controller
 add_subdirectory(
     "${CMAKE_CURRENT_SOURCE_DIR}/high_priority_first_flow_controller/c++")
 
 # instance_statistics
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++11")
+endif()
 
 # keyed_data
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data/c")
@@ -210,12 +229,14 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++03")
 
 # network_capture
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/02_tcp/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/03_security/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/04_advanced_api/c")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/02_tcp/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/03_security/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/04_advanced_api/c")
+endif()
 
 # ordered_presentation
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c")
@@ -243,9 +264,11 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
 
 # printing_qos
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++11")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++")
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++11")
+endif()
 
 # property_qos
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
@@ -290,7 +313,9 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
 
 # compression
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
+if(${RTICONNEXTDDS_VERSION} VERSION_GREATER_EQUAL ${REQUIRED_VERSION})
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
+endif()
 
 # real_time_wan_transport
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
