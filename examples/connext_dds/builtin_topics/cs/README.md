@@ -1,4 +1,5 @@
 # Example Code: Builtin Topics
+
 If you haven't used the RTI Connext C# API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
@@ -19,9 +20,10 @@ Then build it using the dotnet CLI:
 dotnet build
 ```
 
-## Running C# Example
+## Running the Example
 
-In separate command prompt windows run the following commands from the example directory:
+In separate command prompt windows run the following commands from the example
+directory:
 
 ```sh
 dotnet run -- --pub --password <required password>
@@ -30,12 +32,12 @@ dotnet run -- --sub --password <password >
 
 The application acceps several arguments:
 
-1. `--pub` or `--sub` run the publisher or subscriber application.
+1.  `--pub` or `--sub` run the publisher or subscriber application.
 
-2. `--password <value>` specifies the password. In the publisher application
-   this is the required password to allow subscribers to receive the published
-   data. In the subscriber application this is the password used to authenticate
-   with the publisher.
+2.  `--password <value>` specifies the password. In the publisher application
+    this is the required password to allow subscribers to receive the published
+    data. In the subscriber application this is the password used to
+    authenticate with the publisher.
 
 For the full list of arguments:
 
@@ -47,7 +49,7 @@ You can run more than one subscriber with different passwords to see how only
 when the subscriber sends the right password the publisher allows it to
 receive data.
 
-The following is an example execution:
+The following is an example execution.
 
 Publisher:
 
