@@ -1,0 +1,37 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+  
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Examples build
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Setup Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          pip install Sultan scan-build
+      - name: Install RTI Connext DDS
+        run: |
+          if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
+            resources/ci_cd/linux_install.py
+          fi
+      - name: Run static analysis
+        run: |
+          if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
+            resources/ci_cd/linux_static_analysis.py
+          fi
