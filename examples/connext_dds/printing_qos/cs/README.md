@@ -36,6 +36,7 @@ dotnet build
 ```
 
 ## Running the Example
+
 Run the following command from the example directory (this is necessary to ensure
 the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
