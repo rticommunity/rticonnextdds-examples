@@ -10,6 +10,10 @@
  * use or inability to use the software.
  */
 
-struct msg {
-    int16 x;
+module BuiltinTopicsExample
+{
+    // The type definition in this example is not important
+    struct HelloWorld {
+        int16 x;
+    };
 };
