@@ -7,7 +7,7 @@ on:
       - develop
   
   workflow_run:
-    workflows: ["Silly workflow"]
+    workflows: ["PR handler"]
     types:
       - completed
 
