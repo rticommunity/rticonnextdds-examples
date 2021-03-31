@@ -1,4 +1,4 @@
-name: Silly workflow
+name: PR handler
 
 on:  
   pull_request:
