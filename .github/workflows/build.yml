@@ -24,7 +24,6 @@ jobs:
     outputs:
       pr_number: ${{ steps.pr_number.outputs.PR_NUMBER }}
 
-
     steps:
       - name: 'Download artifact'
         if: ${{ github.event_name == 'workflow_run' }}
