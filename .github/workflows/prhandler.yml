@@ -7,9 +7,9 @@ on:
       - develop
 
 jobs:
-  build:
+  upload:
     runs-on: ubuntu-latest
-    name: Examples build
+    name: Artifacts generation
 
     steps:
       - uses: actions/checkout@v2
