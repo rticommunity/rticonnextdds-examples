@@ -111,7 +111,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var issue_number = ${{ needs.upload.outputs.pr_number }};
+            var issue_number = ${{ needs.build.outputs.pr_number }};
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -130,7 +130,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            var issue_number = ${{ needs.upload.outputs.pr_number }};
+            var issue_number = ${{ needs.build.outputs.pr_number }};
             await github.issues.createComment({
               owner: context.repo.owner,
               repo: context.repo.repo,
