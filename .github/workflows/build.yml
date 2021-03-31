@@ -1,4 +1,4 @@
-name: Build
+name: build
 
 on:
   push:
@@ -6,17 +6,69 @@ on:
       - master
       - develop
   
-  pull_request:
-    branches:
-      - master
-      - develop
+  workflow_run:
+    workflows: ["Silly workflow"]
+    types:
+      - completed
 
 jobs:
   build:
     runs-on: ubuntu-latest
-    name: Examples build
+    name: Build examples
+
+    if: >
+      ${{ (github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success') ||
+      github.event_name == 'push' }}
+
+    outputs:
+      pr_number: ${{ steps.pr_number.outputs.PR_NUMBER }}
+
 
     steps:
+      - name: 'Download artifact'
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            var fs = require('fs');
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - run: unzip pr.zip
+        if: ${{ github.event_name == 'workflow_run' }}
+      - name: Save PR number
+        if: ${{ github.event_name == 'workflow_run' }}
+        id: pr_number
+        run: echo '::set-output name=PR_NUMBER::'$(cat NR)
+      - name: Send information message
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/github-script@v3.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var issue_number = ${{ steps.pr_number.outputs.PR_NUMBER }};
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: `The compilation is starting. Take a look
+                    [here](https://github.com/${context.repo.owner}/${conext.repo.repo}/actions/runs/${context.runId}).`
+            });
+      - uses: actions/checkout@v2
+        if: ${{ github.event_name == 'push' }}
       - uses: actions/checkout@v2
       - name: Setup Python 3.7
         uses: actions/setup-python@v2
@@ -29,6 +81,8 @@ jobs:
         run: |
           if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
             resources/ci_cd/linux_install.py
+          else
+            exit 1
           fi
         env:
           RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
@@ -36,7 +90,51 @@ jobs:
         run: |
           if [ -n "$RTI_MIN_PACKAGE_URL" ]; then
             resources/ci_cd/linux_static_analysis.py
+          else
+            exit 1
           fi
         env:
           RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
           RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
+
+  commentpr-success:
+    runs-on: ubuntu-latest
+    needs: upload
+    if: ${{ github.event_name == 'workflow_run' && needs.upload.result == 'success' }}
+
+    steps:
+      - name: 'Comment on PR'
+        uses: actions/github-script@v3
+        env:
+          ISSUE_NUMBER: ${{ needs.upload.outputs.pr_number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var issue_number = ${{ needs.upload.outputs.pr_number }};
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'Succesfully compiled! Thank you for the PR!'
+            });
+
+  commentpr-fail:
+    runs-on: ubuntu-latest
+    needs: upload
+    if: ${{ github.event_name == 'workflow_run' && needs.upload.result == 'failure' }}
+
+    steps:
+      - name: 'Comment on PR'
+        uses: actions/github-script@v3
+        env:
+          ISSUE_NUMBER: ${{ needs.upload.outputs.pr_number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var issue_number = ${{ needs.upload.outputs.pr_number }};
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: 'Oops, something went wrong during compilation!'
+            });
