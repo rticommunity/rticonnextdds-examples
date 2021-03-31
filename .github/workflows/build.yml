@@ -102,8 +102,8 @@ jobs:
 
   commentpr-success:
     runs-on: ubuntu-latest
-    needs: upload
-    if: ${{ github.event_name == 'workflow_run' && needs.upload.result == 'success' }}
+    needs: build
+    if: ${{ github.event_name == 'workflow_run' && needs.build.result == 'success' }}
 
     steps:
       - name: 'Comment on PR'
@@ -121,8 +121,8 @@ jobs:
 
   commentpr-fail:
     runs-on: ubuntu-latest
-    needs: upload
-    if: ${{ github.event_name == 'workflow_run' && needs.upload.result == 'failure' }}
+    needs: build
+    if: ${{ github.event_name == 'workflow_run' && needs.build.result == 'failure' }}
 
     steps:
       - name: 'Comment on PR'
