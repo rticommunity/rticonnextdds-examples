@@ -73,10 +73,6 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
-      - name: Setup cmake
-        uses: jwlawson/actions-setup-cmake@v1.8
-        with:
-          cmake-version: '3.16.x'
       - name: Install dependencies
         run: |
           pip install Sultan scan-build
