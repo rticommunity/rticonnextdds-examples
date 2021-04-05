@@ -15,7 +15,7 @@ using Rti.Dds.Core;
 using Rti.Dds.Domain;
 using Rti.Dds.Publication;
 using Rti.Dds.Topics;
-using Omg.Dds.Core.Policy;
+using Rti.Dds.Core.Policy;
 
 namespace QosPrintingExample
 {
@@ -34,18 +34,19 @@ namespace QosPrintingExample
             Publisher publisher = participant.CreatePublisher();
 
             // In order to demonstrate a possible use-case for the Qos printing APIs
-            // we create a DataWriter and explicitly supply the Qos. We provide
-            // a Qos which differs from that defined in USER_QOS_PROFILES.xml.
-            // In the XML file the DataWriterQos is defined to be have a durability
-            // of Volatile. Here, we override this, supplying a TransientLocal
-            // Durability Qos policy.
-            DataWriterQos writerQos = DataWriterQos.Default.WithDurability(
-                policy => policy.Kind = DurabilityKind.TransientLocal);
+            // we create a DataWriter which is a combination of policies set in
+            // the XML file, and of policies set in code.
+            DataWriterQos writerQos = QosProvider.Default.GetDataWriterQos()
+                .WithReliability(policy => policy.Kind = ReliabilityKind.BestEffort);
             DataWriter<HelloWorld> writer = publisher.CreateDataWriter(topic, writerQos);
 
-            // There is a defined precedence for Qos, Qos policies set in code
-            // always take precedence over those defined in XML files. Using the
-            // Qos printing APIs it is possible to demonstrate this.
+
+            // The Qos we have obtained from the XML file inherits from the
+            // Generic::StrictReliable built-in profile. It also explicitly sets
+            // the Durability Qos policy. We have also explicitly set (in code)
+            // the Reliability Qos (overriding the ReliabilityKind set in the
+            // built-in profile). Using the Qos printing APIs we can check what
+            // is the final Qos in use by an entity.
             Console.WriteLine("Printing DataWriterQos to stdout");
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();

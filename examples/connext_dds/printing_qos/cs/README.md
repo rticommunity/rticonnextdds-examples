@@ -10,13 +10,15 @@ This functionality is useful in many scenarios, one of these being when it is no
 clear which Qos is being used by an entity.
 
 In this example we define the DataWriterQos in the USER_QOS_PROFILES.xml file to
-have a durability kind of Volatile. The code obtains this Qos from the XML file,
-but modifies the durability kind to TransientLocal before creating the DataWriter.
+have a DurabilityKind of TransientLocal. The Qos profile also inherits from
+the built-in profile `BuiltinQosLib::Generic::StrictReliable`.
+The code obtains this Qos from the XML file and ovrerrides the ReliabilityKind to
+BestEffort.
 
 To somebody unfamiliar with the order of Qos precedence, it may not be clear what
-durability kind the created DataWriter will be using. We print the Qos in use by
-the DataWriter, which shows that it is using TransientLocal durability (as set
-in the code).
+is the final Qos being used by the DataWriter. We print the Qos in use by
+the DataWriter, which shows that the ReliabilityKind is BestEffort and the
+DurabilityKind is TransientLocal.
 
 ## Building the Example :wrench:
 
