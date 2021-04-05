@@ -66,9 +66,15 @@ namespace QosPrintingExample
             // By default, only the differences with respect to the documented
             // QoS default (the default values as stated in the API reference)
             // are printed. This behavior can be overridden by passing another
-            // QoS object to use as the baseQos to the ToString, alternatively
-            // the sentinel value QosPrintAll.Value can be provided, which will
-            // printing the entire Qos object (not just the differences).
+            // QoS object to use as the baseQos to the ToString.
+            Console.WriteLine("Printing DataWriterQos with respect to \"BuiltinQosLib::Generic::StrictReliable\" to stdout");
+            Console.WriteLine("Press enter to continue");
+            Console.ReadLine();
+            Console.WriteLine(writer.Qos.ToString(
+                baseQos: QosProvider.Default.GetDataWriterQos("BuiltinQosLib::Generic.StrictReliable")));
+            
+            // Alternatively the sentinel value QosPrintAll.Value can be provided,
+            // which will print the entire Qos object (not just the differences).
             Console.WriteLine("Printing entire DataWriterQos object to stdout");
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
