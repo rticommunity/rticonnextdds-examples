@@ -46,8 +46,9 @@ jobs:
                archive_format: 'zip',
             });
             fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
-      - run: unzip pr.zip
+      - name: Unzip artifact
         if: ${{ github.event_name == 'workflow_run' }}
+        run: unzip pr.zip
       - name: Save PR number
         if: ${{ github.event_name == 'workflow_run' }}
         id: pr_number
