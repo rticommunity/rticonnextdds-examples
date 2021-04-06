@@ -160,7 +160,9 @@ def get_git_files(
             print("Checking local changed files...")
 
     with Sultan.load(cwd=repo_root) as s:
-        changed_files = s.git(*command).run(halt_on_nonzero=False, quiet=True).stdout
+        changed_files = (
+            s.git(*command).run(halt_on_nonzero=False, quiet=True).stdout
+        )
 
     return changed_files
 
@@ -305,7 +307,9 @@ if __name__ == "__main__":
     if "black" not in args.disabled_linters:
         black_suffix_list: Set = {".py"}
         black_cmd: List[str] = ["black", "--check", "--diff", "-l", "79"]
-        black_filtered_file_list: List[str] = filter_files(file_list, black_suffix_list)
+        black_filtered_file_list: List[str] = filter_files(
+            file_list, black_suffix_list
+        )
         print()
         print(" Python ".center(79, "="))
 
