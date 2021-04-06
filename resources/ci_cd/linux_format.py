@@ -305,9 +305,7 @@ if __name__ == "__main__":
     if "black" not in args.disabled_linters:
         black_suffix_list: Set = {".py"}
         black_cmd: List[str] = ["black", "--check", "--diff", "-l", "79"]
-        black_filtered_file_list: List[str] = filter_files(
-            file_list, black_suffix_list
-        )
+        black_filtered_file_list: List[str] = filter_files(file_list, black_suffix_list)
         print()
         print(" Python ".center(79, "="))
 
