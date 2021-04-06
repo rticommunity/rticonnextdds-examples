@@ -97,7 +97,7 @@ def get_argument_parser() -> ArgumentParser:
         help="Disable markdownlint linter.",
     )
     parser.add_argument(
-        "-cxx",
+        "-clang",
         "--disable-clang-format",
         action="append_const",
         dest="disabled_linters",
