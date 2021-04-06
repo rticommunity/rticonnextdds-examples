@@ -11,7 +11,7 @@ clear which Qos is being used by an entity.
 
 In this example we define the DataWriterQos in the USER_QOS_PROFILES.xml file to
 have a DurabilityKind of TransientLocal. The Qos profile also inherits from
-the built-in profile `BuiltinQosLib::Generic::StrictReliable`.
+the built-in profile `BuiltinQosLib::Generic.StrictReliable`.
 The code obtains this Qos from the XML file and ovrerrides the ReliabilityKind to
 BestEffort.
 

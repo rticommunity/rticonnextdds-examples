@@ -42,7 +42,7 @@ namespace QosPrintingExample
 
 
             // The Qos we have obtained from the XML file inherits from the
-            // Generic::StrictReliable built-in profile. It also explicitly sets
+            // Generic.StrictReliable built-in profile. It also explicitly sets
             // the Durability Qos policy. We have also explicitly set (in code)
             // the Reliability Qos (overriding the ReliabilityKind set in the
             // built-in profile). Using the Qos printing APIs we can check what
@@ -66,15 +66,15 @@ namespace QosPrintingExample
             // By default, only the differences with respect to the documented
             // QoS default (the default values as stated in the API reference)
             // are printed. This behavior can be overridden by passing another
-            // QoS object to use as the baseQos to the ToString.
-            Console.WriteLine("Printing DataWriterQos with respect to \"BuiltinQosLib::Generic::StrictReliable\" to stdout");
+            // QoS object to use as the baseQos to ToString.
+            Console.WriteLine("Printing DataWriterQos differences with respect to \"BuiltinQosLib::Generic.StrictReliable\" to stdout");
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
             Console.WriteLine(writer.Qos.ToString(
                 baseQos: QosProvider.Default.GetDataWriterQos("BuiltinQosLib::Generic.StrictReliable")));
-            
-            // Alternatively the sentinel value QosPrintAll.Value can be provided,
-            // which will print the entire Qos object (not just the differences).
+
+            // To print all the Qos policies (not just the differences), call
+            // ToString with sentinel QosPrintAll.Value
             Console.WriteLine("Printing entire DataWriterQos object to stdout");
             Console.WriteLine("Press enter to continue");
             Console.ReadLine();
