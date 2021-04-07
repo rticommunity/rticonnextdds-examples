@@ -1,0 +1,26 @@
+name: PR handler
+
+on:  
+  pull_request:
+    branches:
+      - master
+      - develop
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    name: Artifacts generation
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Save PR number
+        run: |
+          mkdir -p ./pr
+          echo ${{ github.event.number }} > ./pr/NR
+          cp -a examples pr/
+          cp -a resources pr/
+      - name: Upload generated artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: pr/
