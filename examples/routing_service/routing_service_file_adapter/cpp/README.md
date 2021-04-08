@@ -62,7 +62,7 @@ Also, If you installed libraries for multiple target architecture on your system
 libraries you want to link against. For example:
 
 ```sh
-$cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ...
+$cmake -DCONNEXTDDS_ARCH=<ARCH> ...
 ```
 
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
@@ -129,14 +129,14 @@ Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
-$export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
+$export CONNEXTDDS_ARCH=<ARCH>
 $<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName <cfgName>
 ```
 
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/x64Darwin16clang8.0
+$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<
 
 $export SHAPE_TOPIC="Triangle"
 

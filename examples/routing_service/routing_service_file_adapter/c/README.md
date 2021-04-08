@@ -115,6 +115,6 @@ Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
-$export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
+$export CONNEXTDDS_ARCH=<ARCH>
 $<NDDSHOME>/bin/rtiroutingservice -cfgFile file_bridge.xml -cfgName file_to_file
 ```
