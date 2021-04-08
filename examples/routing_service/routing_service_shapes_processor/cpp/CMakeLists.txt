@@ -20,6 +20,14 @@ if(NOT BUILD_SHARED_LIBS)
     message(FATAL_ERROR ${msg})
 endif()
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(msg
+        "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
+        "is not supported for this example. Please provide a valid value for "
+        "the CMAKE_BUILD_TYPE parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
 if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
     set(msg
         "You have selected to build the library in debug mode. It's "

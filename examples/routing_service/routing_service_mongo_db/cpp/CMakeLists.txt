@@ -12,8 +12,27 @@
 cmake_minimum_required(VERSION 3.11)
 project (MongoDBAdapter)
 
+if(NOT CMAKE_BUILD_TYPE)
+    set(msg
+        "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
+        "is not supported for this example. Please provide a valid value for "
+        "the CMAKE_BUILD_TYPE parameter")
+    message(FATAL_ERROR ${msg})
+endif()
+
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Routing Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
+endif()
+
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 find_package(
     RTIConnextDDS "6.1.0"
     REQUIRED
@@ -32,14 +51,16 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConfig.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx" MongoStreamReader.cpp MongoStreamReader.hpp)
+        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx" 
+        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamReader.cpp"
+)
 
 # Set target properties for lang requirement output library name
 set_target_properties(mongodbadapter
     PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED ON
-        OUTPUT_NAME_DEBUG mongodbadapterd
+        DEBUG_POSTFIX "d"
         LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
         LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
         LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
@@ -66,32 +87,3 @@ configure_file(
     "${CMAKE_BINARY_DIR}/RsMongoGateway.xml"
     COPYONLY
 )
-
-
-
-#add_executable(
-#    mongotest
-#    "${CMAKE_BINARY_DIR}/ComplexType.cxx"
-#    "${CMAKE_BINARY_DIR}/ComplexTypePlugin.cxx"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/SampleConverter.cxx"
-#    "${CMAKE_CURRENT_SOURCE_DIR}/MongoTest.cpp")
-#
-#target_link_libraries(
-#    mongotest
-#    mongo::mongocxx_shared
-#    mongo::bsoncxx_shared
-#    RTIConnextDDS::cpp2_api
-#    RTIConnextDDS::routing_service
-#    ${CONNEXTDDS_EXTERNAL_LIBS}
-#)
-#
-#target_include_directories(
-#    mongotest
-#    PUBLIC
-#        "${CMAKE_BINARY_DIR}"
-#)
-#
-#set_target_properties(mongotest
-#    PROPERTIES
-#    CXX_STANDARD 11
-#    CXX_STANDARD_REQUIRED ON)

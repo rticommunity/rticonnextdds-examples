@@ -12,15 +12,27 @@
 cmake_minimum_required(VERSION 3.11)
 project(FileAdapterC++11)
 
-if(NOT DEFINED CONNEXTDDS_DIR)
-    set(msg 
-        "Please set the CMake variable CONNEXTDDS_DIR "
-        "to point to your installation of RTI Connext DDS")
+if(NOT CMAKE_BUILD_TYPE)
+    set(msg
+        "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
+        "is not supported for this example. Please provide a valid value for "
+        "the CMAKE_BUILD_TYPE parameter")
     message(FATAL_ERROR ${msg})
 endif()
 
+if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
+    set(msg
+        "You have selected to build the library in debug mode. It's recommended "
+        "to run the debug version of Routing Service or otherwise you may run "
+        "into undefined behavior")
+    message(WARNING ${msg})
+endif()
+
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 find_package(
     RTIConnextDDS "6.1.0"
     REQUIRED
@@ -52,7 +64,7 @@ set_target_properties(fileadapter
 )
 
 # Copy the sample data files into the binary directory
-ADD_CUSTOM_COMMAND(TARGET fileadapter
+add_custom_command(TARGET fileadapter
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"

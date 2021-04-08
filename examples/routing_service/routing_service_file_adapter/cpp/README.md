@@ -26,28 +26,57 @@ to a file in CSV format.
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
 
-## Building C++ example
+## Building the C++ Example
 
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
-- `CONNEXTDDS_DIR`
-- `CONNEXTDDS_ARCH`
+- `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release and 
+  Debug
+- `BUILD_SHARED_LIBS`: whether to build the library as a shared library or not.
+  This should be set to ON when loading the plugin from the Routing Service
+  executable. However, Routing Service supports loading of static libraries when
+  using the service as a library. See note below.
 
 ```bash
 $mkdir build
-$cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
-    -DCONNEXTDDS_ARCH=<Connext DDS Architecture>
-    -DBUILD_SHARED_LIBS=ON|OFF
-    -DCMAKE_BUILD_TYPE=Debug|Release ..
-cmake --build .
+$cmake -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
+$cmake --build .
+```
+
+#### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform. If you installed Connext DDS in a custom location, you
+can use the `CONNEXTDDS_DIR` variable to indicate the path to your RTI Connext 
+DDS installation folder. For example:
+
+```sh
+$cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
+```
+
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
+`CONNEXTDDS_ARCH` CMake variable to indicate the architecture of the specific 
+libraries you want to link against. For example:
+
+```sh
+$cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ...
 ```
 
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
 Solutions, you can specify the configuration mode to build as follows:
 
 ```bash
-cmake --build . --config Release|Debug
+$cmake --build . --config Release|Debug
+```
+
+In case you are using Windows x64, you have to add the option -A in the cmake
+command as follow:
+
+```bash
+$cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 Here is more information about generating
@@ -60,7 +89,7 @@ supports static linking of adapters. To use this functionality you would need to
 create an application that uses Routing Service as a library component and
 statically links to this `FileAdapter` library.
 
-## Running C++ example
+## Running the C++ Example
 
 To run the example, you just need to run the following command from the `build`
 folder (where the adapter plugin library has been created).
@@ -94,23 +123,25 @@ To run Routing Service, you will need first to set up your environment as follow
 $export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
 ```
 
+**Note:** If you wish to run the executable for a target architecture different
+than the host, you have to specify your architecture. That way the Routing 
+Service script can use the specific target binary instead of using the standard 
+host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
+
 ```bash
-# From the build/ directory
-$<Connext DDS Directory>/bin/rtiroutingservice
--cfgFile RsFileAdapter.xml
--cfgName <cfgName>
+$export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
+$<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName <cfgName>
 ```
 
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=/Applications/rti_connext_dds-6.1.0/lib/x64Darwin16clang8.0
+$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/x64Darwin16clang8.0
 
 $export SHAPE_TOPIC="Triangle"
 
-$/Applications/rti_connext_dds-6.1.0/bin/rtiroutingservice
--cfgFile RsFileAdapter.xml
--cfgName FileAdapterToFileAdapter
+$<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml
+    -cfgName FileAdapterToFileAdapter
 
 RTI Routing Service 6.1.0 executing (with name FileAdapterToFileAdapter)
 Input file name: Input_Triangle.csv
@@ -166,6 +197,6 @@ Service configuration file. This is the list of available properties:
 
 To run this example you will need:
 
-- RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- RTI Connext Professional version 6.1.0 or higher.
+- CMake version 3.11 or higher
 - A target platform with support for RTI Routing Service and C++11.

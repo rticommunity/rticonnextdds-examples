@@ -54,6 +54,16 @@ export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<ARCH>
 where `<ARCH>` shall be replaced with the target architecture you used to build
 the example in the previous step.
 
+
+**Note:** If you wish to run the executable for a target architecture different
+than the host, you have to specify your architecture. That way the Routing 
+Service script can use the specific target binary instead of using the standard 
+host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
+
+```sh
+export CONNEXTDDS_ARCH=<ARCH>
+```
+
 ### Aggregation
 
 1.  Run one instance of *ShapesDemo* on domain 0. This will be the publisher
@@ -163,7 +173,7 @@ default behavior:
     CMake documentation [CMake Generators
     Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
 
-For example, to build a example in Debug/Static mode run CMake as follows:
+For example, to build a example in Debug/Dynamic mode run CMake as follows:
 
 ```sh
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
