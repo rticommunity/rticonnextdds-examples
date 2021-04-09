@@ -26,9 +26,9 @@ In order to build this example, you need to provide the following variables to
   using the service as a library. See note below.
 
 ```bash
-$mkdir build
-$cmake -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
-$cmake --build .
+mkdir build
+cmake -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
+cmake --build .
 ```
 
 #### Configuring Connext DDS Installation Path and Architecture
@@ -40,7 +40,7 @@ can use the `CONNEXTDDS_DIR` variable to indicate the path to your RTI Connext
 DDS installation folder. For example:
 
 ```sh
-$cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
 ```
 
 Also, If you installed libraries for multiple target architecture on your system
@@ -49,7 +49,7 @@ Also, If you installed libraries for multiple target architecture on your system
 libraries you want to link against. For example:
 
 ```sh
-$cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ...
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ...
 ```
 
 **Note:** Since this example uses the `pthread` library, it only works on
@@ -83,22 +83,22 @@ difficult.
 Here is how you would set the environment variables:
 
 ```bash
-$export INPUT_DIRECTORY=<Input Directory>
-$export OUTPUT_DIRECTORY=<Output Directory>
+export INPUT_DIRECTORY=<Input Directory>
+export OUTPUT_DIRECTORY=<Output Directory>
 ```
 
 We also advise setting path to your installation of RTI Connext DDS in the
 variable `NDDSHOME` as shown below:
 
 ```bash
-$export NDDSHOME=<RTI Connext DDS Directory>
+export NDDSHOME=<RTI Connext DDS Directory>
 ```
 
 Before running the RTI Routing Service, you also need to specify where the
 `fileadapter` library is located as show below:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Path to CMake build folder>
+export RTI_LD_LIBRARY_PATH=<Path to CMake build folder>
 ```
 
 Now we can run the RTI Routing Service to copy over the files from
@@ -106,7 +106,7 @@ Now we can run the RTI Routing Service to copy over the files from
 
 ```bash
 # From within the /build folder
-$<NDDSHOME>/bin/rtiroutingservice -cfgFile file_bridge.xml -cfgName file_to_file
+<NDDSHOME>/bin/rtiroutingservice -cfgFile file_bridge.xml -cfgName file_to_file
 ```
 
 **Note:** If you wish to run the executable for a target architecture different
@@ -115,6 +115,6 @@ Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
-$export CONNEXTDDS_ARCH=<ARCH>
-$<NDDSHOME>/bin/rtiroutingservice -cfgFile file_bridge.xml -cfgName file_to_file
+export CONNEXTDDS_ARCH=<ARCH>
+<NDDSHOME>/bin/rtiroutingservice -cfgFile file_bridge.xml -cfgName file_to_file
 ```

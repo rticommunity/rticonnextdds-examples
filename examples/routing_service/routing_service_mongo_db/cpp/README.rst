@@ -118,7 +118,7 @@ To run Routing Service, you will need first to set up your environment as follow
 
 .. code::
 
-    $export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
+    export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
 
 .. note::
 
@@ -129,7 +129,7 @@ To run Routing Service, you will need first to set up your environment as follow
 
     .. code::
 
-    $export CONNEXTDDS_ARCH=<Connext DDS Architecture>
+    export CONNEXTDDS_ARCH=<Connext DDS Architecture>
 
 
 And then you can run the following command, providing the domain ID of your choice:
@@ -137,7 +137,7 @@ And then you can run the following command, providing the domain ID of your choi
 .. code::
 
     # From the build/ directory
-    $<Connext DDS Directory>/bin/rtiroutingservice \
+    <Connext DDS Directory>/bin/rtiroutingservice \
             -cfgFile RsMongoGateway.xml \
             -cfgName MongoGateway \
             -DUSER_AND_PASS=rti_example:adapter
@@ -149,7 +149,7 @@ command line and select the domain and publication rate to one second as follows
 
 .. code::
 
-    $<Connext DDS Directory>/bin/rtishapesdemo -domainId <input_domain> -pubInterval 1000
+    <Connext DDS Directory>/bin/rtishapesdemo -domainId <input_domain> -pubInterval 1000
 
 You can then connect to the ``MongoDB`` using the shell:
 
@@ -216,7 +216,7 @@ follows:
 
 .. code::
 
-    $<Connext DDS Directory>/bin/rtishapesdemo -domainId <output_domain>
+    <Connext DDS Directory>/bin/rtishapesdemo -domainId <output_domain>
 
 You should see data being displayed at the polling period specified in the
 ``fromMongoToDds``. Note that this *AutoRoute* has a ``<periodic_action>`` tag set, which

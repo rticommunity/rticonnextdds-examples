@@ -39,9 +39,9 @@ In order to build this example, you need to provide the following variables to
   using the service as a library. See note below.
 
 ```bash
-$mkdir build
-$cmake -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
-$cmake --build .
+mkdir build
+cmake -DBUILD_SHARED_LIBS=ON|OFF -DCMAKE_BUILD_TYPE=Debug|Release ..
+cmake --build .
 ```
 
 #### Configuring Connext DDS Installation Path and Architecture
@@ -53,7 +53,7 @@ can use the `CONNEXTDDS_DIR` variable to indicate the path to your RTI Connext
 DDS installation folder. For example:
 
 ```sh
-$cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
 ```
 
 Also, If you installed libraries for multiple target architecture on your system
@@ -62,21 +62,21 @@ Also, If you installed libraries for multiple target architecture on your system
 libraries you want to link against. For example:
 
 ```sh
-$cmake -DCONNEXTDDS_ARCH=<ARCH> ...
+cmake -DCONNEXTDDS_ARCH=<ARCH> ...
 ```
 
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
 Solutions, you can specify the configuration mode to build as follows:
 
 ```bash
-$cmake --build . --config Release|Debug
+cmake --build . --config Release|Debug
 ```
 
 In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 
 ```bash
-$cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 Here is more information about generating
@@ -120,7 +120,7 @@ appropriate value of ```SHAPE_TOPIC``` before starting Routing Service.
 To run Routing Service, you will need first to set up your environment as follows:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
+export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
 ```
 
 **Note:** If you wish to run the executable for a target architecture different
@@ -129,18 +129,18 @@ Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
-$export CONNEXTDDS_ARCH=<ARCH>
-$<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName <cfgName>
+export CONNEXTDDS_ARCH=<ARCH>
+<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml -cfgName <cfgName>
 ```
 
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<
+export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<
 
-$export SHAPE_TOPIC="Triangle"
+export SHAPE_TOPIC="Triangle"
 
-$<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml
+<Connext DDS Directory>/bin/rtiroutingservice -cfgFile RsFileAdapter.xml
     -cfgName FileAdapterToFileAdapter
 
 RTI Routing Service 6.1.0 executing (with name FileAdapterToFileAdapter)
