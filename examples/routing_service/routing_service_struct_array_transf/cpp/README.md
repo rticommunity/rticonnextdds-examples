@@ -62,8 +62,8 @@ where `<ARCH>` shall be replaced with the target architecture you used to build
 the example in the previous step.
 
 **Note:** If you wish to run the executable for a target architecture different
-than the host, you have to specify your architecture. That way the Routing 
-Service script can use the specific target binary instead of using the standard 
+than the host, you have to specify your architecture. That way the Routing
+Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```sh

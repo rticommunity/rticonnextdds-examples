@@ -693,7 +693,7 @@ RTI_RoutingServiceStreamWriter
     /* Get the configuration properties in <route>/<output>/<property> */
 
     flush_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, 
+            properties,
             FILE_ADAPTER_FLUSH);
     if (flush_property != NULL) {
         if (!strcmp(flush_property, "yes") || !strcmp(flush_property, "true")
@@ -827,7 +827,7 @@ RTI_RoutingServiceConnection
     }
 
     path = RTI_RoutingServiceProperties_lookup_property(
-            properties, 
+            properties,
             FILE_ADAPTER_CONNECTION_FOLDER_PATH);
     /*
      * if the property is not found, then we are going to assign default value.
@@ -846,7 +846,7 @@ RTI_RoutingServiceConnection
      */
     if ((is_input_connection != NULL)
         && !strcmp(
-                is_input_connection, 
+                is_input_connection,
                 FILE_ADAPTER_CONNECTION_DIRECTION_INPUT)) {
         fprintf(stdout, "Connection: This is an input connection\n");
         connection->is_input = 1;

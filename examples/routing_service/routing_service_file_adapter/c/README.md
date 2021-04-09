@@ -18,7 +18,7 @@ configuration file.
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
-- `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release and 
+- `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release and
   Debug
 - `BUILD_SHARED_LIBS`: whether to build the library as a shared library or not.
   This should be set to ON when loading the plugin from the Routing Service
@@ -36,7 +36,7 @@ cmake --build .
 The CMake build infrastructure will try to guess the location of your Connext
 DDS installation and the Connext DDS architecture based on the default settings
 for your host platform. If you installed Connext DDS in a custom location, you
-can use the `CONNEXTDDS_DIR` variable to indicate the path to your RTI Connext 
+can use the `CONNEXTDDS_DIR` variable to indicate the path to your RTI Connext
 DDS installation folder. For example:
 
 ```sh
@@ -45,7 +45,7 @@ cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ...
 
 Also, If you installed libraries for multiple target architecture on your system
 (i.e., you installed more than one target rtipkg), you can use the
-`CONNEXTDDS_ARCH` CMake variable to indicate the architecture of the specific 
+`CONNEXTDDS_ARCH` CMake variable to indicate the architecture of the specific
 libraries you want to link against. For example:
 
 ```sh
@@ -110,8 +110,8 @@ Now we can run the RTI Routing Service to copy over the files from
 ```
 
 **Note:** If you wish to run the executable for a target architecture different
-than the host, you have to specify your architecture. That way the Routing 
-Service script can use the specific target binary instead of using the standard 
+than the host, you have to specify your architecture. That way the Routing
+Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
