@@ -17,7 +17,7 @@ find_package(RTIConnextDDS
 )
 
 function(send_skip_message example_name)
-    message(STATUS "Skipping ${example_name} example compilation because you are not using a compatible Connext DDS version.")
+    message(STATUS "Skipping ${example_name} example compilation because you are not using a compatible RTI Connext DDS version.")
 endfunction()
 
 
