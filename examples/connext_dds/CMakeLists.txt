@@ -17,7 +17,7 @@ find_package(RTIConnextDDS
 )
 
 function(send_skip_message example_name)
-    message("-- Skipping "${example_name} " example compilation because you are not using a compatible Connext DDS version.")
+    message(STATUS "Skipping ${example_name} example compilation because you are not using a compatible Connext DDS version.")
 endfunction()
 
 
@@ -346,4 +346,3 @@ endif()
 
 # real_time_wan_transport
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
-
