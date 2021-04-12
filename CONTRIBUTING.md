@@ -10,7 +10,8 @@ about your feature or enhancement that you would like us to include.
 ## How to submit a change
 
 If you have any change to submit do not hesitate in opening a Pull Request.
-Before you submit the Pull Request, please be sure you are using a correct
+Before you submit the Pull Request, please be sure you are using the correct
+code style/format that is explained in the following paragraphs.
 code style/format.
 
 -   If you submit changes into a `Python` script or you are adding a new
