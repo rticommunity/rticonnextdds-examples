@@ -51,10 +51,11 @@ Options:
 
 ## How to report bugs
 
-You can use the issues for bug reporting using the correct template.
-It would be helpful if you could provide us with the RTI Product and system
-information. Also, it is neccesary to provide us with the current behavior, the
-steps to reproduce the issue and what is the expected behavior.
+You can use `Issues` for bug reporting using the correct template.
+It would be helpful if you could provide us with the RTI Product, version, and
+system information (such as OS, compiler version, etc...). Also, it is necessary
+to provide us with the current behavior, the steps to reproduce the issue, and
+what is the expected behavior.
 
 ## Contributor License Agreement (CLA)
 
