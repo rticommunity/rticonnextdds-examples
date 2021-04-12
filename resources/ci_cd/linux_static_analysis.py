@@ -63,9 +63,7 @@ def main():
     try:
         rti_connext_dds_dir = (
             Path.home()
-            .joinpath(
-                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-            )
+            .joinpath("rti_connext_dds-{}".format(rti_connext_dds_version), "include")
             .resolve()
         )
     except FileNotFoundError:
