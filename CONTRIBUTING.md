@@ -2,11 +2,10 @@
 
 ## How to request a feature or enhacement
 
-If there is a new feature or enhacement that you would like to be added to
-the examples, feel free to open an issue in this repository and we will take
-a look of your issue as soon as possible. Please, do not forget to use a
-title and clear description about your feature or enhacement you would like
-us to include.
+If there is a new feature or enhancement that you would like to add to
+this repository, feel free to open an issue and we will take a look at it as
+soon as possible. Please, do not forget to use a clear title and description
+about your feature or enhancement that you would like us to include.
 
 ## How to submit a change
 
