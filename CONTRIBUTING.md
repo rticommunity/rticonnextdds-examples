@@ -14,25 +14,22 @@ Before you submit the Pull Request, please be sure you are using the correct
 code style/format that is explained in the following paragraphs.
 code style/format.
 
--   If you submit changes into a `Python` script or you are adding a new
-one, be aware we will check the style/format with an automatic workflow. If you
-are not sure you are using a correct style/format, install
-[black](https://pypi.org/project/black/) and execute it in your local machine
-to ensure the correctness of your code.
 
--   If you submit changes into a `C/C++` source file, you also have to use a
-correct style/format of the code. For this purpose, we are using
+In order to ensure the quality and consistency of the code, we use the
+following linters:
+-   `Python`: 
+[black](https://pypi.org/project/black/) 
+
+-   `C/C++` 
 [clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
-`clan-format` are listed into the `.clang-format` file.
+`clan-format` are listed in the `.clang-format` file.
 
--   If you submit changes into a `Markdown` file, we are using some format rules
-listed into `.markdownlint.json`. The tool we are using for checking the
-`Markdown` rules is
-[markdown-cli](https://www.npmjs.com/package/markdownlint-cli).
+-  `Markdown`: [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
+using the rules listed in `.markdownlint.json`.
 
-To execute the linters, we use a script located in
-`resources/ci_cd/linux_format.py` in the automatic workflow. You can
-also execute this script in your local machine.
+The script located in `resources/ci_cd/linux_format.py` executes the linterns
+in the automatic workflow. You can also execute this script on your local
+machine.
 
 ```plaintext
 Usage: python resources/ci_cd/linux_format.py [options]
