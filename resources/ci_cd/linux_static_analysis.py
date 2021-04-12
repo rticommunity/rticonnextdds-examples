@@ -51,10 +51,7 @@ def main():
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
 
     if not rti_connext_dds_version:
-        print(
-            "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
-        )
-        sys.exit()
+        sys.exit("Environment variable RTI_PACKAGE_VERSION not found, skipping...")
 
     try:
         examples_dir = Path("examples/connext_dds").resolve()
