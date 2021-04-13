@@ -91,6 +91,7 @@ the example in the previous step.
     the example build directory:
 
     On *Windows*:
+
     ```sh
     %NDDSHOME%\bin\rtiroutingservice ^
            -cfgFile ..\RsStructArrayTransf.xml ^
