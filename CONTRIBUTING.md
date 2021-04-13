@@ -14,17 +14,15 @@ Before you submit the Pull Request, please be sure you are using the correct
 code style/format that is explained in the following paragraphs.
 code style/format.
 
-
 In order to ensure the quality and consistency of the code, we use the
 following linters:
--   `Python`: 
-[black](https://pypi.org/project/black/) 
 
--   `C/C++` 
+-   `Python`:
+[black](https://pypi.org/project/black/)
+-   `C/C++`
 [clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
 `clan-format` are listed in the `.clang-format` file.
-
--  `Markdown`: [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
+-   `Markdown`: [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
 using the rules listed in `.markdownlint.json`.
 
 The script located in `resources/ci_cd/linux_format.py` executes the linterns
