@@ -124,14 +124,10 @@ def main():
         print("Analyzing the build...", flush=True)
         time_analysis_start = time.perf_counter()
 
-        connextdds_installation_include = Path.home().joinpath(
-            "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-        )
-
         static_analysis_result = sultan.analyze__build(
             "--verbose",
             "--status-bugs",
-            "--exclude {}".format(connextdds_installation_include),
+            "--exclude {}".format(rti_connext_dds_dir),
             "--exclude",
             ".",
             "-o",
