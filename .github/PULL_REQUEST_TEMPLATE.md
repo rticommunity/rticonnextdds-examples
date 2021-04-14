@@ -15,3 +15,6 @@
 <!-- Change te space between the square brackets to an `x` -->
 -   [ ] I have updated the documentation accordingly.
 -   [ ] I have read the [CONTRIBUTING](https://github.com/rticommunity/rticonnextdds-examples/blob/develop/CONTRIBUTING.md) document.
+<!-- Uncomment bellow if you added a C/C++ example and updated examples/connext_dds/CMakeList.txt 
+-   [ ] I added a new C/C++ example and updated `resources/connext_dds/CMakeList.txt`.
+-->
