@@ -97,7 +97,7 @@ def get_argument_parser() -> ArgumentParser:
         help="Disable markdownlint linter.",
     )
     parser.add_argument(
-        "-cxx",
+        "-clang",
         "--disable-clang-format",
         action="append_const",
         dest="disabled_linters",
@@ -267,7 +267,7 @@ if __name__ == "__main__":
 
     # Clang-format
     if "clang-format" not in args.disabled_linters:
-        clang_format_suffix_list: Set = {".h", ".hxx", ".c", ".cxx"}
+        clang_format_suffix_list: Set = {".h", ".hxx", ".c", ".cxx", ".java"}
         clang_format_cmd: List[str]
 
         if args.all_files:
@@ -281,7 +281,7 @@ if __name__ == "__main__":
             file_list, clang_format_suffix_list
         )
         print()
-        print(" C/C++ ".center(79, "="))
+        print(" C/C++ & Java ".center(79, "="))
 
         if clang_format_filtered_file_list:
             if commits:
@@ -290,7 +290,7 @@ if __name__ == "__main__":
             clang_format_cmd.append("--")
             clang_format_cmd.extend(clang_format_filtered_file_list)
             print(
-                "Checking C/C++ files format with clang-format: "
+                "Checking C/C++ & Java files format with clang-format: "
                 f"{clang_format_filtered_file_list}"
             )
 
@@ -301,7 +301,7 @@ if __name__ == "__main__":
             else:
                 print("clang-format done. No format issues.")
         else:
-            print("No C/C++ files changed.")
+            print("No C/C++ & Java files changed.")
 
     # Black
     if "black" not in args.disabled_linters:

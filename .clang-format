@@ -10,8 +10,11 @@ BasedOnStyle: WebKit
 # Formatting rules in our coding conventions
 ###############################################################
 
-# CFR1-01: 80-column line
+# Languages
 Language: Cpp
+Language: Java
+
+# CFR1-01: 80-column line
 ColumnLimit: 80
 
 # CFR1-02: Tab character
