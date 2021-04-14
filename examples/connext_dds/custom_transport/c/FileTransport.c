@@ -1482,6 +1482,11 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
 
     *sendresource_out = NULL;
 
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
+        return 0;
+    }
+
     /* multicast not supported */
     if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
         if (NDDS_Transport_Log1Enabled(me)) {
@@ -1497,12 +1502,15 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
         return 0;
     }
 
+<<<<<<< HEAD
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
         printf("The destination address cannot be null.");
         return 0;
     }
 
+=======
+>>>>>>> f7d1a3199231227d1b27f1a9a7970bcef72db7b2
     sendResourceStruct = (struct NDDS_Transport_SendResource_FILE *) calloc(
             1,
             sizeof(*sendResourceStruct));
@@ -1547,8 +1555,8 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
     struct NDDS_Transport_SendResource_FILE *sendResourceStruct =
             (struct NDDS_Transport_SendResource_FILE *) *sendresource_in;
 
-    /* multicast not supported */
-    if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
         return 0;
     }
 
