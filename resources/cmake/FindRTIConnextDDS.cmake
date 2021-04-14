@@ -1117,11 +1117,7 @@ if(CONNEXTDDS_ARCH MATCHES "Linux")
         "-lrt"
         "-rdynamic"
     )
-    if(CMAKE_C_COMPILER_VERSION VERSION_GREATER_EQUAL "6.0.0")
-        list(APPEND CONNEXTDDS_EXTERNAL_LIBS
-            "-no-pie"
-        )
-    endif()
+
     set(CONNEXTDDS_COMPILE_DEFINITIONS
         "RTI_UNIX"
         "RTI_LINUX"
@@ -1313,8 +1309,8 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS
             CMAKE_COMPILER_VERSION VERSION_GREATER "4.6.0" AND
             RTICONNEXTDDS_VERSION VERSION_LESS "6.1.0"
         )
-            list(APPEND CONNEXTDDS_EXTERNAL_LIBS
-                -Wl,--no-as-needed
+            list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
+                "-Wl,--no-as-needed"
             )
         endif()
     else()
@@ -1502,7 +1498,7 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         )
 
         # Add OpenSSL libraries to the list of CONNEXTDDS_EXTERNAL_LIBS
-        list(APPEND CONNEXTDDS_EXTERNAL_LIBS
+        list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
             ${OPENSSL_SSL_LIBRARY}
             ${OPENSSL_CRYPTO_LIBRARY}
         )
@@ -1523,7 +1519,7 @@ if(monitoring_libraries IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
     if(MONITORING_FOUND)
         if(CONNEXTDDS_ARCH MATCHES "Win")
-            list(APPEND CONNEXTDDS_EXTERNAL_LIBS
+            list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
                 psapi
             )
         endif()
