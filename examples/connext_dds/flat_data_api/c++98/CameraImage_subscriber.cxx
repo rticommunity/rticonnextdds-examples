@@ -147,7 +147,7 @@ bool print_average_pixel_fast(const CameraImage &sample)
     unsigned int pixel_count = pixels.element_count();
 
     if (pixel_count == 0) {
-        print("The number of pixels should be greater than 0.");
+        printf("The number of pixels should be greater than 0.");
         return false;
     }
 
