@@ -1502,15 +1502,12 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
         return 0;
     }
 
-<<<<<<< HEAD
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
         printf("The destination address cannot be null.");
         return 0;
     }
 
-=======
->>>>>>> f7d1a3199231227d1b27f1a9a7970bcef72db7b2
     sendResourceStruct = (struct NDDS_Transport_SendResource_FILE *) calloc(
             1,
             sizeof(*sendResourceStruct));
