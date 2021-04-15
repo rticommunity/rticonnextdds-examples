@@ -7,7 +7,7 @@
 BasedOnStyle: WebKit
 
 ###############################################################
-# Formatting C/C++ rules in our coding conventions
+# Formatting rules in our coding conventions
 ###############################################################
 
 # CFR1-01: 80-column line
