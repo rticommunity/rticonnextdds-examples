@@ -10,10 +10,6 @@ BasedOnStyle: WebKit
 # Formatting rules in our coding conventions
 ###############################################################
 
-# Languages
-Language: Cpp
-Language: Java
-
 # CFR1-01: 80-column line
 ColumnLimit: 80
 
@@ -141,3 +137,8 @@ BreakBeforeBinaryOperators: NonAssignment
 # Do not sort include files, it breaks the build. Some includes need to appear
 # at the beginning
 SortIncludes: false
+
+---
+Language: Cpp
+---
+Language: Java
