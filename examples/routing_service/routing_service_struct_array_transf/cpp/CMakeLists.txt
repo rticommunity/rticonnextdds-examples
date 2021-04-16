@@ -1,5 +1,5 @@
 #
-# (c) 2018 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 #
 #  RTI grants Licensee a license to use, modify, compile, and create derivative
 #  works of the Software.  Licensee has the right to distribute object form
@@ -109,6 +109,21 @@ target_link_libraries(SensorAttributesCollectionPublisher
     RTIConnextDDS::cpp2_api
 )
 
+set_target_properties(SensorAttributesCollectionPublisher
+    PROPERTIES
+        CXX_STANDARD 11
+        CXX_STANDARD_REQUIRED ON
+        DEBUG_POSTFIX "d"
+        LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+)
 
 # Define the Subscriber application
 add_executable(SensorDataSubscriber
@@ -130,4 +145,14 @@ set_target_properties(SensorDataSubscriber
     PROPERTIES
         CXX_STANDARD 11
         CXX_STANDARD_REQUIRED ON
+        DEBUG_POSTFIX "d"
+        LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        LIBRARY_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        ARCHIVE_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE "${output_dir}"
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG "${output_dir}"
 )
