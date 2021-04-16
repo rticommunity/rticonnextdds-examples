@@ -259,6 +259,7 @@ add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
 
 # compression
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
+add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++11")
 
 # real time wan transport
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
