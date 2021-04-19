@@ -13,7 +13,7 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExamples)
 
 find_package(RTIConnextDDS
-    "6.0.0"
+    "6.1.0"
     REQUIRED
     COMPONENTS
         core
