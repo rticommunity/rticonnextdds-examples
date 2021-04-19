@@ -1553,6 +1553,11 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
         return 0;
     }
 
+    /* multicast not supported */
+    if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
+        return 0;
+    }
+
     /* This transport can only share a NDDS_Transport_SendResource_t if the
      * destination address and port number match
      */
