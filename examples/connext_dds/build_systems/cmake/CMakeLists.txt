@@ -14,15 +14,6 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 
-# Find the ConnextDDS libraries. This will look fo the core and API libraries
-# only
-find_package(RTIConnextDDS
-    "6.1.0"
-    REQUIRED
-    COMPONENTS
-        core
-)
-
 # Run Codegen to generate the source code files for the types
 include(ConnextDdsCodegen)
 connextdds_rtiddsgen_run(
