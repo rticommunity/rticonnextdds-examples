@@ -1309,8 +1309,9 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS
             CMAKE_COMPILER_VERSION VERSION_GREATER "4.6.0" AND
             RTICONNEXTDDS_VERSION VERSION_LESS "6.1.0"
         )
-            list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
+            set(CONNEXTDDS_EXTERNAL_LIBS
                 "-Wl,--no-as-needed"
+                ${CONNEXTDDS_EXTERNAL_LIBS}
             )
         endif()
     else()
@@ -1498,9 +1499,10 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         )
 
         # Add OpenSSL libraries to the list of CONNEXTDDS_EXTERNAL_LIBS
-        list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
+        set(CONNEXTDDS_EXTERNAL_LIBS
             ${OPENSSL_SSL_LIBRARY}
             ${OPENSSL_CRYPTO_LIBRARY}
+            ${CONNEXTDDS_EXTERNAL_LIBS}
         )
 
         set(RTIConnextDDS_security_plugins_FOUND TRUE)
@@ -1519,8 +1521,9 @@ if(monitoring_libraries IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
     if(MONITORING_FOUND)
         if(CONNEXTDDS_ARCH MATCHES "Win")
-            list(PREPEND CONNEXTDDS_EXTERNAL_LIBS
+            set(CONNEXTDDS_EXTERNAL_LIBS
                 psapi
+                ${CONNEXTDDS_EXTERNAL_LIBS}
             )
         endif()
         set(RTIConnextDDS_monitoring_libraries_FOUND TRUE)
