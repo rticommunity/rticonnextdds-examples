@@ -1484,6 +1484,7 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
 
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
+        printf("WARNING: The destination address cannot be null.");
         return 0;
     }
 
@@ -1499,12 +1500,6 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
                     me->_property.trace_level);
         }
 
-        return 0;
-    }
-
-    /* Check if dest_address_in is null */
-    if (dest_address_in == NULL) {
-        printf("The destination address cannot be null.");
         return 0;
     }
 
@@ -1551,11 +1546,6 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
 
     struct NDDS_Transport_SendResource_FILE *sendResourceStruct =
             (struct NDDS_Transport_SendResource_FILE *) *sendresource_in;
-
-    /* Check if dest_address_in is null */
-    if (dest_address_in == NULL) {
-        return 0;
-    }
 
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
