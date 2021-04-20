@@ -1484,7 +1484,7 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
 
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
-        printf("WARNING: The destination address cannot be null.");
+        printf("WARNING: The destination address cannot be NULL.");
         return 0;
     }
 
@@ -1549,7 +1549,7 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
 
     /* Check if dest_address_in is null */
     if (dest_address_in == NULL) {
-        printf("WARNING: The destination address cannot be null.");
+        printf("WARNING: The destination address cannot be NULL.");
         return 0;
     }
 
