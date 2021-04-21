@@ -134,18 +134,10 @@
     </qos_profile>
 
     <!-- ========================================================================= -->
-    <!-- Scenario 1: Private/DefaultPort to Public/SinglePort; no Security; no CDS -->
+    <!-- Scenario 1: Public/SinglePort to Private/DefaultPort; no Security; no CDS -->
     <!-- ========================================================================= -->
 
     <qos_profile name="Publisher_Scenario_1" base_name="Base_Profile">
-      <participant_qos>
-        <discovery>
-          <initial_peers>0@udpv4_wan://$(PUBLIC_ADDRESS):16000</initial_peers>
-        </discovery>
-      </participant_qos>
-    </qos_profile>
-
-    <qos_profile name="Subscriber_Scenario_1" base_name="Base_Profile">
       <participant_qos>
         <transport_builtin>
           <udpv4_wan>
@@ -161,8 +153,16 @@
       </participant_qos>
     </qos_profile>
 
+    <qos_profile name="Subscriber_Scenario_1" base_name="Base_Profile">
+      <participant_qos>
+        <discovery>
+          <initial_peers>0@udpv4_wan://$(PUBLIC_ADDRESS):16000</initial_peers>
+        </discovery>
+      </participant_qos>
+    </qos_profile>
+
     <!-- ========================================================================= -->
-    <!-- Scenario 2: Private/DefaultPort to Public/SinglePort; Security; no CDS    -->
+    <!-- Scenario 2: Public/SinglePort to Private/DefaultPort; Security; no CDS    -->
     <!-- ========================================================================= -->
 
     <qos_profile name="Publisher_Scenario_2" base_name="Publisher_Scenario_1">
@@ -223,5 +223,44 @@
       </participant_qos>
     </qos_profile>
 
+    <!-- ========================================================================= -->
+    <!-- Scenario 5: Private/DefaultPort to Private/DefaultPort through Public/RS; no Security -->
+    <!-- ========================================================================= -->
+
+    <qos_profile name="Publisher_Scenario_5" base_name="Base_Profile">
+      <participant_qos>
+        <discovery>
+          <initial_peers>0@udpv4_wan://$(PUBLIC_ADDRESS):16000</initial_peers>
+        </discovery>
+      </participant_qos>
+    </qos_profile>
+
+    <qos_profile name="Subscriber_Scenario_5" base_name="Base_Profile">
+      <participant_qos>
+        <discovery>
+          <initial_peers>0@udpv4_wan://$(PUBLIC_ADDRESS):16001</initial_peers>
+        </discovery>
+      </participant_qos>
+    </qos_profile>
+
+    <!-- ========================================================================= -->
+    <!-- Scenario 6: Private/DefaultPort to Private/DefaultPort through Public/RS; Security -->
+    <!-- ========================================================================= -->
+
+    <qos_profile name="Publisher_Scenario_6" base_name="Publisher_Scenario_5">
+      <participant_qos>
+        <base_name>
+          <element>Publisher_Security_Snippet</element>
+        </base_name>
+      </participant_qos>
+    </qos_profile>
+
+    <qos_profile name="Subscriber_Scenario_6" base_name="Subscriber_Scenario_5">
+      <participant_qos>
+        <base_name>
+          <element>Subscriber_Security_Snippet</element>
+        </base_name>
+      </participant_qos>
+    </qos_profile>
   </qos_library>
 </dds>

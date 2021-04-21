@@ -62,6 +62,12 @@ communication scenarios:
 -   **Scenario 4:** Secure communication between two internal Participants
     behind Cone-NATs using default UDP port mapping. This scenario requires
     running Cloud Discovery Service.
+-   **Scenario 5:** Non-secure communication through Routing Service between two internal Participants
+    behind NATs using default UDP port mapping. This scenario requires
+    running Routing Service.
+-   **Scenario 6:** Secure communication through Routing Service between two internal Participants
+    behind NATs using default UDP port mapping. This scenario requires
+    running Routing Service.
 
 Scenario 1 and Scenario 2 require one External Participant reachable in a public
 IP address and port as shown in the Figure below. If the External Participant is
@@ -82,13 +88,21 @@ facilitate the NAT traversal process.
    resources/images/InternalToInternal.png?raw=true
    "Internal to Internal Participant").
 
+Scenarios 5 and 6 require that both Internal Participants are behind a
+NAT and they also require running a Routing Service instance
+reachable in a public address (60.10.23.45 in the Figure below) on two port one for the input participant (16000) and another for the output participant (16001).
+
+![Internal to Internal Participant through Routing Service](
+   resources/images/InternalToInternalRS.png?raw=true
+   "Internal to Internal Participant through Routing Service").
+
 ## Prerequisites before running example
 
 1)  Before running the example, make sure the environment variable `NDDSHOME` is
     set to the directory where your version of *RTI Connext* is installed.
 
 2)  Download and install the RTI Security Plugins in order to run scenarios
-    2 and 4.
+    2,4 and 6.
 
 3)  Set the load library path to include the Connext DDS libraries and OpenSSL
 
@@ -106,9 +120,9 @@ facilitate the NAT traversal process.
 
 ## Prerequisites before running scenario 1 or 2
 
-`real_time_wan_transport_subscriber`
+`real_time_wan_transport_publisher`
 
-The `real_time_wan_transport_subscriber` application will create the
+The `real_time_wan_transport_publisher` application will create the
 External Participant.
 
 1)  Create a static NAT binding between the
@@ -126,10 +140,10 @@ External Participant.
     is the public IP address of the NAT-enabled router behind which the
     application runs.
 
-`real_time_wan_transport_publisher`
+`real_time_wan_transport_subscriber`
 
-1)  Set the environment variable PUBLIC_ADDRESS to the public IP address in
-    which the ``real_time_wan_transport_subscriber`` application receives data.
+1)  Set the environment variable `PUBLIC_ADDRESS` to the public IP address in
+    which the ``real_time_wan_transport_publisher`` application receives data.
 
 ## Prerequisites before running scenario 3 or 4
 
@@ -158,9 +172,31 @@ router.
     have to be set for the publisher and subscriber applications and for RTI
     Cloud Discovery Service.
 
+## Prerequisites before running scenario 5 or 6
+
+These scenarios require running Routing Service. They also require
+that both applications `real_time_wan_transport_subscriber` and
+`real_time_wan_transport_publisher` are behind Cone (or Asymmetric) NAT-enabled
+router.
+
+1)  Create a static NAT binding between the
+    (private IP address:private UDP ports) in which the Routing Service will receive/send
+    data and a (public IP address:public UDP ports).
+
+    For the sake of simplicity, the XML configuration assumes that
+    the private and public UDP port for the input participat are 16000, and the private and public UDP port for the output participat are 16001. If you want to use
+    a different number replace 16000/16001 with the new number in the XML
+    configuration file. You can also use different numbers for the private UDP
+    port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
+
+2)  Set the environment variable `PUBLIC_ADDRESS` to be the
+    public IP address in which the application will receive data. Usually this
+    is the public IP address of the NAT-enabled router behind which the
+    application runs.
+
 ## Running Cloud Discovery Service
 
-To run Cloud Discovery Service in scenarios 3 and 4 you can the following
+To run Cloud Discovery Service in scenarios 3 and 4 you can use the following
 command line on Mac OS and Linux:
 
 ```sh
@@ -169,22 +205,13 @@ ${NDDSHOME}/bin/rticlouddiscoveryservice -cfgFile CLOUD_DISCOVERY_SERVICE.xml -c
 
 Use `AllDomains` for scenario 3 and `AllDomainsSecure` for scenario 4.
 
-## Running the test
+## Running Routing Service
 
-To run a specific scenario use the command line option `--scenario <value>`
-in the publisher and subscriber applications.
+To run Routing Service in scenarios 5 and 6 you can usethe following
+command line on Mac OS and Linux:
 
-You can get a full list of command line parameters by running with the
-command line option `-h`.
-
-If communication is established you should see the following messages in the
-`real_time_wan_transport_subscriber` console output.
-
-```plaintext
-Received data
-
-   msg: "Hello World 1"
-Received data
-
-   msg: "Hello World 2"
+```sh
+${NDDSHOME}/bin/rticlouddiscoveryservice -cfgFile RS/ROUTING_SERVICE.xml -cfgName RS
 ```
+
+Use `RS` for scenario 5 and `RSSecure` for scenario 6.
