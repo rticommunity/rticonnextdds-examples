@@ -51,8 +51,8 @@ The main goal of this Example is to test connectivity under the following WAN
 communication scenarios:
 
 -   **Scenario 1 (default):** Non-secure communication between an internal
-    Participant using default UDP port mapping and an External Participant using
-    a single UDP port.
+    Participant using default UDP port mapping and an External Participant 
+    using a single UDP port.
 -   **Scenario 2:** Secure communication between an internal Participant using
     default UDP port mapping and an External Participant using a single UDP
     port.
@@ -62,16 +62,16 @@ communication scenarios:
 -   **Scenario 4:** Secure communication between two internal Participants
     behind Cone-NATs using default UDP port mapping. This scenario requires
     running Cloud Discovery Service.
--   **Scenario 5:** Non-secure communication through Routing Service between two internal Participants
-    behind NATs using default UDP port mapping. This scenario requires
-    running Routing Service.
--   **Scenario 6:** Secure communication through Routing Service between two internal Participants
-    behind NATs using default UDP port mapping. This scenario requires
-    running Routing Service.
+-   **Scenario 5:** Non-secure communication through Routing Service between 
+    two internal Participants behind NATs using default UDP port mapping.
+    This scenario requires running Routing Service.
+-   **Scenario 6:** Secure communication through Routing Service between two
+    internal Participants behind NATs using default UDP port mapping.
+    This scenario requires running Routing Service.
 
-Scenario 1 and Scenario 2 require one External Participant reachable in a public
-IP address and port as shown in the Figure below. If the External Participant is
-behind a NAT, you have to create a static NAT binding between a
+Scenario 1 and Scenario 2 require one External Participant reachable in a 
+public IP address and port as shown in the Figure below. If the External
+Participant is behind a NAT, you have to create a static NAT binding between a
 private IP address:port (192.168.1.1:1234 in the figure below) and a public
 IP address:port (50.10.23.45:2345 in the figure below).
 
@@ -90,7 +90,9 @@ facilitate the NAT traversal process.
 
 Scenarios 5 and 6 require that both Internal Participants are behind a
 NAT and they also require running a Routing Service instance
-reachable in a public address (60.10.23.45 in the Figure below) on two port one for the input participant (16000) and another for the output participant (16001).
+reachable in a public address (60.10.23.45 in the Figure below) on two port one
+for the input participant (16000) and another for the output participant 
+(16001).
 
 ![Internal to Internal Participant through Routing Service](
    resources/images/InternalToInternalRS.png?raw=true
@@ -98,8 +100,8 @@ reachable in a public address (60.10.23.45 in the Figure below) on two port one 
 
 ## Prerequisites before running example
 
-1)  Before running the example, make sure the environment variable `NDDSHOME` is
-    set to the directory where your version of *RTI Connext* is installed.
+1)  Before running the example, make sure the environment variable `NDDSHOME`
+    is set to the directory where your version of *RTI Connext* is installed.
 
 2)  Download and install the RTI Security Plugins in order to run scenarios
     2,4 and 6.
@@ -180,14 +182,15 @@ that both applications `real_time_wan_transport_subscriber` and
 router.
 
 1)  Create a static NAT binding between the
-    (private IP address:private UDP ports) in which the Routing Service will receive/send
-    data and a (public IP address:public UDP ports).
+    (private IP address:private UDP ports) in which the Routing Service will 
+    receive/send data and a (public IP address:public UDP ports).
 
     For the sake of simplicity, the XML configuration assumes that
-    the private and public UDP port for the input participat are 16000, and the private and public UDP port for the output participat are 16001. If you want to use
-    a different number replace 16000/16001 with the new number in the XML
-    configuration file. You can also use different numbers for the private UDP
-    port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
+    the private and public UDP port for the input participat are 16000, and the
+    private and public UDP port for the output participat are 16001. If you
+    want to use a different number replace 16000/16001 with the new number in
+    the XML configuration file. You can also use different numbers for the
+    private UDP port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
 
 2)  Set the environment variable `PUBLIC_ADDRESS` to be the
     public IP address in which the application will receive data. Usually this
