@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
     rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     /* Set the maximun string length */
-    max_string_length = arguments.max_string_length;
+    MAX_STRING_LENGTH = arguments.max_string_length;
 
     try {
         run_publisher_application(

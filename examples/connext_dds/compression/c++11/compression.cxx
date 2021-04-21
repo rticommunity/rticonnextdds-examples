@@ -32,7 +32,7 @@ StringLine::StringLine (
         m_str_( str ) {
 }
 
-unsigned int max_string_length = 4096;
+unsigned int MAX_STRING_LENGTH = 4096;
 
 #ifdef RTI_CXX11_RVALUE_REFERENCES
 #ifdef RTI_CXX11_NO_IMPLICIT_MOVE_OPERATIONS
@@ -136,7 +136,7 @@ namespace rti {
                 }
 
                 StringLine_g_tc_str_string =
-                        initialize_string_typecode((max_string_length));
+                        initialize_string_typecode((MAX_STRING_LENGTH));
 
                 StringLine_g_tc._data._annotations._allowedDataRepresentationMask = 5;
 
@@ -307,7 +307,7 @@ namespace dds {
 
         void topic_type_support< StringLine >::allocate_sample(StringLine& sample, int, int) 
         {
-            ::rti::topic::allocate_sample(sample.str(), -1, max_string_length);
+            ::rti::topic::allocate_sample(sample.str(), -1, MAX_STRING_LENGTH);
         }
 
     }

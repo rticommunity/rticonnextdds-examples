@@ -57,7 +57,7 @@ or consult the Code Generator User's Manual.
 #define NDDSUSERDllExport __declspec(dllexport)
 #endif
 
-extern unsigned int max_string_length;
+extern unsigned int MAX_STRING_LENGTH;
 
 class NDDSUSERDllExport StringLine {
   public:
