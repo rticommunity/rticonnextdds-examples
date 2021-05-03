@@ -62,3 +62,12 @@ build
 __pycache__/
 *.py[cod]
 *$py.class
+
+### Gradle ###
+.gradle
+
+# Ignore Gradle GUI config
+gradle-app.setting
+
+# Cache of project
+.gradletasknamecache
