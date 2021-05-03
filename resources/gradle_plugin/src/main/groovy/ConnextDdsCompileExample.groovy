@@ -54,7 +54,7 @@ class ConnextDdsBuildExample implements Plugin<Project> {
         def codegenRelativePath = "bin/rtiddsgen"
 
         if (OperatingSystem.current().isWindows())
-            codegenRelativePath << ".bat"
+            codegenRelativePath += ".bat"
 
         def codegenPath = new File(connextDdsPath, codegenRelativePath)
         this.addCodegenTask(project, codegenPath, extension)
