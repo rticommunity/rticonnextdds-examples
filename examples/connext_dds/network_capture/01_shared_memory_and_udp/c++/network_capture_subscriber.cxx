@@ -219,7 +219,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     }
 
     topic = participant->create_topic(
-            "NetworkCapture using C++ API",
+            "Network capture shared memory example",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */

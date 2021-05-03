@@ -9,6 +9,10 @@
  * not be liable for any incidental or consequential damages arising out of the
  * use or inability to use the software.
  */
-struct NetworkCapture {
-    string<128> msg;
+module NetworkCaptureExample {
+
+    struct HelloWorld {
+        string<128> msg;
+    };
+
 };
