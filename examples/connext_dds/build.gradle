@@ -1,0 +1,12 @@
+import org.gradle.api.BuildCancelledException
+
+task("findConnextDds") {
+    def nddsHome = System.getenv("NDDSHOME")
+
+    if (nddsHome) {
+        println "Found RTIConnextDDS: ${nddsHome}"
+    } else {
+        throw new BuildCancelledException(
+            "ERROR: RTIConnextDDS not found, please set the environment variables.")
+    }
+}
