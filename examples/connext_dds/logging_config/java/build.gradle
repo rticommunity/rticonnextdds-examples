@@ -1,0 +1,8 @@
+plugins {
+  id 'com.github.rticommunity.connext-dds-build-example'
+}
+
+ConfigureExample {
+  idlFile = 'logging.idl'
+  codegenExtraArgs = ['-update', 'examplefiles']
+}
