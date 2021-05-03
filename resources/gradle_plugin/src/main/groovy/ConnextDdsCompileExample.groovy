@@ -5,6 +5,7 @@ import org.gradle.api.Project
 import org.gradle.api.tasks.Exec
 import org.gradle.api.tasks.Delete
 import org.gradle.api.tasks.SourceSet
+import org.gradle.internal.os.OperatingSystem
 import org.gradle.api.tasks.SourceSetContainer
 import com.github.rticommunity.ConnextDdsBuildExampleExtension
 
@@ -50,7 +51,12 @@ class ConnextDdsBuildExample implements Plugin<Project> {
         this.configureJarManifest(project, classPath)
 
         // Add and configure the codegen Task and deleteGeneratedFiles Task
-        def codegenPath = new File(connextDdsPath, "bin/rtiddsgen")
+        def codegenRelativePath = "bin/rtiddsgen"
+
+        if (OperatingSystem.current().isWindows())
+            codegenRelativePath << ".bat"
+
+        def codegenPath = new File(connextDdsPath, codegenRelativePath)
         this.addCodegenTask(project, codegenPath, extension)
         this.addDeleteGeneratedFilesTask(project, extension)
     }
@@ -94,7 +100,11 @@ class ConnextDdsBuildExample implements Plugin<Project> {
 
                     commandLine codegenCall
                 } else {
-                    commandLine "echo", "Skipping codegen because the .idl file was not provided"
+                    if (OperatingSystem.current().isWindows()) {
+                        commandLine "cmd", "/c", "echo Skipping codegen because the .idl file was not provided"
+                    } else {
+                        commandLine "echo",  "Skipping codegen because the .idl file was not provided"
+                    }
                 }
             }
         }
