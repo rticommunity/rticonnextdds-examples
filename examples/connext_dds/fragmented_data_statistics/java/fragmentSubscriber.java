@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -21,7 +21,13 @@ import com.rti.dds.infrastructure.RETCODE_TIMEOUT;
 import com.rti.dds.infrastructure.ResourceLimitsQosPolicy;
 import com.rti.dds.infrastructure.StatusKind;
 import com.rti.dds.infrastructure.WaitSet;
-import com.rti.dds.subscription.*;
+import com.rti.dds.subscription.InstanceStateKind;
+import com.rti.dds.subscription.ReadCondition;
+import com.rti.dds.subscription.SampleInfo;
+import com.rti.dds.subscription.SampleInfoSeq;
+import com.rti.dds.subscription.SampleStateKind;
+import com.rti.dds.subscription.Subscriber;
+import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
 
 /**
@@ -115,7 +121,6 @@ public class fragmentSubscriber extends Application implements AutoCloseable {
         ConditionSeq activeConditions = new ConditionSeq();
 
         // Main loop. Wait for data to arrive and process when it arrives
-        DataReaderProtocolStatus status = new DataReaderProtocolStatus();
         while (!isShutdownRequested() && samplesRead < getMaxSampleCount()) {
             try {
                 // Wait fills in activeConditions or times out
@@ -128,16 +133,6 @@ public class fragmentSubscriber extends Application implements AutoCloseable {
                 // No data received, not a problem
                 System.out.printf("No data after %d seconds.%n", waitTimeout.sec);
             }
-            reader.get_datareader_protocol_status(status);
-            System.out.println("Fragmented Data Statistics:\n"
-                + "\t received_fragment_count "
-                + status.received_fragment_count + "\n"
-                +"\t dropped_fragment_count "
-                + status.dropped_fragment_count + "\n"
-                +"\t sent_nack_fragment_count "
-                + status.sent_nack_fragment_count + "\n"
-                +"\t sent_nack_fragment_bytes "
-                + status.sent_nack_fragment_bytes);
         }
     }
 
