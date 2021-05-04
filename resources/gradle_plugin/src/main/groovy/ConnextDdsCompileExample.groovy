@@ -51,13 +51,8 @@ class ConnextDdsBuildExample implements Plugin<Project> {
         this.configureJarManifest(project, classPath)
 
         // Add and configure the codegen Task and deleteGeneratedFiles Task
-        def codegenRelativePath = "bin/rtiddsgen"
 
-        if (OperatingSystem.current().isWindows())
-            codegenRelativePath += ".bat"
-
-        def codegenPath = new File(connextDdsPath, codegenRelativePath)
-        this.addCodegenTask(project, codegenPath, extension)
+        this.addCodegenTask(project, extension)
         this.addDeleteGeneratedFilesTask(project, extension)
     }
 
@@ -78,7 +73,6 @@ class ConnextDdsBuildExample implements Plugin<Project> {
 
     private void addCodegenTask(
             Project project,
-            File codegenPath,
             ConnextDdsBuildExampleExtension extension)
     {
         def codegen = project.task(CODEGEN_TASK_NAME) {
@@ -93,8 +87,8 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                     ]
 
                     if (extension.codegenExtraArgs.get()) {
-                        codegenCall.addAll(
-                            codegenCall.size() - 1, extension.codegenExtraArgs.get())
+                        codegenArgs.addAll(
+                            codegenArgs.size() - 1, extension.codegenExtraArgs.get())
                     }
 
                     project.exec {
