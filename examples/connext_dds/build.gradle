@@ -1,12 +1,31 @@
 import org.gradle.api.BuildCancelledException
+import org.gradle.internal.os.OperatingSystem
+
+plugins {
+    id "de.undercouch.download" version "4.1.1"
+}
 
 task("findConnextDds") {
     def nddsHome = System.getenv("NDDSHOME")
+    def foundTarget = System.getenv("CONNEXTDDS_ARCH")
 
     if (nddsHome) {
         println "Found RTIConnextDDS: ${nddsHome}"
+        println "Found target: ${foundTarget}"
     } else {
         throw new BuildCancelledException(
             "ERROR: RTIConnextDDS not found, please set the environment variables.")
     }
 }
+
+task("downloadVSWhere") {
+    if (OperatingSystem.current().isWindows()) {
+        download {
+            src "https://github.com/microsoft/vswhere/releases/download/2.8.4/vswhere.exe"
+            dest "../../resources/vswhere/vswhere.exe"
+            overwrite false
+        }
+    }
+}
+
+findConnextDds.finalizedBy downloadVSWhere
