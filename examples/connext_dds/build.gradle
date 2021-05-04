@@ -1,3 +1,4 @@
+import groovy.io.FileType
 import org.gradle.api.BuildCancelledException
 import org.gradle.internal.os.OperatingSystem
 
@@ -27,5 +28,40 @@ task("downloadVSWhere") {
         }
     }
 }
+
+task("findClExePreprocessor") {
+    dependsOn 'downloadVSWhere'
+    doLast {
+        if(OperatingSystem.current().isWindows()) {
+            def vswhereExecutable = new File(
+                "../../resources/vswhere/vswhere.exe"
+            )
+
+            if (!vswhereExecutable.canExecute()) {
+                fail(
+                    "vswhere.exe program is not executable. It is needed to find "
+                    + "the latest Visual Studio installation"
+                )
+            }
+
+            def cmd = ("${vswhereExecutable.absolutePath} -legacy -latest "
+                + "-format value -property installationPath")
+            latestVsInstallation = new File(cmd.execute().text.trim())
+            def clExePath
+
+            latestVsInstallation.eachFileRecurse(FileType.FILES) { file ->
+                if (
+                    file.toString().endsWith('VC/bin/cl.exe')
+                    || file.toString().endsWith('bin/Hostx64/x64/cl.exe')
+                ) {
+                    clExePath = file.toString()
+                }
+            }
+
+            println clExePath
+        }
+    }
+}
+
 
 findConnextDds.finalizedBy downloadVSWhere
