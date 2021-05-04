@@ -78,6 +78,8 @@ class ConnextDdsBuildExample implements Plugin<Project> {
         def codegen = project.task(CODEGEN_TASK_NAME) {
             doFirst {
                 if(extension.idlFile.get()) {
+                    def codegenExecutableName = "rtiddsgen"
+
                     def codegenArgs = [
                         "-language",
                         "Java",
@@ -86,13 +88,17 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                         extension.idlFile.get()
                     ]
 
+                    if (OperatingSystem.current().isWindows()) {
+                        codegenExecutableName += ".bat"
+                    }
+
                     if (extension.codegenExtraArgs.get()) {
                         codegenArgs.addAll(
                             codegenArgs.size() - 1, extension.codegenExtraArgs.get())
                     }
 
                     project.exec {
-                        executable "rtiddsgen"
+                        executable codegenExecutableName
                         args codegenArgs
                     }
                 } else {
