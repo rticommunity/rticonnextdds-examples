@@ -18,5 +18,3 @@ task("findConnextDds") {
             "ERROR: RTIConnextDDS not found, please set the environment variables.")
     }
 }
-
-findConnextDds.finalizedBy downloadVSWhere
