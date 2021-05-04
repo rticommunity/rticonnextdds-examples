@@ -82,6 +82,7 @@ class ConnextDdsBuildExample implements Plugin<Project> {
 
                     def codegenArgs = [
                         "-language",
+                        "-ppDisable",
                         "Java",
                         "-update",
                         "typefiles",
