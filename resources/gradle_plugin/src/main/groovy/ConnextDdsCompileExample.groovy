@@ -81,11 +81,10 @@ class ConnextDdsBuildExample implements Plugin<Project> {
             File codegenPath,
             ConnextDdsBuildExampleExtension extension)
     {
-        def codegen = project.task(type: Exec.class, CODEGEN_TASK_NAME) {
+        def codegen = project.task(CODEGEN_TASK_NAME) {
             doFirst {
                 if(extension.idlFile.get()) {
-                    def codegenCall = [
-                        codegenPath.toString(),
+                    def codegenArgs = [
                         "-language",
                         "Java",
                         "-update",
@@ -98,13 +97,12 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                             codegenCall.size() - 1, extension.codegenExtraArgs.get())
                     }
 
-                    commandLine codegenCall
-                } else {
-                    if (OperatingSystem.current().isWindows()) {
-                        commandLine "cmd", "/c", "echo Skipping codegen because the .idl file was not provided"
-                    } else {
-                        commandLine "echo",  "Skipping codegen because the .idl file was not provided"
+                    project.exec {
+                        executable "rtiddsgen"
+                        args codegenArgs
                     }
+                } else {
+                    println "Skipping codegen because the .idl file was not provided"
                 }
             }
         }
