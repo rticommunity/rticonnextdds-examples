@@ -53,7 +53,7 @@ Alternatively, you can use `gradle` to run this example:
 
 ```sh
 gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
-gradle run -PmainClass=Subscriber --args="<domain_id> <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods>"
 ```
 
 The applications accept up to two arguments:
