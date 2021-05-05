@@ -38,13 +38,13 @@ application:
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar DynamicDataSequences
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar DynamicDataSequences
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp build\libs\java.jar DynamicDataSequences
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" DynamicDataSequences
 ```
 
 ## Gradle Build Infrastructure
