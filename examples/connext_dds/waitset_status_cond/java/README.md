@@ -49,6 +49,13 @@ java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitset_status
 java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitset_statuscondSubscriber <domain_id> <sleep_periods>
 ```
 
+Alternatively, you can use `gradle` to run this example:
+
+```sh
+gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods>"
+```
+
 The applications accept up to two arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain ID in order
