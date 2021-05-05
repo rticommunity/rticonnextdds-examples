@@ -39,21 +39,21 @@ On *UNIX* systems run:
 
 ```sh
 java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingPublisher -d <domain_id> -s <samples_to_send>
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingSubscriber -d <domain_id> -s <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 On *Windows* systems run:
 
 ```sh
 java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" printingPublisher -d <domain_id> -s <samples_to_send>
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" printingSubscriber -d <domain_id> -s <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" printingSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 Alternatively, you can use `gradle` to run this example:
 
 ```sh
 gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send>"
-gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>"
 ```
 
 The applications accept up to two arguments:
