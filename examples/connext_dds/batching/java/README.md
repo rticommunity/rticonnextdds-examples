@@ -33,9 +33,8 @@ gradle clean
 
 ## Running the Example
 
-The `build.gradle` script that builds this example uses a generic plugin called
-`com.github.rticommunity.connext-dds-build-example` that defines all the
-necessary constructs to:
+Run the following commands in two separate command prompts, one for the
+publisher and another one for the subscriber, both from the example directory:
 
 On *UNIX* systems run:
 
