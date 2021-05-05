@@ -33,21 +33,29 @@ gradle clean
 
 ## Running the Example
 
-Run the following commands in two separate terminal windows: one for the
-publisher and other for the subscriber, both from the example directory:
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
 
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
-java -cp build/libs/java.jar batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp build\libs\java.jar batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
-java -cp build\libs\java.jar batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+```
+
+Alternatively, you can use `gradle` to run this example:
+
+```sh
+gradle run -PmainClass=Publisher --args="<domain_id> <turbo_mode> <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="<domain_id> <turbo_mode> <sleep_periods>"
 ```
 
 The applications accept up to two arguments:
