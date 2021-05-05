@@ -32,21 +32,21 @@ gradle clean
 
 ## Running the Example
 
-Run the following commands in two separate terminal windows: one for the
-publisher and other for the subscriber, both from the example directory:
+Run the following commands in two separate command prompts, one for the
+publisher and another one for the subscriber, both from the example directory:
 
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar waitset_statuscondPublisher <domain_id> <samples_to_send>
-java -cp build/libs/java.jar waitset_statuscondSubscriber <domain_id> <sleep_periods>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar waitset_statuscondPublisher <domain_id> <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar waitset_statuscondSubscriber <domain_id> <sleep_periods>
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp build\libs\java.jar waitset_statuscondPublisher <domain_id> <samples_to_send>
-java -cp build\libs\java.jar waitset_statuscondSubscriber <domain_id> <sleep_periods>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitset_statuscondPublisher <domain_id> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitset_statuscondSubscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
