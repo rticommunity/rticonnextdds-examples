@@ -32,21 +32,28 @@ gradle clean
 
 ## Running the Example
 
-Run the following commands in two separate terminal windows: one for the
-publisher and other for the subscriber, both from the example directory:
+Run the following commands in two separate command prompts, one for the
+publisher and another one for the subscriber, both from the example directory:
 
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar instancePublisher -d <domain_id> -s <samples_to_send>
-java -cp build/libs/java.jar instanceSubscriber -d <domain_id> -s <samples_to_receive>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar instancePublisher -d <domain_id> -s <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar instanceSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp build\libs\java.jar instancePublisher -d <domain_id> -s <samples_to_send>
-java -cp build\libs\java.jar instanceSubscriber -d <domain_id> -s <samples_to_receive>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" instancePublisher -d <domain_id> -s <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" instanceSubscriber -d <domain_id> -s <samples_to_receive>
+```
+
+Alternatively, you can use `gradle` to run this example:
+
+```sh
+gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>"
 ```
 
 The applications accept up to two arguments:
