@@ -65,8 +65,6 @@ communicate. The default is 0.
 and sleep periods for the subscriber. A value of '0' instructs the application
 to run forever; this is the default.
 
-
-
 ## Gradle Build Infrastructure
 
 The `build.gradle` script that builds this example uses a generic plugin called
@@ -82,4 +80,3 @@ for the types defined in the IDL file associated with the example.
 
 You will find the definition of the plugin, along with detailed
 documentation, in `../../../../resources/gradle_plugin`.
-

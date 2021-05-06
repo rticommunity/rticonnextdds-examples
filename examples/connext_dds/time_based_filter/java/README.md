@@ -61,7 +61,7 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.
 
-1. How long the examples should run, measured in samples for the publisher and
+2.  How long the examples should run, measured in samples for the publisher and
 sleep periods for the subscriber. A value of '0' instructs the application
 to run forever; this is the default.
 
@@ -80,4 +80,3 @@ for the types defined in the IDL file associated with the example.
 
 You will find the definition of the plugin, along with detailed
 documentation, in `../../../../resources/gradle_plugin`.
-
