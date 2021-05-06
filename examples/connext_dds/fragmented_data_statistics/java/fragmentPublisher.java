@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -16,7 +16,7 @@ import com.rti.dds.domain.DomainParticipant;
 import com.rti.dds.domain.DomainParticipantFactory;
 import com.rti.dds.infrastructure.InstanceHandle_t;
 import com.rti.dds.infrastructure.StatusKind;
-import com.rti.dds.publication.Publisher;
+import com.rti.dds.publication.*;
 import com.rti.dds.topic.Topic;
 
 /** 
@@ -64,9 +64,12 @@ public class fragmentPublisher extends Application implements AutoCloseable {
                 null, // listener
                 StatusKind.STATUS_MASK_NONE));
 
-        // Create data sample for writing
+        // Create the data to be written, ensuring it is larger than message_size_max
         fragment data = new fragment();
+        byte[] bytes = new byte[8000];
+        data.data.addAllByte(bytes);
 
+        DataWriterProtocolStatus status = new DataWriterProtocolStatus();
         for (int samplesWritten = 0; !isShutdownRequested()
         && samplesWritten < getMaxSampleCount(); samplesWritten++) {
 
@@ -83,6 +86,21 @@ public class fragmentPublisher extends Application implements AutoCloseable {
                 System.err.println("INTERRUPTED");
                 break;
             }
+
+            writer.get_datawriter_protocol_status(status);
+            System.out.println("Fragmented Data Statistics:\n"
+                + "\t pushed_fragment_count "
+                + status.pushed_fragment_count + "\n"
+                +"\t pushed_fragment_bytes "
+                + status.pushed_fragment_bytes + "\n"
+                +"\t pulled_fragment_count "
+                + status.pulled_fragment_count + "\n"
+                +"\t pulled_fragment_bytes "
+                + status.pulled_fragment_bytes + "\n"
+                +"\t received_nack_fragment_count "
+                + status.received_nack_fragment_count + "\n"
+                +"\t received_nack_fragment_bytes "
+                + status.received_nack_fragment_bytes);
         }
     }
 
