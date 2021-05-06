@@ -41,42 +41,42 @@ function(add_examples)
     set(optional_args SKIP)
     set(single_value_args SKIP_MESSAGE)
     set(multi_value_args EXAMPLES)
-    cmake_parse_arguments(_ADD_ARGUMENTS
+    cmake_parse_arguments(_ADD_EXAMPLES_ARGS
         "${optional_args}"
         "${single_value_args}"
         "${multi_value_args}"
         ${ARGN}
     )
     connextdds_check_required_arguments(
-        _ADD_ARGUMENTS_EXAMPLES
+        _ADD_EXAMPLES_ARGS_EXAMPLES
     )
 
-    set(FOLDER_NAMES c c++98 c++ c++03 c++11 cmake)
+    set(LANGUAGE_FOLDER_NAMES c c++98 c++ c++03 c++11 cmake)
 
     # Check if all directories exist 
-    foreach(example ${_ADD_ARGUMENTS_EXAMPLES})
+    foreach(example ${_ADD_EXAMPLES_ARGS_EXAMPLES})
         if(NOT IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${example}")
             message(FATAL_ERROR "${example} does not exist")
         endif()
     endforeach()
 
     # Check if skip
-    if(_ADD_ARGUMENTS_SKIP)
-        string(REPLACE ";" "\n\t- " SKIPPED_EXAMPLES "${_ADD_ARGUMENTS_EXAMPLES}")
+    if(_ADD_EXAMPLES_ARGS_SKIP)
+        string(REPLACE ";" "\n\t- " SKIPPED_EXAMPLES "${_ADD_EXAMPLES_ARGS_EXAMPLES}")
         message(
             STATUS
-                "Skipping examples because ${_ADD_ARGUMENTS_SKIP_MESSAGE}. "
+                "Skipping examples because ${_ADD_EXAMPLES_ARGS_SKIP_MESSAGE}. "
                 "The skipped examples are: \n\t- ${SKIPPED_EXAMPLES}"
         )
         return()
     endif()
-    
+
     # Add existing examples
-    foreach(example ${_ADD_ARGUMENTS_EXAMPLES})
-        foreach(folder ${FOLDER_NAMES})
-            if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${example}/${folder}")
+    foreach(example_name ${_ADD_EXAMPLES_ARGS_EXAMPLES})
+        foreach(language_folder ${LANGUAGE_FOLDER_NAMES})
+            if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/${example_name}/${language_folder}")
                 add_subdirectory(
-                    "${CMAKE_CURRENT_SOURCE_DIR}/${example}/${folder}"
+                    "${CMAKE_CURRENT_SOURCE_DIR}/${example_name}/${language_folder}"
                 )
             endif()
         endforeach()

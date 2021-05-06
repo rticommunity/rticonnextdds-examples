@@ -12,6 +12,7 @@ set(CMAKE_MODULE_PATH
 
 include(ConnextDdsAddExamples)
 
+# Find the ConnextDDS libraries. This will look fo the core and API libraries
 find_package(RTIConnextDDS
     "6.1.0"
     REQUIRED
@@ -111,6 +112,10 @@ add_examples(
 # for cmake_language(EVAL CODE ...) and pass the condition as a string
 # parameter instead of passing a boolean.
 # Take a look here https://tinyurl.com/cmakelanguage
+
+# custom_transport requires D_BUILD_SHARED_LIBS=ON and cannot be compiled on
+# Windows because it uses Unix system calls to perform file operations such as
+# locking, reading and writing.
 if(WIN32 OR NOT BUILD_SHARED_LIBS)
     set(SKIP_CUSTOM_EXTRA_ARGS
      SKIP
@@ -124,6 +129,9 @@ add_examples(
     ${SKIP_CUSTOM_EXTRA_ARGS}
 )
 
+# builtin_qos_profiles needs DBUILD_SHARED_LIBS=ON because it will require
+# to be linked against RTI's dynamic libraries so the monitoring library can
+# be loaded correctly
 if(NOT BUILD_SHARED_LIBS)
     set(SKIP_BUILTIN_QOS_EXTRA_ARGS
         SKIP
