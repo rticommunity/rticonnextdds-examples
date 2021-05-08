@@ -41,6 +41,14 @@ or inability to use the software.
                 <representation>
                     <compression_settings>
                         <!-- Try to compress all the samples -->
+                        <!--
+                            The compression ids are set via command line for
+                            this example, the possible values are
+                            ZLIB - BZIP2 - LZ4 - MASK_NONE
+                            A data writer only support a single id enabled.
+                            Example:
+                            <compression_ids>ZLIB</compression_ids>
+                        -->
                         <writer_compression_threshold>0</writer_compression_threshold>
                         <writer_compression_level>BEST_COMPRESSION</writer_compression_level>
                     </compression_settings>
@@ -52,6 +60,22 @@ or inability to use the software.
                     <max_samples>10</max_samples>
                 </batch>
             </datawriter_qos>
+
+            <datareader_qos>
+                <representation>
+                    <compression_settings>
+                        <!--
+                            The possible values for the compression ids on the
+                            reader are:
+                                ZLIB - BZIP2 - LZ4 - MASK_ALL - MASK_NONE
+                            The default value for a reader is MASK_ALL.
+                            Example:
+                            <compression_ids>ZLIB|LZ4</compression_ids>
+                        -->
+                        <compression_ids>MASK_ALL</compression_ids>
+                    </compression_settings>
+                </representation>
+            </datareader_qos>
 
             <!-- QoS used to configure the data reader created in the example code -->                
             <datareader_qos>

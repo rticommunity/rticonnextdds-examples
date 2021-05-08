@@ -10,12 +10,12 @@
 * to use the software.
 */
 
-#ifndef APPLICATION_H
-#define APPLICATION_H
+#ifndef APPLICATION_HPP
+#define APPLICATION_HPP
 
 #include <iostream>
 #include <csignal>
-#include <climits>
+#include <dds/core/ddscore.hpp>
 
 namespace application {
 
@@ -25,7 +25,7 @@ namespace application {
     inline void stop_handler(int)
     {
         shutdown_requested = true;
-        std::cout << std::endl << "preparing to shut down..." << std::endl;
+        std::cout << "preparing to shut down..." << std::endl;
     }
 
     inline void setup_signal_handlers()
@@ -34,89 +34,115 @@ namespace application {
         signal(SIGTERM, stop_handler);
     }
 
-    enum ParseReturn { PARSE_RETURN_OK, PARSE_RETURN_FAILURE, PARSE_RETURN_EXIT };
+    enum class ParseReturn {
+        ok,
+        failure,
+        exit
+    };
 
     struct ApplicationArguments {
         ParseReturn parse_result;
         unsigned int domain_id;
         unsigned int sample_count;
+        unsigned int max_string_length;
         std::string compression_id;
         std::string input_file;
-        NDDS_Config_LogVerbosity verbosity;
+        rti::config::Verbosity verbosity;
+
+        ApplicationArguments(
+            ParseReturn parse_result_param,
+            unsigned int domain_id_param,
+            unsigned int sample_count_param,
+            unsigned int max_string_length_param,
+            std::string compression_id_param,
+            std::string input_file_param,
+            rti::config::Verbosity verbosity_param)
+            : parse_result(parse_result_param),
+            domain_id(domain_id_param),
+            sample_count(sample_count_param),
+            max_string_length(max_string_length_param),
+            compression_id(compression_id_param),
+            input_file(input_file_param),
+            verbosity(verbosity_param) {}
     };
 
     inline void set_verbosity(
-        ApplicationArguments& arguments,
-        int verbosity)
+        rti::config::Verbosity& verbosity,
+        int verbosity_value)
     {
-        switch (verbosity) {
+        switch (verbosity_value) {
             case 0:
-            arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_SILENT;
+            verbosity = rti::config::Verbosity::SILENT;
             break;
             case 1:
-            arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_ERROR;
+            verbosity = rti::config::Verbosity::EXCEPTION;
             break;
             case 2:
-            arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_WARNING;
+            verbosity = rti::config::Verbosity::WARNING;
             break;
             case 3:
-            arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL;
+            verbosity = rti::config::Verbosity::STATUS_ALL;
             break;
             default:
-            arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_ERROR;
+            verbosity = rti::config::Verbosity::EXCEPTION;
             break;
         }
     }
 
-    // Parses application arguments for example.  Returns whether to exit.
-    inline void parse_arguments(
-        ApplicationArguments& arguments,
-        int argc,
-        char *argv[])
+    // Parses application arguments for example.
+    inline ApplicationArguments parse_arguments(int argc, char *argv[])
     {
         int arg_processing = 1;
         bool show_usage = false;
-        arguments.domain_id = 0;
-        arguments.sample_count = INT_MAX;
-        arguments.verbosity = NDDS_CONFIG_LOG_VERBOSITY_ERROR;
-        arguments.parse_result = PARSE_RETURN_OK;
+        ParseReturn parse_result = ParseReturn::ok;
+        unsigned int domain_id = 0;
+        unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
+        unsigned int max_string_length = 4096;
+        std::string compression_id;
+        std::string input_file;
+        rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
 
         while (arg_processing < argc) {
             if ((argc > arg_processing + 1) 
             && (strcmp(argv[arg_processing], "-d") == 0
             || strcmp(argv[arg_processing], "--domain") == 0)) {
-                arguments.domain_id = atoi(argv[arg_processing + 1]);
-                arg_processing += 2;
-            } else if ((argc > arg_processing + 1)
-            && (strcmp(argv[arg_processing], "-c") == 0
-            || strcmp(argv[arg_processing], "--compression-id") == 0)) {
-                arguments.compression_id = (argv[arg_processing + 1]);
-                arg_processing += 2;
-            } else if ((argc > arg_processing + 1)
-            && (strcmp(argv[arg_processing], "-i") == 0
-            || strcmp(argv[arg_processing], "--input-file") == 0)) {
-                arguments.input_file = (argv[arg_processing + 1]);
+                domain_id = atoi(argv[arg_processing + 1]);
                 arg_processing += 2;
             } else if ((argc > arg_processing + 1)
             && (strcmp(argv[arg_processing], "-s") == 0
             || strcmp(argv[arg_processing], "--sample-count") == 0)) {
-                arguments.sample_count = atoi(argv[arg_processing + 1]);
+                sample_count = atoi(argv[arg_processing + 1]);
+                arg_processing += 2;
+            } else if ((argc > arg_processing + 1)
+            && (strcmp(argv[arg_processing], "-m") == 0
+            || strcmp(argv[arg_processing], "--max-string-length") == 0)) {
+                max_string_length = atoi(argv[arg_processing + 1]);
+                arg_processing += 2;
+            } else if ((argc > arg_processing + 1)
+            && (strcmp(argv[arg_processing], "-c") == 0
+            || strcmp(argv[arg_processing], "--compression-id") == 0)) {
+                compression_id = (argv[arg_processing + 1]);
+                arg_processing += 2;
+            } else if ((argc > arg_processing + 1)
+            && (strcmp(argv[arg_processing], "-i") == 0
+            || strcmp(argv[arg_processing], "--input-file") == 0)) {
+                input_file = (argv[arg_processing + 1]);
                 arg_processing += 2;
             } else if ((argc > arg_processing + 1)
             && (strcmp(argv[arg_processing], "-v") == 0
             || strcmp(argv[arg_processing], "--verbosity") == 0)) {
-                set_verbosity(arguments, atoi(argv[arg_processing + 1]));
+                set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
                 arg_processing += 2;
             } else if (strcmp(argv[arg_processing], "-h") == 0
             || strcmp(argv[arg_processing], "--help") == 0) {
                 std::cout << "Example application." << std::endl;
                 show_usage = true;
-                arguments.parse_result = PARSE_RETURN_EXIT;
+                parse_result = ParseReturn::exit;
                 break;
             } else {
                 std::cout << "Bad parameter." << std::endl;
                 show_usage = true;
-                arguments.parse_result = PARSE_RETURN_FAILURE;
+                parse_result = ParseReturn::failure;
                 break;
             }
         }
@@ -125,9 +151,12 @@ namespace application {
             "    -d, --domain       <int>   Domain ID this application will\n" \
             "                               subscribe in.  \n"
             "                               Default: 0\n"\
-            "    -s, --sample_count <int>   Number of samples to receive before\n"\
+            "    -s, --sample-count <int>   Number of samples to receive before\n"\
             "                               cleanly shutting down. \n"
             "                               Default: infinite\n"
+            "    -s, --max-string-length <int> Max size of a single line from the \n"\
+            "                               input file.\n"
+            "                               Default: 4098\n"
             "    -c, --compression-id <string> Enable or disable compression with\n"
             "                               a given compression algorithm. \n"
             "                               Accepted values: NONE, LZ4, ZLIB, BZIP2\n"
@@ -142,7 +171,17 @@ namespace application {
             "                               Default: 1"
             << std::endl;
         }
+
+        return ApplicationArguments(
+                parse_result,
+                domain_id,
+                sample_count,
+                max_string_length,
+                compression_id,
+                input_file,
+                verbosity);
     }
+
 }  // namespace application
 
-#endif  // APPLICATION_H
+#endif  // APPLICATION_HPP

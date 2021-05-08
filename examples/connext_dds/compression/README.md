@@ -25,7 +25,10 @@ by enabling/disabling compression and the different compression algorithm.
 
 The *USER_DATA* can be also configured by `--input-file` command line parameter,
 where each of the lines on the files will represent a sample. This is a simple
-way to test and compare different kinds of data.
+way to test and compare different kinds of data. Along with the input file, you
+may need to set the `--max-string-length` to specify the maximum size of a
+single line, the default value is 4096 characters long. If any of the lines of
+the given file is longer you would need to increase this value.
 
 ## Publisher
 
@@ -59,10 +62,3 @@ over the given input data.
 To finalize the subscriber either set the `--sample-count` option or send
 a SIGINT/SIGTERM signal that will be handler by the application printing the
 final report and finishing gratefully.
-
-## Code generation
-
-The current limit for each line of the input file is 4096 bytes long. If you
-want to change this value you need to edit the CMakeLists file
-`examples/connext_dds/compression/c++/CMakeLists.txt` and modify the value
-under `CODEGEN_ARGS`
