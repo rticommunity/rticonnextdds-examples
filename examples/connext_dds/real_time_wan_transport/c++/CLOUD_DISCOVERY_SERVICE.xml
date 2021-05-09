@@ -14,6 +14,15 @@
                 </property>
             </element>
         </transport>
+        
+        <forwarder>
+            <event>
+                <refresh_period>
+                    <sec>5</sec>
+                    <nanosec>0</nanosec>
+                </refresh_period>
+            </event>
+        </forwarder>
     </cloud_discovery_service>
 
     <cloud_discovery_service name="AllDomainsSecure">
@@ -42,5 +51,14 @@
                 </element>
             </property>
         </security>
+
+        <forwarder>
+            <event>
+                <refresh_period>
+                    <sec>5</sec>
+                    <nanosec>0</nanosec>
+                </refresh_period>
+            </event>
+        </forwarder>
     </cloud_discovery_service>
 </dds>
