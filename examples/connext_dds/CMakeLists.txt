@@ -58,12 +58,14 @@ connextdds_add_examples_subdirectories(
         "asynchronous_publication"
         "asyncwaitset"
         "batching"
+        "builtin_qos_profiles"
         "builtin_topics"
         "coherent_presentation"
         "content_filtered_topic"
         "content_filtered_topic_string_filter"
         "custom_content_filter"
         "custom_flow_controller"
+        "custom_transport"
         "deadline_contentfilter"
         "dynamic_data_using_publisher_subscriber"
         "flat_data_api"
@@ -105,42 +107,4 @@ connextdds_add_examples_subdirectories(
         "network_capture/03_security"
         "network_capture/04_advanced_api"
         "printing_qos"
-)
-
-# These conditionals could be replaced once we have updated to CMake 3.18.
-# To do this, we could replace the if inside the add_examples function
-# for cmake_language(EVAL CODE ...) and pass the condition as a string
-# parameter instead of passing a boolean.
-# Take a look at cmake_language in the documentation.
-
-# custom_transport requires to be built as a shared library and cannot be compiled on
-# Windows because it uses Unix system calls to perform file operations such as
-# locking, reading and writing.
-if(WIN32 OR NOT BUILD_SHARED_LIBS)
-    set(SKIP_CUSTOM_EXTRA_ARGS
-     SKIP
-     SKIP_MESSAGE "it is not compatible with Windows and requires DBUILD_SHARED_LIBS=ON"
-    )
-endif()
-
-connextdds_add_examples_subdirectories(
-    EXAMPLES
-        "custom_transport"
-    ${SKIP_CUSTOM_EXTRA_ARGS}
-)
-
-# builtin_qos_profiles has to be built as a shared library because it is linked
-# against RTI's dynamic libraries so the monitoring library can
-# be loaded correctly
-if(NOT BUILD_SHARED_LIBS)
-    set(SKIP_BUILTIN_QOS_EXTRA_ARGS
-        SKIP
-        SKIP_MESSAGE "it requires DBUILD_SHARED_LIBS=ON"
-    )
-endif()
-
-connextdds_add_examples_subdirectories(
-    EXAMPLES
-        "builtin_qos_profiles"
-    ${SKIP_BUILTIN_QOS_EXTRA_ARGS}
 )
