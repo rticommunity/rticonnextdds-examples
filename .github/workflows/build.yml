@@ -106,7 +106,7 @@ jobs:
         env:
           RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
 
-      # This script will compile the examples and execute the static analysis
+      # This script will compile the examples and execute the static analysis.
       - name: Run static analysis
         run: python resources/ci_cd/linux_static_analysis.py
         env:
