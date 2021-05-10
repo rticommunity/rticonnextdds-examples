@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH
 
 include(ConnextDdsAddExamplesSubdirectories)
 
-# Find the ConnextDDS libraries. This will look fo the core and API libraries
+# Find the ConnextDDS libraries. This will look for core and API libraries
 find_package(RTIConnextDDS
     "6.1.0"
     REQUIRED
