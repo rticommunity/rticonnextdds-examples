@@ -99,8 +99,8 @@ jobs:
         run: |
           pip install Sultan scan-build
 
-      # This script downloads the libraries of RTIConnextDDS necessary for
-      # compiling the examples.
+      # This script downloads the mandatory libraries of RTI Connext DDS for
+      # compiling the examples
       - name: Install RTI Connext DDS
         run: python resources/ci_cd/linux_install.py
         env:

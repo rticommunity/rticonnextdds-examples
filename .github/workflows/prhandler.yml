@@ -27,8 +27,8 @@ jobs:
           cp -a examples pr/
           cp -a resources pr/
 
-      # Upload the artifacts to GitHub so that they can be used in the next
-      # workflow.
+      # Upload the artifacts (examples, resources and PR number) to GitHub so
+      # that they can be used in the next workflow.
       - name: Upload generated artifact
         uses: actions/upload-artifact@v2
         with:
