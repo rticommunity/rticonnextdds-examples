@@ -5,16 +5,16 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
 #[[.rst
-.. connextdds_add_examples:
+.. connextdds_add_examples_subdirectories:
 
-ConnextDdsAddExamples
----------------------
+ConnextDdsAddExamplesSubdirectories
+-----------------------------------
 
-Function to build a bunch of examples.
+Function to build all the language directories under the provided examples.
 
 ::
 
-    connextdds_add_examples(
+    connextdds_add_examples_subdirectories(
         EXAMPLES example1 [...]
         [SKIP condition]
         [SKIP_MESSAGE message]
