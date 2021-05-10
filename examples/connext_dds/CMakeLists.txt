@@ -111,7 +111,7 @@ add_examples(
 # To do this, we could replace the if inside the add_examples function
 # for cmake_language(EVAL CODE ...) and pass the condition as a string
 # parameter instead of passing a boolean.
-# Take a look here https://tinyurl.com/cmakelanguage
+# Take a look of cmake_language in the documentation.
 
 # custom_transport requires D_BUILD_SHARED_LIBS=ON and cannot be compiled on
 # Windows because it uses Unix system calls to perform file operations such as
