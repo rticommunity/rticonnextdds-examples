@@ -113,7 +113,7 @@ connextdds_add_examples_subdirectories(
 # parameter instead of passing a boolean.
 # Take a look of cmake_language in the documentation.
 
-# custom_transport requires D_BUILD_SHARED_LIBS=ON and cannot be compiled on
+# custom_transport requires to be built as a shared library and cannot be compiled on
 # Windows because it uses Unix system calls to perform file operations such as
 # locking, reading and writing.
 if(WIN32 OR NOT BUILD_SHARED_LIBS)
