@@ -94,7 +94,7 @@ jobs:
         with:
           python-version: 3.7
 
-      # Install the dependencies to run the python scripts.
+      # Install the dependencies to run the Python scripts.
       - name: Install dependencies
         run: |
           pip install Sultan scan-build
