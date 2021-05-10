@@ -18,7 +18,8 @@ jobs:
       # opened.
       - uses: actions/checkout@v2
 
-      # Save the PR number for the next workflow and create the artifacts.
+      # Save the PR number for the next workflow and copy the examples and
+      # resources folders to create the current workflow artifact.
       - name: Save PR number
         run: |
           mkdir -p ./pr
