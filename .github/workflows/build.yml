@@ -1,0 +1,115 @@
+name: build
+
+on:
+  push:
+    branches:
+      - master
+  
+  workflow_run:
+    workflows: ["PR handler"]
+    types:
+      - completed
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: Build examples
+
+    if: >
+      ${{ (github.event.workflow_run.event == 'pull_request' &&
+      github.event.workflow_run.conclusion == 'success') ||
+      github.event_name == 'push' }}
+
+    outputs:
+      pr_number: ${{ steps.pr_number.outputs.PR_NUMBER }}
+
+    steps:
+      - name: Download artifact
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/github-script@v3.1.0
+        with:
+          script: |
+            var fs = require('fs');
+            var artifacts = await github.actions.listWorkflowRunArtifacts({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               run_id: ${{ github.event.workflow_run.id }},
+            });
+            var matchArtifact = artifacts.data.artifacts.filter((artifact) => {
+              return artifact.name == "pr"
+            })[0];
+            var download = await github.actions.downloadArtifact({
+               owner: context.repo.owner,
+               repo: context.repo.repo,
+               artifact_id: matchArtifact.id,
+               archive_format: 'zip',
+            });
+            fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
+      - name: Unzip artifact
+        if: ${{ github.event_name == 'workflow_run' }}
+        run: unzip pr.zip
+      - name: Save PR number
+        if: ${{ github.event_name == 'workflow_run' }}
+        id: pr_number
+        run: echo '::set-output name=PR_NUMBER::'$(cat NR)
+      - name: Send information message
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/github-script@v3.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var issue_number = ${{ steps.pr_number.outputs.PR_NUMBER }};
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: `The compilation is starting. Take a look [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
+            });
+      - uses: actions/checkout@v2
+        if: ${{ github.event_name == 'push' }}
+      - name: Setup Python 3.7
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install dependencies
+        run: |
+          pip install Sultan scan-build
+      - name: Install RTI Connext DDS
+        run: python resources/ci_cd/linux_install.py
+        env:
+          RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
+      - name: Run static analysis
+        run: python resources/ci_cd/linux_static_analysis.py
+        env:
+          RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
+          RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
+
+  commentpr:
+    runs-on: ubuntu-latest
+    needs: build
+    name: Comment PR
+    if: ${{ always() && github.event_name == 'workflow_run' }}
+
+    steps:
+      - name: Comment on PR
+        if: ${{ github.event_name == 'workflow_run' }}
+        uses: actions/github-script@v3
+        env:
+          ISSUE_NUMBER: ${{ needs.build.outputs.pr_number }}
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            var message;
+            if ('${{ needs.build.result }}' == 'success')
+              message = 'Everything is OK. Thank you for the PR!';
+            else
+              message = 'Oops, something went wrong!';
+          
+            var issue_number = ${{ needs.build.outputs.pr_number }};
+            await github.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: issue_number,
+              body: message,
+            });
+
