@@ -129,8 +129,8 @@ connextdds_add_examples_subdirectories(
     ${SKIP_CUSTOM_EXTRA_ARGS}
 )
 
-# builtin_qos_profiles needs DBUILD_SHARED_LIBS=ON because it will require
-# to be linked against RTI's dynamic libraries so the monitoring library can
+# builtin_qos_profiles has to be built as a shared library because it is linked
+# against RTI's dynamic libraries so the monitoring library can
 # be loaded correctly
 if(NOT BUILD_SHARED_LIBS)
     set(SKIP_BUILTIN_QOS_EXTRA_ARGS
