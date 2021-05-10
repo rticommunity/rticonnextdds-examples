@@ -37,7 +37,7 @@ for all of them.
 include(CMakeParseArguments)
 include(ConnextDdsArgumentChecks)
 
-function(add_examples)
+function(connextdds_add_examples_subdirectories)
     set(optional_args SKIP)
     set(single_value_args SKIP_MESSAGE)
     set(multi_value_args EXAMPLES)

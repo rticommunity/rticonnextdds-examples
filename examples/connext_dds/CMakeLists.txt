@@ -10,7 +10,7 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake"
 )
 
-include(ConnextDdsAddExamples)
+include(ConnextDdsAddExamplesSubdirectories)
 
 # Find the ConnextDDS libraries. This will look fo the core and API libraries
 find_package(RTIConnextDDS
@@ -53,7 +53,7 @@ if(STATIC_ANALYSIS)
             EXCLUDE_FROM_ALL TRUE)
 endif()
 
-add_examples(
+connextdds_add_examples_subdirectories(
     EXAMPLES
         "asynchronous_publication"
         "asyncwaitset"
@@ -123,7 +123,7 @@ if(WIN32 OR NOT BUILD_SHARED_LIBS)
     )
 endif()
 
-add_examples(
+connextdds_add_examples_subdirectories(
     EXAMPLES
         "custom_transport"
     ${SKIP_CUSTOM_EXTRA_ARGS}
@@ -139,7 +139,7 @@ if(NOT BUILD_SHARED_LIBS)
     )
 endif()
 
-add_examples(
+connextdds_add_examples_subdirectories(
     EXAMPLES
         "builtin_qos_profiles"
     ${SKIP_BUILTIN_QOS_EXTRA_ARGS}
