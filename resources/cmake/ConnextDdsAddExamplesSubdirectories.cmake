@@ -16,8 +16,6 @@ Function to build all the language directories under the provided examples.
 
     connextdds_add_examples_subdirectories(
         EXAMPLES example1 [...]
-        [SKIP condition]
-        [SKIP_MESSAGE message]
     )
 
 Add a bunch of examples to be built. This method adds subdirectories that
@@ -25,20 +23,15 @@ contains an example with a CMakeList.txt and generates the build system
 for all of them.
 
 ``EXAMPLES`` (required):
-    List of examples names that will be compiled if SKIP is not defined.
-``SKIP`` (optional):
-    If defined, the examples will be skipped.
-``SKIP_MESSAGE`` (optional):
-    If the examples are going to be skipped, prints this message after
-    ``Skipping examples because``.
+    List of examples names that will be compiled.
 ]]
 
 include(CMakeParseArguments)
 include(ConnextDdsArgumentChecks)
 
 function(connextdds_add_examples_subdirectories)
-    set(optional_args SKIP)
-    set(single_value_args SKIP_MESSAGE)
+    set(optional_args)
+    set(single_value_args)
     set(multi_value_args EXAMPLES)
     cmake_parse_arguments(_ADD_EXAMPLES_ARGS
         "${optional_args}"
@@ -58,17 +51,6 @@ function(connextdds_add_examples_subdirectories)
             message(FATAL_ERROR "${example} does not exist")
         endif()
     endforeach()
-
-    # Check if skip
-    if(_ADD_EXAMPLES_ARGS_SKIP)
-        string(REPLACE ";" "\n\t- " SKIPPED_EXAMPLES "${_ADD_EXAMPLES_ARGS_EXAMPLES}")
-        message(
-            STATUS
-                "Skipping examples because ${_ADD_EXAMPLES_ARGS_SKIP_MESSAGE}. "
-                "The skipped examples are: \n\t- ${SKIPPED_EXAMPLES}"
-        )
-        return()
-    endif()
 
     # Add existing examples
     foreach(example_name ${_ADD_EXAMPLES_ARGS_EXAMPLES})
