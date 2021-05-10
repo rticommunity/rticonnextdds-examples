@@ -57,7 +57,7 @@ jobs:
             });
             fs.writeFileSync('${{github.workspace}}/pr.zip', Buffer.from(download.data));
 
-      # Unzip the artifacts
+      # Unzip the artifacts.
       - name: Unzip artifact
         if: ${{ github.event_name == 'workflow_run' }}
         run: unzip pr.zip
@@ -94,19 +94,19 @@ jobs:
         with:
           python-version: 3.7
 
-      # Install the dependencies to run the python scripts.
+      # Install the dependencies to run the Python scripts.
       - name: Install dependencies
         run: |
           pip install Sultan scan-build
 
       # This script downloads the libraries of RTIConnextDDS necessary for
-      # compiling the examples
+      # compiling the examples.
       - name: Install RTI Connext DDS
         run: python resources/ci_cd/linux_install.py
         env:
           RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
 
-      # This script will compile the examples and execute the static analysis
+      # This script will compile the examples and execute the static analysis.
       - name: Run static analysis
         run: python resources/ci_cd/linux_static_analysis.py
         env:
@@ -148,4 +148,3 @@ jobs:
               issue_number: issue_number,
               body: message,
             });
-
