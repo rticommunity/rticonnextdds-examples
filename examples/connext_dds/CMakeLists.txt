@@ -111,7 +111,7 @@ connextdds_add_examples_subdirectories(
 # To do this, we could replace the if inside the add_examples function
 # for cmake_language(EVAL CODE ...) and pass the condition as a string
 # parameter instead of passing a boolean.
-# Take a look of cmake_language in the documentation.
+# Take a look at cmake_language in the documentation.
 
 # custom_transport requires to be built as a shared library and cannot be compiled on
 # Windows because it uses Unix system calls to perform file operations such as
