@@ -120,7 +120,7 @@ jobs:
     name: Comment PR
 
     # This job will be executed if this workflow was triggered by a
-    # workflow_run event even if the build job failed or succeed.
+    # workflow_run event even if the build job failed or succeeded.
     if: ${{ always() && github.event_name == 'workflow_run' }}
 
     steps:
