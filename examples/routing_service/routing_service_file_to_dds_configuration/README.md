@@ -14,19 +14,6 @@ The file adapter is provided under `<Routing Service home>/adapters/file` and
 source code and projects can be found in
 `<RoutingServicehome>/adapters/tutorial/C`.
 
-IMPORTANT!
-
-Please Notice that the adapter kit isn’t available for download from RTI's
-website, so if you are interested in the adapter kit, You should contact your
-local account team to get access to it.
-
-## Prerequisites
-
-A already built file adapter library - You can build the library by following
-the instructions under the Routing Service User Manual, Chapter 8, Section 8.3
-
-- Creating New Adapters.
-
 ## Example Description
 
 This example shows how to configure a specific Routing Service Route that will
