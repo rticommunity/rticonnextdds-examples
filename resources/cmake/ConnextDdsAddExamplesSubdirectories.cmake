@@ -30,7 +30,7 @@ contains an example with a CMakeList.txt and generates the build system
 for all of them.
 
 ``EXAMPLES`` (required):
-    List of examples names that will be compiled is SKIP is not defined.
+    List of examples names that will be compiled if SKIP is not defined.
 ``SKIP`` (optional):
     If defined, the examples will be skipped.
 ``SKIP_MESSAGE`` (optional):
