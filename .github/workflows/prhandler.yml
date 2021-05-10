@@ -3,7 +3,7 @@ name: PR handler
 on:  
   pull_request:
     branches:
-      - develop
+      - master
 
 jobs:
   upload:
