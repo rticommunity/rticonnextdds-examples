@@ -30,8 +30,7 @@ contains an example with a CMakeList.txt and generates the build system
 for all of them.
 
 ``EXAMPLES`` (required):
-    List of examples names that can be compiled with the given MIN_VERSION
-    of RTIConnextDDS.
+    List of examples names that will be compiled is SKIP is not defined.
 ``SKIP`` (optional):
     If defined, the examples will be skipped.
 ``SKIP_MESSAGE`` (optional):
