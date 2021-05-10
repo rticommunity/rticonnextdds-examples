@@ -2,10 +2,8 @@
 
 ## Concept
 
-Routing Service provides an adapter SDK in C and Java to support the creation of
-new adapter plugins. The Routing Service Adapter SDK is distributed as a
-separate component that must be installed over an existing installation of
-Routing Service.
+Routing Service provides an adapter SDK in C, C++, and Java to support the
+creation of new adapter plugins.
 
 This flexible and complex file adapter is able to work with structured
 information and supports both an input and output adapters. The input adapter
