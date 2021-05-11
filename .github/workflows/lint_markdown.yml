@@ -39,7 +39,6 @@ jobs:
           python-version: 3.7
       - name: Install necessary tools
         run: |
-          pip install sultan
           npm install markdownlint-cli@0.23.1
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'

@@ -34,7 +34,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Install necessary tools
-        run: pip install sultan black
+        run: pip install black
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'
         working-directory: ${{ github.workspace }}
