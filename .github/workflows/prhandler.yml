@@ -1,0 +1,36 @@
+# This workflow will be triggered when a pull request is opened to the master
+# branch. After being triggered, it will download the source from the branch
+# to which the pull request was opened.
+name: PR handler
+
+on:  
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  upload:
+    runs-on: ubuntu-latest
+    name: Artifacts generation
+
+    steps:
+      # Download the source from the branch to which the pull request was
+      # opened.
+      - uses: actions/checkout@v2
+
+      # Save the PR number for the next workflow and copy the examples and
+      # resources folders to create the current workflow artifact.
+      - name: Save PR number
+        run: |
+          mkdir -p ./pr
+          echo ${{ github.event.number }} > ./pr/NR
+          cp -a examples pr/
+          cp -a resources pr/
+
+      # Upload the artifacts (examples, resources and PR number) to GitHub so
+      # that they can be used in the next workflow.
+      - name: Upload generated artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: pr
+          path: pr/
