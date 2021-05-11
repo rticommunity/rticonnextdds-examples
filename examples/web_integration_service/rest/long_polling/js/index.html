@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<!--
+(c) 2017 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create
+derivative works of the Software.  Licensee has the right to distribute
+object form only for use with RTI products.  The Software is provided
+"as is", with no warranty of any type, including any warranty for fitness
+for any purpose. RTI is under no obligation to maintain or support the
+Software.  RTI shall not be liable for any incidental or consequential
+damages arising out of the use or inability to use the software.
+-->
+<head>
+  <title>RTI Web Integration Service &mdash; Long Polling</title>
+
+  <meta charset="utf-8">
+  <meta name="description"
+  content="Simple web application long-polling to read Square topics">
+  <meta name="author" content="Real-Time Innovations, Inc.">
+
+  <link href="../../../resources/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../../../resources/css/heroic-features.css" rel="stylesheet">
+
+  <script src="../../../resources/js/jquery-1.12.3.min.js"></script>
+  <script src="../../../resources/js/bootstrap.min.js"></script>
+  <script src="long_polling.js"></script>
+</head>
+
+<body>
+  <!-- Navigation -->
+  <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+    <div class="container">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse"
+        data-target="#bs-example-navbar-collapse-1">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        <img src="../../../resources/img/rti_logo.png"
+        style="vertical-align:bottom; display: inline;"
+        alt="Real-Time Innovations">
+        <span>&nbsp;Long Polling</span>
+      </a>
+    </div>
+    <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+    </div>
+  </div>
+</nav>
+
+<!-- Page Content -->
+<div class="container">
+  <header class="jumbotron hero-spacer" style="background-color: transparent">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>color</th>
+          <th>x</th>
+          <th>y</th>
+          <th>shapesize</th>
+        </tr>
+      </thead>
+      <tbody id="samplesTable">
+      </tbody>
+    </table>
+  </header>
+</div>
+<script>
+/**
+* Iterates over the list of samples that are available on the DataReader's
+* cache and adds them -- replacing the current content -- to the
+* "samplesTable" table in the HTML document.
+* @param sampleSeq Sequence of samples that have been received and must be
+* written in the table.
+*/
+function onDataAvailable(sampleSeq)
+{
+  var tableRows = '';
+
+  sampleSeq.forEach(function(sample, i, samples) {
+    // Return if invalid data
+    var validData = sample.read_sample_info.valid_data;
+    if (!validData) {
+      return;
+    }
+
+    // Construct new row with the value of color, x, y, and shapesize
+    tableRows += "<tr><td>";
+    tableRows += sample.data.color;
+    tableRows += "</td><td>"
+    tableRows += sample.data.x;
+    tableRows += "</td><td>"
+    tableRows += sample.data.y;
+    tableRows += "</td><td>";
+    tableRows += sample.data.shapesize;
+    tableRows += "</td></tr>"
+  });
+
+  // Replace the previous state of samplesTable with the new set of
+  // read rows.
+  document.getElementById("samplesTable").innerHTML = tableRows;
+}
+
+// Start taking samples
+(function() {
+  read("/dds/rest1/applications/ShapesDemoApp/domain_participants/MyParticipant/subscribers/MySubscriber/data_readers/MySquareReader", onDataAvailable);
+})();
+</script>
+</body>
+</html>
