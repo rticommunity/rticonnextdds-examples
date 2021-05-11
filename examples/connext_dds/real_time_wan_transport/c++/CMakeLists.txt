@@ -20,8 +20,15 @@ connextdds_add_example(
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/CLOUD_DISCOVERY_SERVICE.xml"
-    "${CMAKE_BINARY_DIR}/real_time_wan_transport/c++/CLOUD_DISCOVERY_SERVICE.xml"
-    COPYONLY)
+    "${CMAKE_CURRENT_BINARY_DIR}/CLOUD_DISCOVERY_SERVICE.xml"
+    COPYONLY
+)
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/RS/ROUTING_SERVICE.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/RS/ROUTING_SERVICE.xml"
+    COPYONLY
+)
     
 include (ConnextDdsGenerateSecurityArtifacts)
 connextdds_generate_security_artifacts()

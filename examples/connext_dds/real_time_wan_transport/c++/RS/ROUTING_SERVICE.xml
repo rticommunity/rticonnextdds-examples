@@ -1,0 +1,187 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="../../resource/schema/rti_routing_service.xsd">
+
+    <routing_service name="RS">
+        <domain_route name="ceroToOne">
+            <participant name="0">
+                <domain_id>0</domain_id>
+                <participant_qos>
+                    <transport_builtin>
+                        <mask>UDPv4_WAN</mask>
+                        <udpv4_wan>
+                            <public_address>$(PUBLIC_ADDRESS)</public_address>
+                            <comm_ports>
+                                <default>
+                                    <host>16000</host>
+                                    <public>16000</public>
+                                </default>
+                            </comm_ports>
+                        </udpv4_wan>
+                    </transport_builtin>
+                </participant_qos>
+            </participant>
+
+            <participant name="1">
+                <domain_id>1</domain_id>
+                <participant_qos>
+                    <transport_builtin>
+                        <mask>UDPv4_WAN</mask>
+                        <udpv4_wan>
+                            <public_address>$(PUBLIC_ADDRESS)</public_address>
+                            <comm_ports>
+                                <default>
+                                    <host>16001</host>
+                                    <public>16001</public>
+                                </default>
+                            </comm_ports>
+                        </udpv4_wan>
+                    </transport_builtin>
+                </participant_qos>
+            </participant>
+
+            <session name="Session1">
+                <auto_topic_route name="AllForward">
+                    <input participant="0">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*
+                        </allow_registered_type_name_filter>
+                    </input>
+                    <output participant="1">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*
+                        </allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+    <routing_service name="RSSecure">
+        <domain_route name="ceroToOneSecure">
+            <participant name="0">
+                <domain_id>0</domain_id>
+                <participant_qos>
+                    <base_name>
+                        <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+                    </base_name>
+                    <transport_builtin>
+                        <mask>UDPv4_WAN</mask>
+                        <udpv4_wan>
+                            <public_address>$(PUBLIC_ADDRESS)</public_address>
+                            <comm_ports>
+                                <default>
+                                    <host>16000</host>
+                                    <public>16000</public>
+                                </default>
+                            </comm_ports>
+                        </udpv4_wan>
+                    </transport_builtin>
+
+                    <property>
+                        <value>
+                          <element>
+                            <name>dds.sec.auth.identity_ca</name>
+                            <value>file:../security/ecdsa01/certs/ca_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.auth.identity_certificate</name>
+                            <value>file:../security/ecdsa01/certs/peer2_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.auth.private_key</name>
+                            <value>file:../security/ecdsa01/certs/peer2_key.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.permissions_ca</name>
+                            <value>file:../security/ecdsa01/certs/ca_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.governance</name>
+                            <value>file:../security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.permissions</name>
+                            <value>file:../security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
+                          </element>
+                          <element>
+                            <name>com.rti.serv.secure.cryptography.rtps_protection_key</name>
+                            <value>str:key0</value>
+                          </element>
+                        </value>
+                      </property>
+                </participant_qos>
+            </participant>
+
+            <participant name="1">
+                <domain_id>1</domain_id>
+                <participant_qos>
+                    <base_name>
+                        <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+                    </base_name>
+
+                    <transport_builtin>
+                        <mask>UDPv4_WAN</mask>
+                        <udpv4_wan>
+                            <public_address>$(PUBLIC_ADDRESS)</public_address>
+                            <comm_ports>
+                                <default>
+                                    <host>16001</host>
+                                    <public>16001</public>
+                                </default>
+                            </comm_ports>
+                        </udpv4_wan>
+                    </transport_builtin>
+
+                    <property>
+                        <value>
+                          <element>
+                            <name>dds.sec.auth.identity_ca</name>
+                            <value>file:../security/ecdsa01/certs/ca_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.auth.identity_certificate</name>
+                            <value>file:../security/ecdsa01/certs/peer1_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.auth.private_key</name>
+                            <value>file:../security/ecdsa01/certs/peer1_key.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.permissions_ca</name>
+                            <value>file:../security/ecdsa01/certs/ca_cert.pem</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.governance</name>
+                            <value>file:../security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+                          </element>
+                          <element>
+                            <name>dds.sec.access.permissions</name>
+                            <value>file:../security/ecdsa01/xml/signed/signed_Permissions1.p7s</value>
+                          </element>
+                          <element>
+                            <name>com.rti.serv.secure.cryptography.rtps_protection_key</name>
+                            <value>str:key0</value>
+                          </element>
+                        </value>
+                    </property>
+                </participant_qos>
+            </participant>
+
+            <session name="Session1">
+                <auto_topic_route name="AllForward">
+                    <input participant="0">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*
+                        </allow_registered_type_name_filter>
+                    </input>
+                    <output participant="1">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*
+                        </allow_registered_type_name_filter>
+                    </output>
+                </auto_topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>
