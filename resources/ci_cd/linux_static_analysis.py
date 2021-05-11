@@ -18,31 +18,9 @@ import os
 import sys
 import time
 import datetime
+import subprocess
 
 from pathlib import Path
-from sultan.api import Sultan
-
-
-def stream_sultan_output(result):
-    """Stream command output.
-
-    Args:
-        result (sultan.result.Result): Command result object.
-
-    """
-    while True:
-        complete = result.is_complete
-
-        for line in result.stdout:
-            print(line)
-
-        for line in result.stderr:
-            print(line)
-
-        if complete:
-            break
-
-        time.sleep(1)
 
 
 def main():
@@ -95,46 +73,55 @@ def main():
     if not build_dir.exists():
         sys.exit("Build dir not found.")
 
-    print("Building the examples...", flush=True)
     time_build_start = time.perf_counter()
 
-    with Sultan.load(cwd=build_dir) as sultan:
-        build_gen_result = sultan.cmake(
+    print("[RTICommunity] Generating build system...", flush=True)
+
+    build_gen_result = subprocess.run(
+        [
+            "cmake",
             "-DSTATIC_ANALYSIS=ON",
             "-DBUILD_SHARED_LIBS=ON",
             "-DCMAKE_BUILD_TYPE=Release",
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
             examples_dir,
-        ).run(halt_on_nonzero=False, streaming=True)
-        stream_sultan_output(build_gen_result)
+        ],
+        cwd=build_dir,
+    )
 
-        if build_gen_result.rc != 0:
-            sys.exit("There was some errors during build.")
+    if build_gen_result.returncode != 0:
+        sys.exit("There was some errors during generating the build system.")
 
-        building_result = sultan.cmake("--build .", "--config Release").run(
-            halt_on_nonzero=False, streaming=True
-        )
-        stream_sultan_output(building_result)
+    print("\n[RTICommunity] Compiling the examples...", flush=True)
 
-        if building_result.rc != 0:
-            sys.exit("There was some errors during build.")
+    building_result = subprocess.run(
+        ["cmake", "--build", ".", "--config", "Release"],
+        cwd=build_dir,
+    )
 
-        time_build_end = time.perf_counter()
+    if building_result.returncode != 0:
+        sys.exit("There was some errors during build.")
 
-        print("Analyzing the build...", flush=True)
-        time_analysis_start = time.perf_counter()
+    time_build_end = time.perf_counter()
 
-        static_analysis_result = sultan.analyze__build(
+    print("\n[RTICommunity] Analyzing the build...", flush=True)
+
+    time_analysis_start = time.perf_counter()
+
+    static_analysis_result = subprocess.run(
+        [
+            "analyze-build",
             "--verbose",
             "--status-bugs",
-            "--exclude {}".format(rti_connext_dds_dir),
+            "--exclude",
+            rti_connext_dds_dir,
             "--exclude",
             ".",
             "-o",
             ".",
-        ).run(halt_on_nonzero=False, streaming=True)
-
-        stream_sultan_output(static_analysis_result)
+        ],
+        cwd=build_dir,
+    )
 
     time_analysis_end = time.perf_counter()
     time_script_end = time.perf_counter()
@@ -150,15 +137,13 @@ def main():
     )
 
     print(
-        "> Build:    {}\n> Analysis: {}\n{}\n> Total:    {}\n".format(
-            time_build_elapsed,
-            time_analysis_elapsed,
-            "-" * 19,
-            time_script_elapsed,
-        )
+        f"> Build:    {time_build_elapsed}\n"
+        f"> Analysis: {time_analysis_elapsed}\n"
+        f"{'-' * 19}\n"
+        f"> Total:    {time_script_elapsed}\n"
     )
 
-    if static_analysis_result.rc != 0:
+    if static_analysis_result.returncode != 0:
         sys.exit("There where some errors during static analysis.")
 
 
