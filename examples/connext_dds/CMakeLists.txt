@@ -10,6 +10,9 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake"
 )
 
+include(ConnextDdsAddExamplesSubdirectories)
+
+# Find the ConnextDDS libraries. This will look for core and API libraries
 find_package(RTIConnextDDS
     "6.1.0"
     REQUIRED
@@ -50,248 +53,58 @@ if(STATIC_ANALYSIS)
             EXCLUDE_FROM_ALL TRUE)
 endif()
 
-# asynchronous_publication
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asynchronous_publication/c++03")
-
-# asyncwaitset
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/asyncwaitset/c++03")
-
-# batching
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/batching/c++03")
-
-# build_systems
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/build_systems/cmake")
-
-# builtin_qos_profiles
-if(BUILD_SHARED_LIBS)
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_qos_profiles/c")
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_qos_profiles/c++")
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_qos_profiles/c++03")
-endif()
-
-# builtin_topics
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_topics/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_topics/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/builtin_topics/c++03")
-
-# coherent_presentation
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/coherent_presentation/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/coherent_presentation/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/coherent_presentation/c++03")
-
-# content_filtered_topic
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic/c++03")
-
-# content_filtered_topic_string_filter
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic_string_filter/c")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic_string_filter/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/content_filtered_topic_string_filter/c++03")
-
-# custom_content_filter
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_content_filter/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_content_filter/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_content_filter/c++03")
-
-# custom_flow_controller
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_flow_controller/c++03")
-
-# custom_transport
-if(NOT WIN32 AND BUILD_SHARED_LIBS)
-    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/custom_transport/c")
-else()
-    message(
-        STATUS "Skipping custom_transport example: not compabile with Windows"
-    )
-endif()
-
-# deadline_contentfilter
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/deadline_contentfilter/c++03")
-
-# detect_samples_dropped
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/detect_samples_dropped/c++11")
-
-# dynamic_data_access_union_discriminator
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_access_union_discriminator/c++11")
-
-# dynamic_data_nested_structs
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_nested_structs/c++03")
-
-# dynamic_data_sequences
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences/c++03")
-
-# dynamic_data_using_publisher_subscriber
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_using_publisher_subscriber/c")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_using_publisher_subscriber/c++")
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_using_publisher_subscriber/c++11")
-
-# flat_data_api
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++11")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_api/c++98")
-
-# flat_data_latency
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/flat_data_latency/c++11")
-
-# fragmented_data_statistics
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/fragmented_data_statistics/c++11")
-
-# get_publishers
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/get_publishers/c++03")
-
-# group_coherent_presentation
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/group_coherent_presentation/c++11")
-
-# high_priority_first_flow_controller
-add_subdirectory(
-    "${CMAKE_CURRENT_SOURCE_DIR}/high_priority_first_flow_controller/c++")
-
-# instance_statistics
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/instance_statistics/c++11")
-
-# keyed_data
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data/c++03")
-
-# keyed_data_advanced
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data_advanced/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data_advanced/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/keyed_data_advanced/c++03")
-
-# lambda_content_filter
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/lambda_content_filter/c++11")
-
-# listeners
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/listeners/c++03")
-
-# logging_config
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/logging_config/c++11")
-
-# multichannel
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/multichannel/c++03")
-
-# network_capture
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/01_shared_memory_and_udp/c++11")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/02_tcp/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/03_security/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/network_capture/04_advanced_api/c")
-
-# ordered_presentation
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation/c++11")
-
-# ordered_presentation_group
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation_group/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation_group/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/ordered_presentation_group/c++03")
-
-# partitions
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/partitions/c++03")
-
-# polling_querycondition
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_querycondition/c++03")
-
-# polling_read
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/polling_read/c++03")
-
-# printing_qos
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/printing_qos/c++11")
-
-# property_qos
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/property_qos/c++")
-
-# time_based_filter
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/time_based_filter/c++03")
-
-# using_qos_profiles
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_qos_profiles/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_qos_profiles/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_qos_profiles/c++03")
-
-# using_sequences
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_sequences/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_sequences/c++")
-
-# using_typecodes
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_typecodes/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_typecodes/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/using_typecodes/c++03")
-
-# waitset_query_cond
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_query_cond/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_query_cond/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_query_cond/c++11")
-
-# waitset_status_cond
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++03")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitset_status_cond/c++11")
-
-# waitsets
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/waitsets/c++03")
-
-# xml_application
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/xml_application_env/c++11")
-
-# compression
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/compression/c++")
-
-# real_time_wan_transport
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/real_time_wan_transport/c++")
-
+connextdds_add_examples_subdirectories(
+    EXAMPLES
+        "asynchronous_publication"
+        "asyncwaitset"
+        "batching"
+        "builtin_qos_profiles"
+        "builtin_topics"
+        "coherent_presentation"
+        "content_filtered_topic"
+        "content_filtered_topic_string_filter"
+        "custom_content_filter"
+        "custom_flow_controller"
+        "custom_transport"
+        "deadline_contentfilter"
+        "dynamic_data_using_publisher_subscriber"
+        "flat_data_api"
+        "flat_data_latency"
+        "get_publishers"
+        "high_priority_first_flow_controller"
+        "keyed_data"
+        "keyed_data_advanced"
+        "lambda_content_filter"
+        "listeners"
+        "logging_config"
+        "multichannel"
+        "ordered_presentation"
+        "ordered_presentation_group"
+        "partitions"
+        "polling_querycondition"
+        "polling_read"
+        "property_qos"
+        "real_time_wan_transport"
+        "time_based_filter"
+        "using_qos_profiles"
+        "using_sequences"
+        "using_typecodes"
+        "waitset_query_cond"
+        "waitset_status_cond"
+        "waitsets"
+        "xml_application_env"
+        "build_systems"
+        "compression"
+        "detect_samples_dropped"
+        "dynamic_data_access_union_discriminator"
+        "dynamic_data_nested_structs"
+        "dynamic_data_sequences"
+        "fragmented_data_statistics"
+        "group_coherent_presentation"
+        "instance_statistics"
+        "network_capture/01_shared_memory_and_udp"
+        "network_capture/02_tcp"
+        "network_capture/03_security"
+        "network_capture/04_advanced_api"
+        "printing_qos"
+)
