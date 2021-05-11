@@ -41,7 +41,7 @@ int RTI_RoutingServiceFileAdapter_read_sample(
     data_read = fread(ptr_payload, 1, MAX_PAYLOAD_SIZE, file);
     if (data_read == 0) {
         if (ferror(file)) {
-            fprintf(stderr, "ERROR: reading file");
+            fprintf(stderr, "ERROR: reading file\n");
             return 0;
         }
     }

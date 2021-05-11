@@ -4,7 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-hello-world)
 
 # Add the folder where the FindRTIConnextDDS.cmake file is placed to the
@@ -17,7 +17,7 @@ set(CMAKE_MODULE_PATH
 # Find the ConnextDDS libraries. This will look fo the core and API libraries
 # only
 find_package(RTIConnextDDS
-    "5.3.0"
+    "6.1.0"
     REQUIRED
     COMPONENTS
         core

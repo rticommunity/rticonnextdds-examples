@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-waitset-status-cond)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -17,6 +17,4 @@ connextdds_add_example(
     IDL "waitset_cond_modern"
     LANG "C++11"
     PREFIX "waitset_cond_modern11"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

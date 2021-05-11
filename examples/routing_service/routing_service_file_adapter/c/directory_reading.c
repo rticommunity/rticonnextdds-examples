@@ -51,7 +51,7 @@ int RTI_RoutingServiceFileAdapter_is_file_present(
 
 /*
  * Inside this function we write the code that we want to be executed every time
- * This thread discover a new file in the scanned folder. For now we call
+ * this thread discovers a new file in the scanned folder. For now we call
  * on_data_available on the discovery listener and we print that a new
  * file has been discovered
  */
@@ -73,7 +73,7 @@ void RTI_RoutingServiceFileAdapter_send_event(
  * The core execution of the thread that every five seconds checks
  * if there are new files in the directory
  */
-void *RTI_RoutingServiceFileAdpater_checking_thread(void *arg)
+void *RTI_RoutingServiceFileAdapter_discovery_thread(void *arg)
 {
     int i, index = 0;
     int count = 0;
@@ -106,15 +106,15 @@ void *RTI_RoutingServiceFileAdpater_checking_thread(void *arg)
     }
 
     /*
-     * we assign to the discoveryData pointer inside the structure
+     * we assign to the discovery_data pointer inside the structure
      * stream_reader, the pointer to array_files, which contains the list of the
-     * files inside the  input folder
+     * files inside the input folder
      */
 
     connection->input_discovery_reader->discovery_data = array_files;
     dir = opendir(connection->path);
     if (dir == NULL) {
-        fprintf(stderr, "checkingThread: error opening directory");
+        fprintf(stderr, "checkingThread: error opening directory\n");
     }
 
     /*every 5 seconds we check if there are new files in the directory*/
@@ -144,7 +144,7 @@ void *RTI_RoutingServiceFileAdpater_checking_thread(void *arg)
                     if (array_files[index] == NULL) {
                         fprintf(stderr,
                                 "checkingThread:"
-                                "Error allocating memory for discovery array");
+                                "Error allocating memory for discovery array\n");
                         continue;
                     }
 
@@ -164,12 +164,13 @@ void *RTI_RoutingServiceFileAdpater_checking_thread(void *arg)
                     } else {
                         fprintf(stdout,
                                 "checkingThread: You reached the "
-                                "maximum number of file in the directory "
-                                "you can have!\n RoutingService no longer "
+                                "maximum number of files in the directory "
+                                "you can have (>= %d)!\n RoutingService no longer "
                                 "gets notified for creating new streams\n"
                                 "For increasing number of files, increase "
                                 "the size of MAX_VEC_FILE in the header "
-                                "file ");
+                                "file ",
+                                MAX_VEC_SIZE);
                     }
                     connection->input_discovery_reader->discovery_data_counter =
                             index;

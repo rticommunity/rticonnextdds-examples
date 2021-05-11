@@ -1,0 +1,17 @@
+# Solution and project files are created by rtidddsgen
+*.sln
+*.vcxproj
+
+# Java
+java/*
+!network_capture.idl
+!NetworkCapturePublisher.java
+!NetworkCaptureSubscriber.java
+!README.md
+!USER_QOS_PROFILES.xml
+
+# Capture files
+*.pcap
+
+# Build directory
+build/

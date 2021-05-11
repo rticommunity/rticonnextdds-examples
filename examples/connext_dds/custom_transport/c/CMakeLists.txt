@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-custom-flow-controller)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -11,7 +11,13 @@ set(CMAKE_MODULE_PATH
 )
 
 if(WIN32)
-    message(FATAL_ERROR "This example is not supported in Windows.")
+    message(WARNING "This example is not supported in Windows.")
+    return()
+endif()
+
+if(NOT BUILD_SHARED_LIBS)
+    message(WARNING "Static linking is not supported for this example")
+    return()
 endif()
 
 # Include ConnextDdsAddExample.cmake from resources/cmake

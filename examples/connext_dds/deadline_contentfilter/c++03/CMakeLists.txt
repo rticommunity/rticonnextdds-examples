@@ -3,7 +3,7 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-deadline-contentfilter)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -16,6 +16,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "deadline_contentfilter"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )

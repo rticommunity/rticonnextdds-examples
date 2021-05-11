@@ -3,11 +3,12 @@
 # without express written permission.  Any such copies, or revisions thereof,
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
-cmake_minimum_required(VERSION 3.7)
+cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-builtin-qos-profiles)
 
 if(NOT BUILD_SHARED_LIBS)
-    message(FATAL_ERROR "Static linking is not supported for this example")
+    message(WARNING "Static linking is not supported for this example")
+    return()
 endif()
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
@@ -20,6 +21,4 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "profiles"
     LANG "C++03"
-    CODEGEN_ARGS
-        LEGACY_PLUGIN
 )
