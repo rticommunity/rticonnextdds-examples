@@ -14,7 +14,7 @@ import long_polling
 
 
 def on_data_available(data):
-    """ Handles data received by the read or take functions whenever data is
+    """Handles data received by the read or take functions whenever data is
     available. In this case, the function prints out the data it receives,
     which is string represented in JSON format.
     """
@@ -27,12 +27,14 @@ def main():
     port = 8080
 
     # Prepare request
-    datareader_url = "http://" + host + ":" + str(port) \
-        + "/dds/rest1" \
-        + "/applications/ShapesDemoApp" \
-        + "/domain_participants/MyParticipant" \
-        + "/subscribers/MySubscriber" \
-        + "/data_readers/MySquareReader"
+    datareader_url = (
+        f"http://{host}:{port}"
+        "/dds/rest1"
+        "/applications/ShapesDemoApp"
+        "/domain_participants/MyParticipant"
+        "/subscribers/MySubscriber"
+        "/data_readers/MySquareReader"
+    )
 
     print("Starting example...")
 
