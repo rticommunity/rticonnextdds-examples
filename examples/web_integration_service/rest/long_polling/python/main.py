@@ -27,12 +27,14 @@ def main():
     port = 8080
 
     # Prepare request
-    datareader_url = "http://" + host + ":" + str(port) \
-        + "/dds/rest1" \
-        + "/applications/ShapesDemoApp" \
-        + "/domain_participants/MyParticipant" \
-        + "/subscribers/MySubscriber" \
-        + "/data_readers/MySquareReader"
+    datareader_url = (
+        f"http://{host}:{port}"
+        "/dds/rest1"
+        "/applications/ShapesDemoApp"
+        "/domain_participants/MyParticipant"
+        "/subscribers/MySubscriber"
+        "/data_readers/MySquareReader"
+    )
 
     print("Starting example...")
 
