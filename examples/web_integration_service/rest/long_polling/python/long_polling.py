@@ -14,7 +14,7 @@ import requests
 
 
 def read_or_take(data_reader_url, on_data_available_fnc, take):
-    """ Performs a read or take operation on a DDS DataReader using
+    """Performs a read or take operation on a DDS DataReader using
     long-polling. If new data becomes available, the function automatically
     wakes up and calls a given on_data_available_fnc to handle those new
     samples.

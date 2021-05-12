@@ -14,7 +14,7 @@ import long_polling
 
 
 def on_data_available(data):
-    """ Handles data received by the read or take functions whenever data is
+    """Handles data received by the read or take functions whenever data is
     available. In this case, the function prints out the data it receives,
     which is string represented in JSON format.
     """
