@@ -28,8 +28,9 @@ allows us to do this. If there are additional dependencies *across* instances,
 topic level scope makes these changes atomic to the reader.
 
 This shows how coherent access can be used to ensure written samples are viewed
-atomically; that is, all samples sent between begin_ and end_coherent changes
-will be available before the reader is notified that there are samples to read.
+atomically; that is, all samples sent between begin_coherent and end_coherent
+changes will be available before the reader is notified that there are samples
+to read.
 
 In this example, the subscriber receives updates for six state fields, a-f.
 Because we request coherent access at the topic level, on_data_available is not

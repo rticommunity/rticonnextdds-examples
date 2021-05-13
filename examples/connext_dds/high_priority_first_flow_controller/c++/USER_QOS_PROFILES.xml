@@ -24,8 +24,7 @@ For more information about XML QoS Profiles see Chapter 15 in the
 RTI Connext user manual.
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.0.0/rti_dds_qos_profiles.xsd"
-     version="6.0.0">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
@@ -40,7 +39,7 @@ RTI Connext user manual.
         <qos_profile name="HighestPriorityFirst_Profile" is_default_qos="true">
             <!-- QoS used to configure a High Priority Flow in the example code --> 
 
-            <participant_qos>
+            <domain_participant_qos>
                 <!--
                 The participant name, if it is set, will be displayed in the
                 RTI Analyzer tool, making it easier for you to tell one
@@ -164,7 +163,7 @@ RTI Connext user manual.
                         </element>
                     </value>
                 </property>
-            </participant_qos>
+            </domain_participant_qos>
                                        
             <datawriter_qos>
             

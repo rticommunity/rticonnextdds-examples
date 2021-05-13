@@ -1,0 +1,5 @@
+.idea
+.build*
+build_debug
+MongoTest.cpp
+venv

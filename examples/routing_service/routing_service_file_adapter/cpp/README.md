@@ -35,11 +35,11 @@ In order to build this example, you need to provide the following variables to
 - `CONNEXTDDS_ARCH`
 
 ```bash
-mkdir build
-cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
--DCONNEXTDDS_ARCH=<Connext DDS Architecture>
--DBUILD_SHARED_LIBS=ON|OFF
--DCMAKE_BUILD_TYPE=Debug|Release ..
+$mkdir build
+$cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
+    -DCONNEXTDDS_ARCH=<Connext DDS Architecture>
+    -DBUILD_SHARED_LIBS=ON|OFF
+    -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
 
@@ -104,15 +104,15 @@ $<Connext DDS Directory>/bin/rtiroutingservice
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=/Applications/rti_connext_dds-6.0.0/lib/x64Darwin16clang8.0
+$export RTI_LD_LIBRARY_PATH=/Applications/rti_connext_dds-6.1.0/lib/x64Darwin16clang8.0
 
 $export SHAPE_TOPIC="Triangle"
 
-$/Applications/rti_connext_dds-6.0.0/bin/rtiroutingservice
+$/Applications/rti_connext_dds-6.1.0/bin/rtiroutingservice
 -cfgFile RsFileAdapter.xml
 -cfgName FileAdapterToFileAdapter
 
-RTI Routing Service 6.0.0 executing (with name FileAdapterToFileAdapter)
+RTI Routing Service 6.1.0 executing (with name FileAdapterToFileAdapter)
 Input file name: Input_Triangle.csv
 Output file name: Output_Triangle.csv
 Received Sample:

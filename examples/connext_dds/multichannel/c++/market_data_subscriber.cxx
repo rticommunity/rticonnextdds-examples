@@ -289,7 +289,7 @@ extern "C" int subscriber_main(int domainId, int sample_count)
                 subscriber_shutdown(participant);
                 return -1;
             }
-            printf("changed filter to Symbol MATCH 'AD'\n");
+            printf("changed filter to Symbol MATCH 'A,D'\n");
         }
 
         if (count == 6) {

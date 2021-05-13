@@ -18,6 +18,17 @@
 
 #define MAX_PAYLOAD_SIZE 1024
 
+// Adapter plugin configuration property names
+#define FILE_ADAPTER_CONNECTION_DIRECTION "Direction"
+#define FILE_ADAPTER_CONNECTION_DIRECTION_INPUT "Input"
+#define FILE_ADAPTER_CONNECTION_DIRECTION_OUTPUT "Output"
+#define FILE_ADAPTER_CONNECTION_FOLDER_PATH "FolderPath"
+#define FILE_ADAPTER_CONNECTION_DISCOVERY_THREAD_SLEEP_PERIOD "SleepPeriod"
+
+#define FILE_ADAPTER_READ_PERIOD "ReadPeriod"
+#define FILE_ADAPTER_SAMPLES_PER_READ "SamplesPerRead"
+#define FILE_ADAPTER_WRITE_MODE "WriteMode"
+#define FILE_ADAPTER_FLUSH "Flush"
 
 /* ========================================================================= */
 /*                                                                           */
@@ -91,14 +102,15 @@ struct RTI_RoutingServiceFileStreamReader {
     struct RTI_RoutingServiceFileConnection *connection;
     /*the array of filenames present in the source directory*/
     char **discovery_data;
-    /*counter for discovery_data array, indicate the last entry that has been
-     * read*/
+    /*
+     * counter for discovery_data array, indicate the last entry that has been read
+     */
     int discovery_data_counter_read;
     /* counter for discovery data array, indicate the
      * total number of entry (file names) inside the array*/
     int discovery_data_counter;
     /*
-     * The discovery_daata array, is populated with the name of all files
+     * The discovery_data array, is populated with the name of all files
      * present inside the directory monitored, then every new file discovered
      * gets on the top of the array, so, if there is something new, we realize
      * it because there is something "after" the discovery data index, as it

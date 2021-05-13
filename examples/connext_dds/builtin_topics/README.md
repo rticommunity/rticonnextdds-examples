@@ -3,9 +3,9 @@
 ## Concept
 
 *Built-in Topics* are a special kind of topics that are used by *RTI Connext
-*DDS* applications to discover each other. These *Topics* are handled
+DDS* applications to discover each other. These *Topics* are handled
 automatically by the middleware, but in certain scenarios it is useful to
-*access to them. For instance, these *Topics* allow us to access some relevant
+access to them. For instance, these *Topics* allow us to access some relevant
 information about Connext entities, such as:
 
 - The publications and subscriptions available.
@@ -21,6 +21,10 @@ phase. For this purpose, we check *USER_DATA* fields for discovered
 authorization string, we allow all *DataReaders* from that *Participant* read
 access. Otherwise, we check the *USER_DATA* from individual *DataReaders* to see
 if it is authorized.
+
+**Note**: RTI Connext DDS provides secure authentication mechanisms.
+This simple example is only intended to show how to access DDS discovery
+information.
 
 ### Publisher
 

@@ -61,7 +61,7 @@ function into the library that creates the plugin, etc.
 
 ```xml
 <qos_profile name="custom_transport_Profile" is_default_qos="true">
-    <participant_qos>
+    <domain_participant_qos>
         <!-- disable all builtin transports -->
         <transport_builtin>
             <mask>MASK_NONE</mask>
@@ -96,7 +96,7 @@ function into the library that creates the plugin, etc.
 
               </value>
         </property>
-    </participant_qos>
+    </domain_participant_qos>
 </qos_profile>
 ```
 
