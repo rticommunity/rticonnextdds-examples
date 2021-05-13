@@ -1,9 +1,14 @@
 #.rst:
 # (c) 2017 Copyright, Real-Time Innovations, Inc. All rights reserved.
+#
 # RTI grants Licensee a license to use, modify, compile, and create derivative
-# works of this file solely for use with RTI Connext DDS.  Licensee may
-# redistribute copies of this file provided that all such copies are subject
-# to this license.
+# works of the software solely for use with RTI Connext DDS.  Licensee may
+# redistribute copies of the software provided that all such copies are
+# subject to this license. The software is provided "as is", with no warranty
+# of any type, including any warranty for fitness for any purpose. RTI is
+# under no obligation to maintain or support the software.  RTI shall not be
+# liable for any incidental or consequential damages arising out of the use or
+# inability to use the software.
 #
 # FindRTIConnextDDS
 # -----------------
@@ -1110,7 +1115,9 @@ if(CONNEXTDDS_ARCH MATCHES "Linux")
         "-lm"
         "-lpthread"
         "-lrt"
+        "-rdynamic"
     )
+
     set(CONNEXTDDS_COMPILE_DEFINITIONS
         "RTI_UNIX"
         "RTI_LINUX"
@@ -1302,8 +1309,10 @@ if(distributed_logger IN_LIST RTIConnextDDS_FIND_COMPONENTS
             CMAKE_COMPILER_VERSION VERSION_GREATER "4.6.0" AND
             RTICONNEXTDDS_VERSION VERSION_LESS "6.1.0"
         )
-           set(CONNEXTDDS_EXTERNAL_LIBS
-               -Wl,--no-as-needed  ${CONNEXTDDS_EXTERNAL_LIBS})
+            set(CONNEXTDDS_EXTERNAL_LIBS
+                "-Wl,--no-as-needed"
+                ${CONNEXTDDS_EXTERNAL_LIBS}
+            )
         endif()
     else()
         set(RTIConnextDDS_distributed_logger_FOUND FALSE)
@@ -1512,7 +1521,10 @@ if(monitoring_libraries IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
     if(MONITORING_FOUND)
         if(CONNEXTDDS_ARCH MATCHES "Win")
-            set(CONNEXTDDS_EXTERNAL_LIBS psapi ${CONNEXTDDS_EXTERNAL_LIBS})
+            set(CONNEXTDDS_EXTERNAL_LIBS
+                psapi
+                ${CONNEXTDDS_EXTERNAL_LIBS}
+            )
         endif()
         set(RTIConnextDDS_monitoring_libraries_FOUND TRUE)
     else()

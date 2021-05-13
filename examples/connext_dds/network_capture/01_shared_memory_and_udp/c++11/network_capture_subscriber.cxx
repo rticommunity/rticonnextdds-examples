@@ -57,7 +57,7 @@ void run_subscriber_application(
     dds::domain::DomainParticipant participant(domain_id);
     dds::topic::Topic<NetworkCapture> topic(
             participant,
-            "Example NetworkCapture");
+            "Network capture shared memory example");
     dds::sub::Subscriber subscriber(participant);
     dds::sub::DataReader<NetworkCapture> reader(subscriber, topic);
 
