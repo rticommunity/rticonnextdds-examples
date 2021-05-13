@@ -146,6 +146,11 @@ bool print_average_pixel_fast(const CameraImage &sample)
 
     unsigned int pixel_count = pixels.element_count();
 
+    if (pixel_count == 0) {
+        std::cout << "WARNING: the pixels count is 0" << std::endl;
+        return false;
+    }
+
     PixelPlainHelper *pixel_array = rti::flat::plain_cast(pixels);
     if (pixel_array == NULL) {
         return false;

@@ -13,14 +13,6 @@ set(CMAKE_MODULE_PATH
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
-find_package(RTIConnextDDS
-    "6.1.0"
-    REQUIRED
-    COMPONENTS
-        core
-)
-
-
 connextdds_add_example(
     IDL "compression"
     LANG "C++"

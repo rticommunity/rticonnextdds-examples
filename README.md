@@ -1,6 +1,6 @@
 # rticonnextdds-examples
 
-[![Build Status](https://www.travis-ci.org/rticommunity/rticonnextdds-examples.svg?branch=master)](https://www.travis-ci.org/rticommunity/rticonnextdds-examples)
+[![GitHub Workflow Status (branch)](https://img.shields.io/github/workflow/status/rticommunity/rticonnextdds-examples/build/master)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
 
 This repository includes examples on how to use specific features of RTI
 Connext DDS.

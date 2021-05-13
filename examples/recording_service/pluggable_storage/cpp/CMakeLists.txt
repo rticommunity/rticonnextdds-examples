@@ -65,7 +65,7 @@ set(HELLOMSG_CPP_SOURCES
 add_custom_command(
     OUTPUT ${HELLOMSG_CPP_SOURCES}
     MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
-    COMMAND ${RTICODEGEN} -language C++03 -update typefiles
+    COMMAND ${RTICODEGEN} -language C++11 -update typefiles
             -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated"
             "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
 )

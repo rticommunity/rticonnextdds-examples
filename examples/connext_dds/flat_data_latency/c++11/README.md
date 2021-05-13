@@ -1,6 +1,6 @@
 # Example Code: FlatData and ZeroCopy examples
 
-## Explore C++11 Example
+## Explore the Example
 
 ### CameraImage.idl
 
@@ -57,34 +57,63 @@ are acknowledged. The *DataRepresentation QoS* is set to *Extended CDR version
 only supported with this data representation. The tranport settings of the
 participant are also tuned to ensure reduced latency while sending large data.
 
-## Building C++11 Example
+## Building the Example :wrench:
 
-Use rtiddsgen to generate a makefile for your machine's architecture and
-compiler. For example:
-
-```bash
-rtiddsgen -language C++11 -additionalHeaderFile Common.hpp -example <your_target_architecture> CameraImage.idl
-```
-
-You may get messages saying that some files already exist and will not be
-replaced. You can safely ignore those messages, since all the source files for
-this example are already provided.
-
-Compile the Publisher and Subscriber apps:
+To build this example, first run CMake to generate the corresponding build
+files. We recommend you use a separate directory to store all the generated
+files (e.g., ./build).
 
 ```bash
-make -f <makefile_for_your_target_architecture>
+mkdir build
+cd build
+cmake ..
 ```
 
-The executables *CameraImage_publisher* and *CameraImage_subscriber* are located
-under `objs/\<architecture\>`.
+Once you have run CMake, you will find a number of new files in your build
+directory (the list of generated files will depend on the specific CMake
+Generator). To build the example, run CMake as follows:
 
-## Running C++11 Example
+```sh
+cmake --build .
+```
 
-### Usage
+**Note**: if you are using a multi-configuration generator, such as Visual
+Studio solutions, you can specify the configuration mode to build as follows:
+
+```sh
+cmake --build . --config Release|Debug
+```
+
+Alternatively, you can use directly the generated infrastructure (e.g.,
+Makefiles or Visual Studio Solutions) to build the example. If you generated
+Makefiles in the configuration process, run make to build the example. Likewise,
+if you generated a Visual Studio solution, open the solution and follow the
+regular build process.
+
+## Running the Example
+
+In two separate command prompt windows for the publisher and subscriber. Run the
+following commands from the example directory (this is necessary to ensure the
+application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+
+On *Windows* systems run:
+
+```sh
+CameraImage_publisher.exe <domain_id> <mode>
+CameraImage_subscriber.exe <domain_id> <mode>
+```
+
+On *UNIX* systems run:
+
+```sh
+./CameraImage_publisher <domain_id> <mode>
+./CameraImage_subscriber <domain_id> <mode>
+```
+
+The application has the following arguments:
 
 ```plaintext
-Usage: ./objs/<archictecture>/CameraImage_[publisher|subscriber] [options]
+Usage: ./CameraImage_[publisher|subscriber] [options]
 
 Options:
  -domainId    <domain ID>    Domain ID
@@ -107,7 +136,7 @@ When a device has multiple interfaces, it is recommended to use `-nic` when
 running on separate nodes. This ensures that data is sent over one network
 interface only.
 
-### Output
+## Publisher Output
 
 *CameraImage_publisher* waits for the subscriber and then prints the average
 one-way latency every 4 seconds:
@@ -122,6 +151,8 @@ Average end-to-end latency: 81 microseconds
 Average end-to-end latency: 82 microseconds
 ```
 
+## Subscriber Output
+
 *CameraImage_subscriber* waits for the publisher and responds to each ping with
 a pong message:
 
@@ -130,3 +161,77 @@ Running subscriber_zero_copy
 Waiting for the publisher application
 Discovery complete
 ```
+
+## Customizing the Build
+
+### Configuring Build Type and Generator
+
+By default, CMake will generate build files using the most common generator for
+your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
+solution on Windows), \. You can use the following CMake variables to modify the
+default behavior:
+
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+
+-   `-G` -- CMake generator. The generator is the native build system to use
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+
+For example, to build a example in Debug/Static mode run CMake as follows:
+
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
+```
+
+### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform.If you installed Connext DDS in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+installation folder. For example:
+
+```sh
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
+```
+
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
+CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
+you want to link against. For example:
+
+```sh
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+```
+
+### CMake Build Infrastructure
+
+The CMakeListst.txt script that builds this example uses a generic CMake
+function called connextdds_add_example that defines all the necessary constructs
+to:
+
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+    for the types defined in the IDL file associated with the example.
+
+2.  Build the corresponding Publisher and Subscriber applications.
+
+3.  Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
+    and subscriber executables are generated.
+
+You will find the definition of connextdds_add_example, along with detailed
+documentation, in
+[resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
+
+For a more comprehensive example on how to build an RTI Connext DDS application
+using CMake, please refer to the
+[hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
+a comprehensive CMakeLists.txt script with all the steps and instructions
+described in detail.

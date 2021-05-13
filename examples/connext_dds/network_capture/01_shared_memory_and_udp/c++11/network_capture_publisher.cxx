@@ -40,7 +40,7 @@ void run_publisher_application(
     dds::domain::DomainParticipant participant(domain_id);
     dds::topic::Topic<NetworkCapture> topic(
             participant,
-            "Example NetworkCapture");
+            "Network capture shared memory example");
     dds::pub::Publisher publisher(participant);
     dds::pub::DataWriter<NetworkCapture> writer(publisher, topic);
 

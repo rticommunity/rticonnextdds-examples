@@ -61,7 +61,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
-    // reader_qos << Reliability::Reliable(Duration(60));
+    // reader_qos << Reliability::Reliable();
     // reader_qos << History::KeepAll();
 
     // Create a DataReader with a QoS

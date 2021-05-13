@@ -78,8 +78,7 @@ namespace PartitionsExample
                     description: "Displays the RTI Connext version"),
                 };
 
-            rootCommand.Description = "Example RTI Connext Publisher and Subscriber."
-            + "\nSee README.txt for more information";
+            rootCommand.Description = "Partitions Example";
 
             Arguments result = null;
             rootCommand.Handler = System.CommandLine.Invocation.CommandHandler.Create(

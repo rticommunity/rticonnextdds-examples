@@ -47,7 +47,7 @@ The code in this directory provides the following components:
 For more details on how to implement custom plugins, please refer to the *RTI
 Recording Service API* documentation.
 
-## Building the C example
+## Building the C++ example
 
 In order to build this example, you need to provide the following variables to
 `CMake`:

@@ -17,13 +17,13 @@
     -->
     <qos_library name="cfc_Library">
 
-        <!-- QoS profile used to configure reliable communication between the DataWriter 
+        <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
         <qos_profile name="cfc_Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->                
+            <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <publication_name>
                     <name>cfcDataWriter</name>
@@ -38,8 +38,8 @@
                     </flow_controller_name>
                 </publish_mode>
             </datawriter_qos>
-            
-            <!-- QoS used to configure the data reader created in the example code -->                
+
+            <!-- QoS used to configure the data reader created in the example code -->
             <datareader_qos>
                 <subscription_name>
                     <name>cfcDataReader</name>
@@ -52,28 +52,28 @@
                     <value>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.max_tokens</name>
-                            <value>2</value>              
+                            <value>2</value>
                         </element>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.tokens_added_per_period</name>
-                            <value>2</value>              
+                            <value>2</value>
                         </element>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.tokens_leaked_per_period</name>
-                            <!-- The value -1 means LENGTH_UNLIMITED --> 
-                            <value>-1</value>              
+                            <!-- The value -1 means LENGTH_UNLIMITED -->
+                            <value>-1</value>
                         </element>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.period.sec</name>
-                            <value>0</value>              
+                            <value>0</value>
                         </element>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.period.nanosec</name>
-                            <value>100000000</value>              
+                            <value>100000000</value>
                         </element>
                         <element>
                             <name>dds.flow_controller.token_bucket.custom_flowcontroller.token_bucket.bytes_per_token</name>
-                            <value>1024</value>              
+                            <value>1024</value>
                         </element>
                     </value>
                 </property>
@@ -82,7 +82,7 @@
                 RTI tools, making it easier for you to tell one
                 application from another when you're debugging.
                 -->
-                
+
                 <participant_name>
                     <name>Custom Flow Controller C# Example</name>
                     <role_name>cfcParticipantRole</role_name>

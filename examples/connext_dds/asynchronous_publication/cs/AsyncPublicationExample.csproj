@@ -1,0 +1,13 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net5.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Rti.ConnextDds.Extra" Version="6.1.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-*" />
+  </ItemGroup>
+
+</Project>
