@@ -18,11 +18,10 @@ To ensure the quality and consistency of the code, we use the
 following linters:
 
 -   `Python`:
-[black](https://pypi.org/project/black/)
+[black](https://pypi.org/project/black/).
 -   `C/C++`:
 [clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
 `clang-format` are listed in the `.clang-format` file.
-
 -   `Markdown`: [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
 using the rules listed in `.markdownlint.json`.
 
