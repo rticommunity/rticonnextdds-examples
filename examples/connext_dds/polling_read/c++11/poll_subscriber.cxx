@@ -43,11 +43,9 @@ void subscriber_main(int domain_id, int sample_count)
         // adding the value of x on each of them to calculate the average
         // afterwards.
         double sum = 0;
-        for (LoanedSamples<poll>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
-                sum += sample_it->data().x();
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                sum += sample.data().x();
             }
         }
 
