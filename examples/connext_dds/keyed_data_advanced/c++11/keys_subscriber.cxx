@@ -39,16 +39,14 @@ public:
                 previous_handle = samples[0].info().instance_handle();
             }
 
-            for (LoanedSamples<keys>::iterator sampleIt = samples.begin();
-                 sampleIt != samples.end();
-                 ++sampleIt) {
-                const SampleInfo &info = sampleIt->info();
+            for (const auto& sample: samples) {
+                const SampleInfo &info = sample.info();
                 if (info.valid()) {
                     if (info.state().view_state() == ViewState::new_view()) {
-                        new_instance_found(sampleIt->data());
+                        new_instance_found(sample.data());
                     }
 
-                    handle_data(sampleIt->data());
+                    handle_data(sample.data());
                 } else {
                     // Since there is not valid data, it may include metadata.
                     keys key_sample;
