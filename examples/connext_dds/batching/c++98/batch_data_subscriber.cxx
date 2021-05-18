@@ -177,8 +177,10 @@ static int subscriber_shutdown(DDSDomainParticipant *participant)
     return status;
 }
 
-extern "C" int
-        subscriber_main(int domainId, int sample_count, int turbo_mode_on)
+extern "C" int subscriber_main(
+        int domainId,
+        int sample_count,
+        int turbo_mode_on)
 {
     DDSDomainParticipant *participant = NULL;
     DDSSubscriber *subscriber = NULL;
