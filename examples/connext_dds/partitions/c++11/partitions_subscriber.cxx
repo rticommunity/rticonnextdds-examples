@@ -33,18 +33,16 @@ public:
         // Take all samples
         LoanedSamples<partitions> samples = reader.take();
 
-        for (LoanedSamples<partitions>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
                 // After partition mismatch unpair,
                 // it detects the instance as new.
-                ViewState view_state = sample_it->info().state().view_state();
+                ViewState view_state = sample.info().state().view_state();
                 if (view_state == ViewState::new_view()) {
                     std::cout << "Found new instance" << std::endl;
                 }
 
-                std::cout << sample_it->data() << std::endl;
+                std::cout << sample.data() << std::endl;
             }
         }
     }
