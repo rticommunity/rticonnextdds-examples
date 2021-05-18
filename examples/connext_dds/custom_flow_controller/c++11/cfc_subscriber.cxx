@@ -34,16 +34,14 @@ public:
         // Take all samples
         LoanedSamples<cfc> samples = reader.take();
 
-        for (LoanedSamples<cfc>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - Init_time;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
                 std::cout << "@ t=" << elapsed_secs
-                          << "s, got x = " << sample_it->data().x()
+                          << "s, got x = " << sample.data().x()
                           << std::endl;
             }
         }
