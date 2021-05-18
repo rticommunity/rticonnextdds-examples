@@ -29,11 +29,9 @@ public:
         LoanedSamples<cft> samples = reader.take();
 
         // Print samples by copying to std::cout
-        for (LoanedSamples<cft>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (sampleIt->info().valid()) {
-                std::cout << sampleIt->data() << std::endl;
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             }
         }
     }
@@ -49,12 +47,10 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     Topic<cft> topic(participant, "Example cft");
 
     // Sequence of parameters for the content filter expression
-    std::vector<std::string> parameters(2);
-
     // The default parameter list that we will include in the
     // sequence of parameters will be "1", "4" (i.e., 1 <= x <= 4).
-    parameters[0] = "1";
-    parameters[1] = "4";
+    std::vector<std::string> parameters = {"1", "4"};
+
     if (is_cft) {
         std::cout << std::endl
                   << "==========================" << std::endl
