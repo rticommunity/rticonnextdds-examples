@@ -45,27 +45,24 @@ public:
                         .state(dds::sub::status::DataState::new_instance())
                         .take();
 
-        for (LoanedSamples<ParticipantBuiltinTopicData>::iterator sampleIt =
-                     samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (!sampleIt->info().valid()) {
+        for (const auto& sample: samples) {
+            if (!sample.info().valid()) {
                 continue;
             }
 
-            const ByteSeq &user_data = sampleIt->data().user_data().value();
+            const ByteSeq &user_data = sample.data().user_data().value();
             std::string user_auth(user_data.begin(), user_data.end());
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
-            const BuiltinTopicKey &key = sampleIt->data().key();
+            const BuiltinTopicKey &key = sample.data().key();
             std::cout << "Built-in Reader: found participant" << std::endl
                       << "\tkey->'" << key.value()[0] << " " << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
                       << "\tuser_data->'" << user_auth << "'" << std::endl
                       << "\tinstance_handle: "
-                      << sampleIt->info().instance_handle() << std::endl;
+                      << sample.info().instance_handle() << std::endl;
 
             std::cout.flags(default_format);
 
@@ -81,7 +78,7 @@ public:
                 // Ignore the remote participant
                 dds::domain::ignore(
                         participant,
-                        sampleIt->info().instance_handle());
+                        sample.info().instance_handle());
             }
         }
     }
@@ -99,19 +96,16 @@ public:
                         .state(dds::sub::status::DataState::new_instance())
                         .take();
 
-        for (LoanedSamples<SubscriptionBuiltinTopicData>::iterator sampleIt =
-                     samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (!sampleIt->info().valid()) {
+        for (const auto& sample: samples) {
+            if (!sample.info().valid()) {
                 continue;
             }
 
             std::ios::fmtflags default_format(std::cout.flags());
             std::cout << std::hex << std::setw(8) << std::setfill('0');
 
-            const BuiltinTopicKey &partKey = sampleIt->data().participant_key();
-            const BuiltinTopicKey &key = sampleIt->data().key();
+            const BuiltinTopicKey &partKey = sample.data().participant_key();
+            const BuiltinTopicKey &key = sample.data().key();
             std::cout << "Built-in Reader: found subscriber" << std::endl
                       << "\tparticipant_key->'" << partKey.value()[0] << " "
                       << partKey.value()[1] << " " << partKey.value()[2] << "'"
@@ -119,7 +113,7 @@ public:
                       << "\tkey->'" << key.value()[0] << " " << key.value()[1]
                       << " " << key.value()[2] << "'" << std::endl
                       << "\tinstance_handle: "
-                      << sampleIt->info().instance_handle() << std::endl;
+                      << sample.info().instance_handle() << std::endl;
 
             std::cout.flags(default_format);
         }

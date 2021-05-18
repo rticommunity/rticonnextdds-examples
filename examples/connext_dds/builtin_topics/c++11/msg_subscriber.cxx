@@ -31,11 +31,9 @@ public:
     void on_data_available(DataReader<msg> &reader)
     {
         LoanedSamples<msg> samples = reader.take();
-        for (LoanedSamples<msg>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (sampleIt->info().valid()) {
-                std::cout << sampleIt->data() << std::endl;
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             }
         }
     }
