@@ -39,12 +39,10 @@ void publisher_main(int domain_id, int sample_count)
     DataWriter<Flight> writer(Publisher(participant), topic, writer_qos);
 
     // Create the flight info samples.
-    std::vector<Flight> flights_info
-    {
-        Flight(1111, "CompanyA", 15000), Flight(2222, "CompanyB", 20000),
-                Flight(3333, "CompanyA", 30000);
-        Flight(4444, "CompanyB", 25000)
-    };
+    std::vector<Flight> flights_info { Flight(1111, "CompanyA", 15000),
+                                       Flight(2222, "CompanyB", 20000),
+                                       Flight(3333, "CompanyA", 30000),
+                                       Flight(4444, "CompanyB", 25000) };
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count);
