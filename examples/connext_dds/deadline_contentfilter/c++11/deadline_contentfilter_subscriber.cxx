@@ -36,16 +36,13 @@ public:
         // Take all samples
         LoanedSamples<deadline_contentfilter> samples = reader.take();
 
-        for (LoanedSamples<deadline_contentfilter>::iterator sample_it =
-                     samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - init_time;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
-                const deadline_contentfilter &data = sample_it->data();
+                const deadline_contentfilter &data = sample.data();
                 std::cout << "@ t=" << elapsed_secs << "s, Instance"
                           << data.code() << ": <" << data.x() << "," << data.y()
                           << ">" << std::endl;
@@ -87,8 +84,7 @@ void subscriber_main(int domain_id, int sample_count)
             "Example deadline_contentfilter");
 
     // Set up a Content Filtered Topic to show interaction with deadline.
-    std::vector<std::string> parameters(1);
-    parameters[0] = "2";
+    std::vector<std::string> parameters = {"2"};
 
     ContentFilteredTopic<deadline_contentfilter> cft_topic(
             topic,

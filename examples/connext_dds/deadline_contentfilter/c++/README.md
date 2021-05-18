@@ -39,10 +39,18 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
+On *Windows* systems run:
+
 ```sh
-# Do not forget to replace the path separator to "\" on Windows.
 deadline_contentfilter_publisher.exe  <domain_id> <samples_to_send>
 deadline_contentfilter_subscriber.exe <domain_id> <sleep_periods>
+```
+
+On *UNIX* systems run:
+
+```sh
+./deadline_contentfilter_publisher  <domain_id> <samples_to_send>
+./deadline_contentfilter_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to two arguments:
