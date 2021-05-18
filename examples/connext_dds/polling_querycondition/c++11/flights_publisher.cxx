@@ -39,11 +39,10 @@ void publisher_main(int domain_id, int sample_count)
     DataWriter<Flight> writer(Publisher(participant), topic, writer_qos);
 
     // Create the flight info samples.
-    std::vector<Flight> flights_info(4);
-    flights_info[0] = Flight(1111, "CompanyA", 15000);
-    flights_info[1] = Flight(2222, "CompanyB", 20000);
-    flights_info[2] = Flight(3333, "CompanyA", 30000);
-    flights_info[3] = Flight(4444, "CompanyB", 25000);
+    std::vector<Flight> flights_info { Flight(1111, "CompanyA", 15000),
+                                       Flight(2222, "CompanyB", 20000),
+                                       Flight(3333, "CompanyA", 30000);
+                                       Flight(4444, "CompanyB", 25000) };
 
     // Main loop
     for (int count = 0; (sample_count == 0) || (count < sample_count);
@@ -51,11 +50,11 @@ void publisher_main(int domain_id, int sample_count)
         // Update flight info latitude
         std::cout << "Updating and sending values" << std::endl;
 
-        for (std::vector<int>::size_type f = 0; f < flights_info.size(); f++) {
+        for (auto& flight: flights_info) {
             // Set the plane altitude lineally (usually the max is at 41,000ft).
-            int altitude = flights_info[f].altitude() + count * 100;
-            flights_info[f].altitude(altitude >= 41000 ? 41000 : altitude);
-            std::cout << "\t" << flights_info[f] << std::endl;
+            int altitude = flight.altitude() + count * 100;
+            flight.altitude(altitude >= 41000 ? 41000 : altitude);
+            std::cout << "\t" << flight << std::endl;
         }
 
         writer.write(flights_info.begin(), flights_info.end());

@@ -44,9 +44,8 @@ void subscriber_main(int domain_id, int sample_count)
     // (about 30,000ft). The company parameter will be changed in run-time.
     // NOTE: There must be single-quotes in the query parameters around-any
     // strings! The single-quote do NOT go in the query condition itself.
-    std::vector<std::string> query_parameters(2);
-    query_parameters[0] = "'CompanyA'";
-    query_parameters[1] = "30000";
+    std::vector<std::string> query_parameters = {"'CompanyA'", "30000"};
+
     std::cout << "Setting parameters to company: " << query_parameters[0]
               << " and altitude bigger or equals to " << query_parameters[1]
               << std::endl;
@@ -89,13 +88,11 @@ void subscriber_main(int domain_id, int sample_count)
         LoanedSamples<Flight> samples =
                 reader.select().condition(query_condition).read();
 
-        for (LoanedSamples<Flight>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (!sampleIt->info().valid())
+        for (const auto& sample: samples) {
+            if (!sample.info().valid())
                 continue;
 
-            std::cout << "\t" << sampleIt->data() << std::endl;
+            std::cout << "\t" << sample.data() << std::endl;
         }
     }
 }
