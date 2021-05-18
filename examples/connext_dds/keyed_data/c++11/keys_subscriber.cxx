@@ -30,20 +30,18 @@ public:
         // Take all samples
         LoanedSamples<keys> samples = reader.take();
 
-        for (LoanedSamples<keys>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            const SampleInfo &info = sample_it->info();
+        for (const auto& sample: samples) {
+            const SampleInfo &info = sample.info();
             if (info.valid()) {
                 ViewState view_state = info.state().view_state();
                 if (view_state == ViewState::new_view()) {
                     std::cout << "Found new instance; code = "
-                              << sample_it->data().code() << std::endl;
+                              << sample.data().code() << std::endl;
                 }
 
-                std::cout << "Instance " << sample_it->data().code()
-                          << ", x: " << sample_it->data().x()
-                          << ", y: " << sample_it->data().y() << std::endl;
+                std::cout << "Instance " << sample.data().code()
+                          << ", x: " << sample.data().x()
+                          << ", y: " << sample.data().y() << std::endl;
             } else {
                 // Since there is not valid data, it may include metadata.
                 keys sample;
