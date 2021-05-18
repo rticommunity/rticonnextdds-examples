@@ -50,7 +50,13 @@ the QoS defined in *USER_QOS_PROFILES.xml*).
 
 ### Publisher
 
-For i86Linux2.6gcc4.4.5, run:
+On *Windows* systems run:
+
+```sh
+AwsExample_publisher.exe [options]
+```
+
+On *UNIX* systems run:
 
 ```sh
 ./AwsExample_publisher [options]
@@ -74,7 +80,13 @@ where the publisher options are:
 
 ### Subscriber
 
-For i86Linux2.6gcc4.4.5, run:
+On *Windows* systems run:
+
+```sh
+AwsExample_subscriber.exe [options]
+```
+
+On *UNIX* systems run:
 
 ```sh
 ./AwsExample_subscriber [options]
