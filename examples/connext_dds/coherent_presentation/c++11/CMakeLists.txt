@@ -15,5 +15,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "coherent"
-    LANG "C++03"
+    LANG "C++11"
 )

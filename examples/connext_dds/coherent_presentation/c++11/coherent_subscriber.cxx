@@ -51,9 +51,8 @@ public:
 
         // Print result
         std::cout << "Received updates:" << std::endl;
-        typedef std::map<char, int>::const_iterator MapIterator;
-        for (MapIterator iter = values.begin(); iter != values.end(); iter++) {
-            std::cout << " " << iter->first << " = " << iter->second << ";";
+        for (const auto& value: values) {
+            std::cout << " " << value.first << " = " << value.second << ";";
         }
         std::cout << std::endl;
     }
