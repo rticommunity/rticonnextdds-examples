@@ -15,7 +15,7 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "profiles"
-    LANG "C++03"
+    LANG "C++11"
 )
 
 add_custom_command(

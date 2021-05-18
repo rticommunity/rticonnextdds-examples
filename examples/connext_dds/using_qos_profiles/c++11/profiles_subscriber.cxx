@@ -37,11 +37,9 @@ public:
                   << std::endl
                   << listener_name() << " listener received" << std::endl;
 
-        for (LoanedSamples<profiles>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
-                std::cout << sample_it->data() << std::endl;
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             }
         }
 
