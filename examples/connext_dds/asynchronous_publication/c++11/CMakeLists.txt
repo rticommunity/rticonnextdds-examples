@@ -15,5 +15,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "async"
-    LANG "C++03"
+    LANG "C++11"
 )

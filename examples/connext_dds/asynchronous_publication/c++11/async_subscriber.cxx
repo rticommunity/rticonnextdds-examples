@@ -31,15 +31,13 @@ public:
     void on_data_available(DataReader<async> &reader)
     {
         LoanedSamples<async> samples = reader.take();
-        for (LoanedSamples<async>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
+        for (const auto& sample : samples) {
             // Print the time we get each sample.
-            if (sampleIt->info().valid()) {
+            if (sample.info().valid()) {
                 double elapsed_ticks = clock() - InitTime;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
                 std::cout << "@ t=" << elapsed_secs << "s"
-                          << ", got x = " << sampleIt->data().x() << std::endl;
+                          << ", got x = " << sample.data().x() << std::endl;
             }
         }
     }
