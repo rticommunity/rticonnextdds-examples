@@ -33,13 +33,11 @@ public:
         // Take all samples
         LoanedSamples<PublicationBuiltinTopicData> samples = reader.take();
 
-        typedef LoanedSamples<PublicationBuiltinTopicData>::iterator SampleIter;
-        for (SampleIter sample_it = samples.begin(); sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
-                const PublicationBuiltinTopicData &data = sample_it->data();
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                const PublicationBuiltinTopicData &data = sample.data();
                 const BuiltinTopicKey &partKey = data.participant_key();
-                const BuiltinTopicKey &key = sample_it->data().key();
+                const BuiltinTopicKey &key = sample.data().key();
 
                 std::cout << std::hex << std::setw(8) << std::setfill('0');
                 std::cout << "-----" << std::endl
