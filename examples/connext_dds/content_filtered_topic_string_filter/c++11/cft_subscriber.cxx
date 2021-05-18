@@ -33,11 +33,9 @@ public:
         // Take all samples
         LoanedSamples<cft> samples = reader.take();
 
-        for (LoanedSamples<cft>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
-                std::cout << sample_it->data() << std::endl;
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             }
         }
     }
@@ -52,8 +50,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     Topic<cft> topic(participant, "Example cft");
 
     // Define the default parameter of the filter.
-    std::vector<std::string> parameters(1);
-    parameters[0] = "SOME_STRING";
+    std::vector<std::string> parameters = {"SOME_STRING"};
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
