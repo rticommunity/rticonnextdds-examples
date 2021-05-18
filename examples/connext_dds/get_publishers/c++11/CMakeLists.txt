@@ -15,7 +15,7 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "Foo"
-    LANG "C++03"
+    LANG "C++11"
     DISABLE_SUBSCRIBER
     NO_REQUIRE_QOS
 )
