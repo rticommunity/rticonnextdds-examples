@@ -96,10 +96,9 @@ void AwsSubscriber::process_received_samples()
             dds::core::cond::StatusCondition(receiver_));
 
     // Process sample
-    for (const auto& sample: samples) {
+    for (const auto &sample : samples) {
         if (sample.info().valid()) {
-            std::cout << "Received sample:\n\t" << sample.data()
-                      << std::endl;
+            std::cout << "Received sample:\n\t" << sample.data() << std::endl;
         }
     }
     // Sleep a random amount of time between 1 and 10 secs. This is

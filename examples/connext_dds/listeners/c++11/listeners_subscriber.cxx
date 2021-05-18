@@ -209,7 +209,7 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     virtual void on_data_available(DataReader<listeners> &reader)
     {
         LoanedSamples<listeners> samples = reader.take();
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             // If the reference we get is valid data, it means we have actual
             // data available, otherwise we got metadata.
             if (sample.info().valid()) {
@@ -247,7 +247,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create the DataReader and associate a listener
     DataReader<listeners> reader(subscriber, topic);
-    ListenerBinder<DataReader<listeners> > datareader_listener =
+    ListenerBinder<DataReader<listeners>> datareader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new MyDataReaderListener,

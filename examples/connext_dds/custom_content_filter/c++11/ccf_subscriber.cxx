@@ -30,7 +30,7 @@ public:
         // Take the available data
         LoanedSamples<Foo> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -52,7 +52,7 @@ void subscriber_main(int domain_id, int sample_count)
             "CustomFilter");
 
     // The default filter parameters will filter values that are divisible by 2.
-    std::vector<std::string> parameters = {"2", "divides"};
+    std::vector<std::string> parameters = { "2", "divides" };
 
     // Create the filter with the expression and the type registered.
     Filter filter("%0 %1 x", parameters);
@@ -68,7 +68,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<Foo> > scoped_listener =
+    rti::core::ListenerBinder<DataReader<Foo>> scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new CcfListener,

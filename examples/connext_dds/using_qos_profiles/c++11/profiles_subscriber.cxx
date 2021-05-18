@@ -37,7 +37,7 @@ public:
                   << std::endl
                   << listener_name() << " listener received" << std::endl;
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -83,7 +83,7 @@ void subscriber_main(int domain_id, int sample_count)
                     "profiles_Library::transient_local_profile"));
 
     // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles> > scoped_transient_listener =
+    rti::core::ListenerBinder<DataReader<profiles>> scoped_transient_listener =
             rti::core::bind_and_manage_listener(
                     reader_transient_local,
                     new ProfilesListener("transient_local_profile"),
@@ -97,7 +97,7 @@ void subscriber_main(int domain_id, int sample_count)
             qos_provider.datareader_qos("profiles_Library::volatile_profile"));
 
     // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles> > scoped_volatile_listener =
+    rti::core::ListenerBinder<DataReader<profiles>> scoped_volatile_listener =
             rti::core::bind_and_manage_listener(
                     reader_volatile,
                     new ProfilesListener("volatile_profile"),

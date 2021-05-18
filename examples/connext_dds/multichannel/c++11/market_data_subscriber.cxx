@@ -30,7 +30,7 @@ public:
         // Take all samples
         LoanedSamples<market_data> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -64,7 +64,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<market_data> > scoped_listener =
+    rti::core::ListenerBinder<DataReader<market_data>> scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new MarketDataReaderListener,

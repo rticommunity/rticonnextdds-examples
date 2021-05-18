@@ -33,7 +33,7 @@ public:
         // Take all samples
         LoanedSamples<PublicationBuiltinTopicData> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 const PublicationBuiltinTopicData &data = sample.data();
                 const BuiltinTopicKey &partKey = data.participant_key();
@@ -85,13 +85,13 @@ void subscriber_main(int domain_id, int sample_count)
     // Then get builtin subscriber's DataReader for DataWriters.
     DataReader<PublicationBuiltinTopicData> publication_reader =
             rti::sub::find_datareader_by_topic_name<
-                    DataReader<PublicationBuiltinTopicData> >(
+                    DataReader<PublicationBuiltinTopicData>>(
                     builtin_subscriber,
                     dds::topic::publication_topic_name());
 
     // Install our listener using ListenerBinder, a RAII that will take care
     // of setting it to NULL and deleting it.
-    rti::core::ListenerBinder<DataReader<PublicationBuiltinTopicData> >
+    rti::core::ListenerBinder<DataReader<PublicationBuiltinTopicData>>
             publication_listener = rti::core::bind_and_manage_listener(
                     publication_reader,
                     new BuiltinPublicationListener,

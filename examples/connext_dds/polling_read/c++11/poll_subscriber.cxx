@@ -43,7 +43,7 @@ void subscriber_main(int domain_id, int sample_count)
         // adding the value of x on each of them to calculate the average
         // afterwards.
         double sum = 0;
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 sum += sample.data().x();
             }

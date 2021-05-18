@@ -36,7 +36,7 @@ public:
         // Take all samples
         LoanedSamples<deadline_contentfilter> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - init_time;
@@ -84,7 +84,7 @@ void subscriber_main(int domain_id, int sample_count)
             "Example deadline_contentfilter");
 
     // Set up a Content Filtered Topic to show interaction with deadline.
-    std::vector<std::string> parameters = {"2"};
+    std::vector<std::string> parameters = { "2" };
 
     ContentFilteredTopic<deadline_contentfilter> cft_topic(
             topic,
@@ -112,7 +112,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<deadline_contentfilter> > listener =
+    rti::core::ListenerBinder<DataReader<deadline_contentfilter>> listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new deadline_contentfilterReaderListener,

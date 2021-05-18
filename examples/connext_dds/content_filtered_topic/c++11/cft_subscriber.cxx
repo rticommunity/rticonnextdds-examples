@@ -29,7 +29,7 @@ public:
         LoanedSamples<cft> samples = reader.take();
 
         // Print samples by copying to std::cout
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -49,7 +49,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     // Sequence of parameters for the content filter expression
     // The default parameter list that we will include in the
     // sequence of parameters will be "1", "4" (i.e., 1 <= x <= 4).
-    std::vector<std::string> parameters = {"1", "4"};
+    std::vector<std::string> parameters = { "1", "4" };
 
     if (is_cft) {
         std::cout << std::endl
@@ -90,7 +90,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a data reader listener using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<cft> > scoped_listener =
+    rti::core::ListenerBinder<DataReader<cft>> scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new CftListener,

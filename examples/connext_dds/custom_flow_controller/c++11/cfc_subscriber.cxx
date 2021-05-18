@@ -34,15 +34,14 @@ public:
         // Take all samples
         LoanedSamples<cfc> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 // Print the time we get each sample.
                 double elapsed_ticks = clock() - Init_time;
                 double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
                 std::cout << "@ t=" << elapsed_secs
-                          << "s, got x = " << sample.data().x()
-                          << std::endl;
+                          << "s, got x = " << sample.data().x() << std::endl;
             }
         }
     }
@@ -78,7 +77,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataReader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<cfc> > reader_listener =
+    ListenerBinder<DataReader<cfc>> reader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new cfcReaderListener,

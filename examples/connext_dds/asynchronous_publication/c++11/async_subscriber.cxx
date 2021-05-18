@@ -31,7 +31,7 @@ public:
     void on_data_available(DataReader<async> &reader)
     {
         LoanedSamples<async> samples = reader.take();
-        for (const auto& sample : samples) {
+        for (const auto &sample : samples) {
             // Print the time we get each sample.
             if (sample.info().valid()) {
                 double elapsed_ticks = clock() - InitTime;
@@ -67,7 +67,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a data reader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    rti::core::ListenerBinder<DataReader<async> > scoped_listener =
+    rti::core::ListenerBinder<DataReader<async>> scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new AsyncListener,

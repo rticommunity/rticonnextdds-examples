@@ -51,7 +51,7 @@ public:
 
         // Print result
         std::cout << "Received updates:" << std::endl;
-        for (const auto& value: values) {
+        for (const auto &value : values) {
             std::cout << " " << value.first << " = " << value.second << ";";
         }
         std::cout << std::endl;
@@ -91,7 +91,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<coherent> > scoped_listener =
+    ListenerBinder<DataReader<coherent>> scoped_listener =
             bind_and_manage_listener(
                     reader,
                     new CoherentListener,

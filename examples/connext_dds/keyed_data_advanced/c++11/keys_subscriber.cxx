@@ -39,7 +39,7 @@ public:
                 previous_handle = samples[0].info().instance_handle();
             }
 
-            for (const auto& sample: samples) {
+            for (const auto &sample : samples) {
                 const SampleInfo &info = sample.info();
                 if (info.valid()) {
                     if (info.state().view_state() == ViewState::new_view()) {
@@ -150,7 +150,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener using ListenerBinder, a RAII that will take care of
     // setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<keys> > reader_listener =
+    rti::core::ListenerBinder<DataReader<keys>> reader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new KeysReaderListener,

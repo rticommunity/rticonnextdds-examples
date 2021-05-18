@@ -31,7 +31,7 @@ public:
     void on_data_available(DataReader<msg> &reader)
     {
         LoanedSamples<msg> samples = reader.take();
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -80,7 +80,7 @@ void subscriber_main(
 
     // Create a data reader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<msg> > scoped_listener = bind_and_manage_listener(
+    ListenerBinder<DataReader<msg>> scoped_listener = bind_and_manage_listener(
             reader,
             new MsgListener,
             dds::core::status::StatusMask::data_available());

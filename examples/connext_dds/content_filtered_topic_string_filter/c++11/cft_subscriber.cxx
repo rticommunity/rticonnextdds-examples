@@ -33,7 +33,7 @@ public:
         // Take all samples
         LoanedSamples<cft> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -50,7 +50,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
     Topic<cft> topic(participant, "Example cft");
 
     // Define the default parameter of the filter.
-    std::vector<std::string> parameters = {"SOME_STRING"};
+    std::vector<std::string> parameters = { "SOME_STRING" };
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
     DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
@@ -87,7 +87,7 @@ void subscriber_main(int domain_id, int sample_count, bool is_cft)
 
     // Create a DataReader listener using ListenerBinder, a RAII utility that
     // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<cft> > scoped_listener = bind_and_manage_listener(
+    ListenerBinder<DataReader<cft>> scoped_listener = bind_and_manage_listener(
             reader,
             new cftReaderListener,
             StatusMask::data_available());

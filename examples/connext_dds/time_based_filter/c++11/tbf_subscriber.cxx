@@ -31,7 +31,7 @@ public:
         // Take all samples
         LoanedSamples<tbf> samples = reader.take();
 
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 // Here we get source timestamp of the sample using the sample
                 // info. 'info.source_timestamp()' returns dds::core::Time.
@@ -67,7 +67,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Associate a listener to the DataReader using ListenerBinder, a RAII that
     // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<tbf> > reader_listener =
+    ListenerBinder<DataReader<tbf>> reader_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new tbfReaderListener,

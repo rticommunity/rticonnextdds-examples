@@ -29,7 +29,7 @@ public:
     {
         // Take all samples
         LoanedSamples<batch_data> samples = reader.take();
-        for (const auto& sample: samples) {
+        for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 std::cout << sample.data() << std::endl;
             }
@@ -67,7 +67,7 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
             QosProvider::Default().datareader_qos(profile_name));
 
     // Set the listener using a RAII so it's exception-safe
-    rti::core::ListenerBinder<DataReader<batch_data> > scoped_listener =
+    rti::core::ListenerBinder<DataReader<batch_data>> scoped_listener =
             rti::core::bind_and_manage_listener(
                     reader,
                     new BatchDataReaderListener,

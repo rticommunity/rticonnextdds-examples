@@ -123,7 +123,7 @@ void subscriber_main(int domain_id, int sample_count)
                 // Current conditions match our conditions to read data, so we
                 // can read data just like we would do in any other example.
                 LoanedSamples<waitsets> samples = reader.take();
-                for (const auto& sample: samples) {
+                for (const auto &sample : samples) {
                     if (!sample.info().valid()) {
                         std::cout << "Got metadata" << std::endl;
                     } else {
