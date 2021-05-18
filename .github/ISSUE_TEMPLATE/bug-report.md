@@ -1,15 +1,9 @@
 ---
-name: Bug report
-about: Create a bug report to help us improve
+name: 🐛 Bug report
+about: 🔺 Create a bug report to help us improve
 title: "[BUG]"
 labels: bug, unconfirmed
 assignees: ''
-
----
-
----
-name: 🐛 Bug report
-about: 🔺 Create a bug report to help us improve
 ---
 
 <!-- :warning: Please, try to follow the template -->
