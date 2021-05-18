@@ -30,11 +30,9 @@ public:
         // Take the available data
         LoanedSamples<Foo> samples = reader.take();
 
-        for (LoanedSamples<Foo>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
-            if (sampleIt->info().valid()) {
-                std::cout << sampleIt->data() << std::endl;
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             }
         }
     }
@@ -54,9 +52,7 @@ void subscriber_main(int domain_id, int sample_count)
             "CustomFilter");
 
     // The default filter parameters will filter values that are divisible by 2.
-    std::vector<std::string> parameters(2);
-    parameters[0] = "2";
-    parameters[1] = "divides";
+    std::vector<std::string> parameters = {"2", "divides"};
 
     // Create the filter with the expression and the type registered.
     Filter filter("%0 %1 x", parameters);
