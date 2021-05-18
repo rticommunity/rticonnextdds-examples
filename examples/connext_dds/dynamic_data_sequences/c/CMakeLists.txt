@@ -10,6 +10,16 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 
+# Find the RTI Connext DDS libraries
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "6.1.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
+
 add_executable(dynamic_data_sequences_c
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_sequences.c"
 )
