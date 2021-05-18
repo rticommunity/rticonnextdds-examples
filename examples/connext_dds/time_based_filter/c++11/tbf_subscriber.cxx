@@ -31,16 +31,14 @@ public:
         // Take all samples
         LoanedSamples<tbf> samples = reader.take();
 
-        for (LoanedSamples<tbf>::iterator sample_it = samples.begin();
-             sample_it != samples.end();
-             sample_it++) {
-            if (sample_it->info().valid()) {
+        for (const auto& sample: samples) {
+            if (sample.info().valid()) {
                 // Here we get source timestamp of the sample using the sample
                 // info. 'info.source_timestamp()' returns dds::core::Time.
                 double source_timestamp =
-                        sample_it->info().source_timestamp().to_secs();
+                        sample.info().source_timestamp().to_secs();
 
-                const tbf &data = sample_it->data();
+                const tbf &data = sample.data();
                 std::cout << source_timestamp << "\t" << data.code() << "\t\t"
                           << data.x() << std::endl;
             }
