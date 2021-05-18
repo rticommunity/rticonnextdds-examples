@@ -209,13 +209,11 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     virtual void on_data_available(DataReader<listeners> &reader)
     {
         LoanedSamples<listeners> samples = reader.take();
-        for (LoanedSamples<listeners>::iterator sampleIt = samples.begin();
-             sampleIt != samples.end();
-             ++sampleIt) {
+        for (const auto& sample: samples) {
             // If the reference we get is valid data, it means we have actual
             // data available, otherwise we got metadata.
-            if (sampleIt->info().valid()) {
-                std::cout << sampleIt->data() << std::endl;
+            if (sample.info().valid()) {
+                std::cout << sample.data() << std::endl;
             } else {
                 std::cout << "  Got metadata" << std::endl;
             }
