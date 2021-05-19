@@ -1,0 +1,81 @@
+#!/usr/bin/env python3
+#
+# (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved. RTI
+# grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form only
+# for use with RTI products.  The Software is provided "as is", with no
+# warranty of any type, including any warranty for fitness for any purpose. RTI
+# is under no obligation to maintain or support the Software.  RTI shall not be
+# liable for any incidental or consequential damages arising out of the use or
+# inability to use the software.
+"""Build all the examples.
+
+The environment variable RTI_PACKAGE_VERSION must be assigned to find the
+correct RTIConnextDDS package version.
+
+"""
+import os
+import sys
+import subprocess
+
+from pathlib import Path
+
+
+def main():
+    rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
+
+    if not rti_connext_dds_version:
+        sys.exit(
+            "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
+        )
+
+    try:
+        examples_dir = Path("examples/connext_dds").resolve(strict=True)
+    except FileNotFoundError:
+        sys.exit("Error: Examples directory not found.")
+
+    build_dir = examples_dir.joinpath("build")
+
+    try:
+        rti_connext_dds_dir = (
+            Path.home()
+            .joinpath(
+                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
+            )
+            .resolve(strict=True)
+        )
+    except FileNotFoundError:
+        sys.exit("Error: RTIConnextDDS not found.")
+
+    build_dir.mkdir(exist_ok=True)
+
+    print("[RTICommunity] Generating build system...", flush=True)
+
+    build_gen_result = subprocess.run(
+        [
+            "cmake",
+            "-DSTATIC_ANALYSIS=ON",
+            "-DBUILD_SHARED_LIBS=ON",
+            "-DCMAKE_BUILD_TYPE=Release",
+            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            examples_dir,
+        ],
+        cwd=build_dir,
+    )
+
+    if build_gen_result.returncode != 0:
+        sys.exit("There was some errors during generating the build system.")
+
+    print("\n[RTICommunity] Compiling the examples...", flush=True)
+
+    building_result = subprocess.run(
+        ["cmake", "--build", ".", "--config", "Release"],
+        cwd=build_dir,
+    )
+
+    if building_result.returncode != 0:
+        sys.exit("There was some errors during build.")
+
+
+if __name__ == "__main__":
+    main()
