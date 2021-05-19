@@ -97,7 +97,7 @@ jobs:
       # Install the dependencies to run the Python scripts.
       - name: Install dependencies
         run: |
-          pip install Sultan scan-build
+          pip install scan-build
 
       # This script downloads the mandatory libraries of RTI Connext DDS for
       # compiling the examples
@@ -107,10 +107,14 @@ jobs:
           RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
 
       # This script will compile the examples and execute the static analysis.
-      - name: Run static analysis
+      - name: Build all the examples
+        run: python resources/ci_cd/linux_build.py
+        env:
+          RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
+
+      - name: Peform the static analysis
         run: python resources/ci_cd/linux_static_analysis.py
         env:
-          RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
           RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
 
 
