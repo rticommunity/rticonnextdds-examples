@@ -34,7 +34,7 @@ def main():
         )
 
     try:
-        examples_dir = Path("examples/connext_dds").resolve()
+        examples_dir = Path("examples/connext_dds").resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: Examples directory not found.")
 
@@ -46,31 +46,12 @@ def main():
             .joinpath(
                 "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
             )
-            .resolve()
+            .resolve(strict=True)
         )
     except FileNotFoundError:
         sys.exit("Error: RTIConnextDDS not found.")
 
-    if not rti_connext_dds_dir.exists():
-        sys.exit("Error: RTIConnextDDS not found.")
-
-    try:
-        cmake_build_all_path = Path(
-            "resources/cmake/ConnextDdsBuildAllConfigurations.cmake"
-        ).resolve()
-    except FileNotFoundError:
-        sys.exit("Error: Path not found {}.".format(examples_dir))
-
-    if not examples_dir.exists():
-        sys.exit("Examples directory not found.")
-
-    if not cmake_build_all_path.exists():
-        sys.exit("Cmake script to build all configurations not found.")
-
     build_dir.mkdir(exist_ok=True)
-
-    if not build_dir.exists():
-        sys.exit("Build dir not found.")
 
     time_build_start = time.perf_counter()
 
