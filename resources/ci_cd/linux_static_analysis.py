@@ -8,24 +8,21 @@
 # is under no obligation to maintain or support the Software.  RTI shall not be
 # liable for any incidental or consequential damages arising out of the use or
 # inability to use the software.
-"""Build examples and perform static analysis.
+"""Build all the examples.
 
 The environment variable RTI_PACKAGE_VERSION must be assigned to find the
-correct RTIConnextDDS package version.
+correct RTIConnextDDS package version. Also, the examples must be compiled
+to be able to run the static analysis.
 
 """
+
 import os
 import sys
-import time
-import datetime
 import subprocess
-
 from pathlib import Path
 
 
 def main():
-    time_script_start = time.perf_counter()
-
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
 
     if not rti_connext_dds_version:
@@ -34,11 +31,12 @@ def main():
         )
 
     try:
-        examples_dir = Path("examples/connext_dds").resolve(strict=True)
+        build_dir = Path("examples/connext_dds/build").resolve(strict=True)
     except FileNotFoundError:
-        sys.exit("Error: Examples directory not found.")
-
-    build_dir = examples_dir.joinpath("build")
+        sys.exit(
+            "Error: build directory not found, compile the examples before "
+            "running this script."
+        )
 
     try:
         rti_connext_dds_dir = (
@@ -50,43 +48,6 @@ def main():
         )
     except FileNotFoundError:
         sys.exit("Error: RTIConnextDDS not found.")
-
-    build_dir.mkdir(exist_ok=True)
-
-    time_build_start = time.perf_counter()
-
-    print("[RTICommunity] Generating build system...", flush=True)
-
-    build_gen_result = subprocess.run(
-        [
-            "cmake",
-            "-DSTATIC_ANALYSIS=ON",
-            "-DBUILD_SHARED_LIBS=ON",
-            "-DCMAKE_BUILD_TYPE=Release",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-            examples_dir,
-        ],
-        cwd=build_dir,
-    )
-
-    if build_gen_result.returncode != 0:
-        sys.exit("There was some errors during generating the build system.")
-
-    print("\n[RTICommunity] Compiling the examples...", flush=True)
-
-    building_result = subprocess.run(
-        ["cmake", "--build", ".", "--config", "Release"],
-        cwd=build_dir,
-    )
-
-    if building_result.returncode != 0:
-        sys.exit("There was some errors during build.")
-
-    time_build_end = time.perf_counter()
-
-    print("\n[RTICommunity] Analyzing the build...", flush=True)
-
-    time_analysis_start = time.perf_counter()
 
     static_analysis_result = subprocess.run(
         [
@@ -101,26 +62,6 @@ def main():
             ".",
         ],
         cwd=build_dir,
-    )
-
-    time_analysis_end = time.perf_counter()
-    time_script_end = time.perf_counter()
-
-    time_script_elapsed = datetime.timedelta(
-        seconds=round(time_script_end - time_script_start)
-    )
-    time_build_elapsed = datetime.timedelta(
-        seconds=round(time_build_end - time_build_start)
-    )
-    time_analysis_elapsed = datetime.timedelta(
-        seconds=round(time_analysis_end - time_analysis_start)
-    )
-
-    print(
-        f"> Build:    {time_build_elapsed}\n"
-        f"> Analysis: {time_analysis_elapsed}\n"
-        f"{'-' * 19}\n"
-        f"> Total:    {time_script_elapsed}\n"
     )
 
     if static_analysis_result.returncode != 0:
