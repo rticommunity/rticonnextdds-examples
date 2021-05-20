@@ -24,8 +24,11 @@ from pathlib import Path
 
 def main():
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
+    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH")
     rti_installation_path = (
-        Path(os.getenv("RTI_INSTALLATION_PATH")) or Path.home()
+        Path(rti_installation_path)
+        if rti_installation_path is not None
+        else Path.home()
     )
 
     if not rti_connext_dds_version:

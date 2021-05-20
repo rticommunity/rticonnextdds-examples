@@ -46,8 +46,11 @@ class ZipFileWithPermissions(ZipFile):
 
 def main():
     rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
+    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH")
     rti_installation_path = (
-        Path(os.getenv("RTI_INSTALLATION_PATH")) or Path.home()
+        Path(rti_installation_path)
+        if rti_installation_path is not None
+        else Path.home()
     )
 
     if not rti_minimal_package_url:
@@ -56,7 +59,7 @@ def main():
         )
 
     if not rti_installation_path.exists():
-        sys.exit("The RTI_INSTALALTION_PATH does not exist.")
+        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
         resp = request.urlopen(rti_minimal_package_url)
