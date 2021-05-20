@@ -8,7 +8,7 @@
 # is under no obligation to maintain or support the Software.  RTI shall not be
 # liable for any incidental or consequential damages arising out of the use or
 # inability to use the software.
-"""Build all the examples.
+"""Run static analysis over all the built examples.
 
 The environment variable RTI_PACKAGE_VERSION must be assigned to find the
 correct RTIConnextDDS package version. Also, the examples must be compiled
