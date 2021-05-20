@@ -24,11 +24,15 @@ from pathlib import Path
 
 def main():
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
+    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH") or Path.home()
 
     if not rti_connext_dds_version:
         sys.exit(
             "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
         )
+
+    if not rti_installation_path.exists():
+        sys.exit("The RTI_INSTALALTION_PATH does not exist.")
 
     try:
         build_dir = Path("examples/connext_dds/build").resolve(strict=True)
@@ -40,7 +44,7 @@ def main():
 
     try:
         rti_connext_dds_dir = (
-            Path.home()
+            rti_installation_path
             .joinpath(
                 "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
             )
