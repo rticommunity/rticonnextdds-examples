@@ -36,17 +36,6 @@ def main():
 
     build_dir = examples_dir.joinpath("build")
 
-    try:
-        rti_connext_dds_dir = (
-            Path.home()
-            .joinpath(
-                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-            )
-            .resolve(strict=True)
-        )
-    except FileNotFoundError:
-        sys.exit("Error: RTIConnextDDS not found.")
-
     build_dir.mkdir(exist_ok=True)
 
     print("[RTICommunity] Generating build system...", flush=True)
