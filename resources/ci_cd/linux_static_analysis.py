@@ -24,7 +24,9 @@ from pathlib import Path
 
 def main():
     rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
-    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+    rti_installation_path = (
+        Path(os.getenv("RTI_INSTALLATION_PATH")) or Path.home()
+    )
 
     if not rti_connext_dds_version:
         sys.exit(
@@ -43,13 +45,9 @@ def main():
         )
 
     try:
-        rti_connext_dds_dir = (
-            rti_installation_path
-            .joinpath(
-                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-            )
-            .resolve(strict=True)
-        )
+        rti_connext_dds_dir = rti_installation_path.joinpath(
+            "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
+        ).resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: RTIConnextDDS not found.")
 

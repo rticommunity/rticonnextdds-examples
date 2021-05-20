@@ -46,7 +46,9 @@ class ZipFileWithPermissions(ZipFile):
 
 def main():
     rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
-    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+    rti_installation_path = (
+        Path(os.getenv("RTI_INSTALLATION_PATH")) or Path.home()
+    )
 
     if not rti_minimal_package_url:
         sys.exit(
