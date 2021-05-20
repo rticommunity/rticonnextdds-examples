@@ -24,8 +24,6 @@ from pathlib import Path
 from zipfile import ZipFile, ZipInfo
 from urllib.error import URLError
 
-HOME_PATH = Path.home()
-
 
 class ZipFileWithPermissions(ZipFile):
     """Custom ZipFile class handling file permissions.
@@ -48,11 +46,15 @@ class ZipFileWithPermissions(ZipFile):
 
 def main():
     rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
+    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH") or Path.home()
 
     if not rti_minimal_package_url:
         sys.exit(
             "Environment variable RTI_MIN_PACKAGE_URL not found, skipping..."
         )
+
+    if not rti_installation_path.exists():
+        sys.exit("The RTI_INSTALALTION_PATH does not exist.")
 
     try:
         resp = request.urlopen(rti_minimal_package_url)
@@ -68,7 +70,7 @@ def main():
             if bad_file_name:
                 sys.exit("Bad file found in the archive.")
 
-            rti_zipfile.extractall(HOME_PATH)
+            rti_zipfile.extractall(rti_installation_path)
     except zipfile.BadZipFile as e:
         sys.exit("Error opening zip file: {}".format(e))
 
