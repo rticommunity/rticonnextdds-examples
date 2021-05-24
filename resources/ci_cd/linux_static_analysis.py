@@ -42,7 +42,7 @@ def main():
         rti_installation_path.glob("rti_connext_dds-?.?.?")
     )
 
-    if found_rti_connext_dds:
+    if not found_rti_connext_dds:
         sys.exit("Error: RTIConnextDDS not found.")
 
     rti_connext_dds_dir = found_rti_connext_dds[0]
