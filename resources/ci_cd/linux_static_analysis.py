@@ -23,7 +23,6 @@ from pathlib import Path
 
 
 def main():
-    rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
     rti_installation_path = os.getenv("RTI_INSTALLATION_PATH")
     rti_installation_path = (
         Path(rti_installation_path)
@@ -31,13 +30,8 @@ def main():
         else Path.home()
     )
 
-    if not rti_connext_dds_version:
-        sys.exit(
-            "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
-        )
-
     if not rti_installation_path.exists():
-        sys.exit("The RTI_INSTALALTION_PATH does not exist.")
+        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
         build_dir = Path("examples/connext_dds/build").resolve(strict=True)
@@ -47,9 +41,18 @@ def main():
             "running this script."
         )
 
+    found_rti_connext_dds = list(
+        rti_installation_path.glob("rti_connext_dds-?.?.?")
+    )
+
+    if len(found_rti_connext_dds) == 0:
+        sys.exit("Error: RTIConnextDDS not found.")
+
+    rti_connext_dds_dir = found_rti_connext_dds[0]
+
     try:
-        rti_connext_dds_dir = rti_installation_path.joinpath(
-            "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
+        rti_connext_dds_include_dir = rti_connext_dds_dir.joinpath(
+            "include"
         ).resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: RTIConnextDDS not found.")
@@ -60,7 +63,7 @@ def main():
             "--verbose",
             "--status-bugs",
             "--exclude",
-            rti_connext_dds_dir,
+            rti_connext_dds_include_dir,
             "--exclude",
             ".",
             "-o",

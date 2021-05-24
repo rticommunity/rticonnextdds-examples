@@ -22,18 +22,12 @@ from pathlib import Path
 
 
 def main():
-    rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
     rti_installation_path = os.getenv("RTI_INSTALLATION_PATH")
     rti_installation_path = (
         Path(rti_installation_path)
         if rti_installation_path is not None
         else Path.home()
     )
-
-    if not rti_connext_dds_version:
-        sys.exit(
-            "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
-        )
 
     if not rti_installation_path.exists():
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
@@ -43,13 +37,14 @@ def main():
     except FileNotFoundError:
         sys.exit("Error: Examples directory not found.")
 
-    try:
-        rti_connext_dds_dir = rti_installation_path.joinpath(
-            "rti_connext_dds-{}".format(rti_connext_dds_version)
-        ).resolve(strict=True)
-    except FileNotFoundError:
+    found_rti_connext_dds = list(
+        rti_installation_path.glob("rti_connext_dds-?.?.?")
+    )
+
+    if len(found_rti_connext_dds) == 0:
         sys.exit("Error: RTIConnextDDS not found.")
 
+    rti_connext_dds_dir = found_rti_connext_dds[0]
     build_dir = examples_dir.joinpath("build")
 
     build_dir.mkdir(exist_ok=True)
