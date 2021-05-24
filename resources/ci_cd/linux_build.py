@@ -22,14 +22,11 @@ from pathlib import Path
 
 
 def main():
-    rti_installation_path = os.getenv("RTI_INSTALLATION_PATH")
-    rti_installation_path = (
-        Path(rti_installation_path)
-        if rti_installation_path is not None
-        else Path.home()
-    )
-
-    if not rti_installation_path.exists():
+    try:
+        rti_installation_path = Path(
+            os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+        ).resolve(strict=True)
+    except FileNotFoundError:
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
