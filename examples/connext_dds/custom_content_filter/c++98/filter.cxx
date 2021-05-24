@@ -21,13 +21,13 @@
 
 class custom_filter_type : public DDSContentFilter {
 public:
-    virtual DDS_ReturnCode_t
-            compile(void **new_compile_data,
-                    const char *expression,
-                    const DDS_StringSeq &parameters,
-                    const DDS_TypeCode *type_code,
-                    const char *type_class_name,
-                    void *old_compile_data);
+    virtual DDS_ReturnCode_t compile(
+            void **new_compile_data,
+            const char *expression,
+            const DDS_StringSeq &parameters,
+            const DDS_TypeCode *type_code,
+            const char *type_class_name,
+            void *old_compile_data);
 
     virtual DDS_Boolean evaluate(
             void *compile_data,
