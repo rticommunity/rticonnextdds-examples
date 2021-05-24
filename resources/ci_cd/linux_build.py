@@ -74,7 +74,7 @@ def main():
         cwd=build_dir,
     )
 
-    if building_result.returncode != 0:
+    if building_result.returncode:
         sys.exit("There was some errors during build.")
 
 
