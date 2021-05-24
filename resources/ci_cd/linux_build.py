@@ -64,7 +64,7 @@ def main():
         cwd=build_dir,
     )
 
-    if build_gen_result.returncode != 0:
+    if build_gen_result.returncode:
         sys.exit("There was some errors during generating the build system.")
 
     print("\n[RTICommunity] Compiling the examples...", flush=True)
