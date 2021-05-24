@@ -30,8 +30,6 @@ def main():
     except FileNotFoundError:
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
-    if not rti_installation_path.exists():
-        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
         build_dir = Path("examples/connext_dds/build").resolve(strict=True)
