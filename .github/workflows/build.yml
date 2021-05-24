@@ -109,13 +109,9 @@ jobs:
       # This script will compile the examples and execute the static analysis.
       - name: Build all the examples
         run: python resources/ci_cd/linux_build.py
-        env:
-          RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
 
       - name: Peform the static analysis
         run: python resources/ci_cd/linux_static_analysis.py
-        env:
-          RTI_PACKAGE_VERSION: ${{ secrets.RTI_PACKAGE_VERSION }}
 
 
   commentpr:
