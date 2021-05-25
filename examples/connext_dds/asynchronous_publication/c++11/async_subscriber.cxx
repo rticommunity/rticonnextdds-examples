@@ -24,16 +24,23 @@ clock_t InitTime;
 
 int process_data(dds::sub::DataReader<async> reader)
 {
+    int count = 0;
     dds::sub::LoanedSamples<async> samples = reader.take();
     for (const auto &sample : samples) {
         // Print the time we get each sample.
         if (sample.info().valid()) {
+            count++;
             double elapsed_ticks = clock() - InitTime;
             double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
             std::cout << "@ t=" << elapsed_secs << "s"
                       << ", got x = " << sample.data().x() << std::endl;
+        } else {
+            std::cout << "Instance state changed to "
+            << sample.info().state().instance_state() << std::endl;
         }
     }
+
+    return count;
 }  // The LoanedSamples destructor returns the loan
 
 void run_subscriber_application(
