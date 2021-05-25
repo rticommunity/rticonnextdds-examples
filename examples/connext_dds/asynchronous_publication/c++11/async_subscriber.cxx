@@ -31,12 +31,14 @@ int process_data(dds::sub::DataReader<async> reader)
             double elapsed_ticks = clock() - InitTime;
             double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
             std::cout << "@ t=" << elapsed_secs << "s"
-                        << ", got x = " << sample.data().x() << std::endl;
+                      << ", got x = " << sample.data().x() << std::endl;
         }
     }
-} // The LoanedSamples destructor returns the loan
+}  // The LoanedSamples destructor returns the loan
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // For timekeeping
     InitTime = clock();
@@ -48,7 +50,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     dds::topic::Topic<async> topic(participant, "Example async");
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::DataReaderQos reader_qos = dds::core::QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -66,18 +69,17 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // Create a ReadCondition for any data on this reader, and add to WaitSet
     unsigned int samples_read = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::new_data(),
-        [reader, &samples_read]() {
-        // If we wake up, process data
-        samples_read += process_data(reader);
-    });
+            reader,
+            dds::sub::status::DataState::new_data(),
+            [reader, &samples_read]() {
+                // If we wake up, process data
+                samples_read += process_data(reader);
+            });
 
     waitset += read_condition;
 
     // Main loop
     while (!application::shutdown_requested && samples_read < sample_count) {
-
         std::cout << "async subscriber sleeping up to 4 sec..." << std::endl;
 
         // Wait for data and report if it does not arrive in 1 second
@@ -87,7 +89,6 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -104,10 +105,10 @@ int main(int argc, char *argv[])
 
     try {
         run_subscriber_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
-        << std::endl;
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
