@@ -9,22 +9,20 @@
  use the software.
  ******************************************************************************/
 
-#include "profiles.hpp"
-#include <dds/dds.hpp>
 #include <iostream>
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::domain::qos;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
-void publisher_main(int domain_id, int sample_count)
+#include "application.hpp"  // for command line parsing and ctrl-c
+#include "profiles.hpp"
+
+void run_publisher_application(int domain_id, int sample_count)
 {
     // Retrieve the Participant QoS from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos =
-            QosProvider::Default().participant_qos();
+    dds::domain::qos::DomainParticipantQos participant_qos =
+            dds::core::QosProvider::Default().participant_qos();
 
     // This example uses a built-in QoS profile to enable monitoring on the
     // DomainParticipant. This profile is specified in USER_QOS_PROFILES.xml.
@@ -34,13 +32,14 @@ void publisher_main(int domain_id, int sample_count)
     //     "BuiltinQosLib::Generic.Monitoring.Common");
 
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id, participant_qos);
+    dds::domain::DomainParticipant participant(domain_id, participant_qos);
 
     // Create a Topic -- and automatically register the type.
-    Topic<HelloWorld> topic(participant, "Example profiles");
+    dds::topic::Topic<HelloWorld> topic(participant, "Example profiles");
 
     // Retrieve the DataWriter QoS from USER_QOS_PROFILES.xml
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     // This example uses a built-in QoS profile to tune QoS for reliable
     // streaming data. To enable it programmatically uncomment these lines.
@@ -48,46 +47,59 @@ void publisher_main(int domain_id, int sample_count)
     // writer_qos = QosProvider::Default().datawriter_qos(
     //     "BuiltinQosLibExp::Pattern.ReliableStreaming");
 
+    // Create a Publisher
+    dds::pub::Publisher publisher(participant);
+
     // Create a Datawriter.
-    DataWriter<HelloWorld> writer(Publisher(participant), topic, writer_qos);
+    dds::pub::DataWriter<HelloWorld> writer(publisher, topic, writer_qos);
 
     // Create a data sample for writing.
     HelloWorld instance;
 
-    // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        std::cout << "Writing profiles, count " << count << std::endl;
-
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
+        // Modify the data to be written here
         instance.msg("Hello World!");
+
+        std::cout << "Writing HelloWord, count " << samples_written
+                  << std::endl;
+
         writer.write(instance);
-        rti::util::sleep(Duration(4));
+
+        // Send once every second
+        rti::util::sleep(dds::core::Duration(4));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

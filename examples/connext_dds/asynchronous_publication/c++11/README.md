@@ -43,14 +43,14 @@ On *Windows* systems run:
 
 ```sh
 async_publisher.exe  -d <domain_id> -s <samples_to_send>
-async_subscriber.exe -d <domain_id> -s  <sleep_periods>
+async_subscriber.exe -d <domain_id> -s  <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
 ./async_publisher  -d <domain_id> -s <samples_to_send>
-./async_subscriber -d <domain_id> -s <sleep_periods>
+./async_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:
