@@ -11,31 +11,29 @@
 
 #include <string>
 
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+
 #include "batch_data.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::qos;
 
-class BatchDataReaderListener : public NoOpDataReaderListener<batch_data> {
-public:
-    void on_data_available(DataReader<batch_data> &reader)
-    {
-        // Take all samples
-        LoanedSamples<batch_data> samples = reader.take();
-        for (const auto &sample : samples) {
-            if (sample.info().valid()) {
-                std::cout << sample.data() << std::endl;
-            }
+int process_data(dds::sub::DataReader<batch_data> reader)
+{
+    // Take all samples
+    int count = 0;
+    dds::sub::LoanedSamples<batch_data> samples = reader.take();
+    for (const auto &sample : samples) {
+        if (sample.info().valid()) {
+            count++;
+            std::cout << sample.data() << std::endl;
+        } else {
+            std::cout << "Instance state changed to "
+                      << sample.info().state().instance_state() << std::endl;
         }
     }
-};
+
+    return count;
+}
 
 void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
 {
@@ -51,32 +49,43 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
     }
 
     // To customize entities QoS use the file USER_QOS_PROFILES.xml
-    DomainParticipant participant(
+    dds::domain::DomainParticipant participant(
             domain_id,
-            QosProvider::Default().participant_qos(profile_name));
+            dds::core::QosProvider::Default().participant_qos(profile_name));
 
-    Topic<batch_data> topic(participant, "Example batch_data");
+    dds::topic::Topic<batch_data> topic(participant, "Example batch_data");
 
-    Subscriber subscriber(
+    dds::sub::Subscriber subscriber(
             participant,
-            QosProvider::Default().subscriber_qos(profile_name));
+            dds::core::QosProvider::Default().subscriber_qos(profile_name));
 
-    DataReader<batch_data> reader(
+    dds::sub::DataReader<batch_data> reader(
             subscriber,
             topic,
-            QosProvider::Default().datareader_qos(profile_name));
+            dds::core::QosProvider::Default().datareader_qos(profile_name));
 
-    // Set the listener using a RAII so it's exception-safe
-    rti::core::ListenerBinder<DataReader<batch_data>> scoped_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new BatchDataReaderListener,
-                    StatusMask::data_available());
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                // If we wake up, process data
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     // Main loop
     for (int count = 0; count < sample_count || sample_count == 0; ++count) {
         std::cout << "batch_data subscriber sleeping for 4 sec...\n";
-        rti::util::sleep(Duration(4));
+
+
+        // Wait for data and report if it does not arrive in 1 second
+        waitset.dispatch(dds::core::Duration(4));
     }
 }
 

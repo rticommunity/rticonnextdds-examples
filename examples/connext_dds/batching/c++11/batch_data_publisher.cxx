@@ -11,19 +11,18 @@
 
 #include <string>
 
+#include <dds/pub/ddspub.hpp>
+#include <dds/core/ddscore.hpp>
+
 #include "batch_data.hpp"
-#include <dds/dds.hpp>
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::domain::qos;
-using namespace dds::topic;
-using namespace dds::pub;
-
-void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
+void run_publisher_application(
+        int domain_id,
+        int sample_count,
+        bool turbo_mode_on)
 {
     // Seconds to wait between samples published.
-    Duration send_period(1);
+    dds::core::Duration send_period(1);
 
     // We pick the profile name if the turbo_mode is selected or not.
     // If turbo_mode is not selected, the batching profile will be used.
@@ -40,20 +39,20 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
     }
 
     // To customize entities QoS use the file USER_QOS_PROFILES.xml
-    DomainParticipant participant(
+    dds::domain::DomainParticipant participant(
             domain_id,
-            QosProvider::Default().participant_qos(profile_name));
+            dds::core::QosProvider::Default().participant_qos(profile_name));
 
-    Topic<batch_data> topic(participant, "Example batch_data");
+    dds::topic::Topic<batch_data> topic(participant, "Example batch_data");
 
-    Publisher publisher(
+    dds::pub::Publisher publisher(
             participant,
-            QosProvider::Default().publisher_qos(profile_name));
+            dds::core::QosProvider::Default().publisher_qos(profile_name));
 
-    DataWriter<batch_data> writer(
+    dds::pub::DataWriter<batch_data> writer(
             publisher,
             topic,
-            QosProvider::Default().datawriter_qos(profile_name));
+            dds::core::QosProvider::Default().datawriter_qos(profile_name));
 
     // Create data sample for writing.
     batch_data sample;
@@ -61,7 +60,8 @@ void publisher_main(int domain_id, int sample_count, bool turbo_mode_on)
     // For a data type that has a key, if the same instance is going to be
     // written multiple times, initialize the key here and register the keyed
     // instance prior to writing.
-    InstanceHandle instance_handle = InstanceHandle::nil();
+    dds::core::InstanceHandle instance_handle =
+            dds::core::InstanceHandle::nil();
     // instance_handle = writer.register_instance(sample);
 
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        publisher_main(domain_id, sample_count, turbo_mode_on);
+        run_publisher_application(domain_id, sample_count, turbo_mode_on);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher_main(): " << ex.what()
