@@ -11,30 +11,24 @@
 
 #include <iostream>
 
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
+
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "async.hpp"
-#include <dds/dds.hpp>
-#include <rti/pub/FlowController.hpp>
-
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace rti::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
-using namespace rti::pub;
 
 
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     // To customize participant QoS, use file USER_QOS_PROFILES.xml
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // To customize topic QoS, use file USER_QOS_PROFILES.xml
-    Topic<async> topic(participant, "Example async");
+    dds::topic::Topic<async> topic(participant, "Example async");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos = dds::core::QosProvider::Default().datawriter_qos();
 
     // If you want to change the DataWriter's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -59,8 +53,11 @@ void publisher_main(int domain_id, int sample_count)
     // Set flowcontroller for DataWriter
     // writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME);
 
+    // Create a Publisher
+    dds::pub::Publisher publisher(participant);
+
     // Create the DataWriter with a QoS.
-    DataWriter<async> writer(Publisher(participant), topic, writer_qos);
+    dds::pub::DataWriter<async> writer(publisher, topic, writer_qos);
 
     // Create data sample for writing
     async instance;
@@ -71,18 +68,20 @@ void publisher_main(int domain_id, int sample_count)
     // InstanceHandle instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        std::cout << "Writing async, count " << count << std::endl;
+    for (unsigned int samples_written = 0;
+    !application::shutdown_requested && samples_written < sample_count;
+    samples_written++) {
+        std::cout << "Writing async, count " << samples_written << std::endl;
 
         // Send count as data
-        instance.x(count);
+        instance.x(samples_written);
 
         // Send it, if using instance_handle:
         // writer.write(instance, instance_handle);
         writer.write(instance);
 
-        rti::util::sleep(Duration(0, 100000000));
+        // Send once every second
+        rti::util::sleep(dds::core::Duration(1));
     }
 
     // If using instance_handle, unregister it.
@@ -91,26 +90,33 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
-    }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    using namespace application;
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
+    }
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception& ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+        << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

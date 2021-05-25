@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-async_publisher.exe  <domain_id> <samples_to_send>
-async_subscriber.exe <domain_id>  <sleep_periods>
+async_publisher.exe  -d <domain_id> -s <samples_to_send>
+async_subscriber.exe -d <domain_id> -s  <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./async_publisher  <domain_id> <samples_to_send>
-./async_subscriber <domain_id> <sleep_periods>
+./async_publisher  -d <domain_id> -s <samples_to_send>
+./async_subscriber -d <domain_id> -s <sleep_periods>
 ```
 
 The applications accept up to two arguments:
