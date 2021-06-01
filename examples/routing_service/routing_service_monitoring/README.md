@@ -99,5 +99,5 @@ On *Linux* systems run:
 
 ## References
 
-- https://community.rti.com/static/documentation/connext-dds/6.0.1/doc/manuals/routing_service/monitoring.html
-- https://community.rti.com/static/documentation/connext-dds/6.0.1/doc/manuals/routing_service/common/monitoring_dist.html#
+- [Monitoring for Routing Service](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/services/routing_service/monitoring.html)
+- [Monitoring Distribution Platform](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/services/routing_service/common/monitoring_dist.html)

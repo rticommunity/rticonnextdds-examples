@@ -42,13 +42,13 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-routingServiceMonitoring_subscriber.exe <domain_id>
+RoutingServiceMonitoring_subscriber.exe <domain_id>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./routingServiceMonitoring_subscriber <domain_id>
+./RoutingServiceMonitoring_subscriber <domain_id>
 ```
 
 The applications accept up to two arguments:
