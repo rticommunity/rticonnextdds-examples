@@ -37,7 +37,10 @@ int process_data(dds::sub::DataReader<batch_data> reader)
     return count;
 }
 
-void run_subscriber_application(int domain_id, int sample_count, bool turbo_mode_on)
+void run_subscriber_application(
+        int domain_id,
+        int sample_count,
+        bool turbo_mode_on)
 {
     // We pick the profile name if the turbo_mode is selected or not.
     // If turbo_mode is not selected, the batching profile will be used.
@@ -108,7 +111,10 @@ int main(int argc, char *argv[])
     rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        run_subscriber_application(arguments.domain_id, arguments.sample_count, arguments.turbo_mode);
+        run_subscriber_application(
+                arguments.domain_id,
+                arguments.sample_count,
+                arguments.turbo_mode);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
