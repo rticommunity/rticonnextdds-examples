@@ -56,15 +56,15 @@ On *UNIX* systems run:
 The applications accept up to three arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
-    communicate. The default is 0.
+communicate. The default is 0.
 
-2.  If `<turbo_mode>` will be used or not. A value '0' indicates turbo mode is
-    not enable, so manual batching will be used. A value '1' indicates that
-    *Turbo Mode* will be used. The default is 0.
+2.  If `<turbo_mode>` will be used or not. By default turbo mode is
+not enable, so manual batching will be used. To activate the *Turbo Mode*, use
+the `--turbo` option.
 
 3.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+sleep periods for the subscriber. A value of '0' instructs the application
+to run forever; this is the default.
 
 ## Customizing the Build
 
@@ -76,18 +76,18 @@ solution on Windows), \. You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
-    and Debug. See the [CMake documentation for more details.
-    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+and Debug. See the [CMake documentation for more details.
+(Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
 -   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
-    dynamic linking and OFF for static linking. See [CMake documentation for
-    more details.
-    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+dynamic linking and OFF for static linking. See [CMake documentation for
+more details.
+(Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
 -   `-G` -- CMake generator. The generator is the native build system to use
-    build the source code. All the valid values are described described in the
-    CMake documentation [CMake Generators
-    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+build the source code. All the valid values are described described in the
+CMake documentation [CMake Generators
+Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
 
 For example, to build a example in Debug/Static mode run CMake as follows:
 
@@ -123,12 +123,12 @@ function called connextdds_add_example that defines all the necessary constructs
 to:
 
 1.  Run RTI Code Generator to generate the serialization/deserialization code
-    for the types defined in the IDL file associated with the example.
+for the types defined in the IDL file associated with the example.
 
 2.  Build the corresponding Publisher and Subscriber applications.
 
 3.  Copy the USER_QOS_PROFILES.xml file into the directory where the publisher
-    and subscriber executables are generated.
+and subscriber executables are generated.
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in
