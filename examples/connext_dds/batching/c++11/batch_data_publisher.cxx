@@ -12,13 +12,15 @@
 #include <string>
 
 #include <dds/pub/ddspub.hpp>
-#include <dds/core/ddscore.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"
 #include "batch_data.hpp"
 
 void run_publisher_application(
-        int domain_id,
-        int sample_count,
+        unsigned int domain_id,
+        unsigned int sample_count,
         bool turbo_mode_on)
 {
     // Seconds to wait between samples published.
@@ -64,11 +66,13 @@ void run_publisher_application(
             dds::core::InstanceHandle::nil();
     // instance_handle = writer.register_instance(sample);
 
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify the data to be written here
-        sample.x(count);
+        sample.x(samples_written);
 
-        std::cout << "Writing batch_data, count " << count << std::endl;
+        std::cout << "Writing batch_data, count " << samples_written << std::endl;
         writer.write(sample);
 
         rti::util::sleep(send_period);
@@ -79,39 +83,32 @@ void run_publisher_application(
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
-    bool turbo_mode_on = false;
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        turbo_mode_on = (argv[2][0] == '1');
-    }
-
-    if (argc >= 4) {
-        sample_count = atoi(argv[3]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        run_publisher_application(domain_id, sample_count, turbo_mode_on);
+        run_publisher_application(arguments.domain_id, arguments.sample_count, arguments.turbo_mode);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what()
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

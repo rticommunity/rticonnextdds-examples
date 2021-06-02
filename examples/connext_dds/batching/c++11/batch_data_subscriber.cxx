@@ -13,7 +13,9 @@
 
 #include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"
 #include "batch_data.hpp"
 
 
@@ -35,7 +37,7 @@ int process_data(dds::sub::DataReader<batch_data> reader)
     return count;
 }
 
-void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
+void run_subscriber_application(int domain_id, int sample_count, bool turbo_mode_on)
 {
     // We pick the profile name if the turbo_mode is selected or not.
     // If turbo_mode is not selected, the batching profile will be used.
@@ -80,7 +82,7 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
     waitset += read_condition;
 
     // Main loop
-    for (int count = 0; count < sample_count || sample_count == 0; ++count) {
+    while (!application::shutdown_requested && samples_read < sample_count) {
         std::cout << "batch_data subscriber sleeping for 4 sec...\n";
 
 
@@ -91,37 +93,32 @@ void subscriber_main(int domain_id, int sample_count, bool turbo_mode_on)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
-    bool turbo_mode_on = false;
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        turbo_mode_on = (argv[2][0] == '1');
-    }
-
-    if (argc >= 4) {
-        sample_count = atoi(argv[3]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count, turbo_mode_on);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count, arguments.turbo_mode);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << "\n";
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
