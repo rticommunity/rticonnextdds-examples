@@ -9,12 +9,12 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
-#include <string>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "msg.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"
 
 using namespace dds::core;
 using namespace dds::core::policy;
@@ -26,29 +26,31 @@ using namespace dds::topic;
 using namespace dds::sub;
 using namespace dds::sub::qos;
 
-class MsgListener : public NoOpDataReaderListener<msg> {
-public:
-    void on_data_available(DataReader<msg> &reader)
-    {
-        LoanedSamples<msg> samples = reader.take();
-        for (const auto &sample : samples) {
-            if (sample.info().valid()) {
-                std::cout << sample.data() << std::endl;
-            }
+
+int process_data(dds::sub::DataReader<msg> reader)
+{
+    int count = 0;
+    dds::sub::LoanedSamples<msg> samples = reader.take();
+    for (const auto &sample: samples) {
+        if (sample.info().valid()) {
+            count++;
+            std::cout << sample.data() << std::endl;
         }
     }
-};
 
-void subscriber_main(
-        int domain_id,
-        int sample_count,
+    return count;
+}  // The LoanedSamples destructor returns the loan
+
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count,
         std::string participant_auth)
 {
     // Retrieve the default participant QoS, from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos =
-            QosProvider::Default().participant_qos();
-    DomainParticipantResourceLimits resource_limits_qos =
-            participant_qos.policy<DomainParticipantResourceLimits>();
+    dds::domain::qos::DomainParticipantQos participant_qos =
+            dds::core::QosProvider::Default().participant_qos();
+    rti::core::policy::DomainParticipantResourceLimits resource_limits_qos =
+            participant_qos.policy<rti::core::policy::DomainParticipantResourceLimits>();
 
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -62,69 +64,79 @@ void subscriber_main(
         std::cout << "error, participant user_data exceeds resource limits"
                   << std::endl;
     } else {
-        participant_qos << UserData(
-                ByteSeq(participant_auth.begin(), participant_auth.end()));
+        participant_qos << dds::core::policy::UserData(
+                dds::core::ByteSeq(participant_auth.begin(), participant_auth.end()));
     }
 
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id, participant_qos);
+    dds::domain::DomainParticipant participant(domain_id, participant_qos);
 
     // Participant is disabled by default in USER_QOS_PROFILES. We enable it now
     participant.enable();
 
     // Create a Topic -- and automatically register the type.
-    Topic<msg> topic(participant, "Example msg");
+    dds::topic::Topic<msg> topic(participant, "Example msg");
 
-    // Create a DataReader
-    DataReader<msg> reader(Subscriber(participant), topic);
+    // Create a DataReader with default QoS
+    // Create a Subscriber and DataReader with default Qos
+    dds::sub::Subscriber subscriber(participant);
+    dds::sub::DataReader<msg> reader(subscriber, topic);
 
-    // Create a data reader listener using ListenerBinder, a RAII utility that
-    // will take care of reseting it from the reader and deleting it.
-    ListenerBinder<DataReader<msg>> scoped_listener = bind_and_manage_listener(
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
             reader,
-            new MsgListener,
-            dds::core::status::StatusMask::data_available());
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                // If we wake up, process data
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        // Each "sample_count" is one second.
-        rti::util::sleep(Duration(1));
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        std::cout << "builtin_topics subscriber sleeping for 1 sec...\n";
+
+        // Wait for data and report if it does not arrive in 1 second
+        waitset.dispatch(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    // Changes for Builtin_Topics
-    // Get arguments for auth strings and pass to subscriber_main()
-    std::string participant_auth = "password";
-
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    if (argc >= 4) {
-        participant_auth = argv[3];
-    }
-
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count, participant_auth);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_subscriber_application(
+                arguments.domain_id,
+                arguments.sample_count,
+                arguments.participant_password);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
