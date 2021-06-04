@@ -62,8 +62,8 @@ The applications accept up to three arguments:
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
 
-3.  (subscriber only) If this argument is given, it will use a normal *Topic* 
-instead of a *Content Filtered Topic*.
+3.  (subscriber only) If the `--normal-topic` argument is given, it will use a
+normal *Topic* instead of a *Content Filtered Topic*.
 
 ## Customizing the Build
 
