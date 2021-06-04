@@ -31,7 +31,7 @@ int process_data(dds::sub::DataReader<msg> reader)
 {
     int count = 0;
     dds::sub::LoanedSamples<msg> samples = reader.take();
-    for (const auto &sample: samples) {
+    for (const auto &sample : samples) {
         if (sample.info().valid()) {
             count++;
             std::cout << sample.data() << std::endl;
@@ -50,7 +50,8 @@ void run_subscriber_application(
     dds::domain::qos::DomainParticipantQos participant_qos =
             dds::core::QosProvider::Default().participant_qos();
     rti::core::policy::DomainParticipantResourceLimits resource_limits_qos =
-            participant_qos.policy<rti::core::policy::DomainParticipantResourceLimits>();
+            participant_qos.policy<
+                    rti::core::policy::DomainParticipantResourceLimits>();
 
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -64,8 +65,9 @@ void run_subscriber_application(
         std::cout << "error, participant user_data exceeds resource limits"
                   << std::endl;
     } else {
-        participant_qos << dds::core::policy::UserData(
-                dds::core::ByteSeq(participant_auth.begin(), participant_auth.end()));
+        participant_qos << dds::core::policy::UserData(dds::core::ByteSeq(
+                participant_auth.begin(),
+                participant_auth.end()));
     }
 
     // Create a DomainParticipant.
