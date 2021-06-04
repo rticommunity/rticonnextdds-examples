@@ -49,8 +49,8 @@ batch_data_subscriber.exe -d <domain_id> -s <samples_to_receive> [--turbo]
 On *UNIX* systems run:
 
 ```sh
-./batch_data_publisher  -d <domain_id> -s <samples_to_send> [--turbo]
-./batch_data_subscriber -d <domain_id> -s <samples_to_receive> [--turbo]
+./batch_data_publisher  -d <domain_id> -s <samples_to_send> --turbo
+./batch_data_subscriber -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 The applications accept up to three arguments:
