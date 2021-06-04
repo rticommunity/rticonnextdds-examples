@@ -43,14 +43,14 @@ On *Windows* systems run:
 
 ```sh
 coherent_publisher.exe  -d <domain_id> -s <samples_to_send>
-coherent_subscriber.exe -d <domain_id> -s <sleep_periods>
+coherent_subscriber.exe -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems:
 
 ```sh
 ./coherent_publisher  -d <domain_id> -s <samples_to_send>
-./coherent_subscriber -d <domain_id> -s <sleep_periods>
+./coherent_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to three arguments:
