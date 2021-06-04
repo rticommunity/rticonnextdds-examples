@@ -9,26 +9,26 @@
  use the software.
  ******************************************************************************/
 
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
+
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "cft.hpp"
-#include <dds/dds.hpp>
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
-
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // To customize any of the entities QoS, use
     // the configuration file USER_QOS_PROFILES.xml
 
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
-    Topic<cft> topic(participant, "Example cft");
+    dds::topic::Topic<cft> topic(participant, "Example cft");
 
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     // If you want to set the reliability and history QoS settings
     // programmatically rather than using the XML, you will need to comment out
@@ -37,7 +37,8 @@ void publisher_main(int domain_id, int sample_count)
     //            << Durability::TransientLocal()
     //            << History::KeepLast(20);
 
-    DataWriter<cft> writer(Publisher(participant), topic, writer_qos);
+    dds::pub::Publisher publisher(participant);
+    dds::pub::DataWriter<cft> writer(publisher, topic, writer_qos);
 
     // Create data sample for writing
     cft instance;
@@ -46,20 +47,22 @@ void publisher_main(int domain_id, int sample_count)
     // written multiple times, initialize the key here
     // and register the keyed instance prior to writing.
 
-    InstanceHandle instance_handle = InstanceHandle::nil();
+    dds::core::InstanceHandle instance_handle =
+            dds::core::InstanceHandle::nil();
     // instance_handle = writer.register_instance(instance);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify the data to be sent here
 
         // Our purpose is to increment x every time we send a sample and to
         // reset the x counter to 0 every time we send 10 samples (x=0,1,..,9).
         // Using the value of count, we can get set x to the appropriate value
         // applying % 10 operation to it.
-        instance.count(count);
-        instance.x(count % 10);
+        instance.count(samples_written);
+        instance.x(samples_written % 10);
 
         std::cout << "Writing cft, count " << instance.count() << "\t"
                   << "x=" << instance.x() << std::endl;
@@ -67,7 +70,7 @@ void publisher_main(int domain_id, int sample_count)
         writer.write(instance, instance_handle);
 
         // Send a new sample every second
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
     }
 
     // writer.unregister_instance(instance_handle);
@@ -75,29 +78,32 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what()
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

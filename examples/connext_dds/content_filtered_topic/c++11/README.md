@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-cft_publisher.exe  <domain_id> <samples_to_send>
-cft_subscriber.exe <domain_id> <sleep_periods> <select_cft>
+cft_publisher.exe  -d <domain_id> -s <samples_to_send>
+cft_subscriber.exe -d <domain_id> -s <samples_to_receive> --normal-topic
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./cft_publisher  <domain_id> <samples_to_send>
-./cft_subscriber <domain_id> <sleep_periods> <select_cft>
+./cft_publisher  -d <domain_id> -s <samples_to_send>
+./cft_subscriber -d <domain_id> -s <samples_to_receive> --normal-topic
 ```
 
 The applications accept up to three arguments:
@@ -62,9 +62,8 @@ The applications accept up to three arguments:
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
 
-3.  (subscriber only) The *select Content Filtered Topic* switch. If 1, then we
-    use a *Content Filtered Topic*. If 0, then we use a normal *Topic*. The
-    default is 1.
+3.  (subscriber only) If this argument is given, it will use a normal *Topic* 
+instead of a *Content Filtered Topic*.
 
 ## Customizing the Build
 
