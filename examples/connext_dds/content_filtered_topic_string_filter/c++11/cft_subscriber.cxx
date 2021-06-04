@@ -32,7 +32,10 @@ int process_data(dds::sub::DataReader<cft> reader)
     return count;
 }
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count, bool is_cft)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count,
+        bool is_cft)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -44,7 +47,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     std::vector<std::string> parameters = { "SOME_STRING" };
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::DataReaderQos reader_qos = dds::core::QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -70,8 +74,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
                 "ContentFilteredTopic",
                 filter);
 
-        reader =
-                dds::sub::DataReader<cft>(subscriber, cft_topic, reader_qos);
+        reader = dds::sub::DataReader<cft>(subscriber, cft_topic, reader_qos);
     } else {
         std::cout << "Using Normal Topic" << std::endl;
         reader = dds::sub::DataReader<cft>(subscriber, topic, reader_qos);
@@ -143,7 +146,10 @@ int main(int argc, char *argv[])
     rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        run_subscriber_application(arguments.domain_id, arguments.sample_count, arguments.use_cft);
+        run_subscriber_application(
+                arguments.domain_id,
+                arguments.sample_count,
+                arguments.use_cft);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
