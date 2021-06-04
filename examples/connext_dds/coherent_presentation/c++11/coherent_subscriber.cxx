@@ -31,10 +31,10 @@ int process_data(dds::sub::DataReader<coherent> reader)
     // Process samples and add to a dictionary
     std::map<char, int> values;
     std::transform(
-        rti::sub::valid_samples(samples.begin()),
-        rti::sub::valid_samples(samples.end()),
-        std::inserter(values, values.begin()),
-        sample2map);
+            rti::sub::valid_samples(samples.begin()),
+            rti::sub::valid_samples(samples.end()),
+            std::inserter(values, values.begin()),
+            sample2map);
     std::cout << std::endl;
 
     // Print result
@@ -48,13 +48,16 @@ int process_data(dds::sub::DataReader<coherent> reader)
     return count;
 }
 
-void run_subscriber_application(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a participant with default QoS.
     dds::domain::DomainParticipant participant(domain_id);
 
     // Retrieve the default Subscriber QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::SubscriberQos subscriber_qos = dds::core::QosProvider::Default().subscriber_qos();
+    dds::sub::qos::SubscriberQos subscriber_qos =
+            dds::core::QosProvider::Default().subscriber_qos();
 
     // If you want to change the Subscriber QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -68,7 +71,8 @@ void run_subscriber_application(int domain_id, int sample_count)
     dds::topic::Topic<coherent> topic(participant, "Example coherent");
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::DataReaderQos reader_qos = dds::core::QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the Subscriber QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.

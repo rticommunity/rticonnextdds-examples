@@ -16,7 +16,9 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "coherent.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -25,7 +27,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::topic::Topic<coherent> topic(participant, "Example coherent");
 
     // Retrieve the Publisher QoS, from USER_QOS_PROFILES.xml.
-    dds::pub::qos::PublisherQos publisher_qos = dds::core::QosProvider::Default().publisher_qos();
+    dds::pub::qos::PublisherQos publisher_qos =
+            dds::core::QosProvider::Default().publisher_qos();
 
     // If you want to change the Publisher's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
@@ -35,7 +38,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::pub::Publisher publisher(participant, publisher_qos);
 
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml.
-    dds::pub::qos::DataWriterQos writer_qos = dds::core::QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     // If you want to change the DataWriter's QoS programmatically rather
     // than using the XML file, you will need to uncomment the following lines.
