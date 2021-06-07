@@ -9,32 +9,22 @@
  use the software.
  ******************************************************************************/
 
-#include <algorithm>
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "deadline_contentfilter.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
-
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::qos;
+#include "application.hpp"  // for command line parsing and ctrl-c
 
 clock_t init_time;
 
 class deadline_contentfilterReaderListener
-        : public NoOpDataReaderListener<deadline_contentfilter> {
+        : public dds::sub::NoOpDataReaderListener<deadline_contentfilter> {
 public:
-    void on_data_available(DataReader<deadline_contentfilter> &reader)
+    void on_data_available(dds::sub::DataReader<deadline_contentfilter> &reader)
     {
         // Take all samples
-        LoanedSamples<deadline_contentfilter> samples = reader.take();
+        dds::sub::LoanedSamples<deadline_contentfilter> samples = reader.take();
 
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
@@ -51,8 +41,8 @@ public:
     }
 
     void on_requested_deadline_missed(
-            DataReader<deadline_contentfilter> &reader,
-            const RequestedDeadlineMissedStatus &status)
+            dds::sub::DataReader<deadline_contentfilter> &reader,
+            const dds::core::status::RequestedDeadlineMissedStatus &status)
     {
         double elapsed_ticks = clock() - init_time;
         double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
@@ -70,29 +60,30 @@ public:
     }
 };
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // For timekeeping
     init_time = clock();
 
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<deadline_contentfilter> topic(
+    dds::topic::Topic<deadline_contentfilter> topic(
             participant,
             "Example deadline_contentfilter");
 
     // Set up a Content Filtered Topic to show interaction with deadline.
-    std::vector<std::string> parameters = { "2" };
-
-    ContentFilteredTopic<deadline_contentfilter> cft_topic(
+    dds::topic::ContentFilteredTopic<deadline_contentfilter> cft_topic(
             topic,
             "ContentFilteredTopic",
-            Filter("code < %0", parameters));
+            dds::topic::Filter("code < %0", { "2" }));
 
     // Retrieve the default DataReader's QoS, from USER_QOS_PROFILES.xml
-    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -104,58 +95,64 @@ void subscriber_main(int domain_id, int sample_count)
 
     // reader_qos << Deadline(Duration(2));
 
+    // Create a subscriber
+    dds::sub::Subscriber subscriber(participant);
+
+    // Create a shared pointer for deadline_contentfilterReaderListener class
+    auto deadline_listener =
+            std::make_shared<deadline_contentfilterReaderListener>();
+
     // Create a DataReader (Subscriber created in-line)
-    DataReader<deadline_contentfilter> reader(
-            Subscriber(participant),
+    dds::sub::DataReader<deadline_contentfilter> reader(
+            subscriber,
             cft_topic,
             reader_qos);
 
-    // Create a data reader listener using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<deadline_contentfilter>> listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new deadline_contentfilterReaderListener,
-                    StatusMask::all());
+    reader.set_listener(deadline_listener);
 
     std::cout << std::fixed;
-    for (short count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
+    for (unsigned int samples_read = 0;
+         !application::shutdown_requested && samples_read < sample_count;
+         samples_read++) {
         // After 10 seconds, change filter to accept only instance 0.
-        if (count == 10) {
+        if (samples_read == 10) {
             std::cout << "Starting to filter out instance1" << std::endl;
-            parameters[0] = "1";
-            cft_topic.filter_parameters(parameters.begin(), parameters.end());
+            std::vector<std::string> parameter = { "1" };
+            cft_topic.filter_parameters(parameter.begin(), parameter.end());
         }
 
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
