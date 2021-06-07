@@ -34,7 +34,9 @@ int process_data(dds::sub::DataReader<coherent> reader)
             rti::sub::valid_samples(samples.begin()),
             rti::sub::valid_samples(samples.end()),
             std::inserter(values, values.begin()),
-            sample2map);
+            [](const coherent &data) {
+                return std::make_pair(data.field(), data.value());
+            });
     std::cout << std::endl;
 
     // Print result
