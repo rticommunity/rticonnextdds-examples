@@ -96,6 +96,9 @@ void run_subscriber_application(
 
     waitset += read_condition;
 
+    bool filter_changed1 = false;
+    bool filter_changed2 = false;
+
     // Main loop
     while (!application::shutdown_requested && samples_read < sample_count) {
         // Wait for data and report if it does not arrive in 1 second
@@ -107,7 +110,7 @@ void run_subscriber_application(
             continue;
         }
 
-        if (samples_read == 10) {
+        if (samples_read == 10 && !filter_changed1) {
             std::cout << std::endl
                       << "==========================" << std::endl
                       << "Changing filter parameters" << std::endl
@@ -116,7 +119,8 @@ void run_subscriber_application(
 
             std::vector<std::string> parameters = { "5", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
-        } else if (samples_read == 20) {
+            filter_changed1 = true;
+        } else if (samples_read == 20 && !filter_changed2) {
             std::cout << std::endl
                       << "==========================" << std::endl
                       << "Changing filter parameters" << std::endl
@@ -125,6 +129,7 @@ void run_subscriber_application(
 
             std::vector<std::string> parameters = { "3", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
+            filter_changed2 = true;
         }
     }
 }
