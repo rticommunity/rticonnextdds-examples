@@ -49,9 +49,8 @@ void run_subscriber_application(
     // Retrieve the default participant QoS, from USER_QOS_PROFILES.xml
     dds::domain::qos::DomainParticipantQos participant_qos =
             dds::core::QosProvider::Default().participant_qos();
-    rti::core::policy::DomainParticipantResourceLimits resource_limits_qos =
-            participant_qos.policy<
-                    rti::core::policy::DomainParticipantResourceLimits>();
+    auto resource_limits_qos = participant_qos.policy<
+            rti::core::policy::DomainParticipantResourceLimits>();
 
     // If you want to change the Participant's QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -93,7 +92,6 @@ void run_subscriber_application(
             reader,
             dds::sub::status::DataState::any(),
             [reader, &samples_read]() {
-                // If we wake up, process data
                 samples_read += process_data(reader);
             });
 

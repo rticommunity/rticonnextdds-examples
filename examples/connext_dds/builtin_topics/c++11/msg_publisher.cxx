@@ -160,8 +160,7 @@ void run_publisher_application(int domain_id, int sample_count)
             dds::sub::builtin_subscriber(participant);
 
     // Create shared pointer to BuiltinParticipantListener class
-    std::shared_ptr<BuiltinParticipantListener> participant_listener =
-            std::make_shared<BuiltinParticipantListener>();
+    auto participant_listener = std::make_shared<BuiltinParticipantListener>();
 
     // Then get builtin subscriber's datareader for participants.
     std::vector<dds::sub::DataReader<dds::topic::ParticipantBuiltinTopicData>>
@@ -174,8 +173,7 @@ void run_publisher_application(int domain_id, int sample_count)
 
     participant_reader[0].set_listener(participant_listener);
 
-    std::shared_ptr<BuiltinSubscriberListener> subscriber_listener =
-            std::make_shared<BuiltinSubscriberListener>();
+    auto subscriber_listener = std::make_shared<BuiltinSubscriberListener>();
 
     // Get builtin subscriber's datareader for subscribers.
     std::vector<dds::sub::DataReader<dds::topic::SubscriptionBuiltinTopicData>>
