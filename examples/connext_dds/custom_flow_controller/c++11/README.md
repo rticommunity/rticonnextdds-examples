@@ -43,14 +43,14 @@ On *Windows* systems run:
 
 ```sh
 cfc_publisher.exe  -d <domain_id> -s <samples_to_send>
-cfc_subscriber.exe -d <domain_id> -s <sleep_periods>
+cfc_subscriber.exe -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
 ./cfc_publisher  -d <domain_id> -s <samples_to_send>
-./cfc_publisher  -d <domain_id> -s <sleep_periods>
+./cfc_publisher  -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:

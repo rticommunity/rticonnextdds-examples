@@ -62,9 +62,8 @@ communicate. The default is 0.
 not enabled, so manual batching will be used. To activate the *Turbo Mode*, use
 the `--turbo` option.
 
-3.  How long the examples should run, measured in samples for the publisher and
-sleep periods for the subscriber. A value of '0' instructs the application
-to run forever; this is the default.
+1.  How long the examples should run, measured in samples. A value of '0'
+instructs the application to run forever; this is the default.
 
 ## Customizing the Build
 
