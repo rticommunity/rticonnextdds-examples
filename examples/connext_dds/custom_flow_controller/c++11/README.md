@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-cfc_publisher.exe  <domain_id> <samples_to_send>
-cfc_subscriber.exe <domain_id> <sleep_periods>
+cfc_publisher.exe  -d <domain_id> -s <samples_to_send>
+cfc_subscriber.exe -d <domain_id> -s <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./cfc_publisher  <domain_id> <samples_to_send>
-./cfc_publisher <domain_id> <sleep_periods>
+./cfc_publisher  -d <domain_id> -s <samples_to_send>
+./cfc_publisher  -d <domain_id> -s <sleep_periods>
 ```
 
 The applications accept up to two arguments:

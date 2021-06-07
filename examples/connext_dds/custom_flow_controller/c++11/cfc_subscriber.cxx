@@ -9,52 +9,46 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <ctime>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "cfc.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
-
-using namespace dds::core;
-using namespace rti::core;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::domain::qos;
-using namespace dds::sub;
-using namespace dds::topic;
+#include "application.hpp"  // for command line parsing and ctrl-c
 
 clock_t Init_time;
 
-class cfcReaderListener : public NoOpDataReaderListener<cfc> {
-public:
-    void on_data_available(DataReader<cfc> &reader)
-    {
-        // Take all samples
-        LoanedSamples<cfc> samples = reader.take();
+int process_data(dds::sub::DataReader<cfc> reader)
+{
+    int count = 0;
+    // Take all samples
+    dds::sub::LoanedSamples<cfc> samples = reader.take();
 
-        for (const auto &sample : samples) {
-            if (sample.info().valid()) {
-                // Print the time we get each sample.
-                double elapsed_ticks = clock() - Init_time;
-                double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
+    for (const auto &sample : samples) {
+        if (sample.info().valid()) {
+            count++;
+            // Print the time we get each sample.
+            double elapsed_ticks = clock() - Init_time;
+            double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
-                std::cout << "@ t=" << elapsed_secs
-                          << "s, got x = " << sample.data().x() << std::endl;
-            }
+            std::cout << "@ t=" << elapsed_secs
+                      << "s, got x = " << sample.data().x() << std::endl;
         }
     }
-};
 
-void subscriber_main(int domain_id, int sample_count)
+    return count;
+}
+
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // For timekeeping.
     Init_time = clock();
 
     // Retrieve the default Participant QoS, from USER_QOS_PROFILES.xml
-    DomainParticipantQos participant_qos =
-            QosProvider::Default().participant_qos();
+    dds::domain::qos::DomainParticipantQos participant_qos =
+            dds::core::QosProvider::Default().participant_qos();
 
     // If you want to change the Participant's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
@@ -67,58 +61,68 @@ void subscriber_main(int domain_id, int sample_count)
     // participant_qos << TransportBuiltin::UDPv4();
 
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id, participant_qos);
+    dds::domain::DomainParticipant participant(domain_id, participant_qos);
 
     // Create a Topic -- and automatically register the type
-    Topic<cfc> topic(participant, "Example cfc");
+    dds::topic::Topic<cfc> topic(participant, "Example cfc");
+
+    // Create a subscriber
+    dds::sub::Subscriber subscriber(participant);
 
     // Create a DataReader with default Qos (Subscriber created in-line)
-    DataReader<cfc> reader(Subscriber(participant), topic);
+    dds::sub::DataReader<cfc> reader(subscriber, topic);
 
-    // Associate a listener to the DataReader using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<cfc>> reader_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new cfcReaderListener,
-                    StatusMask::all());
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::new_data(),
+            [reader, &samples_read]() {
+                // If we wake up, process data
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     std::cout << std::fixed;
-    for (int count = 0; sample_count == 0 || count < sample_count; ++count) {
-        rti::util::sleep(dds::core::Duration(1));
+
+    // Main loop
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        waitset.dispatch(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what()
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
