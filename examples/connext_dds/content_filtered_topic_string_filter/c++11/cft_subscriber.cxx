@@ -102,6 +102,9 @@ void run_subscriber_application(
         cft_topic->append_to_expression_parameter(0, "EVEN");
     }
 
+    bool filter_changed1 = false;
+    bool filter_changed2 = false;
+
     // Main loop
     while (!application::shutdown_requested && samples_read < sample_count) {
         // Wait for data and report if it does not arrive in 1 second
@@ -111,20 +114,22 @@ void run_subscriber_application(
             continue;
         }
 
-        if (samples_read == 10) {
+        if (samples_read == 10 && !filter_changed1) {
             std::cout << std::endl
                       << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Append 'ODD' filter" << std::endl
                       << "===========================" << std::endl;
             cft_topic->append_to_expression_parameter(0, "ODD");
-        } else if (samples_read == 20) {
+            filter_changed1 = true;
+        } else if (samples_read == 20 && !filter_changed2) {
             std::cout << std::endl
                       << "===========================" << std::endl
                       << "Changing filter parameters" << std::endl
                       << "Removing 'EVEN' filter" << std::endl
                       << "===========================" << std::endl;
             cft_topic->remove_from_expression_parameter(0, "EVEN");
+            filter_changed2 = true;
         }
     }
 }
