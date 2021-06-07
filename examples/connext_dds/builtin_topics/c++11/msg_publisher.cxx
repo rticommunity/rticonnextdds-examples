@@ -20,7 +20,6 @@
 #include <dds/pub/ddspub.hpp>
 #include <rti/util/util.hpp>      // for sleep()
 #include <rti/config/Logger.hpp>  // for logging
-#include <rti/core/ListenerBinder.hpp>
 
 #include "msg.hpp"
 #include "application.hpp"
