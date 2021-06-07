@@ -9,74 +9,76 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
-#include "ccf.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "filter.hpp"
-#include <dds/dds.hpp>
+#include "ccf.hpp"
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace rti::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
-
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Register the custom filter type. It must be registered in both sides.
     participant->register_contentfilter(
-            CustomFilter<CustomFilterType>(new CustomFilterType()),
+            rti::topic::CustomFilter<CustomFilterType>(new CustomFilterType()),
             "CustomFilter");
 
     // Create a Topic -- and automatically register the type.
-    Topic<Foo> topic(participant, "Example ccf");
+    dds::topic::Topic<Foo> topic(participant, "Example ccf");
 
     // Create a DataWriter.
-    DataWriter<Foo> writer(Publisher(participant), topic);
+    dds::pub::Publisher publisher(participant);
+    dds::pub::DataWriter<Foo> writer(publisher, topic);
 
     // Create an instance for writing.
     Foo instance;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         count++) {
-        std::cout << "Writing ccf, count " << count << std::endl;
-        instance.x(count);
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
+        std::cout << "Writing ccf, count " << samples_written << std::endl;
+        instance.x(samples_written);
         writer.write(instance);
 
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

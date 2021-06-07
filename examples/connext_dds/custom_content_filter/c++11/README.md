@@ -42,15 +42,15 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-ccf_publisher.exe  <domain_id> <samples_to_send>
-ccf_subscriber.exe <domain_id> <sleep_periods>
+ccf_publisher.exe  -d <domain_id> -s <samples_to_send>
+ccf_subscriber.exe -d <domain_id> -s <sleep_periods>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./ccf_publisher  <domain_id> <samples_to_send>
-./ccf_subscriber <domain_id> <sleep_periods>
+./ccf_publisher  -d <domain_id> -s <samples_to_send>
+./ccf_subscriber -d <domain_id> -s <sleep_periods>
 ```
 
 The applications accept up to two arguments:

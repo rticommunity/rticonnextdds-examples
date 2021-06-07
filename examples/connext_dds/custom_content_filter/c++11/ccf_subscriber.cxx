@@ -9,114 +9,126 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "ccf.hpp"
 #include "filter.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
+int process_data(dds::sub::DataReader<Foo> reader)
+{
+    int count = 0;
+    // Take the available data
+    dds::sub::LoanedSamples<Foo> samples = reader.take();
 
-class CcfListener : public NoOpDataReaderListener<Foo> {
-public:
-    void on_data_available(DataReader<Foo> &reader)
-    {
-        // Take the available data
-        LoanedSamples<Foo> samples = reader.take();
-
-        for (const auto &sample : samples) {
-            if (sample.info().valid()) {
-                std::cout << sample.data() << std::endl;
-            }
+    for (const auto &sample : samples) {
+        if (sample.info().valid()) {
+            count++;
+            std::cout << sample.data() << std::endl;
         }
     }
-};
 
-void subscriber_main(int domain_id, int sample_count)
+    return count;
+}
+
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<Foo> topic(participant, "Example ccf");
+    dds::topic::Topic<Foo> topic(participant, "Example ccf");
 
     // Register the custom filter type. It must be registered in both sides.
     participant->register_contentfilter(
-            CustomFilter<CustomFilterType>(new CustomFilterType()),
+            rti::topic::CustomFilter<CustomFilterType>(new CustomFilterType()),
             "CustomFilter");
 
-    // The default filter parameters will filter values that are divisible by 2.
-    std::vector<std::string> parameters = { "2", "divides" };
-
     // Create the filter with the expression and the type registered.
-    Filter filter("%0 %1 x", parameters);
+    dds::topic::Filter filter("%0 %1 x", { "2", "divides" });
     filter->name("CustomFilter");
 
     // Create the content filtered topic.
-    ContentFilteredTopic<Foo> cft_topic(topic, "ContentFilteredTopic", filter);
+    dds::topic::ContentFilteredTopic<Foo> cft_topic(
+            topic,
+            "ContentFilteredTopic",
+            filter);
 
     std::cout << "Filter: 2 divides x" << std::endl;
 
     // Create a DataReader. Note that we are using the content filtered topic.
-    DataReader<Foo> reader(Subscriber(participant), cft_topic);
+    dds::sub::Subscriber subcriber(participant);
+    dds::sub::DataReader<Foo> reader(subcriber, cft_topic);
 
-    // Create a data reader listener using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<Foo>> scoped_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new CcfListener,
-                    StatusMask::data_available());
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
+
+    bool filter_changed1 = false;
+    bool filter_changed2 = false;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        if (count == 10) {
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        if (samples_read == 10 && !filter_changed1) {
             std::cout << "Changing filter parameters" << std::endl
                       << "Filter: 15 greater-than x" << std::endl;
-            parameters[0] = "15";
-            parameters[1] = "greater-than";
+            std::vector<std::string> parameters = { "15", "greater-than" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
-        } else if (count == 20) {
+            filter_changed1 = true;
+        } else if (samples_read == 20 && !filter_changed2) {
             std::cout << "Changing filter parameters" << std::endl
                       << "Filter: 3 divides x" << std::endl;
-            parameters[0] = "3";
-            parameters[1] = "divides";
+            std::vector<std::string> parameters = { "3", "divides" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
+            filter_changed2 = true;
         }
 
-        rti::util::sleep(Duration(1));
+        waitset.dispatch(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance()l.verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

@@ -10,37 +10,24 @@
  ******************************************************************************/
 
 #include "ccf.hpp"
-#include <cstdlib>
-#include <dds/dds.hpp>
-
-using namespace dds::core;
-using namespace dds::core::xtypes;
-using namespace rti::topic;
+#include <dds/core/ddscore.hpp>
 
 struct CustomCompileData {
     long param;
     bool (*eval_func)(long, long);
 };
 
-bool divide_test(long sample_data, long p)
-{
-    return (sample_data % p == 0);
-}
-
-bool gt_test(long sample_data, long p)
-{
-    return (p > sample_data);
-}
-
-class CustomFilterType : public ContentFilter<Foo, CustomCompileData> {
+class CustomFilterType
+        : public rti::topic::ContentFilter<Foo, CustomCompileData> {
 public:
     // Called when Custom Filter is created, or when parameters are changed.
-    virtual CustomCompileData &
-            compile(const std::string &expression,
-                    const StringSeq &parameters,
-                    const optional<DynamicType> &type_code,
-                    const std::string &type_class_name,
-                    CustomCompileData *old_compile_data)
+    virtual CustomCompileData &compile(
+            const std::string &expression,
+            const dds::core::StringSeq &parameters,
+            const dds::core::optional<dds::core::xtypes::DynamicType>
+                    &type_code,
+            const std::string &type_class_name,
+            CustomCompileData *old_compile_data)
     {
         // First free old data, if any.
         if (old_compile_data != NULL)
@@ -73,9 +60,13 @@ public:
         cd->param = atol(parameters[0].c_str());
 
         if (parameters[1] == "greater-than") {
-            cd->eval_func = &gt_test;
+            cd->eval_func = [](long sample_data, long p) {
+                return (p > sample_data);
+            };
         } else if (parameters[1] == "divides") {
-            cd->eval_func = &divide_test;
+            cd->eval_func = [](long sample_data, long p) {
+                return (sample_data % p == 0);
+            };
         } else {
             throw std::invalid_argument("Invad filter operation");
         }
@@ -87,7 +78,7 @@ public:
     virtual bool evaluate(
             CustomCompileData &compile_data,
             const Foo &sample,
-            const FilterSampleInfo &meta_data)
+            const rti::topic::FilterSampleInfo &meta_data)
     {
         return compile_data.eval_func(sample.x(), compile_data.param);
     }
