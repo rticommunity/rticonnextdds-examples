@@ -16,12 +16,6 @@
 #include "coherent.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
 
-// Transform a DDS sample into a pair value for a dictionary.
-std::pair<char, int> sample2map(const coherent &data)
-{
-    return std::make_pair(data.field(), data.value());
-}
-
 int process_data(dds::sub::DataReader<coherent> reader)
 {
     int count = 0;
