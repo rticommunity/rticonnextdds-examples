@@ -22,7 +22,6 @@ int process_data(dds::sub::DataReader<cft> reader)
     // Take the available data
     dds::sub::LoanedSamples<cft> samples = reader.take();
 
-    // Print samples by copying to std::cout
     for (const auto &sample : samples) {
         if (sample.info().valid()) {
             count++;
@@ -44,9 +43,6 @@ void run_subscriber_application(
     dds::domain::DomainParticipant participant(domain_id);
 
     dds::topic::Topic<cft> topic(participant, "Example cft");
-
-    // Sequence of parameters for the content filter expression
-    std::vector<std::string> parameters = { "1", "4" };
 
     if (is_cft) {
         std::cout << std::endl
@@ -79,7 +75,7 @@ void run_subscriber_application(
         cft_topic = dds::topic::ContentFilteredTopic<cft>(
                 topic,
                 "ContentFilteredTopic",
-                dds::topic::Filter("x >= %0 AND x <= %1", parameters));
+                dds::topic::Filter("x >= %0 AND x <= %1", {"1", "4"}));
         reader = dds::sub::DataReader<cft>(subscriber, cft_topic, reader_qos);
     } else {
         std::cout << "Using Normal Topic" << std::endl;
@@ -119,7 +115,7 @@ void run_subscriber_application(
                       << "Filter: 5 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
-            parameters = { "5", "9" };
+            std::vector<std::string> parameters = { "5", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
         } else if (samples_read == 20) {
             std::cout << std::endl
@@ -128,7 +124,7 @@ void run_subscriber_application(
                       << "Filter: 3 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
-            parameters = { "3", "9" };
+            std::vector<std::string> parameters = { "3", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
         }
     }
