@@ -102,12 +102,13 @@ void run_subscriber_application(
     auto deadline_listener =
             std::make_shared<deadline_contentfilterReaderListener>();
 
-    // Create a DataReader (Subscriber created in-line)
+    // Create a DataReader
     dds::sub::DataReader<deadline_contentfilter> reader(
             subscriber,
             cft_topic,
             reader_qos);
 
+    // Set the created listened for the DataReader
     reader.set_listener(deadline_listener);
 
     std::cout << std::fixed;
