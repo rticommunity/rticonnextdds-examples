@@ -1,6 +1,9 @@
 ---
-name: :bug: Bug report
-about: :small_red_triangle: Create a bug report to help us improve
+name: 🐛 Bug report
+about: 🔺 Create a bug report to help us improve
+title: "[BUG]"
+labels: bug, unconfirmed
+assignees: ''
 ---
 
 <!-- :warning: Please, try to follow the template -->
@@ -14,15 +17,10 @@ about: :small_red_triangle: Create a bug report to help us improve
 - **Compiler version**:
 - **Additional information**:
 
-
 ### What is the current behavior?
-
 
 ### Steps to reproduce the issue
 
-
 ### Expected behavior
 
-
 ### Suggested solutions
-
