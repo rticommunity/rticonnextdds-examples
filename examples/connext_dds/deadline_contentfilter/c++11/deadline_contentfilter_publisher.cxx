@@ -17,14 +17,6 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "deadline_contentfilter.hpp"
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
-
 class DeadlineWriterListener
         : public dds::pub::NoOpDataWriterListener<deadline_contentfilter> {
 public:
@@ -90,7 +82,7 @@ void run_publisher_application(
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
 
         // Update non-key fields.
         sample0.x(samples_written);
