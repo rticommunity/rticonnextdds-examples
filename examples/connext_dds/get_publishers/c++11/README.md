@@ -42,13 +42,13 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-Foo_publisher.exe <domain_id>
+Foo_publisher.exe -d <domain_id>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./Foo_publisher <domain_id>
+./Foo_publisher -d <domain_id>
 ```
 
 The applications accept one argument:
