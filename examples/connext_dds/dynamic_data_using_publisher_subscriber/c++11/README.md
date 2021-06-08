@@ -42,15 +42,15 @@ In two separate command prompt windows for the publisher and subscriber.
 On *Windows* systems run:
 
 ```sh
-Shapes_publisher.exe <domain_id> <sample #>
-Shapes_subscriber.exe <domain_id> <sample #>
+Shapes_publisher.exe  -d <domain_id> -s <samples_to_send>
+Shapes_subscriber.exe -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./Shapes_publisher  <domain_id> <sample #>
-./Shapes_subscriber <domain_id> <sample #>
+./Shapes_publisher  -d <domain_id> -s <samples_to_send>
+./Shapes_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:
