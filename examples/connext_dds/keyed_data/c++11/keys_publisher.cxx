@@ -9,29 +9,26 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "keys.hpp"
-#include <dds/dds.hpp>
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-using namespace dds::pub::qos;
-
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<keys> topic(participant, "Example keys");
+    dds::topic::Topic<keys> topic(participant, "Example keys");
 
     // Retrieve the DataWriter QoS, from USER_QOS_PROFILES.xml
-    DataWriterQos writer_qos = QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     // If you want to change the DataWriter's QoS programmatically rather
     // than using the XML file, you will need to comment out the previous
@@ -40,11 +37,14 @@ void publisher_main(int domain_id, int sample_count)
     // writer_qos <<
     // WriterDataLifecycle::ManuallyDisposeUnregisteredInstances();
 
-    // Create a DataWriter with default Qos (Publisher created in-line).
-    DataWriter<keys> writer(Publisher(participant), topic, writer_qos);
+    // Create a Publisher
+    dds::pub::Publisher publisher(participant);
+
+    // Create a DataWriter with default Qos.
+    dds::pub::DataWriter<keys> writer(publisher, topic, writer_qos);
 
     std::vector<keys> samples;
-    std::vector<InstanceHandle> instance_handles;
+    std::vector<dds::core::InstanceHandle> instance_handles;
 
     // RTI Connext could examine the key fields each time it needs to determine
     // which data-instance is being modified. However, for performance and
@@ -65,7 +65,7 @@ void publisher_main(int domain_id, int sample_count)
             std::cout << "Registering instance " << k.code() << std::endl;
             instance_handles.push_back(writer.register_instance(k));
         } else {
-            instance_handles.push_back(InstanceHandle::nil());
+            instance_handles.push_back(dds::core::InstanceHandle::nil());
         }
 
         // Finally, we modify the data to be sent.
@@ -74,10 +74,12 @@ void publisher_main(int domain_id, int sample_count)
     }
 
     // Main loop
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        rti::util::sleep(Duration(1));
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
+        rti::util::sleep(dds::core::Duration(1));
 
-        if (count == 5) {
+        if (samples_written == 5) {
             // Start sending the second and third instances.
             std::cout << "----Registering instance " << samples[1].code()
                       << std::endl;
@@ -86,24 +88,24 @@ void publisher_main(int domain_id, int sample_count)
             std::cout << "----Registering instance " << samples[2].code()
                       << std::endl;
             instance_handles[2] = writer.register_instance(samples[2]);
-        } else if (count == 10) {
+        } else if (samples_written == 10) {
             // Unregister the second instance.
             std::cout << "----Unregistering instance " << samples[1].code()
                       << std::endl;
             writer.unregister_instance(instance_handles[1]);
-            instance_handles[1] = InstanceHandle::nil();
-        } else if (count == 15) {
+            instance_handles[1] = dds::core::InstanceHandle::nil();
+        } else if (samples_written == 15) {
             // Dispose the third instance.
             std::cout << "----Disposing instance " << samples[2].code()
                       << std::endl;
             writer.dispose_instance(instance_handles[2]);
-            instance_handles[2] = InstanceHandle::nil();
+            instance_handles[2] = dds::core::InstanceHandle::nil();
         }
 
         // Update sample data field and send if handle is not nil.
         for (int i = 0; i < num_samples; i++) {
             if (!instance_handles[i].is_nil()) {
-                samples[i].y(count);
+                samples[i].y(samples_written);
                 std::cout << "Writing instance " << samples[i].code()
                           << ", x: " << samples[i].x()
                           << ", y: " << samples[i].y() << std::endl;
@@ -115,28 +117,32 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

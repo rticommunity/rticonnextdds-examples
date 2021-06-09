@@ -9,108 +9,122 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "keys.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace rti::core;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::status;
+int process_data(dds::sub::DataReader<keys> reader)
+{
+    int count = 0;
+    // Take all samples
+    dds::sub::LoanedSamples<keys> samples = reader.take();
 
-class KeysReaderListener : public NoOpDataReaderListener<keys> {
-public:
-    void on_data_available(DataReader<keys> &reader)
-    {
-        // Take all samples
-        LoanedSamples<keys> samples = reader.take();
+    for (const auto &sample : samples) {
+        const dds::sub::SampleInfo &info = sample.info();
+        if (info.valid()) {
+            dds::sub::status::ViewState view_state = info.state().view_state();
+            if (view_state == dds::sub::status::ViewState::new_view()) {
+                std::cout << "Found new instance; code = "
+                          << sample.data().code() << std::endl;
+            }
 
-        for (const auto &sample : samples) {
-            const SampleInfo &info = sample.info();
-            if (info.valid()) {
-                ViewState view_state = info.state().view_state();
-                if (view_state == ViewState::new_view()) {
-                    std::cout << "Found new instance; code = "
-                              << sample.data().code() << std::endl;
-                }
+            std::cout << "Instance " << sample.data().code()
+                      << ", x: " << sample.data().x()
+                      << ", y: " << sample.data().y() << std::endl;
+        } else {
+            // Since there is not valid data, it may include metadata.
+            keys sample;
+            reader.key_value(sample, info.instance_handle());
 
-                std::cout << "Instance " << sample.data().code()
-                          << ", x: " << sample.data().x()
-                          << ", y: " << sample.data().y() << std::endl;
-            } else {
-                // Since there is not valid data, it may include metadata.
-                keys sample;
-                reader.key_value(sample, info.instance_handle());
-
-                // Here we print a message if the instance state is
-                // 'not_alive_no_writers' or 'not_alive_disposed'.
-                const InstanceState &state = info.state().instance_state();
-                if (state == InstanceState::not_alive_no_writers()) {
-                    std::cout << "Instance " << sample.code()
-                              << " has no writers" << std::endl;
-                } else if (state == InstanceState::not_alive_disposed()) {
-                    std::cout << "Instance " << sample.code() << " disposed"
-                              << std::endl;
-                }
+            // Here we print a message if the instance state is
+            // 'not_alive_no_writers' or 'not_alive_disposed'.
+            const dds::sub::status::InstanceState &state =
+                    info.state().instance_state();
+            if (state
+                == dds::sub::status::InstanceState::not_alive_no_writers()) {
+                std::cout << "Instance " << sample.code() << " has no writers"
+                          << std::endl;
+            } else if (
+                    state
+                    == dds::sub::status::InstanceState::not_alive_disposed()) {
+                std::cout << "Instance " << sample.code() << " disposed"
+                          << std::endl;
             }
         }
-    }
-};
 
-void subscriber_main(int domain_id, int sample_count)
+        count++;
+    }
+
+    return count;
+}
+
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<keys> topic(participant, "Example keys");
+    dds::topic::Topic<keys> topic(participant, "Example keys");
 
-    // Create a DataReader with default Qos (Subscriber created in-line)
-    DataReader<keys> reader(Subscriber(participant), topic);
+    // Create a subscriber
+    dds::sub::Subscriber subscriber(participant);
 
-    // Associate a listener to the datareader using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<keys>> reader_listener = bind_and_manage_listener(
+    // Create a DataReader with default Qos
+    dds::sub::DataReader<keys> reader(subscriber, topic);
+
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
             reader,
-            new KeysReaderListener,
-            dds::core::status::StatusMask::all());
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     // Main loop
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        rti::util::sleep(Duration(1));
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        waitset.dispatch(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what()
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
