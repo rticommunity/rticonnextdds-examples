@@ -148,10 +148,11 @@ public:
 
         sub->notify_datareaders();
         if (++count > 3) {
+            auto subscriber_listener = std::make_shared<MySubscriberListener>();
             dds::core::status::StatusMask new_mask =
                     dds::core::status::StatusMask::all();
             new_mask &= ~dds::core::status::StatusMask::data_on_readers();
-            sub.listener(this, new_mask);
+            sub.set_listener(subscriber_listener, new_mask);
         }
     }
 };
