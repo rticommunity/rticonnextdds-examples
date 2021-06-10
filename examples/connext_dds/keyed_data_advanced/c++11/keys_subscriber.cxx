@@ -9,184 +9,207 @@
  use the software.
  ******************************************************************************/
 
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
+
 #include "keys.hpp"
-#include <dds/dds.hpp>
-#include <iostream>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace rti::sub;
-using namespace dds::sub::cond;
-using namespace dds::sub::qos;
-using namespace dds::sub::status;
+void new_instance_found(
+        const keys &msg,
+        std::map<int, dds::sub::status::InstanceState> &sampleState)
+{
+    // There are three cases here:
+    // 1.) truly new instance.
+    // 2.) instance lost all writers, but now we're getting data again.
+    // 3.) instance was disposed, but a new one has been created.
+    //
+    // We distinguish these cases by examining generation counts, BUT
+    // note that if the instance resources have been reclaimed, the
+    // generation counts may be reset to 0.
+    //
+    // Instances are eligible for resource cleanup if there are no
+    // active writers and all samples have been taken.  To reliably
+    // determine which case a 'new' instance falls into, the application
+    // must store state information on a per-instance basis.
+    //
+    // Note that this example assumes that state changes only occur via
+    // explicit register_instance(), unregister_instance() and dispose()
+    // calls from the DataWriter. In reality, these changes could also
+    // occur due to lost liveliness or missed deadlines, so those
+    // listeners would also need to update the instance state.
 
-class KeysReaderListener : public NoOpDataReaderListener<keys> {
-public:
-    void on_data_available(DataReader<keys> &reader)
-    {
-        // To read the first instance the handle must be InstanceHandle::nil()
-        InstanceHandle previous_handle = InstanceHandle::nil();
-        LoanedSamples<keys> samples;
-        do {
-            samples = reader.select().next_instance(previous_handle).take();
+    int code = msg.code();
 
-            // Update the previous handle to read the next instance.
-            if (samples.length() > 0) {
-                previous_handle = samples[0].info().instance_handle();
-            }
-
-            for (const auto &sample : samples) {
-                const SampleInfo &info = sample.info();
-                if (info.valid()) {
-                    if (info.state().view_state() == ViewState::new_view()) {
-                        new_instance_found(sample.data());
-                    }
-
-                    handle_data(sample.data());
-                } else {
-                    // Since there is not valid data, it may include metadata.
-                    keys key_sample;
-                    reader.key_value(key_sample, info.instance_handle());
-
-                    // Here we print a message and change the instance state
-                    // if the instance state is
-                    InstanceState inst_state = info.state().instance_state();
-                    if (inst_state == InstanceState::not_alive_no_writers()) {
-                        instance_lost_writers(key_sample);
-                    } else if (
-                            inst_state == InstanceState::not_alive_disposed()) {
-                        instance_disposed(key_sample);
-                    }
-                }
-            }
-        } while (samples.length() > 0);
+    // If we don't have any information about it, it's a new instance.
+    if (sampleState.count(code) == 0) {
+        std::cout << "New instance found; code = " << code << std::endl;
+    } else if (sampleState[code] == dds::sub::status::InstanceState::alive()) {
+        std::cout << "Error, 'new' already-active instance found; code = "
+                  << code << std::endl;
+    } else if (
+            sampleState[code]
+            == dds::sub::status::InstanceState::not_alive_no_writers()) {
+        std::cout << "Found writer for instance; code = " << code << std::endl;
+    } else if (
+            sampleState[code]
+            == dds::sub::status::InstanceState::not_alive_disposed()) {
+        std::cout << "Found reborn instance; code = " << code << std::endl;
     }
 
-    void new_instance_found(const keys &msg)
-    {
-        // There are three cases here:
-        // 1.) truly new instance.
-        // 2.) instance lost all writers, but now we're getting data again.
-        // 3.) instance was disposed, but a new one has been created.
-        //
-        // We distinguish these cases by examining generation counts, BUT
-        // note that if the instance resources have been reclaimed, the
-        // generation counts may be reset to 0.
-        //
-        // Instances are eligible for resource cleanup if there are no
-        // active writers and all samples have been taken.  To reliably
-        // determine which case a 'new' instance falls into, the application
-        // must store state information on a per-instance basis.
-        //
-        // Note that this example assumes that state changes only occur via
-        // explicit register_instance(), unregister_instance() and dispose()
-        // calls from the DataWriter. In reality, these changes could also
-        // occur due to lost liveliness or missed deadlines, so those
-        // listeners would also need to update the instance state.
+    sampleState[code] = dds::sub::status::InstanceState::alive();
+}
 
-        int code = msg.code();
+void instance_lost_writers(
+        const keys &msg,
+        std::map<int, dds::sub::status::InstanceState> &sampleState)
+{
+    std::cout << "Instance has no writers; code = " << msg.code() << std::endl;
+    sampleState[msg.code()] =
+            dds::sub::status::InstanceState::not_alive_no_writers();
+}
 
-        // If we don't have any information about it, it's a new instance.
-        if (sampleState.count(code) == 0) {
-            std::cout << "New instance found; code = " << code << std::endl;
-        } else if (sampleState[code] == InstanceState::alive()) {
-            std::cout << "Error, 'new' already-active instance found; code = "
-                      << code << std::endl;
-        } else if (sampleState[code] == InstanceState::not_alive_no_writers()) {
-            std::cout << "Found writer for instance; code = " << code
-                      << std::endl;
-        } else if (sampleState[code] == InstanceState::not_alive_disposed()) {
-            std::cout << "Found reborn instance; code = " << code << std::endl;
+void instance_disposed(
+        const keys &msg,
+        std::map<int, dds::sub::status::InstanceState> &sampleState)
+{
+    std::cout << "Instance disposed; code = " << msg.code() << std::endl;
+    sampleState[msg.code()] =
+            dds::sub::status::InstanceState::not_alive_disposed();
+}
+
+void handle_data(const keys &msg)
+{
+    std::cout << "code: " << msg.code() << ", x: " << msg.x()
+              << ", y: " << msg.y() << std::endl;
+}
+
+int process_data(dds::sub::DataReader<keys> reader)
+{
+    int count = 0;
+    // To read the first instance the handle must be InstanceHandle::nil()
+    dds::core::InstanceHandle previous_handle =
+            dds::core::InstanceHandle::nil();
+    std::map<int, dds::sub::status::InstanceState> sampleState;
+    dds::sub::LoanedSamples<keys> samples;
+    do {
+        samples = reader.select().next_instance(previous_handle).take();
+
+        // Update the previous handle to read the next instance.
+        if (samples.length() > 0) {
+            previous_handle = samples[0].info().instance_handle();
         }
 
-        sampleState[code] = InstanceState::alive();
-    }
+        for (const auto &sample : samples) {
+            const dds::sub::SampleInfo &info = sample.info();
+            if (info.valid()) {
+                if (info.state().view_state()
+                    == dds::sub::status::ViewState::new_view()) {
+                    new_instance_found(sample.data(), sampleState);
+                }
 
-    void instance_lost_writers(const keys &msg)
-    {
-        std::cout << "Instance has no writers; code = " << msg.code()
-                  << std::endl;
-        sampleState[msg.code()] = InstanceState::not_alive_no_writers();
-    }
+                handle_data(sample.data());
+            } else {
+                // Since there is not valid data, it may include metadata.
+                keys key_sample;
+                reader.key_value(key_sample, info.instance_handle());
 
-    void instance_disposed(const keys &msg)
-    {
-        std::cout << "Instance disposed; code = " << msg.code() << std::endl;
-        sampleState[msg.code()] = InstanceState::not_alive_disposed();
-    }
+                // Here we print a message and change the instance state
+                // if the instance state is
+                dds::sub::status::InstanceState inst_state =
+                        info.state().instance_state();
+                if (inst_state
+                    == dds::sub::status::InstanceState::
+                            not_alive_no_writers()) {
+                    instance_lost_writers(key_sample, sampleState);
+                } else if (
+                        inst_state
+                        == dds::sub::status::InstanceState::
+                                not_alive_disposed()) {
+                    instance_disposed(key_sample, sampleState);
+                }
+            }
+            count++;
+        }
+    } while (samples.length() > 0);
 
-    void handle_data(const keys &msg)
-    {
-        std::cout << "code: " << msg.code() << ", x: " << msg.x()
-                  << ", y: " << msg.y() << std::endl;
-    }
+    return count;
+}
 
-private:
-    std::map<int, InstanceState> sampleState;
-};
-
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<keys> topic(participant, "Example keys");
+    dds::topic::Topic<keys> topic(participant, "Example keys");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
 
     // reader_qos << Ownership::Exclusive();
 
-    // Create a DataReader with default Qos (Subscriber created in-line)
-    DataReader<keys> reader(Subscriber(participant), topic, reader_qos);
+    // Create a subscriber with default QoS
+    dds::sub::Subscriber subscriber(participant);
 
-    // Associate a listener using ListenerBinder, a RAII that will take care of
-    // setting it to NULL on destruction.
-    rti::core::ListenerBinder<DataReader<keys>> reader_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new KeysReaderListener,
-                    dds::core::status::StatusMask::all());
+    // Create a DataReader with default Qos
+    dds::sub::DataReader<keys> reader(subscriber, topic, reader_qos);
+
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         count++) {
-        rti::util::sleep(Duration(2));
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        waitset.dispatch(dds::core::Duration(2));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
