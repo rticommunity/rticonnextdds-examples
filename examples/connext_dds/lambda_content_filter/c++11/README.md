@@ -40,15 +40,15 @@ In two separate command prompt windows for the publisher and subscriber.
 On *Windows* systems run:
 
 ```sh
-LambdaFilterExample_publisher.exe <domain_id> <sample #>
-LambdaFilterExample_subscriber.exe <domain_id> <sample #>
+LambdaFilterExample_publisher.exe  -d <domain_id> -s <samples_to_send>
+LambdaFilterExample_subscriber.exe -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./LambdaFilterExample_publisher  <domain_id> <sample #>
-./LambdaFilterExample_subscriber <domain_id> <sample #>
+./LambdaFilterExample_publisher  <domain_id> <samples_to_send>
+./LambdaFilterExample_subscriber <domain_id> <samples_to_receive>
 ```
 
 The applications accept up to two arguments:
