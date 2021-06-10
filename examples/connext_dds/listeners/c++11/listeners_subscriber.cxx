@@ -89,7 +89,9 @@ public:
     }
 };
 
-class MySubscriberListener : public dds::sub::NoOpSubscriberListener {
+class MySubscriberListener
+        : public dds::sub::NoOpSubscriberListener,
+          public std::enable_shared_from_this<MySubscriberListener> {
 public:
     virtual void on_requested_deadline_missed(
             dds::sub::AnyDataReader &the_reader,
@@ -148,7 +150,7 @@ public:
 
         sub->notify_datareaders();
         if (++count > 3) {
-            auto subscriber_listener = std::make_shared<MySubscriberListener>();
+            auto subscriber_listener = shared_from_this();
             dds::core::status::StatusMask new_mask =
                     dds::core::status::StatusMask::all();
             new_mask &= ~dds::core::status::StatusMask::data_on_readers();
