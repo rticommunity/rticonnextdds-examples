@@ -9,20 +9,15 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "listeners.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace rti::core;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::sub;
-using namespace dds::topic;
-
-class MyParticipantListener : public NoOpDomainParticipantListener {
+class MyParticipantListener
+        : public dds::domain::NoOpDomainParticipantListener {
 public:
     virtual void on_requested_deadline_missed(
             dds::pub::AnyDataWriter &writer,
@@ -94,10 +89,10 @@ public:
     }
 };
 
-class MySubscriberListener : public NoOpSubscriberListener {
+class MySubscriberListener : public dds::sub::NoOpSubscriberListener {
 public:
     virtual void on_requested_deadline_missed(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::RequestedDeadlineMissedStatus &status)
     {
         std::cout << "SubscriberListener: on_requested_deadline_missed()"
@@ -105,7 +100,7 @@ public:
     }
 
     virtual void on_requested_incompatible_qos(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::RequestedIncompatibleQosStatus &status)
     {
         std::cout << "SubscriberListener: on_requested_incompatible_qos()"
@@ -113,56 +108,58 @@ public:
     }
 
     virtual void on_sample_rejected(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::SampleRejectedStatus &status)
     {
         std::cout << "SubscriberListener: on_sample_rejected()" << std::endl;
     }
 
     virtual void on_liveliness_changed(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::LivelinessChangedStatus &status)
     {
         std::cout << "SubscriberListener: on_liveliness_changed()" << std::endl;
     }
 
     virtual void on_sample_lost(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::SampleLostStatus &status)
     {
         std::cout << "SubscriberListener: on_sample_lost()" << std::endl;
     }
 
     virtual void on_subscription_matched(
-            AnyDataReader &the_reader,
+            dds::sub::AnyDataReader &the_reader,
             const dds::core::status::SubscriptionMatchedStatus &status)
     {
         std::cout << "SubscriberListener: on_subscription_matched()"
                   << std::endl;
     }
 
-    virtual void on_data_available(AnyDataReader &the_reader)
+    virtual void on_data_available(dds::sub::AnyDataReader &the_reader)
     {
         std::cout << "SubscriberListener: on_data_available()" << std::endl;
     }
 
-    virtual void on_data_on_readers(Subscriber &sub)
+    virtual void on_data_on_readers(dds::sub::Subscriber &sub)
     {
         static int count = 0;
         std::cout << "SubscriberListener: on_data_on_readers()" << std::endl;
 
         sub->notify_datareaders();
         if (++count > 3) {
-            StatusMask new_mask = StatusMask::all();
-            new_mask &= ~StatusMask::data_on_readers();
+            dds::core::status::StatusMask new_mask =
+                    dds::core::status::StatusMask::all();
+            new_mask &= ~dds::core::status::StatusMask::data_on_readers();
             sub.listener(this, new_mask);
         }
     }
 };
 
-class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
+class MyDataReaderListener
+        : public dds::sub::NoOpDataReaderListener<listeners> {
     virtual void on_requested_deadline_missed(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::RequestedDeadlineMissedStatus &status)
     {
         std::cout << "ReaderListener: on_requested_deadline_missed()"
@@ -170,7 +167,7 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     }
 
     virtual void on_requested_incompatible_qos(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::RequestedIncompatibleQosStatus &status)
     {
         std::cout << "ReaderListener: on_requested_incompatible_qos()"
@@ -178,14 +175,14 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     }
 
     virtual void on_sample_rejected(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::SampleRejectedStatus &status)
     {
         std::cout << "ReaderListener: on_sample_rejected()" << std::endl;
     }
 
     virtual void on_liveliness_changed(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::LivelinessChangedStatus &status)
     {
         std::cout << "ReaderListener: on_liveliness_changed()" << std::endl
@@ -193,22 +190,22 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     }
 
     virtual void on_sample_lost(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::SampleLostStatus &status)
     {
         std::cout << "ReaderListener: on_sample_lost()" << std::endl;
     }
 
     virtual void on_subscription_matched(
-            DataReader<listeners> &reader,
+            dds::sub::DataReader<listeners> &reader,
             const dds::core::status::SubscriptionMatchedStatus &status)
     {
         std::cout << "ReaderListener: on_subscription_matched()" << std::endl;
     }
 
-    virtual void on_data_available(DataReader<listeners> &reader)
+    virtual void on_data_available(dds::sub::DataReader<listeners> &reader)
     {
-        LoanedSamples<listeners> samples = reader.take();
+        dds::sub::LoanedSamples<listeners> samples = reader.take();
         for (const auto &sample : samples) {
             // If the reference we get is valid data, it means we have actual
             // data available, otherwise we got metadata.
@@ -221,69 +218,70 @@ class MyDataReaderListener : public NoOpDataReaderListener<listeners> {
     }
 };
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
-    // Create the participant
-    DomainParticipant participant(domain_id);
+    // Create a shared pointer for the Participant Listener
+    auto participant_listener = std::make_shared<MyParticipantListener>();
 
-    // Associate a listener to the participant using ListenerBinder, a RAII that
+    // Create the participant
+    dds::domain::DomainParticipant participant(domain_id);
+
+    // Associate a listener to the participant using a shared pointer. It
     // will take care of setting it to NULL on destruction.
-    ListenerBinder<DomainParticipant> participant_listener =
-            rti::core::bind_and_manage_listener(
-                    participant,
-                    new MyParticipantListener,
-                    dds::core::status::StatusMask::all());
+    participant.set_listener(participant_listener);
 
     // To customize topic QoS, use the configuration file USER_QOS_PROFILES.xml
-    Topic<listeners> topic(participant, "Example listeners");
+    dds::topic::Topic<listeners> topic(participant, "Example listeners");
 
     // Create the subscriber and associate a listener
-    Subscriber subscriber(participant);
-    ListenerBinder<Subscriber> subscriber_listener =
-            rti::core::bind_and_manage_listener(
-                    subscriber,
-                    new MySubscriberListener,
-                    dds::core::status::StatusMask::all());
+    dds::sub::Subscriber subscriber(participant);
+    auto subscriber_listener = std::make_shared<MySubscriberListener>();
+    subscriber.set_listener(subscriber_listener);
 
     // Create the DataReader and associate a listener
-    DataReader<listeners> reader(subscriber, topic);
-    ListenerBinder<DataReader<listeners>> datareader_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new MyDataReaderListener,
-                    dds::core::status::StatusMask::all());
+    dds::sub::DataReader<listeners> reader(subscriber, topic);
+    auto dw_listener = std::make_shared<MyDataReaderListener>();
+    reader.set_listener(dw_listener);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
+    for (int count = 0;
+         !application::shutdown_requested && (count < sample_count);
          ++count) {
         // Each "sample_count" is four seconds.
-        rti::util::sleep(Duration(4));
+        rti::util::sleep(dds::core::Duration(4));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

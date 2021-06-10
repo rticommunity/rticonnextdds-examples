@@ -9,18 +9,15 @@
  use the software.
  ******************************************************************************/
 
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "listeners.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::pub;
-using namespace dds::topic;
-
-class MyDataWriterListener : public NoOpDataWriterListener<listeners> {
+class MyDataWriterListener
+        : public dds::pub::NoOpDataWriterListener<listeners> {
 public:
     virtual void on_offered_deadline_missed(
             dds::pub::DataWriter<listeners> &writer,
@@ -76,15 +73,17 @@ public:
     }
 };
 
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create the participant.
     // To customize QoS, use the configuration file USER_QOS_PROFILES.xml
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create the publisher
     // To customize QoS, use the configuration file USER_QOS_PROFILES.xml
-    Publisher publisher(participant);
+    dds::pub::Publisher publisher(participant);
 
     // Create ande Delete Inconsistent Topic
     // ---------------------------------------------------------------
@@ -96,14 +95,16 @@ void publisher_main(int domain_id, int sample_count)
     // Once it is created, we sleep to ensure the applications discover
     // each other and delete the Data Writer and Topic.
     std::cout << "Creating Inconsistent Topic..." << std::endl;
-    Topic<msg> inconsistent_topic(participant, "Example listeners");
+    dds::topic::Topic<msg> inconsistent_topic(participant, "Example listeners");
 
     // We have to associate a writer to the topic, as Topic information is not
     // actually propagated until the creation of an associated writer.
-    DataWriter<msg> inconsistent_writer(publisher, inconsistent_topic);
+    dds::pub::DataWriter<msg> inconsistent_writer(
+            publisher,
+            inconsistent_topic);
 
     // Sleep to leave time for applications to discover each other.
-    rti::util::sleep(Duration(2));
+    rti::util::sleep(dds::core::Duration(2));
 
     inconsistent_writer.close();
     inconsistent_topic.close();
@@ -114,58 +115,64 @@ void publisher_main(int domain_id, int sample_count)
     // Once we have created the inconsistent topic with the wrong type,
     // we create a topic with the right type name -- listeners -- that we
     // will use to publish data.
-    Topic<listeners> topic(participant, "Example listeners");
+    dds::topic::Topic<listeners> topic(participant, "Example listeners");
+
+    // Create a shared pointer for the Data Writer Listener defined above
+    auto dw_listener = std::make_shared<MyDataWriterListener>();
 
     // We will use the Data Writer Listener defined above to print
     // a message when some of events are triggered in the DataWriter.
-    // By using ListenerBinder (a RAII) it will take care of setting the
+    // By using shared_pointer it will take care of setting the
     // listener to NULL on destruction.
-    DataWriter<listeners> writer(publisher, topic);
-    rti::core::ListenerBinder<DataWriter<listeners>> writer_listener =
-            rti::core::bind_and_manage_listener(
-                    writer,
-                    new MyDataWriterListener,
-                    dds::core::status::StatusMask::all());
+    dds::pub::DataWriter<listeners> writer(publisher, topic);
+    writer.set_listener(dw_listener);
 
     // Create data sample for writing
     listeners instance;
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        std::cout << "Writing listeners, count " << count << std::endl;
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
+        std::cout << "Writing listeners, count " << samples_written
+                  << std::endl;
 
         // Modify data and send it.
-        instance.x(count);
+        instance.x(samples_written);
         writer.write(instance);
 
-        rti::util::sleep(Duration(2));
+        rti::util::sleep(dds::core::Duration(2));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
