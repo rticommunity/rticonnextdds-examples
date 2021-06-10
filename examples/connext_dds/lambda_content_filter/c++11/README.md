@@ -47,8 +47,8 @@ LambdaFilterExample_subscriber.exe -d <domain_id> -s <samples_to_receive>
 On *UNIX* systems run:
 
 ```sh
-./LambdaFilterExample_publisher  <domain_id> <samples_to_send>
-./LambdaFilterExample_subscriber <domain_id> <samples_to_receive>
+./LambdaFilterExample_publisher  -d <domain_id> -s <samples_to_send>
+./LambdaFilterExample_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:
