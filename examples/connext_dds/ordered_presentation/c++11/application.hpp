@@ -101,8 +101,16 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
+                && current_entity == Entity::Publisher
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sample-count") == 0)) {
+            sample_count = atoi(argv[arg_processing + 1]);
+            arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && current_entity == Entity::Subscriber
+                && (strcmp(argv[arg_processing], "-s") == 0
+                    || strcmp(argv[arg_processing], "--sleeps") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
