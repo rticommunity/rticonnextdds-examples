@@ -9,35 +9,37 @@
  use the software.
  ******************************************************************************/
 
-#include <algorithm>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "poll.hpp"
-#include <dds/dds.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<poll> topic(participant, "Example poll");
+    dds::topic::Topic<poll> topic(participant, "Example poll");
 
-    // Create a DataReader with default Qos (Subscriber created in-line)
-    DataReader<poll> reader(Subscriber(participant), topic);
+    // Create a Subscriber with default QoS
+    dds::sub::Subscriber subscriber(participant);
+
+    // Create a DataReader with default Qos
+    dds::sub::DataReader<poll> reader(subscriber, topic);
 
     std::cout << std::fixed;
-    for (int count = 0; sample_count == 0 || count < sample_count; ++count) {
+    int samples_read = 0;
+    while (!application::shutdown_requested && samples_read < sample_count) {
         // Poll for new data every 5 seconds.
-        rti::util::sleep(Duration(5));
+        rti::util::sleep(dds::core::Duration(5));
 
         // Check for new data calling the DataReader's take() method.
-        LoanedSamples<poll> samples = reader.take();
+        dds::sub::LoanedSamples<poll> samples = reader.take();
 
         // Iterate through the samples read using the 'take()' method and
         // adding the value of x on each of them to calculate the average
@@ -45,6 +47,7 @@ void subscriber_main(int domain_id, int sample_count)
         double sum = 0;
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
+                samples_read++;
                 sum += sample.data().x();
             }
         }
@@ -58,28 +61,32 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
