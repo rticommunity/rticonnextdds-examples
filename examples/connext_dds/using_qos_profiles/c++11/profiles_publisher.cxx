@@ -9,37 +9,33 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "profiles.hpp"
-#include <dds/dds.hpp>
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     // Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
-    QosProvider qos_provider("my_custom_qos_profiles.xml");
+    dds::core::QosProvider qos_provider("my_custom_qos_profiles.xml");
 
     // Create a DomainParticipant with the default QoS of the provider.
-    DomainParticipant participant(domain_id, qos_provider.participant_qos());
+    dds::domain::DomainParticipant participant(domain_id, qos_provider.participant_qos());
 
     // Create a Publisher with default QoS.
-    Publisher publisher(participant, qos_provider.publisher_qos());
+    dds::pub::Publisher publisher(participant, qos_provider.publisher_qos());
 
     // Create a Topic with default QoS.
-    Topic<profiles> topic(
+    dds::topic::Topic<profiles> topic(
             participant,
             "Example profiles",
             qos_provider.topic_qos());
 
     // Create a DataWriter with the QoS profile "transient_local_profile",
     // from QoS library "profiles_Library".
-    DataWriter<profiles> writer_transient_local(
+    dds::pub::DataWriter<profiles> writer_transient_local(
             publisher,
             topic,
             qos_provider.datawriter_qos(
@@ -47,7 +43,7 @@ void publisher_main(int domain_id, int sample_count)
 
     // Create a DataReader with the QoS profile "volatile_profile",
     // from the QoS library "profiles_Library".
-    DataWriter<profiles> writer_volatile(
+    dds::pub::DataWriter<profiles> writer_volatile(
             publisher,
             topic,
             qos_provider.datawriter_qos("profiles_Library::volatile_profile"));
@@ -56,13 +52,14 @@ void publisher_main(int domain_id, int sample_count)
     profiles instance;
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Update the counter value of the sample.
-        instance.x(count);
+        instance.x(samples_written);
 
         // Send the sample using the DataWriter with "volatile" durability.
-        std::cout << "Writing profile_name = volatile_profile,\t x = " << count
+        std::cout << "Writing profile_name = volatile_profile,\t x = " << samples_written
                   << std::endl;
         instance.profile_name("volatile_profile");
         writer_volatile.write(instance);
@@ -70,39 +67,44 @@ void publisher_main(int domain_id, int sample_count)
         // Send the sample using the DataWriter with "transient_local"
         // durability.
         std::cout << "Writing profile_name = transient_local_profile,\t x = "
-                  << count << std::endl
+                  << samples_written << std::endl
                   << std::endl;
         instance.profile_name("transient_local_profile");
         writer_transient_local.write(instance);
 
         // Send the sample every second.
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv, Entity::Publisher);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

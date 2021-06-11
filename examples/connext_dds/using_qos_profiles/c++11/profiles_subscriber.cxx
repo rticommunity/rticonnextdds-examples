@@ -9,29 +9,23 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "profiles.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::core::status;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-
-class ProfilesListener : public NoOpDataReaderListener<profiles> {
+class ProfilesListener : public dds::sub::NoOpDataReaderListener<profiles> {
 public:
     ProfilesListener(std::string name) : listener_name_(name)
     {
     }
 
-    void on_data_available(DataReader<profiles> &reader)
+    void on_data_available(dds::sub::DataReader<profiles> &reader)
     {
         // Take all samples
-        LoanedSamples<profiles> samples = reader.take();
+        dds::sub::LoanedSamples<profiles> samples = reader.take();
 
         std::cout << "============================================="
                   << std::endl
@@ -57,83 +51,82 @@ private:
     const std::string listener_name_;
 };
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
 {
     // Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
-    QosProvider qos_provider("my_custom_qos_profiles.xml");
+    dds::core::QosProvider qos_provider("my_custom_qos_profiles.xml");
 
     // Create a DomainParticipant with the default QoS of the provider.
-    DomainParticipant participant(domain_id, qos_provider.participant_qos());
+    dds::domain::DomainParticipant participant(domain_id, qos_provider.participant_qos());
 
     // Create a Subscriber with default QoS.
-    Subscriber subscriber(participant, qos_provider.subscriber_qos());
+    dds::sub::Subscriber subscriber(participant, qos_provider.subscriber_qos());
 
     // Create a Topic with default QoS.
-    Topic<profiles> topic(
+    dds::topic::Topic<profiles> topic(
             participant,
             "Example profiles",
             qos_provider.topic_qos());
 
+    // Create a shared pointer for the ProfilesListener Class
+    auto transient_listener = std::make_shared<ProfilesListener>("transient_local_profile");
+
     // Create a DataWriter with the QoS profile "transient_local_profile" that
     // it is inside the QoS library "profiles_Library".
-    DataReader<profiles> reader_transient_local(
+    dds::sub::DataReader<profiles> reader_transient_local(
             subscriber,
             topic,
             qos_provider.datareader_qos(
-                    "profiles_Library::transient_local_profile"));
+                    "profiles_Library::transient_local_profile"),
+            transient_listener);
 
-    // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles>> scoped_transient_listener =
-            rti::core::bind_and_manage_listener(
-                    reader_transient_local,
-                    new ProfilesListener("transient_local_profile"),
-                    StatusMask::data_available());
+    // Create a shared pointer for the ProfilesListener Class
+    auto volatile_listener = std::make_shared<ProfilesListener>("volatile_profile");
 
     // Create a DataReader with the QoS profile "volatile_profile" that it is
     // inside the QoS library "profiles_Library".
-    DataReader<profiles> reader_volatile(
+    dds::sub::DataReader<profiles> reader_volatile(
             subscriber,
             topic,
-            qos_provider.datareader_qos("profiles_Library::volatile_profile"));
-
-    // Use a ListeberBinder to take care of resetting and deleting the listener.
-    rti::core::ListenerBinder<DataReader<profiles>> scoped_volatile_listener =
-            rti::core::bind_and_manage_listener(
-                    reader_volatile,
-                    new ProfilesListener("volatile_profile"),
-                    StatusMask::data_available());
+            qos_provider.datareader_qos("profiles_Library::volatile_profile"),
+            volatile_listener);
 
     // Main loop.
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        rti::util::sleep(Duration(1));
+    for (unsigned int samples_read = 0;
+         !application::shutdown_requested && samples_read < sample_count;
+         samples_read++) {
+        rti::util::sleep(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv, Entity::Subscriber);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
