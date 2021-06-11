@@ -1,5 +1,5 @@
 /*
- * (c) Copyright, Real-Time Innovations, 2012.  All rights reserved.
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the software solely for use with RTI Connext DDS. Licensee may
  * redistribute copies of the software provided that all such copies are subject
@@ -10,23 +10,25 @@
  * to use the software.
  */
 
-/* RoutingServiceMonitoring_subscriber.cxx
-
-A subscription example to the Routing Service Monitoring topics
-
-*/
+/*
+ * RoutingServiceMonitoring_subscriber.cxx
+ *
+ * A subscription example to the Routing Service Monitoring topics
+ *
+ * */
 #include <algorithm>
+#include <dds/dds.hpp>
+#include <exception>
 #include <iostream>
 #include <map>
-#include <exception>
-
-#include <dds/dds.hpp>
 
 #include "RoutingServiceMonitoring.hpp"
 
-// Get the Configuration sample (rti/service/monitoring/config topic) from its
-// Instance Handle. The reader for that topic is passed as a parameter. Also the
-// Instance Handle.
+/*
+ * Get the Configuration sample (rti/service/monitoring/config topic) from its
+ * Instance Handle. The reader for that topic is passed as a parameter. Also the
+ * Instance Handle.
+ * */
 RTI::RoutingService::Monitoring::Config getConfig(
         dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>
                 &configReader,
@@ -44,14 +46,14 @@ RTI::RoutingService::Monitoring::Config getConfig(
                  << " has not being received";
         throw std::runtime_error((errorMsg.str()));
     }
-    return cSamples[cSamples.length() - 1].data();  // We are interested only in
-                                                    // the last config sample
-                                                    // received
+    // We are interested only in the last config sample received
+    return cSamples[cSamples.length() - 1].data();
 }
 
-// Process the samples from the "rti/service/monitoring/periodic" topic. It
-// shows in the console information related to the Domain Route, and Routing
-// Service process.
+/* Process the samples from the "rti/service/monitoring/periodic" topic. It
+ * shows in the console information related to the Domain Route, and Routing
+ * Service process.
+ * */
 int processPeriodicData(
         dds::sub::DataReader<RTI::RoutingService::Monitoring::Periodic>
                 &periodicReader,
@@ -66,9 +68,9 @@ int processPeriodicData(
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 count++;
-                if (sample.data().value()._d()
-                    == (RTI::Service::Monitoring::ResourceKind::
-                                ROUTING_DOMAIN_ROUTE)) {
+                switch (sample.data().value()._d()) {
+                case (RTI::Service::Monitoring::ResourceKind::
+                              ROUTING_DOMAIN_ROUTE): {
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
@@ -107,11 +109,10 @@ int processPeriodicData(
                                          .publication_period_metrics()
                                          .mean()
                               << std::endl;
-
-                } else if (
-                        sample.data().value()._d()
-                        == RTI::Service::Monitoring::ResourceKind::
-                                ROUTING_SERVICE) {
+                    break;
+                }
+                case (RTI::Service::Monitoring::ResourceKind::
+                              ROUTING_SERVICE): {
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
@@ -130,6 +131,11 @@ int processPeriodicData(
                                          .publication_period_metrics()
                                          .mean()
                               << " %" << std::endl;
+                    break;
+                }
+                default:
+                    // Nothing to show
+                    break;
                 }
             }
         }
@@ -142,11 +148,14 @@ int processPeriodicData(
     }
 
     return count;
-}  // The LoanedSamples destructor returns the loan
+    // The LoanedSamples destructor returns the loan
+}
 
-// Process the samples from the "rti/service/monitoring/event" topic. It shows
-// in the console information related to the Domain Route, Inputs and Outputs
-// (Routing Service).
+/*
+ * Process the samples from the "rti/service/monitoring/event" topic. It shows
+ * in the console information related to the Domain Route, Inputs and Outputs
+ * (Routing Service).
+ * */
 int processEventData(
         dds::sub::DataReader<RTI::RoutingService::Monitoring::Event>
                 &eventReader,
@@ -161,9 +170,9 @@ int processEventData(
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 count++;
-                if (sample.data().value()._d()
-                    == (RTI::Service::Monitoring::ResourceKind::
-                                ROUTING_DOMAIN_ROUTE)) {
+                switch (sample.data().value()._d()) {
+                case (RTI::Service::Monitoring::ResourceKind::
+                              ROUTING_DOMAIN_ROUTE): {
                     std::cout << "\t > The Domain Route status is "
                               << sample.data()
                                          .value()
@@ -189,91 +198,79 @@ int processEventData(
                         }
                         std::cout << " } " << std::endl;
                     }
-                } else {
-                    if (sample.data().value()._d()
-                        == (RTI::Service::Monitoring::ResourceKind::
-                                    ROUTING_INPUT)) {
-                        auto config = getConfig(
-                                configReader,
-                                sample.info().instance_handle());
-                        if (config.value()._d()
-                            == RTI::Service::Monitoring::ResourceKind::
-                                    ROUTING_INPUT) {
-                            std::cout << "\t > The Input "
-                                      << config.value()
-                                                 .routing_input()
-                                                 .resource_id()
-                                      << std::endl;
-                            std::cout << "\t\t status is "
-                                      << sample.data()
-                                                 .value()
-                                                 .routing_input()
-                                                 .state()
-                                      << std::endl;
-                            std::cout << "\t\t Topic: "
-                                      << config.value()
-                                                 .routing_input()
-                                                 .stream_name()
-                                      << ", Type: "
-                                      << config.value()
-                                                 .routing_input()
-                                                 .registered_type_name()
-                                      << ", Participant name: "
-                                      << config.value()
-                                                 .routing_input()
-                                                 .connection_name()
-                                      << std::endl;
-                            // if
-                            // (sample.data().value().routing_input().endpoint_key().is_set())
-                            //    std::cout<< "\t \t Endpoint key is "<<
-                            //    sample.data().value().routing_input().endpoint_key().value()<<
-                            //    std::endl;
-                        }
-                    } else if (
-                            sample.data().value()._d()
-                            == (RTI::Service::Monitoring::ResourceKind::
-                                        ROUTING_OUTPUT)) {
-                        auto config = getConfig(
-                                configReader,
-                                sample.info().instance_handle());
-                        if (config.value()._d()
-                            == RTI::Service::Monitoring::ResourceKind::
-                                    ROUTING_OUTPUT) {
-                            std::cout << "\t > The Output "
-                                      << config.value()
-                                                 .routing_output()
-                                                 .resource_id()
-                                      << std::endl;
-                            std::cout << "\t > status is "
-                                      << sample.data()
-                                                 .value()
-                                                 .routing_output()
-                                                 .state()
-                                      << std::endl;
-                            std::cout << "\t\t Topic: "
-                                      << config.value()
-                                                 .routing_output()
-                                                 .stream_name()
-                                      << ", Type: "
-                                      << config.value()
-                                                 .routing_output()
-                                                 .registered_type_name()
-                                      << ", Participant name: "
-                                      << config.value()
-                                                 .routing_output()
-                                                 .connection_name()
-                                      << std::endl;
-                            // if
-                            // (sample.data().value().routing_output().endpoint_key().is_set())
-                            //    std::cout<< "\t \t Endpoint key is "<<
-                            //    sample.data().value().routing_output().endpoint_key().value()<<
-                            //    std::endl;
-                        }
+                    break;
+                }
+                case (RTI::Service::Monitoring::ResourceKind::ROUTING_INPUT): {
+                    auto config = getConfig(
+                            configReader,
+                            sample.info().instance_handle());
+                    if (config.value()._d()
+                        == RTI::Service::Monitoring::ResourceKind::
+                                ROUTING_INPUT) {
+                        std::cout
+                                << "\t > The Input "
+                                << config.value().routing_input().resource_id()
+                                << std::endl;
+                        std::cout
+                                << "\t\t status is "
+                                << sample.data().value().routing_input().state()
+                                << std::endl;
+                        std::cout
+                                << "\t\t Topic: "
+                                << config.value().routing_input().stream_name()
+                                << ", Type: "
+                                << config.value()
+                                           .routing_input()
+                                           .registered_type_name()
+                                << ", Participant name: "
+                                << config.value()
+                                           .routing_input()
+                                           .connection_name()
+                                << std::endl;
                     }
+                    break;
+                }
+                case (RTI::Service::Monitoring::ResourceKind::ROUTING_OUTPUT): {
+                    auto config = getConfig(
+                            configReader,
+                            sample.info().instance_handle());
+                    if (config.value()._d()
+                        == RTI::Service::Monitoring::ResourceKind::
+                                ROUTING_OUTPUT) {
+                        std::cout
+                                << "\t > The Output "
+                                << config.value().routing_output().resource_id()
+                                << std::endl;
+                        std::cout << "\t > status is "
+                                  << sample.data()
+                                             .value()
+                                             .routing_output()
+                                             .state()
+                                  << std::endl;
+                        std::cout
+                                << "\t\t Topic: "
+                                << config.value().routing_output().stream_name()
+                                << ", Type: "
+                                << config.value()
+                                           .routing_output()
+                                           .registered_type_name()
+                                << ", Participant name: "
+                                << config.value()
+                                           .routing_output()
+                                           .connection_name()
+                                << std::endl;
+                    }
+                    break;
+                }
+                default:
+                    // Nothing to show
+                    break;
                 }
             }
         }
-    } catch (const dds::core::Exception &e) {
+    }
+
+    catch (const dds::core::Exception &e) {
         std::cerr << "A Connext exception has been thrown: " << e.what()
                   << std::endl;
     } catch (const std::exception &e) {
@@ -282,7 +279,8 @@ int processEventData(
     }
 
     return count;
-}  // The LoanedSamples destructor returns the loan
+    // The LoanedSamples destructor returns the loan
+}
 
 int subscriberMain(int domain_id, int sample_count)
 {
@@ -319,21 +317,18 @@ int subscriberMain(int domain_id, int sample_count)
                     periodicTopic,
                     qosProvider.datareader_qos(
                             "monitoring_Library::periodic_Profile"));
-    // Create a ReadCondition for any data on this reader and associate a
-    // handler
     int count = 0;
+    // Create a ReadCondition for any data on this reader
     dds::sub::cond::ReadCondition eventReadCondition(
             eventReader,
             dds::sub::status::DataState::any(),
-            [&eventReader, &configReader, &count](
-                    /* dds::core::cond::Condition condition */) {
+            [&eventReader, &configReader, &count]() {
                 count += processEventData(eventReader, configReader);
             });
     dds::sub::cond::ReadCondition periodicReadCondition(
             periodicReader,
             dds::sub::status::DataState::any(),
-            [&periodicReader, &configReader, &count](
-                    /* dds::core::cond::Condition condition */) {
+            [&periodicReader, &configReader, &count]() {
                 count += processPeriodicData(periodicReader, configReader);
             });
 
@@ -345,10 +340,8 @@ int subscriberMain(int domain_id, int sample_count)
     std::cout << "RTI::RoutingService::Monitoring::Event subscriber is running"
               << std::endl;
     while (count < sample_count || sample_count == 0) {
-        // Dispatch will call the handlers associated to the WaitSet conditions
-        // when they activate
-
-        waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
+        // Dispatch calls the conditions WaitSet handlers when they activate
+        waitset.dispatch(dds::core::Duration(4));
     }
     return 1;
 }
@@ -356,7 +349,8 @@ int subscriberMain(int domain_id, int sample_count)
 int main(int argc, char *argv[])
 {
     int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    // infinite loop
+    int sample_count = 0;
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -365,8 +359,8 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
+    /* To turn on additional logging, include <rti/config/Logger.hpp> and
+     uncomment the following line: */
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
@@ -378,10 +372,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
+    /* RTI Connext provides a finalize_participant_factory() method
+       if you want to release memory used by the participant factory singleton.
+       Uncomment the following line to release the singleton:*/
     // dds::domain::DomainParticipant::finalize_participant_factory();
 
     return 0;
