@@ -9,36 +9,36 @@
  use the software.
  ******************************************************************************/
 
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
+
 #include "flights.hpp"
-#include <dds/dds.hpp>
-#include <iostream>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::cond;
-using namespace dds::sub::qos;
-using namespace dds::sub::status;
-
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<Flight> topic(participant, "Example Flight");
+    dds::topic::Topic<Flight> topic(participant, "Example Flight");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather than
     // using the XML file, uncomment the following lines.
     // reader_qos << Reliability::Reliable();
 
+    // Create a subscriber
+    dds::sub::Subscriber subscriber(participant);
+
     // Create a DataReader.
-    DataReader<Flight> reader(Subscriber(participant), topic, reader_qos);
+    dds::sub::DataReader<Flight> reader(subscriber, topic, reader_qos);
 
     // Query for company named 'CompanyA' and for flights in cruise
     // (about 30,000ft). The company parameter will be changed in run-time.
@@ -52,18 +52,19 @@ void subscriber_main(int domain_id, int sample_count)
 
     // Create the query condition with an expession to MATCH the id field in
     // the structure and a numeric comparison.
-    QueryCondition query_condition(
-            Query(reader,
-                  "company MATCH %0 AND altitude >= %1",
-                  query_parameters),
-            DataState::any_data());
+    dds::sub::cond::QueryCondition query_condition(
+            dds::sub::Query(
+                    reader,
+                    "company MATCH %0 AND altitude >= %1",
+                    query_parameters),
+            dds::sub::status::DataState::any_data());
 
     // Main loop
     bool update = false;
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         count++) {
+    int samples_read = 0, count = 0;
+    while (!application::shutdown_requested && samples_read < sample_count) {
         // Poll for new samples every second.
-        rti::util::sleep(Duration(1));
+        rti::util::sleep(dds::core::Duration(1));
 
         // Change the filter parameter after 5 seconds.
         if ((count + 1) % 10 == 5) {
@@ -85,40 +86,48 @@ void subscriber_main(int domain_id, int sample_count)
         }
 
         // Get new samples selecting them with a condition.
-        LoanedSamples<Flight> samples =
+        dds::sub::LoanedSamples<Flight> samples =
                 reader.select().condition(query_condition).read();
 
         for (const auto &sample : samples) {
-            if (!sample.info().valid())
-                continue;
-
-            std::cout << "\t" << sample.data() << std::endl;
+            if (sample.info().valid()) {
+                samples_read++;
+                std::cout << "\t" << sample.data() << std::endl;
+            }
         }
+
+        count++;
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance()l.verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }
