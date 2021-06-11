@@ -9,104 +9,113 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "tbf.hpp"
-#include <dds/dds.hpp>
-#include <rti/core/ListenerBinder.hpp>
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace rti::core;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::qos;
+int process_data(dds::sub::DataReader<tbf> reader)
+{
+    int count = 0;
+    // Take all samples
+    dds::sub::LoanedSamples<tbf> samples = reader.take();
 
-class tbfReaderListener : public NoOpDataReaderListener<tbf> {
-public:
-    void on_data_available(dds::sub::DataReader<tbf> &reader)
-    {
-        // Take all samples
-        LoanedSamples<tbf> samples = reader.take();
+    for (const auto &sample : samples) {
+        if (sample.info().valid()) {
+            count++;
+            // Here we get source timestamp of the sample using the sample
+            // info. 'info.source_timestamp()' returns dds::core::Time.
+            double source_timestamp =
+                    sample.info().source_timestamp().to_secs();
 
-        for (const auto &sample : samples) {
-            if (sample.info().valid()) {
-                // Here we get source timestamp of the sample using the sample
-                // info. 'info.source_timestamp()' returns dds::core::Time.
-                double source_timestamp =
-                        sample.info().source_timestamp().to_secs();
-
-                const tbf &data = sample.data();
-                std::cout << source_timestamp << "\t" << data.code() << "\t\t"
-                          << data.x() << std::endl;
-            }
+            const tbf &data = sample.data();
+            std::cout << source_timestamp << "\t" << data.code() << "\t\t"
+                      << data.x() << std::endl;
         }
     }
-};
 
-void subscriber_main(int domain_id, int sample_count)
+    return count;
+}
+
+
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<tbf> topic(participant, "Example tbf");
+    dds::topic::Topic<tbf> topic(participant, "Example tbf");
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
-    DataReaderQos reader_qos = QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the DataReader's QoS programmatically rather
     // than using the XML file, you will need uncomment this line.
 
     // reader_qos << TimeBasedFilter(Duration::from_secs(2));
 
-    // Create a DataReader with default Qos (Subscriber created in-line)
-    DataReader<tbf> reader(Subscriber(participant), topic, reader_qos);
+    // Create a Subscriber with default QoS
+    dds::sub::Subscriber subscriber(participant);
 
-    // Associate a listener to the DataReader using ListenerBinder, a RAII that
-    // will take care of setting it to NULL on destruction.
-    ListenerBinder<DataReader<tbf>> reader_listener =
-            rti::core::bind_and_manage_listener(
-                    reader,
-                    new tbfReaderListener,
-                    dds::core::status::StatusMask::all());
+    // Create a DataReader with default Qos
+    dds::sub::DataReader<tbf> reader(subscriber, topic, reader_qos);
+
+    // WaitSet will be woken when the attached condition is triggered
+    dds::core::cond::WaitSet waitset;
+
+    // Create a ReadCondition for any data on this reader, and add to WaitSet
+    unsigned int samples_read = 0;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                samples_read += process_data(reader);
+            });
+
+    waitset += read_condition;
 
     std::cout << "================================================" << std::endl
               << "Source Timestamp\tInstance\tX" << std::endl
               << "================================================" << std::endl
               << std::fixed;
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
-        rti::util::sleep(Duration(1));
+    while (!application::shutdown_requested && samples_read < sample_count) {
+        waitset.dispatch(dds::core::Duration(1));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

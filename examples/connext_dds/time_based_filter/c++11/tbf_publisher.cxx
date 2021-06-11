@@ -9,77 +9,84 @@
  use the software.
  ******************************************************************************/
 
-#include <cstdlib>
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
+#include "application.hpp"  // for command line parsing and ctrl-c
 #include "tbf.hpp"
-#include <dds/dds.hpp>
 
-using namespace dds::core;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
-
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type
-    Topic<tbf> topic(participant, "Example tbf");
+    dds::topic::Topic<tbf> topic(participant, "Example tbf");
 
-    // Create a DataWriter with default Qos (Publisher created in-line)
-    DataWriter<tbf> writer(Publisher(participant), topic);
+    // Create a Publisher with default QoS
+    dds::pub::Publisher publisher(participant);
+
+    // Create a DataWriter with default Qos
+    dds::pub::DataWriter<tbf> writer(publisher, topic);
 
     // Create a sample to write
     tbf sample;
 
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        std::cout << "Writing tbf, count " << count << std::endl;
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
+        std::cout << "Writing tbf, count " << samples_written << std::endl;
 
         // Update instance1 (code = 1) every 0.5 seconds => when count is even.
-        if ((count + 1) % 2 == 0) {
+        if ((samples_written + 1) % 2 == 0) {
             std::cout << "Publishing instance 1" << std::endl;
             sample.code(1);
-            sample.x(count);
+            sample.x(samples_written);
             writer.write(sample);
         }
 
         // Update instance 0 (code = 0) every 0.25 seconds.
         std::cout << "Publishing instance 0" << std::endl;
         sample.code(0);
-        sample.x(count);
+        sample.x(samples_written);
         writer.write(sample);
 
         // The loop to write new samples will sleep for 0.25 second.
-        rti::util::sleep(Duration::from_millisecs(250));
+        rti::util::sleep(dds::core::Duration::from_millisecs(250));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

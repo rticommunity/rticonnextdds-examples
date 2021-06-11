@@ -71,7 +71,7 @@
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI Time-Based Filter C++03 Example</name>
+                    <name>RTI Time-Based Filter C++11 Example</name>
                 </participant_name>
 
             </domain_participant_qos>
