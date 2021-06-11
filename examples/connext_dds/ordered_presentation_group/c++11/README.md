@@ -39,10 +39,18 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
+On *Windows* systems run:
+
 ```sh
-# Do not forget to replace the path separator to "\" on Windows.
-ordered_group_publisher.exe  <domain_id> <samples_to_send>
-ordered_group_subscriber.exe <domain_id> <sleep_periods>
+ordered_group_publisher.exe  -d <domain_id> -s <samples_to_send>
+ordered_group_subscriber.exe -d <domain_id> -s <sleep_periods>
+```
+
+On *UNIX* systems run:
+
+```sh
+./ordered_group_publisher  -d <domain_id> -s <samples_to_send>
+./ordered_group_subscriber -d <domain_id> -s <sleep_periods>
 ```
 
 The applications accept up to two arguments:
