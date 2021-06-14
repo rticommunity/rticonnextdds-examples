@@ -16,7 +16,8 @@
 #include "ordered_group.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
 
-class ordered_groupSubscriberListener : public dds::sub::NoOpSubscriberListener {
+class ordered_groupSubscriberListener
+        : public dds::sub::NoOpSubscriberListener {
 public:
     void on_data_on_readers(dds::sub::Subscriber &subscriber)
     {
@@ -33,7 +34,8 @@ public:
         std::cout << num_readers << std::endl;
 
         for (int i = 0; i < num_readers; i++) {
-            dds::sub::DataReader<ordered_group> reader = readers[i].get<ordered_group>();
+            dds::sub::DataReader<ordered_group> reader =
+                    readers[i].get<ordered_group>();
 
             // We need to take only one sample each time, as we want to follow
             // the sequence of DataReaders. This way the samples will be
@@ -50,13 +52,16 @@ public:
     }
 };
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
 
     // Retrieve the default Subscriber QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::SubscriberQos subscriber_qos = dds::core::QosProvider::Default().subscriber_qos();
+    dds::sub::qos::SubscriberQos subscriber_qos =
+            dds::core::QosProvider::Default().subscriber_qos();
 
     // If you want to change the Subscriber's QoS programmatically rather than
     // using the XML file, uncomment the following line.
@@ -64,10 +69,14 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // subscriber_qos << Presentation::GroupAccessScope(false, true);
 
     // Create a shared pointer for the Subscriber Listener
-    auto subscriber_listener = std::make_shared<ordered_groupSubscriberListener>();
+    auto subscriber_listener =
+            std::make_shared<ordered_groupSubscriberListener>();
 
     // Create a Subscriber.
-    dds::sub::Subscriber subscriber(participant, subscriber_qos, subscriber_listener);
+    dds::sub::Subscriber subscriber(
+            participant,
+            subscriber_qos,
+            subscriber_listener);
 
     // Create three Topic, once for each DataReader.
     dds::topic::Topic<ordered_group> topic1(participant, "Topic1");

@@ -27,7 +27,8 @@ int process_data(dds::sub::DataReader<partitions> reader)
             count++;
             // After partition mismatch unpair,
             // it detects the instance as new.
-            dds::sub::status::ViewState view_state = sample.info().state().view_state();
+            dds::sub::status::ViewState view_state =
+                    sample.info().state().view_state();
             if (view_state == dds::sub::status::ViewState::new_view()) {
                 std::cout << "Found new instance" << std::endl;
             }
@@ -39,15 +40,19 @@ int process_data(dds::sub::DataReader<partitions> reader)
     return count;
 }
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a participant with default QoS.
     dds::domain::DomainParticipant participant(domain_id);
 
     // Retrieve the default Subscriber QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::SubscriberQos subscriber_qos = dds::core::QosProvider::Default().subscriber_qos();
+    dds::sub::qos::SubscriberQos subscriber_qos =
+            dds::core::QosProvider::Default().subscriber_qos();
 
-    dds::core::policy::Partition partition = subscriber_qos.policy<dds::core::policy::Partition>();
+    dds::core::policy::Partition partition =
+            subscriber_qos.policy<dds::core::policy::Partition>();
     std::vector<std::string> partition_names = partition.name();
 
     // If you want to change the Subscriber QoS programmatically rather
@@ -69,7 +74,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     dds::topic::Topic<partitions> topic(participant, "Example partitions");
 
     // Retrieve the default DataReader QoS, from USER_QOS_PROFILES.xml
-    dds::sub::qos::DataReaderQos reader_qos = dds::core::QosProvider::Default().datareader_qos();
+    dds::sub::qos::DataReaderQos reader_qos =
+            dds::core::QosProvider::Default().datareader_qos();
 
     // If you want to change the Subscriber QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -97,7 +103,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     waitset += read_condition;
 
     // Main loop
-   while (!application::shutdown_requested && samples_read < sample_count) {
+    while (!application::shutdown_requested && samples_read < sample_count) {
         waitset.dispatch(dds::core::Duration(4));
     }
 }

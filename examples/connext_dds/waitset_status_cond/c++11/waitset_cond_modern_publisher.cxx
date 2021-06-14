@@ -16,7 +16,9 @@
 #include "waitset_cond_modern.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);

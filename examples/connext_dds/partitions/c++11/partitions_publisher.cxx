@@ -16,14 +16,18 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "partitions.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos.
     dds::domain::DomainParticipant participant(domain_id);
 
     // Retrieve the default Publisher QoS, from USER_QOS_PROFILES.xml
-    dds::pub::qos::PublisherQos publisher_qos = dds::core::QosProvider::Default().publisher_qos();
-    dds::core::policy::Partition partition = publisher_qos.policy<dds::core::policy::Partition>();
+    dds::pub::qos::PublisherQos publisher_qos =
+            dds::core::QosProvider::Default().publisher_qos();
+    dds::core::policy::Partition partition =
+            publisher_qos.policy<dds::core::policy::Partition>();
     std::vector<std::string> partition_names = partition.name();
 
     // If you want to change the Publisher QoS programmatically rather
@@ -47,7 +51,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::topic::Topic<partitions> topic(participant, "Example partitions");
 
     // Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    dds::pub::qos::DataWriterQos writer_qos = dds::core::QosProvider::Default().datawriter_qos();
+    dds::pub::qos::DataWriterQos writer_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     // If you want to change the DataWriter QoS programmatically rather
     // than using the XML file, you will need to comment out these lines.
@@ -67,7 +72,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
-        std::cout << "Writing partitions, count " << samples_written << std::endl;
+        std::cout << "Writing partitions, count " << samples_written
+                  << std::endl;
 
         // Modify and send the sample.
         instance.x(samples_written);

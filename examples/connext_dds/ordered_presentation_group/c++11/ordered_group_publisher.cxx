@@ -16,13 +16,16 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "ordered_group.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
 
     // Retrieve the default Publisher QoS, from USER_QOS_PROFILES.xml
-    dds::pub::qos::PublisherQos publisher_qos = dds::core::QosProvider::Default().publisher_qos();
+    dds::pub::qos::PublisherQos publisher_qos =
+            dds::core::QosProvider::Default().publisher_qos();
 
     // If you want to change the Publisher's QoS programmatically rather than
     // using the XML file, uncomment the following line.
@@ -52,7 +55,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
-        std::cout << "Writing ordered_group, count " << samples_written << std::endl;
+        std::cout << "Writing ordered_group, count " << samples_written
+                  << std::endl;
 
         // Modify twice the first instance and send with the first writer.
         instance1.message("First sample, Topic 1 sent by DataWriter number 1");

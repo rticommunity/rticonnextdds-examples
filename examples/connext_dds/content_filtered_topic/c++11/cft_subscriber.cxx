@@ -75,7 +75,7 @@ void run_subscriber_application(
         cft_topic = dds::topic::ContentFilteredTopic<cft>(
                 topic,
                 "ContentFilteredTopic",
-                dds::topic::Filter("x >= %0 AND x <= %1", {"1", "4"}));
+                dds::topic::Filter("x >= %0 AND x <= %1", { "1", "4" }));
         reader = dds::sub::DataReader<cft>(subscriber, cft_topic, reader_qos);
     } else {
         std::cout << "Using Normal Topic" << std::endl;

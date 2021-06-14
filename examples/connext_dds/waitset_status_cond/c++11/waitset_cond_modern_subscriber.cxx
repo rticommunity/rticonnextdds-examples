@@ -18,7 +18,9 @@
 
 #include "waitset_cond_modern.hpp"
 
-int run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);

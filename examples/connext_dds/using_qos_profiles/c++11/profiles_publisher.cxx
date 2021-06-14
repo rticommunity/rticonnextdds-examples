@@ -16,13 +16,17 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "profiles.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
     dds::core::QosProvider qos_provider("my_custom_qos_profiles.xml");
 
     // Create a DomainParticipant with the default QoS of the provider.
-    dds::domain::DomainParticipant participant(domain_id, qos_provider.participant_qos());
+    dds::domain::DomainParticipant participant(
+            domain_id,
+            qos_provider.participant_qos());
 
     // Create a Publisher with default QoS.
     dds::pub::Publisher publisher(participant, qos_provider.publisher_qos());
@@ -59,8 +63,8 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
         instance.x(samples_written);
 
         // Send the sample using the DataWriter with "volatile" durability.
-        std::cout << "Writing profile_name = volatile_profile,\t x = " << samples_written
-                  << std::endl;
+        std::cout << "Writing profile_name = volatile_profile,\t x = "
+                  << samples_written << std::endl;
         instance.profile_name("volatile_profile");
         writer_volatile.write(instance);
 

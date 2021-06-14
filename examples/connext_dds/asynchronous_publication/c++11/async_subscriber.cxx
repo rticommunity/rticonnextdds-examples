@@ -36,7 +36,7 @@ int process_data(dds::sub::DataReader<async> reader)
                       << ", got x = " << sample.data().x() << std::endl;
         } else {
             std::cout << "Instance state changed to "
-            << sample.info().state().instance_state() << std::endl;
+                      << sample.info().state().instance_state() << std::endl;
         }
     }
 

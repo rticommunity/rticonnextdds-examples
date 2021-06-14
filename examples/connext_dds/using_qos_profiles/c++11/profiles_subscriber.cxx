@@ -51,13 +51,17 @@ private:
     const std::string listener_name_;
 };
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Retrieve QoS from custom profile XML and USER_QOS_PROFILES.xml
     dds::core::QosProvider qos_provider("my_custom_qos_profiles.xml");
 
     // Create a DomainParticipant with the default QoS of the provider.
-    dds::domain::DomainParticipant participant(domain_id, qos_provider.participant_qos());
+    dds::domain::DomainParticipant participant(
+            domain_id,
+            qos_provider.participant_qos());
 
     // Create a Subscriber with default QoS.
     dds::sub::Subscriber subscriber(participant, qos_provider.subscriber_qos());
@@ -69,7 +73,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
             qos_provider.topic_qos());
 
     // Create a shared pointer for the ProfilesListener Class
-    auto transient_listener = std::make_shared<ProfilesListener>("transient_local_profile");
+    auto transient_listener =
+            std::make_shared<ProfilesListener>("transient_local_profile");
 
     // Create a DataWriter with the QoS profile "transient_local_profile" that
     // it is inside the QoS library "profiles_Library".
@@ -81,7 +86,8 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
             transient_listener);
 
     // Create a shared pointer for the ProfilesListener Class
-    auto volatile_listener = std::make_shared<ProfilesListener>("volatile_profile");
+    auto volatile_listener =
+            std::make_shared<ProfilesListener>("volatile_profile");
 
     // Create a DataReader with the QoS profile "volatile_profile" that it is
     // inside the QoS library "profiles_Library".
