@@ -44,7 +44,7 @@ the execution of the example. The templates are located in
     -   If you added a new `C/C++` example for RTI Connext DDS, update the
     `CMakeList.txt` file located in `examples/connext_ds`.
     -   If you added a new `Java` example for RTI Connext DDS, update the
-    `settings.gradle` located in `examples/connext_ds`.
+    `settings.gradle` file located in `examples/connext_ds`.
 
 ## How to report bugs
 
