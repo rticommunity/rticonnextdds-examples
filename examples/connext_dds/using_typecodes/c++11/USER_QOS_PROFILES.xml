@@ -70,7 +70,7 @@
                 application from another when you're debugging.
                 -->
                 <participant_name>
-                    <name>RTI Using Typecodes C++03 Example</name>
+                    <name>RTI Using Typecodes C++11 Example</name>
                 </participant_name>
 
             </domain_participant_qos>
