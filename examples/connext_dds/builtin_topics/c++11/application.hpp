@@ -115,12 +115,14 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
+                && current_entity == Entity::Subscriber
                 && (strcmp(argv[arg_processing], "-pa") == 0
                     || strcmp(argv[arg_processing], "--pauth") == 0)) {
             participant_password = argv[arg_processing + 1];
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
+                && current_entity == Entity::Subscriber
                 && (strcmp(argv[arg_processing], "-ra") == 0
                     || strcmp(argv[arg_processing], "--rauth") == 0)) {
             reader_password = argv[arg_processing + 1];
