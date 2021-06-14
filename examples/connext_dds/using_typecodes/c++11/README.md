@@ -43,14 +43,14 @@ On *Windows* systems run:
 
 ```sh
 msg_publisher.exe  -d <domain_id> -s <samples_to_send>
-msg_subscriber.exe -d <domain_id> -s <sleep_periods>
+msg_subscriber.exe -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
 ./msg_publisher  -d <domain_id> -s <samples_to_send>
-./msg_subscriber -d <domain_id> -s <sleep_periods>
+./msg_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:

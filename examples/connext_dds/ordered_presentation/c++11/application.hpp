@@ -147,7 +147,7 @@ inline ApplicationArguments parse_arguments(
                      "                               cleanly shutting down. \n"
                      "                               Default: infinite\n";
         } else if (current_entity == Entity::Subscriber) {
-            usage += "    -s, --sleeps <int>         Number of sleeps before "
+            usage += "    -s, --sleeps       <int>   Number of sleeps before "
                      "cleanly\n"
                      "                               shutting down. \n"
                      "                               Default: infinite\n";
