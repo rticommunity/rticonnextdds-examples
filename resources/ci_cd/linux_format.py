@@ -44,8 +44,8 @@ import sys
 
 from argparse import ArgumentParser, RawDescriptionHelpFormatter, Namespace
 from pathlib import Path
-from sultan.api import Sultan, Result
 from typing import List, Set, Optional
+import subprocess
 
 
 class FormatError(Exception):
@@ -118,19 +118,6 @@ def get_argument_parser() -> ArgumentParser:
     return parser
 
 
-def show_sultan_output(result: Result) -> None:
-    """Show command output.
-
-    :param result: Command result object.
-
-    """
-    for line in result.stdout:
-        print(line)
-
-    for line in result.stderr:
-        print(line)
-
-
 def get_git_files(
     repo_root: Path,
     commits: Optional[List[str]] = None,
@@ -159,10 +146,12 @@ def get_git_files(
             command.append("HEAD")
             print("Checking local changed files...")
 
-    with Sultan.load(cwd=repo_root) as s:
-        changed_files = (
-            s.git(*command).run(halt_on_nonzero=False, quiet=True).stdout
-        )
+    command.insert(0, "git")
+
+    result = subprocess.run(command, cwd=repo_root, capture_output=True)
+
+    changed_files = result.stdout.decode("utf-8")
+    changed_files = changed_files[:-1].split("\n")
 
     return changed_files
 
@@ -190,13 +179,11 @@ def perform_linting(repo_root: Path, command: List[str]) -> None:
     :raises FormatError: When the linter outputs format errors.
 
     """
-    with Sultan.load(cwd=repo_root) as s:
-        lint_result: Result = getattr(s, command[0])(*command[1:]).run(
-            halt_on_nonzero=False, quiet=True
-        )
+    lint_result = subprocess.run(command, cwd=repo_root, capture_output=True)
 
-    if lint_result.rc != 0 or len(lint_result.stdout) > 1:
-        show_sultan_output(lint_result)
+    if lint_result.returncode != 0 or len(lint_result.stdout) > 1:
+        print(lint_result.stdout.decode("utf-8"))
+        print(lint_result.stderr.decode("utf-8"))
         raise FormatError(f"Format error for {command} command.")
 
 
@@ -204,21 +191,21 @@ if __name__ == "__main__":
     args: Namespace = get_argument_parser().parse_args()
     current_script_dir: Path = Path(__file__).parent.resolve()
 
-    with Sultan.load(logging=False, cwd=current_script_dir) as s:
-        result: Result = s.git("rev-parse", "--show-toplevel").run(
-            halt_on_nonzero=False, quiet=True
+    result = subprocess.run(
+        ["git", "rev-parse", "--show-toplevel"],
+        cwd=current_script_dir,
+        capture_output=True,
+    )
+
+    if result.returncode != 0:
+        sys.exit("Error: Script not in a git repository.")
+
+    try:
+        repo_root: Path = Path(result.stdout[:-1].decode("utf-8")).resolve(
+            strict=True
         )
-
-        if result.rc != 0:
-            sys.exit("Error: Script not in a git repository.")
-
-        try:
-            repo_root: Path = Path(result.stdout[0]).resolve()
-        except FileNotFoundError:
-            sys.exit("Error: Root repo path not found.")
-        else:
-            if not repo_root.exists():
-                sys.exit("Error: Root repo path not found.")
+    except FileNotFoundError:
+        sys.exit("Error: Root repo path not found.")
 
     print("Starting format checker...")
 

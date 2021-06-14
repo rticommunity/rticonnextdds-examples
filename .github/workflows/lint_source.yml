@@ -28,7 +28,7 @@ jobs:
         with:
           python-version: 3.7
       - name: Install necessary tools
-        run: pip install sultan clang-format==9.0.0
+        run: pip install clang-format==9.0.0
       - name: Perform linting
         working-directory: ${{ github.workspace }}
         run: |
