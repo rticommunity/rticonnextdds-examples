@@ -19,7 +19,7 @@ following linters:
 
 -   For `Python` we are using [black](https://pypi.org/project/black/) with a
     line length of 79.
--   For `C/C++` and `Java` we are using
+-   For `C/C++`, `C#` and `Java` we are using
 [clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
 formatting for this tool are defined in the `.clang-format` file.
 -   For `Markdown` we are using [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
