@@ -126,7 +126,9 @@ public:
     }
 };
 
-void run_publisher_application(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // By default, the participant is enabled upon construction.
     // At that time our listeners for the builtin topics have not
@@ -235,7 +237,7 @@ int main(int argc, char *argv[])
     using namespace application;
 
     // Parse arguments and handle control-C
-    auto arguments = parse_arguments(argc, argv);
+    auto arguments = parse_arguments(argc, argv, Entity::Publisher);
     if (arguments.parse_result == ParseReturn::exit) {
         return EXIT_SUCCESS;
     } else if (arguments.parse_result == ParseReturn::failure) {

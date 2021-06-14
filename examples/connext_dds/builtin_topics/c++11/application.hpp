@@ -36,6 +36,8 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
+enum class Entity { Publisher, Subscriber };
+
 struct ApplicationArguments {
     ParseReturn parse_result;
     unsigned int domain_id;
@@ -85,7 +87,10 @@ inline void set_verbosity(
 }
 
 // Parses application arguments for example.
-inline ApplicationArguments parse_arguments(int argc, char *argv[])
+inline ApplicationArguments parse_arguments(
+        int argc,
+        char *argv[],
+        Entity current_entity)
 {
     int arg_processing = 1;
     bool show_usage = false;
@@ -153,16 +158,17 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[])
                      "    -v, --verbosity    <int>   How much debugging output "
                      "to show.\n"
                      "                               Range: 0-3 \n"
-                     "                               Default: 1\n"
-                     "    -pa, --pauth    <string>   (subscriber only) The "
-                     "participant\n"
-                     "                               authorization string. \n"
-                     "                               Default: \"password\"\n"
-                     "    -ra, --rauth    <string>   (subscriber only) The "
-                     "reader\n"
-                     "                               authorization string. \n"
-                     "                               Default: \"Reader_Auth\""
-                  << std::endl;
+                     "                               Default: 1\n";
+
+        if (current_entity == Entity::Subscriber)
+            std::cout
+                    << "    -pa, --pauth    <string>   The participant "
+                       "authorization string. \n"
+                       "                               Default: \"password\"\n"
+                       "    -ra, --rauth    <string>   The reader "
+                       "authorization string. \n"
+                       "                               Default: \"Reader_Auth\""
+                    << std::endl;
     }
 
     return ApplicationArguments(

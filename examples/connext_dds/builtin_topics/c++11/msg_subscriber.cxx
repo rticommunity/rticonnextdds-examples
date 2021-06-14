@@ -16,16 +16,6 @@
 #include "msg.hpp"
 #include "application.hpp"
 
-using namespace dds::core;
-using namespace dds::core::policy;
-using namespace rti::core;
-using namespace rti::core::policy;
-using namespace dds::domain;
-using namespace dds::domain::qos;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::qos;
-
 
 int process_data(dds::sub::DataReader<msg> reader)
 {
@@ -111,7 +101,7 @@ int main(int argc, char *argv[])
     using namespace application;
 
     // Parse arguments and handle control-C
-    auto arguments = parse_arguments(argc, argv);
+    auto arguments = parse_arguments(argc, argv, Entity::Subscriber);
     if (arguments.parse_result == ParseReturn::exit) {
         return EXIT_SUCCESS;
     } else if (arguments.parse_result == ParseReturn::failure) {
