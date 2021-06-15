@@ -1,4 +1,4 @@
-def DETAILS_URL="https://www.community.rti.com/"
+def DETAILS_URL="https://community.rti.com/"
 def detailsText
 def detailsTextBuild
 def detailstextStatic
