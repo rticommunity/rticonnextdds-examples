@@ -17,6 +17,7 @@
 // Or simply include <dds/dds.hpp>
 
 #include "waitset_cond_modern.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
 int run_subscriber_application(
         unsigned int domain_id,
