@@ -15,6 +15,7 @@
 #include <dds/core/ddscore.hpp>
 #include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "waitset_cond_modern.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
