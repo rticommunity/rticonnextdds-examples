@@ -19,6 +19,7 @@
 #include <rti/util/util.hpp>  // for sleep()
 
 #include "AwsExample.hpp"
+#include "application.hpp"
 
 class AwsSubscriber {
 public:
@@ -123,56 +124,21 @@ AwsSubscriber::~AwsSubscriber()
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int thread_pool_size = 4;
-    int sample_count = 0;  // infinite loop
-    const std::string USAGE(
-            "AwsSubscriber_subscriber [options]\n"
-            "Options:\n"
-            "\t-d, -domainId: Domain ID\n"
-            "\t-t, -threads: Number of threads used to process sample "
-            "reception\n"
-            "\t-s, -samples: Total number of received samples before "
-            "exiting\n");
+    using namespace application;
 
     srand(time(NULL));
 
-    for (int i = 0; i < argc; i++) {
-        if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "-domainId") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing domain ID parameter value " << std::endl;
-                return -1;
-            } else {
-                domain_id = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-t") == 0
-                || strcmp(argv[i], "-threads") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing threads parameter value " << std::endl;
-                return -1;
-            } else {
-                thread_pool_size = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-s") == 0
-                || strcmp(argv[i], "-samples") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing samples parameter value " << std::endl;
-                return -1;
-            } else {
-                sample_count = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
-            std::cout << USAGE << std::endl;
-            return 0;
-        }
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv, ApplicationKind::Subscriber);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
         // An AsyncWaitSet (AWS) for multi-threaded events .
@@ -180,15 +146,15 @@ int main(int argc, char *argv[])
         // multiple threads.
         rti::core::cond::AsyncWaitSet async_waitset(
                 rti::core::cond::AsyncWaitSetProperty().thread_pool_size(
-                        thread_pool_size));
+                        arguments.thread_pool_size));
 
         async_waitset.start();
 
-        AwsSubscriber subscriber(domain_id, async_waitset);
+        AwsSubscriber subscriber(arguments.domain_id, async_waitset);
 
         std::cout << "Wait for samples..." << std::endl;
-        while (subscriber.received_count() < sample_count
-               || sample_count == 0) {
+        while (!application::shutdown_requested
+               && subscriber.received_count() < arguments.sample_count) {
             rti::util::sleep(dds::core::Duration(1));
         }
 
@@ -198,11 +164,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

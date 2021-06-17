@@ -64,19 +64,19 @@ On *UNIX* systems run:
 
 where the publisher options are:
 
--   `-d, -domainId`: Domain ID.
+-   `-d, --domain`: Domain ID.
 
     **Default**: 0.
 
--   `-p, -publisherId`: Key value of the samples sent.
+-   `-p, --publisherId`: Key value of the samples sent.
 
     **Default**: (random).
 
--   `-s, -samples`: Number of samples to send before the application shuts down.
+-   `-s, --sample-count`: Number of samples to send before the application shuts down.
 
     **Default**: 0 (infinite).
 
--   `-h, -help`: Displays application usage and exits.
+-   `-h, --help`: Displays application usage and exits.
 
 ### Subscriber
 
@@ -94,20 +94,20 @@ On *UNIX* systems run:
 
 where the subscriber options are:
 
--   `-d, -domainId`: Domain ID.
+-   `-d, --domain`: Domain ID.
 
     **Default**: 0.
 
--   `-t, -threads`: Number of threads used to process sample reception.
+-   `-t, --threads`: Number of threads used to process sample reception.
 
      **Default**: 4.
 
--   `-s, -samples`: Number of received samples before the application shuts
+-   `-s, --sample-count`: Number of received samples before the application shuts
     down.
 
      **Default**: 0 (infinite).
 
--   `-h, -help`: Displays application usage and exits.
+-   `-h, --help`: Displays application usage and exits.
 
 ## Customizing the Build
 

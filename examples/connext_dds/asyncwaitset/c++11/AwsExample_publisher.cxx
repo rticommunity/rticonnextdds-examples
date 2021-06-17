@@ -14,10 +14,12 @@
 #include <dds/core/ddscore.hpp>
 #include <dds/pub/ddspub.hpp>
 #include <dds/sub/ddssub.hpp>
+#include <rti/config/Logger.hpp>
 #include <rti/core/cond/AsyncWaitSet.hpp>
 #include <rti/util/util.hpp>  // for sleep()
 
 #include "AwsExample.hpp"
+#include "application.hpp"
 
 class AwsPublisher {
 public:
@@ -118,66 +120,33 @@ AwsPublisher::~AwsPublisher()
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int publisher_id = 0;
-    int sample_count = 0;  // infinite loop
-    const std::string USAGE(
-            "Aws_publisher [options]\n"
-            "Options:\n"
-            "\t-d, -domainId: Domain ID\n"
-            "\t-p, -publisherId: Key value for the Aws samples\n"
-            "\t-s, -samples: Total number of published samples\n");
+    using namespace application;
 
-    srand(time(NULL));
-    publisher_id = rand() % RAND_MAX;
-
-    for (int i = 0; i < argc; i++) {
-        if (strcmp(argv[i], "-d") == 0 || strcmp(argv[i], "-domainId") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing domain ID parameter value " << std::endl;
-                return -1;
-            } else {
-                domain_id = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-p") == 0
-                || strcmp(argv[i], "-publisherId") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing publisher ID parameter value "
-                          << std::endl;
-                return -1;
-            } else {
-                publisher_id = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-s") == 0
-                || strcmp(argv[i], "-samples") == 0) {
-            if (i == argc - 1) {
-                std::cerr << "missing samples parameter value " << std::endl;
-                return -1;
-            } else {
-                sample_count = atoi(argv[++i]);
-            }
-        } else if (
-                strcmp(argv[i], "-h") == 0 || strcmp(argv[i], "-help") == 0) {
-            std::cout << USAGE << std::endl;
-            return 0;
-        }
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv, ApplicationKind::Publisher);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
         // An AsyncWaitSet (AWS) to send samples in a separate thread
         rti::core::cond::AsyncWaitSet async_waitset;
         async_waitset.start();
 
-        AwsPublisher publisher(domain_id, publisher_id, async_waitset);
+        AwsPublisher publisher(
+                arguments.domain_id,
+                arguments.publisher_id,
+                async_waitset);
 
         // Generate periodic send events
-        for (int count = 0; count < sample_count || sample_count == 0;
+        for (unsigned int count = 0;
+             !application::shutdown_requested && count < arguments.sample_count;
              count++) {
             publisher.generate_send_event();
             rti::util::sleep(dds::core::Duration(1));
@@ -190,11 +159,9 @@ int main(int argc, char *argv[])
         return -1;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }
