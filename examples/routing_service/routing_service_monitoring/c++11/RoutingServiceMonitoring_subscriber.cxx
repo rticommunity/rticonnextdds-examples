@@ -30,9 +30,9 @@
  * Instance Handle.
  * */
 RTI::RoutingService::Monitoring::Config getConfig(
-        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>&
-                configReader,
-        const dds::core::InstanceHandle& handle)
+        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>
+                &configReader,
+        const dds::core::InstanceHandle &handle)
 {
     // Get the configuration for an instance handle to use this information to
     // complement what is received in the event or periodic topic
@@ -55,10 +55,10 @@ RTI::RoutingService::Monitoring::Config getConfig(
  * Service process.
  * */
 int processPeriodicData(
-        dds::sub::DataReader<RTI::RoutingService::Monitoring::Periodic>&
-                periodicReader,
-        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>&
-                configReader)
+        dds::sub::DataReader<RTI::RoutingService::Monitoring::Periodic>
+                &periodicReader,
+        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>
+                &configReader)
 {
     int count = 0;
     try {
@@ -80,7 +80,7 @@ int processPeriodicData(
                                 .connections()
                                 .value()
                                 .size()
-                            > 0) {
+                        > 0) {
                         std::cout << " { ";
                         for (const auto &connection :
                              config.value()
@@ -112,7 +112,7 @@ int processPeriodicData(
                     break;
                 }
                 case (RTI::Service::Monitoring::ResourceKind::
-                            ROUTING_SERVICE): {
+                              ROUTING_SERVICE): {
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
@@ -139,10 +139,10 @@ int processPeriodicData(
                 }
             }
         }
-    } catch (const dds::core::Exception& e) {
+    } catch (const dds::core::Exception &e) {
         std::cerr << "A Connext exception has been thrown: " << e.what()
                   << std::endl;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "An std exception has been thrown: " << e.what()
                   << std::endl;
     }
@@ -157,10 +157,10 @@ int processPeriodicData(
  * (Routing Service).
  * */
 int processEventData(
-        dds::sub::DataReader<RTI::RoutingService::Monitoring::Event>&
-                eventReader,
-        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>&
-                configReader)
+        dds::sub::DataReader<RTI::RoutingService::Monitoring::Event>
+                &eventReader,
+        dds::sub::DataReader<RTI::RoutingService::Monitoring::Config>
+                &configReader)
 {
     int count = 0;
     try {
@@ -172,7 +172,7 @@ int processEventData(
                 count++;
                 switch (sample.data().value()._d()) {
                 case (RTI::Service::Monitoring::ResourceKind::
-                            ROUTING_DOMAIN_ROUTE): {
+                              ROUTING_DOMAIN_ROUTE): {
                     std::cout << "\t > The Domain Route status is "
                               << sample.data()
                                          .value()
@@ -185,7 +185,7 @@ int processEventData(
                                 .connections()
                                 .value()
                                 .size()
-                            > 0) {
+                        > 0) {
                         std::cout << "\t\t Connections available: { ";
                         for (const auto &connection :
                              sample.data()
@@ -270,10 +270,10 @@ int processEventData(
         }
     }
 
-    catch (const dds::core::Exception& e) {
+    catch (const dds::core::Exception &e) {
         std::cerr << "A Connext exception has been thrown: " << e.what()
                   << std::endl;
-    } catch (const std::exception& e) {
+    } catch (const std::exception &e) {
         std::cerr << "An std exception has been thrown: " << e.what()
                   << std::endl;
     }
