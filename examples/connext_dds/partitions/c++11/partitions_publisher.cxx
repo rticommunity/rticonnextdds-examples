@@ -26,7 +26,7 @@ void run_publisher_application(
     // Retrieve the default Publisher QoS, from USER_QOS_PROFILES.xml
     dds::pub::qos::PublisherQos publisher_qos =
             dds::core::QosProvider::Default().publisher_qos();
-    auto& partition = publisher_qos.policy<dds::core::policy::Partition>();
+    auto &partition = publisher_qos.policy<dds::core::policy::Partition>();
     std::vector<std::string> partition_names = partition.name();
 
     // If you want to change the Publisher QoS programmatically rather
@@ -38,7 +38,7 @@ void run_publisher_application(
     // publisher_qos << partition;
 
     std::cout << "Setting partition to";
-    for (const auto& name: partition_names) {
+    for (const auto &name : partition_names) {
         std::cout << " '" << name << "'";
     }
     std::cout << std::endl;
