@@ -36,7 +36,7 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class Entity { Publisher, Subscriber };
+enum class ApplicationKind { Publisher, Subscriber };
 
 struct ApplicationArguments {
     ParseReturn parse_result;
@@ -90,7 +90,7 @@ inline void set_verbosity(
 inline ApplicationArguments parse_arguments(
         int argc,
         char *argv[],
-        Entity current_entity)
+        ApplicationKind current_application)
 {
     int arg_processing = 1;
     bool show_usage = false;
@@ -115,14 +115,14 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_entity == Entity::Subscriber
+                && current_application == ApplicationKind::Subscriber
                 && (strcmp(argv[arg_processing], "-pa") == 0
                     || strcmp(argv[arg_processing], "--pauth") == 0)) {
             participant_password = argv[arg_processing + 1];
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_entity == Entity::Subscriber
+                && current_application == ApplicationKind::Subscriber
                 && (strcmp(argv[arg_processing], "-ra") == 0
                     || strcmp(argv[arg_processing], "--rauth") == 0)) {
             reader_password = argv[arg_processing + 1];
@@ -162,7 +162,7 @@ inline ApplicationArguments parse_arguments(
                      "                               Range: 0-3 \n"
                      "                               Default: 1\n";
 
-        if (current_entity == Entity::Subscriber)
+        if (current_application == ApplicationKind::Subscriber)
             std::cout
                     << "    -pa, --pauth    <string>   The participant "
                        "authorization string. \n"

@@ -118,7 +118,7 @@ void run_subscriber_application(
         // After 10 seconds, change filter to accept only instance 0.
         if (samples_read == 10) {
             std::cout << "Starting to filter out instance1" << std::endl;
-            std::vector<std::string> parameter = { "1" };
+            std::vector<std::string> parameter { "1" };
             cft_topic.filter_parameters(parameter.begin(), parameter.end());
         }
 

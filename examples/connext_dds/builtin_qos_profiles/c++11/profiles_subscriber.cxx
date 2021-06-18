@@ -79,7 +79,6 @@ void run_subscriber_application(int domain_id, int sample_count)
             reader,
             dds::sub::status::DataState::any(),
             [reader, &samples_read]() {
-                // If we wake up, process data
                 samples_read += process_data(reader);
             });
 

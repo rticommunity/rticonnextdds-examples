@@ -25,8 +25,7 @@ int process_data(dds::sub::DataReader<partitions> reader)
     for (const auto &sample : samples) {
         if (sample.info().valid()) {
             count++;
-            // After partition mismatch unpair,
-            // it detects the instance as new.
+            // After partitions match, the instance is considered new
             dds::sub::status::ViewState view_state =
                     sample.info().state().view_state();
             if (view_state == dds::sub::status::ViewState::new_view()) {
@@ -96,7 +95,6 @@ void run_subscriber_application(
             reader,
             dds::sub::status::DataState::new_data(),
             [reader, &samples_read]() {
-                // If we wake up, process data
                 samples_read += process_data(reader);
             });
 

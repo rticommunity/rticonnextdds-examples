@@ -117,7 +117,7 @@ void run_subscriber_application(
                       << "Filter: 5 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
-            std::vector<std::string> parameters = { "5", "9" };
+            std::vector<std::string> parameters { "5", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
             filter_changed1 = true;
         } else if (samples_read == 20 && !filter_changed2) {
@@ -127,7 +127,7 @@ void run_subscriber_application(
                       << "Filter: 3 <= x <= 9" << std::endl
                       << "==========================" << std::endl;
 
-            std::vector<std::string> parameters = { "3", "9" };
+            std::vector<std::string> parameters { "3", "9" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
             filter_changed2 = true;
         }

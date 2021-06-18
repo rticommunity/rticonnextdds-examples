@@ -36,7 +36,7 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class Entity { Publisher, Subscriber };
+enum class ApplicationKind { Publisher, Subscriber };
 
 struct ApplicationArguments {
     ParseReturn parse_result;
@@ -84,7 +84,7 @@ inline void set_verbosity(
 inline ApplicationArguments parse_arguments(
         int argc,
         char *argv[],
-        Entity current_entity)
+        ApplicationKind current_application)
 {
     int arg_processing = 1;
     bool show_usage = false;
@@ -101,14 +101,14 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_entity == Entity::Publisher
+                && current_application == ApplicationKind::Publisher
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sample-count") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_entity == Entity::Subscriber
+                && current_application == ApplicationKind::Subscriber
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sleeps") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
@@ -141,12 +141,12 @@ inline ApplicationArguments parse_arguments(
                 "                               subscribe in.  \n"
                 "                               Default: 0\n";
 
-        if (current_entity == Entity::Publisher) {
+        if (current_application == ApplicationKind::Publisher) {
             usage += "    -s, --sample_count <int>   Number of samples to send "
                      "before\n"
                      "                               cleanly shutting down. \n"
                      "                               Default: infinite\n";
-        } else if (current_entity == Entity::Subscriber) {
+        } else if (current_application == ApplicationKind::Subscriber) {
             usage += "    -s, --sleeps       <int>   Number of sleeps before "
                      "cleanly\n"
                      "                               shutting down. \n"

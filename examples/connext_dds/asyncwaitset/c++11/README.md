@@ -72,7 +72,8 @@ where the publisher options are:
 
     **Default**: (random).
 
--   `-s, --sample-count`: Number of samples to send before the application shuts down.
+-   `-s, --sample-count`: Number of samples to send before the application
+shuts down.
 
     **Default**: 0 (infinite).
 

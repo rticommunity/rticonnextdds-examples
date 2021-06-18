@@ -25,83 +25,45 @@ rti::core::policy::MultiChannel create_multichannel_qos()
     // Create 8 channels based on Symbol.
     std::vector<rti::core::ChannelSettings> channels;
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),  // All the transports
-                                                         // available
-                            "239.255.0.2",
-                            0)),  // Port determined automatically
+            { rti::core::TransportMulticastSettings(
+                    {},  // All the transports available
+                    "239.255.0.2",
+                    0) },  // Port determined automatically
             "Symbol MATCH '[A-C]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.3",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.3", 0) },
             "Symbol MATCH '[D-F]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.4",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.4", 0) },
             "Symbol MATCH '[G-I]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.5",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.5", 0) },
             "Symbol MATCH '[J-L]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.6",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.6", 0) },
             "Symbol MATCH '[M-O]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.7",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.7", 0) },
             "Symbol MATCH '[P-S]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.8",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.8", 0) },
             "Symbol MATCH '[T-V]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 
     channels.push_back(rti::core::ChannelSettings(
-            std::vector<rti::core::TransportMulticastSettings>(
-                    1,
-                    rti::core::TransportMulticastSettings(
-                            std::vector<std::string>(),
-                            "239.255.0.9",
-                            0)),
+            { rti::core::TransportMulticastSettings({}, "239.255.0.9", 0) },
             "Symbol MATCH '[W-Z]*'",
             rti::core::PUBLICATION_PRIORITY_UNDEFINED));
 

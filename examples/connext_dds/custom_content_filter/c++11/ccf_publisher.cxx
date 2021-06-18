@@ -25,7 +25,7 @@ void run_publisher_application(
     dds::domain::DomainParticipant participant(domain_id);
 
     // Register the custom filter type. It must be registered in both sides.
-    participant->register_contentfilter(
+    participant.extensions().register_contentfilter(
             rti::topic::CustomFilter<CustomFilterType>(new CustomFilterType()),
             "CustomFilter");
 

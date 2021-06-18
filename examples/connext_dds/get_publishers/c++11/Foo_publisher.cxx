@@ -18,6 +18,8 @@
 
 void run_publisher_application(unsigned int domain_id)
 {
+    using namespace rti::core::policy;
+
     // Create a DomainParticipant with default QoS.
     dds::domain::DomainParticipant participant(domain_id);
 
@@ -26,23 +28,17 @@ void run_publisher_application(unsigned int domain_id)
             dds::core::QosProvider::Default().publisher_qos();
 
     // Create the first publisher.
-    publisher_qos << rti::core::policy::EntityName("Foo");
+    publisher_qos << EntityName("Foo");
     dds::pub::Publisher publisher1(participant, publisher_qos);
     std::cout << "The first  publisher name is "
-              << publisher1.qos()
-                         .policy<rti::core::policy::EntityName>()
-                         .name()
-                         .get()
+              << publisher1.qos().policy<EntityName>().name().get()
               << std::endl;
 
     // Create the second publisher.
-    publisher_qos << rti::core::policy::EntityName("Bar");
+    publisher_qos << EntityName("Bar");
     dds::pub::Publisher publisher2(participant, publisher_qos);
     std::cout << "The second publisher name is "
-              << publisher2.qos()
-                         .policy<rti::core::policy::EntityName>()
-                         .name()
-                         .get()
+              << publisher2.qos().policy<EntityName>().name().get()
               << std::endl;
 
     // Find the publishers.
@@ -57,11 +53,7 @@ void run_publisher_application(unsigned int domain_id)
               << " publishers on this participant" << std::endl;
     for (std::vector<int>::size_type i = 0; i < publishers.size(); i++) {
         std::cout << "The " << i << " publisher name is "
-                  << publishers[i]
-                             .qos()
-                             .policy<rti::core::policy::EntityName>()
-                             .name()
-                             .get()
+                  << publishers[i].qos().policy<EntityName>().name().get()
                   << std::endl;
     }
 }

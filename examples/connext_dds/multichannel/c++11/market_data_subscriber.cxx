@@ -70,7 +70,6 @@ void run_subscriber_application(
             reader,
             dds::sub::status::DataState::any(),
             [reader, &samples_read]() {
-                // If we wake up, process data
                 samples_read += process_data(reader);
             });
 
@@ -81,12 +80,12 @@ void run_subscriber_application(
         if (samples_read == 3) {
             // On t=3 we add the symbol 'D' to the filter parameter
             // to match 'A' and 'D'.
-            cft_topic->append_to_expression_parameter(0, "D");
+            cft_topic.extensions().append_to_expression_parameter(0, "D");
             std::cout << "changed filter to Symbol MATCH 'A,D'" << std::endl;
         } else if (samples_read == 6) {
             // On t=6 we remove the symbol 'A' to the filter parameter
             // to match only 'D'.
-            cft_topic->remove_from_expression_parameter(0, "A");
+            cft_topic.extensions().remove_from_expression_parameter(0, "A");
             std::cout << "changed filter to Symbol MATCH 'D'" << std::endl;
         }
 
