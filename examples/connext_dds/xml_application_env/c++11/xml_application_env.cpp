@@ -11,7 +11,7 @@
 
 #include <csignal>
 #include <dds/dds.hpp>
-#include <rti/util/util.hpp>      // for sleep()
+#include <rti/util/util.hpp>  // for sleep()
 
 const std::string QOS_URL = "file://application.xml";
 const std::string PARTICIPANT_NAME = "domain_participant_library::participant";
@@ -34,11 +34,14 @@ inline void setup_signal_handlers()
     signal(SIGTERM, stop_handler);
 }
 
-class MyDataReaderListener : public dds::sub::NoOpDataReaderListener<dds::core::xtypes::DynamicData> {
-    virtual void on_data_available(dds::sub::DataReader<dds::core::xtypes::DynamicData> &reader)
+class MyDataReaderListener : public dds::sub::NoOpDataReaderListener<
+                                     dds::core::xtypes::DynamicData> {
+    virtual void on_data_available(
+            dds::sub::DataReader<dds::core::xtypes::DynamicData> &reader)
     {
-        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples = reader.take();
-        for (const auto &sample: samples) {
+        dds::sub::LoanedSamples<dds::core::xtypes::DynamicData> samples =
+                reader.take();
+        for (const auto &sample : samples) {
             // If the reference we get is valid data, it means we have actual
             // data available, otherwise we received metadata.
             if (sample.info().valid()) {
@@ -56,7 +59,8 @@ class MyDataReaderListener : public dds::sub::NoOpDataReaderListener<dds::core::
 //  writer - a DataWriter for DnyamicData
 //  kvpType - a key value pair DynamicType
 //  env - the environment array
-void publish_env(int id,
+void publish_env(
+        int id,
         dds::pub::DataWriter<dds::core::xtypes::DynamicData> &writer,
         const dds::core::xtypes::DynamicType &kvpType,
         char *env[])
@@ -107,19 +111,22 @@ int main(int argc, char *argv[], char *envp[])
     // Lookup the specific KeyValuePair type as defined in the xml file.
     // This will be needed to create samples of the correct type when
     // publishing.
-    const dds::core::xtypes::DynamicType &myType = qos_provider->type(KVP_TYPE_NAME);
+    const dds::core::xtypes::DynamicType &myType =
+            qos_provider->type(KVP_TYPE_NAME);
 
     // Find the DataWriter defined in the xml by using the participant and the
     // publisher::writer pair as the datawriter name.
     dds::pub::DataWriter<dds::core::xtypes::DynamicData> writer =
-            rti::pub::find_datawriter_by_name<dds::pub::DataWriter<dds::core::xtypes::DynamicData>>(
+            rti::pub::find_datawriter_by_name<
+                    dds::pub::DataWriter<dds::core::xtypes::DynamicData>>(
                     participant,
                     WRITER_NAME);
 
     // Find the DataReader defined in the xml by using the participant and the
     // subscriber::reader pair as the datareader name.
     dds::sub::DataReader<dds::core::xtypes::DynamicData> reader =
-            rti::sub::find_datareader_by_name<dds::sub::DataReader<dds::core::xtypes::DynamicData>>(
+            rti::sub::find_datareader_by_name<
+                    dds::sub::DataReader<dds::core::xtypes::DynamicData>>(
                     participant,
                     READER_NAME);
 
@@ -137,8 +144,7 @@ int main(int argc, char *argv[], char *envp[])
 
     // Publish the environment vairables to the topic configured in the
     // xml writer.
-    while (!shutdown_requested)
-    {
+    while (!shutdown_requested) {
         std::cout << "Publishing Environment" << std::endl;
         publish_env(id, writer, myType, envp);
         rti::util::sleep(dds::core::Duration(2));
