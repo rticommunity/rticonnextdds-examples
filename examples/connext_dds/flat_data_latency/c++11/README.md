@@ -115,8 +115,11 @@ The application has the following arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples. A value of '0'
-instructs the application to run forever; this is the default.
+2.  Publisher subscriber/mode.
+    1.  publisher_flat
+    2.  publisher_zero_copy
+    3.  publisher_flat_zero_copy
+    4.  publisher_plain
 
 3.  (Publisher only) How long the examples should run, measured in samples 
 (-s option). A value of '0' instructs the application to run forever; this is
