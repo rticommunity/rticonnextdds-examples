@@ -121,7 +121,7 @@ The application has the following arguments:
     3.  publisher_flat_zero_copy
     4.  publisher_plain
 
-3.  (Publisher only) How long the examples should run, measured in samples 
+3.  (Publisher only) How long the examples should run, measured in samples
 (-s option). A value of '0' instructs the application to run forever; this is
 the default.
 
