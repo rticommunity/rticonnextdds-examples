@@ -36,7 +36,7 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class ApplicationKind { Publisher, Subscriber };
+enum class ApplicationKind { publisher, subscriber };
 
 struct ApplicationArguments {
     ParseReturn parse_result;
@@ -124,22 +124,22 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && (current_application == ApplicationKind::Publisher)
+                && (current_application == ApplicationKind::publisher)
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sample_count") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && (current_application == ApplicationKind::Publisher)
+                && (current_application == ApplicationKind::publisher)
                 && (strcmp(argv[arg_processing], "-e") == 0
                     || strcmp(argv[arg_processing], "--exec_time") == 0)) {
             execution_time = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
-                (current_application == ApplicationKind::Subscriber)
-                && (strcmp(argv[arg_processing], "-d") == 0
-                    || strcmp(argv[arg_processing], "--display_sample") == 0)) {
+                (current_application == ApplicationKind::subscriber)
+                && (strcmp(argv[arg_processing], "-ds") == 0
+                    || strcmp(argv[arg_processing], "--display_samples") == 0)) {
             display_sample = true;
             arg_processing += 1;
         } else if (
@@ -183,7 +183,7 @@ inline ApplicationArguments parse_arguments(
                    "                                   4. publisher_plain\n"
                    "                               Default: 1\n";
 
-        if (current_application == ApplicationKind::Publisher) {
+        if (current_application == ApplicationKind::publisher) {
             std::cout
                     << "    -s, --sample_count <int>   Number of samples to "
                        "receive before\n"

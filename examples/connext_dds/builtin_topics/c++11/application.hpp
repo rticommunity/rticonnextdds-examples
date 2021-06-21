@@ -36,7 +36,7 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class ApplicationKind { Publisher, Subscriber };
+enum class ApplicationKind { publisher, subscriber };
 
 struct ApplicationArguments {
     ParseReturn parse_result;
@@ -115,14 +115,14 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_application == ApplicationKind::Subscriber
+                && current_application == ApplicationKind::subscriber
                 && (strcmp(argv[arg_processing], "-pa") == 0
                     || strcmp(argv[arg_processing], "--pauth") == 0)) {
             participant_password = argv[arg_processing + 1];
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_application == ApplicationKind::Subscriber
+                && current_application == ApplicationKind::subscriber
                 && (strcmp(argv[arg_processing], "-ra") == 0
                     || strcmp(argv[arg_processing], "--rauth") == 0)) {
             reader_password = argv[arg_processing + 1];
@@ -162,7 +162,7 @@ inline ApplicationArguments parse_arguments(
                      "                               Range: 0-3 \n"
                      "                               Default: 1\n";
 
-        if (current_application == ApplicationKind::Subscriber)
+        if (current_application == ApplicationKind::subscriber)
             std::cout
                     << "    -pa, --pauth    <string>   The participant "
                        "authorization string. \n"

@@ -36,7 +36,7 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class ApplicationKind { Publisher, Subscriber };
+enum class ApplicationKind { publisher, subscriber };
 
 struct ApplicationArguments {
     ParseReturn parse_result;
@@ -101,14 +101,14 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_application == ApplicationKind::Publisher
+                && current_application == ApplicationKind::publisher
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sample-count") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_application == ApplicationKind::Subscriber
+                && current_application == ApplicationKind::subscriber
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sleeps") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
@@ -141,12 +141,12 @@ inline ApplicationArguments parse_arguments(
                 "                               subscribe in.  \n"
                 "                               Default: 0\n";
 
-        if (current_application == ApplicationKind::Publisher) {
+        if (current_application == ApplicationKind::publisher) {
             usage += "    -s, --sample_count <int>   Number of samples to send "
                      "before\n"
                      "                               cleanly shutting down. \n"
                      "                               Default: infinite\n";
-        } else if (current_application == ApplicationKind::Subscriber) {
+        } else if (current_application == ApplicationKind::subscriber) {
             usage += "    -s, --sleeps       <int>   Number of sleeps before "
                      "cleanly\n"
                      "                               shutting down. \n"
