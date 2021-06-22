@@ -42,29 +42,27 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-batch_data_publisher.exe  <domain_id> <turbo_mode> <samples_to_send>
-batch_data_subscriber.exe <domain_id> <turbo_mode> <sleep_periods>
+batch_data_publisher.exe  -d <domain_id> -s <samples_to_send> --turbo
+batch_data_subscriber.exe -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./batch_data_publisher  <domain_id> <turbo_mode> <samples_to_send>
-./batch_data_subscriber <domain_id> <turbo_mode> <sleep_periods>
+./batch_data_publisher  -d <domain_id> -s <samples_to_send> --turbo
+./batch_data_subscriber -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 The applications accept up to three arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
-    communicate. The default is 0.
+communicate. The default is 0.
 
-2.  If `<turbo_mode>` will be used or not. A value '0' indicates turbo mode is
-    not enable, so manual batching will be used. A value '1' indicates that
-    *Turbo Mode* will be used. The default is 0.
+2.  If *Turbo Mode* will be used or not. If the `--turbo` argument is given,
+*Turbo Mode* will be used. Otherwise, it will use the *Manual Batching*.
 
-3.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+3.  How long the examples should run, measured in samples. A value of '0'
+instructs the application to run forever; this is the default.
 
 ## Customizing the Build
 
