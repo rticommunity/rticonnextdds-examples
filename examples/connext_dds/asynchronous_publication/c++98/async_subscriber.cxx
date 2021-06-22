@@ -54,7 +54,6 @@ unsigned int process_data(asyncDataReader *typed_reader)
 
             std::cout << "@ t=" << elapsed_secs << ", got x = " << data_seq[i].x
                       << std::endl;
-
             //// End changes for Asynchronous_Publication
         }
     }
