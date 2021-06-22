@@ -64,7 +64,6 @@ communicate. The default is 0.
 3.  How long the examples should run, measured in samples. A value of '0'
 instructs the application to run forever; this is the default.
 
-
 ## Customizing the Build
 
 ### Configuring Build Type and Generator
