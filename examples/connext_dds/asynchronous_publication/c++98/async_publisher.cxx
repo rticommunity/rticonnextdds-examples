@@ -21,62 +21,77 @@
 using namespace application;
 
 static int shutdown_participant(
-    DDSDomainParticipant *participant,
-    const char *shutdown_message,
-    int status);
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
 int run_publisher_application(unsigned int domainId, unsigned int sample_count)
 {
     /* To customize participant QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     DDSDomainParticipant *participant =
-    DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+            DDSTheParticipantFactory->create_participant(
+                    domainId,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    //To customize publisher QoS, use the configuration file
+    // To customize publisher QoS, use the configuration file
     // USER_QOS_PROFILES.xml
     DDSPublisher *publisher = participant->create_publisher(
-        DDS_PUBLISHER_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
-        return shutdown_participant(participant, "create_publisher error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_publisher error",
+                EXIT_FAILURE);
     }
 
     // Register the datatype to use when creating the Topic
     const char *type_name = asyncTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    asyncTypeSupport::register_type(participant, type_name);
+            asyncTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
     // Create a Topic with a name and a datatype
     DDSTopic *topic = participant->create_topic(
-        "Example async",
-        type_name,
-        DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example async",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
     /* To customize data writer QoS, use
        the configuration file USER_QOS_PROFILES.xml */
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
-        topic,
-        DDS_DATAWRITER_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (untyped_writer == NULL) {
-        return shutdown_participant(participant, "create_datawriter error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_datawriter error",
+                EXIT_FAILURE);
     }
 
     /* If you want to change the DataWriter's QoS programmatically rather than
@@ -92,7 +107,8 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
     retcode = publisher->get_default_datawriter_qos(datawriter_qos);
 
     if (retcode != DDS_RETCODE_OK) {
-        return shutdown_participant(participant, "get_default_datawriter_qos error", EXIT_FAILURE);
+        return shutdown_participant(participant, "get_default_datawriter_qos
+    error", EXIT_FAILURE);
     }
 
     // Since samples are only being sent once per second, datawriter will need
@@ -119,20 +135,22 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
     //// End changes for Asynchronous_Publication
         */
 
-    // Narrow casts from an untyped DataWriter to a writer of your type 
-    asyncDataWriter *typed_writer =
-    asyncDataWriter::narrow(untyped_writer);
+    // Narrow casts from an untyped DataWriter to a writer of your type
+    asyncDataWriter *typed_writer = asyncDataWriter::narrow(untyped_writer);
     if (typed_writer == NULL) {
-        return shutdown_participant(participant, "DataWriter narrow error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "DataWriter narrow error",
+                EXIT_FAILURE);
     }
 
     // Create data for writing, allocating all members
     async *data = asyncTypeSupport::create_data();
     if (data == NULL) {
         return shutdown_participant(
-            participant,
-            "asyncTypeSupport::create_data error",
-            EXIT_FAILURE);
+                participant,
+                "asyncTypeSupport::create_data error",
+                EXIT_FAILURE);
     }
 
     /* For a data type that has a key, if the same instance is going to be
@@ -144,10 +162,9 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
 
     /* Main loop */
     for (unsigned int samples_written = 0;
-    !shutdown_requested && samples_written < sample_count;
-    ++samples_written) {
-        std::cout << "Writing async, count " << samples_written 
-        << std::endl;
+         !shutdown_requested && samples_written < sample_count;
+         ++samples_written) {
+        std::cout << "Writing async, count " << samples_written << std::endl;
 
         // send count as data.
         data->x = samples_written;
@@ -165,7 +182,7 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
     retcode = asyncTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "asyncTypeSupport::delete_data error " << retcode
-        << std::endl;
+                  << std::endl;
     }
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
@@ -174,9 +191,9 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
 
 // Delete all entities
 static int shutdown_participant(
-    DDSDomainParticipant *participant,
-    const char *shutdown_message,
-    int status)
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
 {
     DDS_ReturnCode_t retcode;
 
@@ -187,7 +204,7 @@ static int shutdown_participant(
         retcode = participant->delete_contained_entities();
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "delete_contained_entities error " << retcode
-            << std::endl;
+                      << std::endl;
             status = EXIT_FAILURE;
         }
 
@@ -203,7 +220,6 @@ static int shutdown_participant(
 
 int main(int argc, char *argv[])
 {
-
     // Parse arguments and handle control-C
     ApplicationArguments arguments;
     parse_arguments(arguments, argc, argv);
@@ -217,7 +233,9 @@ int main(int argc, char *argv[])
     // Sets Connext verbosity to help debugging
     NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
 
-    int status = run_publisher_application(arguments.domain_id, arguments.sample_count);
+    int status = run_publisher_application(
+            arguments.domain_id,
+            arguments.sample_count);
 
     // Releases the memory used by the participant factory.  Optional at
     // application exit

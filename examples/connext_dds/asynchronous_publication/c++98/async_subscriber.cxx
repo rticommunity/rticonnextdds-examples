@@ -24,25 +24,25 @@ clock_t init;
 using namespace application;
 
 static int shutdown_participant(
-    DDSDomainParticipant *participant,
-    const char *shutdown_message,
-    int status);
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
 // Process data. Returns number of samples processed.
 unsigned int process_data(asyncDataReader *typed_reader)
 {
-    asyncSeq data_seq;     // Sequence of received data
-    DDS_SampleInfoSeq info_seq; // Metadata associated with samples in data_seq
+    asyncSeq data_seq;           // Sequence of received data
+    DDS_SampleInfoSeq info_seq;  // Metadata associated with samples in data_seq
     unsigned int samples_read = 0;
 
     // Take available data from DataReader's queue
     typed_reader->take(
-        data_seq,
-        info_seq,
-        DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE,
-        DDS_ANY_VIEW_STATE,
-        DDS_ANY_INSTANCE_STATE);
+            data_seq,
+            info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
 
     for (int i = 0; i < data_seq.length(); ++i) {
         if (info_seq[i].valid_data) {
@@ -52,7 +52,8 @@ unsigned int process_data(asyncDataReader *typed_reader)
             double elapsed_ticks = clock() - init;
             double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
-            std::cout << "@ t=" << elapsed_secs << ", got x = " << data_seq[i].x << std::endl;
+            std::cout << "@ t=" << elapsed_secs << ", got x = " << data_seq[i].x
+                      << std::endl;
 
             //// End changes for Asynchronous_Publication
         }
@@ -67,7 +68,9 @@ unsigned int process_data(asyncDataReader *typed_reader)
     return samples_read;
 }
 
-int run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     //// Changes for Asynchronous_Publication
     // for timekeeping
@@ -76,77 +79,100 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     // To customize the participant QoS, use the configuration file
     // USER_QOS_PROFILES.xml
     DDSDomainParticipant *participant =
-    DDSTheParticipantFactory->create_participant(
-        domain_id,
-        DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        return shutdown_participant(participant, "create_participant error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    // To customize the subscriber QoS, use the configuration file 
+    // To customize the subscriber QoS, use the configuration file
     // USER_QOS_PROFILES.xml
     DDSSubscriber *subscriber = participant->create_subscriber(
-        DDS_SUBSCRIBER_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
-        return shutdown_participant(participant, "create_subscriber error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_subscriber error",
+                EXIT_FAILURE);
     }
 
     // Register the datatype to use when creating the Topic
     const char *type_name = asyncTypeSupport::get_type_name();
     DDS_ReturnCode_t retcode =
-    asyncTypeSupport::register_type(participant, type_name);
+            asyncTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        return shutdown_participant(participant, "register_type error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
     // To customize the topic QoS, use the configuration file
     // USER_QOS_PROFILES.xml
     DDSTopic *topic = participant->create_topic(
-        "Example async",
-        type_name,
-        DDS_TOPIC_QOS_DEFAULT,
-        NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            "Example async",
+            type_name,
+            DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        return shutdown_participant(participant, "create_topic error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
     // To customize the data reader QoS, use the configuration file
     // USER_QOS_PROFILES.xml
     DDSDataReader *untyped_reader = subscriber->create_datareader(
-        topic,
-        DDS_DATAREADER_QOS_DEFAULT,
-        NULL,
-        DDS_STATUS_MASK_NONE);
+            topic,
+            DDS_DATAREADER_QOS_DEFAULT,
+            NULL,
+            DDS_STATUS_MASK_NONE);
     if (untyped_reader == NULL) {
-        return shutdown_participant(participant, "create_datareader error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_datareader error",
+                EXIT_FAILURE);
     }
 
     // Narrow casts from a untyped DataReader to a reader of your type
-    asyncDataReader *typed_reader =
-    asyncDataReader::narrow(untyped_reader);
+    asyncDataReader *typed_reader = asyncDataReader::narrow(untyped_reader);
     if (typed_reader == NULL) {
-        return shutdown_participant(participant, "DataReader narrow error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "DataReader narrow error",
+                EXIT_FAILURE);
     }
 
     // Create ReadCondition that triggers when unread data in reader's queue
     DDSReadCondition *read_condition = typed_reader->create_readcondition(
-        DDS_NOT_READ_SAMPLE_STATE,
-        DDS_ANY_VIEW_STATE,
-        DDS_ANY_INSTANCE_STATE);
+            DDS_NOT_READ_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (read_condition == NULL) {
-        return shutdown_participant(participant, "create_readcondition error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "create_readcondition error",
+                EXIT_FAILURE);
     }
 
     // WaitSet will be woken when the attached condition is triggered
     DDSWaitSet waitset;
     retcode = waitset.attach_condition(read_condition);
     if (retcode != DDS_RETCODE_OK) {
-        return shutdown_participant(participant, "attach_condition error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "attach_condition error",
+                EXIT_FAILURE);
     }
 
     // Main loop. Wait for data to arrive, and process when it arrives
@@ -156,7 +182,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 
         // Wait for data and report if it does not arrive in 4 seconds
         DDS_Duration_t wait_timeout = { 4, 0 };
-        std::cout << "async subscriber sleeping for " << wait_timeout.sec << " sec...\n";
+        std::cout << "async subscriber sleeping for " << wait_timeout.sec
+                  << " sec...\n";
         retcode = waitset.wait(active_conditions_seq, wait_timeout);
 
         if (retcode == DDS_RETCODE_OK) {
@@ -173,9 +200,9 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 
 // Delete all entities
 static int shutdown_participant(
-    DDSDomainParticipant *participant,
-    const char *shutdown_message,
-    int status)
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
 {
     DDS_ReturnCode_t retcode;
 
@@ -186,7 +213,7 @@ static int shutdown_participant(
         retcode = participant->delete_contained_entities();
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "delete_contained_entities error" << retcode
-            << std::endl;
+                      << std::endl;
             status = EXIT_FAILURE;
         }
 
@@ -201,7 +228,6 @@ static int shutdown_participant(
 
 int main(int argc, char *argv[])
 {
-
     // Parse arguments and handle control-C
     ApplicationArguments arguments;
     parse_arguments(arguments, argc, argv);
@@ -215,7 +241,9 @@ int main(int argc, char *argv[])
     // Sets Connext verbosity to help debugging
     NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
 
-    int status = run_subscriber_application(arguments.domain_id, arguments.sample_count);
+    int status = run_subscriber_application(
+            arguments.domain_id,
+            arguments.sample_count);
 
     // Releases the memory used by the participant factory.  Optional at
     // application exit
