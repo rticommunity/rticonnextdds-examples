@@ -62,8 +62,7 @@ pipeline {
                                 "files": [
                                 {
                                     "pattern": "connext-ci/pro/weekly/",
-                                    "props": "rti.artifact.architecture=x64Linux4gcc7.3.0;
-                                              rti.artifact.kind=staging",
+                                    "props": "rti.artifact.architecture=x64Linux4gcc7.3.0;rti.artifact.kind=staging",
                                     "sortBy": ["created"],
                                     "sortOrder": "desc",
                                     "limit": 1,
