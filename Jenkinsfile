@@ -17,11 +17,6 @@ def detailstextStatic
 pipeline {
     agent none
 
-    environment {
-        RTI_INSTALLATION_PATH = "${WORKSPACE}/unlicensed"
-        RTI_LOGS_FILE = "${WORKSPACE}/output_logs.txt"
-    }
-
     stages {
         stage('Executor Check') {
             steps {
@@ -37,6 +32,11 @@ pipeline {
                     filename 'Dockerfile'
                     label 'docker'
                 }
+            }
+
+            environment {
+                RTI_INSTALLATION_PATH = "${WORKSPACE}/unlicensed"
+                RTI_LOGS_FILE = "${WORKSPACE}/output_logs.txt"
             }
 
             stages {
