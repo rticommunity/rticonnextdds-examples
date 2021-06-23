@@ -127,9 +127,10 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
         topic, datawriter_qos, NULL /* listener * /,
         DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
-        printf("create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_datawriter error",
+                EXIT_FAILURE);
     }
 
     //// End changes for Asynchronous_Publication
