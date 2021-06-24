@@ -123,10 +123,10 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
 
     /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
        instead of datawriter_qos * /
-    writer = publisher->create_datawriter(
+    DDSDataWriter *untyped_writer = publisher->create_datawriter(
         topic, datawriter_qos, NULL /* listener * /,
         DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
+    if (untyped_writer == NULL) {
         return shutdown_participant(
                 participant,
                 "create_datawriter error",
@@ -158,7 +158,8 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        instance_handle = async_writer->register_instance(*instance);
+        DDS_InstanceHandle_t instance_handle = typed_writer
+                ->register_instance(*data);
     */
 
     /* Main loop */

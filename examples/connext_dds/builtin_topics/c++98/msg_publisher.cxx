@@ -193,7 +193,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
      */
     /*
     DDS_DomainParticipantFactoryQos factory_qos;
-    retcode = DDSTheParticipantFactory->get_qos(factory_qos);
+    DDS_ReturnCode_t retcode = DDSTheParticipantFactory->get_qos(factory_qos);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(participant, "create_participant error",
     EXIT_FAILURE);
@@ -205,21 +205,21 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         case DDS_RETCODE_OK:
             break;
         case DDS_RETCODE_IMMUTABLE_POLICY: {
-            printf("Cannot set factory Qos due to IMMUTABLE_POLICY ");
-            printf("for domain participant\n");
-            return -1;
+            std::cerr << "Cannot set factory Qos due to IMMUTABLE_POLICY ";
+            std::cerr << "for domain participant\n";
+            return EXIT_FAILURE;
             break;
         }
         case DDS_RETCODE_INCONSISTENT_POLICY: {
-            printf("Cannot set factory Qos due to INCONSISTENT_POLICY for ");
-            printf("domain participant\n");
-            return -1;
+            std::cerr << "Cannot set factory Qos due to INCONSISTENT_POLICY for ";
+            std::cerr << "domain participant\n";
+            return EXIT_FAILURE;
             break;
         }
         default: {
-            printf("Cannot set factory Qos for unknown reason for ");
-            printf("domain participant\n");
-            return -1;
+            std::cerr << "Cannot set factory Qos for unknown reason for ";
+            std::cerr <<"domain participant\n";
+            return EXIT_FAILURE;
             break;
         }
     }
@@ -390,7 +390,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-    instance_handle = typed_writer->register_instance(*data);
+    DDS_InstanceHandle_t instance_handle = typed_writer
+            ->register_instance(*data);
     */
 
     // Main loop, write data
@@ -414,7 +415,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     retcode = typed_writer->unregister_instance(
       *data, DDS_HANDLE_NIL);
     if (retcode != DDS_RETCODE_OK) {
-        printf("unregister instance error %d\n", retcode);
+        std::cerr << "unregister instance error " << retcode << std::endl;
     }
     */
 

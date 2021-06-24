@@ -127,7 +127,9 @@ int run_subscriber_application(
      * code and comment out the create_subscriber call above.
      */
     /* Start changes for coherent_presentation */
-    /*    retcode = participant->get_default_subscriber_qos(subscriber_qos);
+    /*    
+        DDS_ReturnCode_t retcode = participant->
+                get_default_subscriber_qos(subscriber_qos);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "get_default_subscriber_qos error\n";
             return EXIT_FAILURE;
@@ -136,11 +138,13 @@ int run_subscriber_application(
         subscriber_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
         subscriber_qos.presentation.coherent_access = DDS_BOOLEAN_TRUE;
 
-        subscriber = participant->create_subscriber(subscriber_qos, NULL,
-                DDS_STATUS_MASK_NONE);
+        DDSSubscriber *subscriber = participant
+                ->create_subscriber(subscriber_qos, NULL, DDS_STATUS_MASK_NONE);
         if (subscriber == NULL) {
-            return shutdown_participant(participant, "create_subscriber error",
-       EXIT_FAILURE);
+            return shutdown_participant(
+                participant,
+                "create_subscriber error",
+                EXIT_FAILURE);
         }
     */
     /* End changes for coherent_presentation */
@@ -196,11 +200,16 @@ int run_subscriber_application(
         datareader_qos.reliability.kind = DDS_RELIABLE_RELIABILITY_QOS;
         datareader_qos.history.depth = 10;
 
-        untyped_reader = subscriber->create_datareader(topic, datareader_qos,
-                reader_listener, DDS_STATUS_MASK_ALL);
+        DDSDataReader *untyped_reader = subscriber->create_datareader(
+                topic,
+                datareader_qos,
+                reader_listener,
+                DDS_STATUS_MASK_ALL);
         if (untyped_reader == NULL) {
-            return shutdown_participant(participant, "create_datareader error",
-       EXIT_FAILURE);
+            return shutdown_participant(
+                    participant, 
+                    "create_datareader error",
+                    EXIT_FAILURE);
         }
 
     */    /* End changes for coherent_presentation */

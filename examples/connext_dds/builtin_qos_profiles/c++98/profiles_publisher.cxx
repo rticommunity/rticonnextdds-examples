@@ -52,9 +52,10 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
      *
      * This example uses a built-in QoS profile to enable
      * monitoring on the DomainParticipant.*/
-    /* participant = DDSTheParticipantFactory->create_participant_with_profile(
-        domainId, "BuiltinQosLib", "Generic.Monitoring.Common",
-        NULL /* listener * /, DDS_STATUS_MASK_NONE);
+    /* DDSDomainParticipant *participant = DDSTheParticipantFactory
+            ->create_participant_with_profile(
+                domainId, "BuiltinQosLib", "Generic.Monitoring.Common",
+                NULL /* listener * /, DDS_STATUS_MASK_NONE);
      */
     if (participant == NULL) {
         return shutdown_participant(
@@ -114,10 +115,13 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
      * reliable streaming data.*/
     /* To customize data writer QoS, use
        the configuration file USER_QOS_PROFILES.xml */
-    /* writer = publisher->create_datawriter_with_profile(
-        topic, DDS_BUILTIN_QOS_LIB_EXP,
-        DDS_PROFILE_PATTERN_RELIABLE_STREAMING, NULL /* listener * /,
-        DDS_STATUS_MASK_NONE);
+    /* DDSDataWriter *untyped_writer = publisher
+            ->create_datawriter_with_profile(
+                topic,
+                DDS_BUILTIN_QOS_LIB_EXP,
+                DDS_PROFILE_PATTERN_RELIABLE_STREAMING,
+                NULL /* listener * /,
+                DDS_STATUS_MASK_NONE);
     */
     if (untyped_writer == NULL) {
         return shutdown_participant(
@@ -150,7 +154,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        instance_handle = profiles_writer->register_instance(*instance);
+        DDS_InstanceHandle_t instance_handle = profiles_writer
+                ->register_instance(*data);
     */
 
     // Main loop, write data
@@ -169,10 +174,10 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     }
 
     /*
-        retcode = profiles_writer->unregister_instance(
-            *instance, instance_handle);
+        retcode = typed_writer->unregister_instance(
+            *data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
-            printf("unregister instance error %d\n", retcode);
+            std::cerr << "unregister instance error " << retcode << std::endl;
         }
     */
 

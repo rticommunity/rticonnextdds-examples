@@ -137,7 +137,8 @@ int run_publisher_application(
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        instance_handle = batch_data_writer->register_instance(*instance);
+        DDS_InstanceHandle_t instance_handle = typed_writer
+                ->register_instance(*data);
     */
 
     // Main loop, write data
@@ -159,10 +160,10 @@ int run_publisher_application(
     }
 
     /*
-        retcode = batch_data_writer->unregister_instance(
-            *instance, instance_handle);
+        retcode = typed_writer->unregister_instance(
+            *data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
-            printf("unregister instance error %d\n", retcode);
+            std::cerr << "unregister instance error " << retcode << std::endl;
         }
     */
 

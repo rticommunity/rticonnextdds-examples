@@ -84,9 +84,13 @@ int run_subscriber_application(
      *
      * This example uses a built-in QoS profile to enable
      * monitoring on the DomainParticipant.*/
-    /* participant = DDSTheParticipantFactory->create_participant_with_profile(
-        domainId, "BuiltinQosLib", "Generic.Monitoring.Common",
-        NULL /* listener * /, DDS_STATUS_MASK_NONE);
+    /* DDSDomainParticipant *participant = DDSTheParticipantFactory->
+            create_participant_with_profile(
+                domainId,
+                "BuiltinQosLib",
+                "Generic.Monitoring.Common",
+                NULL /* listener * /,
+                DDS_STATUS_MASK_NONE);
      */
     if (participant == NULL) {
         return shutdown_participant(
@@ -146,7 +150,7 @@ int run_subscriber_application(
      * This example uses a built-in QoS profile to enable reliable streaming
      * data.*/
 
-    /* reader = subscriber->create_datareader_with_profile(
+    /* DDSDataReader *untyped_reader = subscriber->create_datareader_with_profile(
         topic, DDS_BUILTIN_QOS_LIB_EXP,
         DDS_PROFILE_PATTERN_RELIABLE_STREAMING, reader_listener,
         DDS_STATUS_MASK_ALL);

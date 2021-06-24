@@ -65,7 +65,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     /* Get default publisher QoS to customize */
 
-    /*    retcode = participant->get_default_publisher_qos(publisher_qos);
+    /*  DDS_ReturnCode_t retcode = participant
+                ->get_default_publisher_qos(publisher_qos);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "get_default_publisher_qos error\n");
             return EXIT_FAILURE;
@@ -77,11 +78,15 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     /*    publisher_qos.presentation.access_scope = DDS_TOPIC_PRESENTATION_QOS;
         publisher_qos.presentation.coherent_access = DDS_BOOLEAN_TRUE;
 
-        publisher = participant->create_publisher(publisher_qos, NULL,
+        DDSPublisher * = participant->create_publisher(
+                publisher_qos,
+                NULL,
                 DDS_STATUS_MASK_NONE);
         if (publisher == NULL) {
-            return shutdown_participant(participant, "create_publisher error",
-       EXIT_FAILURE);
+            return shutdown_participant(
+                    participant,
+                    "create_publisher error",
+                    EXIT_FAILURE);
         }
 
     */    /* End changes for coherent_presentation */
@@ -141,10 +146,16 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         datawriter_qos.protocol.rtps_reliable_writer.heartbeats_per_max_samples
        = 0;
 
-        untyped_writer = publisher->create_datawriter(topic, datawriter_qos,
-       NULL, DDS_STATUS_MASK_NONE); if (untyped_writer == NULL) { return
-       shutdown_participant(participant, "create_datawriter error",
-       EXIT_FAILURE);
+        DDSDataWriter *untyped_writer = publisher->create_datawriter(
+                topic,
+                datawriter_qos,
+                NULL,
+                DDS_STATUS_MASK_NONE);
+        if (untyped_writer == NULL) {
+            return shutdown_participant(
+                    participant,
+                    "create_datawriter error",
+                    EXIT_FAILURE);
         }
     */    /* End changes for coherent_presentation */
 
