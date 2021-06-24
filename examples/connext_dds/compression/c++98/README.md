@@ -65,7 +65,7 @@ instructs the application to run forever; this is the default.
 algorithm. The accepted values are: NONE, LZ4, ZLIB, BZIP2. The default is LZ4.
 
 4.  (Publisher only) Path to the file to read. The file will be read line by
-line (each line represent a sample). If no file is given a 1K sample filled 
+line (each line represent a sample). If no file is given a 1K sample filled
 with zeros will be sent.
 
 ## Customizing the Build
