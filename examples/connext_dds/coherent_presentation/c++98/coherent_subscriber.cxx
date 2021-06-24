@@ -127,7 +127,7 @@ int run_subscriber_application(
      * code and comment out the create_subscriber call above.
      */
     /* Start changes for coherent_presentation */
-    /*    
+    /*
         DDS_ReturnCode_t retcode = participant->
                 get_default_subscriber_qos(subscriber_qos);
         if (retcode != DDS_RETCODE_OK) {
@@ -207,7 +207,7 @@ int run_subscriber_application(
                 DDS_STATUS_MASK_ALL);
         if (untyped_reader == NULL) {
             return shutdown_participant(
-                    participant, 
+                    participant,
                     "create_datareader error",
                     EXIT_FAILURE);
         }

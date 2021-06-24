@@ -211,10 +211,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             break;
         }
         case DDS_RETCODE_INCONSISTENT_POLICY: {
-            std::cerr << "Cannot set factory Qos due to INCONSISTENT_POLICY for ";
-            std::cerr << "domain participant\n";
-            return EXIT_FAILURE;
-            break;
+            std::cerr << "Cannot set factory Qos due to INCONSISTENT_POLICY for
+    "; std::cerr << "domain participant\n"; return EXIT_FAILURE; break;
         }
         default: {
             std::cerr << "Cannot set factory Qos for unknown reason for ";

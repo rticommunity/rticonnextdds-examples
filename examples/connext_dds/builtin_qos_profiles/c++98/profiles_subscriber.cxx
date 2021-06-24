@@ -150,10 +150,10 @@ int run_subscriber_application(
      * This example uses a built-in QoS profile to enable reliable streaming
      * data.*/
 
-    /* DDSDataReader *untyped_reader = subscriber->create_datareader_with_profile(
-        topic, DDS_BUILTIN_QOS_LIB_EXP,
-        DDS_PROFILE_PATTERN_RELIABLE_STREAMING, reader_listener,
-        DDS_STATUS_MASK_ALL);
+    /* DDSDataReader *untyped_reader =
+       subscriber->create_datareader_with_profile( topic,
+       DDS_BUILTIN_QOS_LIB_EXP, DDS_PROFILE_PATTERN_RELIABLE_STREAMING,
+       reader_listener, DDS_STATUS_MASK_ALL);
     */
     if (untyped_reader == NULL) {
         return shutdown_participant(
