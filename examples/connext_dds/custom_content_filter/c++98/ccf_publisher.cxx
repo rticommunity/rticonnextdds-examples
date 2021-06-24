@@ -23,20 +23,21 @@
 using namespace application;
 
 static int shutdown_participant(
-    DDSDomainParticipant *participant,
-    const char *shutdown_message,
-    int status);
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
 int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     DDS_Duration_t send_period = { 1, 0 };
 
     // Start communicating in a domain, usually one participant per application
-    DDSDomainParticipant *participant = DDSTheParticipantFactory->create_participant(
-            domain_id,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
@@ -58,7 +59,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     // Register the datatype to use when creating the Topic
     const char *type_name = ccfTypeSupport::get_type_name();
-    DDS_ReturnCode_t retcode = ccfTypeSupport::register_type(participant, type_name);
+    DDS_ReturnCode_t retcode =
+            ccfTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,

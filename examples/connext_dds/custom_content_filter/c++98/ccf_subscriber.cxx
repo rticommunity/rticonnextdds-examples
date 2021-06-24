@@ -58,16 +58,19 @@ unsigned int process_data(ccfDataReader *typed_reader)
     return samples_read;
 }
 
-int run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     DDS_Duration_t wait_timeout = { 1, 0 };
 
     // Start communicating in a domain, usually one participant per application
-    DDSDomainParticipant *participant = DDSTheParticipantFactory->create_participant(
-            domain_id,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
@@ -89,7 +92,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 
     // Register the datatype to use when creating the Topic
     const char *type_name = ccfTypeSupport::get_type_name();
-    DDS_ReturnCode_t retcode = ccfTypeSupport::register_type(participant, type_name);
+    DDS_ReturnCode_t retcode =
+            ccfTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
@@ -129,12 +133,13 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
     parameters.from_array(param_list, 2);
 
     // Create content filtered topic
-    DDSContentFilteredTopic *cft = participant->create_contentfilteredtopic_with_filter(
-            "ContentFilteredTopic",
-            topic,
-            "%0 %1 x",
-            parameters,
-            "CustomFilter");
+    DDSContentFilteredTopic *cft =
+            participant->create_contentfilteredtopic_with_filter(
+                    "ContentFilteredTopic",
+                    topic,
+                    "%0 %1 x",
+                    parameters,
+                    "CustomFilter");
     if (cft == NULL) {
         return shutdown_participant(
                 participant,
@@ -220,9 +225,9 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
             retcode = cft->set_expression_parameters(parameters);
             if (retcode != DDS_RETCODE_OK) {
                 return shutdown_participant(
-                    participant,
-                    "set_expression_parameters error",
-                    EXIT_FAILURE);
+                        participant,
+                        "set_expression_parameters error",
+                        EXIT_FAILURE);
             }
         } else if (samples_read == 10) {
             std::cout << "changing filter parameters\n";
@@ -237,9 +242,9 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
             retcode = cft->set_expression_parameters(oldParameters);
             if (retcode != DDS_RETCODE_OK) {
                 return shutdown_participant(
-                    participant,
-                    "set_expression_parameters error",
-                    EXIT_FAILURE);
+                        participant,
+                        "set_expression_parameters error",
+                        EXIT_FAILURE);
             }
         }
     }
