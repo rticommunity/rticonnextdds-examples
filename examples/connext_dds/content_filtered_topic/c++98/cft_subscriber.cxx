@@ -190,12 +190,12 @@ int run_subscriber_application(
     if (!normal_topic) {
         std::cout << "Using ContentFiltered Topic\n";
         untyped_reader = subscriber->create_datareader(
-            cft, datareader_qos, reader_listener,
+            cft, datareader_qos, NULL,
             DDS_STATUS_MASK_ALL);
     } else {
         std::cout << "Using Normal Topic\n";
         untyped_reader = subscriber->create_datareader(
-            topic, datareader_qos, reader_listener,
+            topic, datareader_qos, NULL,
             DDS_STATUS_MASK_ALL);
     }
     if (untyped_reader == NULL) {

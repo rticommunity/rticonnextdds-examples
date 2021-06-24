@@ -81,7 +81,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    // This DataWriter writes data on "Example async" Topic
+    // This DataWriter writes data on "Example cft" Topic
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
@@ -141,7 +141,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (data == NULL) {
         return shutdown_participant(
                 participant,
-                "asyncTypeSupport::create_data error",
+                "cftTypeSupport::create_data error",
                 EXIT_FAILURE);
     }
 
@@ -186,7 +186,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         }
     */
 
-    // Delete previously allocated async, including all contained elements
+    // Delete previously allocated cft, including all contained elements
     retcode = cftTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "cftTypeSupport::delete_data error " << retcode
