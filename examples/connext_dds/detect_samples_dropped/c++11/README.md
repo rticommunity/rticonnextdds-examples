@@ -43,14 +43,14 @@ On *Windows* systems run:
 
 ```sh
 DroppedSamplesExample_publisher.exe   -d <domain_id> -s <samples_to_send>
-DroppedSamplesExample_subscriber.exe  -d <domain_id> -s <sleep_periods>
+DroppedSamplesExample_subscriber.exe  -d <domain_id> -s <samples_to_receive>
 ```
 
 On *UNIX* systems run:
 
 ```sh
 ./DroppedSamplesExample_publisher  -d <domain_id> -s <samples_to_send>
-./DroppedSamplesExample_subscriber -d <domain_id> -s <sleep_periods>
+./DroppedSamplesExample_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 The applications accept up to two arguments:
@@ -58,8 +58,8 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples. A value of '0'
-instructs the application to run forever; this is the default.
+2.  How long the examples should run, measured in samples. The default is
+infinite.
 
 ## Customizing the Build
 

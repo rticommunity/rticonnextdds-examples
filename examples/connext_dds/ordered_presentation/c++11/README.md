@@ -59,8 +59,7 @@ The applications accept up to two arguments:
     communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+    sleep periods for the subscriber. The default is infinite.
 
 While generating the output below, we used values that would capture the most
 interesting behavior. This ouput it is from:

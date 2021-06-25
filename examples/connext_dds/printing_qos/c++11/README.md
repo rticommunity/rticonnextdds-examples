@@ -58,8 +58,8 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples. A value of '0'
-instructs the application to run forever; this is the default.
+2.  How long the examples should run, measured in samples. The default is
+    infinite.
 
 ## Customizing the Build
 

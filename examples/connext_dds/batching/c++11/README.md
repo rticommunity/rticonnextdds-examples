@@ -58,12 +58,12 @@ The applications accept up to three arguments:
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
 communicate. The default is 0.
 
-2.  If `<turbo_mode>` will be used or not. By default turbo mode is
+2.  How long the examples should run, measured in samples. The default is
+infinite.
+
+3.  If `<turbo_mode>` will be used or not. By default turbo mode is
 not enabled, so manual batching will be used. To activate the *Turbo Mode*, use
 the `--turbo` option.
-
-1.  How long the examples should run, measured in samples. A value of '0'
-instructs the application to run forever; this is the default.
 
 ## Customizing the Build
 

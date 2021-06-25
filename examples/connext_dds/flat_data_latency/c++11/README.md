@@ -122,8 +122,7 @@ The application has the following arguments:
     4.  publisher_plain
 
 3.  (Publisher only) How long the examples should run, measured in samples
-(-s option). A value of '0' instructs the application to run forever; this is
-the default.
+(-s option). The default is infinite.
 
 4.  (Publisher only) The `<exec_time>` in seconds.
 

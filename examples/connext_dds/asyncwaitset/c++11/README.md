@@ -75,7 +75,7 @@ where the publisher options are:
 -   `-s, --sample-count`: Number of samples to send before the application
 shuts down.
 
-    **Default**: 0 (infinite).
+    **Default**: infinite.
 
 -   `-h, --help`: Displays application usage and exits.
 
@@ -103,10 +103,10 @@ where the subscriber options are:
 
      **Default**: 4.
 
--   `-s, --sample-count`: Number of received samples before the application shuts
-    down.
+-   `-s, --sample-count`: Number of received samples before the application
+    shuts down.
 
-     **Default**: 0 (infinite).
+     **Default**: infinite.
 
 -   `-h, --help`: Displays application usage and exits.
 
