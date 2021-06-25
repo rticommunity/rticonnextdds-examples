@@ -83,13 +83,13 @@ void run_subscriber_application(
 
     // Main loop
     while (!application::shutdown_requested && samples_read < sample_count) {
-        if (samples_read == 10 && !filter_changed1) {
+        if (samples_read == 4 && !filter_changed1) {
             std::cout << "Changing filter parameters" << std::endl
                       << "Filter: 15 greater-than x" << std::endl;
             std::vector<std::string> parameters = { "15", "greater-than" };
             cft_topic.filter_parameters(parameters.begin(), parameters.end());
             filter_changed1 = true;
-        } else if (samples_read == 20 && !filter_changed2) {
+        } else if (samples_read == 10 && !filter_changed2) {
             std::cout << "Changing filter parameters" << std::endl
                       << "Filter: 3 divides x" << std::endl;
             std::vector<std::string> parameters = { "3", "divides" };
