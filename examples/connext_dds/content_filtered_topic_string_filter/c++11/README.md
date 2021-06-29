@@ -59,7 +59,7 @@ The applications accept up to three arguments:
 communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
-infinite.
+    infinite.
 
 3.  (subscriber only) If the `--normal-topic` argument is given, it will use a
 normal *Topic* instead of a *Content Filtered Topic*.

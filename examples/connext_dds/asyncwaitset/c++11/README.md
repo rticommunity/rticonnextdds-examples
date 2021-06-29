@@ -101,12 +101,12 @@ where the subscriber options are:
 
 -   `-t, --threads`: Number of threads used to process sample reception.
 
-     **Default**: 4.
+    **Default**: 4.
 
 -   `-s, --sample-count`: Number of received samples before the application
     shuts down.
 
-     **Default**: infinite.
+    **Default**: infinite.
 
 -   `-h, --help`: Displays application usage and exits.
 
