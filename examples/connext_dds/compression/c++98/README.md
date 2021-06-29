@@ -59,14 +59,15 @@ The applications accept up to three arguments:
     communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
-infinite.
+    infinite.
 
 3.  (Publisher only) Enable or disable compression with a given compression
-algorithm. The accepted values are: NONE, LZ4, ZLIB, BZIP2. The default is LZ4.
+    algorithm. The accepted values are: NONE, LZ4, ZLIB, BZIP2. The default is
+    LZ4.
 
 4.  (Publisher only) Path to the file to read. The file will be read line by
-line (each line represent a sample). If no file is given a 1K sample filled
-with zeros will be sent.
+    line (each line represent a sample). If no file is given a 1K sample filled
+    with zeros will be sent.
 
 ## Customizing the Build
 

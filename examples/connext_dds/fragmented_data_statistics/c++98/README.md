@@ -59,7 +59,7 @@ The applications accept up to two arguments:
     communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
-infinite.
+    infinite.
 
 ## Customizing the Build
 

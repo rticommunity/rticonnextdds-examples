@@ -59,7 +59,7 @@ The applications accept up to three arguments:
 communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
-infinite.
+    infinite.
 
 3.  If *Turbo Mode* will be used or not. If the `--turbo` argument is given,
 *Turbo Mode* will be used. Otherwise, it will use *Manual Batching*.
