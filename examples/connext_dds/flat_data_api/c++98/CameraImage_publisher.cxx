@@ -283,8 +283,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         // Build the CameraImage data sample using the builder
         bool build_result = false;
         if (samples_written % 2 == 0) {
-            build_result = build_data_sample(builder, samples_written);  // method
-                                                                         // 1
+            build_result =
+                    build_data_sample(builder, samples_written);  // method
+                                                                  // 1
         } else {
             build_result =
                     build_data_sample_fast(builder, samples_written);  // method
