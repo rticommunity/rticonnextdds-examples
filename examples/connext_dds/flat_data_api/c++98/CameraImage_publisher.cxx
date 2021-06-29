@@ -10,50 +10,23 @@
  * use or inability to use the software.
  */
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "CameraImage.h"
 #include "CameraImageSupport.h"
 #include "ndds/ndds_cpp.h"
+#include "application.h"
 
-/* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant)
-{
-    DDS_ReturnCode_t retcode;
-    int status = 0;
-
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_contained_entities error %d\n", retcode);
-            status = -1;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_participant error %d\n", retcode);
-            status = -1;
-        }
-    }
-
-    /* RTI Connext provides finalize_instance() method on
-    domain participant factory for people who want to release memory used
-    by the participant factory. Uncomment the following block of code for
-    clean destruction of the singleton. */
-    /*
-
-    retcode = DDSDomainParticipantFactory::finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-    */
-
-    return status;
-}
+using namespace application;
 
 const int PIXEL_COUNT = 10;
+
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
 // Simplest way to create the data sample
 bool build_data_sample(CameraImageBuilder &builder, int seed)
@@ -216,150 +189,194 @@ bool build_data_sample_fast(CameraImageBuilder &builder, int seed)
 }
 #endif
 
-extern "C" int publisher_main(int domainId, int sample_count)
+int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
-    DDSDomainParticipant *participant = NULL;
-    DDSPublisher *publisher = NULL;
-    DDSTopic *topic = NULL;
-    DDSDataWriter *writer = NULL;
-    CameraImageDataWriter *CameraImage_writer = NULL;
-    CameraImage *instance = NULL;
-    DDS_ReturnCode_t retcode;
-    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
-    const char *type_name = NULL;
-    int count = 0;
     DDS_Duration_t send_period = { 4, 0 };
 
-    /* To customize participant QoS, use
-    the configuration file USER_QOS_PROFILES.xml */
-    participant = DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    // Start communicating in a domain, usually one participant per application
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        fprintf(stderr, "create_participant error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    /* To customize publisher QoS, use
-    the configuration file USER_QOS_PROFILES.xml */
-    publisher = participant->create_publisher(
+    // A Publisher allows an application to create one or more DataWriters
+    DDSPublisher *publisher = participant->create_publisher(
             DDS_PUBLISHER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
-        fprintf(stderr, "create_publisher error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_publisher error",
+                EXIT_FAILURE);
     }
 
-    /* Register type before creating topic */
-    type_name = CameraImageTypeSupport::get_type_name();
-    retcode = CameraImageTypeSupport::register_type(participant, type_name);
+    // Register the datatype to use when creating the Topic
+    const char *type_name = CameraImageTypeSupport::get_type_name();
+    DDS_ReturnCode_t retcode =
+            CameraImageTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "register_type error %d\n", retcode);
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
-    /* To customize topic QoS, use
-    the configuration file USER_QOS_PROFILES.xml */
-    topic = participant->create_topic(
+    // Create a Topic with a name and a datatype
+    DDSTopic *topic = participant->create_topic(
             "Example CameraImage",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        fprintf(stderr, "create_topic error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
-    /* To customize data writer QoS, use
-    the configuration file USER_QOS_PROFILES.xml */
-    writer = publisher->create_datawriter(
+    // This DataWriter writes data on "Example StringLine" Topic
+    DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
-        fprintf(stderr, "create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-    CameraImage_writer = CameraImageDataWriter::narrow(writer);
-    if (CameraImage_writer == NULL) {
-        fprintf(stderr, "DataWriter narrow error\n");
-        publisher_shutdown(participant);
-        return -1;
+    if (untyped_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_datawriter error",
+                EXIT_FAILURE);
     }
 
-    /* Main loop */
-    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+    // Narrow casts from an untyped DataWriter to a writer of your type
+    CameraImageDataWriter *typed_writer =
+            CameraImageDataWriter::narrow(untyped_writer);
+    if (typed_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "DataWriter narrow error",
+                EXIT_FAILURE);
+    }
+
+    // Main loop, write data
+    for (unsigned int samples_written = 0;
+         !shutdown_requested && samples_written < sample_count;
+         ++samples_written) {
         CameraImageBuilder builder =
-                rti::flat::build_data<CameraImage>(CameraImage_writer);
+                rti::flat::build_data<CameraImage>(typed_writer);
         if (builder.check_failure()) {
-            printf("builder creation error\n");
-            publisher_shutdown(participant);
-            return -1;
+            return shutdown_participant(
+                    participant,
+                    "builder creation error",
+                    EXIT_FAILURE);
         }
 
         // Build the CameraImage data sample using the builder
         bool build_result = false;
-        if (count % 2 == 0) {
-            build_result = build_data_sample(builder, count);  // method 1
+        if (samples_written % 2 == 0) {
+            build_result = build_data_sample(builder, samples_written);  // method
+                                                                         // 1
         } else {
-            build_result = build_data_sample_fast(builder, count);  // method 2
+            build_result =
+                    build_data_sample_fast(builder, samples_written);  // method
+                                                                       // 2
         }
 
         if (!build_result) {
-            printf("error building the sample\n");
-            publisher_shutdown(participant);
-            return -1;
+            return shutdown_participant(
+                    participant,
+                    "error building the sample",
+                    EXIT_FAILURE);
         }
 
         // Create the sample
-        CameraImage *instance = builder.finish_sample();
-        if (instance == NULL) {
-            printf("finish_sample() error\n");
-            publisher_shutdown(participant);
-            return -1;
+        CameraImage *data = builder.finish_sample();
+        if (data == NULL) {
+            return shutdown_participant(
+                    participant,
+                    "finish_sample() error",
+                    EXIT_FAILURE);
         }
 
-        printf("Writing CameraImage, count %d\n", count);
+        std::cout << "Writing CameraImage, count " << samples_written
+                  << std::endl;
 
-        retcode = CameraImage_writer->write(*instance, instance_handle);
+        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "write error %d\n", retcode);
+            std::cerr << "write error " << retcode << std::endl;
         }
 
         NDDSUtility::sleep(send_period);
     }
 
-    /* Delete all entities */
-    return publisher_shutdown(participant);
+    // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
+    return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
+}
+
+// Delete all entities
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
+{
+    DDS_ReturnCode_t retcode;
+
+    std::cout << shutdown_message << std::endl;
+
+    if (participant != NULL) {
+        // Cleanup everything created by this Participant
+        retcode = participant->delete_contained_entities();
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_contained_entities error " << retcode
+                      << std::endl;
+            status = EXIT_FAILURE;
+        }
+
+        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_participant error " << retcode << std::endl;
+            status = EXIT_FAILURE;
+        }
+    }
+
+    return status;
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    ApplicationArguments arguments;
+    parse_arguments(arguments, argc, argv);
+    if (arguments.parse_result == PARSE_RETURN_EXIT) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == PARSE_RETURN_FAILURE) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
+
+    int status = run_publisher_application(
+            arguments.domain_id,
+            arguments.sample_count);
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "finalize_instance error " << retcode << std::endl;
+        status = EXIT_FAILURE;
     }
 
-    /* Uncomment this to turn on additional logging
-    NDDSConfigLogger::get_instance()->
-    set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
-    NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return publisher_main(domain_id, sample_count);
+    return status;
 }
