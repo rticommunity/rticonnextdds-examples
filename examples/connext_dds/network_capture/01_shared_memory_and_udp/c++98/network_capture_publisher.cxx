@@ -24,65 +24,26 @@
  *   - Disable after everything else.
  */
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "ndds/ndds_cpp.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
+#include "application.h"
 
-static int publisher_shutdown(DDSDomainParticipant *participant)
+using namespace application;
+
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
+
+int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
-    DDS_ReturnCode_t retcode;
-    int status = 0;
-
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_contained_entities error %d\n", retcode);
-            status = -1;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_participant error %d\n", retcode);
-            status = -1;
-        }
-    }
-
-    retcode = DDSDomainParticipantFactory::finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-
-    /*
-     * Disable network capture.
-     *
-     * This must be:
-     *   - The last network capture function that is called.
-     */
-    if (!NDDSUtilityNetworkCapture::disable()) {
-        fprintf(stderr, "Error disabling network capture\n");
-        status = -1;
-    }
-
-    return status;
-}
-
-extern "C" int publisher_main(int domainId, int sample_count)
-{
-    DDSDomainParticipant *participant = NULL;
-    DDSPublisher *publisher = NULL;
-    DDSTopic *topic = NULL;
-    DDSDataWriter *writer = NULL;
-    NetworkCaptureDataWriter *NetworkCapture_writer = NULL;
-    NetworkCapture *instance = NULL;
-    DDS_ReturnCode_t retcode;
-    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
-    const char *type_name = NULL;
-    int count = 0;
     DDS_Duration_t send_period = { 1, 0 };
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
 
     /*
      * Enable network capture.
@@ -92,19 +53,22 @@ extern "C" int publisher_main(int domainId, int sample_count)
      *   - Creating the participants for which we want to capture traffic.
      */
     if (!NDDSUtilityNetworkCapture::enable()) {
-        fprintf(stderr, "Error enabling network capture\n");
+        std::cerr << "Error enabling network capture\n";
         return -1;
     }
 
-    participant = DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL, /* listener */
-            DDS_STATUS_MASK_NONE);
+    // Start communicating in a domain, usually one participant per application
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL, /* listener */
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        fprintf(stderr, "create_participant error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
     /*
@@ -118,103 +82,125 @@ extern "C" int publisher_main(int domainId, int sample_count)
      * dependent on the participant's GUID.
      */
     if (!NDDSUtilityNetworkCapture::start("publisher")) {
-        fprintf(stderr, "Error starting network capture\n");
-        return -1;
+        std::cerr << "Error starting network capture\n";
+        return EXIT_FAILURE;
     }
 
-    /* The example continues as the usual Connext DDS HelloWorld. */
-    publisher = participant->create_publisher(
+    // A Publisher allows an application to create one or more DataWriters
+    DDSPublisher *publisher = participant->create_publisher(
             DDS_PUBLISHER_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
-        fprintf(stderr, "create_publisher error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_publisher error",
+                EXIT_FAILURE);
     }
 
-    type_name = NetworkCaptureTypeSupport::get_type_name();
-    retcode = NetworkCaptureTypeSupport::register_type(participant, type_name);
+    // Register the datatype to use when creating the Topic
+    const char *type_name = NetworkCaptureTypeSupport::get_type_name();
+    DDS_ReturnCode_t retcode =
+            NetworkCaptureTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "register_type error %d\n", retcode);
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
-    topic = participant->create_topic(
+    // Create a Topic with a name and a datatype
+    DDSTopic *topic = participant->create_topic(
             "Network capture shared memory example",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        fprintf(stderr, "create_topic error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
-    writer = publisher->create_datawriter(
+    // This DataWriter writes data on "Example prueba" Topic
+    DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
-        fprintf(stderr, "create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
-    }
-    NetworkCapture_writer = NetworkCaptureDataWriter::narrow(writer);
-    if (NetworkCapture_writer == NULL) {
-        fprintf(stderr, "DataWriter narrow error\n");
-        publisher_shutdown(participant);
-        return -1;
+    if (untyped_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_datawriter error",
+                EXIT_FAILURE);
     }
 
-    instance = NetworkCaptureTypeSupport::create_data();
-    if (instance == NULL) {
-        fprintf(stderr, "NetworkCaptureTypeSupport::create_data error\n");
-        publisher_shutdown(participant);
-        return -1;
+    // Narrow casts from an untyped DataWriter to a writer of your type
+    NetworkCaptureDataWriter *typed_writer =
+            NetworkCaptureDataWriter::narrow(untyped_writer);
+    if (typed_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "DataWriter narrow error",
+                EXIT_FAILURE);
     }
 
-    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("Writing NetworkCapture, count %d\n", count);
-        RTIOsapiUtility_snprintf(instance->msg, 128, "Hello World (%d)", count);
+    // Create data for writing, allocating all members
+    NetworkCapture *data = NetworkCaptureTypeSupport::create_data();
+    if (data == NULL) {
+        return shutdown_participant(
+                participant,
+                "NetworkCaptureTypeSupport::create_data error",
+                EXIT_FAILURE);
+    }
+
+    // Main loop, write data
+    for (unsigned int samples_written = 0;
+         !shutdown_requested && samples_written < sample_count;
+         ++samples_written) {
+        std::cout << "Writing NetworkCapture, count " << samples_written
+                  << std::endl;
+        RTIOsapiUtility_snprintf(
+                data->msg,
+                128,
+                "Hello World (%d)",
+                samples_written);
 
         /*
          * Here we are going to pause capturing for some samples.
          * The resulting pcap file will not contain them.
          */
-        if (count == 4 && !NDDSUtilityNetworkCapture::pause()) {
-            fprintf(stderr, "Error pausing network capture\n");
-            publisher_shutdown(participant);
-            return -1;
-        } else if (count == 6 && !NDDSUtilityNetworkCapture::resume()) {
-            fprintf(stderr, "Error resuming network capture\n");
-            publisher_shutdown(participant);
-            return -1;
+        if (samples_written == 4 && !NDDSUtilityNetworkCapture::pause()) {
+            return shutdown_participant(
+                    participant,
+                    "Error pausing network capture",
+                    EXIT_FAILURE);
+        } else if (
+                samples_written == 6 && !NDDSUtilityNetworkCapture::resume()) {
+            return shutdown_participant(
+                    participant,
+                    "Error resuming network capture",
+                    EXIT_FAILURE);
         }
 
-        retcode = NetworkCapture_writer->write(*instance, instance_handle);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "write error %d\n", retcode);
+            std::cerr << "write error " << retcode << std::endl;
         }
 
         NDDSUtility::sleep(send_period);
     }
 
-    retcode = NetworkCapture_writer->unregister_instance(
-            *instance,
-            instance_handle);
+    retcode = typed_writer->unregister_instance(*data, instance_handle);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "unregister instance error %d\n", retcode);
+        std::cerr << "unregister instance error " << retcode << std::endl;
     }
 
-    retcode = NetworkCaptureTypeSupport::delete_data(instance);
+    retcode = NetworkCaptureTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr,
-                "NetworkCaptureTypeSupport::delete_data error %d\n",
-                retcode);
+        std::cerr << "NetworkCaptureTypeSupport::delete_data error " << retcode
+                  << std::endl;
     }
 
     /*
@@ -222,24 +208,71 @@ extern "C" int publisher_main(int domainId, int sample_count)
      * network capture for them.
      */
     if (!NDDSUtilityNetworkCapture::stop()) {
-        fprintf(stderr, "Error stopping network capture\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "Error stopping network capture",
+                EXIT_FAILURE);
     }
-    return publisher_shutdown(participant);
+
+    // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
+    return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
+}
+
+// Delete all entities
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
+{
+    DDS_ReturnCode_t retcode;
+
+    std::cout << shutdown_message << std::endl;
+
+    if (participant != NULL) {
+        // Cleanup everything created by this Participant
+        retcode = participant->delete_contained_entities();
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_contained_entities error " << retcode
+                      << std::endl;
+            status = EXIT_FAILURE;
+        }
+
+        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_participant error " << retcode << std::endl;
+            status = EXIT_FAILURE;
+        }
+    }
+
+    return status;
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    ApplicationArguments arguments;
+    parse_arguments(arguments, argc, argv);
+    if (arguments.parse_result == PARSE_RETURN_EXIT) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == PARSE_RETURN_FAILURE) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
+
+    int status = run_publisher_application(
+            arguments.domain_id,
+            arguments.sample_count);
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "finalize_instance error " << retcode << std::endl;
+        status = EXIT_FAILURE;
     }
 
-    return publisher_main(domain_id, sample_count);
+    return status;
 }
