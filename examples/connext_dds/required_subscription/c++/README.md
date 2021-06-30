@@ -62,8 +62,8 @@ The applications accept up to two arguments:
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
 
-2.  The log level verbosity. How much debugging output to show. Valid values from 0
-    to 3, being 3 the higher verbosity level.
+2.  The log level verbosity. How much debugging output to show. Valid values from
+    0 to 3, being 3 the higher verbosity level.
 
 ## Customizing the Build
 
