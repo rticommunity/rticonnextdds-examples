@@ -298,7 +298,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // Delete previously allocated data, including all contained elements
     retcode = listenersTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "pruebaTypeSupport::delete_data error " << retcode
+        std::cerr << "listenersTypeSupport::delete_data error " << retcode
                   << std::endl;
     }
 
