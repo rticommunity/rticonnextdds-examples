@@ -114,7 +114,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /* Write one sample and wait for acknowledgment from the 
+    /* Write one sample and wait for acknowledgment from the
        Required Subscribers */
     std::cout << "Writing RequiredSubscriptions" << std::endl;
     retcode = typed_writer->write(*data, DDS_HANDLE_NIL);

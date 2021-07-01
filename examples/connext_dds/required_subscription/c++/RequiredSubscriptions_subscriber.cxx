@@ -53,7 +53,7 @@ unsigned int process_data(RequiredSubscriptionsDataReader *typed_reader)
             std::cout << "Received data" << std::endl;
             RequiredSubscriptionsTypeSupport::print_data(&data_seq[i]);
             samples_read++;
-        } else {  
+        } else {
             // This is an instance lifecycle event with no data payload.
             std::cout << "Received instance state notification" << std::endl;
         }
