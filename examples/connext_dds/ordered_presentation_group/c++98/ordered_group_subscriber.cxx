@@ -101,16 +101,19 @@ void ordered_groupSubscriberListener::on_data_on_readers(
     subscriber->end_access();
 }
 
-int run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     DDS_Duration_t receive_period = { 4, 0 };
 
     // Start communicating in a domain, usually one participant per application
-    DDSDomainParticipant *participant = DDSTheParticipantFactory->create_participant(
-            domain_id,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
@@ -118,7 +121,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
                 EXIT_FAILURE);
     }
 
-    ordered_groupSubscriberListener *subscriber_listener = new ordered_groupSubscriberListener();
+    ordered_groupSubscriberListener *subscriber_listener =
+            new ordered_groupSubscriberListener();
 
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
@@ -134,7 +138,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 
     // Register the datatype to use when creating the Topic
     const char *type_name = ordered_groupTypeSupport::get_type_name();
-    DDS_ReturnCode_t retcode = ordered_groupTypeSupport::register_type(participant, type_name);
+    DDS_ReturnCode_t retcode =
+            ordered_groupTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
@@ -223,7 +228,8 @@ int run_subscriber_application(unsigned int domain_id, unsigned int sample_count
 
     // Main loop. Wait for data to arrive, and process when it arrives
     for (int count = 0; count < sample_count && !shutdown_requested; ++count) {
-        std::cout << "ordered_group subscriber sleeping for " << receive_period.sec << " sec...\n";
+        std::cout << "ordered_group subscriber sleeping for "
+                  << receive_period.sec << " sec...\n";
 
         NDDSUtility::sleep(receive_period);
     }

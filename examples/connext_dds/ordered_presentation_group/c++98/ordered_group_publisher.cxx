@@ -30,11 +30,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     DDS_Duration_t send_period = { 1, 0 };
 
     // Start communicating in a domain, usually one participant per application
-    DDSDomainParticipant *participant = DDSTheParticipantFactory->create_participant(
-            domain_id,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
@@ -56,7 +57,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     // Register the datatype to use when creating the Topic
     const char *type_name = ordered_groupTypeSupport::get_type_name();
-    DDS_ReturnCode_t retcode = ordered_groupTypeSupport::register_type(participant, type_name);
+    DDS_ReturnCode_t retcode =
+            ordered_groupTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
@@ -119,7 +121,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    ordered_groupDataWriter *typed_writer1 = ordered_groupDataWriter::narrow(untyped_writer1);
+    ordered_groupDataWriter *typed_writer1 =
+            ordered_groupDataWriter::narrow(untyped_writer1);
     if (typed_writer1 == NULL) {
         return shutdown_participant(
                 participant,
@@ -138,8 +141,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 "create_datawriter error",
                 EXIT_FAILURE);
     }
-    
-    ordered_groupDataWriter *typed_writer2 = ordered_groupDataWriter::narrow(untyped_writer2);
+
+    ordered_groupDataWriter *typed_writer2 =
+            ordered_groupDataWriter::narrow(untyped_writer2);
     if (typed_writer2 == NULL) {
         return shutdown_participant(
                 participant,
@@ -158,8 +162,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 "create_datawriter error",
                 EXIT_FAILURE);
     }
-    
-    ordered_groupDataWriter *typed_writer3 = ordered_groupDataWriter::narrow(untyped_writer3);
+
+    ordered_groupDataWriter *typed_writer3 =
+            ordered_groupDataWriter::narrow(untyped_writer3);
     if (typed_writer3 == NULL) {
         return shutdown_participant(
                 participant,
@@ -207,45 +212,52 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     for (unsigned int samples_written = 0;
          !shutdown_requested && samples_written < sample_count;
          ++samples_written) {
-        std::cout << "Writing ordered_group, count " << samples_written << std::endl;
+        std::cout << "Writing ordered_group, count " << samples_written
+                  << std::endl;
 
         // Modify the data to be sent and Write data
-        strcpy(instance1->message,"First sample, Topic 1 sent by DataWriter number 1");
+        strcpy(instance1->message,
+               "First sample, Topic 1 sent by DataWriter number 1");
 
         retcode = typed_writer1->write(*instance1, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
 
-        strcpy(instance1->message, "Second sample, Topic 1 sent by DataWriter number 1");
+        strcpy(instance1->message,
+               "Second sample, Topic 1 sent by DataWriter number 1");
 
         retcode = typed_writer1->write(*instance1, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
 
-        strcpy(instance2->message, "First sample, Topic 2 sent by DataWriter number 2");
+        strcpy(instance2->message,
+               "First sample, Topic 2 sent by DataWriter number 2");
 
         retcode = typed_writer2->write(*instance2, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
 
-        strcpy(instance2->message, "Second sample, Topic 2 sent by DataWriter number 2");
+        strcpy(instance2->message,
+               "Second sample, Topic 2 sent by DataWriter number 2");
 
         retcode = typed_writer2->write(*instance2, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
 
-        strcpy(instance3->message, "First sample, Topic 3 sent by DataWriter number 3");
+        strcpy(instance3->message,
+               "First sample, Topic 3 sent by DataWriter number 3");
 
         retcode = typed_writer3->write(*instance3, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
 
-        strcpy(instance3->message, "Second sample, Topic 3 sent by DataWriter number 3");
+        strcpy(instance3->message,
+               "Second sample, Topic 3 sent by DataWriter number 3");
 
         retcode = typed_writer3->write(*instance3, DDS_HANDLE_NIL);
         if (retcode != DDS_RETCODE_OK) {
@@ -266,19 +278,22 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // Delete data sample
     retcode = ordered_groupTypeSupport::delete_data(instance1);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode << std::endl;
+        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode
+                  << std::endl;
     }
 
     // Delete data sample
     retcode = ordered_groupTypeSupport::delete_data(instance2);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode << std::endl;
+        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode
+                  << std::endl;
     }
 
     // Delete data sample
     retcode = ordered_groupTypeSupport::delete_data(instance3);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode << std::endl;
+        std::cerr << "ordered_groupTypeSupport::delete_data error " << retcode
+                  << std::endl;
     }
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
