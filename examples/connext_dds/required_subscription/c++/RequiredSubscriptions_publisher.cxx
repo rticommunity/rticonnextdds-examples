@@ -34,7 +34,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             DDSTheParticipantFactory->create_participant(
                     domain_id,
                     DDS_PARTICIPANT_QOS_DEFAULT,
-                    NULL /* listener */,
+                    NULL,
                     DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
@@ -46,7 +46,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
             DDS_PUBLISHER_QOS_DEFAULT,
-            NULL /* listener */,
+            NULL,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         return shutdown_participant(
@@ -72,7 +72,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             "RequiredSubscriptionsTopic",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
-            NULL /* listener */,
+            NULL,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(
@@ -81,11 +81,11 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    // This DataWriter writes data on "Example RequiredSubscriptions" Topic
+    // This DataWriter writes data on "RequiredSubscriptionsTopic" Topic
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
-            NULL /* listener */,
+            NULL,
             DDS_STATUS_MASK_NONE);
     if (untyped_writer == NULL) {
         return shutdown_participant(
@@ -114,10 +114,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /// Write one sample and wait
-
-    // Modify the data to be written here
-
+    /* Write one sample and wait for acknowledgment from the 
+       Required Subscribers */
     std::cout << "Writing RequiredSubscriptions" << std::endl;
     retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
     if (retcode != DDS_RETCODE_OK) {
@@ -130,8 +128,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
     }
 
-    // Delete previously allocated RequiredSubscriptions, including all
-    // contained elements
+    /* Delete previously allocated RequiredSubscriptions, including all
+       contained elements */
     retcode = RequiredSubscriptionsTypeSupport::delete_data(data);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "RequiredSubscriptionsTypeSupport::delete_data error "
@@ -142,7 +140,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }
 
-// Delete all entities
+/* Delete all entities */
 static int shutdown_participant(
         DDSDomainParticipant *participant,
         const char *shutdown_message,
@@ -190,8 +188,8 @@ int main(int argc, char *argv[])
             arguments.domain_id,
             arguments.sample_count);
 
-    // Releases the memory used by the participant factory.  Optional at
-    // application exit
+    /* Releases the memory used by the participant factory.  Optional at
+       application exit */
     DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "finalize_instance error " << retcode << std::endl;

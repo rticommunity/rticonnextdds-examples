@@ -26,11 +26,14 @@ static int shutdown_participant(
         const char *shutdown_message,
         int status);
 
-// Process data. Returns number of samples processed.
+/* Process the data received by the DataReader passed as a parameter.
+   It returns the number of samples processed. */
 unsigned int process_data(RequiredSubscriptionsDataReader *typed_reader)
 {
-    RequiredSubscriptionsSeq data_seq;  // Sequence of received data
-    DDS_SampleInfoSeq info_seq;  // Metadata associated with samples in data_seq
+    // Sequence of received data
+    RequiredSubscriptionsSeq data_seq;
+    // Metadata associated with samples in data_seq
+    DDS_SampleInfoSeq info_seq;
     unsigned int samples_read = 0;
 
     // Take available data from DataReader's queue
@@ -50,7 +53,8 @@ unsigned int process_data(RequiredSubscriptionsDataReader *typed_reader)
             std::cout << "Received data" << std::endl;
             RequiredSubscriptionsTypeSupport::print_data(&data_seq[i]);
             samples_read++;
-        } else {  // This is an instance lifecycle event with no data payload.
+        } else {  
+            // This is an instance lifecycle event with no data payload.
             std::cout << "Received instance state notification" << std::endl;
         }
     }
@@ -72,7 +76,7 @@ int run_subscriber_application(
             DDSTheParticipantFactory->create_participant(
                     domain_id,
                     DDS_PARTICIPANT_QOS_DEFAULT,
-                    NULL /* listener */,
+                    NULL,
                     DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         return shutdown_participant(
@@ -84,7 +88,7 @@ int run_subscriber_application(
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *subscriber = participant->create_subscriber(
             DDS_SUBSCRIBER_QOS_DEFAULT,
-            NULL /* listener */,
+            NULL,
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         return shutdown_participant(
@@ -110,7 +114,7 @@ int run_subscriber_application(
             "RequiredSubscriptionsTopic",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
-            NULL /* listener */,
+            NULL,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         return shutdown_participant(
@@ -119,7 +123,7 @@ int run_subscriber_application(
                 EXIT_FAILURE);
     }
 
-    // This DataReader reads data on "Example RequiredSubscriptions" Topic
+    // This DataReader reads data on "RequiredSubscriptionsTopic" Topic
     DDSDataReader *untyped_reader = subscriber->create_datareader(
             topic,
             DDS_DATAREADER_QOS_DEFAULT,
@@ -187,7 +191,7 @@ int run_subscriber_application(
     return shutdown_participant(participant, "Shutting down", 0);
 }
 
-// Delete all entities
+/* Delete all entities */
 static int shutdown_participant(
         DDSDomainParticipant *participant,
         const char *shutdown_message,
@@ -234,8 +238,8 @@ int main(int argc, char *argv[])
             arguments.domain_id,
             arguments.sample_count);
 
-    // Releases the memory used by the participant factory.  Optional at
-    // application exit
+    /* Releases the memory used by the participant factory.  Optional at
+       application exit */
     DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "finalize_instance error" << retcode << std::endl;
