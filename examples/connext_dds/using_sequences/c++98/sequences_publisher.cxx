@@ -81,7 +81,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    // This DataWriter writes data on "Example prueba" Topic
+    // This DataWriter writes data on "Example sequences" Topic
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
@@ -219,7 +219,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     delete[] short_buffer;
 
-    // Delete previously allocated prueba, including all contained elements
+    // Delete previously allocated sequences, including all contained elements
     retcode = sequencesTypeSupport::delete_data(owner_instance);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "sequencesTypeSupport::delete_data error " << retcode
