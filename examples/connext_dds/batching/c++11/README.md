@@ -42,8 +42,8 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-batch_data_publisher.exe  -d <domain_id> -s <samples_to_send> [--turbo]
-batch_data_subscriber.exe -d <domain_id> -s <samples_to_receive> [--turbo]
+batch_data_publisher.exe  -d <domain_id> -s <samples_to_send> --turbo
+batch_data_subscriber.exe -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 On *UNIX* systems run:
