@@ -83,7 +83,6 @@ void run_publisher_application(
         // writer.write(instance, instance_handle);
         writer.write(instance);
 
-        // Send once every second
         rti::util::sleep(dds::core::Duration(0, 100000000));
     }
 
