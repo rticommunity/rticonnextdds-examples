@@ -21,9 +21,13 @@ from pathlib import Path
 
 
 def main():
-    rti_installation_path = Path(os.getenv("RTI_INSTALLATION_PATH") or Path.home())
+    rti_installation_path = Path(
+        os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+    )
 
-    found_rti_connext_dds = list(rti_installation_path.glob("rti_connext_dds-?.?.?"))
+    found_rti_connext_dds = list(
+        rti_installation_path.glob("rti_connext_dds-?.?.?")
+    )
 
     if not found_rti_connext_dds:
         rti_package_version = "-"
@@ -44,7 +48,9 @@ def main():
         try:
             gcc_version = (
                 subprocess.run(
-                    ["gcc", "-dumpfullversion"], capture_output=True, check=True
+                    ["gcc", "-dumpfullversion"],
+                    capture_output=True,
+                    check=True,
                 )
                 .stdout[:-1]
                 .decode("utf-8")
