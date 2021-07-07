@@ -45,24 +45,35 @@ def main():
     text = text.replace("@OS_VERSION@", platform.release())
 
     if platform.system() == "Linux":
-        gcc_version = (
-            subprocess.run(["gcc", "-dumpfullversion"], capture_output=True)
-            .stdout[:-1]
-            .decode("utf-8")
-        )
+        try:
+            gcc_version = (
+                subprocess.run(["gcc", "-dumpfullversion"], capture_output=True, check=True)
+                .stdout[:-1]
+                .decode("utf-8")
+            )
+        except:
+            gcc_version = "-"
+
         extra_rows = f"| GCC Version | {gcc_version} |\n"
 
-        clang_version = (
-            subprocess.run(["clang", "-dumpversion"], capture_output=True)
-            .stdout[:-1]
-            .decode("utf-8")
-        )
+        try:
+            clang_version = (
+                subprocess.run(["clang", "-dumpversion"], capture_output=True, check=True)
+                .stdout[:-1]
+                .decode("utf-8")
+            )
+        except:
+            clang_version = "-"
+
         extra_rows = f"| CLANG Version | {clang_version} |\n"
     elif platform.system() == "Darwin":
-        output = subprocess.run(
-            ["clang", "--version"], capture_output=True
-        ).stdout.decode("utf-8")
-        clang_version = output.split("\n")[0]
+        try:
+            output = subprocess.run(
+                ["clang", "--version"], capture_output=True, check=True
+            ).stdout.decode("utf-8")
+            clang_version = output.split("\n")[0]
+        except:
+            clang_version = "-"
 
         extra_rows = f"| CLANG Version | {clang_version} |\n"
 
