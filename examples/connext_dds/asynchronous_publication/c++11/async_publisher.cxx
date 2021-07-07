@@ -84,7 +84,7 @@ void run_publisher_application(
         writer.write(instance);
 
         // Send once every second
-        rti::util::sleep(dds::core::Duration(1));
+        rti::util::sleep(dds::core::Duration(0, 100000000));
     }
 
     // If using instance_handle, unregister it.
