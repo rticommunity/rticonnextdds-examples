@@ -43,6 +43,7 @@ unsigned int process_data(hpfDataReader *typed_reader)
         if (info_seq[i].valid_data) {
             std::cout << "Received data\n";
             hpfTypeSupport::print_data(&data_seq[i]);
+            samples_read++;
         }
     }
 
