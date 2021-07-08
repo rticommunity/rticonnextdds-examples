@@ -65,7 +65,7 @@ def main():
             or "-"
         )
 
-        extra_rows = f"| CLANG Version | {clang_version} |\n"
+        extra_rows += f"| CLANG Version | {clang_version} |\n"
     elif platform.system() == "Darwin":
         output = (
             subprocess.run(
