@@ -169,18 +169,15 @@ pipeline {
             }
 
             post {
+                always {
+                    cleanWs()
+                }
                 aborted {
                     publishChecks conclusion: 'CANCELED', detailsURL: DETAILS_URL,
                         name: 'Waiting for executor', title: 'Aborted',
                        summary: ':no_entry: The pipeline was aborted'
                 }
             }
-        }
-    }
-
-    post {
-        always {
-            cleanWs()
         }
     }
 }
