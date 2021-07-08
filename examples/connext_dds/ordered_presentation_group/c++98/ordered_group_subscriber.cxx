@@ -105,7 +105,7 @@ int run_subscriber_application(
         unsigned int domain_id,
         unsigned int sample_count)
 {
-    DDS_Duration_t receive_period = { 4, 0 };
+    DDS_Duration_t receive_period = { 1, 0 };
 
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
