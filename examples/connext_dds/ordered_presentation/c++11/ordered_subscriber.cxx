@@ -20,8 +20,9 @@
 
 // Instead of using listeners, we are polling the readers to be able to see
 // the order of a set of received samples.
-void poll_readers(std::vector<dds::sub::DataReader<ordered>> &readers)
+unsigned int poll_readers(std::vector<dds::sub::DataReader<ordered>> &readers)
 {
+    unsigned int samples_read = 0;
     for (std::vector<int>::size_type i = 0; i < readers.size(); i++) {
         dds::sub::LoanedSamples<ordered> samples = readers[i].take();
         for (auto sample : samples) {
@@ -29,14 +30,17 @@ void poll_readers(std::vector<dds::sub::DataReader<ordered>> &readers)
                 std::cout << std::string(i, '\t') << "Reader " << i
                           << ": Instance" << sample.data().id()
                           << "->value = " << sample.data().value() << std::endl;
+                samples_read++;
             }
         }
     }
+
+    return samples_read;
 }
 
 void run_subscriber_application(
         unsigned int domain_id,
-        unsigned int max_sleep_periods)
+        unsigned int sample_count)
 {
     // Create a DomainParticipant.
     dds::domain::DomainParticipant participant(domain_id);
@@ -93,12 +97,11 @@ void run_subscriber_application(
     }
 
     // Main loop
-    for (unsigned int sleep_periods = 0;
-         !application::shutdown_requested && sleep_periods < max_sleep_periods;
-         sleep_periods++) {
+    unsigned int samples_read = 0;
+    while (!application::shutdown_requested && samples_read < sample_count) {
         std::cout << "ordered subscriber sleeping for 4 sec.." << std::endl;
         rti::util::sleep(dds::core::Duration(4));
-        poll_readers(readers);
+        samples_read += poll_readers(readers);
     }
 }
 
@@ -107,7 +110,7 @@ int main(int argc, char *argv[])
     using namespace application;
 
     // Parse arguments and handle control-C
-    auto arguments = parse_arguments(argc, argv, ApplicationKind::subscriber);
+    auto arguments = parse_arguments(argc, argv);
     if (arguments.parse_result == ParseReturn::exit) {
         return EXIT_SUCCESS;
     } else if (arguments.parse_result == ParseReturn::failure) {

@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
     using namespace application;
 
     // Parse arguments and handle control-C
-    auto arguments = parse_arguments(argc, argv, ApplicationKind::publisher);
+    auto arguments = parse_arguments(argc, argv);
     if (arguments.parse_result == ParseReturn::exit) {
         return EXIT_SUCCESS;
     } else if (arguments.parse_result == ParseReturn::failure) {

@@ -36,8 +36,6 @@ inline void setup_signal_handlers()
 
 enum class ParseReturn { ok, failure, exit };
 
-enum class ApplicationKind { publisher, subscriber };
-
 struct ApplicationArguments {
     ParseReturn parse_result;
     unsigned int domain_id;
@@ -81,10 +79,7 @@ inline void set_verbosity(
 }
 
 // Parses application arguments for example.
-inline ApplicationArguments parse_arguments(
-        int argc,
-        char *argv[],
-        ApplicationKind current_application)
+inline ApplicationArguments parse_arguments(int argc, char *argv[])
 {
     int arg_processing = 1;
     bool show_usage = false;
@@ -101,16 +96,8 @@ inline ApplicationArguments parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && current_application == ApplicationKind::publisher
                 && (strcmp(argv[arg_processing], "-s") == 0
                     || strcmp(argv[arg_processing], "--sample-count") == 0)) {
-            sample_count = atoi(argv[arg_processing + 1]);
-            arg_processing += 2;
-        } else if (
-                (argc > arg_processing + 1)
-                && current_application == ApplicationKind::subscriber
-                && (strcmp(argv[arg_processing], "-s") == 0
-                    || strcmp(argv[arg_processing], "--sleeps") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
@@ -134,32 +121,20 @@ inline ApplicationArguments parse_arguments(
         }
     }
     if (show_usage) {
-        std::string usage =
-                "Usage:\n"
-                "    -d, --domain       <int>   Domain ID this application "
-                "will\n"
-                "                               subscribe in.  \n"
-                "                               Default: 0\n";
-
-        if (current_application == ApplicationKind::publisher) {
-            usage += "    -s, --sample_count <int>   Number of samples to send "
-                     "before\n"
+        std::cout << "Usage:\n"
+                     "    -d, --domain       <int>   Domain ID this "
+                     "application will\n"
+                     "                               subscribe in.  \n"
+                     "                               Default: 0\n"
+                     "    -s, --sample_count <int>   Number of samples to "
+                     "receive before\n"
                      "                               cleanly shutting down. \n"
-                     "                               Default: infinite\n";
-        } else if (current_application == ApplicationKind::subscriber) {
-            usage += "    -s, --sleeps       <int>   Number of sleeps before "
-                     "cleanly\n"
-                     "                               shutting down. \n"
-                     "                               Default: infinite\n";
-        }
-
-
-        usage += "    -v, --verbosity    <int>   How much debugging output to "
-                 "show.\n"
-                 "                               Range: 0-3 \n"
-                 "                               Default: 1\n";
-
-        std::cout << usage;
+                     "                               Default: infinite\n"
+                     "    -v, --verbosity    <int>   How much debugging output "
+                     "to show.\n"
+                     "                               Range: 0-3 \n"
+                     "                               Default: 1"
+                  << std::endl;
     }
 
     return ApplicationArguments(
