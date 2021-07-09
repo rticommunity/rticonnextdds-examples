@@ -83,7 +83,7 @@ void run_publisher_application(
         // writer.write(instance, instance_handle);
         writer.write(instance);
 
-        rti::util::sleep(dds::core::Duration(0, 100000000));
+        rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 
     // If using instance_handle, unregister it.
