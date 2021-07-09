@@ -169,7 +169,7 @@ pipeline {
             }
 
             post {
-                always {
+                cleanup {
                     cleanWs()
                 }
                 aborted {
