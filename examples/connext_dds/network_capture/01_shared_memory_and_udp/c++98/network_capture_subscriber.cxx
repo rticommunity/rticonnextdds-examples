@@ -24,69 +24,29 @@
  *   - Stop capturing trafffic (for one or all participants).
  *   - Disable after everything else.
  */
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include "ndds/ndds_cpp.h"
 #include "network_capture.h"
 #include "network_captureSupport.h"
+#include "application.h"
 
-class NetworkCaptureListener : public DDSDataReaderListener {
-public:
-    virtual void on_requested_deadline_missed(
-            DDSDataReader * /*reader*/,
-            const DDS_RequestedDeadlineMissedStatus & /*status*/)
-    {
-    }
+using namespace application;
 
-    virtual void on_requested_incompatible_qos(
-            DDSDataReader * /*reader*/,
-            const DDS_RequestedIncompatibleQosStatus & /*status*/)
-    {
-    }
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
-    virtual void on_sample_rejected(
-            DDSDataReader * /*reader*/,
-            const DDS_SampleRejectedStatus & /*status*/)
-    {
-    }
-
-    virtual void on_liveliness_changed(
-            DDSDataReader * /*reader*/,
-            const DDS_LivelinessChangedStatus & /*status*/)
-    {
-    }
-
-    virtual void on_sample_lost(
-            DDSDataReader * /*reader*/,
-            const DDS_SampleLostStatus & /*status*/)
-    {
-    }
-
-    virtual void on_subscription_matched(
-            DDSDataReader * /*reader*/,
-            const DDS_SubscriptionMatchedStatus & /*status*/)
-    {
-    }
-
-    virtual void on_data_available(DDSDataReader *reader);
-};
-
-void NetworkCaptureListener::on_data_available(DDSDataReader *reader)
+unsigned int process_data(NetworkCaptureDataReader *typed_reader)
 {
-    NetworkCaptureDataReader *NetworkCapture_reader = NULL;
     NetworkCaptureSeq data_seq;
     DDS_SampleInfoSeq info_seq;
-    DDS_ReturnCode_t retcode;
-    int i;
+    unsigned int samples_read = 0;
 
-    NetworkCapture_reader = NetworkCaptureDataReader::narrow(reader);
-    if (NetworkCapture_reader == NULL) {
-        fprintf(stderr, "DataReader narrow error\n");
-        return;
-    }
-
-    retcode = NetworkCapture_reader->take(
+    typed_reader->take(
             data_seq,
             info_seq,
             DDS_LENGTH_UNLIMITED,
@@ -94,70 +54,25 @@ void NetworkCaptureListener::on_data_available(DDSDataReader *reader)
             DDS_ANY_VIEW_STATE,
             DDS_ANY_INSTANCE_STATE);
 
-    if (retcode == DDS_RETCODE_NO_DATA) {
-        return;
-    } else if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "take error %d\n", retcode);
-        return;
-    }
-
-    for (i = 0; i < data_seq.length(); ++i) {
+    for (int i = 0; i < data_seq.length(); ++i) {
         if (info_seq[i].valid_data) {
-            printf("Received data\n");
+            std::cout << "Received data\n";
             NetworkCaptureTypeSupport::print_data(&data_seq[i]);
+            samples_read++;
         }
     }
 
-    retcode = NetworkCapture_reader->return_loan(data_seq, info_seq);
+    DDS_ReturnCode_t retcode = typed_reader->return_loan(data_seq, info_seq);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "return loan error %d\n", retcode);
+        std::cerr << "return loan error " << retcode << std::endl;
     }
 }
 
-static int subscriber_shutdown(DDSDomainParticipant *participant)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
-    DDS_ReturnCode_t retcode;
-    int status = 0;
-
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_contained_entities error %d\n", retcode);
-            status = -1;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            fprintf(stderr, "delete_participant error %d\n", retcode);
-            status = -1;
-        }
-    }
-
-    retcode = DDSDomainParticipantFactory::finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-
-    if (!NDDSUtilityNetworkCapture::disable()) {
-        fprintf(stderr, "Error disabling network capture\n");
-        status = -1;
-    }
-    return status;
-}
-
-extern "C" int subscriber_main(int domainId, int sample_count)
-{
-    DDSDomainParticipant *participant = NULL;
-    DDSSubscriber *subscriber = NULL;
-    DDSTopic *topic = NULL;
-    NetworkCaptureListener *reader_listener = NULL;
-    DDSDataReader *reader = NULL;
-    DDS_ReturnCode_t retcode;
-    const char *type_name = NULL;
-    int count = 0;
-    DDS_Duration_t receive_period = { 1, 0 };
-    int status = 0;
+    DDS_Duration_t wait_timeout = { 1, 0 };
     DDS_Boolean success = DDS_BOOLEAN_FALSE;
 
     /*
@@ -169,8 +84,8 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::enable();
     if (!success) {
-        fprintf(stderr, "Error enabling network capture\n");
-        return -1;
+        std::cerr << "Error enabling network capture\n";
+        return EXIT_FAILURE;
     }
 
     /*
@@ -185,69 +100,123 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::start("subscriber");
     if (!success) {
-        fprintf(stderr, "Error starting network capture\n");
-        return -1;
+        std::cerr << "Error starting network capture\n";
+        return EXIT_FAILURE;
     }
 
-    participant = DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL, /* listener */
-            DDS_STATUS_MASK_NONE);
+    // Start communicating in a domain, usually one participant per application
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL, /* listener */
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        fprintf(stderr, "create_participant error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    subscriber = participant->create_subscriber(
+    // A Subscriber allows an application to create one or more DataReaders
+    DDSSubscriber *subscriber = participant->create_subscriber(
             DDS_SUBSCRIBER_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
-        fprintf(stderr, "create_subscriber error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_subscriber error",
+                EXIT_FAILURE);
     }
 
-    type_name = NetworkCaptureTypeSupport::get_type_name();
-    retcode = NetworkCaptureTypeSupport::register_type(participant, type_name);
+    // Register the datatype to use when creating the Topic
+    const char *type_name = NetworkCaptureTypeSupport::get_type_name();
+    DDS_ReturnCode_t retcode =
+            NetworkCaptureTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "register_type error %d\n", retcode);
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
-    topic = participant->create_topic(
+    // Create a Topic with a name and a datatype
+    DDSTopic *topic = participant->create_topic(
             "Network capture shared memory example",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL, /* listener */
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        fprintf(stderr, "create_topic error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
-    reader_listener = new NetworkCaptureListener();
-    reader = subscriber->create_datareader(
+    // This DataReader reads data on "Example prueba" Topic
+    DDSDataReader *untyped_reader = subscriber->create_datareader(
             topic,
             DDS_DATAREADER_QOS_DEFAULT,
-            reader_listener,
+            NULL,
             DDS_STATUS_MASK_ALL);
-    if (reader == NULL) {
-        fprintf(stderr, "create_datareader error\n");
-        subscriber_shutdown(participant);
-        delete reader_listener;
-        return -1;
+    if (untyped_reader == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_datareader error",
+                EXIT_FAILURE);
     }
 
-    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("NetworkCapture subscriber sleeping for %d sec...\n",
-               receive_period.sec);
+    // Narrow casts from a untyped DataReader to a reader of your type
+    NetworkCaptureDataReader *typed_reader =
+            NetworkCaptureDataReader::narrow(untyped_reader);
+    if (typed_reader == NULL) {
+        return shutdown_participant(
+                participant,
+                "DataReader narrow error",
+                EXIT_FAILURE);
+    }
 
-        NDDSUtility::sleep(receive_period);
+    // Create ReadCondition that triggers when unread data in reader's queue
+    DDSReadCondition *read_condition = typed_reader->create_readcondition(
+            DDS_NOT_READ_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
+    if (read_condition == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_readcondition error",
+                EXIT_FAILURE);
+    }
+
+    // WaitSet will be woken when the attached condition is triggered
+    DDSWaitSet waitset;
+    retcode = waitset.attach_condition(read_condition);
+    if (retcode != DDS_RETCODE_OK) {
+        return shutdown_participant(
+                participant,
+                "attach_condition error",
+                EXIT_FAILURE);
+    }
+
+    // Main loop. Wait for data to arrive, and process when it arrives
+    unsigned int samples_read = 0;
+    while (!shutdown_requested && samples_read < sample_count) {
+        DDSConditionSeq active_conditions_seq;
+
+        // Wait for data and report if it does not arrive
+        retcode = waitset.wait(active_conditions_seq, wait_timeout);
+
+        if (retcode == DDS_RETCODE_OK) {
+            // If the read condition is triggered, process data
+            samples_read += process_data(typed_reader);
+        } else {
+            if (retcode == DDS_RETCODE_TIMEOUT) {
+                std::cout << "No data after " << wait_timeout.sec << " second"
+                          << std::endl;
+            }
+        }
     }
 
     /*
@@ -256,28 +225,70 @@ extern "C" int subscriber_main(int domainId, int sample_count)
      */
     success = NDDSUtilityNetworkCapture::stop();
     if (!success) {
-        fprintf(stderr, "Error stopping network capture\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "Error stopping network capture",
+                EXIT_FAILURE);
     }
 
-    status = subscriber_shutdown(participant);
-    delete reader_listener;
+    // Cleanup
+    return shutdown_participant(participant, "Shutting down", 0);
+}
 
+// Delete all entities
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
+{
+    DDS_ReturnCode_t retcode;
+
+    std::cout << shutdown_message << std::endl;
+
+    if (participant != NULL) {
+        // Cleanup everything created by this Participant
+        retcode = participant->delete_contained_entities();
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_contained_entities error" << retcode
+                      << std::endl;
+            status = EXIT_FAILURE;
+        }
+
+        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_participant error" << retcode << std::endl;
+            status = EXIT_FAILURE;
+        }
+    }
     return status;
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    ApplicationArguments arguments;
+    parse_arguments(arguments, argc, argv);
+    if (arguments.parse_result == PARSE_RETURN_EXIT) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == PARSE_RETURN_FAILURE) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
+
+    int status = run_subscriber_application(
+            arguments.domain_id,
+            arguments.sample_count);
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "finalize_instance error" << retcode << std::endl;
+        status = EXIT_FAILURE;
     }
 
-    return subscriber_main(domain_id, sample_count);
+    return status;
 }

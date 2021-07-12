@@ -9,126 +9,97 @@
  use the software.
  ******************************************************************************/
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef RTI_VX653
-    #include <vThreadsData.h>
-#endif
+
 #include "flights.h"
 #include "flightsSupport.h"
 #include "ndds/ndds_cpp.h"
+#include "application.h"
 
-/* Delete all entities */
-static int publisher_shutdown(DDSDomainParticipant *participant)
+using namespace application;
+
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
+
+int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
-    DDS_ReturnCode_t retcode;
-    int status = 0;
-
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("delete_contained_entities error %d\n", retcode);
-            status = -1;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("delete_participant error %d\n", retcode);
-            status = -1;
-        }
-    }
-
-    /* RTI Connext provides finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDSDomainParticipantFactory::finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
-
-    return status;
-}
-
-extern "C" int publisher_main(int domainId, int sample_count)
-{
-    DDSDomainParticipant *participant = NULL;
-    DDSPublisher *publisher = NULL;
-    DDSTopic *topic = NULL;
-    DDSDataWriter *writer = NULL;
-    FlightDataWriter *flights_writer = NULL;
-    DDS_ReturnCode_t retcode;
-    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
-    const char *type_name = NULL;
-    int count = 0;
-
     /* Send a new sample every second */
     DDS_Duration_t send_period = { 1, 0 };
 
-    /* Create a Participant. */
-    participant = DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    // Start communicating in a domain, usually one participant per application
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        printf("create_participant error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    /* Create a Publisher. */
-    publisher = participant->create_publisher(
+    // A Publisher allows an application to create one or more DataWriters
+    DDSPublisher *publisher = participant->create_publisher(
             DDS_PUBLISHER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
-        printf("create_publisher error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_publisher error",
+                EXIT_FAILURE);
     }
 
-    /* Register type before creating topic. */
-    type_name = FlightTypeSupport::get_type_name();
-    retcode = FlightTypeSupport::register_type(participant, type_name);
+    // Register the datatype to use when creating the Topic
+    const char *type_name = FlightTypeSupport::get_type_name();
+    DDS_ReturnCode_t retcode =
+            FlightTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        printf("register_type error %d\n", retcode);
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
-    /* Create the Topic. */
-    topic = participant->create_topic(
+    // Create a Topic with a name and a datatype
+    DDSTopic *topic = participant->create_topic(
             "Example Flight",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        printf("create_topic error\n");
-        publisher_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
-    /* Create a DataWriter. */
-    writer = publisher->create_datawriter(
+    // This DataWriter writes data on "Example flight" Topic
+    DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
-    if (writer == NULL) {
-        printf("create_datawriter error\n");
-        publisher_shutdown(participant);
-        return -1;
+    if (untyped_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_datawriter error",
+                EXIT_FAILURE);
     }
-    flights_writer = FlightDataWriter::narrow(writer);
-    if (flights_writer == NULL) {
-        printf("DataWriter narrow error\n");
-        publisher_shutdown(participant);
-        return -1;
+
+    FlightDataWriter *typed_writer = FlightDataWriter::narrow(untyped_writer);
+    if (typed_writer == NULL) {
+        return shutdown_participant(
+                participant,
+                "DataWriter narrow error",
+                EXIT_FAILURE);
     }
 
     /* Create the flight info samples. */
@@ -147,87 +118,94 @@ extern "C" int publisher_main(int domainId, int sample_count)
     flights_info[3].company = (char *) "CompanyB";
     flights_info[3].altitude = 25000;
 
-    /* Main loop */
-    for (count = 0; (sample_count == 0) || (count < sample_count);
-         count += num_flights) {
+    // Main loop, write data
+    for (unsigned int samples_written = 0;
+         !shutdown_requested && samples_written < sample_count;
+         ++samples_written) {
         /* Update flight info latitude and write. */
-        printf("Updating and sending values\n");
+        std::cout << "Updating and sending values\n";
 
         for (int i = 0; i < num_flights; i++) {
             /* Set the plane altitude lineally
              * (usually the max is at 41,000ft). */
-            flights_info[i].altitude += count * 100;
+            flights_info[i].altitude += samples_written * 100;
             if (flights_info[i].altitude >= 41000) {
                 flights_info[i].altitude = 41000;
             }
 
-            printf("\t[trackId: %d, company: %s, altitude: %d]\n",
-                   flights_info[i].trackId,
-                   flights_info[i].company,
-                   flights_info[i].altitude);
+            std::cout << "\t[trackId: " << flights_info[i].trackId
+                      << ", company: " << flights_info[i].company
+                      << ", altitude: " << flights_info[i].altitude << "]\n";
 
             /* Write the instance */
-            retcode = flights_writer->write(flights_info[i], instance_handle);
+            retcode = typed_writer->write(flights_info[i], DDS_HANDLE_NIL);
             if (retcode != DDS_RETCODE_OK) {
-                printf("write error %d\n", retcode);
+                std::cerr << "write error " << retcode << std::endl;
             }
         }
 
         NDDSUtility::sleep(send_period);
     }
 
-    /* Delete all entities */
-    return publisher_shutdown(participant);
+    // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
+    return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }
 
-#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
+// Delete all entities
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
+{
+    DDS_ReturnCode_t retcode;
+
+    std::cout << shutdown_message << std::endl;
+
+    if (participant != NULL) {
+        // Cleanup everything created by this Participant
+        retcode = participant->delete_contained_entities();
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_contained_entities error " << retcode
+                      << std::endl;
+            status = EXIT_FAILURE;
+        }
+
+        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_participant error " << retcode << std::endl;
+            status = EXIT_FAILURE;
+        }
+    }
+
+    return status;
+}
+
 int main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domainId = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    ApplicationArguments arguments;
+    parse_arguments(arguments, argc, argv);
+    if (arguments.parse_result == PARSE_RETURN_EXIT) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == PARSE_RETURN_FAILURE) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
+
+    int status = run_publisher_application(
+            arguments.domain_id,
+            arguments.sample_count);
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "finalize_instance error " << retcode << std::endl;
+        status = EXIT_FAILURE;
     }
 
-    /* Uncomment this to turn on additional logging
-    NDDSConfigLogger::get_instance()->
-        set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
-                                  NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return publisher_main(domainId, sample_count);
+    return status;
 }
-#endif
-
-#ifdef RTI_VX653
-const unsigned char *__ctype = *(__ctypePtrGet());
-
-extern "C" void usrAppInit()
-{
-    #ifdef USER_APPL_INIT
-    USER_APPL_INIT; /* for backwards compatibility */
-    #endif
-
-    /* add application specific code here */
-    taskSpawn(
-            "pub",
-            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
-            0x8,
-            0x150000,
-            (FUNCPTR) publisher_main,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0);
-}
-#endif

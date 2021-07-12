@@ -9,126 +9,101 @@
  use the software.
  ******************************************************************************/
 
+#include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
-#ifdef RTI_VX653
-    #include <vThreadsData.h>
-#endif
+
 #include "flights.h"
 #include "flightsSupport.h"
 #include "ndds/ndds_cpp.h"
+#include "application.h"
+
+using namespace application;
+
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status);
 
 /* We remove all the listener code as we won't use any listener */
 
-/* Delete all entities */
-static int subscriber_shutdown(DDSDomainParticipant *participant)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
-    DDS_ReturnCode_t retcode;
-    int status = 0;
-
-    if (participant != NULL) {
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("delete_contained_entities error %d\n", retcode);
-            status = -1;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            printf("delete_participant error %d\n", retcode);
-            status = -1;
-        }
-    }
-
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDSDomainParticipantFactory::finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
-    return status;
-}
-
-extern "C" int subscriber_main(int domainId, int sample_count)
-{
-    DDSDomainParticipant *participant = NULL;
-    DDSSubscriber *subscriber = NULL;
-    DDSTopic *topic = NULL;
-    DDSDataReader *reader = NULL;
-    DDS_ReturnCode_t retcode;
-    const char *type_name = NULL;
-    int count = 0;
-
     /* Poll for new samples every second. */
     DDS_Duration_t receive_period = { 1, 0 };
-    int status = 0;
 
-    /* Create the Participant. */
-    participant = DDSTheParticipantFactory->create_participant(
-            domainId,
-            DDS_PARTICIPANT_QOS_DEFAULT,
-            NULL /* listener */,
-            DDS_STATUS_MASK_NONE);
+    // Start communicating in a domain, usually one participant per application
+    DDSDomainParticipant *participant =
+            DDSTheParticipantFactory->create_participant(
+                    domain_id,
+                    DDS_PARTICIPANT_QOS_DEFAULT,
+                    NULL /* listener */,
+                    DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
-        printf("create_participant error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_participant error",
+                EXIT_FAILURE);
     }
 
-    /* Create a Subscriber. */
-    subscriber = participant->create_subscriber(
+    // A Subscriber allows an application to create one or more DataReaders
+    DDSSubscriber *subscriber = participant->create_subscriber(
             DDS_SUBSCRIBER_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
-        printf("create_subscriber error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_subscriber error",
+                EXIT_FAILURE);
     }
 
-    /* Register the type before creating the topic. */
-    type_name = FlightTypeSupport::get_type_name();
-    retcode = FlightTypeSupport::register_type(participant, type_name);
+    // Register the datatype to use when creating the Topic
+    const char *type_name = FlightTypeSupport::get_type_name();
+    DDS_ReturnCode_t retcode =
+            FlightTypeSupport::register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
-        printf("register_type error %d\n", retcode);
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "register_type error",
+                EXIT_FAILURE);
     }
 
-    /* Create a Topic. */
-    topic = participant->create_topic(
+    // Create a Topic with a name and a datatype
+    DDSTopic *topic = participant->create_topic(
             "Example Flight",
             type_name,
             DDS_TOPIC_QOS_DEFAULT,
             NULL /* listener */,
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
-        printf("create_topic error\n");
-        subscriber_shutdown(participant);
-        return -1;
+        return shutdown_participant(
+                participant,
+                "create_topic error",
+                EXIT_FAILURE);
     }
 
-    /* Call create_datareader passing NULL in the listener parameter. */
-    reader = subscriber->create_datareader(
+    // This DataReader reads data on "Example flights" Topic
+    DDSDataReader *untyped_reader = subscriber->create_datareader(
             topic,
             DDS_DATAREADER_QOS_DEFAULT,
             NULL,
             DDS_STATUS_MASK_ALL);
-    if (reader == NULL) {
-        printf("create_datareader error\n");
-        subscriber_shutdown(participant);
-        return -1;
+    if (untyped_reader == NULL) {
+        return shutdown_participant(
+                participant,
+                "create_datareader error",
+                EXIT_FAILURE);
     }
 
-    FlightDataReader *flight_reader = FlightDataReader::narrow(reader);
-    if (reader == NULL) {
-        printf("DataReader narrow error\n");
-        return -1;
+    FlightDataReader *typed_reader = FlightDataReader::narrow(untyped_reader);
+    if (typed_reader == NULL) {
+        return shutdown_participant(
+                participant,
+                "DataReader narrow error",
+                EXIT_FAILURE);
     }
 
     /* Query for company named 'CompanyA' and for flights in cruise
@@ -139,47 +114,51 @@ extern "C" int subscriber_main(int domainId, int sample_count)
     query_parameters.ensure_length(2, 2);
     query_parameters[0] = (char *) "'CompanyA'";
     query_parameters[1] = (char *) "30000";
-    printf("Setting parameter to company %s, altitude bigger or equals to %s\n",
-           query_parameters[0],
-           query_parameters[1]);
+    std::cout << "Setting parameter to company " << query_parameters[0]
+              << ", altitude bigger or equals to " << query_parameters[1]
+              << std::endl;
 
     /* Create the query condition with an expession to MATCH the id field in
      * the structure and a numeric comparison. Note that you should make a copy
      * of the expression string when creating the query condition - beware it
      * going out of scope! */
-    DDSQueryCondition *query_condition = flight_reader->create_querycondition(
+    DDSQueryCondition *query_condition = typed_reader->create_querycondition(
             DDS_ANY_SAMPLE_STATE,
             DDS_ANY_VIEW_STATE,
             DDS_ALIVE_INSTANCE_STATE,
             DDS_String_dup("company MATCH %0 AND altitude >= %1"),
             query_parameters);
 
-    /* Main loop */
-    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-        /* Poll for a new samples every second. */
+    // Main loop. Wait for data to arrive, and process when it arrives
+    int iteration_count = 0;
+    unsigned int samples_read = 0;
+    while (!shutdown_requested && samples_read < sample_count) {
+        // Poll for a new samples every second.
         NDDSUtility::sleep(receive_period);
         bool update = false;
 
-        /* Change the filter parameter after 5 seconds. */
-        if ((count + 1) % 10 == 5) {
+        // Change the filter parameter after 5 seconds.
+        if ((iteration_count + 1) % 10 == 5) {
             query_parameters[0] = (char *) "'CompanyB'";
             update = true;
-        } else if ((count + 1) % 10 == 0) {
+        } else if ((iteration_count + 1) % 10 == 0) {
             query_parameters[0] = (char *) "'CompanyA'";
             update = true;
         }
+        iteration_count++;
 
-        /* Set new parameters. */
+        // Set new parameters.
         if (update) {
-            printf("Changing parameter to %s\n", query_parameters[0]);
+            std::cout << "Changing parameter to " << query_parameters[0]
+                      << std::endl;
             query_condition->set_query_parameters(query_parameters);
         }
 
         DDS_SampleInfoSeq info_seq;
         FlightSeq data_seq;
 
-        /* Iterate through the samples read using the read_w_condition method */
-        retcode = flight_reader->read_w_condition(
+        // Iterate through the samples read using the read_w_condition method
+        retcode = typed_reader->read_w_condition(
                 data_seq,
                 info_seq,
                 DDS_LENGTH_UNLIMITED,
@@ -189,80 +168,84 @@ extern "C" int subscriber_main(int domainId, int sample_count)
             continue;
         } else if (retcode != DDS_RETCODE_OK) {
             // Is an error
-            printf("take error: %d\n", retcode);
+            std::cerr << "take error: " << retcode << std::endl;
             break;
         }
 
         for (int i = 0; i < data_seq.length(); ++i) {
             if (info_seq[i].valid_data) {
-                printf("\t[trackId: %d, company: %s, altitude: %d]\n",
-                       data_seq[i].trackId,
-                       data_seq[i].company,
-                       data_seq[i].altitude);
+                std::cout << "\t[trackId: " << data_seq[i].trackId
+                          << ", company: " << data_seq[i].company
+                          << ", altitude: " << data_seq[i].altitude << "]\n";
+
+                samples_read++;
             }
         }
 
-        retcode = flight_reader->return_loan(data_seq, info_seq);
+        retcode = typed_reader->return_loan(data_seq, info_seq);
         if (retcode != DDS_RETCODE_OK) {
-            printf("return loan error %d\n", retcode);
+            std::cerr << "return loan error " << retcode << std::endl;
         }
     }
 
-    /* Delete all entities */
-    status = subscriber_shutdown(participant);
+    // Cleanup
+    return shutdown_participant(participant, "Shutting down", 0);
+}
 
+// Delete all entities
+static int shutdown_participant(
+        DDSDomainParticipant *participant,
+        const char *shutdown_message,
+        int status)
+{
+    DDS_ReturnCode_t retcode;
+
+    std::cout << shutdown_message << std::endl;
+
+    if (participant != NULL) {
+        // Cleanup everything created by this Participant
+        retcode = participant->delete_contained_entities();
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_contained_entities error" << retcode
+                      << std::endl;
+            status = EXIT_FAILURE;
+        }
+
+        retcode = DDSTheParticipantFactory->delete_participant(participant);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "delete_participant error" << retcode << std::endl;
+            status = EXIT_FAILURE;
+        }
+    }
     return status;
 }
 
-#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS)
 int main(int argc, char *argv[])
 {
-    int domainId = 0;
-    int sample_count = 0; /* infinite loop */
-
-    if (argc >= 2) {
-        domainId = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    ApplicationArguments arguments;
+    parse_arguments(arguments, argc, argv);
+    if (arguments.parse_result == PARSE_RETURN_EXIT) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == PARSE_RETURN_FAILURE) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
+    setup_signal_handlers();
+
+    // Sets Connext verbosity to help debugging
+    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
+
+    int status = run_subscriber_application(
+            arguments.domain_id,
+            arguments.sample_count);
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "finalize_instance error" << retcode << std::endl;
+        status = EXIT_FAILURE;
     }
 
-
-    /* Uncomment this to turn on additional logging
-    NDDSConfigLogger::get_instance()->
-        set_verbosity_by_category(NDDS_CONFIG_LOG_CATEGORY_API,
-                                  NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
-    */
-
-    return subscriber_main(domainId, sample_count);
+    return status;
 }
-#endif
-
-#ifdef RTI_VX653
-const unsigned char *__ctype = *(__ctypePtrGet());
-
-extern "C" void usrAppInit()
-{
-    #ifdef USER_APPL_INIT
-    USER_APPL_INIT; /* for backwards compatibility */
-    #endif
-
-    /* add application specific code here */
-    taskSpawn(
-            "sub",
-            RTI_OSAPI_THREAD_PRIORITY_NORMAL,
-            0x8,
-            0x150000,
-            (FUNCPTR) subscriber_main,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0);
-}
-#endif
