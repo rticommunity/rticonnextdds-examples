@@ -9,24 +9,24 @@
  use the software.
  ******************************************************************************/
 
-#include "Shapes.hpp"
-#include <dds/dds.hpp>
-#include <iostream>
+#include <dds/pub/ddspub.hpp>
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 #include <rti/core/xtypes/DynamicDataTuples.hpp>
 
-using namespace dds::core;
-using namespace dds::core::xtypes;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::pub;
+#include "application.hpp"  // for command line parsing and ctrl-c
+#include "Shapes.hpp"
 
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create the participant.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create DynamicData using the type defined in the IDL file.
-    const StructType &shape_type = rti::topic::dynamic_type<ShapeType>::get();
+    const dds::core::xtypes::StructType &shape_type =
+            rti::topic::dynamic_type<ShapeType>::get();
 
     // If you want to create the type from code instead of using an IDL
     // file with rtiddsgen, comment out the previous declaration and
@@ -43,13 +43,21 @@ void publisher_main(int domain_id, int sample_count)
     // name. In the Shapes example: we are publishing a Square, which is the
     // topic name. If you want to publish other shapes (Triangle or
     // Circle), you just need to update the topic name.
-    Topic<DynamicData> topic(participant, "Square", shape_type);
+    dds::topic::Topic<dds::core::xtypes::DynamicData> topic(
+            participant,
+            "Square",
+            shape_type);
 
-    // Create a DataReader (Subscriber created in-line).
-    DataWriter<DynamicData> writer(Publisher(participant), topic);
+    // Create a Publisher
+    dds::pub::Publisher publisher(participant);
+
+    // Create a DataWriter.
+    dds::pub::DataWriter<dds::core::xtypes::DynamicData> writer(
+            publisher,
+            topic);
 
     // Create an instance of DynamicData.
-    DynamicData shape_data(shape_type);
+    dds::core::xtypes::DynamicData shape_data(shape_type);
 
     // Initialize the data values.
     int direction = 1;
@@ -68,10 +76,11 @@ void publisher_main(int domain_id, int sample_count)
     // shape_data.value("shapesize", shape_size);
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         ++count) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify and set the shape size from 30 to 50.
-        shape_size = 30 + (count % 20);
+        shape_size = 30 + (samples_written % 20);
         shape_data.value("shapesize", shape_size);
 
         // Set the position X.
@@ -93,33 +102,38 @@ void publisher_main(int domain_id, int sample_count)
             direction = 1;
         }
 
-        rti::util::sleep(Duration::from_millisecs(100));
+        rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0; /* infinite loop */
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

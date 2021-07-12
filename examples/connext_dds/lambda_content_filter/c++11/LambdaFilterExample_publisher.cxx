@@ -13,13 +13,16 @@
 #include <random>
 
 #include <dds/pub/ddspub.hpp>
-#include <rti/util/util.hpp>  // for sleep()
+#include <rti/util/util.hpp>      // for sleep()
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "LambdaFilterExample.hpp"
-
 #include "LambdaFilter.hpp"
+#include "application.hpp"
 
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -52,7 +55,9 @@ void publisher_main(int domain_id, int sample_count)
     std::random_device random_device;
     std::uniform_int_distribution<int> distribution(0, symbols.size() - 1);
 
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify the data to be written here
         sample.symbol(symbols[distribution(random_device)]);
         sample.value(distribution(random_device) * 1.1);
@@ -76,33 +81,32 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what() << "\n";
-        return -1;
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

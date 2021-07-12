@@ -99,40 +99,37 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-CameraImage_publisher.exe <domain_id> <mode>
-CameraImage_subscriber.exe <domain_id> <mode>
+CameraImage_publisher.exe -d <domain_id> -m <mode> -s <sample_count> -e <exec_time> -n <ip_addres>
+CameraImage_subscriber.exe -d <domain_id> -m <mode> -n <ip_address> --display_samples
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./CameraImage_publisher <domain_id> <mode>
-./CameraImage_subscriber <domain_id> <mode>
+./CameraImage_publisher -d <domain_id> -m <mode> -s <sample_count> -e <exec_time> -n <ip_addres>
+./CameraImage_subscriber -d <domain_id> -m <mode> -n <ip_address> --display_samples
 ```
 
 The application has the following arguments:
 
-```plaintext
-Usage: ./CameraImage_[publisher|subscriber] [options]
+1.  The `<domain_id>`. Both applications must use the same domain ID in order to
+    communicate. The default is 0.
 
-Options:
- -domainId    <domain ID>    Domain ID
- -mode        <1,2,3,4>      Publisher modes
-                                 1. publisher_flat
-                                 2. publisher_zero_copy
-                                 3. publisher_flat_zero_copy
-                                 4. publisher_plain
- -sampleCount <sample count> Sample count
-                             Default: -1 (infinite)
- -executionTime <sec>        Execution time in seconds
-                             Default: 30
- -nic         <IP address>   Use the nic specified by <ipaddr> to send
-                             Default: automatic
- -help                       Displays this information
+2.  Publisher subscriber/mode.
+    1.  publisher_flat
+    2.  publisher_zero_copy
+    3.  publisher_flat_zero_copy
+    4.  publisher_plain
 
-```
+3.  (Publisher only) How long the examples should run, measured in samples
+(-s option). The default is infinite.
 
-When a device has multiple interfaces, it is recommended to use `-nic` when
+4.  (Publisher only) The `<exec_time>` in seconds.
+
+5.  (Subscriber only) If the `--display_samples` option is given, the
+subscriber will print the sample data.
+
+6.  When a device has multiple interfaces, it is recommended to use `-n` when
 running on separate nodes. This ensures that data is sent over one network
 interface only.
 

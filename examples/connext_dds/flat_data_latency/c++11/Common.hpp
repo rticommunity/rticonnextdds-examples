@@ -18,31 +18,34 @@
 #include <dds/core/cond/GuardCondition.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/pub/DataWriterListener.hpp>
+#include "application.hpp"
 
 
 /**
  * Wait for discovery
  */
-template <typename T>
+template<typename T>
 void wait_for_reader(dds::pub::DataWriter<T> &writer, bool match = true)
 {
-    while ((match && dds::pub::matched_subscriptions(writer).empty())
-           || (!match && !dds::pub::matched_subscriptions(writer).empty())) {
+    while (((match && dds::pub::matched_subscriptions(writer).empty())
+            || (!match && !dds::pub::matched_subscriptions(writer).empty()))
+           && (!application::shutdown_requested)) {
         rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 }
 
-template <typename T>
+template<typename T>
 void wait_for_writer(dds::sub::DataReader<T> &reader)
 {
-    while (dds::sub::matched_publications(reader).empty()) {
+    while (dds::sub::matched_publications(reader).empty()
+           && !application::shutdown_requested) {
         rti::util::sleep(dds::core::Duration::from_millisecs(100));
     }
 }
 
 // CameraImageType can be flat_types::CameraImage or
 // flat_zero_copy_types::CameraImage
-template <typename CameraImageType>
+template<typename CameraImageType>
 void populate_flat_sample(CameraImageType &sample, int count)
 {
     auto image = sample.root();
@@ -59,7 +62,7 @@ void populate_flat_sample(CameraImageType &sample, int count)
 
 // CameraImageType can be zero_copy_types::CameraImage or
 // plain_types::CameraImage
-template <typename CameraImageType>
+template<typename CameraImageType>
 void populate_plain_sample(CameraImageType &sample, int count)
 {
     sample.format(common::Format::RGB);
@@ -72,7 +75,7 @@ void populate_plain_sample(CameraImageType &sample, int count)
     }
 }
 
-template <typename CameraImageType>
+template<typename CameraImageType>
 void display_flat_sample(const CameraImageType &sample)
 {
     auto image = sample.root();
@@ -87,7 +90,7 @@ void display_flat_sample(const CameraImageType &sample)
     std::cout << std::endl;
 }
 
-template <typename CameraImageType>
+template<typename CameraImageType>
 void display_plain_sample(const CameraImageType &sample)
 {
     std::cout << "\nTimestamp " << sample.timestamp() << " " << sample.format();
@@ -102,7 +105,7 @@ void display_plain_sample(const CameraImageType &sample)
 struct ApplicationOptions {
     ApplicationOptions()
             : domain_id(0),
-              mode(0),
+              mode(1),
               sample_count(-1),  // infinite
               execution_time(30000000),
               display_sample(false)

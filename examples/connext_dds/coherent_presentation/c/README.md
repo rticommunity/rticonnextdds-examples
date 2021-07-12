@@ -39,10 +39,18 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
+On *Windows* systems run:
+
 ```sh
-# Do not forget to replace the path separator to "\" on Windows.
 coherent_publisher.exe  <domain_id> <samples_to_send>
-coherent_subscriber.exe <domain_id> <sleep_periods>
+coherent_subscriber.exe <domain_id>  <sleep_periods>
+```
+
+On *UNIX* systems:
+
+```sh
+./coherent_publisher  <domain_id> <samples_to_send>
+./coherent_subscriber <domain_id> <sleep_periods>
 ```
 
 The applications accept up to three arguments:

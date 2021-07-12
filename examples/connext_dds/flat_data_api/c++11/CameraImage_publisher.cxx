@@ -17,6 +17,7 @@
 #include <rti/util/util.hpp>  // for sleep()
 
 #include "CameraImage.hpp"
+#include "application.hpp"
 
 const int PIXEL_COUNT = 10;
 
@@ -83,7 +84,9 @@ void build_data_sample_fast(CameraImageBuilder &builder, int seed)
     }
 }
 
-void publisher_main(int domain_id, int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -96,20 +99,23 @@ void publisher_main(int domain_id, int sample_count)
             dds::pub::Publisher(participant),
             topic);
 
-    for (int count = 0; count < sample_count || sample_count == 0; count++) {
+    for (unsigned int samples_written = 0;
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         CameraImageBuilder builder = rti::flat::build_data(writer);
 
         // Build the CameraImage data sample using the builder
-        if (count % 2 == 0) {
-            build_data_sample(builder, count);  // method 1
+        if (samples_written % 2 == 0) {
+            build_data_sample(builder, samples_written);  // method 1
         } else {
-            build_data_sample_fast(builder, count);  // method 2
+            build_data_sample_fast(builder, samples_written);  // method 2
         }
 
         // Create the sample
         CameraImage *sample = builder.finish_sample();
 
-        std::cout << "Writing CameraImage, count " << count << std::endl;
+        std::cout << "Writing CameraImage, count " << samples_written
+                  << std::endl;
 
         writer.write(*sample);
 
@@ -119,34 +125,32 @@ void publisher_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    rti::config::Logger::instance().verbosity(rti::config::Verbosity::WARNING);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        publisher_main(domain_id, sample_count);
+        run_publisher_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in publisher_main(): " << ex.what()
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

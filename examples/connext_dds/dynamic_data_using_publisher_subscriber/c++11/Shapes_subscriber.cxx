@@ -9,23 +9,15 @@
  use the software.
  ******************************************************************************/
 
-#include <algorithm>
-#include <iostream>
-
-#include "Shapes.hpp"
-#include <dds/dds.hpp>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 #include <rti/core/xtypes/DynamicDataTuples.hpp>
 
-using namespace dds::core;
-using namespace dds::core::cond;
-using namespace dds::core::xtypes;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::cond;
-using namespace dds::sub::status;
+#include "Shapes.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-void print_shape_data(const DynamicData &data)
+void print_shape_data(const dds::core::xtypes::DynamicData &data)
 {
     // First method: using C++ tuples (C++11 only).
     auto shape_tuple_data = rti::core::xtypes::
@@ -47,13 +39,16 @@ void print_shape_data(const DynamicData &data)
     std::cout << data << std::endl;
 }
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create the participant.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create DynamicData using the type defined in the IDL file.
-    const StructType &shape_type = rti::topic::dynamic_type<ShapeType>::get();
+    const dds::core::xtypes::StructType &shape_type =
+            rti::topic::dynamic_type<ShapeType>::get();
 
     // If you want to create the type from code instead of using an IDL
     // file with rtiddsgen, comment out the previous declaration and
@@ -70,32 +65,44 @@ void subscriber_main(int domain_id, int sample_count)
     // In the Shapes example: we are subscribing to a Square, wich is the
     // topic name. If you want to publish other shapes (Triangle or Circle),
     // you just need to update the topic name.
-    Topic<DynamicData> topic(participant, "Square", shape_type);
+    dds::topic::Topic<dds::core::xtypes::DynamicData> topic(
+            participant,
+            "Square",
+            shape_type);
 
-    // Create a DataReader (Subscriber created in-line).
-    DataReader<DynamicData> reader(Subscriber(participant), topic);
+    // Create a subscriber
+    dds::sub::Subscriber subscriber(participant);
+
+    // Create a DataReader.
+    dds::sub::DataReader<dds::core::xtypes::DynamicData> reader(
+            subscriber,
+            topic);
 
     // Create a ReadCondition for any data on this reader and associate
     // a handler.
     int count = 0;
-    ReadCondition read_condition(reader, DataState::any(), [&reader, &count]() {
-        // Take all samples
-        LoanedSamples<DynamicData> samples = reader.take();
-        for (auto sample : samples) {
-            if (sample.info().valid()) {
-                count++;
+    dds::sub::cond::ReadCondition read_condition(
+            reader,
+            dds::sub::status::DataState::any(),
+            [&reader, &count]() {
+                // Take all samples
+                dds::sub::LoanedSamples<dds::core::xtypes::DynamicData>
+                        samples = reader.take();
+                for (auto sample : samples) {
+                    if (sample.info().valid()) {
+                        count++;
 
-                // Print sample with different methods.
-                print_shape_data(sample.data());
-            }
-        }
-    });
+                        // Print sample with different methods.
+                        print_shape_data(sample.data());
+                    }
+                }
+            });
 
     // Create a WaitSet and attach the ReadCondition
-    WaitSet waitset;
+    dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    while (count < sample_count || sample_count == 0) {
+    while (!application::shutdown_requested && count < sample_count) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
         std::cout << "ShapeType subscriber sleeping for 1 sec..." << std::endl;
@@ -105,28 +112,32 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // Infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main: " << ex.what() << std::endl;
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

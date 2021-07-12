@@ -20,7 +20,6 @@
 #include <dds/sub/ddssub.hpp>
 
 #include <rti/config/Logger.hpp>
-#include <rti/core/ListenerBinder.hpp>
 #include <rti/util/util.hpp>  // for sleep()
 
 #include "CameraImage.hpp"
@@ -30,7 +29,7 @@
 
 #include "Common.hpp"
 
-void publisher_flat(const ApplicationOptions &options)
+void publisher_flat(const application::ApplicationArguments &options)
 {
     using namespace flat_types;
     using namespace dds::core::policy;
@@ -73,7 +72,7 @@ void publisher_flat(const ApplicationOptions &options)
     uint64_t total_latency = 0;
     uint64_t latency_interval_start_time = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while (count <= options.sample_count || options.sample_count == -1) {
+    while (!application::shutdown_requested && count < options.sample_count) {
         // Get and populate the sample
         auto ping_sample = writer.extensions().get_loan();
         populate_flat_sample(*ping_sample, count);
@@ -119,14 +118,12 @@ void publisher_flat(const ApplicationOptions &options)
         }
     }
 
-    print_latency(total_latency, count);
-
     // Wait for unmatch
     wait_for_reader(writer, false);
     std::cout << "Publisher shutting down\n";
 }
 
-void publisher_zero_copy(const ApplicationOptions &options)
+void publisher_zero_copy(const application::ApplicationArguments &options)
 {
     using namespace zero_copy_types;
     using namespace rti::core::policy;
@@ -167,7 +164,7 @@ void publisher_zero_copy(const ApplicationOptions &options)
     uint64_t latency_interval_start_time = 0;
     int count = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while (count <= options.sample_count || options.sample_count == -1) {
+    while (!application::shutdown_requested && count < options.sample_count) {
         // Create and write the ping sample:
         // The DataWriter gets a sample from its shared memory sample pool. This
         // operation does not allocate memory. Samples are returned to the
@@ -210,14 +207,12 @@ void publisher_zero_copy(const ApplicationOptions &options)
         }
     }
 
-    print_latency(total_latency, count);
-
     // Wait for unmatch
     wait_for_reader(writer, false);
     std::cout << "Publisher shutting down\n";
 }
 
-void publisher_flat_zero_copy(const ApplicationOptions &options)
+void publisher_flat_zero_copy(const application::ApplicationArguments &options)
 {
     using namespace flat_zero_copy_types;
     using namespace rti::core::policy;
@@ -265,7 +260,7 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
     int count = 0;
     uint64_t latency_interval_start_time = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while (count <= options.sample_count || options.sample_count == -1) {
+    while (!application::shutdown_requested && count < options.sample_count) {
         // Create and write the ping sample:
         CameraImage *ping_sample = writer.extensions().get_loan();
 
@@ -313,7 +308,7 @@ void publisher_flat_zero_copy(const ApplicationOptions &options)
     std::cout << "Publisher shutting down\n";
 }
 
-void publisher_plain(const ApplicationOptions &options)
+void publisher_plain(const application::ApplicationArguments &options)
 {
     using namespace plain_types;
     using namespace dds::core::policy;
@@ -359,7 +354,7 @@ void publisher_plain(const ApplicationOptions &options)
     uint64_t total_latency = 0;
     uint64_t latency_interval_start_time = 0;
     uint64_t start_ts = participant->current_time().to_microsecs();
-    while (count <= options.sample_count || options.sample_count == -1) {
+    while (!application::shutdown_requested && count < options.sample_count) {
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
             || (send_ts - start_ts >= options.execution_time)) {
@@ -400,7 +395,7 @@ void publisher_plain(const ApplicationOptions &options)
     std::cout << "Publisher shutting down\n";
 }
 
-void publisher_copy_sample(int domain_id, int sample_count)
+void publisher_copy_sample(unsigned int domain_id, unsigned int sample_count)
 {
     using namespace plain_types;
 
@@ -413,7 +408,7 @@ void publisher_copy_sample(int domain_id, int sample_count)
 
     int count = 0;
     uint64_t total_latency = 0;
-    while (count < sample_count || sample_count == 0) {
+    while (!application::shutdown_requested && count < sample_count) {
         ping_sample->data()[45345] = count + sample_count + 100;
         ping_sample->timestamp(participant->current_time().to_microsecs());
         *copy = *ping_sample;
@@ -433,85 +428,48 @@ void publisher_copy_sample(int domain_id, int sample_count)
     }
 }
 
-void print_help(const char *program_name)
-{
-    std::cout << "Usage: " << program_name << "[options]\nOptions:\n";
-    std::cout << " -domainId    <domain ID>    Domain ID\n";
-    std::cout << " -mode        <1,2,3,4>      Publisher modes\n";
-    std::cout << "                                 1. publisher_flat\n";
-    std::cout << "                                 2. publisher_zero_copy\n";
-    std::cout
-            << "                                 3. publisher_flat_zero_copy\n";
-    std::cout << "                                 4. publisher_plain\n";
-    std::cout << " -sampleCount <sample count> Sample count\n";
-    std::cout << "                             Default: -1 (infinite)\n";
-    std::cout << " -executionTime <sec>        Execution time in seconds\n";
-    std::cout << "                             Default: 30\n";
-    std::cout << " -nic         <IP address>   Use the nic specified by "
-                 "<ipaddr> to send\n";
-    std::cout << "                             Default: automatic\n";
-    std::cout << " -help                       Displays this information\n";
-}
-
 int main(int argc, char *argv[])
 {
-    ApplicationOptions options;
+    using namespace application;
 
-    for (int i = 1; i < argc; i++) {
-        if (strstr(argv[i], "-h") == argv[i]) {
-            print_help(argv[0]);
-            return 0;
-        } else if (strstr(argv[i], "-d") == argv[i]) {
-            options.domain_id = atoi(argv[++i]);
-        } else if (strstr(argv[i], "-m") == argv[i]) {
-            options.mode = atoi(argv[++i]);
-        } else if (strstr(argv[i], "-s") == argv[i]) {
-            options.sample_count = atoi(argv[++i]);
-        } else if (strstr(argv[i], "-e") == argv[i]) {
-            options.execution_time = atoi(argv[++i]) * 1000000;
-        } else if (strstr(argv[i], "-n") == argv[i]) {
-            options.nic = (argv[++i]);
-        } else {
-            std::cout << "unexpected option: " << argv[i] << std::endl;
-            return -1;
-        }
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv, ApplicationKind::publisher);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::WARNING);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        switch (options.mode) {
+        switch (arguments.mode) {
         case 1:
-            publisher_flat(options);
+            publisher_flat(arguments);
             break;
         case 2:
-            publisher_zero_copy(options);
+            publisher_zero_copy(arguments);
             break;
         case 3:
-            publisher_flat_zero_copy(options);
+            publisher_flat_zero_copy(arguments);
             break;
         case 4:
-            publisher_plain(options);
+            publisher_plain(arguments);
             break;
         case 5:
-            publisher_copy_sample(0, 0);
+            publisher_copy_sample(arguments.domain_id, arguments.sample_count);
             break;
         }
 
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in publisher: " << ex.what() << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

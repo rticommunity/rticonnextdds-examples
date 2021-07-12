@@ -15,10 +15,14 @@
 #include <dds/core/ddscore.hpp>
 #include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "waitset_cond_modern.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-int subscriber_main(int domain_id, int sample_count)
+int run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
@@ -53,16 +57,16 @@ int subscriber_main(int domain_id, int sample_count)
     });  // Create a ReadCondition for any data on this reader and associate a
          // handler
 
-    int count = 0;
+    int samples_read = 0;
     dds::sub::cond::ReadCondition read_condition(
             reader,
             dds::sub::status::DataState::any(),
-            [&reader, &count]() {
+            [&reader, &samples_read]() {
                 // Take all samples
                 dds::sub::LoanedSamples<Foo> samples = reader.take();
                 for (auto sample : samples) {
                     if (sample.info().valid()) {
-                        count++;
+                        samples_read++;
                         std::cout << sample.data() << std::endl;
                     }
                 }
@@ -74,7 +78,7 @@ int subscriber_main(int domain_id, int sample_count)
     waitset += read_condition;
     waitset += status_condition;
 
-    while (count < sample_count || sample_count == 0) {
+    while (!application::shutdown_requested && samples_read < sample_count) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
         waitset.dispatch(dds::core::Duration(4));  // Wait up to 4s each time
@@ -84,34 +88,32 @@ int subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what()
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
                   << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

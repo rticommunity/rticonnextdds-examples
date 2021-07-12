@@ -11,42 +11,42 @@
 
 #include <iostream>
 
-#include "ordered.hpp"
-#include <dds/dds.hpp>
+#include <dds/sub/ddssub.hpp>
+#include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
-using namespace dds::core;
-using namespace dds::core::cond;
-using namespace dds::core::policy;
-using namespace dds::domain;
-using namespace dds::topic;
-using namespace dds::sub;
-using namespace dds::sub::cond;
-using namespace dds::sub::qos;
-using namespace dds::sub::status;
+#include "ordered.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
 // Instead of using listeners, we are polling the readers to be able to see
 // the order of a set of received samples.
-void poll_readers(std::vector<DataReader<ordered>> &readers)
+unsigned int poll_readers(std::vector<dds::sub::DataReader<ordered>> &readers)
 {
+    unsigned int samples_read = 0;
     for (std::vector<int>::size_type i = 0; i < readers.size(); i++) {
-        LoanedSamples<ordered> samples = readers[i].take();
+        dds::sub::LoanedSamples<ordered> samples = readers[i].take();
         for (auto sample : samples) {
             if (sample.info().valid()) {
                 std::cout << std::string(i, '\t') << "Reader " << i
                           << ": Instance" << sample.data().id()
                           << "->value = " << sample.data().value() << std::endl;
+                samples_read++;
             }
         }
     }
+
+    return samples_read;
 }
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // Create a DomainParticipant.
-    DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic -- and automatically register the type.
-    Topic<ordered> topic(participant, "Example ordered");
+    dds::topic::Topic<ordered> topic(participant, "Example ordered");
 
     // Create a reader per QoS profile: ordering by topic and instance modes.
     std::vector<std::string> profile_names = {
@@ -54,14 +54,15 @@ void subscriber_main(int domain_id, int sample_count)
         "ordered_Library::ordered_Profile_subscriber_topic"
     };
 
-    std::vector<DataReader<ordered>> readers;
+    std::vector<dds::sub::DataReader<ordered>> readers;
     for (std::vector<int>::size_type i = 0; i < profile_names.size(); i++) {
         std::cout << "Subscriber " << i << " using " << profile_names[i]
                   << std::endl;
 
         // Retrieve the subscriber QoS from USER_QOS_PROFILES.xml
-        SubscriberQos subscriber_qos =
-                QosProvider::Default().subscriber_qos(profile_names[i]);
+        dds::sub::qos::SubscriberQos subscriber_qos =
+                dds::core::QosProvider::Default().subscriber_qos(
+                        profile_names[i]);
 
         // If you want to change the Subscriber's QoS programmatically rather
         // than using the XML file, you will need to comment out the previous
@@ -75,11 +76,12 @@ void subscriber_main(int domain_id, int sample_count)
         // }
 
         // Create a subscriber with the custom QoS.
-        Subscriber subscriber(participant, subscriber_qos);
+        dds::sub::Subscriber subscriber(participant, subscriber_qos);
 
         // Retrieve the DataReader QoS from USER_QOS_PROFILES.xml
-        DataReaderQos reader_qos =
-                QosProvider::Default().datareader_qos(profile_names[i]);
+        dds::sub::qos::DataReaderQos reader_qos =
+                dds::core::QosProvider::Default().datareader_qos(
+                        profile_names[i]);
 
         // If you want to change the DataReader's QoS programmatically rather
         // than using the XML file, you will need to comment out the previous
@@ -90,42 +92,47 @@ void subscriber_main(int domain_id, int sample_count)
         //            << Reliability::Reliable();
 
         // Create a DataReader with the custom QoS.
-        DataReader<ordered> reader(subscriber, topic, reader_qos);
+        dds::sub::DataReader<ordered> reader(subscriber, topic, reader_qos);
         readers.push_back(reader);
     }
 
     // Main loop
-    for (int count = 0; (sample_count == 0) || (count < sample_count);
-         count++) {
+    unsigned int samples_read = 0;
+    while (!application::shutdown_requested && samples_read < sample_count) {
         std::cout << "ordered subscriber sleeping for 4 sec.." << std::endl;
-        rti::util::sleep(Duration(4));
-        poll_readers(readers);
+        rti::util::sleep(dds::core::Duration(4));
+        samples_read += poll_readers(readers);
     }
 }
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
+    setup_signal_handlers();
 
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
-    } catch (std::exception ex) {
-        std::cout << "Exception caught: " << ex.what() << std::endl;
-        return -1;
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

@@ -15,12 +15,15 @@
 #include <dds/core/ddscore.hpp>
 #include <dds/sub/ddssub.hpp>
 // Or simply include <dds/dds.hpp>
+#include <rti/config/Logger.hpp>  // for logging
 
 #include "LambdaFilterExample.hpp"
-
 #include "LambdaFilter.hpp"
+#include "application.hpp"  // for command line parsing and ctrl-c
 
-void subscriber_main(int domain_id, int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     dds::domain::DomainParticipant participant(domain_id);
 
@@ -61,7 +64,7 @@ void subscriber_main(int domain_id, int sample_count)
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
-    while (count < sample_count || sample_count == 0) {
+    while (!application::shutdown_requested && count < sample_count) {
         // Dispatch will call the handlers associated to the WaitSet conditions
         // when they activate
         std::cout << "Stock subscriber sleeping for 4 sec...\n";
@@ -71,33 +74,32 @@ void subscriber_main(int domain_id, int sample_count)
 
 int main(int argc, char *argv[])
 {
-    int domain_id = 0;
-    int sample_count = 0;  // infinite loop
+    using namespace application;
 
-    if (argc >= 2) {
-        domain_id = atoi(argv[1]);
+    // Parse arguments and handle control-C
+    auto arguments = parse_arguments(argc, argv);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
     }
-    if (argc >= 3) {
-        sample_count = atoi(argv[2]);
-    }
+    setup_signal_handlers();
 
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
 
     try {
-        subscriber_main(domain_id, sample_count);
+        run_subscriber_application(arguments.domain_id, arguments.sample_count);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
-        std::cerr << "Exception in subscriber_main(): " << ex.what() << "\n";
-        return -1;
+        std::cerr << "Exception in run_subscriber_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
     }
 
-    // RTI Connext provides a finalize_participant_factory() method
-    // if you want to release memory used by the participant factory singleton.
-    // Uncomment the following line to release the singleton:
-    //
-    // dds::domain::DomainParticipant::finalize_participant_factory();
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
-    return 0;
+    return EXIT_SUCCESS;
 }

@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+    <!--
+        (c) 2017 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+        RTI grants Licensee a license to use, modify, compile, and create
+        derivative works of the Software.  Licensee has the right to distribute
+        object form only for use with RTI products.  The Software is provided
+        "as is", with no warranty of any type, including any warranty for fitness
+        for any purpose. RTI is under no obligation to maintain or support the
+        Software.  RTI shall not be liable for any incidental or consequential
+        damages arising out of the use or inability to use the software.
+    -->
+    <head>
+        <title>RTI Web Integration Service &mdash; Welcome!</title>
+
+        <meta charset="utf-8">
+        <meta name="description"
+              content="Welcome to Web Integration Service!">
+        <meta name="author" content="Real-Time Innovations, Inc.">
+        <!-- IE -->
+        <link rel="shortcut icon" type="image/x-icon"
+              href="./resources/img/favicon.ico" />
+        <!-- other browsers -->
+        <link rel="icon" type="image/x-icon"
+              href="./resources/img/favicon.ico" />
+        <link href="./resources/css/bootstrap.min.css" rel="stylesheet">
+        <link href="./resources/css/heroic-features.css" rel="stylesheet">
+
+        <script src="./resources/js/jquery-1.12.3.min.js"></script>
+        <script src="./resources/js/bootstrap.min.js"></script>
+    </head>
+
+    <body>
+        <!-- Navigation -->
+        <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+            <div class="container">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse"
+                            data-target="#bs-example-navbar-collapse-1">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        <img src="./resources/img/rti_logo.png"
+                             style="vertical-align:bottom; display: inline;"
+                             alt="Real-Time Innovations">
+                        <span>&nbsp;Web Integration Service</span>
+                    </a>
+                </div>
+                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li><a href="#Welcome">Welcome!</a></li>
+                        <li><a href="#Examples">Examples</a></li>
+                        <li><a href="#Tutorials">Tutorials</a></li>
+                        <li><a href="#Documentation">Documentation</a></li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Page Content -->
+        <div class="container">
+            <div class="page-header">
+                <h2 id="Welcome">
+                    <a href="#Welcome">Welcome to Web Integration Service!</a>
+                </h2>
+                <p>Welcome to <em>RTI&#169; Web Integration Service</em>, an out-of-the-box solution
+                    for integrating web-based applications and services with
+                    <em>RTI Connext&trade; DDS</em>.</p>
+            </div>
+            <div class="page-header">
+                <h2 id="Examples"><a href="#Examples">Examples</a></h2>
+                <h3>Simple Shapes Demo</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p>This example illustrates how to subscribe to Shape topics using <em>Web
+                                        Integration Service</em>. The samples read are drawn on a Canvas using
+                                    <a href="http://fabricjs.com/">Fabric</a>&mdash;a simple JavaScript
+                                    framework.</p>
+                                <p>To run the web-based version of this example from <em>RTI Launcher</em>:</p>
+                                <ul>
+                                    <li>Open the <em>Web Integration Service</em> dialog from the Services tab.</li>
+                                    <li>Select the <code>shapesDemoAllShapes</code> configuration and click on run.</li>
+                                    <li>Open <em>RTI Shapes Demo</em> from the Tools tab and publish some
+                                        shapes on Domain 0.</li>
+                                    <li>Finally, open the <a href="rest/simple_shapes_demo/js">JavaScript
+                                        client</a> to see all the shapes that are being published.</li>
+                                </ul>
+                                <p>For more information on how to run this example using the command-line,
+                                   check out this <a href="rest/simple_shapes_demo/js/README.md">README</a>
+                                   file.</p>
+                                <p>The Simple Shapes Demo example is available in the following languages:</p>
+                                <ul>
+                                    <li><a href="rest/simple_shapes_demo/js">JavaScript</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <a href="rest/simple_shapes_demo/js/index.html">
+                                    <img src="resources/img/web_shapes.png"
+                                         alt="DDS Web Shapes Demo"  width="320">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>Long Polling</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p>This example illustrates how to configure <em>Web Integration Service</em>
+                                    and different client applications to subscribe to Square Topics using
+                                    Long Polling. Long Polling emulates a server push mechanism over HTTP by
+                                    configuring client and server applications to perform long-lasting HTTP
+                                    requests that do not trigger an immediate response.</p>
+                                <p>To run the web-based version of this example from <em>RTI Launcher</em>:</p>
+                                <ul>
+                                    <li>Open the <em>Web Integration Service</em> dialog from the Services tab.</li>
+                                    <li>Select the <code>shapesDemoTutorial</code> configuration and click on run.</li>
+                                    <li>Open <em>RTI Shapes Demo</em> from the Tools tab and publish some
+                                        Squares on Domain 0.</li>
+                                    <li>Finally, open the <a href="rest/long_polling/js">JavaScript client</a>
+                                        to see the squares that are being published.</li>
+                                </ul>
+                                <p>For more information on how to run this example using the command-line, check out this
+                                    <a href="rest/long_polling/js/README.md">README</a> file.</p>
+                                <p>The Long Polling example is available in the following languages:</p>
+                                <ul>
+                                    <li><a href="rest/long_polling/js">JavaScript</a></li>
+                                    <li><a href="rest/long_polling/python">Python</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <a href="rest/long_polling/js/index.html">
+                                    <img src="resources/img/long_polling.png"
+                                         alt="DDS Long Polling"  width="320">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+                <h3>WebSocket Shapes Demo</h3>
+                <table>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <p>This example illustrates how to subscribe to Shape topics using <em>Web
+                                        Integration Service's</em> WebSocket API. The samples read are drawn on a Canvas using
+                                    <a href="http://fabricjs.com/">Fabric</a>&mdash;a simple JavaScript
+                                    framework.</p>
+                                <p>To run the web-based version of this example from <em>RTI Launcher</em>:</p>
+                                <ul>
+                                    <li>Open the <em>Web Integration Service</em> dialog from the Services tab.</li>
+                                    <li>Go on advanced Options and click on the <code>Enable WebSockets</code> checkbox</li>
+                                    <li>Select the <code>shapesDemoAllShapes</code> configuration and click on run.</li>
+                                    <li>Open <em>RTI Shapes Demo</em> from the Tools tab and publish some
+                                        shapes on Domain 0.</li>
+                                    <li>Finally, open the <a href="websockets/simple_shapes_demo/js">JavaScript
+                                        client</a> to see all the shapes that are being published.</li>
+                                </ul>
+                                <p>For more information on how to run this example using the command-line,
+                                   check out this <a href="websockets/simple_shapes_demo/js/README.md">README</a>
+                                   file.</p>
+                                <p>The Simple Shapes Demo example is available in the following languages:</p>
+                                <ul>
+                                    <li><a href="websockets/simple_shapes_demo/js">JavaScript</a></li>
+                                </ul>
+                            </td>
+                            <td>
+                                <a href="websockets/simple_shapes_demo/js/index.html">
+                                    <img src="resources/img/web_shapes.png"
+                                         alt="DDS Web Shapes Demo"  width="320">
+                                </a>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="page-header">
+                <h2 id="Tutorials">
+                    <a href="#Tutorials">Tutorials</a>
+                </h2>
+                These <a href="https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/web_integration_service/tutorials.html">tutorials</a> walk you through some some examples so you can
+                quickly configure <em>Web Integration Service</em> to publish and subscribe
+                to DDS data.
+            </div>
+            <div class="page-header">
+                <h2 id="Documentation">
+                    <a href="#Documentation">Documentation</a>
+                </h2>
+                To learn more about <em>Web Integration Service</em> check out its complete
+                <a href="https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/web_integration_service/index.html">documentation</a>.
+                It includes detailed instructions as well as simple tutorials that will
+                help you get started.
+            </div>
+        </div>
+        <footer class="bd-footer text-muted">
+            <div class="container">
+                <p>&copy; Copyright 2017, Real-Time Innovations, Inc.</p>
+            </div>
+        </footer>
+    </body>
+</html>
