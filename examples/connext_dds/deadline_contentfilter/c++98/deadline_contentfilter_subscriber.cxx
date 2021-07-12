@@ -225,16 +225,6 @@ int run_subscriber_application(
                 EXIT_FAILURE);
     }
 
-    /* Create data reader listener */
-    deadline_contentfilterListener *reader_listener =
-            new deadline_contentfilterListener();
-    if (reader_listener == NULL) {
-        return shutdown_participant(
-                participant,
-                "listener instantiation error",
-                EXIT_FAILURE);
-    }
-
     /* Start changes for Deadline */
     /* Set up content filtered topic to show interaction with deadline */
     DDS_StringSeq parameters(1);
@@ -255,6 +245,16 @@ int run_subscriber_application(
         return shutdown_participant(
                 participant,
                 "get_default_datareader_qos error",
+                EXIT_FAILURE);
+    }
+
+    /* Create data reader listener */
+    deadline_contentfilterListener *reader_listener =
+            new deadline_contentfilterListener();
+    if (reader_listener == NULL) {
+        return shutdown_participant(
+                participant,
+                "listener instantiation error",
                 EXIT_FAILURE);
     }
 
