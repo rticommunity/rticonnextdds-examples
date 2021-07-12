@@ -1,0 +1,7 @@
+plugins {
+  id 'com.github.rticommunity.connext-dds-build-example'
+}
+
+ConfigureExample {
+  idlFile = 'market_data.idl'
+}
