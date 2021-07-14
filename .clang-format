@@ -142,3 +142,5 @@ SortIncludes: false
 Language: Cpp
 ---
 Language: Java
+---
+Language: CSharp
