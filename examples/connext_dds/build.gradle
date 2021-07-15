@@ -11,10 +11,11 @@ task("findConnextDds") {
     def foundTarget = System.getenv("CONNEXTDDS_ARCH")
 
     if (nddsHome) {
-        println "Found RTIConnextDDS: ${nddsHome}"
+        println "Found NDDSHOME: ${nddsHome}"
         println "Found target: ${foundTarget}"
     } else {
         throw new BuildCancelledException(
-            "ERROR: RTIConnextDDS not found, please set the environment variables.")
+            "ERROR: NDDSHOME not found, please set this environment variable "
+            + "to the RTI Connext DDS installation folder.")
     }
 }

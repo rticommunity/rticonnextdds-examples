@@ -56,7 +56,7 @@ gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
 gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods> <select_cft>"
 ```
 
-The applications accept up to two arguments:
+The applications accept up to two arguments (three to subscriber):
 
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
 communicate. The default is 0.

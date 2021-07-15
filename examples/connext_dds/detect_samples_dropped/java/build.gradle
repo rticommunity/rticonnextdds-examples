@@ -4,5 +4,5 @@ plugins {
 
 ConfigureExample {
   idlFile = 'DroppedSamplesExample.idl'
-  codegenExtraArgs = ['-update', 'examplefiles']
+  codegenExtraArgs = ['-create', 'examplefiles']
 }

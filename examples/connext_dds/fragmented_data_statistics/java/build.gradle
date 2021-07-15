@@ -4,5 +4,5 @@ plugins {
 
 ConfigureExample {
   idlFile = 'fragment.idl'
-  codegenExtraArgs = ['-update', 'examplefiles']
+  codegenExtraArgs = ['-create', 'examplefiles']
 }

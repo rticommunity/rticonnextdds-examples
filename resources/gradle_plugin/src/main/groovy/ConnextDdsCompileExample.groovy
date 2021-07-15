@@ -57,7 +57,10 @@ class ConnextDdsBuildExample implements Plugin<Project> {
          *   codegenExtraArgs = [arg1, arg2, ..., argN]  
          * }
         */
-        def extension = project.extensions.create("ConfigureExample", ConnextDdsBuildExampleExtension)
+        def extension = 
+            project
+            .extensions
+            .create("ConfigureExample", ConnextDdsBuildExampleExtension)
 
         /** Applies the java plugin */
         project.getPluginManager().apply(JAVA_PLUGIN_NAME)
@@ -117,17 +120,10 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                 if(extension.idlFile.get()) {
                     def codegenExecutableName = "rtiddsgen"
 
-                    /** 
-                     * -ppDisable is required for compiling in Windows without
-                     * needing Visual Studio or Ninja. In the future it would
-                     * be convenient to delete this argument and create a new
-                     * task to find Visual Studio or Ninja.
-                     */
                     def codegenArgs = [
                         "-language",
                         "Java",
-                        "-ppDisable",
-                        "-update",
+                        "-create",
                         "typefiles",
                         extension.idlFile.get()
                     ]
@@ -139,7 +135,8 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                     /** inserts the extra args if it was given */
                     if (extension.codegenExtraArgs.get()) {
                         codegenArgs.addAll(
-                            codegenArgs.size() - 1, extension.codegenExtraArgs.get())
+                            codegenArgs.size() - 1,
+                            extension.codegenExtraArgs.get())
                     }
 
                     /** execs rtiddsgen */
@@ -253,7 +250,9 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                 }
 
                 /** Gets the application's extension and sets the mainClass */
-                def prueba = project.getExtensions().getByType(JavaApplication.class)
+                def prueba = project
+                    .getExtensions()
+                    .getByType(JavaApplication.class)
                 prueba.setMainClass("${baseName}${mainClass}")
             }
         }
