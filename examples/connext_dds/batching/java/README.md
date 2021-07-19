@@ -5,10 +5,10 @@
 To build this example, first set the environment variables of RTIConnextDDS
 as follows:
 
-On *UNIX* systems run:
+On *Linux* and *macOS* systems run:
 
 ```sh
-<install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
+source <install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
 ```
 
 On *Windows* systems run:

@@ -4,10 +4,10 @@
 
 To build this example, first set all the environment variables as follows:
 
-On *UNIX* systems run:
+On *Linux* and *macOS* systems run:
 
 ```sh
-<install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
+source <install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
 ```
 
 On *Windows* systems run:
