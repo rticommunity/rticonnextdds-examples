@@ -1,77 +1,82 @@
 # Example Code: WaitSets
 
-## Building Java Example
+## Building the Example :wrench:
 
-Before compiling or running the example, make sure the environment variable
-`NDDSHOME` is set to the directory where your version of *RTI Connext* is
-installed.
+To build this example, first set all the environment variables as follows:
 
-Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2010* or *i86Linux2.6gcc4.4.5*). The *RTI Connext Core
-Libraries and Utilities Getting Started Guide* describes this process in detail.
-Follow the same procedure to generate the code and build the examples. **Do not
-use the `-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2010* run:
+On *Linux* and *macOS* systems run:
 
 ```sh
-rtiddsgen -language Java -example i86Win32VS2010 waitsets.idl
+source <install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
 ```
-
-You will see messages that look like this:
-
-```plaintext
-File C:\local\waitsets\java\waitsetsSubscriber.java already exists and
-will not be replaced with updated content. If you would like to get a new file
-with the new content, either remove this file or supply -replace option.
-File C:\local\waitsets\java\waitsetsPublisher.java already exists and
-will not be replaced with updated content. If you would like to get a new file
-with the new content, either remove this file or supply -replace option.
-```
-
-This is normal and is only informing you that the subscriber/publisher code has
-not been replaced, which is fine since all the source files for the example are
-already provided.
-
-Before compiling in Java, make sure that the desired version of the *javac*
-compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 
 ```sh
-javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar waitsets.java waitsetsSeq.java waitsetsTypeSupport.java waitsetsTypeCode.java waitsetsDataReader.java waitsetsDataWriter.java waitsetsSubscriber.java waitsetsPublisher.java
+<install_dir>\resource\scripts\rtisetenv_<target>.bat
 ```
+
+Once you have run rtisetenv, run `gradle` to generate the Java's `.class`
+and `.jar` files from the `<example_dir>/java` directory. This will also call
+`rtiddsgen` for you:
+
+```sh
+gradle build
+```
+
+If you need to clean all the generated files run:
+
+```sh
+gradle clean
+```
+
+## Running the Example
+
+Run the following commands in two separate command prompts, one for the
+publisher and another one for the subscriber, both from the example directory:
 
 On *UNIX* systems run:
 
 ```sh
-javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar waitsets.java waitsetsSeq.java waitsetsTypeSupport.java waitsetsTypeCode.java waitsetsDataReader.java waitsetsDataWriter.java waitsetsSubscriber.java waitsetsPublisher.java
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar waitsetsPublisher <domain_id> <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar waitsetsSubscriber <domain_id> <sleep_periods>
 ```
-
-## Running Java Example
-
-In two separate command prompt windows for the publisher and subscriber. Run the
-following commands from the example directory (this is necessary to ensure the
-application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 On *Windows* systems run:
 
 ```sh
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar waitsetsPublisher  <domain_id> <samples_to_send>
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar waitsetsSubscriber <domain_id> <sleep_periods>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitsetsPublisher <domain_id> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" waitsetsSubscriber <domain_id> <sleep_periods>
 ```
 
-On *UNIX* systems run:
+Alternatively, you can use `gradle` to run this example:
 
 ```sh
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar waitsetsPublisher  <domain_id> <samples_to_send>
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar waitsetsSubscriber <domain_id> <sleep_periods>
+gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods>"
 ```
 
-The applications accept two arguments:
+The applications accept up to two arguments:
 
-1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
+1.  The `<domain_id>`. Both applications must use the same domain ID in order
+to communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+2.  How long the examples should run, measured in samples for the publisher
+and sleep periods for the subscriber. A value of '0' instructs the application
+to run forever; this is the default.
+
+## Gradle Build Infrastructure
+
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
+
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+for the types defined in the IDL file associated with the example.
+
+2.  Build the corresponding Publisher and Subscriber applications.
+
+3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
+
+You will find the definition of the plugin, along with detailed
+documentation, in `../../../../resources/gradle_plugin`.
