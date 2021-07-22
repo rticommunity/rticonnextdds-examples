@@ -1,0 +1,12 @@
+{
+    "valgrind": {
+        "languages": {
+            "c": {},
+            "c++98": {},
+            "c++11": {}
+        },
+        "metadata": {
+            "example_type": "no-pub-sub"
+        }
+    }
+}
