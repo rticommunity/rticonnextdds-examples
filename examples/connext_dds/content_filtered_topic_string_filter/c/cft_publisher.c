@@ -83,6 +83,12 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+
     /* RTI Connext provides finalize_instance() method on
        domain participant factory for people who want to release memory used
        by the participant factory. Uncomment the following block of code for
@@ -111,8 +117,8 @@ static int publisher_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t send_period = { 1, 0 };
-    char *even_string = DDS_String_dup("EVEN");
-    char *odd_string = DDS_String_dup("ODD");
+    char *even_string = (char*) "EVEN";
+    char *odd_string = (char*) "ODD";
     /* We need this structure in case we want to change the datawriter_qos
      * programmatically.*/
     /* struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;
@@ -244,9 +250,9 @@ static int publisher_main(int domainId, int sample_count)
 
         /* Modify the data to be written here */
         if (count % 2 == 1) {
-            instance->name = odd_string;
+            strcpy(instance->name, odd_string);
         } else {
-            instance->name = even_string;
+            strcpy(instance->name, even_string);
         }
 
         instance->count = count;
