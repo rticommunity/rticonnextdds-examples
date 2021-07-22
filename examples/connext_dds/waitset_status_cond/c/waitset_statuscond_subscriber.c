@@ -84,6 +84,12 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+
     /* RTI Connext provides the finalize_instance() method on
        domain participant factory for users who want to release memory used
        by the participant factory. Uncomment the following block of code for
@@ -300,6 +306,8 @@ static int subscriber_main(int domainId, int sample_count)
                 }
             }
         }
+
+        DDS_ConditionSeq_finalize(&active_conditions);
     }
 
     /* Delete all entities */
