@@ -183,6 +183,12 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+
     /* RTI Data Distribution Service provides the finalize_instance() method on
        domain participant factory for users who want to release memory used
        by the participant factory. Uncomment the following block of code for
@@ -243,7 +249,7 @@ static int
          */
         DDS_OctetSeq_from_array(
                 &participant_qos.user_data.value,
-                (DDS_Octet *) (participant_auth),
+                participant_auth,
                 len);
     }
 
@@ -340,6 +346,10 @@ static int
          */
         NDDS_Utility_sleep(&poll_period);
     }
+
+    // Deallocate participant_qos to avoid memory leaks once it is not
+    // necessary.
+    DDS_DomainParticipantQos_finalize(&participant_qos);
 
     /* Cleanup and delete all entities */
     return subscriber_shutdown(participant);
