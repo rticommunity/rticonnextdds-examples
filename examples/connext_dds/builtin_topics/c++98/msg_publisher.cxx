@@ -424,6 +424,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
     }
 
+    delete builtin_participant_listener;
+    delete builtin_subscriber_listener;
+
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }
@@ -475,6 +478,9 @@ int main(int argc, char *argv[])
     int status = run_publisher_application(
             arguments.domain_id,
             arguments.sample_count);
+
+    DDS_String_free(arguments.participant_auth);
+    DDS_String_free(arguments.reader_auth);
 
     // Releases the memory used by the participant factory.  Optional at
     // application exit

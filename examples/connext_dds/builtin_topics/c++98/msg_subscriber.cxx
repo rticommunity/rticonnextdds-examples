@@ -264,6 +264,9 @@ int main(int argc, char *argv[])
             arguments.sample_count,
             arguments.participant_auth);
 
+    DDS_String_free(arguments.participant_auth);
+    DDS_String_free(arguments.reader_auth);
+
     // Releases the memory used by the participant factory.  Optional at
     // application exit
     DDS_ReturnCode_t retcode = DDSDomainParticipantFactory::finalize_instance();
