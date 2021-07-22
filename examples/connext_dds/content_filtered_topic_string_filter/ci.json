@@ -1,0 +1,41 @@
+{
+    "valgrind": {
+        "languages": {
+            "c": {
+                "pub_args": [
+                    ["0", "20"],
+                    ["0", "5"]
+                ],
+                "sub_args": [
+                    ["0", "25"],
+                    ["0", "5", "1"]
+                ]
+            },
+            "c++98": {
+                "pub_args": [
+                    ["-s", "40"],
+                    ["-s", "5"]
+                ],
+                "sub_args": [
+                    ["-s", "25"],
+                    ["-s", "5", "--normal-topic"]
+                ],
+                "timeout": 60
+            },
+            "c++11": {
+                "pub_args": [
+                    ["-s", "40"],
+                    ["-s", "5"]
+                ],
+                "sub_args": [
+                    ["-s", "25"],
+                    ["-s", "5", "--normal-topic"]
+                ],
+                "timeout": 60
+            }
+        },
+        "metadata": {
+            "example_type": "pub-sub"
+        }
+    }
+}
