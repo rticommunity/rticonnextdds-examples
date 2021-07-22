@@ -260,6 +260,18 @@ static int shutdown_participant(
             status = EXIT_FAILURE;
         }
     }
+
+    /*
+     * Disable network capture.
+     *
+     * This must be:
+     *   - The last network capture function that is called.
+     */
+    if (!NDDSUtilityNetworkCapture::disable()) {
+        fprintf(stderr, "Error disabling network capture\n");
+        status = -1;
+    }
+
     return status;
 }
 
