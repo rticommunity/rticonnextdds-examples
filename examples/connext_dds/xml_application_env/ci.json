@@ -1,0 +1,12 @@
+{
+    "valgrind": {
+        "languages": {
+            "c++11": {
+                "timeout": 10
+            }
+        },
+        "metadata": {
+            "example_type": "pub-sub-onefile"
+        }
+    }
+}
