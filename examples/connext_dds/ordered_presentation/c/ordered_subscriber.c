@@ -70,7 +70,7 @@ void poll_data(orderedDataReader *ordered_reader[], int numreaders)
     DDS_ReturnCode_t retcode = DDS_RETCODE_OK;
     int r, i, ident;
     for (r = 0; r < numreaders; ++r) {
-        struct DDS_SampleInfoSeq info_seq;
+        struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
         struct orderedSeq data_seq = DDS_SEQUENCE_INITIALIZER;
         retcode = orderedDataReader_take(
                 ordered_reader[r],
