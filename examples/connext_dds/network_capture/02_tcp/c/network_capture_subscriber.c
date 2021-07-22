@@ -141,6 +141,12 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+
     /*
      * Disable network capture.
      *
