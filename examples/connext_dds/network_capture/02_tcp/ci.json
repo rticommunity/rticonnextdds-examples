@@ -1,0 +1,14 @@
+{
+    "valgrind": {
+        "languages": {
+            "c": {
+                "pub_args": ["0", "10"],
+                "sub_args": ["0", "10"]
+            }
+        },
+        "metadata": {
+            "example_type": "pub-sub"
+        }
+    }
+}
+

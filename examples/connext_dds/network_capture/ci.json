@@ -1,0 +1,10 @@
+{
+    "valgrind": {
+        "subdirectories": [
+            "01_shared_memory_and_udp",
+            "02_tcp",
+            "03_security",
+            "04_advanced_api"
+        ]
+    }
+}
