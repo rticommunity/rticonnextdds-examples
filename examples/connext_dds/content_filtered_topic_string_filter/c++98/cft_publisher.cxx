@@ -28,8 +28,8 @@ static int shutdown_participant(
 int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     DDS_Duration_t send_period = { 1, 0 };
-    char *even_string = DDS_String_dup("EVEN");
-    char *odd_string = DDS_String_dup("ODD");
+    char *even_string = (char *) "EVEN";
+    char *odd_string = (char *) "ODD";
 
     // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
@@ -163,9 +163,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
         // Modify the data to be sent here
         if (samples_written % 2 == 1) {
-            data->name = odd_string;
+            strcpy(data->name, odd_string);
         } else {
-            data->name = even_string;
+            strcpy(data->name, even_string);
         }
 
         data->count = samples_written;
