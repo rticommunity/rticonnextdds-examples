@@ -1,0 +1,5 @@
+{
+    "valgrind": {
+        "skip": true
+    }
+}
