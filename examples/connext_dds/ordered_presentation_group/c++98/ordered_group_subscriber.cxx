@@ -93,6 +93,8 @@ void ordered_groupSubscriberListener::on_data_on_readers(
         if (info.valid_data) {
             ordered_groupTypeSupport::print_data(&data);
         }
+
+        ordered_group_finalize(&data);
     }
     /* Reset DataReaders sequence */
     MyDataReaders.ensure_length(0, 0);
@@ -233,6 +235,8 @@ int run_subscriber_application(
 
         NDDSUtility::sleep(receive_period);
     }
+
+    delete subscriber_listener;
 
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
