@@ -172,17 +172,11 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-     domain participant factory for users who want to release memory used
-     by the participant factory. Uncomment the following block of code for
-     clean destruction of the singleton. */
-    /*
-     retcode = DDS_DomainParticipantFactory_finalize_instance();
-     if (retcode != DDS_RETCODE_OK) {
-     printf("finalize_instance error %d\n", retcode);
-     status = -1;
-     }
-     */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -200,7 +194,7 @@ static int subscriber_main(int domainId, int sample_count)
     int count = 0;
     struct DDS_Duration_t poll_period = { 4, 0 };
     DDS_ContentFilteredTopic *filtered_topic = NULL;
-    struct DDS_StringSeq expression_parameters;
+    struct DDS_StringSeq expression_parameters = DDS_SEQUENCE_INITIALIZER;
 
     /* To customize participant QoS, use
      the configuration file USER_QOS_PROFILES.xml */
