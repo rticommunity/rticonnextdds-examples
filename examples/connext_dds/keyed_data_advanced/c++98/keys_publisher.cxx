@@ -362,6 +362,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         }
     }
 
+    retcode = keysTypeSupport::delete_data(instance_dw2);
+    if (retcode != DDS_RETCODE_OK) {
+        std::cerr << "keysTypeSupport::delete_data error " << retcode
+                << std::endl;
+    }
+
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }
