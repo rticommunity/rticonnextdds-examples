@@ -148,7 +148,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    data->msg = DDS_String_dup("Hello World!");
+    strcpy(data->msg, "Hello World!");
 
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
