@@ -299,6 +299,8 @@ int run_subscriber_application(
         }
     }
 
+    delete waitset;
+
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
 }
