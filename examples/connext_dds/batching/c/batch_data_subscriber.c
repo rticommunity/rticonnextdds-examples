@@ -172,17 +172,11 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for users who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -199,8 +193,8 @@ static int subscriber_main(int domainId, int sample_count, int turbo_mode_on)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t poll_period = { 4, 0 };
-    const char *profile_name = NULL;
-    const char *library_name = DDS_String_dup("batching_Library");
+    const char *library_name = (char *) "batching_Library";
+    char *profile_name = NULL;
 
     /* We pick the profile name if the turbo_mode is selected or not.
      * If Turbo_mode is not selected, the batching profile will be used.
@@ -301,6 +295,8 @@ static int subscriber_main(int domainId, int sample_count, int turbo_mode_on)
                poll_period.sec);
         NDDS_Utility_sleep(&poll_period);
     }
+
+    DDS_String_free(profile_name);
 
     /* Cleanup and delete all entities */
     return subscriber_shutdown(participant);

@@ -83,17 +83,11 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -111,8 +105,8 @@ static int publisher_main(int domainId, int sample_count, int turbo_mode_on)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t send_period = { 1, 0 };
-    const char *profile_name = NULL;
-    const char *library_name = DDS_String_dup("batching_Library");
+    const char *library_name = (char *) "batching_Library";
+    char *profile_name = NULL;
 
     /* We pick the profile name if the turbo_mode is selected or not.
      * If Turbo_mode is not selected, the batching profile will be used.
@@ -251,6 +245,8 @@ static int publisher_main(int domainId, int sample_count, int turbo_mode_on)
     if (retcode != DDS_RETCODE_OK) {
         printf("batch_dataTypeSupport_delete_data error %d\n", retcode);
     }
+
+    DDS_String_free(profile_name);
 
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant);
