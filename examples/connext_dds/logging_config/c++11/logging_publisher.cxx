@@ -96,7 +96,12 @@ int main(int argc, char *argv[])
         // This will catch DDS exceptions
         std::cerr << "Exception in run_publisher_application(): " << ex.what()
         << std::endl;
-        return EXIT_FAILURE;
+
+        // Releases the memory used by the participant factory.  Optional at
+        // application exit
+        dds::domain::DomainParticipant::finalize_participant_factory();
+
+        return EXIT_SUCCESS;
     }
 
     // Releases the memory used by the participant factory.  Optional at
