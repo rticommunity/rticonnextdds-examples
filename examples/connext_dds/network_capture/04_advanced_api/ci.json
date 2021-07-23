@@ -2,8 +2,8 @@
     "valgrind": {
         "languages": {
             "c": {
-                "pub_args": ["0", "1500"],
-                "sub_args": ["0", "1500"]
+                "pub_args": ["0", "500"],
+                "sub_args": ["0", "500"]
             }
         },
         "metadata": {
