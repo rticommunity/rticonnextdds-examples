@@ -307,6 +307,8 @@ int run_subscriber_application(
         NDDSUtility::sleep(receive_period);
     }
 
+    delete reader_listener;
+
     /* End changes for Deadline */
 
     // Cleanup

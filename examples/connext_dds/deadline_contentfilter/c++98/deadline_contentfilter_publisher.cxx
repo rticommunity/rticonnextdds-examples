@@ -267,6 +267,8 @@ if (retcode != DDS_RETCODE_OK) {
                   << retcode << std::endl;
     }
 
+    delete writer_listener;
+
     /* End changes for Deadline */
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
