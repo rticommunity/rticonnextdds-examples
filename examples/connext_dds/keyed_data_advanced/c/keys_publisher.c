@@ -83,17 +83,11 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides finalize_instance() method on
-    domain participant factory for people who want to release memory used
-    by the participant factory. Uncomment the following block of code for
-    clean destruction of the singleton. */
-    /*
     retcode = DDS_DomainParticipantFactory_finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
-    printf("finalize_instance error %d\n", retcode);
-    status = -1;
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
     }
-    */
 
     return status;
 }
@@ -461,6 +455,9 @@ static int publisher_main(int domainId, int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         printf("keysTypeSupport::delete_data error %d\n", retcode);
     }
+
+    // Free any dynamic memory allocated by the policies to avoid memory leaks.
+    DDS_DataWriterQos_finalize(&datawriter_qos);
 
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant);
