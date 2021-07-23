@@ -470,8 +470,14 @@ static int subscriber_main(int domainId, int sample_count)
     /* Finalize the parameters to free allocated memory */
     NDDS_Utility_NetworkCaptureParams_t_finalize(&params);
 
-    return subscriber_shutdown(participant, DDS_BOOLEAN_FALSE)
-            && subscriber_shutdown(participant2, DDS_BOOLEAN_TRUE);
+    int rc1 = subscriber_shutdown(participant, DDS_BOOLEAN_FALSE);
+    int rc2 = subscriber_shutdown(participant2, DDS_BOOLEAN_TRUE);
+
+    if (rc1 == 0 && rc2 == 0){
+        return 0;
+    }
+
+    return -1;
 }
 
 int main(int argc, char *argv[])
