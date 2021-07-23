@@ -92,12 +92,9 @@ void publish_env(
     }
 }
 
-
-int main(int argc, char *argv[], char *envp[])
+void run_publisher_application(char *envp[])
 {
-    setup_signal_handlers();
-
-    // Create the QosPovider from the specified xml file.
+// Create the QosPovider from the specified xml file.
     // The application.xml filename is used in this example instead of the
     // default.
     dds::core::QosProvider qos_provider(QOS_URL);
@@ -149,6 +146,25 @@ int main(int argc, char *argv[], char *envp[])
         publish_env(id, writer, myType, envp);
         rti::util::sleep(dds::core::Duration(2));
     }
+}
+
+
+int main(int argc, char *argv[], char *envp[])
+{
+    setup_signal_handlers();
+
+    try {
+        run_publisher_application(envp);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_publisher_application(): " << ex.what()
+                  << std::endl;
+        return EXIT_FAILURE;
+    }
+
+    // Releases the memory used by the participant factory.  Optional at
+    // application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
 
     return 0;
 }
