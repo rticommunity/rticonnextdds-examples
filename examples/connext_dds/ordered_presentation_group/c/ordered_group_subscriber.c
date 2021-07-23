@@ -66,7 +66,7 @@ void ordered_groupListener_on_data_on_readers(
         void *listener_data,
         DDS_Subscriber *subscriber)
 {
-    struct DDS_DataReaderSeq MyDataReaders;
+    struct DDS_DataReaderSeq MyDataReaders = DDS_SEQUENCE_INITIALIZER;
     DDS_ReturnCode_t retcode;
     int i;
 
@@ -88,6 +88,7 @@ void ordered_groupListener_on_data_on_readers(
          * return call. Also reset DataReaders sequence */
         DDS_DataReaderSeq_ensure_length(&MyDataReaders, 0, 0);
         DDS_Subscriber_end_access(subscriber);
+        DDS_DataReaderSeq_finalize(&MyDataReaders);
         return;
     }
 
@@ -106,6 +107,7 @@ void ordered_groupListener_on_data_on_readers(
              * a return call. Also reset DataReaders sequence */
             DDS_DataReaderSeq_ensure_length(&MyDataReaders, 0, 0);
             DDS_Subscriber_end_access(subscriber);
+            DDS_DataReaderSeq_finalize(&MyDataReaders);
             return;
         }
 
@@ -121,8 +123,10 @@ void ordered_groupListener_on_data_on_readers(
         /* In case there is no data in current DataReader,
            check next in the sequence */
         if (retcode == DDS_RETCODE_NO_DATA) {
+            ordered_group_finalize(&data);
             continue;
         } else if (retcode != DDS_RETCODE_OK) {
+            ordered_group_finalize(&data);
             printf("take error %d\n", retcode);
             continue;
         }
@@ -131,12 +135,17 @@ void ordered_groupListener_on_data_on_readers(
         if (info.valid_data) {
             ordered_groupTypeSupport_print_data(&data);
         }
+
+        ordered_group_finalize(&data);
     }
     /* Reset DataReaders sequence */
     DDS_DataReaderSeq_ensure_length(&MyDataReaders, 0, 0);
 
     /* IMPORTANT for GROUP access scope: Invoking DDS_Subscriber_end_access() */
     DDS_Subscriber_end_access(subscriber);
+
+    /* Deallocate the sequence to avoid memory leaks. */
+    DDS_DataReaderSeq_finalize(&MyDataReaders);
 }
 
 
@@ -162,17 +171,11 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for users who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
     retcode = DDS_DomainParticipantFactory_finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         printf("finalize_instance error %d\n", retcode);
         status = -1;
     }
-     */
 
     return status;
 }
