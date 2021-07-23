@@ -62,7 +62,10 @@ modification history
 #include <stdlib.h>
 
 /* Delete all entities */
-static int publisher_shutdown(DDS_DomainParticipant *participant)
+static int publisher_shutdown(
+        DDS_DomainParticipant *participant,
+        struct DDS_PublisherQos *publisher_qos,
+        struct DDS_DataWriterQos *datawriter_qos)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -83,17 +86,23 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_PublisherQos_finalize(publisher_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("PublisherQos_finalize error %d\n", retcode);
+        status = -1;
+    }
+
+    retcode = DDS_DataWriterQos_finalize(datawriter_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("DataWriterQos_finalize error %d\n", retcode);
+        status = -1;
+    }
+
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -124,7 +133,7 @@ static int publisher_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -137,6 +146,7 @@ static int publisher_main(int domainId, int sample_count)
             &publisher_qos);
     if (retcode != DDS_RETCODE_OK) {
         printf("get_default_publisher_qos error\n");
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -154,7 +164,7 @@ static int publisher_main(int domainId, int sample_count)
                                                        DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
       printf("create_publisher error\n");
-      publisher_shutdown(participant);
+      publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
       return -1;
     }
     */
@@ -168,7 +178,7 @@ static int publisher_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         printf("create_publisher error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -177,7 +187,7 @@ static int publisher_main(int domainId, int sample_count)
     retcode = partitionsTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -192,7 +202,7 @@ static int publisher_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -222,7 +232,7 @@ static int publisher_main(int domainId, int sample_count)
                                              DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
     */
@@ -235,7 +245,7 @@ static int publisher_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         printf("create_datawriter error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -246,7 +256,7 @@ static int publisher_main(int domainId, int sample_count)
     partitions_writer = partitionsDataWriter_narrow(writer);
     if (partitions_writer == NULL) {
         printf("DataWriter narrow error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -256,7 +266,7 @@ static int publisher_main(int domainId, int sample_count)
 
     if (instance == NULL) {
         printf("partitionsTypeSupport_create_data error\n");
-        publisher_shutdown(participant);
+        publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
         return -1;
     }
 
@@ -288,10 +298,12 @@ static int publisher_main(int domainId, int sample_count)
         if ((count + 1) % 25 == 0) {
             /* Matches "ABC" -- name[1] here can match name[0] there,
              * as long as there is some overlapping name */
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0) =
-                    DDS_String_dup("zzz");
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 1) =
-                    DDS_String_dup("A*C");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
+                "zzz");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 1),
+                "A*C");
 
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
@@ -300,32 +312,36 @@ static int publisher_main(int domainId, int sample_count)
         } else if ((count + 1) % 20 == 0) {
             /* Strings that are regular expressions aren't tested for
              * literal matches, so this won't match "X*Z" */
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0) =
-                    DDS_String_dup("X*Z");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
+                "X*Z");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 15 == 0) {
             /* Matches "ABC" */
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0) =
-                    DDS_String_dup("A?C");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
+                "A?C");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 10 == 0) {
             /* Matches "ABC" */
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0) =
-                    DDS_String_dup("A*");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
+                "A*");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 5 == 0) {
             /* No literal match for "bar"*/
-            *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0) =
-                    DDS_String_dup("bar");
+            strcpy(
+                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
+                "bar");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
@@ -350,7 +366,7 @@ static int publisher_main(int domainId, int sample_count)
     }
 
     /* Cleanup and delete delete all entities */
-    return publisher_shutdown(participant);
+    publisher_shutdown(participant, &publisher_qos, &datawriter_qos);
 }
 
 #if defined(RTI_WINCE)

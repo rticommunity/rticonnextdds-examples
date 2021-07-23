@@ -156,7 +156,9 @@ void partitionsListener_on_data_available(
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(DDS_DomainParticipant *participant)
+static int subscriber_shutdown(
+        DDS_DomainParticipant *participant,
+        struct DDS_SubscriberQos *subscriber_qos)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -177,17 +179,17 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for users who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_SubscriberQos_finalize(subscriber_qos);
+    if (retcode != DDS_RETCODE_OK) {
+        printf("SubscriberQos_finalize error %d\n", retcode);
+        status = -1;
+    }
+
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -218,7 +220,7 @@ static int subscriber_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         printf("create_participant error\n");
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &subscriber_qos);
         return -1;
     }
 
@@ -247,7 +249,7 @@ static int subscriber_main(int domainId, int sample_count)
                                                          DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
       printf("create_subscriber error\n");
-      subscriber_shutdown(participant);
+      subscriber_shutdown(participant, &subscriber_qos);
       return -1;
     }
     */
@@ -258,7 +260,7 @@ static int subscriber_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         printf("create_subscriber error\n");
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &subscriber_qos);
         return -1;
     }
 
@@ -272,7 +274,7 @@ static int subscriber_main(int domainId, int sample_count)
     retcode = partitionsTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         printf("register_type error %d\n", retcode);
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &subscriber_qos);
         return -1;
     }
 
@@ -287,7 +289,7 @@ static int subscriber_main(int domainId, int sample_count)
             DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         printf("create_topic error\n");
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &subscriber_qos);
         return -1;
     }
 
@@ -326,7 +328,7 @@ static int subscriber_main(int domainId, int sample_count)
                                               DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
       printf("create_datareader error\n");
-      subscriber_shutdown(participant);
+      subscriber_shutdown(participant, &subscriber_qos);
       return -1;
     }
     */
@@ -338,7 +340,7 @@ static int subscriber_main(int domainId, int sample_count)
             DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         printf("create_datareader error\n");
-        subscriber_shutdown(participant);
+        subscriber_shutdown(participant, &subscriber_qos);
         return -1;
     }
 
@@ -348,7 +350,7 @@ static int subscriber_main(int domainId, int sample_count)
     }
 
     /* Cleanup and delete all entities */
-    return subscriber_shutdown(participant);
+    subscriber_shutdown(participant, &subscriber_qos);
 }
 
 #if defined(RTI_WINCE)
