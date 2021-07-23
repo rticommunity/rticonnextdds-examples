@@ -31,8 +31,8 @@ int run_publisher_application(
         bool turbo_mode)
 {
     DDS_Duration_t send_period = { 1, 0 };
-    const char *profile_name = NULL;
-    const char *library_name = DDS_String_dup("batching_Library");
+    const char *library_name = (char *) "batching_Library";
+    char *profile_name = NULL;
 
     /* We pick the profile name if the turbo_mode is selected or not.
      * If Turbo_mode is not selected, the batching profile will be used.
@@ -173,6 +173,9 @@ int run_publisher_application(
         std::cerr << "batch_dataTypeSupport::delete_data error " << retcode
                   << std::endl;
     }
+
+    // Deallocate C characters array
+    DDS_String_free(profile_name);
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);

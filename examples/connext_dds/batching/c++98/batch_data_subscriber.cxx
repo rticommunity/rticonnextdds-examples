@@ -60,8 +60,8 @@ unsigned int process_data(batch_dataDataReader *typed_reader)
 int run_subscriber_application(int domain_id, int sample_count, bool turbo_mode)
 {
     DDS_Duration_t wait_timeout = { 4, 0 };
-    const char *profile_name = NULL;
-    const char *library_name = DDS_String_dup("batching_Library");
+    const char *library_name = (char *) "batching_Library";
+    char *profile_name = NULL;
 
     /* We pick the profile name if the turbo_mode is selected or not.
      * If Turbo_mode is not selected, the batching profile will be used.
@@ -195,6 +195,9 @@ int run_subscriber_application(int domain_id, int sample_count, bool turbo_mode)
             }
         }
     }
+
+    // Deallocate the character array
+    DDS_String_free(profile_name);
 
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
