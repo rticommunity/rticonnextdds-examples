@@ -25,6 +25,7 @@ using namespace application;
 
 static int shutdown_participant(
         DDSDomainParticipant *participant,
+        custom_filter_type *custom_filter,
         const char *shutdown_message,
         int status);
 
@@ -74,6 +75,7 @@ int run_subscriber_application(
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_participant error",
                 EXIT_FAILURE);
     }
@@ -86,6 +88,7 @@ int run_subscriber_application(
     if (subscriber == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_subscriber error",
                 EXIT_FAILURE);
     }
@@ -97,6 +100,7 @@ int run_subscriber_application(
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "register_type error",
                 EXIT_FAILURE);
     }
@@ -111,6 +115,7 @@ int run_subscriber_application(
     if (topic == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_topic error",
                 EXIT_FAILURE);
     }
@@ -124,6 +129,7 @@ int run_subscriber_application(
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "Failed to register custom content filter",
                 EXIT_FAILURE);
     }
@@ -143,6 +149,7 @@ int run_subscriber_application(
     if (cft == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "create_contentfilteredtopic error",
                 EXIT_FAILURE);
     }
@@ -167,6 +174,7 @@ int run_subscriber_application(
     if (untyped_reader == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "create_datareader error",
                 EXIT_FAILURE);
     }
@@ -176,6 +184,7 @@ int run_subscriber_application(
     if (typed_reader == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "DataReader narrow error",
                 EXIT_FAILURE);
     }
@@ -188,6 +197,7 @@ int run_subscriber_application(
     if (read_condition == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "create_readcondition error",
                 EXIT_FAILURE);
     }
@@ -198,6 +208,7 @@ int run_subscriber_application(
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "attach_condition error",
                 EXIT_FAILURE);
     }
@@ -226,6 +237,7 @@ int run_subscriber_application(
             if (retcode != DDS_RETCODE_OK) {
                 return shutdown_participant(
                         participant,
+                        custom_filter,
                         "set_expression_parameters error",
                         EXIT_FAILURE);
             }
@@ -243,6 +255,7 @@ int run_subscriber_application(
             if (retcode != DDS_RETCODE_OK) {
                 return shutdown_participant(
                         participant,
+                        custom_filter,
                         "set_expression_parameters error",
                         EXIT_FAILURE);
             }
@@ -250,13 +263,16 @@ int run_subscriber_application(
     }
     /* End Topics/ContentFilter changes */
 
+    // delete custom_filter;
+
     // Cleanup
-    return shutdown_participant(participant, "Shutting down", 0);
+    return shutdown_participant(participant, custom_filter, "Shutting down", 0);
 }
 
 // Delete all entities
 static int shutdown_participant(
         DDSDomainParticipant *participant,
+        custom_filter_type *custom_filter,
         const char *shutdown_message,
         int status)
 {
@@ -279,6 +295,10 @@ static int shutdown_participant(
             status = EXIT_FAILURE;
         }
     }
+
+    if (custom_filter != NULL)
+        delete custom_filter;
+
     return status;
 }
 

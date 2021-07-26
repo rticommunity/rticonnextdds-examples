@@ -24,6 +24,7 @@ using namespace application;
 
 static int shutdown_participant(
         DDSDomainParticipant *participant,
+        custom_filter_type *custom_filter,
         const char *shutdown_message,
         int status);
 
@@ -41,6 +42,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (participant == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_participant error",
                 EXIT_FAILURE);
     }
@@ -53,6 +55,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (publisher == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_publisher error",
                 EXIT_FAILURE);
     }
@@ -64,6 +67,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "register_type error",
                 EXIT_FAILURE);
     }
@@ -78,6 +82,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (topic == NULL) {
         return shutdown_participant(
                 participant,
+                NULL,
                 "create_topic error",
                 EXIT_FAILURE);
     }
@@ -91,6 +96,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "Failed to register custom content filter",
                 EXIT_FAILURE);
     }
@@ -106,6 +112,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (untyped_writer == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "create_datawriter error",
                 EXIT_FAILURE);
     }
@@ -114,6 +121,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (typed_writer == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "DataWriter narrow error",
                 EXIT_FAILURE);
     }
@@ -124,6 +132,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (data == NULL) {
         return shutdown_participant(
                 participant,
+                custom_filter,
                 "ccfTypeSupport::create_data error",
                 EXIT_FAILURE);
     }
@@ -166,14 +175,14 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         std::cerr << "ccfTypeSupport::delete_data error " << retcode
                   << std::endl;
     }
-
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
-    return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
+    return shutdown_participant(participant, custom_filter, "Shutting down", EXIT_SUCCESS);
 }
 
 // Delete all entities
 static int shutdown_participant(
         DDSDomainParticipant *participant,
+        custom_filter_type *custom_filter,
         const char *shutdown_message,
         int status)
 {
@@ -185,17 +194,20 @@ static int shutdown_participant(
         // Cleanup everything created by this Participant
         retcode = participant->delete_contained_entities();
         if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "delete_contained_entities error " << retcode
+            std::cerr << "delete_contained_entities error" << retcode
                       << std::endl;
             status = EXIT_FAILURE;
         }
 
         retcode = DDSTheParticipantFactory->delete_participant(participant);
         if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "delete_participant error " << retcode << std::endl;
+            std::cerr << "delete_participant error" << retcode << std::endl;
             status = EXIT_FAILURE;
         }
     }
+
+    if (custom_filter != NULL)
+        delete custom_filter;
 
     return status;
 }
