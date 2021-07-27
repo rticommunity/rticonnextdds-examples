@@ -39,17 +39,11 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for users who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -70,7 +64,7 @@ static int subscriber_main(int domainId, int sample_count)
 
     /* Query Condition-specific types */
     DDS_QueryCondition *query_condition;
-    struct DDS_StringSeq query_parameters;
+    struct DDS_StringSeq query_parameters = DDS_SEQUENCE_INITIALIZER;
     const char *param_list[] = { "'CompanyA'", "30000" };
 
     /* Create a Participant. */
@@ -159,14 +153,14 @@ static int subscriber_main(int domainId, int sample_count)
             DDS_ANY_SAMPLE_STATE,
             DDS_ANY_VIEW_STATE,
             DDS_ALIVE_INSTANCE_STATE,
-            DDS_String_dup("company MATCH %0 AND altitude >= %1"),
+            "company MATCH %0 AND altitude >= %1",
             &query_parameters);
 
 
     /* Main loop */
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
-        struct DDS_SampleInfoSeq info_seq;
-        struct FlightSeq data_seq;
+        struct DDS_SampleInfoSeq info_seq = DDS_SEQUENCE_INITIALIZER;
+        struct FlightSeq data_seq = DDS_SEQUENCE_INITIALIZER;
         DDS_ReturnCode_t retcode;
         int update = 0;
         int i = 0;
@@ -176,10 +170,12 @@ static int subscriber_main(int domainId, int sample_count)
 
         /* Change the filter parameter after 5 seconds. */
         if ((count + 1) % 10 == 5) {
+            DDS_String_free(DDS_StringSeq_get(&query_parameters, 0));
             *DDS_StringSeq_get_reference(&query_parameters, 0) =
                     DDS_String_dup("'CompanyB'");
             update = 1;
         } else if ((count + 1) % 10 == 0) {
+            DDS_String_free(DDS_StringSeq_get(&query_parameters, 0));
             *DDS_StringSeq_get_reference(&query_parameters, 0) =
                     DDS_String_dup("'CompanyA'");
             update = 1;
@@ -228,6 +224,8 @@ static int subscriber_main(int domainId, int sample_count)
             printf("return loan error %d\n", retcode);
         }
     }
+
+    DDS_StringSeq_finalize(&query_parameters);
 
     /* Cleanup and delete all entities */
     return subscriber_shutdown(participant);
