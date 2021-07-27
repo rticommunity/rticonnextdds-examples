@@ -112,8 +112,8 @@ int run_subscriber_application(
      * strings! The single-quote do NOT go in the query condition itself. */
     DDS_StringSeq query_parameters;
     query_parameters.ensure_length(2, 2);
-    query_parameters[0] = (char *) "'CompanyA'";
-    query_parameters[1] = (char *) "30000";
+    query_parameters[0] = DDS_String_dup("'CompanyA'");
+    query_parameters[1] = DDS_String_dup("30000");
     std::cout << "Setting parameter to company " << query_parameters[0]
               << ", altitude bigger or equals to " << query_parameters[1]
               << std::endl;
@@ -126,7 +126,7 @@ int run_subscriber_application(
             DDS_ANY_SAMPLE_STATE,
             DDS_ANY_VIEW_STATE,
             DDS_ALIVE_INSTANCE_STATE,
-            DDS_String_dup("company MATCH %0 AND altitude >= %1"),
+            "company MATCH %0 AND altitude >= %1",
             query_parameters);
 
     // Main loop. Wait for data to arrive, and process when it arrives
@@ -139,10 +139,12 @@ int run_subscriber_application(
 
         // Change the filter parameter after 5 seconds.
         if ((iteration_count + 1) % 10 == 5) {
-            query_parameters[0] = (char *) "'CompanyB'";
+            DDS_String_free(query_parameters[0]);
+            query_parameters[0] = DDS_String_dup("'CompanyB'");
             update = true;
         } else if ((iteration_count + 1) % 10 == 0) {
-            query_parameters[0] = (char *) "'CompanyA'";
+            DDS_String_free(query_parameters[0]);
+            query_parameters[0] = DDS_String_dup("'CompanyA'");
             update = true;
         }
         iteration_count++;
