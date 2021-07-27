@@ -220,6 +220,8 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
     }
 
+    delete type_support;
+
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }

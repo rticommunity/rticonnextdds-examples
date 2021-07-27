@@ -205,6 +205,8 @@ int run_subscriber_application(
         }
     }
 
+    delete type_support;
+
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
 }
