@@ -83,17 +83,11 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides finalize_instance() method on
-       domain participant factory for people who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -210,10 +204,11 @@ static int publisher_main(int domainId, int sample_count)
         printf("Writing waitset_query_cond, count %d\n", count);
 
         /* Modify the data to be written here */
+        DDS_String_free(instance->name);
         if (count % 2 == 1) {
-            instance->name = odd_string;
+            instance->name = DDS_String_dup(odd_string);
         } else {
-            instance->name = even_string;
+            instance->name = DDS_String_dup(even_string);
         }
 
         instance->x = count;
@@ -226,7 +221,6 @@ static int publisher_main(int domainId, int sample_count)
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
-
         NDDS_Utility_sleep(&send_period);
     }
 
@@ -245,6 +239,9 @@ static int publisher_main(int domainId, int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         printf("waitset_query_condTypeSupport_delete_data error %d\n", retcode);
     }
+
+    DDS_String_free(even_string);
+    DDS_String_free(odd_string);
 
     /* Cleanup and delete delete all entities */
     return publisher_shutdown(participant);

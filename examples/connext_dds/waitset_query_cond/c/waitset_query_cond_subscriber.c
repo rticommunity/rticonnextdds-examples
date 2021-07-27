@@ -87,17 +87,11 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
         }
     }
 
-    /* RTI Connext provides the finalize_instance() method on
-       domain participant factory for users who want to release memory used
-       by the participant factory. Uncomment the following block of code for
-       clean destruction of the singleton. */
-    /*
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
@@ -117,7 +111,7 @@ static int subscriber_main(int domainId, int sample_count)
     DDS_WaitSet *waitset = NULL;
     DDS_QueryCondition *query_condition = NULL;
     waitset_query_condDataReader *waitset_query_cond_reader = NULL;
-    const char *query_expression = DDS_String_dup("name MATCH %0");
+    char *query_expression = DDS_String_dup("name MATCH %0");
     struct DDS_StringSeq query_parameters;
     struct DDS_ConditionSeq active_conditions_seq = DDS_SEQUENCE_INITIALIZER;
     struct waitset_query_condSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -302,6 +296,16 @@ static int subscriber_main(int domainId, int sample_count)
                     &info_seq);
         }
     }
+
+    // Deallocate assigned memory to avoid memory leaks
+    DDS_String_free(even_string);
+    DDS_String_free(odd_string);
+    DDS_String_free(query_expression);
+    DDS_StringSeq_finalize(&query_parameters);
+    DDS_ConditionSeq_finalize(&active_conditions_seq);
+    waitset_query_condSeq_finalize(&data_seq);
+    DDS_SampleInfoSeq_finalize(&info_seq);
+    DDS_WaitSet_delete(waitset);
 
     /* Cleanup and delete all entities */
     return subscriber_shutdown(participant);
