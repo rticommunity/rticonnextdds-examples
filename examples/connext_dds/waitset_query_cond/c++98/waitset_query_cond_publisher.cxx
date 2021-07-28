@@ -130,11 +130,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         std::cout << "Writing waitset_query_cond, count " << samples_written
                   << std::endl;
 
+        DDS_String_free(data->name);
         /* Modify the data to be sent here */
         if (samples_written % 2 == 1) {
-            data->name = odd_string;
+            data->name = DDS_String_dup(odd_string);
         } else {
-            data->name = even_string;
+            data->name = DDS_String_dup(even_string);
         }
 
         data->x = samples_written;
@@ -161,6 +162,10 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         std::cerr << "waitset_query_condTypeSupport::delete_data error "
                   << retcode << std::endl;
     }
+
+    // Deallocate strings to avoid memory leaks
+    DDS_String_free(even_string);
+    DDS_String_free(odd_string);
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);

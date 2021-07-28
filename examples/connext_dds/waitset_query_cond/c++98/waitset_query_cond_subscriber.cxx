@@ -34,7 +34,7 @@ int run_subscriber_application(
         unsigned int sample_count)
 {
     DDS_Duration_t wait_timeout = { 1, 0 };
-    const char *query_expression = DDS_String_dup("name MATCH %0");
+    char *query_expression = DDS_String_dup("name MATCH %0");
     char *odd_string = DDS_String_dup("'ODD'");
     char *even_string = DDS_String_dup("'EVEN'");
 
@@ -165,6 +165,7 @@ int run_subscriber_application(
         count++;
         // We set a new parameter in the Query Condition after 7 secs
         if (count == 7) {
+            DDS_String_free(query_parameters[0]);
             query_parameters[0] = odd_string;
             std::cout << "CHANGING THE QUERY CONDITION\n";
             std::cout << "\n>>> Query conditions: name MATCH %%0\n";
@@ -210,6 +211,10 @@ int run_subscriber_application(
             typed_reader->return_loan(data_seq, info_seq);
         }
     }
+
+    // Deallocate memory to avoid memory leaks
+    delete waitset;
+    DDS_String_free(query_expression);
 
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
