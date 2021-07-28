@@ -302,6 +302,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
     }
 
+    // Deallocate dynamic memory
+    delete writer_listener;
+
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
     return shutdown_participant(participant, "Shutting down", EXIT_SUCCESS);
 }

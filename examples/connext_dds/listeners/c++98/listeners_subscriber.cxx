@@ -366,6 +366,11 @@ int run_subscriber_application(
         NDDSUtility::sleep(wait_timeout);
     }
 
+    // Deallocate dynamic memory to avoid memory leaks
+    delete participant_listener;
+    delete subscriber_listener;
+    delete reader_listener;
+
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
 }
