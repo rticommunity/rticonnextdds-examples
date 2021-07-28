@@ -86,21 +86,14 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
             status = -1;
         }
     }
+        
+    numbersTypeSupport_finalize();
 
-    /* RTI Data Distribution Service provides finalize_instance() method on
-       domain participant factory and finalize() method on type support for
-       people who want to release memory used by the participant factory and
-       type support singletons. Uncomment the following block of code for
-       clean destruction of the singletons. */
-    /*
-        numbersTypeSupport_finalize();
-
-        retcode = DDS_DomainParticipantFactory_finalize_instance();
-        if (retcode != DDS_RETCODE_OK) {
-            printf("finalize_instance error %d\n", retcode);
-            status = -1;
-        }
-    */
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        printf("finalize_instance error %d\n", retcode);
+        status = -1;
+    }
 
     return status;
 }
