@@ -2,8 +2,8 @@
     "valgrind": {
         "languages": {
             "c": {
-                "pub_args": ["0", "15"],
-                "sub_args": ["0", "25"]
+                "pub_args": ["0", "10"],
+                "sub_args": ["0", "10"]
             },
             "c++98": {
                 "pub_args": ["-s", "15"],
