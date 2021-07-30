@@ -301,12 +301,14 @@ int run_subscriber_application(
         /* After 10 seconds, change content filter to accept only instance 0 */
         if (count == 10) {
             std::cout << "Starting to filter out instance1\n";
+            DDS_String_free(parameters[0]);
             parameters[0] = DDS_String_dup("1");
             cft->set_expression_parameters(parameters);
         }
         NDDSUtility::sleep(receive_period);
     }
 
+    // Deallocate dynamic memory to avoid memory leaks
     delete reader_listener;
 
     /* End changes for Deadline */
