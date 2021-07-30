@@ -96,6 +96,12 @@ def execute_application(
 
     print(f"Arguments: {command}", flush=True)
 
+    if (
+        "LD_LIBRARY_PATH" in environment
+        and environment["LD_LIBRARY_PATH"] == "build-dir"
+    ):
+        environment["LD_LIBRARY_PATH"] = exe_path.parent
+
     # Run Valgrind and capture the output to not display the example logs.
     valgrind_result = subprocess.run(
         command, capture_output=True, env=environment, cwd=exe_path.parent
@@ -113,7 +119,7 @@ def is_exe(path: Path) -> bool:
     :param path: The path that will be checked.
     :returns: ```True``` if ```path``` is executable and ```False``` otherwise.
     """
-    return path.is_file() and os.access(path, os.X_OK)
+    return path.is_file() and os.access(path, os.X_OK) and path.suffix != ".so"
 
 
 def get_exe_list(path: Path) -> List[Path]:
