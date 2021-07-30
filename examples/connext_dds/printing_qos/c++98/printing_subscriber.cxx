@@ -96,6 +96,7 @@ int run_subscriber_application(
      * The DDS_DomainParticipantQos_to_string_w_params API prints all the QoS
      * values for the DomainParticipantQos object.
      */
+    participant_qos.resource_limits.plugin_info_parameter_max_length = 256;
     participant_qos.to_string(str, strSize, DDS_QOS_PRINT_ALL, printFormat);
     str = DDS_String_alloc(strSize);
     if (str == NULL) {
