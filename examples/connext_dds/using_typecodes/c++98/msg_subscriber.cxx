@@ -185,6 +185,9 @@ int run_subscriber_application(
         NDDSUtility::sleep(receive_period);
     }
 
+    // Deallocate memory
+    delete builtin_publication_listener;
+
     // Cleanup
     return shutdown_participant(participant, "Shutting down", 0);
 }
