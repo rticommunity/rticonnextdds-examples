@@ -158,6 +158,8 @@ int main(int argc, char *argv[])
             rti::util::sleep(dds::core::Duration(1));
         }
 
+        async_waitset.stop();
+
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in main(): " << ex.what() << std::endl;
