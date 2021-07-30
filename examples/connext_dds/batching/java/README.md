@@ -39,36 +39,35 @@ publisher and another one for the subscriber, both from the example directory:
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataPublisher -d <domain_id> -s <samples_to_send> --turbo
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataSubscriber -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataPublisher -d <domain_id> -s <samples_to_send> --turbo
+java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataSubscriber -d <domain_id> -s <samples_to_receive> --turbo
 ```
 
 Alternatively, you can use `gradle` to run this example:
 
 ```sh
-gradle run -PmainClass=Publisher --args="<domain_id> <turbo_mode> <samples_to_send>"
-gradle run -PmainClass=Subscriber --args="<domain_id> <turbo_mode> <sleep_periods>"
+gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send> --turbo"
+gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive> --turbo"
 ```
 
-The applications accept up to two arguments:
+The applications accept up to three arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
-communicate. The default is 0.
+    communicate. The default is 0.
 
-2.  If `<turbo_mode>` will be used or not. A value '0' indicates turbo mode is
-not enable, so manual batching will be used. A value '1' indicates that Turbo
-Mode will be used. The default is 0.
+2.  How long the examples should run, measured in samples. The default is
+    infinite.
 
-3.  How long the examples should run, measured in samples for the publisher
-and sleep periods for the subscriber. A value of '0' instructs the application
-to run forever; this is the default.
+3.  If `<turbo_mode>` will be used or not. By default turbo mode is
+not enabled, so manual batching will be used. To activate the *Turbo Mode*, use
+the `--turbo` option.
 
 ## Gradle Build Infrastructure
 
