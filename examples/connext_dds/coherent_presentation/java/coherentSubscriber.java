@@ -44,17 +44,18 @@ public class coherentSubscriber extends Application implements AutoCloseable {
 
         try {
             reader.take(
-                dataSeq, infoSeq,
-                ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                SampleStateKind.ANY_SAMPLE_STATE,
-                ViewStateKind.ANY_VIEW_STATE,
-                InstanceStateKind.ANY_INSTANCE_STATE);
+                    dataSeq,
+                    infoSeq,
+                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                    SampleStateKind.ANY_SAMPLE_STATE,
+                    ViewStateKind.ANY_VIEW_STATE,
+                    InstanceStateKind.ANY_INSTANCE_STATE);
             // Start changes for Coherent_Presentation
 
             // Firstly process all samples
             int len = 0;
             coherent data;
-            for(int i = 0; i < dataSeq.size(); ++i) {
+            for (int i = 0; i < dataSeq.size(); ++i) {
                 SampleInfo info = (SampleInfo) infoSeq.get(i);
                 if (info.valid_data) {
                     data = (coherent) dataSeq.get(i);
@@ -63,13 +64,14 @@ public class coherentSubscriber extends Application implements AutoCloseable {
                     samplesRead++;
                 }
             }
-            
+
             // Then, we print the results
             if (len > 0) {
-                System.out.println("Received " + len + " updates\n  " +
-                        reader_state.toString());
+                System.out.println(
+                        "Received " + len + " updates\n  "
+                        + reader_state.toString());
             }
-            
+
         } catch (RETCODE_NO_DATA noData) {
             // No data to process
         } finally {
@@ -79,15 +81,15 @@ public class coherentSubscriber extends Application implements AutoCloseable {
         return samplesRead;
     }
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
                         getDomainId(),
                         DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                         null,  // listener
-                        StatusKind.STATUS_MASK_NONE));                        
+                        StatusKind.STATUS_MASK_NONE));
 
         // A Subscriber allows an application to create one or more DataReaders
         Subscriber subscriber =
@@ -95,13 +97,13 @@ public class coherentSubscriber extends Application implements AutoCloseable {
                         DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
- 
-        /* If you want to change the DataWriter's QoS programmatically 
-         * rather than using the XML file, you will need to add the 
-         * following lines to your code and comment out the 
+
+        /* If you want to change the DataWriter's QoS programmatically
+         * rather than using the XML file, you will need to add the
+         * following lines to your code and comment out the
          * create_subscriber call above.
          */
-        //Start changes for Coherent_Presentation
+        // Start changes for Coherent_Presentation
 
         // Get default subscriber QoS to customize
         /*
@@ -116,11 +118,11 @@ public class coherentSubscriber extends Application implements AutoCloseable {
             subscriber_qos, null,
             StatusKind.STATUS_MASK_NONE);
         */
-      
+
         // End changes for Coherent_Presentation
-            
+
         // Register the datatype to use when creating the Topic
-        String typeName = coherentTypeSupport.get_type_name(); 
+        String typeName = coherentTypeSupport.get_type_name();
         coherentTypeSupport.register_type(participant, typeName);
 
         // Create a Topic with a name and a datatype
@@ -139,12 +141,12 @@ public class coherentSubscriber extends Application implements AutoCloseable {
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
 
-        /* If you want to change the DataWriter's QoS programmatically 
-         * rather than using the XML file, you will need to add the 
-         * following lines to your code and comment out the 
+        /* If you want to change the DataWriter's QoS programmatically
+         * rather than using the XML file, you will need to add the
+         * following lines to your code and comment out the
          * create_datareader call above.
          */
-            
+
         // Start changes for Coherent_Presentation
 
         // Get default datareader QoS to customize
@@ -160,10 +162,10 @@ public class coherentSubscriber extends Application implements AutoCloseable {
                 subscriber.create_datareader(
                     topic, datareader_qos, listener,
                     StatusKind.STATUS_MASK_ALL);
-        
+
         */
         // End changes for Coherent_Presentation
-            
+
         // --- Wait for data --- //
 
         // Create ReadCondition that triggers when data in reader's queue
@@ -203,8 +205,9 @@ public class coherentSubscriber extends Application implements AutoCloseable {
         static final int nvals = 6;
         static int statevals[] = new int[nvals];
 
-        public void set_state(char c, int value) {
-            int idx = c - (int)('a');
+        public void set_state(char c, int value)
+        {
+            int idx = c - (int) ('a');
             if (idx < 0 || idx >= nvals) {
                 System.out.print("error: invalid field '" + c + "'\n");
                 return;
@@ -212,16 +215,17 @@ public class coherentSubscriber extends Application implements AutoCloseable {
             statevals[idx] = value;
         }
 
-        public String toString() {
+        public String toString()
+        {
             char c = 'a';
             String res = new String();
-            for (int i=0; i < nvals; ++i) {
+            for (int i = 0; i < nvals; ++i) {
                 res = res + " " + (c++) + " = " + statevals[i] + ";";
             }
             return res;
         }
     };
-    
+
     @Override public void close()
     {
         // Delete all entities (DataReader, Topic, Subscriber,
@@ -238,7 +242,8 @@ public class coherentSubscriber extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (coherentSubscriber subscriberApplication = new coherentSubscriber()) {
+        try (coherentSubscriber subscriberApplication =
+                     new coherentSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
@@ -249,6 +254,3 @@ public class coherentSubscriber extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-
-        

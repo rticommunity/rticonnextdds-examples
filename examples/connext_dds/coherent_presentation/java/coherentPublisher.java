@@ -24,8 +24,9 @@ import com.rti.dds.topic.Topic;
 public class coherentPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
-    
-    private void runApplication() {
+
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -39,11 +40,11 @@ public class coherentPublisher extends Application implements AutoCloseable {
                 Objects.requireNonNull(participant.create_publisher(
                         DomainParticipant.PUBLISHER_QOS_DEFAULT,
                         null,  // listener
-                        StatusKind.STATUS_MASK_NONE));                
-                
-        
-        /* If you want to change the DataWriter's QoS programmatically 
-         * rather than using the XML file, you will need to add the 
+                        StatusKind.STATUS_MASK_NONE));
+
+
+        /* If you want to change the DataWriter's QoS programmatically
+         * rather than using the XML file, you will need to add the
          * following lines to your code and comment out the create_publisher
          * call above.
          */
@@ -63,24 +64,24 @@ public class coherentPublisher extends Application implements AutoCloseable {
         publisher = participant.create_publisher(
             publisher_qos, null,
             StatusKind.STATUS_MASK_NONE);
-        */        
+        */
         // End changes for coherent_presentation
 
         // Register the datatype to use when creating the Topic
         String typeName = coherentTypeSupport.get_type_name();
         coherentTypeSupport.register_type(participant, typeName);
-    
-            /* To customize topic QoS, use
-               the configuration file USER_QOS_PROFILES.xml */
-    
+
+        /* To customize topic QoS, use
+           the configuration file USER_QOS_PROFILES.xml */
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example coherent",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null,  // listener
-                StatusKind.STATUS_MASK_NONE));         
-                
+                StatusKind.STATUS_MASK_NONE));
+
         // This DataWriter writes data on "Example coherent" Topic
         coherentDataWriter writer = (coherentDataWriter) Objects.requireNonNull(
                 publisher.create_datawriter(
@@ -88,22 +89,22 @@ public class coherentPublisher extends Application implements AutoCloseable {
                         Publisher.DATAWRITER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-                 
-            
+
+
         /* If you want to change the DataWriter's QoS programmatically
-         * rather than using the XML file, you will need to add the 
-         * following lines to your code and comment out the 
+         * rather than using the XML file, you will need to add the
+         * following lines to your code and comment out the
          * create_datawriter call above.
          */
-            
+
         // Start changes for coherent_presentation
 
         // Get default datawriter QoS to customize
-        /*      
+        /*
         DataWriterQos datawriter_qos = new DataWriterQos();
         publisher.get_default_datawriter_qos(datawriter_qos);
 
-        datawriter_qos.reliability.kind = 
+        datawriter_qos.reliability.kind =
                 ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
         datawriter_qos.history.depth = 10;
 
@@ -113,13 +114,13 @@ public class coherentPublisher extends Application implements AutoCloseable {
                 null, StatusKind.STATUS_MASK_NONE);
         */
         // End changes for coherent_presentation
-            
+
         // --- Write --- //
 
         // Create data sample for writing
         coherent data = new coherent();
         data.id = 0;
-            
+
         InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
         /*
          * For a data type that has a key, if the same instance is going to
@@ -127,18 +128,17 @@ public class coherentPublisher extends Application implements AutoCloseable {
          * the keyed instance prior to writing
          */
         instance_handle = writer.register_instance(data);
-            
+
         publisher.begin_coherent_changes();
         System.out.println("Begin Coherent Changes");
-            
-        final long sendPeriodMillis = 1 * 1000; // 4 second
+
+        final long sendPeriodMillis = 1 * 1000;  // 4 second
         int mod = 0;
         Random rand = new Random();
-            
+
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-                
             try {
                 Thread.sleep(sendPeriodMillis);
             } catch (InterruptedException ix) {
@@ -153,20 +153,20 @@ public class coherentPublisher extends Application implements AutoCloseable {
                 continue;
             }
 
-            data.field = (char)((int)'a' + mod);
+            data.field = (char) ((int) 'a' + mod);
             data.value = rand.nextInt(10);
 
-            System.out.print("  Updating instance, " + data.field +
-                     "->" + data.value + "\n");
-                
+            System.out.print(
+                    "  Updating instance, " + data.field + "->" + data.value
+                    + "\n");
+
             // Write data
             writer.write(data, instance_handle);
-                
+
             if (mod == 5) {
                 publisher.end_coherent_changes();
                 System.out.print("End Coherent Changes\n\n");
             }
-                
         }
 
         writer.unregister_instance(data, instance_handle);
@@ -198,5 +198,3 @@ public class coherentPublisher extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-        
