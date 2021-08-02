@@ -28,8 +28,8 @@ import com.rti.dds.subscription.SampleInfoSeq;
 import com.rti.dds.subscription.SampleStateKind;
 import com.rti.dds.subscription.Subscriber;
 import com.rti.dds.subscription.ViewStateKind;
-import com.rti.dds.topic.Topic;
 import com.rti.dds.topic.ContentFilteredTopic;
+import com.rti.dds.topic.Topic;
 
 // ===========================================================================
 
