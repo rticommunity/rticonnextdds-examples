@@ -86,7 +86,7 @@ public abstract class Application {
             + "    -d, --domain       <int>   DDS domain ID." + NL
             + "                               Default: 0" + NL
             + "    -s, --sample_count <int>   Number of samples to send/receive." + NL
-            + "                               Default: Integer.MAX_VALUE" + NL);
+            + "                               Default: Integer.MAX_VALUE");
 
             if (current_app == ApplicationType.SUBSCRIBER) {
                 System.out.println("    -pa, --pauth    <string>   The participant "
