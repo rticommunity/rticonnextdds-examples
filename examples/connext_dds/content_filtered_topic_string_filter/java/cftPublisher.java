@@ -24,8 +24,8 @@ public class cftPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -44,7 +44,7 @@ public class cftPublisher extends Application implements AutoCloseable {
         // Register the datatype to use when creating the Topic
         String typeName = cftTypeSupport.get_type_name();
         cftTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example cft",
@@ -52,7 +52,7 @@ public class cftPublisher extends Application implements AutoCloseable {
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
-                
+
         // This DataWriter writes data on "Example cft" Topic
         cftDataWriter writer = (cftDataWriter) Objects.requireNonNull(
                 publisher.create_datawriter(
@@ -60,20 +60,20 @@ public class cftPublisher extends Application implements AutoCloseable {
                         Publisher.DATAWRITER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-            
+
         /* If you want to set the reliability and history QoS settings
          * programmatically rather than using the XML, you will need to add
-         * the following lines to your code and comment out the 
+         * the following lines to your code and comment out the
          * create_datawriter call above.
          */
-            
-        /*            
+
+        /*
             DataWriterQos datawriter_qos = new DataWriterQos();
             publisher.get_default_datawriter_qos(datawriter_qos);
 
             datawriter_qos.reliability.kind =
                 ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-            datawriter_qos.durability.kind = 
+            datawriter_qos.durability.kind =
                 DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
             datawriter_qos.history.kind =
                 HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
@@ -82,7 +82,7 @@ public class cftPublisher extends Application implements AutoCloseable {
             writer = (cftDataWriter) Objects.requireNonNull(
                     publisher.create_datawriter(
                         topic, datawriter_qos,
-                        null, StatusKind.STATUS_MASK_NONE));        
+                        null, StatusKind.STATUS_MASK_NONE));
         */
 
         // Create data sample for writing
@@ -92,14 +92,13 @@ public class cftPublisher extends Application implements AutoCloseable {
         /* For a data type that has a key, if the same instance is going to
          * be written multiple times, initialize the key here
          * and register the keyed instance prior to writing */
-        //instance_handle = writer.register_instance(instance);
+        // instance_handle = writer.register_instance(instance);
 
-        final long sendPeriodMillis = 1 * 1000; // 1 second
+        final long sendPeriodMillis = 1 * 1000;  // 1 second
 
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-            
             System.out.println("Writing cft, count " + samplesWritten);
 
             // Modify the instance to be written here
@@ -108,9 +107,9 @@ public class cftPublisher extends Application implements AutoCloseable {
             } else {
                 data.name = "EVEN";
             }
-            
+
             data.count = samplesWritten;
-                
+
             // Write data
             writer.write(data, instance_handle);
             try {
@@ -138,7 +137,9 @@ public class cftPublisher extends Application implements AutoCloseable {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
         try (cftPublisher publisherApplication = new cftPublisher()) {
-            publisherApplication.parseArguments(args, ApplicationType.PUBLISHER);
+            publisherApplication.parseArguments(
+                    args,
+                    ApplicationType.PUBLISHER);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();
         }
@@ -148,5 +149,3 @@ public class cftPublisher extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-        
