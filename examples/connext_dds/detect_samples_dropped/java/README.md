@@ -45,8 +45,8 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar DroppedSamplesExamp
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" DroppedSamplesExamplePublisher -d <domain_id> -s <samples_to_send>
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" DroppedSamplesExampleSubscriber -d <domain_id> -s <samples_to_receive>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" DroppedSamplesExamplePublisher -d <domain_id> -s <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" DroppedSamplesExampleSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 Alternatively, you can use `gradle` to run this example:

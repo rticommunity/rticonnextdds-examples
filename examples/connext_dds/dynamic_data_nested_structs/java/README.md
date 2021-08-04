@@ -44,7 +44,7 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar DynamicDataNestedSt
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" DynamicDataNestedStruct
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" DynamicDataNestedStruct
 ```
 
 ## Gradle Build Infrastructure

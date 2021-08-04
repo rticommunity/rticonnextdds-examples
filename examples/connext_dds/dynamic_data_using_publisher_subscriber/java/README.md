@@ -45,8 +45,8 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" ShapeTypePublisher  -d <domain_id> -s <samples_to_send>
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" ShapeTypeSubscriber -d <domain_id> -s <samples_to_receive>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" ShapeTypePublisher <domain_id> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" ShapeTypeSubscriber <domain_id> <sleep_periods>
 ```
 
 Alternatively, you can use `gradle` to run this example:

@@ -46,8 +46,8 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar batch_dataSubscribe
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataPublisher -d <domain_id> -s <samples_to_send> --turbo
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" batch_dataSubscriber -d <domain_id> -s <samples_to_receive> --turbo
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" batch_dataPublisher <domain_id> <turbo_mode> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" batch_dataSubscriber <domain_id> <turbo_mode> <sleep_periods>
 ```
 
 Alternatively, you can use `gradle` to run this example:

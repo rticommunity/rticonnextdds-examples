@@ -44,7 +44,7 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar UnionExample
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" UnionExample
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" UnionExample
 ```
 
 ## Gradle Build Infrastructure

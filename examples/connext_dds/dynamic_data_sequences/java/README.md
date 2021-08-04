@@ -44,7 +44,7 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar DynamicDataSequence
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" DynamicDataSequences
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" DynamicDataSequences
 ```
 
 ## Gradle Build Infrastructure

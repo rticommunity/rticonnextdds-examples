@@ -135,7 +135,7 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                     def codegenArgs = [
                         "-language",
                         "Java",
-                        "-create",
+                        "-update",
                         "typefiles",
                         extension.idlFile.get()
                     ]
@@ -190,7 +190,6 @@ class ConnextDdsBuildExample implements Plugin<Project> {
 
                 /** The list of files to delete */
                 def filesToDelete = [
-                    "Application.java",
                     "${baseFileName}.java",
                     "${baseFileName}DataReader.java",
                     "${baseFileName}DataWriter.java",
