@@ -44,7 +44,7 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar FooPublisher <domai
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" FooPublisher <domain_id>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" FooPublisher <domain_id>
 ```
 
 Alternatively, you can use `gradle` to run this example:

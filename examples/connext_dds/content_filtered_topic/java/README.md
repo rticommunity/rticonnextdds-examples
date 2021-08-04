@@ -45,8 +45,8 @@ java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar cftSubscriber <doma
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" cftPublisher  <domain_id> <samples_to_send>
-java -cp "build\libs\java.jar";"%NDDSHOME%/lib/java/nddsjava.jar" cftSubscriber <domain_id> <sleep_periods> <select_cft>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" cftPublisher  <domain_id> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" cftSubscriber <domain_id> <sleep_periods> <select_cft>
 ```
 
 Alternatively, you can use `gradle` to run this example:
