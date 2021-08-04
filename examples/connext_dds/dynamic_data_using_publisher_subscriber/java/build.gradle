@@ -15,5 +15,5 @@ plugins {
 }
 
 ConfigureExample {
-  idlFile = 'Shapes.idl'
+  idlFile = 'ShapeType.idl'
 }
