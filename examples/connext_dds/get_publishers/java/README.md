@@ -38,19 +38,19 @@ application:
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar FooPublisher <domain_id>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar FooPublisher -d <domain_id>
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" FooPublisher <domain_id>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" FooPublisher -d <domain_id>
 ```
 
 Alternatively, you can use `gradle` to run this example:
 
 ```sh
-gradle run -PmainClass=Publisher --args="<domain_id>"
+gradle run -PmainClass=Publisher --args="-d <domain_id>"
 ```
 
 The applications accept up to two arguments:
