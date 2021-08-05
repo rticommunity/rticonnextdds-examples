@@ -143,3 +143,4 @@ inline void parse_arguments(
 }  // namespace application
 
 #endif  // APPLICATION_H
+

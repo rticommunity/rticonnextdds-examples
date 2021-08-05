@@ -27,8 +27,7 @@ static int shutdown_participant(
 
 int run_publisher_application(unsigned int domainId, unsigned int sample_count)
 {
-    /* To customize participant QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    // Start communicating in a domain, usually one participant per application
     DDSDomainParticipant *participant =
             DDSTheParticipantFactory->create_participant(
                     domainId,
@@ -42,8 +41,7 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    // To customize publisher QoS, use the configuration file
-    // USER_QOS_PROFILES.xml
+    // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
             DDS_PUBLISHER_QOS_DEFAULT,
             NULL /* listener */,
@@ -80,8 +78,7 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /* To customize data writer QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
+    // This DataWriter writes data on "Example async" Topic
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
@@ -105,34 +102,31 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
     /* Get default datawriter QoS to customize * /
     DDS_DataWriterQos datawriter_qos;
     retcode = publisher->get_default_datawriter_qos(datawriter_qos);
-
     if (retcode != DDS_RETCODE_OK) {
-        return shutdown_participant(participant, "get_default_datawriter_qos
-    error", EXIT_FAILURE);
+        return shutdown_participant(
+                participant,
+                "get_default_datawriter_qos error",
+                EXIT_FAILURE);
     }
-
     // Since samples are only being sent once per second, datawriter will need
     // to keep them on queue.  History defaults to only keeping the last
     // sample enqueued, so we increase that here.
     datawriter_qos.history.depth = 12;
-
     // Set flowcontroller for datawriter
     datawriter_qos.publish_mode.kind = DDS_ASYNCHRONOUS_PUBLISH_MODE_QOS;
     datawriter_qos.publish_mode.flow_controller_name =
     DDS_FIXED_RATE_FLOW_CONTROLLER_NAME;
-
     /* To create datawriter with default QoS, use DDS_DATAWRITER_QOS_DEFAULT
        instead of datawriter_qos * /
-    DDSDataWriter *untyped_writer = publisher->create_datawriter(
+    writer = publisher->create_datawriter(
         topic, datawriter_qos, NULL /* listener * /,
         DDS_STATUS_MASK_NONE);
-    if (untyped_writer == NULL) {
+    if (writer == NULL) {
         return shutdown_participant(
                 participant,
                 "create_datawriter error",
                 EXIT_FAILURE);
     }
-
     //// End changes for Asynchronous_Publication
         */
 
@@ -154,15 +148,15 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        DDS_InstanceHandle_t instance_handle = typed_writer
-                ->register_instance(*data);
+        instance_handle = typed_writer->register_instance(*data);
     */
 
-    /* Main loop */
+    // Main loop
     for (unsigned int samples_written = 0;
          !shutdown_requested && samples_written < sample_count;
          ++samples_written) {
@@ -171,7 +165,7 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
         // send count as data.
         data->x = samples_written;
 
-        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }
@@ -179,6 +173,14 @@ int run_publisher_application(unsigned int domainId, unsigned int sample_count)
         DDS_Duration_t send_period = { 0, 100000000 };
         NDDSUtility::sleep(send_period);
     }
+
+    /*
+        retcode = typed_writer->unregister_instance(
+            *data, instance_handle);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "unregister instance error " << retcode << std::endl;
+        }
+    */
 
     // Delete previously allocated async, including all contained elements
     retcode = asyncTypeSupport::delete_data(data);

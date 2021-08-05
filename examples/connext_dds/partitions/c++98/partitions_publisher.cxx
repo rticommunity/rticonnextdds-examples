@@ -177,6 +177,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
@@ -192,7 +193,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
         data->x = samples_written;
 
-        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }

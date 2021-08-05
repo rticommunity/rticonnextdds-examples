@@ -59,6 +59,7 @@ unsigned int process_data(cfcDataReader *typed_reader)
             std::cout << "@ t=" << elapsed_secs << ", got x = " << data_seq[i].x
                       << std::endl;
 
+            samples_read++;
             /* End changes for Custom_Flowcontroller */
         }
     }

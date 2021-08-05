@@ -201,13 +201,6 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /* For a data type that has a key, if the same instance is going to be
-       written multiple times, initialize the key here
-       and register the keyed instance prior to writing */
-    /*
-    instance_handle = typed_writer->register_instance(*instance);
-     */
-
     // Main loop, write data
     for (unsigned int samples_written = 0;
          !shutdown_requested && samples_written < sample_count;
@@ -266,14 +259,6 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
         NDDSUtility::sleep(send_period);
     }
-
-    /*
-    retcode = typed_writer->unregister_instance(
-     *instance, instance_handle);
-    if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "unregister instance error " << retcode << std::endl;
-    }
-     */
 
     // Delete data sample
     retcode = ordered_groupTypeSupport::delete_data(instance1);
