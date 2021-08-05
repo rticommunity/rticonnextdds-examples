@@ -274,12 +274,11 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     NDDS_Utility_sleep(&send_period);
 
     /*
-     retcode = typed_writer->unregister_instance(
-     *data, instance_handle);
-     if (retcode != DDS_RETCODE_OK) {
-     std::cerr << "unregister instance error " << retcode << std::endl;
-     }
-     */
+        retcode = typed_writer->unregister_instance(*data, instance_handle);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "unregister instance error " << retcode << std::endl;
+        }
+    */
 
     // Delete previously allocated cfc, including all contained elements
     retcode = cfcTypeSupport::delete_data(data);
