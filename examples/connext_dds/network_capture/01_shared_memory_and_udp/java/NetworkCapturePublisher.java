@@ -9,155 +9,118 @@
  use the software.
  ******************************************************************************/
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.Arrays;
+import java.util.Objects;
 
-import com.rti.dds.domain.*;
-import com.rti.dds.infrastructure.*;
-import com.rti.dds.publication.*;
-import com.rti.dds.topic.*;
-import com.rti.ndds.config.*;
+import com.rti.dds.domain.DomainParticipant;
+import com.rti.dds.domain.DomainParticipantFactory;
+import com.rti.dds.infrastructure.InstanceHandle_t;
+import com.rti.dds.infrastructure.StatusKind;
+import com.rti.dds.publication.Publisher;
+import com.rti.dds.topic.Topic;
 
-// ===========================================================================
 
-public class NetworkCapturePublisher {
-    // -----------------------------------------------------------------------
-    // Public Methods
-    // -----------------------------------------------------------------------
+public class NetworkCapturePublisher extends Application implements AutoCloseable {
+    // Usually one per application
+    private DomainParticipant participant = null;
 
-    public static void main(String[] args) {
-        // Enable network capture.
-        //
-        // This must be called before:
-        //   - Any other network capture function is called.
-        //   - Creating the participants for which we want to capture traffic.
+    private void runApplication() {
+
         if (!com.rti.ndds.utility.NetworkCapture.enable()) {
             System.err.println("Error enabling network capture");
         }
 
-        int domainId = 0;
-        if (args.length >= 1) {
-            domainId = Integer.valueOf(args[0]).intValue();
+        if (!com.rti.ndds.utility.NetworkCapture.start("publisher")) {
+            System.err.println("Error starting network capture");
         }
+            
+        // Start communicating in a domain
+        participant = Objects.requireNonNull(
+                DomainParticipantFactory.get_instance().create_participant(
+                        getDomainId(),
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
-        int sampleCount = 0; // 0 means infinite loop
-        if (args.length >= 2) {
-            sampleCount = Integer.valueOf(args[1]).intValue();
-        }
+        // A Publisher allows an application to create one or more DataWriters
+        Publisher publisher =
+                Objects.requireNonNull(participant.create_publisher(
+                        DomainParticipant.PUBLISHER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
-        publisherMain(domainId, sampleCount);
+        // Register the datatype to use when creating the Topic
+        String typeName = NetworkCaptureTypeSupport.get_type_name();
+        NetworkCaptureTypeSupport.register_type(participant, typeName);
 
-        // Disable network capture.
-        //
-        // This must be:
-        //   - The last network capture function that is called.
-        //
-        if (!com.rti.ndds.utility.NetworkCapture.disable()) {
-            System.err.println("Error disabling network capture");
-        }
-    }
+        // Create a Topic with a name and a datatype
+        Topic topic = Objects.requireNonNull(participant.create_topic(
+                "Network capture shared memory example",
+                typeName,
+                DomainParticipant.TOPIC_QOS_DEFAULT,
+                null, /* listener */
+                StatusKind.STATUS_MASK_NONE));
 
-    // -----------------------------------------------------------------------
-    // Private Methods
-    // -----------------------------------------------------------------------
-
-    // --- Constructors: -----------------------------------------------------
-    private NetworkCapturePublisher() {
-        super();
-    }
-
-    // -----------------------------------------------------------------------
-    private static void publisherMain(int domainId, int sampleCount) {
-
-        DomainParticipant participant = null;
-        Publisher publisher = null;
-        Topic topic = null;
-        NetworkCaptureDataWriter writer = null;
-
-        try {
-            // Start capturing traffic for all participants.
-            //
-            // All participants: those already created and those yet to be
-            // created.
-            // Default parameters: all transports and some other sane defaults.
-            //
-            // A capture file will be created for each participant. The capture
-            // file will start with the prefix "publisher" and continue with a
-            // suffix dependent on the participant's GUID.
-            if (!com.rti.ndds.utility.NetworkCapture.start("publisher")) {
-                System.err.println("Error starting network capture");
-            }
-
-            participant = DomainParticipantFactory.TheParticipantFactory.
-                    create_participant(
-                            domainId,
-                            DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                            null, /* listener */
-                            StatusKind.STATUS_MASK_NONE);
-
-            publisher = participant.create_publisher(
-                    DomainParticipant.PUBLISHER_QOS_DEFAULT,
-                    null, /* listener */
-                    StatusKind.STATUS_MASK_NONE);
-
-            String typeName = NetworkCaptureTypeSupport.get_type_name();
-            NetworkCaptureTypeSupport.register_type(participant, typeName);
-
-            topic = participant.create_topic(
-                    "Network capture shared memory example",
-                    typeName,
-                    DomainParticipant.TOPIC_QOS_DEFAULT,
-                    null, /* listener */
-                    StatusKind.STATUS_MASK_NONE);
-
-            writer = (NetworkCaptureDataWriter) publisher.create_datawriter(
+        // This DataWriter writes data on "Example NetworkCapture" Topic
+        NetworkCaptureDataWriter writer = (NetworkCaptureDataWriter) Objects.requireNonNull(
+                publisher.create_datawriter(
                         topic,
                         Publisher.DATAWRITER_QOS_DEFAULT,
-                        null, /* listener */
-                        StatusKind.STATUS_MASK_NONE);
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
-            NetworkCapture instance = new NetworkCapture();
-            InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
+        NetworkCapture data = new NetworkCapture();
+        InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
 
-            for (int count = 0;
-                    (sampleCount == 0) || (count < sampleCount);
-                    ++count) {
-                System.out.println("Writing NetworkCapture, count " + count);
-                instance.msg = "Hello World! (" + count + ")";
+        for (int samplesWritten = 0;
+            !isShutdownRequested() && samplesWritten < getMaxSampleCount();
+            samplesWritten++) {
+                
+            System.out.println("Writing NetworkCapture, count " + samplesWritten);
+            data.msg = "Hello World! (" + samplesWritten + ")";
 
-               // Here we are going to pause capturing for some samples.
-               // The resulting pcap file will not contain them.
-                if (count == 4
-                        && !com.rti.ndds.utility.NetworkCapture.pause()) {
-                    System.err.println("Error pausing network capture");
-                } else if (count == 6
-                        && !com.rti.ndds.utility.NetworkCapture.resume()) {
-                    System.err.println("Error resuming network capture");
-                }
-
-                writer.write(instance, InstanceHandle_t.HANDLE_NIL);
-                try {
-                    Thread.sleep(1000); // 1 second
-                } catch (InterruptedException ix) {
-                    System.err.println("INTERRUPTED");
-                    break;
-                }
+            // Here we are going to pause capturing for some samples.
+            // The resulting pcap file will not contain them.
+            if (samplesWritten == 4
+                    && !com.rti.ndds.utility.NetworkCapture.pause()) {
+                System.err.println("Error pausing network capture");
+            } else if (samplesWritten == 6
+                    && !com.rti.ndds.utility.NetworkCapture.resume()) {
+                System.err.println("Error resuming network capture");
             }
-        } finally {
 
-            // Before deleting the participants that are capturing, we must stop
-            // network capture for them.
-            if (!com.rti.ndds.utility.NetworkCapture.stop()) {
-                System.err.println("Error stopping network capture");
+            writer.write(data, instance_handle);
+            try {
+                Thread.sleep(1000); // 1 second
+            } catch (InterruptedException ix) {
+                System.err.println("INTERRUPTED");
+                break;
             }
-            if(participant != null) {
-                participant.delete_contained_entities();
-
-                DomainParticipantFactory.TheParticipantFactory.
-                    delete_participant(participant);
-            }
-            DomainParticipantFactory.finalize_instance();
         }
+    }
+
+    @Override public void close()
+    {
+        // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
+        if (participant != null) {
+            participant.delete_contained_entities();
+
+            DomainParticipantFactory.get_instance().delete_participant(
+                    participant);
+        }
+    }
+
+    public static void main(String[] args)
+    {
+        // Create example and run: Uses try-with-resources,
+        // publisherApplication.close() automatically called
+        try (NetworkCapturePublisher publisherApplication = new NetworkCapturePublisher()) {
+            publisherApplication.parseArguments(args);
+            publisherApplication.addShutdownHook();
+            publisherApplication.runApplication();
+        }
+
+        // Releases the memory used by the participant factory. Optional at
+        // application exit.
+        DomainParticipantFactory.finalize_instance();
     }
 }
