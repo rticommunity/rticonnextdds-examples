@@ -3,3 +3,4 @@ flights.*
 !flights.idl
 Flight.*
 !Flight.idl
+!Application.java
