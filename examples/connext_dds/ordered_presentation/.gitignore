@@ -8,3 +8,5 @@ ordered.*
 orderedPlugin.*
 orderedSupport.*
 orderedImpl*
+
+!Application.java
