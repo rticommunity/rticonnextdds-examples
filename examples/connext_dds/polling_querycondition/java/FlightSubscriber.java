@@ -38,7 +38,8 @@ public class FlightSubscriber extends Application implements AutoCloseable {
     private final FlightSeq dataSeq = new FlightSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
-    private void runApplication() {
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -83,18 +84,18 @@ public class FlightSubscriber extends Application implements AutoCloseable {
         queryParameters.add("'CompanyA'");
         queryParameters.add("30000");
         System.out.format(
-            "Setting parameters to company: %s and altitude >= %s\n",
-            queryParameters.get(0), queryParameters.get(1));
+                "Setting parameters to company: %s and altitude >= %s\n",
+                queryParameters.get(0),
+                queryParameters.get(1));
 
         // Create the query condition with an expession to MATCH the id
         // field in the structure and a numeric comparison.
-        QueryCondition queryCondition =
-            reader.create_querycondition(
-                    SampleStateKind.ANY_SAMPLE_STATE,
-                    ViewStateKind.ANY_VIEW_STATE,
-                    InstanceStateKind.ALIVE_INSTANCE_STATE,
-                    "company MATCH %0 AND altitude >= %1",
-                    queryParameters);
+        QueryCondition queryCondition = reader.create_querycondition(
+                SampleStateKind.ANY_SAMPLE_STATE,
+                ViewStateKind.ANY_VIEW_STATE,
+                InstanceStateKind.ALIVE_INSTANCE_STATE,
+                "company MATCH %0 AND altitude >= %1",
+                queryParameters);
 
         // --- Wait for data --- //
         final long receivePeriodSec = 1;
@@ -123,8 +124,8 @@ public class FlightSubscriber extends Application implements AutoCloseable {
 
             // Set new parameters.
             if (update) {
-                System.out.println("Changing parameter to " +
-                    queryParameters.get(0));
+                System.out.println(
+                        "Changing parameter to " + queryParameters.get(0));
                 queryCondition.set_query_parameters(queryParameters);
                 update = false;
             }
@@ -133,20 +134,21 @@ public class FlightSubscriber extends Application implements AutoCloseable {
             SampleInfoSeq infoSeq = new SampleInfoSeq();
             FlightSeq dataSeq = new FlightSeq();
             try {
-                reader.read_w_condition(dataSeq,
+                reader.read_w_condition(
+                        dataSeq,
                         infoSeq,
                         ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
                         queryCondition);
 
                 for (int i = 0; i < dataSeq.size(); i++) {
-                    SampleInfo info = (SampleInfo)infoSeq.get(i);
+                    SampleInfo info = (SampleInfo) infoSeq.get(i);
                     if (info.valid_data) {
-                        Flight flight_info = (Flight)dataSeq.get(i);
+                        Flight flight_info = (Flight) dataSeq.get(i);
                         System.out.format(
-                            "\t[trackId: %d, company: %s, altitude: %d]\n",
-                            flight_info.trackId,
-                            flight_info.company,
-                            flight_info.altitude);
+                                "\t[trackId: %d, company: %s, altitude: %d]\n",
+                                flight_info.trackId,
+                                flight_info.company,
+                                flight_info.altitude);
                     }
 
                     samplesRead++;

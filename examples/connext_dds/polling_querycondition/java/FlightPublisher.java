@@ -22,7 +22,8 @@ public class FlightPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -61,41 +62,40 @@ public class FlightPublisher extends Application implements AutoCloseable {
         // Create data sample for writing.
         Flight[] flights_info = new Flight[4];
         flights_info[0] = new Flight();
-        flights_info[0].trackId  = 1111;
-        flights_info[0].company  = "CompanyA";
+        flights_info[0].trackId = 1111;
+        flights_info[0].company = "CompanyA";
         flights_info[0].altitude = 15000;
         flights_info[1] = new Flight();
-        flights_info[1].trackId  = 2222;
-        flights_info[1].company  = "CompanyB";
+        flights_info[1].trackId = 2222;
+        flights_info[1].company = "CompanyB";
         flights_info[1].altitude = 20000;
         flights_info[2] = new Flight();
-        flights_info[2].trackId  = 3333;
-        flights_info[2].company  = "CompanyA";
+        flights_info[2].trackId = 3333;
+        flights_info[2].company = "CompanyA";
         flights_info[2].altitude = 30000;
         flights_info[3] = new Flight();
-        flights_info[3].trackId  = 4444;
-        flights_info[3].company  = "CompanyB";
+        flights_info[3].trackId = 4444;
+        flights_info[3].company = "CompanyB";
         flights_info[3].altitude = 25000;
 
-        final long sendPeriodMillis = 1000; // 1 second.
+        final long sendPeriodMillis = 1000;  // 1 second.
 
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-
             // Update flight info latitude and write.
             System.out.println("Updating and sending values");
             for (int i = 0; i < flights_info.length; i++) {
                 // Set the plane altitude lineally (usually the max is
                 // at 41,000ft).
                 int altitude = flights_info[i].altitude + samplesWritten * 100;
-                flights_info[i].altitude =
-                    altitude >= 41000 ? 41000 : altitude;
+                flights_info[i].altitude = altitude >= 41000 ? 41000 : altitude;
 
                 System.out.format(
-                    "\t[trackId: %d, company: %s, altitude: %d]\n",
-                    flights_info[i].trackId, flights_info[i].company,
-                    flights_info[i].altitude);
+                        "\t[trackId: %d, company: %s, altitude: %d]\n",
+                        flights_info[i].trackId,
+                        flights_info[i].company,
+                        flights_info[i].altitude);
 
                 writer.write(flights_info[i], InstanceHandle_t.HANDLE_NIL);
             }
