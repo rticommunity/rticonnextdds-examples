@@ -35,8 +35,6 @@ public class FlightSubscriber extends Application implements AutoCloseable {
     private DomainParticipant participant = null;  // Usually one per
                                                    // application
     private FlightDataReader reader = null;
-    private final FlightSeq dataSeq = new FlightSeq();
-    private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
     private void runApplication()
     {
