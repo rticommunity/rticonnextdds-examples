@@ -2,3 +2,4 @@
 ordered_group.*
 !ordered_group.idl
 java/HELLO_MAX_STRING_SIZE.java
+!Application.java
