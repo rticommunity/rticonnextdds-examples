@@ -16,5 +16,4 @@ plugins {
 
 ConfigureExample {
   idlFile = 'numbers.idl'
-  codegenExtraArgs = ['-create', 'examplefiles']
 }
