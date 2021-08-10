@@ -10,7 +10,6 @@ java/*
 !README.md
 !USER_QOS_PROFILES.xml
 !build.gradle
-!Application.java
 
 # Capture files
 *.pcap

@@ -6,4 +6,3 @@ listenersPlugin.*
 listenersSupport.*
 listenersImpl*
 USER_QOS_PROFILES.xml
-!Application.java
