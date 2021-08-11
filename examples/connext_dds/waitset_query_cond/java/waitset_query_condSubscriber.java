@@ -43,34 +43,29 @@ public class waitset_query_condSubscriber
     private int processData(QueryCondition queryCondition)
     {
         int samplesRead = 0;
+        try {
+            reader.take_w_condition(
+                    dataSeq,
+                    infoSeq,
+                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                    queryCondition);
 
-        boolean follow = true;
-        while (follow) {
-            try {
-                reader.take_w_condition(
-                        dataSeq,
-                        infoSeq,
-                        ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                        queryCondition);
+            // Print data
+            for (int i = 0; i < dataSeq.size(); ++i) {
+                SampleInfo info = infoSeq.get(i);
 
-                // Print data
-                for (int i = 0; i < dataSeq.size(); ++i) {
-                    SampleInfo info = infoSeq.get(i);
-
-                    if (!info.valid_data) {
-                        System.out.println("Got metadata");
-                        continue;
-                    }
-                    System.out.println("Received" + dataSeq.get(i));
-                    samplesRead++;
+                if (!info.valid_data) {
+                    System.out.println("Got metadata");
+                    continue;
                 }
-            } catch (RETCODE_NO_DATA noData) {
-                // When there isn't data, the subscriber stop to take samples
-                follow = false;
-            } finally {
-                // Return the loaned data
-                reader.return_loan(dataSeq, infoSeq);
+                System.out.println("Received" + dataSeq.get(i));
+                samplesRead++;
             }
+        } catch (RETCODE_NO_DATA noData) {
+            // No data to process, not a problem
+        } finally {
+            // Return the loaned data
+            reader.return_loan(dataSeq, infoSeq);
         }
 
         return samplesRead;
