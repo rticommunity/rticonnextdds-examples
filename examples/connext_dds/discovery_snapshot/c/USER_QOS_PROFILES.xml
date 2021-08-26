@@ -3,7 +3,7 @@
 Description
 XML QoS Profile for discovery_snapshot
 
-(c) Copyright, Real-Time Innovations, 2012.  All rights reserved.
+(c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 RTI grants Licensee a license to use, modify, compile, and create derivative
 works of the software solely for use with RTI Connext DDS. Licensee may
 redistribute copies of the software provided that all such copies are
@@ -49,7 +49,7 @@ XML" chapter in the RTI Connext DDS Core Libraries User's Manual.
 -->
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="file:////home/ablanquez/rti_repos/F/rti_connext_dds-6.1.0/resource/schema/rti_dds_qos_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="https:/community.rti.com/schema/current/rti_dds_qos_profiles.xsd">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.

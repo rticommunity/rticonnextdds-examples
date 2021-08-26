@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -87,11 +87,11 @@ namespace application {
         bool show_usage = false;
         ParseReturn parse_result = ParseReturn::ok;
         unsigned int domain_id = 0;
-        unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
+        unsigned int sample_count = 5;
         rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
 
         while (arg_processing < argc) {
-            if ((argc > arg_processing + 1) 
+            if ((argc > arg_processing + 1)
             && (strcmp(argv[arg_processing], "-d") == 0
             || strcmp(argv[arg_processing], "--domain") == 0)) {
                 domain_id = atoi(argv[arg_processing + 1]);

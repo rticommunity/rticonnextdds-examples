@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <algorithm>
 #include <iostream>
@@ -34,29 +34,34 @@ int process_data(dds::sub::DataReader<DiscoverySnapshot> reader)
     // Take all samples
     int count = 0;
     dds::sub::LoanedSamples<DiscoverySnapshot> samples = reader.take();
-    for (const auto& sample : samples) {
+    for (const auto &sample : samples) {
         if (sample.info().valid()) {
             count++;
             std::cout << sample.data() << std::endl;
         } else {
             std::cout << "Instance state changed to "
-            << sample.info().state().instance_state() << std::endl;
+                      << sample.info().state().instance_state() << std::endl;
         }
     }
 
-    return count; 
-} // The LoanedSamples destructor returns the loan
+    return count;
+}  // The LoanedSamples destructor returns the loan
 
-void run_subscriber_application(unsigned int domain_id, unsigned int sample_count)
+void run_subscriber_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/best-practices/use-modern-c-types-correctly)
+    // (see
+    // https://community.rti.com/best-practices/use-modern-c-types-correctly)
 
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
 
     // Create a Topic with a name and a datatype
-    dds::topic::Topic<DiscoverySnapshot> topic(participant, "Example DiscoverySnapshot");
+    dds::topic::Topic<DiscoverySnapshot> topic(
+            participant,
+            "Example DiscoverySnapshot");
 
     // Create a Subscriber and DataReader with default Qos
     dds::sub::Subscriber subscriber(participant);
@@ -66,26 +71,30 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     // handler to process the data
     unsigned int samples_read = 0;
     dds::sub::cond::ReadCondition read_condition(
-        reader,
-        dds::sub::status::DataState::any(),
-        [reader, &samples_read]() { samples_read += process_data(reader); });
+            reader,
+            dds::sub::status::DataState::any(),
+            [reader, &samples_read]() {
+                samples_read += process_data(reader);
+            });
 
     // WaitSet will be woken when the attached condition is triggered
     dds::core::cond::WaitSet waitset;
     waitset += read_condition;
 
     while (!application::shutdown_requested && samples_read < sample_count) {
-
-        std::cout << "DiscoverySnapshot subscriber sleeping up to 1 sec..." << std::endl;
+        std::cout << "DiscoverySnapshot subscriber sleeping up to 1 sec..."
+                  << std::endl;
 
         // Run the handlers of the active conditions. Wait for up to 1 second.
         waitset.dispatch(dds::core::Duration(1));
     }
+
+    rti::util::discovery::take_snapshot(participant);
+    rti::util::discovery::take_snapshot(reader);
 }
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -102,10 +111,10 @@ int main(int argc, char *argv[])
 
     try {
         run_subscriber_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
-        << std::endl;
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
