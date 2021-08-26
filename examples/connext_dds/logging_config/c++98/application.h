@@ -64,12 +64,6 @@ inline void parse_arguments(
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && (strcmp(argv[arg_processing], "-s") == 0
-                    || strcmp(argv[arg_processing], "--sample-count") == 0)) {
-            arguments.sample_count = atoi(argv[arg_processing + 1]);
-            arg_processing += 2;
-        } else if (
-                (argc > arg_processing + 1)
                 && (strcmp(argv[arg_processing], "-v") == 0
                     || strcmp(argv[arg_processing], "--verbosity") == 0)) {
             arguments.verbosity =
@@ -95,10 +89,6 @@ inline void parse_arguments(
                      "application will\n"
                      "                               subscribe in.  \n"
                      "                               Default: 0\n"
-                     "    -s, --sample_count <int>   Number of samples to "
-                     "receive before\n"
-                     "                               cleanly shutting down. \n"
-                     "                               Default: infinite\n"
                      "    -v, --verbosity    <int>   How much debugging output "
                      "to show.\n"
                      "                               Range: 0-5 \n"
