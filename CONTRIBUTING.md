@@ -1,6 +1,6 @@
 # Contributing to rticonnext-examples
 
-## How do I request a feature or enhancement?
+## How to request a feature or enhancement
 
 If there is a new feature or enhancement that you would like to add to
 this repository, feel free to open an issue and we will take a look at it as
@@ -8,7 +8,7 @@ soon as possible. Please, do not forget to use a clear title and description
 about your feature or enhancement that you would like us to include and select
 the correct template in the `GitHub` GUI.
 
-## How do I submit a change?
+## How to submit a change
 
 If you have any change to submit do not hesitate in opening a Pull Request.
 Before submitting the Pull Request, please be sure you are using the correct
@@ -36,7 +36,7 @@ in the automatic workflow. You can also execute this script on your local
 machine. If you need help with how the script works, use
 `python resources/ci_cd/linux_format.py --help`.
 
-## How do I submit a new example?
+## How to submit a new example
 
 This should be done by RTI employees only, because they have access to the
 unreleased builds. Before submitting a new example, you have to follow the next
@@ -59,7 +59,7 @@ approved your changes and all the checks of the automatic workflows (read the
 previous section of "How do I submit a change?" to learn more about these
 workflows) are passing.
 
-## How do I report bugs?
+## How to report bugs
 
 You can open an issue selecting the bug report template in the `GitHub` GUI.
 It would be helpful if you could provide us with the RTI Product, version, and
