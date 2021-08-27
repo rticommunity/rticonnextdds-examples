@@ -8,7 +8,7 @@ RTI Connext DDS allows you to take discovery snapshots of
 DomainParticipants, DataWriters, and DataReaders. Discovery snapshots
 are useful when your applications are not communicating as expected.
 
-- In C, there are three APIs, one per entity
+-   In C, there are three APIs, one per entity
     (file_name can be NULL to print through RTI Connext Logging):
 
 ```c
@@ -17,7 +17,7 @@ DDS_ReturnCode_t DDS_DataWriter_take_discovery_snapshot(DDS_DataWriter *self, co
 DDS_ReturnCode_t DDS_DataReader_take_discovery_snapshot(DDS_DataReader *self, const char *file_name)
 ```
 
-- In Traditional C++, the same functionality exists as a member function of
+-   In Traditional C++, the same functionality exists as a member function of
     each entity:
 
 ```cpp
