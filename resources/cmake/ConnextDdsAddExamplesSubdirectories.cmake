@@ -43,7 +43,7 @@ function(connextdds_add_examples_subdirectories)
         _ADD_EXAMPLES_ARGS_EXAMPLES
     )
 
-    set(LANGUAGE_FOLDER_NAMES c c++98 c++ c++03 c++11)
+    set(LANGUAGE_FOLDER_NAMES c c++98 c++11)
 
     # Check if all directories exist 
     foreach(example ${_ADD_EXAMPLES_ARGS_EXAMPLES})
