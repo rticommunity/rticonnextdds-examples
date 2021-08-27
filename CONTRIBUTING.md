@@ -56,7 +56,7 @@ the execution of the example. The templates are located in
 
 Be aware your Pull Request will not be merged until at least 2 reviewers
 approved your changes and all the checks of the automatic workflows (read the
-previous section of "How do I submit a change?" to learn more about these
+previous section of "How to submit a change" to learn more about these
 workflows) are passing.
 
 ## How to report bugs
