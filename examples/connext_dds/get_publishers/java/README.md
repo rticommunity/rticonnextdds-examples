@@ -53,7 +53,7 @@ Alternatively, you can use `gradle` to run this example:
 gradle run -PmainClass=Publisher --args="<domain_id>"
 ```
 
-The applications accept up to two arguments:
+The application accepts one argument:
 
 1.  The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.

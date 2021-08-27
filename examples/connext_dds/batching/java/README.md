@@ -57,7 +57,7 @@ gradle run -PmainClass=Publisher --args="<domain_id> <turbo_mode> <samples_to_se
 gradle run -PmainClass=Subscriber --args="<domain_id> <turbo_mode> <sleep_periods>"
 ```
 
-The applications accept up to two arguments:
+The applications accept up to three arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
 communicate. The default is 0.

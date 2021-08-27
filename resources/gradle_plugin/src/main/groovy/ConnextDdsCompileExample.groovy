@@ -262,10 +262,10 @@ class ConnextDdsBuildExample implements Plugin<Project> {
                 }
 
                 /** Gets the application's extension and sets the mainClass */
-                def prueba = project
+                def javaApplication = project
                     .getExtensions()
                     .getByType(JavaApplication.class)
-                prueba.setMainClass("${baseName}${mainClass}")
+                javaApplication.setMainClass("${baseName}${mainClass}")
             }
         }
 

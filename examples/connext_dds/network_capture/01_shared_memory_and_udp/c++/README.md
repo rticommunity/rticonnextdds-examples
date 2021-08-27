@@ -53,7 +53,7 @@ On *UNIX* systems run:
 ./network_capture_subscriber <domain_id> <sleep_periods>
 ```
 
-The applications accept up to three arguments:
+The applications accept up to two arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
     communicate. The default is 0.
