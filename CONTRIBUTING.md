@@ -1,6 +1,6 @@
 # Contributing to rticonnext-examples
 
-## How to request a feature or enhancement
+## How do I request a feature or enhancement?
 
 If there is a new feature or enhancement that you would like to add to
 this repository, feel free to open an issue and we will take a look at it as
@@ -8,7 +8,7 @@ soon as possible. Please, do not forget to use a clear title and description
 about your feature or enhancement that you would like us to include and select
 the correct template in the `GitHub` GUI.
 
-## How to submit a change
+## How do I submit a change?
 
 If you have any change to submit do not hesitate in opening a Pull Request.
 Before submitting the Pull Request, please be sure you are using the correct
@@ -20,19 +20,27 @@ following linters:
 -   For `Python` we are using [black](https://pypi.org/project/black/) with a
     line length of 79.
 -   For `C/C++`, `C#` and `Java` we are using
-[clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
-formatting for this tool are defined in the `.clang-format` file.
+    [clang-format](https://clang.llvm.org/docs/ClangFormat.html). The rules of
+    formatting for this tool are defined in the `.clang-format` file.
 -   For `Markdown` we are using [markdown-cli](https://www.npmjs.com/package/markdownlint-cli)
-using the formatting rules defined in `.markdownlint.json`.
+    using the formatting rules defined in `.markdownlint.json`.
+
+After you open the Pull Request, some autmatic workflows will be started to
+check the format/style of the changed documents. Also, another workflow will
+be launched (in `GitHub Actions` if the Pull Request goes to the master branch
+and in our internal `Jenkins` if the Pull Request goes to develop) to build all
+the examples to check if they have any compilation error.
 
 The script located in `resources/ci_cd/linux_format.py` executes the linterns
 in the automatic workflow. You can also execute this script on your local
 machine. If you need help with how the script works, use
 `python resources/ci_cd/linux_format.py --help`.
 
-## How to submit a new example
+## How do I submit a new example?
 
-Before submitting a new example, you have to follow the next rules:
+This should be done by RTI employees only, because they have access to the
+unreleased builds. Before submitting a new example, you have to follow the next
+rules:
 
 -   Obviously, the example should work properly.
 -   Make sure your code follows the code conventions (read the previous
@@ -46,7 +54,12 @@ the execution of the example. The templates are located in
     -   If you added a new `Java` example for RTI Connext DDS, update the
     `settings.gradle` file located in `examples/connext_ds`.
 
-## How to report bugs
+Be aware your Pull Request will not be merged until at least 2 reviewers
+approved your changes and all the checks of the automatic workflows (read the
+previous section of "How do I submit a change?" to learn more about these
+workflows) are passing.
+
+## How do I report bugs?
 
 You can open an issue selecting the bug report template in the `GitHub` GUI.
 It would be helpful if you could provide us with the RTI Product, version, and
