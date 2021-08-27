@@ -8,10 +8,10 @@ RTI Connext DDS allows you to take discovery snapshots of
 DomainParticipants, DataWriters, and DataReaders. Discovery snapshots
 are useful when your applications are not communicating as expected.
 
-- In C, there are three new APIs, one per entity
+- In C, there are three APIs, one per entity
     (file_name can be NULL to print through RTI Connext Logging):
 
-```plaintext
+```c
 DDS_ReturnCode_t DDS_DomainParticipant_take_discovery_snapshot(DDS_DomainParticipant *self, const char *file_name)
 DDS_ReturnCode_t DDS_DataWriter_take_discovery_snapshot(DDS_DataWriter *self, const char *file_name)
 DDS_ReturnCode_t DDS_DataReader_take_discovery_snapshot(DDS_DataReader *self, const char *file_name)
@@ -20,7 +20,7 @@ DDS_ReturnCode_t DDS_DataReader_take_discovery_snapshot(DDS_DataReader *self, co
 - In Traditional C++, the same functionality exists as a member function of
     each entity:
 
-```plaintext
+```cpp
 DDS_ReturnCode_t DDSDomainParticipant::take_discovery_snapshot()
 DDS_ReturnCode_t DDSDomainParticipant::take_discovery_snapshot(const char *file_name)
 DDS_ReturnCode_t DDSDataWriter::take_discovery_snapshot()
@@ -31,7 +31,7 @@ DDS_ReturnCode_t DDSDataReader::take_discovery_snapshot(const char *file_name)
 
 - In Modern C++, the APIs are standalone functions:
 
-```plaintext
+```cpp
 void take_snapshot(dds::domain::DomainParticipant participant)
 void take_snapshot(dds::domain::DomainParticipant participant, const std::string& file_name)
 void take_snapshot(dds::pub::DataWriter writer)
@@ -42,7 +42,7 @@ void take_snapshot(dds::sub::DataReader reader, const std::string& file_name)
 
 - In Java, this functionality is present as a member function:
 
-```plaintext
+```java
 void com.rti.dds.domain.DomainParticipant.take_discovery_snapshot()
 void com.rti.dds.domain.DomainParticipant.take_discovery_snapshot(String file_name)
 void com.rti.dds.publication.DataWriter.take_discovery_snapshot()
@@ -53,7 +53,7 @@ void com.rti.dds.subscription.DataReader.take_discovery_snapshot(String file_nam
 
 - In .NET/C#, the APIs are part of the class DiscoverySnapshot:
 
-```plaintext
+```csharp
 void DiscoverySnapshot.TakeSnapshot(DomainParticipant participant)
 void DiscoverySnapshot.TakeSnapshot(DomainParticipant participant, string fileName)
 void DiscoverySnapshot.TakeSnapshot(DataWriter writer)
