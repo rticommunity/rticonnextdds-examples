@@ -45,7 +45,7 @@ do so, just follow the next steps:
     the build system using `CMake` and compile all of the examples.
 3.  Execute the `resources/ci_cd/linux_static_analysis.py` script. This script
     will execute the static analysis on all of the examples. Before executing
-    this script, install [this pacakge](https://pypi.org/project/scan-build/).
+    this script, install [this package](https://pypi.org/project/scan-build/).
 
 ## How to submit a new example
 
