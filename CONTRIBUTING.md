@@ -28,7 +28,7 @@ After you open the Pull Request, some automatic workflows will be started to
 check the format/style of the changed documents. Another workflow will
 be launched to build all of the examples to check if they have compilation errors.
 (This workflow is launched in `GitHub Actions` if the Pull Request goes to the master
-branch and in our internal `Jenkins` tool if the Pull Request goes to develop.) 
+branch and in our internal `Jenkins` tool if the Pull Request goes to develop.)
 
 The script located in `resources/ci_cd/linux_format.py` executes the linterns
 in the automatic workflow. You can also execute this script on your local
@@ -55,7 +55,7 @@ to the unreleased builds. Before submitting a new example, follow these rules:
 Note that your Pull Request will not be merged until at least two reviewers
 have approved your changes and all the checks performed by the automatic workflows
 pass. (Read the previous section, "How to submit a change", to learn more about
-these workflows.) 
+these workflows.)
 
 ## How to report bugs
 
