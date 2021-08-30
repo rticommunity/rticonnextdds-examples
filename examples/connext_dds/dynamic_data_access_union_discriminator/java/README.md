@@ -1,38 +1,64 @@
 # Example Code: Access Union Discriminator In Dynamic Data
 
-## Building Java Example
+## Building the Example :wrench:
 
-The example is contained in the *UnionExample.java* file. Before compiling or
-running the example, make sure the environment variable `NDDSHOME` is set to the
-directory where your version of *RTI Connext* is installed.
+To build this example, first set all the environment variables as follows:
 
-Before compiling in Java, make sure that the desired version of the *javac*
-compiler is in your `PATH` environment variable.
-
-- On *Windows* systems run:
+On *Linux* and *macOS* systems run:
 
 ```sh
-javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar UnionExample.java
+source <install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
 ```
 
-- On *UNIX* systems (including *Linux* and *MacOS X*) run:
+On *Windows* systems run:
 
 ```sh
-javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar UnionExample.java
+<install_dir>\resource\scripts\rtisetenv_<target>.bat
 ```
 
-## Running Java Example
-
-Run the following command from the example directory to execute the application.
-
-- On *Windows* Systems:
+Once you have run rtisetenv, run `gradle` to generate the Java's `.class`
+and `.jar` files from the `<example_dir>/java` directory. This will also call
+`rtiddsgen` for you:
 
 ```sh
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar UnionExample
+gradle build
 ```
 
-- On *UNIX* systems:
+If you need to clean all the generated files run:
 
 ```sh
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar UnionExample
+gradle clean
 ```
+
+## Running the Example
+
+Run the following command from the example directory to execute the
+application:
+
+On *UNIX* systems run:
+
+```sh
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar UnionExample
+```
+
+On *Windows* systems run:
+
+```sh
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" UnionExample
+```
+
+## Gradle Build Infrastructure
+
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
+
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+for the types defined in the IDL file associated with the example.
+
+2.  Build the corresponding Publisher and Subscriber applications.
+
+3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
+
+You will find the definition of the plugin, along with detailed
+documentation, in `../../../../resources/gradle_plugin`.
