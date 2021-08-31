@@ -35,16 +35,16 @@ in the automatic workflow. You can also execute this script on your local
 machine. If you need help with how the script works, use
 `python resources/ci_cd/linux_format.py --help`.
 
-Also, you can build all of the examples to check in your local environment if
-you want to check that everything properly before opening the Pull Request. To
-do so, just follow the next steps:
+You can also build all of the examples in your local environment if you want to
+check that everything works properly before opening the Pull Request. To do so,
+follow these steps:
 
 1.  Set the `RTI_INSTALLATION_PATH` environment variable. This variable should
     contain the path where the `rti_connext_dds-<version>` directory is located.
 2.  Execute the `resources/ci_cd/linux_build.py` script. This script generates
-    the build system using `CMake` and compile all of the examples.
+    the build system using `CMake` and compiles all of the examples.
 3.  Execute the `resources/ci_cd/linux_static_analysis.py` script. This script
-    will execute the static analysis on all of the examples. Before executing
+    executes the static analysis on all of the examples. Before executing
     this script, install [this package](https://pypi.org/project/scan-build/).
 
 ## How to submit a new example
