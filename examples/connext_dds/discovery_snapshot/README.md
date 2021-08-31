@@ -105,13 +105,13 @@ Compatible readers:
 Incompatible readers:
 1. 0x0101A343,0x260898AB,0xDEE35DB5:0x80000004 name="discovery_snapshotDataReader"
 kind="unkeyed user datareader" unicastLocators="udpv4://192.168.1.36:7411,udpv4://10.2.190.25:7411,
-shmem://C268:F783:F9C1:8665:B8B1:B40F:0000:0000:7411" reason="Inconsistent QoS"
+shmem://C268:F783:F9C1:8665:B8B1:B40F:0000:0000:7411" reason="Incompatible QoS"
 ```
 
 This means that writer and reader match each other (because the reader appears
 in the writer discovery snapshot) but they are not compatible (because the
 reader appears like an incompatible reader). The field `reason` says
-`Inconsistent QoS`, so now we know why writer and reader are incompatible.
+`Incompatible QoS`, so now we know why writer and reader are incompatible.
 Let's take a look at `USER_QOS_PROFILE.xml`. We can see the following lines
 in the data reader QoS:
 
