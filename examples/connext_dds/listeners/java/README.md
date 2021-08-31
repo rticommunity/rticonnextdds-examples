@@ -59,10 +59,23 @@ gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>
 The applications accept up to two arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
+communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
     infinite.
+
+## Gradle Build Infrastructure
+
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
+
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+for the types defined in the IDL file associated with the example.
+
+2.  Build the corresponding Publisher and Subscriber applications.
+
+3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
 
 ## Gradle Build Infrastructure
 

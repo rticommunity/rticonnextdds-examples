@@ -38,20 +38,57 @@ publisher and another one for the subscriber, both from the example directory:
 On *UNIX* systems run:
 
 ```sh
+<<<<<<< HEAD
 java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar loggingPublisher
+=======
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar loggingPublisher -d <domain_id> -s <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar loggingSubscriber -d <domain_id> -s <samples_to_receive>
+>>>>>>> 5aead13eddacf3afa9af1bc43748dbf3bd988ff8
 ```
 
 On *Windows* systems run:
 
 ```sh
+<<<<<<< HEAD
 java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" loggingPublisher
+=======
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" loggingPublisher -d <domain_id> -s <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" loggingSubscriber -d <domain_id> -s <samples_to_receive>
+>>>>>>> 5aead13eddacf3afa9af1bc43748dbf3bd988ff8
 ```
 
 Alternatively, you can use `gradle` to run this example:
 
 ```sh
+<<<<<<< HEAD
 gradle run -PmainClass=Publisher
+=======
+gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>"
+>>>>>>> 5aead13eddacf3afa9af1bc43748dbf3bd988ff8
 ```
+
+## Gradle Build Infrastructure
+
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
+
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+for the types defined in the IDL file associated with the example.
+
+2.  Build the corresponding Publisher and Subscriber applications.
+
+<<<<<<< HEAD
+3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
+
+=======
+1.  The `<domain_id>`. Both applications must use the same domain ID in order
+to communicate. The default is 0.
+
+2.  How long the examples should run, measured in samples for the publisher and
+sleep periods for the subscriber. A value of '0' instructs the application
+to run forever; this is the default.
 
 ## Gradle Build Infrastructure
 
@@ -66,5 +103,6 @@ for the types defined in the IDL file associated with the example.
 
 3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
 
+>>>>>>> 5aead13eddacf3afa9af1bc43748dbf3bd988ff8
 You will find the definition of the plugin, along with detailed
 documentation, in `../../../../resources/gradle_plugin`.

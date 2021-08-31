@@ -60,7 +60,7 @@ gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>
 The applications accept up to three arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
-    communicate. The default is 0.
+communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. The default is
     infinite.

@@ -51,13 +51,6 @@ java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" cftSubscriber 
 
 Alternatively, you can use `gradle` to run this example:
 
-```sh
-gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send>"
-gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive> --normal-topic"
-```
-
-The applications accept up to two arguments (three to subscriber):
-
 1.  The `<domain_id>`. Both applications must use the same domain ID in order to
 communicate. The default is 0.
 
