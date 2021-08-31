@@ -29,7 +29,8 @@ import com.rti.dds.subscription.Subscriber;
 import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
 
-public class NetworkCaptureSubscriber extends Application implements AutoCloseable {
+public class NetworkCaptureSubscriber
+        extends Application implements AutoCloseable {
     private DomainParticipant participant = null;  // Usually one per
                                                    // application
     private NetworkCaptureDataReader reader = null;
@@ -68,11 +69,12 @@ public class NetworkCaptureSubscriber extends Application implements AutoCloseab
         return samplesRead;
     }
 
-    private void runApplication() {
+    private void runApplication()
+    {
         if (!com.rti.ndds.utility.NetworkCapture.enable()) {
             System.err.println("Error enabling network capture");
         }
-        
+
         if (!com.rti.ndds.utility.NetworkCapture.start("subscriber")) {
             System.err.println("Error starting network capture");
         }
@@ -85,12 +87,12 @@ public class NetworkCaptureSubscriber extends Application implements AutoCloseab
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
 
-       // A Subscriber allows an application to create one or more DataReaders
-       Subscriber subscriber =
-       Objects.requireNonNull(participant.create_subscriber(
-               DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
-               null,  // listener
-               StatusKind.STATUS_MASK_NONE));
+        // A Subscriber allows an application to create one or more DataReaders
+        Subscriber subscriber =
+                Objects.requireNonNull(participant.create_subscriber(
+                        DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
         String typeName = NetworkCaptureTypeSupport.get_type_name();
@@ -166,7 +168,8 @@ public class NetworkCaptureSubscriber extends Application implements AutoCloseab
     {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (NetworkCaptureSubscriber subscriberApplication = new NetworkCaptureSubscriber()) {
+        try (NetworkCaptureSubscriber subscriberApplication =
+                     new NetworkCaptureSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
@@ -177,4 +180,3 @@ public class NetworkCaptureSubscriber extends Application implements AutoCloseab
         DomainParticipantFactory.finalize_instance();
     }
 }
-

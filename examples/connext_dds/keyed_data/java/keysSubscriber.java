@@ -59,20 +59,31 @@ public class keysSubscriber extends Application implements AutoCloseable {
                 if (info.valid_data) {
                     keys sample = (keys) dataSeq.get(i);
                     if (info.view_state == ViewStateKind.NEW_VIEW_STATE) {
-                        System.out.print("Found new instance; code = " + sample.code + "\n");
+                        System.out.print(
+                                "Found new instance; code = " + sample.code
+                                + "\n");
                     }
-                    System.out.print("Instance " + sample.code + ": x: " + sample.x + ", y: " + sample.y + "\n");
+                    System.out.print(
+                            "Instance " + sample.code + ": x: " + sample.x
+                            + ", y: " + sample.y + "\n");
                 } else {
                     // Since there is not valid data, it may include metadata
                     keys dummy = new keys();
                     reader.get_key_value(dummy, info.instance_handle);
-                        
+
                     // Here we print a message if the instance state is
                     // ALIVE_NO_WRITERS or ALIVE_DISPOSED
-                    if (info.instance_state == InstanceStateKind.NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                        System.out.print("Instance " + dummy.code + " has no writers\n");
-                    } else if (info.instance_state == InstanceStateKind.NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                        System.out.print("Instance " + dummy.code + " disposed\n");
+                    if (info.instance_state
+                        == InstanceStateKind
+                                   .NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
+                        System.out.print(
+                                "Instance " + dummy.code + " has no writers\n");
+                    } else if (
+                            info.instance_state
+                            == InstanceStateKind
+                                       .NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                        System.out.print(
+                                "Instance " + dummy.code + " disposed\n");
                     }
                 }
                 samplesRead++;
@@ -87,15 +98,15 @@ public class keysSubscriber extends Application implements AutoCloseable {
         return samplesRead;
     }
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
                         getDomainId(),
                         DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                         null,  // listener
-                        StatusKind.STATUS_MASK_NONE));                        
+                        StatusKind.STATUS_MASK_NONE));
 
         // A Subscriber allows an application to create one or more DataReaders
         Subscriber subscriber =
@@ -105,9 +116,9 @@ public class keysSubscriber extends Application implements AutoCloseable {
                         StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
-        String typeName = keysTypeSupport.get_type_name(); 
+        String typeName = keysTypeSupport.get_type_name();
         keysTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example keys",
@@ -115,7 +126,7 @@ public class keysSubscriber extends Application implements AutoCloseable {
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
-        
+
         // This DataReader reads data on "Example keys" Topic
         reader = (keysDataReader) Objects.requireNonNull(
                 subscriber.create_datareader(
@@ -141,7 +152,8 @@ public class keysSubscriber extends Application implements AutoCloseable {
 
         // Main loop. Wait for data to arrive and process when it arrives
         while (!isShutdownRequested() && samplesRead < getMaxSampleCount()) {
-            //System.out.println("keys subscriber sleeping for " + receivePeriodSec + " sec...");
+            // System.out.println("keys subscriber sleeping for " +
+            // receivePeriodSec + " sec...");
             try {
                 // Wait fills in activeConditions or times out
                 waitset.wait(activeConditions, waitTimeout);
@@ -154,7 +166,7 @@ public class keysSubscriber extends Application implements AutoCloseable {
             }
         }
     }
-    
+
     @Override public void close()
     {
         // Delete all entities (DataReader, Topic, Subscriber,
@@ -182,6 +194,3 @@ public class keysSubscriber extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-
-        

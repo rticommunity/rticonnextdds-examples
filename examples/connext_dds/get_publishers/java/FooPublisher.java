@@ -24,15 +24,15 @@ public class FooPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
                         getDomainId(),
                         DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                         null,  // listener
-                        StatusKind.STATUS_MASK_NONE));        
+                        StatusKind.STATUS_MASK_NONE));
 
         // A Publisher allows an application to create one or more DataWriters
         Publisher publisher =
@@ -40,16 +40,17 @@ public class FooPublisher extends Application implements AutoCloseable {
                         DomainParticipant.PUBLISHER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-        System.out.println("The first publisher is " + publisher); 
+        System.out.println("The first publisher is " + publisher);
 
         Publisher publisher2 =
                 Objects.requireNonNull(participant.create_publisher(
                         DomainParticipant.PUBLISHER_QOS_DEFAULT,
                         null,  // listener
-                        StatusKind.STATUS_MASK_NONE));                  
-        System.out.println("The second publisher is " + publisher2); 
+                        StatusKind.STATUS_MASK_NONE));
+        System.out.println("The second publisher is " + publisher2);
 
-        System.out.println("Let's call get_publisher() now and check if I get all my publishers...\n");
+        System.out.println(
+                "Let's call get_publisher() now and check if I get all my publishers...\n");
         PublisherSeq publisherSeq = new PublisherSeq();
         participant.get_publishers(publisherSeq);
 
@@ -87,5 +88,3 @@ public class FooPublisher extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-

@@ -24,8 +24,8 @@ public class sequencesPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -33,7 +33,7 @@ public class sequencesPublisher extends Application implements AutoCloseable {
                         DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-                    
+
         // A Publisher allows an application to create one or more DataWriters
         Publisher publisher =
                 Objects.requireNonNull(participant.create_publisher(
@@ -44,7 +44,7 @@ public class sequencesPublisher extends Application implements AutoCloseable {
         // Register type before creating topic
         String typeName = sequencesTypeSupport.get_type_name();
         sequencesTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example sequences",
@@ -52,59 +52,60 @@ public class sequencesPublisher extends Application implements AutoCloseable {
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
-                
-        // This DataWriter writes data on "Example sequences" Topic
-        sequencesDataWriter writer = (sequencesDataWriter) Objects.requireNonNull(
-                publisher.create_datawriter(
-                        topic,
-                        Publisher.DATAWRITER_QOS_DEFAULT,
-                        null,  // listener
-                        StatusKind.STATUS_MASK_NONE));
 
-        /* Here we define two instances of sequences: ownerInstance and 
+        // This DataWriter writes data on "Example sequences" Topic
+        sequencesDataWriter writer =
+                (sequencesDataWriter) Objects.requireNonNull(
+                        publisher.create_datawriter(
+                                topic,
+                                Publisher.DATAWRITER_QOS_DEFAULT,
+                                null,  // listener
+                                StatusKind.STATUS_MASK_NONE));
+
+        /* Here we define two instances of sequences: ownerInstance and
          * borrowerInstance.
          */
 
         /* ownerInstance.data uses its own memory as, by default, a sequence
-         * you create owns its memory unless you explicitly loan memory of 
+         * you create owns its memory unless you explicitly loan memory of
          * your own to it.
          */
         sequences ownerInstance = new sequences();
         sequences borrowerInstance = new sequences();
 
         InstanceHandle_t ownerInstanceHandle = InstanceHandle_t.HANDLE_NIL;
-        InstanceHandle_t borrowerInstanceHandle = InstanceHandle_t.HANDLE_NIL;            
+        InstanceHandle_t borrowerInstanceHandle = InstanceHandle_t.HANDLE_NIL;
 
-        /* If we want borrower_instance.data to loan a buffer of shorts, 
-         * first we have to allocate the buffer. Here we allocate a buffer 
+        /* If we want borrower_instance.data to loan a buffer of shorts,
+         * first we have to allocate the buffer. Here we allocate a buffer
          * of MAX_SEQUENCE_LEN.
          */
         short[] shortBuffer = new short[MAX_SEQUENCE_LEN.VALUE];
-            
-        /* Before calling loan(), we need to set sequence maximum to 0, 
+
+        /* Before calling loan(), we need to set sequence maximum to 0,
          * i.e., the sequence won't have memory allocated to it.
          */
         borrowerInstance.data.setMaximum(0);
 
         /* Now that the sequence doesn't have memory allocated to it, we can
          * call loan() to loan shortBuffer to borrowerInstance.
-         * We set the allocated number of elements to MAX_SEQUENCE_LEN, the 
-         * size of the buffer and the maximum size of the sequence as we 
+         * We set the allocated number of elements to MAX_SEQUENCE_LEN, the
+         * size of the buffer and the maximum size of the sequence as we
          * declared in the IDL. */
         borrowerInstance.data.loan(
-            	shortBuffer,	// Buffer
-            	0 				// Initial Length
-            	);
-            
+                shortBuffer,  // Buffer
+                0             // Initial Length
+        );
+
         /* Before starting to publish samples, set the instance id of each
          * instance
          */
-        ownerInstance.id 	= "owner_instance";
+        ownerInstance.id = "owner_instance";
         borrowerInstance.id = "browser_instance";
 
         // Send a new sample every second
-        final long sendPeriodMillis = 1 * 1000; // 1 second
-            
+        final long sendPeriodMillis = 1 * 1000;  // 1 second
+
         // We use Random to generate random values for the sequences
         Random rand = new Random();
 
@@ -117,13 +118,12 @@ public class sequencesPublisher extends Application implements AutoCloseable {
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-            	
             /* We set a different sequenceLength for both instances every
-             * iteration. sequenceLength is based on the value of count 
-             * and its value cycles between the values of 1 and 
+             * iteration. sequenceLength is based on the value of count
+             * and its value cycles between the values of 1 and
              * MAX_SEQUENCE_LEN. */
             int sequenceLength = (samplesWritten % MAX_SEQUENCE_LEN.VALUE) + 1;
-            	
+
             System.out.println("Writing sequences, count " + samplesWritten);
 
             ownerInstance.count = (short) samplesWritten;
@@ -139,13 +139,14 @@ public class sequencesPublisher extends Application implements AutoCloseable {
              */
             for (int i = 0; i < sequenceLength; ++i) {
                 ownerInstance.data.setShort(i, (short) rand.nextInt(100));
-                borrowerInstance.data.setShort(i, (short) rand.nextInt(100));                	
+                borrowerInstance.data.setShort(i, (short) rand.nextInt(100));
             }
 
-            /* Both sequences have the same length, so we only print the 
+            /* Both sequences have the same length, so we only print the
              * length of one of them.
              */
-            System.out.println("Instances length = " + ownerInstance.data.size());
+            System.out.println(
+                    "Instances length = " + ownerInstance.data.size());
 
             // Write data
             writer.write(ownerInstance, ownerInstanceHandle);
@@ -155,7 +156,7 @@ public class sequencesPublisher extends Application implements AutoCloseable {
                 System.err.println("INTERRUPTED");
                 break;
             }
-                
+
             writer.write(borrowerInstance, borrowerInstanceHandle);
             try {
                 Thread.sleep(sendPeriodMillis);
@@ -166,7 +167,7 @@ public class sequencesPublisher extends Application implements AutoCloseable {
         }
 
         // Once we are done with the sequence, we call unloan()
-        borrowerInstance.data.unloan(); 
+        borrowerInstance.data.unloan();
     }
 
     @Override public void close()
@@ -184,7 +185,8 @@ public class sequencesPublisher extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
-        try (sequencesPublisher publisherApplication = new sequencesPublisher()) {
+        try (sequencesPublisher publisherApplication =
+                     new sequencesPublisher()) {
             publisherApplication.parseArguments(args);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();
@@ -195,5 +197,3 @@ public class sequencesPublisher extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-        

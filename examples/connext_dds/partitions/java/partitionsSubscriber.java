@@ -36,7 +36,7 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
     private partitionsDataReader reader = null;
     private final partitionsSeq dataSeq = new partitionsSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
-    
+
     private int processData()
     {
         int samplesRead = 0;
@@ -51,15 +51,15 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
                     ViewStateKind.ANY_VIEW_STATE,
                     InstanceStateKind.ANY_INSTANCE_STATE);
 
-            for(int i = 0; i < dataSeq.size(); ++i) {
+            for (int i = 0; i < dataSeq.size(); ++i) {
                 SampleInfo info = (SampleInfo) infoSeq.get(i);
-                
+
                 if (info.valid_data) {
                     if (info.view_state == ViewStateKind.NEW_VIEW_STATE) {
                         System.out.print("Found new instance\n");
                     }
-                    System.out.println("   x: " + 
-                        ((partitions) dataSeq.get(i)).x);
+                    System.out.println(
+                            "   x: " + ((partitions) dataSeq.get(i)).x);
                 }
                 samplesRead++;
             }
@@ -72,9 +72,9 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
 
         return samplesRead;
     }
-    
-    private void runApplication() {
 
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -83,40 +83,40 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
 
-	    SubscriberQos subscriber_qos = new SubscriberQos();
+        SubscriberQos subscriber_qos = new SubscriberQos();
         participant.get_default_subscriber_qos(subscriber_qos);
-	    
-	    /* If you want to change the Partition name programmatically rather than
-	     * using the XML, you will need to add the following lines to your code
-	     * and comment out the create_subscriber() call bellow.
-	     */
-	    /*
-        subscriber_qos.partition.name.clear();
-        subscriber_qos.partition.name.add("ABC");
-        subscriber_qos.partition.name.add("X*Z");
 
-	    Subscriber subscriber = Subscriber subscriber =
-                Objects.requireNonNull(participant.create_subscriber(
-                        subscriber_qos,
-                        null,  // listener
-                        StatusKind.STATUS_MASK_NONE));
-	    */
-    
+        /* If you want to change the Partition name programmatically rather than
+         * using the XML, you will need to add the following lines to your code
+         * and comment out the create_subscriber() call bellow.
+         */
+        /*
+    subscriber_qos.partition.name.clear();
+    subscriber_qos.partition.name.add("ABC");
+    subscriber_qos.partition.name.add("X*Z");
+
+        Subscriber subscriber = Subscriber subscriber =
+            Objects.requireNonNull(participant.create_subscriber(
+                    subscriber_qos,
+                    null,  // listener
+                    StatusKind.STATUS_MASK_NONE));
+        */
+
         // A Subscriber allows an application to create one or more DataReaders
         Subscriber subscriber =
                 Objects.requireNonNull(participant.create_subscriber(
                         DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-	    
-        System.out.print("Setting partition to '" +
-                subscriber_qos.partition.name.get(0) + "', '" +
-                subscriber_qos.partition.name.get(1) + "'...\n");
+
+        System.out.print(
+                "Setting partition to '" + subscriber_qos.partition.name.get(0)
+                + "', '" + subscriber_qos.partition.name.get(1) + "'...\n");
 
         // Register type before creating topic
-        String typeName = partitionsTypeSupport.get_type_name(); 
+        String typeName = partitionsTypeSupport.get_type_name();
         partitionsTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example partitions",
@@ -125,37 +125,36 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
-	    /* If you want to change the Datareader QoS programmatically rather than
-	     * using the XML, you will need to add the following lines to your code
-	     * and comment out the create_datareader() call bellow.
-	     */
-	    
-	    /*
-	    DataReaderQos datareader_qos = new DataReaderQos();
-            subscriber.get_default_datareader_qos(datareader_qos);
+        /* If you want to change the Datareader QoS programmatically rather than
+         * using the XML, you will need to add the following lines to your code
+         * and comment out the create_datareader() call bellow.
+         */
 
-            datareader_qos.reliability.kind =
-                ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-            datareader_qos.durability.kind = 
-                DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
-            datareader_qos.history.kind = 
-                HistoryQosPolicyKind.KEEP_ALL_HISTORY_QOS;
-	    
-	    partitionsDataReader reader = (partitionsDataReader) Objects.requireNonNull(
-                subscriber.create_datareader(
-                        topic,
-                        datareader_qos,
-                        null,  // listener
-                        StatusKind.STATUS_MASK_NONE));
-	    */
+        /*
+        DataReaderQos datareader_qos = new DataReaderQos();
+        subscriber.get_default_datareader_qos(datareader_qos);
+
+        datareader_qos.reliability.kind =
+            ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+        datareader_qos.durability.kind =
+            DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
+        datareader_qos.history.kind =
+            HistoryQosPolicyKind.KEEP_ALL_HISTORY_QOS;
+
+        partitionsDataReader reader = (partitionsDataReader)
+        Objects.requireNonNull( subscriber.create_datareader( topic,
+                    datareader_qos,
+                    null,  // listener
+                    StatusKind.STATUS_MASK_NONE));
+        */
 
         // This DataReader reads data on "Example partitions" Topic
         reader = (partitionsDataReader) Objects.requireNonNull(
-        subscriber.create_datareader(
-                topic,
-                Subscriber.DATAREADER_QOS_DEFAULT,
-                null,  // listener
-                StatusKind.STATUS_MASK_NONE));
+                subscriber.create_datareader(
+                        topic,
+                        Subscriber.DATAREADER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         // Create ReadCondition that triggers when data in reader's queue
         ReadCondition condition = reader.create_readcondition(
@@ -186,7 +185,7 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
             }
         }
     }
-    
+
     @Override public void close()
     {
         // Delete all entities (DataReader, Topic, Subscriber,
@@ -203,7 +202,8 @@ public class partitionsSubscriber extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (partitionsSubscriber subscriberApplication = new partitionsSubscriber()) {
+        try (partitionsSubscriber subscriberApplication =
+                     new partitionsSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();

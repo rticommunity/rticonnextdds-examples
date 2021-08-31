@@ -41,7 +41,6 @@ import com.rti.dds.topic.Topic;
 // ===========================================================================
 
 public class msgPublisher extends Application implements AutoCloseable {
-
     public static String auth = "password";
     private DomainParticipant participant = null;
 
@@ -55,49 +54,52 @@ public class msgPublisher extends Application implements AutoCloseable {
         SampleInfoSeq _infoSeq = new SampleInfoSeq();
 
         // This gets called when a participant has been discovered
-        public void on_data_available(DataReader reader) {
+        public void on_data_available(DataReader reader)
+        {
             ParticipantBuiltinTopicDataDataReader builtin_reader =
-                (ParticipantBuiltinTopicDataDataReader)reader;
+                    (ParticipantBuiltinTopicDataDataReader) reader;
             String participant_data;
             ParticipantBuiltinTopicData cur_participant_builtin_topic_data;
 
             try {
-
                 // We only process newly seen participants
                 builtin_reader.take(
-                    _dataSeq, _infoSeq,
-                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                    SampleStateKind.ANY_SAMPLE_STATE,
-                    ViewStateKind.NEW_VIEW_STATE,
-                    InstanceStateKind.ANY_INSTANCE_STATE);
+                        _dataSeq,
+                        _infoSeq,
+                        ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                        SampleStateKind.ANY_SAMPLE_STATE,
+                        ViewStateKind.NEW_VIEW_STATE,
+                        InstanceStateKind.ANY_INSTANCE_STATE);
 
-                for(int i = 0; i < _dataSeq.size(); ++i) {
-                    SampleInfo info = (SampleInfo)_infoSeq.get(i);
+                for (int i = 0; i < _dataSeq.size(); ++i) {
+                    SampleInfo info = (SampleInfo) _infoSeq.get(i);
 
                     if (info.valid_data) {
                         participant_data = "nil";
                         boolean is_auth = false;
                         cur_participant_builtin_topic_data =
-                                (ParticipantBuiltinTopicData)_dataSeq.get(i);
+                                (ParticipantBuiltinTopicData) _dataSeq.get(i);
 
                         // see if there is any participant_data
-                        if (cur_participant_builtin_topic_data.
-                                user_data.value.size() > 0) {
-
+                        if (cur_participant_builtin_topic_data.user_data.value
+                                    .size()
+                            > 0) {
                             // This sequence is guaranteed to be contiguous
-                            participant_data =
-                                    new String(
-                                            cur_participant_builtin_topic_data.
-                                            user_data.value.toArrayByte(null));
+                            participant_data = new String(
+                                    cur_participant_builtin_topic_data.user_data
+                                            .value.toArrayByte(null));
                             is_auth = participant_data.equals(auth);
                         }
 
                         System.out.println("Builtin Reader: found participant");
-                        System.out.println("\tkey->'" + Arrays.toString(
-                                cur_participant_builtin_topic_data.key.value) +
-                                "'\n\tuser_data->'" + participant_data + "'");
-                        System.out.println("instance_handle: " +
-                                info.instance_handle);
+                        System.out.println(
+                                "\tkey->'"
+                                + Arrays.toString(
+                                        cur_participant_builtin_topic_data.key
+                                                .value)
+                                + "'\n\tuser_data->'" + participant_data + "'");
+                        System.out.println(
+                                "instance_handle: " + info.instance_handle);
 
                         if (!is_auth) {
                             System.out.println(
@@ -127,41 +129,44 @@ public class msgPublisher extends Application implements AutoCloseable {
         SampleInfoSeq _infoSeq = new SampleInfoSeq();
 
         // This gets called when a new subscriber has been discovered
-        public void on_data_available(DataReader reader) {
+        public void on_data_available(DataReader reader)
+        {
             SubscriptionBuiltinTopicDataDataReader builtin_reader =
-                (SubscriptionBuiltinTopicDataDataReader)reader;
+                    (SubscriptionBuiltinTopicDataDataReader) reader;
             SubscriptionBuiltinTopicData cur_subscription_builtin_topic_data;
 
             try {
-
                 // We only process newly seen subscribers
                 builtin_reader.take(
-                    _dataSeq, _infoSeq,
-                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-                    SampleStateKind.ANY_SAMPLE_STATE,
-                    ViewStateKind.NEW_VIEW_STATE,
-                    InstanceStateKind.ANY_INSTANCE_STATE);
+                        _dataSeq,
+                        _infoSeq,
+                        ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                        SampleStateKind.ANY_SAMPLE_STATE,
+                        ViewStateKind.NEW_VIEW_STATE,
+                        InstanceStateKind.ANY_INSTANCE_STATE);
 
-                for(int i = 0; i < _dataSeq.size(); ++i) {
-                    SampleInfo info = (SampleInfo)_infoSeq.get(i);
+                for (int i = 0; i < _dataSeq.size(); ++i) {
+                    SampleInfo info = (SampleInfo) _infoSeq.get(i);
 
                     if (info.valid_data) {
                         cur_subscription_builtin_topic_data =
-                                (SubscriptionBuiltinTopicData)_dataSeq.get(i);
+                                (SubscriptionBuiltinTopicData) _dataSeq.get(i);
 
 
                         System.out.println("Built-in Reader: found subscriber");
-                        System.out.println("\tparticipant_key->'"
+                        System.out.println(
+                                "\tparticipant_key->'"
                                 + Arrays.toString(
-                                        cur_subscription_builtin_topic_data.
-                                        participant_key.value) + "'\n\tkey->'"
+                                        cur_subscription_builtin_topic_data
+                                                .participant_key.value)
+                                + "'\n\tkey->'"
                                 + Arrays.toString(
-                                        cur_subscription_builtin_topic_data.
-                                        key.value)
+                                        cur_subscription_builtin_topic_data.key
+                                                .value)
                                 + "\n");
 
-                        System.out.println("instance_handle: " +
-                                info.instance_handle);
+                        System.out.println(
+                                "instance_handle: " + info.instance_handle);
                     }
                 }
 
@@ -174,8 +179,8 @@ public class msgPublisher extends Application implements AutoCloseable {
         }
     }
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         //// Start changes for Builtin_Topics
         /* If you want to change the Factory's QoS programmatically rather
          * than using the XML file, you will need to add the following lines
@@ -201,17 +206,19 @@ public class msgPublisher extends Application implements AutoCloseable {
         // following lines and replace in create_participant the argument
         // DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT with
         // participantQos
-        //DomainParticipantQos participantQos = new DomainParticipantQos();
-        //DomainParticipantFactory.TheParticipantFactory
+        // DomainParticipantQos participantQos = new DomainParticipantQos();
+        // DomainParticipantFactory.TheParticipantFactory
         //        .get_default_participant_qos(participantQos);
-        //participantQos.resource_limits.participant_user_data_max_length = 1024;
+        // participantQos.resource_limits.participant_user_data_max_length =
+        // 1024;
 
         // Start communicating in a domain
         participant = Objects.requireNonNull(
-                DomainParticipantFactory.get_instance().
-                create_participant(
-                    getDomainId(), DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                    null /* listener */, StatusKind.STATUS_MASK_NONE));
+                DomainParticipantFactory.get_instance().create_participant(
+                        getDomainId(),
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null /* listener */,
+                        StatusKind.STATUS_MASK_NONE));
 
         /* Installing listeners for the builtin topics requires several
          * steps
@@ -219,7 +226,7 @@ public class msgPublisher extends Application implements AutoCloseable {
 
         // First get the builtin subscriber
         Subscriber builtin_subscriber =
-            Objects.requireNonNull(participant.get_builtin_subscriber());
+                Objects.requireNonNull(participant.get_builtin_subscriber());
 
         /*  Then get builtin subscriber's datareader for participants
             The type name is a bit hairy, but can be read right to left:
@@ -227,12 +234,11 @@ public class msgPublisher extends Application implements AutoCloseable {
             DataReader for BuiltinTopicData concerning a discovered
             Participant
         */
-        ParticipantBuiltinTopicDataDataReader
-            builtin_participant_datareader =
-                    (ParticipantBuiltinTopicDataDataReader) Objects.requireNonNull(
+        ParticipantBuiltinTopicDataDataReader builtin_participant_datareader =
+                (ParticipantBuiltinTopicDataDataReader) Objects.requireNonNull(
                         builtin_subscriber.lookup_datareader(
-                                ParticipantBuiltinTopicDataTypeSupport.
-                                PARTICIPANT_TOPIC_NAME));
+                                ParticipantBuiltinTopicDataTypeSupport
+                                        .PARTICIPANT_TOPIC_NAME));
 
         // Install our listener
         BuiltinParticipantListener builtin_participant_listener =
@@ -242,12 +248,11 @@ public class msgPublisher extends Application implements AutoCloseable {
                 StatusKind.DATA_AVAILABLE_STATUS);
 
         // Get builtin subscriber's datareader for subscribers
-        SubscriptionBuiltinTopicDataDataReader
-                builtin_subscription_datareader =
-                    (SubscriptionBuiltinTopicDataDataReader) Objects.requireNonNull(
+        SubscriptionBuiltinTopicDataDataReader builtin_subscription_datareader =
+                (SubscriptionBuiltinTopicDataDataReader) Objects.requireNonNull(
                         builtin_subscriber.lookup_datareader(
-                                SubscriptionBuiltinTopicDataTypeSupport.
-                                SUBSCRIPTION_TOPIC_NAME));
+                                SubscriptionBuiltinTopicDataTypeSupport
+                                        .SUBSCRIPTION_TOPIC_NAME));
 
         // Install our listener
         BuiltinSubscriberListener builtin_subscriber_listener =
@@ -261,9 +266,11 @@ public class msgPublisher extends Application implements AutoCloseable {
          */
         participant.enable();
 
-        Publisher publisher = Objects.requireNonNull(participant.create_publisher(
-                DomainParticipant.PUBLISHER_QOS_DEFAULT, null /* listener */,
-                StatusKind.STATUS_MASK_NONE));
+        Publisher publisher =
+                Objects.requireNonNull(participant.create_publisher(
+                        DomainParticipant.PUBLISHER_QOS_DEFAULT,
+                        null /* listener */,
+                        StatusKind.STATUS_MASK_NONE));
 
 
         // Register the datatype to use when creating the Topic
@@ -272,15 +279,19 @@ public class msgPublisher extends Application implements AutoCloseable {
 
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
-            "Example msg",
-            typeName, DomainParticipant.TOPIC_QOS_DEFAULT,
-            null /* listener */, StatusKind.STATUS_MASK_NONE));
+                "Example msg",
+                typeName,
+                DomainParticipant.TOPIC_QOS_DEFAULT,
+                null /* listener */,
+                StatusKind.STATUS_MASK_NONE));
 
         // This DataWriter writes data on "Example msg" Topic
         msgDataWriter writer = (msgDataWriter) Objects.requireNonNull(
                 publisher.create_datawriter(
-                    topic, Publisher.DATAWRITER_QOS_DEFAULT,
-                    null, StatusKind.STATUS_MASK_NONE));
+                        topic,
+                        Publisher.DATAWRITER_QOS_DEFAULT,
+                        null,
+                        StatusKind.STATUS_MASK_NONE));
 
         // Create data sample for writing
         msg data = new msg();
@@ -290,10 +301,10 @@ public class msgPublisher extends Application implements AutoCloseable {
          * to be written multiple times, initialize the key here
          * and register the keyed instance prior to writing
          */
-        //instance_handle = writer.register_instance(data);
+        // instance_handle = writer.register_instance(data);
 
         //// Changes for Builtin_Topics
-        final long sendPeriodMillis = 1000; // 1 second
+        final long sendPeriodMillis = 1000;  // 1 second
 
         for (short samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
@@ -312,7 +323,7 @@ public class msgPublisher extends Application implements AutoCloseable {
             }
         }
 
-        //writer.unregister_instance(instance, instance_handle);
+        // writer.unregister_instance(instance, instance_handle);
     }
 
     @Override public void close()
@@ -331,7 +342,9 @@ public class msgPublisher extends Application implements AutoCloseable {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
         try (msgPublisher publisherApplication = new msgPublisher()) {
-            publisherApplication.parseArguments(args, ApplicationType.PUBLISHER);
+            publisherApplication.parseArguments(
+                    args,
+                    ApplicationType.PUBLISHER);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();
         }

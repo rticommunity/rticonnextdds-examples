@@ -32,7 +32,8 @@ import com.rti.dds.topic.ContentFilteredTopic;
 import com.rti.dds.topic.Topic;
 
 
-public class market_dataSubscriber extends Application implements AutoCloseable {
+public class market_dataSubscriber
+        extends Application implements AutoCloseable {
     private DomainParticipant participant = null;  // Usually one per
                                                    // application
     private market_dataDataReader reader = null;
@@ -71,8 +72,8 @@ public class market_dataSubscriber extends Application implements AutoCloseable 
         return samplesRead;
     }
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -102,8 +103,8 @@ public class market_dataSubscriber extends Application implements AutoCloseable 
 
         // Start changes for MultiChannel
         StringSeq expressionParameters = new StringSeq(1);
-        ContentFilteredTopic filteredTopic = participant
-                .create_contentfilteredtopic_with_filter(
+        ContentFilteredTopic filteredTopic =
+                participant.create_contentfilteredtopic_with_filter(
                         "Example market_data",
                         topic,
                         "Symbol MATCH 'A'",
@@ -173,7 +174,8 @@ public class market_dataSubscriber extends Application implements AutoCloseable 
     {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (market_dataSubscriber subscriberApplication = new market_dataSubscriber()) {
+        try (market_dataSubscriber subscriberApplication =
+                     new market_dataSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();

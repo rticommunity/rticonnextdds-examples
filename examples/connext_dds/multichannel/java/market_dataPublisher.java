@@ -25,8 +25,8 @@ public class market_dataPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -59,13 +59,13 @@ public class market_dataPublisher extends Application implements AutoCloseable {
          * rather than using the XML file, you will need to add the
          * following lines to your code and modify the datawriter creation
          * fuction using writer_qos.
-         * 
+         *
          * In this case, we set the publish as multichannel using the
          * differents channel to send differents symbol. Every channel have
          * a IP to send the data.
          */
         // Start changes for MultiChannel
-        /*      
+        /*
         DataWriterQos writer_qos = new DataWriterQos();
         try {
             publisher.get_default_datawriter_qos(writer_qos);
@@ -77,7 +77,7 @@ public class market_dataPublisher extends Application implements AutoCloseable {
         writer_qos.multi_channel.channels.setMaximum(8);
         ChannelSettings_t channel = new ChannelSettings_t();
         channel.multicast_settings.setMaximum(1);
-        TransportMulticastSettings_t multicast_setting = 
+        TransportMulticastSettings_t multicast_setting =
                 new TransportMulticastSettings_t();
         try {
             channel.filter_expression = "Symbol MATCH '[A-C]*'";
@@ -144,12 +144,13 @@ public class market_dataPublisher extends Application implements AutoCloseable {
          * toggle between writer_qos and DDS_DATAWRITER_QOS_DEFAULT to
          * alternate between using code and using XML to specify the Qos
          */
-        market_dataDataWriter writer = (market_dataDataWriter) Objects.requireNonNull(
-                publisher.create_datawriter(
-                        topic,
-                        Publisher.DATAWRITER_QOS_DEFAULT,
-                        null,  // listener
-                        StatusKind.STATUS_MASK_NONE));
+        market_dataDataWriter writer =
+                (market_dataDataWriter) Objects.requireNonNull(
+                        publisher.create_datawriter(
+                                topic,
+                                Publisher.DATAWRITER_QOS_DEFAULT,
+                                null,  // listener
+                                StatusKind.STATUS_MASK_NONE));
 
         // End changes for MultiChannel
 
@@ -164,17 +165,17 @@ public class market_dataPublisher extends Application implements AutoCloseable {
          */
         // instance_handle = writer.register_instance(data);
 
-        final long sendPeriodMillis = 100; // 0.1 seconds
+        final long sendPeriodMillis = 100;  // 0.1 seconds
 
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-                
             // System.out.println("Writing market_data, count " + count);
 
             // Changes for MultiChannel
             // Modify the instance to be written here
-            char SymbolBuffer[] = { (char) ('A' + (char) (samplesWritten % 26)) };
+            char SymbolBuffer[] = { (
+                    char) ('A' + (char) (samplesWritten % 26)) };
             String Symbol = new String(SymbolBuffer);
             data.Symbol = Symbol;
             data.Price = samplesWritten;
@@ -207,7 +208,8 @@ public class market_dataPublisher extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
-        try (market_dataPublisher publisherApplication = new market_dataPublisher()) {
+        try (market_dataPublisher publisherApplication =
+                     new market_dataPublisher()) {
             publisherApplication.parseArguments(args);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();

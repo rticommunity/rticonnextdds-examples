@@ -71,8 +71,8 @@ public class msgSubscriber extends Application implements AutoCloseable {
     }
 
     //// Changes for Builtin_Topics
-    private void runApplication() {
-
+    private void runApplication()
+    {
         DomainParticipantQos participantQos = new DomainParticipantQos();
         DomainParticipantFactory.TheParticipantFactory
                 .get_default_participant_qos(participantQos);
@@ -80,13 +80,14 @@ public class msgSubscriber extends Application implements AutoCloseable {
         // If you want to change the Participant's QoS programmatically
         // rather than using the XML file, you will need to uncomment the
         // following line.
-        //participantQos.resource_limits.participant_user_data_max_length = 1024;
+        // participantQos.resource_limits.participant_user_data_max_length =
+        // 1024;
 
         // user_data is opaque to DDS
         String participantAuth = getParticipantAuth();
         int len = participantAuth.length();
-        int max = participantQos.resource_limits.
-                participant_user_data_max_length;
+        int max =
+                participantQos.resource_limits.participant_user_data_max_length;
 
         if (len > max) {
             System.out.println(
@@ -97,17 +98,21 @@ public class msgSubscriber extends Application implements AutoCloseable {
         }
 
         // Start communicating in a domain
-        participant = Objects.requireNonNull(DomainParticipantFactory.get_instance().
-            create_participant(
-                getDomainId(), participantQos,
-                null /* listener */, StatusKind.STATUS_MASK_NONE));
+        participant = Objects.requireNonNull(
+                DomainParticipantFactory.get_instance().create_participant(
+                        getDomainId(),
+                        participantQos,
+                        null /* listener */,
+                        StatusKind.STATUS_MASK_NONE));
 
         participant.enable();
 
         // A Subscriber allows an application to create one or more DataReaders
-        Subscriber subscriber = Objects.requireNonNull(participant.create_subscriber(
-                DomainParticipant.SUBSCRIBER_QOS_DEFAULT, null /* listener */,
-                StatusKind.STATUS_MASK_NONE));
+        Subscriber subscriber =
+                Objects.requireNonNull(participant.create_subscriber(
+                        DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
+                        null /* listener */,
+                        StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
         String typeName = msgTypeSupport.get_type_name();
@@ -116,8 +121,10 @@ public class msgSubscriber extends Application implements AutoCloseable {
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example msg",
-                typeName, DomainParticipant.TOPIC_QOS_DEFAULT,
-                null /* listener */, StatusKind.STATUS_MASK_NONE));
+                typeName,
+                DomainParticipant.TOPIC_QOS_DEFAULT,
+                null /* listener */,
+                StatusKind.STATUS_MASK_NONE));
 
         // This DataReader reads data on "Example msg" Topic
         reader = (msgDataReader) Objects.requireNonNull(
@@ -177,7 +184,9 @@ public class msgSubscriber extends Application implements AutoCloseable {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
         try (msgSubscriber subscriberApplication = new msgSubscriber()) {
-            subscriberApplication.parseArguments(args, ApplicationType.SUBSCRIBER);
+            subscriberApplication.parseArguments(
+                    args,
+                    ApplicationType.SUBSCRIBER);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
         }

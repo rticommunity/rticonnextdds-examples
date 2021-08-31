@@ -69,8 +69,8 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
         return samplesRead;
     }
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -87,9 +87,9 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
                         StatusKind.STATUS_MASK_NONE));
 
         // Register type before creating topic
-        String typeName = sequencesTypeSupport.get_type_name(); 
+        String typeName = sequencesTypeSupport.get_type_name();
         sequencesTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example sequences",
@@ -97,7 +97,7 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
                 DomainParticipant.TOPIC_QOS_DEFAULT,
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
-    
+
         // This DataReader reads data on "Example sequences" Topic
         reader = (sequencesDataReader) Objects.requireNonNull(
                 subscriber.create_datareader(
@@ -105,7 +105,7 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
                         Subscriber.DATAREADER_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-        
+
         // Create ReadCondition that triggers when data in reader's queue
         ReadCondition condition = reader.create_readcondition(
                 SampleStateKind.ANY_SAMPLE_STATE,
@@ -155,7 +155,8 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (sequencesSubscriber subscriberApplication = new sequencesSubscriber()) {
+        try (sequencesSubscriber subscriberApplication =
+                     new sequencesSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
@@ -166,6 +167,3 @@ public class sequencesSubscriber extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-
-        

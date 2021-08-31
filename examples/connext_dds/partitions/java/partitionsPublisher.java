@@ -23,8 +23,8 @@ public class partitionsPublisher extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -32,23 +32,23 @@ public class partitionsPublisher extends Application implements AutoCloseable {
                         DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
-	    
-	    PublisherQos publisher_qos = new PublisherQos();
+
+        PublisherQos publisher_qos = new PublisherQos();
         participant.get_default_publisher_qos(publisher_qos);
 
-	    /* If you want to change the Partition name programmatically rather than
-	     * using the XML, you will need to add the following lines to your code
-	     * and comment out the create_publisher() call bellow.
-	     */
-	    /*
-	    publisher_qos.partition.name.clear();
-        publisher_qos.partition.name.add("ABC");
-        publisher_qos.partition.name.add("foo");
-	    
-	    publisher = participant.create_publisher(publisher_qos, 
-						     null,
-						     StatusKind.STATUS_MASK_NONE);
-	    */
+        /* If you want to change the Partition name programmatically rather than
+         * using the XML, you will need to add the following lines to your code
+         * and comment out the create_publisher() call bellow.
+         */
+        /*
+        publisher_qos.partition.name.clear();
+    publisher_qos.partition.name.add("ABC");
+    publisher_qos.partition.name.add("foo");
+
+        publisher = participant.create_publisher(publisher_qos,
+                                                 null,
+                                                 StatusKind.STATUS_MASK_NONE);
+        */
 
         // A Publisher allows an application to create one or more DataWriters
         Publisher publisher =
@@ -57,14 +57,14 @@ public class partitionsPublisher extends Application implements AutoCloseable {
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
 
-	    System.out.print("Setting partition to '" +
-                publisher_qos.partition.name.get(0) + "', '" +
-                publisher_qos.partition.name.get(1) + "'...\n");
+        System.out.print(
+                "Setting partition to '" + publisher_qos.partition.name.get(0)
+                + "', '" + publisher_qos.partition.name.get(1) + "'...\n");
 
         // Register type before creating topic
         String typeName = partitionsTypeSupport.get_type_name();
         partitionsTypeSupport.register_type(participant, typeName);
-    
+
         // Create a Topic with a name and a datatype
         Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example partitions",
@@ -73,37 +73,38 @@ public class partitionsPublisher extends Application implements AutoCloseable {
                 null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
-	    /* In this example we set a Reliable datawriter, with Transient Local 
-	     * durability. By default we set up these QoS settings via XML. If you
-	     * want to to it programmatically, use the following code, and comment out
-	     * the create_datawriter call bellow.
-	     */
-	    /*
-        DataWriterQos datawriter_qos = new DataWriterQos();
-        publisher.get_default_datawriter_qos(datawriter_qos);
+        /* In this example we set a Reliable datawriter, with Transient Local
+         * durability. By default we set up these QoS settings via XML. If you
+         * want to to it programmatically, use the following code, and comment
+         * out the create_datawriter call bellow.
+         */
+        /*
+    DataWriterQos datawriter_qos = new DataWriterQos();
+    publisher.get_default_datawriter_qos(datawriter_qos);
 
-        datawriter_qos.reliability.kind =
-            ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
-        datawriter_qos.durability.kind = 
-            DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
-        datawriter_qos.history.kind = 
-            HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
-        datawriter_qos.history.depth = 3;
+    datawriter_qos.reliability.kind =
+        ReliabilityQosPolicyKind.RELIABLE_RELIABILITY_QOS;
+    datawriter_qos.durability.kind =
+        DurabilityQosPolicyKind.TRANSIENT_LOCAL_DURABILITY_QOS;
+    datawriter_qos.history.kind =
+        HistoryQosPolicyKind.KEEP_LAST_HISTORY_QOS;
+    datawriter_qos.history.depth = 3;
 
-        writer = (partitionsDataWriter) Objects.requireNonNull(
-                publisher.create_datawriter(
-                        topic,
-                        datawriter_qos,
-                        null,
-                        StatusKind.STATUS_MASK_NONE));
-	    */
+    writer = (partitionsDataWriter) Objects.requireNonNull(
+            publisher.create_datawriter(
+                    topic,
+                    datawriter_qos,
+                    null,
+                    StatusKind.STATUS_MASK_NONE));
+        */
 
-        partitionsDataWriter writer = (partitionsDataWriter) Objects.requireNonNull(
-                publisher.create_datawriter(
-                        topic,
-                        Publisher.DATAWRITER_QOS_DEFAULT,
-                        null,
-                        StatusKind.STATUS_MASK_NONE));
+        partitionsDataWriter writer =
+                (partitionsDataWriter) Objects.requireNonNull(
+                        publisher.create_datawriter(
+                                topic,
+                                Publisher.DATAWRITER_QOS_DEFAULT,
+                                null,
+                                StatusKind.STATUS_MASK_NONE));
 
         // Create data sample for writing
         partitions data = new partitions();
@@ -113,16 +114,15 @@ public class partitionsPublisher extends Application implements AutoCloseable {
          * written multiple times, initialize the key here
          * and register the keyed instance prior to writing
          */
-        //instance_handle = writer.register_instance(data);
+        // instance_handle = writer.register_instance(data);
 
-        final long sendPeriodMillis = 1000; // 1 second
+        final long sendPeriodMillis = 1000;  // 1 second
 
         for (int samplesWritten = 0;
              !isShutdownRequested() && samplesWritten < getMaxSampleCount();
              samplesWritten++) {
-                
             System.out.println("Writing partitions, count " + samplesWritten);
-		    data.x = samplesWritten;
+            data.x = samplesWritten;
             writer.write(data, instance_handle);
             try {
                 Thread.sleep(sendPeriodMillis);
@@ -131,56 +131,57 @@ public class partitionsPublisher extends Application implements AutoCloseable {
                 break;
             }
 
-		    /* Every 5 samples we will change the Partition name. These are the
-		     * partition expressions we are going to try: 
-		     * "bar", "A*", "A?C", "X*Z", "zzz", "A*C"
-		     */
-            if ((samplesWritten+1) % 25 == 0) {
-                // Matches "ABC" -- name[1] here can match name[0] there, 
+            /* Every 5 samples we will change the Partition name. These are the
+             * partition expressions we are going to try:
+             * "bar", "A*", "A?C", "X*Z", "zzz", "A*C"
+             */
+            if ((samplesWritten + 1) % 25 == 0) {
+                // Matches "ABC" -- name[1] here can match name[0] there,
                 // as long as there is some overlapping name
                 publisher_qos.partition.name.set(0, "zzz");
                 publisher_qos.partition.name.set(1, "A*C");
-                System.out.print("Setting partition to '" + 
-                        publisher_qos.partition.name.get(0) + "', '" + 
-                        publisher_qos.partition.name.get(1) + "'...\n");
+                System.out.print(
+                        "Setting partition to '"
+                        + publisher_qos.partition.name.get(0) + "', '"
+                        + publisher_qos.partition.name.get(1) + "'...\n");
                 publisher.set_qos(publisher_qos);
-            }
-            else if ((samplesWritten+1) % 20 == 0) {
+            } else if ((samplesWritten + 1) % 20 == 0) {
                 // Strings that are regular expressions aren't tested for
                 // literal matches, so this won't match "X*Z"
                 publisher_qos.partition.name.set(0, "X*Z");
-                System.out.print("Setting partition to '" + 
-                        publisher_qos.partition.name.get(0) + "', '" + 
-                        publisher_qos.partition.name.get(1) + "'...\n");
-                publisher.set_qos(publisher_qos);		    
-            }
-            else if ((samplesWritten+1) % 15 == 0) {
+                System.out.print(
+                        "Setting partition to '"
+                        + publisher_qos.partition.name.get(0) + "', '"
+                        + publisher_qos.partition.name.get(1) + "'...\n");
+                publisher.set_qos(publisher_qos);
+            } else if ((samplesWritten + 1) % 15 == 0) {
                 // Matches "ABC"
                 publisher_qos.partition.name.set(0, "A?C");
-                System.out.print("Setting partition to '" + 
-                        publisher_qos.partition.name.get(0) + "', '" + 
-                        publisher_qos.partition.name.get(1) + "'...\n");
+                System.out.print(
+                        "Setting partition to '"
+                        + publisher_qos.partition.name.get(0) + "', '"
+                        + publisher_qos.partition.name.get(1) + "'...\n");
                 publisher.set_qos(publisher_qos);
-            }
-            else if ((samplesWritten+1) % 10 == 0) {
+            } else if ((samplesWritten + 1) % 10 == 0) {
                 // Matches "ABC"
                 publisher_qos.partition.name.set(0, "A*");
-                System.out.print("Setting partition to '" + 
-                        publisher_qos.partition.name.get(0) + "', '" + 
-                        publisher_qos.partition.name.get(1) + "'...\n");
+                System.out.print(
+                        "Setting partition to '"
+                        + publisher_qos.partition.name.get(0) + "', '"
+                        + publisher_qos.partition.name.get(1) + "'...\n");
                 publisher.set_qos(publisher_qos);
-            }
-            else if ((samplesWritten+1) % 5 == 0) {
+            } else if ((samplesWritten + 1) % 5 == 0) {
                 // No literal match for "bar"
                 publisher_qos.partition.name.set(0, "bar");
-                System.out.print("Setting partition to '" +
-                        publisher_qos.partition.name.get(0) + "', '" + 
-                        publisher_qos.partition.name.get(1) + "'...\n");
+                System.out.print(
+                        "Setting partition to '"
+                        + publisher_qos.partition.name.get(0) + "', '"
+                        + publisher_qos.partition.name.get(1) + "'...\n");
                 publisher.set_qos(publisher_qos);
             }
         }
 
-        //writer.unregister_instance(data, instance_handle);
+        // writer.unregister_instance(data, instance_handle);
     }
 
     @Override public void close()
@@ -198,7 +199,8 @@ public class partitionsPublisher extends Application implements AutoCloseable {
     {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
-        try (partitionsPublisher publisherApplication = new partitionsPublisher()) {
+        try (partitionsPublisher publisherApplication =
+                     new partitionsPublisher()) {
             publisherApplication.parseArguments(args);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();
@@ -209,5 +211,3 @@ public class partitionsPublisher extends Application implements AutoCloseable {
         DomainParticipantFactory.finalize_instance();
     }
 }
-
-        

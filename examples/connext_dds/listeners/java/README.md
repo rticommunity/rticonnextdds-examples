@@ -76,19 +76,3 @@ for the types defined in the IDL file associated with the example.
 2.  Build the corresponding Publisher and Subscriber applications.
 
 3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
-
-## Gradle Build Infrastructure
-
-The `build.gradle` script that builds this example uses a generic plugin called
-`com.github.rticommunity.connext-dds-build-example` that defines all the
-necessary constructs to:
-
-1.  Run RTI Code Generator to generate the serialization/deserialization code
-for the types defined in the IDL file associated with the example.
-
-2.  Build the corresponding Publisher and Subscriber applications.
-
-3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
-
-You will find the definition of the plugin, along with detailed
-documentation, in `../../../../resources/gradle_plugin`.

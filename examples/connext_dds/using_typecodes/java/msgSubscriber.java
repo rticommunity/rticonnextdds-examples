@@ -40,7 +40,7 @@ public class msgSubscriber extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
     private static int samplesRead = 0;
-    
+
     private void runApplication()
     {
         // Start communicating in a domain

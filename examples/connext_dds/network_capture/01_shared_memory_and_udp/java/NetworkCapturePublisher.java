@@ -19,12 +19,13 @@ import com.rti.dds.publication.Publisher;
 import com.rti.dds.topic.Topic;
 
 
-public class NetworkCapturePublisher extends Application implements AutoCloseable {
+public class NetworkCapturePublisher
+        extends Application implements AutoCloseable {
     // Usually one per application
     private DomainParticipant participant = null;
 
-    private void runApplication() {
-
+    private void runApplication()
+    {
         if (!com.rti.ndds.utility.NetworkCapture.enable()) {
             System.err.println("Error enabling network capture");
         }
@@ -32,7 +33,7 @@ public class NetworkCapturePublisher extends Application implements AutoCloseabl
         if (!com.rti.ndds.utility.NetworkCapture.start("publisher")) {
             System.err.println("Error starting network capture");
         }
-            
+
         // Start communicating in a domain
         participant = Objects.requireNonNull(
                 DomainParticipantFactory.get_instance().create_participant(
@@ -61,36 +62,38 @@ public class NetworkCapturePublisher extends Application implements AutoCloseabl
                 StatusKind.STATUS_MASK_NONE));
 
         // This DataWriter writes data on "Example NetworkCapture" Topic
-        NetworkCaptureDataWriter writer = (NetworkCaptureDataWriter) Objects.requireNonNull(
-                publisher.create_datawriter(
-                        topic,
-                        Publisher.DATAWRITER_QOS_DEFAULT,
-                        null,  // listener
-                        StatusKind.STATUS_MASK_NONE));
+        NetworkCaptureDataWriter writer =
+                (NetworkCaptureDataWriter) Objects.requireNonNull(
+                        publisher.create_datawriter(
+                                topic,
+                                Publisher.DATAWRITER_QOS_DEFAULT,
+                                null,  // listener
+                                StatusKind.STATUS_MASK_NONE));
 
         NetworkCapture data = new NetworkCapture();
         InstanceHandle_t instance_handle = InstanceHandle_t.HANDLE_NIL;
 
         for (int samplesWritten = 0;
-            !isShutdownRequested() && samplesWritten < getMaxSampleCount();
-            samplesWritten++) {
-                
-            System.out.println("Writing NetworkCapture, count " + samplesWritten);
+             !isShutdownRequested() && samplesWritten < getMaxSampleCount();
+             samplesWritten++) {
+            System.out.println(
+                    "Writing NetworkCapture, count " + samplesWritten);
             data.msg = "Hello World! (" + samplesWritten + ")";
 
             // Here we are going to pause capturing for some samples.
             // The resulting pcap file will not contain them.
             if (samplesWritten == 4
-                    && !com.rti.ndds.utility.NetworkCapture.pause()) {
+                && !com.rti.ndds.utility.NetworkCapture.pause()) {
                 System.err.println("Error pausing network capture");
-            } else if (samplesWritten == 6
+            } else if (
+                    samplesWritten == 6
                     && !com.rti.ndds.utility.NetworkCapture.resume()) {
                 System.err.println("Error resuming network capture");
             }
 
             writer.write(data, instance_handle);
             try {
-                Thread.sleep(1000); // 1 second
+                Thread.sleep(1000);  // 1 second
             } catch (InterruptedException ix) {
                 System.err.println("INTERRUPTED");
                 break;
@@ -113,7 +116,8 @@ public class NetworkCapturePublisher extends Application implements AutoCloseabl
     {
         // Create example and run: Uses try-with-resources,
         // publisherApplication.close() automatically called
-        try (NetworkCapturePublisher publisherApplication = new NetworkCapturePublisher()) {
+        try (NetworkCapturePublisher publisherApplication =
+                     new NetworkCapturePublisher()) {
             publisherApplication.parseArguments(args);
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication();

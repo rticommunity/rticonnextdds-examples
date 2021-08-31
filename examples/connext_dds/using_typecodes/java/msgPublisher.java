@@ -54,7 +54,7 @@ public class msgPublisher extends Application implements AutoCloseable {
                         null,  // listener
                         StatusKind.STATUS_MASK_NONE));
         */
-        
+
         // A Publisher allows an application to create one or more DataWriters
         Publisher publisher =
                 Objects.requireNonNull(participant.create_publisher(
