@@ -18,6 +18,7 @@
 #include <dds/core/cond/GuardCondition.hpp>
 #include <dds/pub/DataWriter.hpp>
 #include <dds/pub/DataWriterListener.hpp>
+#include <rti/util/util.hpp>
 #include "application.hpp"
 
 

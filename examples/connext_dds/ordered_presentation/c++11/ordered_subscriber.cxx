@@ -13,6 +13,7 @@
 
 #include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <rti/util/util.hpp>      // for sleep()
 #include <rti/config/Logger.hpp>  // for logging
 
 #include "ordered.hpp"
