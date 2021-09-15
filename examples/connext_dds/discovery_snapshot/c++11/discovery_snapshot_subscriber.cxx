@@ -15,6 +15,7 @@
 
 #include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <rti/util/util.hpp>
 #include <rti/config/Logger.hpp>  // for logging
 // alternatively, to include all the standard APIs:
 //  <dds/dds.hpp>

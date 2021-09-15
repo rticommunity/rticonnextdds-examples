@@ -13,7 +13,7 @@
 #include <iostream>
 
 #include <dds/pub/ddspub.hpp>
-#include <rti/util/util.hpp>      // for sleep()
+#include <rti/util/util.hpp>
 #include <rti/config/Logger.hpp>  // for logging
 // alternatively, to include all the standard APIs:
 //  <dds/dds.hpp>
