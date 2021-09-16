@@ -53,12 +53,13 @@ On *UNIX* systems run:
 ./network_capture_subscriber -d <domain_id> -s <samples_to_receive>
 ```
 
-The applications accept up to three arguments:
+The applications accept up to two arguments:
 
 1.  The `<domain_id>`. Both applications must use the same domain id in order to
     communicate. The default is 0.
 
-2.  How long the examples should run.
+2.  How long the examples should run, measured in samples. The default is
+    infinite.
 
 ## Customizing the Build
 
