@@ -1,0 +1,18 @@
+{
+    "valgrind": {
+        "languages": {
+            "c": {
+                "pub_args": ["0", "5"],
+                "sub_args": ["0", "5"]
+            },
+            "c++11": {
+                "pub_args": ["-s", "5"],
+                "sub_args": ["-s", "1"],
+                "timeout": 10
+            }
+        },
+        "metadata": {
+            "example_type": "pub-sub"
+        }
+    }
+}
