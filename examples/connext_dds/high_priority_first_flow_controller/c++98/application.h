@@ -129,4 +129,8 @@ inline void parse_arguments(
 
 }  // namespace application
 
+<<<<<<< HEAD
 #endif  // APPLICATION_H
+=======
+#endif  // APPLICATION_H
+>>>>>>> f3fb0293749f009d7ead690483f0581d02768336

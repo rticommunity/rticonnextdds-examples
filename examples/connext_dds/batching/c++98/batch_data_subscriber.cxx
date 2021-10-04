@@ -30,7 +30,6 @@ unsigned int process_data(batch_dataDataReader *typed_reader)
     batch_dataSeq data_seq;
     DDS_SampleInfoSeq info_seq;
     unsigned int samples_read = 0;
-    ;
 
     typed_reader->take(
             data_seq,

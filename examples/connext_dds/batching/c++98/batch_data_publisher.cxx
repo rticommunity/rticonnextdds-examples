@@ -133,12 +133,12 @@ int run_publisher_application(
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        DDS_InstanceHandle_t instance_handle = typed_writer
-                ->register_instance(*data);
+        instance_handle = typed_writer->register_instance(*data);
     */
 
     // Main loop, write data
@@ -151,7 +151,7 @@ int run_publisher_application(
         /* Modify the data to be sent here */
         data->x = samples_written;
 
-        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             std::cout << "write error " << samples_written << std::endl;
         }

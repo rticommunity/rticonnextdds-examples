@@ -145,12 +145,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-        DDS_InstanceHandle_t instance_handle = typed_writer
-                ->register_instance(*instance);
+        instance_handle = typed_writer->register_instance(*instance);
     */
 
     // Main loop, write data
@@ -170,7 +170,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         std::cout << "Writing cft, count " << data->count << "\tx=" << data->x
                   << std::endl;
 
-        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             std::cerr << "write error " << retcode << std::endl;
         }

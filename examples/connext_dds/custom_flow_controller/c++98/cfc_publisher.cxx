@@ -238,12 +238,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
      written multiple times, initialize the key here
      and register the keyed instance prior to writing */
     /*
-     DDS_InstanceHandle_t instance_handle =
-            cfc_writer->register_instance(*data);
+        instance_handle = cfc_writer->register_instance(*data);
      */
 
     // Main loop, write data
@@ -260,7 +260,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
             data->x = sample;
             memset(data->str, 1, 999);
             data->str[999] = 0;
-            retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+            retcode = typed_writer->write(*data, instance_handle);
             if (retcode != DDS_RETCODE_OK) {
                 std::cerr << "write error " << retcode << std::endl;
             }
@@ -274,12 +274,11 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     NDDS_Utility_sleep(&send_period);
 
     /*
-     retcode = typed_writer->unregister_instance(
-     *data, DDS_HANDLE_NIL);
-     if (retcode != DDS_RETCODE_OK) {
-     std::cerr << "unregister instance error " << retcode << std::endl;
-     }
-     */
+        retcode = typed_writer->unregister_instance(*data, instance_handle);
+        if (retcode != DDS_RETCODE_OK) {
+            std::cerr << "unregister instance error " << retcode << std::endl;
+        }
+    */
 
     // Delete previously allocated cfc, including all contained elements
     retcode = cfcTypeSupport::delete_data(data);

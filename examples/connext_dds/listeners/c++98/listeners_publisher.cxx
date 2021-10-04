@@ -262,11 +262,13 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For a data type that has a key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-      instance_handle = typed_writer->register_instance(*data);
+        instance_handle =
+            typed_writer->register_instance(*data);
     */
 
     // Main loop, write data

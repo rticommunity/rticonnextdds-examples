@@ -50,7 +50,7 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
 
     const char *participant_data;
 
-    /* We only process newly seen participants */
+    // We only process newly seen participants
     retcode = builtin_reader->take(
             data_seq,
             info_seq,
@@ -76,9 +76,9 @@ void BuiltinParticipantListener::on_data_available(DDSDataReader *reader)
 
         participant_data = "nil";
         bool is_auth = false;
-        /* see if there is any participant_data */
+        // see if there is any participant_data
         if (data_seq[i].user_data.value.length() != 0) {
-            /* This sequence is guaranteed to be contiguous */
+            // This sequence is guaranteed to be contiguous
             participant_data = (char *) &data_seq[i].user_data.value[0];
             is_auth = (strcmp(participant_data, auth) == 0);
         }
@@ -124,7 +124,7 @@ public:
     virtual void on_data_available(DDSDataReader *reader);
 };
 
-/* This gets called when a new subscriber has been discovered */
+// This gets called when a new subscriber has been discovered
 void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
 {
     DDSSubscriptionBuiltinTopicDataDataReader *builtin_reader =
@@ -133,7 +133,7 @@ void BuiltinSubscriberListener::on_data_available(DDSDataReader *reader)
     DDS_SampleInfoSeq info_seq;
     DDS_ReturnCode_t retcode;
 
-    /* We only process newly seen subscribers */
+    // We only process newly seen subscribers
     retcode = builtin_reader->take(
             data_seq,
             info_seq,
@@ -253,8 +253,9 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    // Start changes for Builtin_Topics
-    // Installing listeners for the builtin topics requires several steps
+    /* Start changes for Builtin_Topics
+     * Installing listeners for the builtin topics requires several steps
+     */
 
     // A Subscriber allows an application to create one or more DataReaders
     DDSSubscriber *builtin_subscriber = participant->get_builtin_subscriber();
@@ -315,7 +316,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 "failed to Enable Participant",
                 EXIT_FAILURE);
     }
-    /* End changes for Builtin_Topics */
+    // End changes for Builtin_Topics
 
     // A Publisher allows an application to create one or more DataWriters
     DDSPublisher *publisher = participant->create_publisher(
@@ -353,8 +354,6 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /* To customize data writer QoS, use
-       the configuration file USER_QOS_PROFILES.xml */
     DDSDataWriter *untyped_writer = publisher->create_datawriter(
             topic,
             DDS_DATAWRITER_QOS_DEFAULT,
@@ -375,7 +374,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
-    /* Create data sample for writing */
+    // Create data sample for writing
     msg *data = msgTypeSupport::create_data();
     if (data == NULL) {
         return shutdown_participant(
@@ -384,12 +383,12 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                 EXIT_FAILURE);
     }
 
+    DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     /* For data type that has key, if the same instance is going to be
        written multiple times, initialize the key here
        and register the keyed instance prior to writing */
     /*
-    DDS_InstanceHandle_t instance_handle = typed_writer
-            ->register_instance(*data);
+        instance_handle = typed_writer->register_instance(*data);
     */
 
     // Main loop, write data
@@ -403,7 +402,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
         // Modify the data to be sent here
         data->x = samples_written;
 
-        retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
+        retcode = typed_writer->write(*data, instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
@@ -411,7 +410,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 
     /*
     retcode = typed_writer->unregister_instance(
-      *data, DDS_HANDLE_NIL);
+      *data, instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "unregister instance error " << retcode << std::endl;
     }

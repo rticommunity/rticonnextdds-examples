@@ -53,7 +53,7 @@ unsigned int process_data(numbersDataReader *typed_reader)
         std::cerr << "return loan error " << retcode << std::endl;
     }
 
-    samples_read++;
+    return samples_read;
 }
 
 int run_subscriber_application(
