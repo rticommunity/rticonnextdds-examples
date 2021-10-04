@@ -15,6 +15,9 @@ following files:
 -   `linux_static_analysis.py`: run static analysis. This should be called
     after building all the examples.
 
+-   `linux_valgrind.py`: performs a memory check using valgrind with the
+    configuration stored in the `ci.json` file of each example.
+
 -   `jenkins_output.py`: generate a `Markdown` file from the template located
     in `resources/markdown_templates/JenkinsTemplate.md` which contains the
     details text for the GitHub check.
