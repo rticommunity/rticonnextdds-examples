@@ -8,6 +8,7 @@
         },
         "metadata": {
             "example_type": "pub-sub"
-        }
+        },
+        "skip": true
     }
 }
