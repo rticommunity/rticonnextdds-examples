@@ -166,6 +166,40 @@ pipeline {
                         }
                     }
                 }
+
+                stage('Valgrind') {
+                    steps {
+                        publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME, 
+                            status: 'IN_PROGRESS', title: 'In progress', text: detailsText,
+                            summary: ':mag: Analysing all the examples...'
+
+                        sh  """#!/bin/bash
+                               set -o pipefail
+                               python3 resources/ci_cd/linux_valgrind.py | tee $RTI_LOGS_FILE
+                            """
+                    }
+
+                    post {
+                        always {
+                            sh 'python3 resources/ci_cd/jenkins_output.py'
+                        }
+                        success {
+                            publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME,
+                                summary: ':white_check_mark: Succesfully analysed',
+                                title: 'Passed', text: readFile("jenkins_output.md")
+                        }
+                        failure {
+                            publishChecks conclusion: 'FAILURE', detailsURL: DETAILS_URL,
+                                name: STAGE_NAME, title: 'Failed', text: readFile("jenkins_output.md"),
+                                summary: ':warning: The static analysis failed'
+                        }
+                        aborted {
+                            publishChecks conclusion: 'CANCELED', detailsURL: DETAILS_URL,
+                                name: STAGE_NAME, title: 'Aborted', text: readFile("jenkins_output.md"),
+                                summary: ':no_entry: The static analysis was aborted'
+                        }
+                    }
+                }
             }
 
             post {
