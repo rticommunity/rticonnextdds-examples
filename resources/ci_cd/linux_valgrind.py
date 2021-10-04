@@ -96,12 +96,6 @@ def execute_application(
 
     print(f"Arguments: {command}", flush=True)
 
-    if (
-        "LD_LIBRARY_PATH" in environment
-        and environment["LD_LIBRARY_PATH"] == "build-dir"
-    ):
-        environment["LD_LIBRARY_PATH"] = exe_path.parent
-
     # Run Valgrind and capture the output to not display the example logs.
     valgrind_result = subprocess.run(
         command, capture_output=True, env=environment, cwd=exe_path.parent
