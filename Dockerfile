@@ -22,6 +22,7 @@ RUN apt update && apt install -y \
     cmake \
     python3 \
     clang-tools-10 \
+    valgrind \
     && rm -rf /var/lib/apt/lists/*
 
 ENV PATH=/usr/share/clang/scan-build-py-10/bin:${PATH}
