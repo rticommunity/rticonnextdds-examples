@@ -340,6 +340,7 @@ def main():
                             f"Memory leak discovered in {lang_dir}\n",
                             flush=True,
                         )
+                        sys.exit(1)
 
 
 if __name__ == "__main__":
