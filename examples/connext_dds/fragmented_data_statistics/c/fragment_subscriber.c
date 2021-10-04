@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /* fragment_subscriber.c
 
@@ -117,12 +117,15 @@ void fragmentListener_on_data_available(
 
     for (i = 0; i < fragmentSeq_get_length(&data_seq); ++i) {
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
-            printf("Received data %d\n", fragmentSeq_get_reference(&data_seq, i)->x);
-
+            printf("Received data %d\n",
+                   fragmentSeq_get_reference(&data_seq, i)->x);
         }
     }
 
-    retcode = fragmentDataReader_return_loan(fragment_reader, &data_seq, &info_seq);
+    retcode = fragmentDataReader_return_loan(
+            fragment_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         printf("return loan error %d\n", retcode);
     }
@@ -231,7 +234,8 @@ static int subscriber_main(int domainId, int sample_count)
     reader_listener.on_requested_incompatible_qos =
             fragmentListener_on_requested_incompatible_qos;
     reader_listener.on_sample_rejected = fragmentListener_on_sample_rejected;
-    reader_listener.on_liveliness_changed = fragmentListener_on_liveliness_changed;
+    reader_listener.on_liveliness_changed =
+            fragmentListener_on_liveliness_changed;
     reader_listener.on_sample_lost = fragmentListener_on_sample_lost;
     reader_listener.on_subscription_matched =
             fragmentListener_on_subscription_matched;
@@ -265,14 +269,14 @@ static int subscriber_main(int domainId, int sample_count)
             return -1;
         }
         printf("Fragmented Data Statistics:\n"
-                "\t received_fragment_count %lld\n"
-                "\t dropped_fragment_count %lld\n"
-                "\t sent_nack_fragment_count %lld\n"
-                "\t sent_nack_fragment_bytes %lld\n",
-                protocol_status.received_fragment_count,
-                protocol_status.dropped_fragment_count,
-                protocol_status.sent_nack_fragment_count,
-                protocol_status.sent_nack_fragment_bytes);
+               "\t received_fragment_count %lld\n"
+               "\t dropped_fragment_count %lld\n"
+               "\t sent_nack_fragment_count %lld\n"
+               "\t sent_nack_fragment_bytes %lld\n",
+               protocol_status.received_fragment_count,
+               protocol_status.dropped_fragment_count,
+               protocol_status.sent_nack_fragment_count,
+               protocol_status.sent_nack_fragment_bytes);
     }
 
     /* Cleanup and delete all entities */

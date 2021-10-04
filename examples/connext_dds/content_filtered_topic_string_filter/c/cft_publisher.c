@@ -117,8 +117,8 @@ static int publisher_main(int domainId, int sample_count)
     const char *type_name = NULL;
     int count = 0;
     struct DDS_Duration_t send_period = { 1, 0 };
-    char *even_string = (char*) "EVEN";
-    char *odd_string = (char*) "ODD";
+    char *even_string = (char *) "EVEN";
+    char *odd_string = (char *) "ODD";
     /* We need this structure in case we want to change the datawriter_qos
      * programmatically.*/
     /* struct DDS_DataWriterQos datawriter_qos = DDS_DataWriterQos_INITIALIZER;

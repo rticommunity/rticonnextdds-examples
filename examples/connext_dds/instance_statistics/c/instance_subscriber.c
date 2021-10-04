@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /* instance_subscriber.c
 
@@ -43,50 +43,50 @@ add and remove them dynamically from the domain.
 #include "instanceSupport.h"
 
 void instanceListener_on_requested_deadline_missed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedDeadlineMissedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void instanceListener_on_requested_incompatible_qos(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedIncompatibleQosStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void instanceListener_on_sample_rejected(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleRejectedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void instanceListener_on_liveliness_changed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_LivelinessChangedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void instanceListener_on_sample_lost(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleLostStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleLostStatus *status)
 {
 }
 
 void instanceListener_on_subscription_matched(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SubscriptionMatchedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void instanceListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     instanceDataReader *instance_reader = NULL;
     struct instanceSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -101,9 +101,13 @@ void instanceListener_on_data_available(
     }
 
     retcode = instanceDataReader_take(
-        instance_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            instance_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -120,16 +124,16 @@ void instanceListener_on_data_available(
     }
 
     retcode = instanceDataReader_return_loan(
-        instance_reader,
-        &data_seq, &info_seq);
+            instance_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "return loan error %d\n", retcode);
     }
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-    DDS_DomainParticipant *participant)
+static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -142,7 +146,8 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -164,20 +169,23 @@ int subscriber_main(int domainId, int sample_count)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = { 4, 0 };
     struct DDS_DataReaderCacheStatus cache_status =
             DDS_DataReaderCacheStatus_INITIALIZER;
 
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         subscriber_shutdown(participant);
@@ -187,8 +195,10 @@ int subscriber_main(int domainId, int sample_count)
     /* To customize subscriber QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     subscriber = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            &DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         fprintf(stderr, "create_subscriber error\n");
         subscriber_shutdown(participant);
@@ -207,9 +217,12 @@ int subscriber_main(int domainId, int sample_count)
     /* To customize topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example instance",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            "Example instance",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         subscriber_shutdown(participant);
@@ -217,26 +230,26 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Set up a data reader listener */
-    reader_listener.on_requested_deadline_missed  =
-    instanceListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            instanceListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-    instanceListener_on_requested_incompatible_qos;
-    reader_listener.on_sample_rejected =
-    instanceListener_on_sample_rejected;
+            instanceListener_on_requested_incompatible_qos;
+    reader_listener.on_sample_rejected = instanceListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
-    instanceListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-    instanceListener_on_sample_lost;
+            instanceListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = instanceListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-    instanceListener_on_subscription_matched;
-    reader_listener.on_data_available =
-    instanceListener_on_data_available;
+            instanceListener_on_subscription_matched;
+    reader_listener.on_data_available = instanceListener_on_data_available;
 
     /* To customize data reader QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     reader = DDS_Subscriber_create_datareader(
-        subscriber, DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+            subscriber,
+            DDS_Topic_as_topicdescription(topic),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(participant);
@@ -244,9 +257,8 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("instance subscriber sleeping for %d sec...\n",
-        poll_period.sec);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("instance subscriber sleeping for %d sec...\n", poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
         retcode = DDS_DataReader_get_datareader_cache_status(
@@ -258,14 +270,14 @@ int subscriber_main(int domainId, int sample_count)
             return -1;
         }
         printf("Instance statistics:\n"
-                "\t alive_instance_count %lld\n"
-                "\t no_writers_instance_count %lld\n"
-                "\t detached_instance_count %lld\n"
-                "\t disposed_instance_count %lld\n",
-                cache_status.alive_instance_count,
-                cache_status.no_writers_instance_count,
-                cache_status.detached_instance_count,
-                cache_status.disposed_instance_count);
+               "\t alive_instance_count %lld\n"
+               "\t no_writers_instance_count %lld\n"
+               "\t detached_instance_count %lld\n"
+               "\t disposed_instance_count %lld\n",
+               cache_status.alive_instance_count,
+               cache_status.no_writers_instance_count,
+               cache_status.detached_instance_count,
+               cache_status.disposed_instance_count);
     }
 
     /* Cleanup and delete all entities */
@@ -293,4 +305,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domain_id, sample_count);
 }
-

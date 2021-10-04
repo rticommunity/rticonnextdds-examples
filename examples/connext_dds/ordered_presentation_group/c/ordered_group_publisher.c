@@ -303,7 +303,7 @@ static int publisher_main(int domainId, int sample_count)
 
         /* Modify the data to be sent and Write data */
         strcpy(instance1->message,
-                "First sample, Topic 1 sent by DataWriter number 1");
+               "First sample, Topic 1 sent by DataWriter number 1");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer1,
@@ -314,7 +314,7 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         strcpy(instance1->message,
-                "Second sample, Topic 1 sent by DataWriter number 1");
+               "Second sample, Topic 1 sent by DataWriter number 1");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer1,
@@ -325,7 +325,7 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         strcpy(instance2->message,
-                "First sample, Topic 2 sent by DataWriter number 2");
+               "First sample, Topic 2 sent by DataWriter number 2");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer2,
@@ -336,7 +336,7 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         strcpy(instance2->message,
-                "Second sample, Topic 2 sent by DataWriter number 2");
+               "Second sample, Topic 2 sent by DataWriter number 2");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer2,
@@ -347,7 +347,7 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         strcpy(instance3->message,
-                "First sample, Topic 3 sent by DataWriter number 3");
+               "First sample, Topic 3 sent by DataWriter number 3");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer3,
@@ -358,7 +358,7 @@ static int publisher_main(int domainId, int sample_count)
         }
 
         strcpy(instance3->message,
-                "Second sample, Topic 3 sent by DataWriter number 3");
+               "Second sample, Topic 3 sent by DataWriter number 3");
 
         retcode = ordered_groupDataWriter_write(
                 ordered_group_writer3,

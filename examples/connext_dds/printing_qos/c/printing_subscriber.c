@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /* printing_subscriber.c
 
@@ -43,50 +43,50 @@ add and remove them dynamically from the domain.
 #include "printingSupport.h"
 
 void printingListener_on_requested_deadline_missed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedDeadlineMissedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void printingListener_on_requested_incompatible_qos(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_RequestedIncompatibleQosStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void printingListener_on_sample_rejected(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleRejectedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void printingListener_on_liveliness_changed(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_LivelinessChangedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void printingListener_on_sample_lost(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SampleLostStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SampleLostStatus *status)
 {
 }
 
 void printingListener_on_subscription_matched(
-    void* listener_data,
-    DDS_DataReader* reader,
-    const struct DDS_SubscriptionMatchedStatus *status)
+        void *listener_data,
+        DDS_DataReader *reader,
+        const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void printingListener_on_data_available(
-    void* listener_data,
-    DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     printingDataReader *printing_reader = NULL;
     struct printingSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -101,9 +101,13 @@ void printingListener_on_data_available(
     }
 
     retcode = printingDataReader_take(
-        printing_reader,
-        &data_seq, &info_seq, DDS_LENGTH_UNLIMITED,
-        DDS_ANY_SAMPLE_STATE, DDS_ANY_VIEW_STATE, DDS_ANY_INSTANCE_STATE);
+            printing_reader,
+            &data_seq,
+            &info_seq,
+            DDS_LENGTH_UNLIMITED,
+            DDS_ANY_SAMPLE_STATE,
+            DDS_ANY_VIEW_STATE,
+            DDS_ANY_INSTANCE_STATE);
     if (retcode == DDS_RETCODE_NO_DATA) {
         return;
     } else if (retcode != DDS_RETCODE_OK) {
@@ -115,13 +119,14 @@ void printingListener_on_data_available(
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             printf("Received data\n");
             printingTypeSupport_print_data(
-                printingSeq_get_reference(&data_seq, i));
+                    printingSeq_get_reference(&data_seq, i));
         }
     }
 
     retcode = printingDataReader_return_loan(
-        printing_reader,
-        &data_seq, &info_seq);
+            printing_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "return loan error %d\n", retcode);
     }
@@ -145,7 +150,8 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -183,12 +189,12 @@ int subscriber_main(int domainId, int sample_count)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = { 4, 0 };
     struct DDS_DomainParticipantQos participant_qos =
             DDS_DomainParticipantQos_INITIALIZER;
     struct DDS_SubscriberQos subscriber_qos = DDS_SubscriberQos_INITIALIZER;
@@ -200,8 +206,11 @@ int subscriber_main(int domainId, int sample_count)
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         subscriber_shutdown(
@@ -224,16 +233,15 @@ int subscriber_main(int domainId, int sample_count)
         return -1;
     }
     /*
-     * First, we pass NULL for the str argument. This will cause the API to update
-     * the strSize argument to contain the required size of the str buffer.
-     * We then allocate a buffer of that size and obtain the QoS string.
+     * First, we pass NULL for the str argument. This will cause the API to
+     * update the strSize argument to contain the required size of the str
+     * buffer. We then allocate a buffer of that size and obtain the QoS string.
      * The DDS_DomainParticipantQos_to_string API only prints differences with
-     * respect to the document default values for the DomainParticipantQos object.
+     * respect to the document default values for the DomainParticipantQos
+     * object.
      */
-    retcode = DDS_DomainParticipantQos_to_string(
-            &participant_qos,
-            str,
-            &strSize);
+    retcode =
+            DDS_DomainParticipantQos_to_string(&participant_qos, str, &strSize);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "participant qos to string");
         subscriber_shutdown(
@@ -253,10 +261,8 @@ int subscriber_main(int domainId, int sample_count)
                 &reader_qos);
         return -1;
     }
-    retcode = DDS_DomainParticipantQos_to_string(
-            &participant_qos,
-            str,
-            &strSize);
+    retcode =
+            DDS_DomainParticipantQos_to_string(&participant_qos, str, &strSize);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "participant qos to string");
         subscriber_shutdown(
@@ -274,8 +280,10 @@ int subscriber_main(int domainId, int sample_count)
     /* To customize subscriber QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     subscriber = DDS_DomainParticipant_create_subscriber(
-        participant, &DDS_SUBSCRIBER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            &DDS_SUBSCRIBER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (subscriber == NULL) {
         fprintf(stderr, "create_subscriber error\n");
         subscriber_shutdown(
@@ -298,11 +306,11 @@ int subscriber_main(int domainId, int sample_count)
         return -1;
     }
     /*
-     * First, we pass NULL for the str argument. This will cause the API to update
-     * the strSize argument to contain the required size of the str buffer.
-     * We then allocate a buffer of that size and obtain the QoS string.
-     * The DDS_SubscriberQos_to_string_w_params API prints all the QoS values for
-     * the SubscriberQos object.
+     * First, we pass NULL for the str argument. This will cause the API to
+     * update the strSize argument to contain the required size of the str
+     * buffer. We then allocate a buffer of that size and obtain the QoS string.
+     * The DDS_SubscriberQos_to_string_w_params API prints all the QoS values
+     * for the SubscriberQos object.
      */
     retcode = DDS_SubscriberQos_to_string_w_params(
             &subscriber_qos,
@@ -365,9 +373,12 @@ int subscriber_main(int domainId, int sample_count)
     /* To customize topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example printing",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            "Example printing",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         subscriber_shutdown(
@@ -379,26 +390,26 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Set up a data reader listener */
-    reader_listener.on_requested_deadline_missed  =
-    printingListener_on_requested_deadline_missed;
+    reader_listener.on_requested_deadline_missed =
+            printingListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
-    printingListener_on_requested_incompatible_qos;
-    reader_listener.on_sample_rejected =
-    printingListener_on_sample_rejected;
+            printingListener_on_requested_incompatible_qos;
+    reader_listener.on_sample_rejected = printingListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
-    printingListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-    printingListener_on_sample_lost;
+            printingListener_on_liveliness_changed;
+    reader_listener.on_sample_lost = printingListener_on_sample_lost;
     reader_listener.on_subscription_matched =
-    printingListener_on_subscription_matched;
-    reader_listener.on_data_available =
-    printingListener_on_data_available;
+            printingListener_on_subscription_matched;
+    reader_listener.on_data_available = printingListener_on_data_available;
 
     /* To customize data reader QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     reader = DDS_Subscriber_create_datareader(
-        subscriber, DDS_Topic_as_topicdescription(topic),
-        &DDS_DATAREADER_QOS_DEFAULT, &reader_listener, DDS_STATUS_MASK_ALL);
+            subscriber,
+            DDS_Topic_as_topicdescription(topic),
+            &DDS_DATAREADER_QOS_DEFAULT,
+            &reader_listener,
+            DDS_STATUS_MASK_ALL);
     if (reader == NULL) {
         fprintf(stderr, "create_datareader error\n");
         subscriber_shutdown(
@@ -432,9 +443,8 @@ int subscriber_main(int domainId, int sample_count)
     }
 
     /* Main loop */
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf("printing subscriber sleeping for %d sec...\n",
-        poll_period.sec);
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("printing subscriber sleeping for %d sec...\n", poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }
@@ -468,4 +478,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domain_id, sample_count);
 }
-

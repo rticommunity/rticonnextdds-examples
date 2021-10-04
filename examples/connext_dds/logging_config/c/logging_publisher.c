@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /* logging_publisher.c
 
@@ -43,8 +43,7 @@ add and remove them dynamically from the domain.
 #include "loggingSupport.h"
 
 /* Delete all entities */
-static int publisher_shutdown(
-    DDS_DomainParticipant *participant)
+static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -57,7 +56,8 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -85,13 +85,16 @@ int publisher_main(int domainId, int sample_count)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Time_t sourceTimestamp = {0, 0};
+    struct DDS_Time_t sourceTimestamp = { 0, 0 };
 
     /* To customize participant QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     participant = DDS_DomainParticipantFactory_create_participant(
-        DDS_TheParticipantFactory, domainId, &DDS_PARTICIPANT_QOS_DEFAULT,
-        NULL /* listener */, DDS_STATUS_MASK_NONE);
+            DDS_TheParticipantFactory,
+            domainId,
+            &DDS_PARTICIPANT_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (participant == NULL) {
         fprintf(stderr, "create_participant error\n");
         publisher_shutdown(participant);
@@ -112,10 +115,11 @@ int publisher_main(int domainId, int sample_count)
             NDDS_Config_Logger_get_instance(),
             NDDS_CONFIG_LOG_VERBOSITY_WARNING);
     if (!NDDS_Config_Logger_set_print_format_by_log_level(
-            NDDS_Config_Logger_get_instance(),
-            NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL,
-            NDDS_CONFIG_LOG_LEVEL_WARNING)) {
-        fprintf(stderr, "NDDS_Config_Logger_set_print_format_by_log_level error\n");
+                NDDS_Config_Logger_get_instance(),
+                NDDS_CONFIG_LOG_PRINT_FORMAT_MAXIMAL,
+                NDDS_CONFIG_LOG_LEVEL_WARNING)) {
+        fprintf(stderr,
+                "NDDS_Config_Logger_set_print_format_by_log_level error\n");
         publisher_shutdown(participant);
         return -1;
     }
@@ -123,8 +127,10 @@ int publisher_main(int domainId, int sample_count)
     /* To customize publisher QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     publisher = DDS_DomainParticipant_create_publisher(
-        participant, &DDS_PUBLISHER_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            &DDS_PUBLISHER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (publisher == NULL) {
         fprintf(stderr, "create_publisher error\n");
         publisher_shutdown(participant);
@@ -133,8 +139,7 @@ int publisher_main(int domainId, int sample_count)
 
     /* Register type before creating topic */
     type_name = loggingTypeSupport_get_type_name();
-    retcode = loggingTypeSupport_register_type(
-        participant, type_name);
+    retcode = loggingTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -144,9 +149,12 @@ int publisher_main(int domainId, int sample_count)
     /* To customize topic QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     topic = DDS_DomainParticipant_create_topic(
-        participant, "Example logging",
-        type_name, &DDS_TOPIC_QOS_DEFAULT, NULL /* listener */,
-        DDS_STATUS_MASK_NONE);
+            participant,
+            "Example logging",
+            type_name,
+            &DDS_TOPIC_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (topic == NULL) {
         fprintf(stderr, "create_topic error\n");
         publisher_shutdown(participant);
@@ -155,8 +163,11 @@ int publisher_main(int domainId, int sample_count)
     /* To customize data writer QoS, use
     the configuration file USER_QOS_PROFILES.xml */
     writer = DDS_Publisher_create_datawriter(
-        publisher, topic,
-        &DDS_DATAWRITER_QOS_DEFAULT, NULL /* listener */, DDS_STATUS_MASK_NONE);
+            publisher,
+            topic,
+            &DDS_DATAWRITER_QOS_DEFAULT,
+            NULL /* listener */,
+            DDS_STATUS_MASK_NONE);
     if (writer == NULL) {
         fprintf(stderr, "create_datawriter error\n");
         publisher_shutdown(participant);
@@ -178,8 +189,8 @@ int publisher_main(int domainId, int sample_count)
     }
 
     /* Write data */
-    retcode = loggingDataWriter_write(
-        logging_writer, instance, &instance_handle);
+    retcode =
+            loggingDataWriter_write(logging_writer, instance, &instance_handle);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "write error %d\n", retcode);
     }
@@ -191,7 +202,10 @@ int publisher_main(int domainId, int sample_count)
      * older than in previous write a warnings message will be logged.
      */
     retcode = loggingDataWriter_write_w_timestamp(
-        logging_writer, instance, &instance_handle, &sourceTimestamp);
+            logging_writer,
+            instance,
+            &instance_handle,
+            &sourceTimestamp);
     if (retcode != DDS_RETCODE_BAD_PARAMETER) {
         fprintf(stderr, "write error %d\n", retcode);
     }
@@ -224,4 +238,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domain_id, sample_count);
 }
-

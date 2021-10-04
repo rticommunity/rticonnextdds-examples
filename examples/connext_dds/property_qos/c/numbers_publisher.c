@@ -86,7 +86,7 @@ static int publisher_shutdown(DDS_DomainParticipant *participant)
             status = -1;
         }
     }
-        
+
     numbersTypeSupport_finalize();
 
     retcode = DDS_DomainParticipantFactory_finalize_instance();

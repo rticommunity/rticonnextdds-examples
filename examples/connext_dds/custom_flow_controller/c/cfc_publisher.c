@@ -97,7 +97,7 @@ static int publisher_shutdown(
         printf("dataWriterQos_finalize error %d\n", retcode);
         status = -1;
     }
-        
+
     retcode = DDS_DomainParticipantFactory_finalize_instance();
     if (retcode != DDS_RETCODE_OK) {
         printf("finalize_instance error %d\n", retcode);

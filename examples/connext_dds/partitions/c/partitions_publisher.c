@@ -298,12 +298,14 @@ static int publisher_main(int domainId, int sample_count)
         if ((count + 1) % 25 == 0) {
             /* Matches "ABC" -- name[1] here can match name[0] there,
              * as long as there is some overlapping name */
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
-                "zzz");
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 1),
-                "A*C");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           0),
+                   "zzz");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           1),
+                   "A*C");
 
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
@@ -312,36 +314,40 @@ static int publisher_main(int domainId, int sample_count)
         } else if ((count + 1) % 20 == 0) {
             /* Strings that are regular expressions aren't tested for
              * literal matches, so this won't match "X*Z" */
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
-                "X*Z");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           0),
+                   "X*Z");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 15 == 0) {
             /* Matches "ABC" */
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
-                "A?C");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           0),
+                   "A?C");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 10 == 0) {
             /* Matches "ABC" */
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
-                "A*");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           0),
+                   "A*");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));
             DDS_Publisher_set_qos(publisher, &publisher_qos);
         } else if ((count + 1) % 5 == 0) {
             /* No literal match for "bar"*/
-            strcpy(
-                *DDS_StringSeq_get_reference(&publisher_qos.partition.name, 0),
-                "bar");
+            strcpy(*DDS_StringSeq_get_reference(
+                           &publisher_qos.partition.name,
+                           0),
+                   "bar");
             printf("Setting partition to '%s', '%s'...\n",
                    DDS_StringSeq_get(&publisher_qos.partition.name, 0),
                    DDS_StringSeq_get(&publisher_qos.partition.name, 1));

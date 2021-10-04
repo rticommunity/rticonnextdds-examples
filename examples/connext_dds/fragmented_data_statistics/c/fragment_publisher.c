@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 /* fragment_publisher.c
 
@@ -169,7 +169,8 @@ static int publisher_main(int domainId, int sample_count)
         return -1;
     }
 
-    /* Create the data to be written, ensuring it is larger than message_size_max */
+    /* Create the data to be written, ensuring it is larger than
+     * message_size_max */
     if (!DDS_OctetSeq_ensure_length(&instance->data, 8000, 8000)) {
         printf("DDS_OctetSeq_ensure_length error\n");
         publisher_shutdown(participant);
@@ -194,8 +195,10 @@ static int publisher_main(int domainId, int sample_count)
         instance->x = count;
 
         /* Write data */
-        retcode =
-                fragmentDataWriter_write(fragment_writer, instance, &instance_handle);
+        retcode = fragmentDataWriter_write(
+                fragment_writer,
+                instance,
+                &instance_handle);
         if (retcode != DDS_RETCODE_OK) {
             printf("write error %d\n", retcode);
         }
@@ -211,18 +214,18 @@ static int publisher_main(int domainId, int sample_count)
             return -1;
         }
         printf("Fragmented Data Statistics:\n"
-                "\t pushed_fragment_count %lld\n"
-                "\t pushed_fragment_bytes %lld\n"
-                "\t pulled_fragment_count %lld\n"
-                "\t pulled_fragment_bytes %lld\n"
-                "\t received_nack_fragment_count %lld\n"
-                "\t received_nack_fragment_bytes %lld\n",
-                protocol_status.pushed_fragment_count,
-                protocol_status.pushed_fragment_bytes,
-                protocol_status.pulled_fragment_count,
-                protocol_status.pulled_fragment_bytes,
-                protocol_status.received_nack_fragment_count,
-                protocol_status.received_nack_fragment_bytes);
+               "\t pushed_fragment_count %lld\n"
+               "\t pushed_fragment_bytes %lld\n"
+               "\t pulled_fragment_count %lld\n"
+               "\t pulled_fragment_bytes %lld\n"
+               "\t received_nack_fragment_count %lld\n"
+               "\t received_nack_fragment_bytes %lld\n",
+               protocol_status.pushed_fragment_count,
+               protocol_status.pushed_fragment_bytes,
+               protocol_status.pulled_fragment_count,
+               protocol_status.pulled_fragment_bytes,
+               protocol_status.received_nack_fragment_count,
+               protocol_status.received_nack_fragment_bytes);
     }
 
     /*

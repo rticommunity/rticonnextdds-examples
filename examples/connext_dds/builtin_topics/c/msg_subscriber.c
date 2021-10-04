@@ -204,8 +204,10 @@ static int subscriber_shutdown(DDS_DomainParticipant *participant)
     return status;
 }
 
-static int
-        subscriber_main(int domain_id, int sample_count, char *participant_auth)
+static int subscriber_main(
+        int domain_id,
+        int sample_count,
+        char *participant_auth)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Subscriber *subscriber = NULL;

@@ -95,7 +95,8 @@ inline void parse_arguments(
                 && (strcmp(argv[arg_processing], "-pa") == 0
                     || strcmp(argv[arg_processing], "--pauth") == 0)) {
             DDS_String_free(arguments.participant_auth);
-            arguments.participant_auth = DDS_String_dup(argv[arg_processing + 1]);
+            arguments.participant_auth =
+                    DDS_String_dup(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1) && current_application == subscriber

@@ -176,7 +176,11 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
                   << std::endl;
     }
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
-    return shutdown_participant(participant, custom_filter, "Shutting down", EXIT_SUCCESS);
+    return shutdown_participant(
+            participant,
+            custom_filter,
+            "Shutting down",
+            EXIT_SUCCESS);
 }
 
 // Delete all entities
