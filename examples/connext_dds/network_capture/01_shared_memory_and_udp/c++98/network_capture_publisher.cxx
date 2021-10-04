@@ -254,10 +254,6 @@ static int shutdown_participant(
         fprintf(stderr, "Error disabling network capture\n");
         status = -1;
     }
-    setup_signal_handlers();
-
-    // Sets Connext verbosity to help debugging
-    NDDSConfigLogger::get_instance()->set_verbosity(arguments.verbosity);
 
     return status;
 }

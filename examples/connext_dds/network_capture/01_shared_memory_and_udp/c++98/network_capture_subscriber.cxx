@@ -272,21 +272,6 @@ static int shutdown_participant(
         status = -1;
     }
 
-    if (participant != NULL) {
-        // Cleanup everything created by this Participant
-        retcode = participant->delete_contained_entities();
-        if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "delete_contained_entities error" << retcode
-                      << std::endl;
-            status = EXIT_FAILURE;
-        }
-
-        retcode = DDSTheParticipantFactory->delete_participant(participant);
-        if (retcode != DDS_RETCODE_OK) {
-            std::cerr << "delete_participant error" << retcode << std::endl;
-            status = EXIT_FAILURE;
-        }
-    }
     return status;
 }
 

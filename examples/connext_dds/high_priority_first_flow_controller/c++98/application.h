@@ -11,11 +11,11 @@
  */
 
 #ifndef APPLICATION_H
-    #define APPLICATION_H
+#define APPLICATION_H
 
-    #include <iostream>
-    #include <csignal>
-    #include <climits>
+#include <iostream>
+#include <csignal>
+#include <climits>
 
 namespace application {
 
