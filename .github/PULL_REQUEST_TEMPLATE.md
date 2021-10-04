@@ -18,5 +18,9 @@
 
 <!-- Uncomment bellow if you added a C/C++ example and updated examples/connext_dds/CMakeList.txt -->
 <!--
--   [ ] I added a new C/C++ example and updated `resources/connext_dds/CMakeList.txt`.
+-   [ ] I added a new C/C++ example and updated `examples/connext_dds/CMakeList.txt`.
+-->
+<!-- Uncomment bellow if you added a Java example and updated examples/connext_dds/settings.gradle -->
+<!--
+-   [ ] I added a new Java example and updated `examples/connext_dds/settings.gradle`.
 -->
