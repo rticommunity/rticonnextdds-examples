@@ -111,7 +111,7 @@ int example()
     DDS_ReturnCode_t retcode;
     struct DDS_DynamicDataMemberInfo info;
     struct DDS_TypeCodeFactory *factory = NULL;
-    int ret = -1;
+    int ret = 1;
     struct DDS_DynamicDataProperty_t myProperty =
             DDS_DYNAMIC_DATA_PROPERTY_DEFAULT;
     DDS_Short valueTestShort;
@@ -185,7 +185,7 @@ int example()
            info.member_name,
            valueTestShort);
 
-    ret = 1;
+    ret = 0;
 
 fail:
     if (unionTC != NULL) {
