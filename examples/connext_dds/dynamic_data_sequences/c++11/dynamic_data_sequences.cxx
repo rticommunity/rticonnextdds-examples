@@ -153,5 +153,8 @@ int main()
         return -1;
     }
 
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return 0;
 }

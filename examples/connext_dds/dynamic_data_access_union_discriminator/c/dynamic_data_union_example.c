@@ -196,6 +196,9 @@ fail:
         DDS_DynamicData_finalize(&data);
     }
 
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return ret;
 }
 

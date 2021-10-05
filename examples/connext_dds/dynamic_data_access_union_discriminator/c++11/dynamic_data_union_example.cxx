@@ -53,6 +53,9 @@ void example()
     // Getting the value of the target member.
     short aShort = union_data.value<short>(union_data.discriminator_value());
     std::cout << " with value " << aShort << std::endl;
+
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
 }
 
 int main(int argc, char *argv[])

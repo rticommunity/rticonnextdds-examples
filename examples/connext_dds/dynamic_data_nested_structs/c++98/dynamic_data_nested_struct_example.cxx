@@ -349,5 +349,9 @@ fail:
     if (outer_tc != NULL) {
         tcf->delete_tc(outer_tc, err);
     }
+
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return ret;
 }

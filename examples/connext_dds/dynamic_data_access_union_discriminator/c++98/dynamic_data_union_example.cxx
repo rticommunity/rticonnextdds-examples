@@ -178,6 +178,10 @@ fail:
     if (unionTC != NULL) {
         tcf->delete_tc(unionTC, err);
     }
+
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return ret;
 }
 

@@ -105,6 +105,9 @@ int main()
               << " + current outer_data value" << std::endl;
     std::cout << outer_data;
 
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     // The destructor will unloan the member
     return 0;
 }

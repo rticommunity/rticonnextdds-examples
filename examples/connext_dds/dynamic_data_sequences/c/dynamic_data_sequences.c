@@ -472,5 +472,9 @@ fail:
     if (dynamicDataIsInitialized) {
         DDS_DynamicData_finalize(&sample);
     }
+
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return 0;
 }

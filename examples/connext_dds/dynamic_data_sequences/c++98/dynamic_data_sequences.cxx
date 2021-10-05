@@ -360,5 +360,8 @@ int main()
         factory->delete_tc(wSequenceTC, err);
     }
 
+    // This is necesary to get a clean leak report
+    DDS_TypeCodeFactory_finalize_instance();
+
     return 0;
 }
