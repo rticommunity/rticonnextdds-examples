@@ -155,14 +155,14 @@ int main()
     tcf = DDS_TypeCodeFactory::get_instance();
     if (tcf == NULL) {
         cerr << "! Unable to get type code factory singleton" << endl;
-        return -1;
+        return 1;
     }
 
     /* Creating the typeCode of the inner_struct */
     struct DDS_TypeCode *inner_tc = inner_struct_get_typecode(tcf);
     if (inner_tc == NULL) {
         cerr << "! Unable to create inner typecode " << endl;
-        return -1;
+        return 1;
     }
 
     /* Creating the typeCode of the outer_struct that contains an inner_struct
@@ -171,11 +171,11 @@ int main()
     if (inner_tc == NULL) {
         cerr << "! Unable to create outer typecode " << endl;
         tcf->delete_tc(outer_tc, err);
-        return -1;
+        return 1;
     }
 
     DDS_ReturnCode_t retcode;
-    int ret = -1;
+    int ret = 1;
 
     /* Now, we create a dynamicData instance for each type */
     DDS_DynamicData outer_data(outer_tc, DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
@@ -339,7 +339,7 @@ int main()
     cout << endl << " + current outer_data value " << endl;
     outer_data.print(stdout, 1);
 
-    ret = 1;
+    ret = 0;
 
 fail:
     if (inner_tc != NULL) {

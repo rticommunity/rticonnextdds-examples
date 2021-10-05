@@ -165,7 +165,7 @@ int main()
 
     DDS_ExceptionCode_t err;
     DDS_ReturnCode_t retcode;
-    int ret = -1;
+    int ret = 1;
 
     DDS_DynamicData *outer_data = NULL;
     DDS_DynamicData *inner_data = NULL;
@@ -383,7 +383,7 @@ int main()
     printf("\n + current outer_data value \n");
     DDS_DynamicData_print(outer_data, stdout, 1);
 
-    ret = 1;
+    ret = 0;
 
 fail:
     if (inner_tc != NULL) {
