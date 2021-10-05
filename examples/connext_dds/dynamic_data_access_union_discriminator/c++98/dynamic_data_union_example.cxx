@@ -116,7 +116,7 @@ int example()
     struct DDS_TypeCode *unionTC = create_type_code(tcf);
     DDS_ReturnCode_t retcode;
     struct DDS_DynamicDataMemberInfo info;
-    int ret = -1;
+    int ret = 1;
     DDS_ExceptionCode_t err;
     struct DDS_DynamicDataProperty_t myProperty =
             DDS_DYNAMIC_DATA_PROPERTY_DEFAULT;
@@ -172,7 +172,7 @@ int example()
     cout << "The member selected is " << info.member_name
          << "with value: " << valueTestShort << endl;
 
-    ret = 1;
+    ret = 0;
 
 fail:
     if (unionTC != NULL) {
