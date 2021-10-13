@@ -19,11 +19,11 @@ sent by the service. The application will then exit.
 
 The following files are part of the example:
 
-- `Requester.hpp` and `Requester.cxx`: these files contain the example C++
+-   `Requester.hpp` and `Requester.cxx`: these files contain the example C++
     code that prepares and sends the command request and then waits for a reply
     from the running service instance.
 
-- `USER_QOS_PROFILES.xml`: this file defines DDS XML QoS profiles to be used
+-   `USER_QOS_PROFILES.xml`: this file defines DDS XML QoS profiles to be used
     by the application and by *Routing Service*.
 
 ## Building the Example
@@ -81,16 +81,16 @@ your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
 solution on Windows), \. You can use the following CMake variables to modify the
 default behavior:
 
-- `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
     and Debug. See the [CMake documentation for more details.
     (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
-- `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
     dynamic linking and OFF for static linking. See [CMake documentation for
     more details.
     (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
-- `-G` -- CMake generator. The generator is the native build system to use
+-   `-G` -- CMake generator. The generator is the native build system to use
     build the source code. All the valid values are described described in the
     CMake documentation [CMake Generators
     Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
