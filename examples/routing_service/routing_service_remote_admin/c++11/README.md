@@ -11,10 +11,11 @@ Here you have the Requester application.
 ## Description of the Requester Application
 
 This example shows a one-shot application that can be used to send one remote
-command to a running application of Routing Service. The application will prepare a command request based
-on the command-line parameters provided in the application invocation. After
-sending that request out to the service, it will wait for a command reply to be
-sent by the service. The application will then exit.
+command to a running application of Routing Service. The application will
+prepare a command request based on the command-line parameters provided in
+the application invocation. After sending that request out to the service, 
+it will wait for a command reply to be sent by the service.
+The application will then exit.
 
 The following files are part of the example:
 
