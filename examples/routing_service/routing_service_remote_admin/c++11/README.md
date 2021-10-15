@@ -11,8 +11,7 @@ Here you have the Requester application.
 ## Description of the Requester Application
 
 This example shows a one-shot application that can be used to send one remote
-command to a running application of Routing Service (you can also try to use
-it with Routing Service). The application will prepare a command request based
+command to a running application of Routing Service. The application will prepare a command request based
 on the command-line parameters provided in the application invocation. After
 sending that request out to the service, it will wait for a command reply to be
 sent by the service. The application will then exit.
@@ -105,7 +104,7 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 20
 
 The CMake build infrastructure will try to guess the location of your Connext
 DDS installation and the Connext DDS architecture based on the default settings
-for your host platform.If you installed Connext DDS in a custom location, you
+for your host platform. If you installed Connext DDS in a custom location, you
 can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
 installation folder. For example:
 

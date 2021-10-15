@@ -11,11 +11,10 @@ instance of Routing Service.
 ## Example Description
 
 This example shows a one-shot application that can be used to send one remote
-command to a running application of Routing Service (you can also try to use
-it with Routing Service). The application will prepare a command request based
-on the command-line parameters provided in the application invocation. After
-sending that request out to the service, it will wait for a command reply to be
-sent by the service. The application will then exit.
+command to a running application of Routing Service. The application will
+prepare a command request based on the command-line parameters provided in the
+application invocation. After sending that request out to the service, it will
+wait for a command reply to be sent by the service. The application will then exit.
 
 ### Routing Service configuration
 
@@ -32,7 +31,7 @@ Here you can find the Routing Service configuration files.
 
 ## Running some examples
 
-We describes here some examples of how to use the Remote Administration
+We describe here some examples of how to use the Remote Administration
 Platform.
 
 First of all, you have to build the Requester application. So, please follow
@@ -40,10 +39,10 @@ this [guide](c++11/README.md).
 
 After building the Requester application, we will open two ShapesDemo:
 
-- One have to run in domain 1 and publish `Squares`.
-- The other have to run in domain 2 and subscribe `Circles`.
+- One has to run in domain 1 and publish `Squares`.
+- The other has to run in domain 2 and subscribe `Circles`.
 
-After that, we have to run Routing Service so the second ShapeDemo starts
+After that, we have to run Routing Service so the second Shape Demo starts
 receiving `Circles`:
 
 ``` bash
@@ -70,9 +69,9 @@ build directory using the following command:
 ```
 
 Please, note that the file has to be present in the same location where Routing
-Service is being execute. Routing Service will try to read the file from there.
+Service is being executed. Routing Service will try to read the file from there.
 
-Run another ShapeDemo that runs on Domain 3 and subscribes to `Triangles`.
+Run another instance of Shape Demo that runs on Domain 3 and subscribes to `Triangles`.
 You will see how `Squares` are now being route as `Triangles` from
 Domain 1 to 3.
 
