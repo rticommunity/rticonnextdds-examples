@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
         CommandRequest request;
         request.action(args_parser.command_kind());
         request.resource_identifier(args_parser.resource_identifier());
-        if (args_parser.body_str() != "")
+        if (args_parser.body_str() != "") {
             request.string_body(args_parser.body_str());
         }
         send(request, requester);
