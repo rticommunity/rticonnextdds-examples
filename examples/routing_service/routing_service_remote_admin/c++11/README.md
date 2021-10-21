@@ -121,4 +121,3 @@ you want to link against. For example:
 ```sh
 cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ```
-
