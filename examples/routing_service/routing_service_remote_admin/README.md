@@ -20,7 +20,7 @@ wait for a command reply to be sent by the service. The application will then ex
 
 Here you can find the Routing Service configuration files.
 
--   `routing_remote_admin.xml`: this is a configuration file for Routing
+-   `routing_remote_admin.xml`: This is a configuration file for Routing
     Service that enables remote administration, and uses the QoS profiles
     defined in the XML QoS profiles file (`USER_QOS_PROFILES.xml`). By using
     the same QoS profiles in both the application and the *Routing Service* we
