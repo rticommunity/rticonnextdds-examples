@@ -122,9 +122,3 @@ you want to link against. For example:
 cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ```
 
-## Requirements
-
-To run this example you will need:
-
-- RTI Connext Professional version 6.1.0 or higher.
-- CMake version 3.11 or higher

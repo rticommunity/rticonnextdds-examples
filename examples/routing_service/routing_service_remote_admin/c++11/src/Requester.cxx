@@ -22,14 +22,14 @@ using namespace dds::core;
 using namespace RTI::Service;
 using namespace RTI::Service::Admin;
 
-const unsigned int WAIT_TIMEOUT_SEC_MAX = 10;
-const unsigned int ADMIN_DOMAIN_ID = 55;
+static constexpr unsigned int WAIT_TIMEOUT_SEC_MAX = 10;
+static constexpr unsigned int ADMIN_DOMAIN_ID = 55;
 
-void send(
-        CommandRequest &request,
+static void send(
         rti::request::Requester<
                 RTI::Service::Admin::CommandRequest,
-                RTI::Service::Admin::CommandReply> &requester)
+                RTI::Service::Admin::CommandReply> &requester,
+        CommandRequest &request)
 {
     dds::topic::topic_type_support<EntityState>::to_cdr_buffer(
             reinterpret_cast<std::vector<char> &>(request.octet_body()),
@@ -93,7 +93,7 @@ int main(int argc, char *argv[])
         if (args_parser.body_str() != "") {
             request.string_body(args_parser.body_str());
         }
-        send(request, requester);
+        send(requester, request);
 
     } catch (const std::exception &ex) {
         std::cout << "Exception: " << ex.what() << std::endl;

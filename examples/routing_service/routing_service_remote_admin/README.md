@@ -84,11 +84,3 @@ command:
 ``` bash
 ./Requester GET /routing_services/remote_admin/domain_routes/MyRoute
 ```
-
-## Requirements
-
-To run this example you will need:
-
-- RTI Connext Professional version 6.1.0 or higher.
-- CMake version 3.11 or higher
-- A target platform supported by *RTI* *RoutingService*.
