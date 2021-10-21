@@ -77,7 +77,7 @@ Domain 1 to 3.
 
 ### Getting the Domain Route information
 
-If you want to see the configuration of a specific Domain Route, Just execute
+If you want to see the configuration of a specific Domain Route, just execute
 the Requester application located in the build directory using the following
 command:
 
