@@ -37,12 +37,12 @@ Platform.
 First of all, you have to build the Requester application. So, please follow
 this [guide](c++11/README.md).
 
-After building the Requester application, we will open two ShapesDemo:
+After building the Requester application, we will open two Shapes Demo:
 
 - One has to run in domain 1 and publish `Squares`.
 - The other has to run in domain 2 and subscribe `Circles`.
 
-After that, we have to run Routing Service so the second Shape Demo starts
+After that, we have to run Routing Service so the second Shapes Demo starts
 receiving `Circles`:
 
 ``` bash
@@ -71,7 +71,7 @@ build directory using the following command:
 Please, note that the file has to be present in the same location where Routing
 Service is being executed. Routing Service will try to read the file from there.
 
-Run another instance of Shape Demo that runs on Domain 3 and subscribes to `Triangles`.
+Run another instance of Shapes Demo that runs on Domain 3 and subscribes to `Triangles`.
 You will see how `Squares` are now being route as `Triangles` from
 Domain 1 to 3.
 
