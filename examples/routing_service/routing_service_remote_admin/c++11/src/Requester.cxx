@@ -92,6 +92,7 @@ int main(int argc, char *argv[])
         request.resource_identifier(args_parser.resource_identifier());
         if (args_parser.body_str() != "")
             request.string_body(args_parser.body_str());
+        }
         send(request, requester);
 
     } catch (const std::exception &ex) {
