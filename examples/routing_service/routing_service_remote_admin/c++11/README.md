@@ -23,7 +23,7 @@ The following files are part of the example:
     code that prepares and sends the command request and then waits for a reply
     from the running service instance.
 
--   `USER_QOS_PROFILES.xml`: this file defines DDS XML QoS profiles to be used
+-   `USER_QOS_PROFILES.xml`: This file defines DDS XML QoS profiles to be used
     by the application and by *Routing Service*.
 
 ## Building the Example
