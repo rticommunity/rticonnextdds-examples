@@ -25,7 +25,7 @@ Here you can find the Routing Service configuration files.
     defined in the XML QoS profiles file (`USER_QOS_PROFILES.xml`). By using
     the same QoS profiles in both the application and the *Routing Service* we
     ensure the QoS matching and the reliability of the communication.
--   `domain_route_creation.xml`: this xml has the configuration about how to
+-   `domain_route_creation.xml`: This xml has the configuration about how to
     create a new domain route that routes from domain 1 to domain 3. It is used
     by the Requester application to CREATE the new route.
 
