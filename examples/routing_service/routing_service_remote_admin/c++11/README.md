@@ -19,7 +19,7 @@ The application will then exit.
 
 The following files are part of the example:
 
--   `Requester.hpp` and `Requester.cxx`: these files contain the example C++
+-   `Requester.hpp` and `Requester.cxx`: These files contain the example C++
     code that prepares and sends the command request and then waits for a reply
     from the running service instance.
 
