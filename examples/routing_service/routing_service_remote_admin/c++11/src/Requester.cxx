@@ -66,6 +66,7 @@ int main(int argc, char *argv[])
                 RTI::Service::Admin::CommandRequest,
                 RTI::Service::Admin::CommandReply>
                 requester(requester_params);
+
         // Wait for Routing Service Discovery
         dds::core::status::PublicationMatchedStatus matched_status;
         unsigned int wait_count = 0;
