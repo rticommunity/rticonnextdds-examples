@@ -8,8 +8,12 @@
                 <receive_port>7400</receive_port>
                 <property>
                     <element>
-                        <name>dds.transport.UDPv4.builtin.public_address</name>
+                        <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
                         <value>$(PUBLIC_ADDRESS)</value>
+                    </element>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
+                        <value>1400</value>
                     </element>
                 </property>
             </element>
@@ -32,8 +36,12 @@
                 <receive_port>7400</receive_port>
                 <property>
                     <element>
-                        <name>dds.transport.UDPv4.builtin.public_address</name>
+                        <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
                         <value>$(PUBLIC_ADDRESS)</value>
+                    </element>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
+                        <value>1400</value>
                     </element>
                 </property>
             </element>
