@@ -105,7 +105,7 @@ public class NetworkCapturePublisher {
             NetworkCaptureTypeSupport.register_type(participant, typeName);
 
             topic = participant.create_topic(
-                    "NetworkCapture using Java API",
+                    "Network capture shared memory example",
                     typeName,
                     DomainParticipant.TOPIC_QOS_DEFAULT,
                     null, /* listener */

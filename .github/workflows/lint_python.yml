@@ -34,15 +34,15 @@ jobs:
         with:
           python-version: 3.7
       - name: Install necessary tools
-        run: pip install sultan black
+        run: pip install black==21.5b1
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'
         working-directory: ${{ github.workspace }}
         run: |
           base_commit="${{ github.event.pull_request.base.sha }}"
           head_commit="${{ github.event.pull_request.head.sha }}"
-          linux_format.py -md -cxx -r "${base_commit}...${head_commit}"
+          linux_format.py -md -clang -r "${base_commit}...${head_commit}"
       - name: Perform format check in normal push
         if: github.event_name == 'push'
         working-directory: ${{ github.workspace }}
-        run: linux_format.py -md -cxx -a
+        run: linux_format.py -md -clang -a

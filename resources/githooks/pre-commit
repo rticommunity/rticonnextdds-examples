@@ -32,8 +32,9 @@ def main():
         sys.exit("Error: script not located in .git/hooks.")
 
     root = script_path.parents[2]
-    formater = root.joinpath("resources", "travis", "linux_format.py")
-    os.system(str(formater))
+    os.unsetenv("GIT_DIR")
+    formater = root.joinpath("resources", "ci_cd", "linux_format.py")
+    os.system(f"{str(formater)} -a")
 
 
 if __name__ == "__main__":

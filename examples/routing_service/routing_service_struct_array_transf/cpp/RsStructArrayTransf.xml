@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 
 <!--
-  (c) 2018 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+  (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 
   RTI grants Licensee a license to use, modify, compile, and create derivative
   works of the Software.  Licensee has the right to distribute object form
@@ -17,15 +17,15 @@
 
     <!--
     **********************************************************************
-    RTI Router example                                                     
-    ********************************************************************** 
-    This example reads SensorDataExample on domain 0 and transforms them           
-    into TransformedSensorDataExample. See idl in this example                                          
-    ********************************************************************** 
+    RTI Router example
+    **********************************************************************
+    This example reads SensorDataExample on domain 0 and transforms them
+    into TransformedSensorDataExample. See idl in this example
+    **********************************************************************
     -->
 
 
-    <!-- 
+    <!--
     Here we're loading our custom transformation class
     -->
     <plugin_library name="MyPluginLib">
@@ -58,7 +58,6 @@
             <participant name="myDomain">
                 <domain_id>0</domain_id>
             </participant>
-                     
             <session name="Session">
                 <!--
                 Reading SensorAttributesCollection topic
