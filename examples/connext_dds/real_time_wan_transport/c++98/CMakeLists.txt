@@ -23,5 +23,5 @@ configure_file(
     "${CMAKE_CURRENT_BINARY_DIR}/CLOUD_DISCOVERY_SERVICE.xml"
     COPYONLY)
     
-#include (ConnextDdsGenerateSecurityArtifacts)
-#connextdds_generate_security_artifacts()
+include (ConnextDdsGenerateSecurityArtifacts)
+connextdds_generate_security_artifacts()
