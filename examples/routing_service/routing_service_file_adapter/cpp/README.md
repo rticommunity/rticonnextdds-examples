@@ -152,6 +152,12 @@ Received Sample:
    shapesize: 30
 ```
 
+**Note**: when running on Windows systems, remove the quotes from the value of
+the ``SHAPE_TOPIC`` environment variable.
+
+```bash
+set SHAPE_TOPIC=Triangle
+
 The general behavior of this example, can be controlled using properties and the
 ```SHAPE_TOPIC``` environment variable. You can modify properties in the Routing
 Service configuration file. This is the list of available properties:
