@@ -73,7 +73,7 @@ $export NDDSHOME=<RTI Connext DDS Directory>
 ```
 
 Before running the RTI Routing Service, you also need to specify where the
-`fileadapter` library is located as show below:
+`fileadapter` library is located as shown below:
 
 ```bash
 $export RTI_LD_LIBRARY_PATH=<Path to CMake build folder>
