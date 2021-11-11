@@ -43,6 +43,9 @@ $cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
 cmake --build .
 ```
 
+**Note**: when compiling on a Windows 64-bit machine you will need to add the
+`-A x64` parameter to the call to CMake.
+
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
 Solutions, you can specify the configuration mode to build as follows:
 
