@@ -17,11 +17,11 @@ This example has two actors:
 
 -   The subscriber application that receives the samples and is configured to use
     the *Required Subscription* feature.
--   The publisher application that writes only one sample and call
+-   The publisher application that writes only one sample and calls
     *wait_for_acknowledgments()* before finishing. So it will wait until the
     subscriber is executed and, after it, it will finish.
 
-The *USER_QOS_PROFILES.xml* has been modified as follows:
+*USER_QOS_PROFILES.xml* has been modified as follows:
 
 -   Durability set to *TRANSIENT_LOCAL_DURABILITY_QOS*. This is mandatory for the
     DataWriter, otherwise a runtime error will occur. This is not stricty mandatory

@@ -119,13 +119,18 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     std::cout << "Writing RequiredSubscriptions" << std::endl;
     retcode = typed_writer->write(*data, DDS_HANDLE_NIL);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "write error " << retcode << std::endl;
+        return shutdown_participant(
+                participant,
+                "typed_writer->write error",
+                EXIT_FAILURE);
     }
 
     retcode = untyped_writer->wait_for_acknowledgments(DDS_DURATION_INFINITE);
     if (retcode != DDS_RETCODE_OK) {
-        std::cerr << "untyped_writer->wait_for_acknowledgments " << retcode
-                  << std::endl;
+        return shutdown_participant(
+                participant,
+                "untyped_writer->wait_for_acknowledgments error",
+                EXIT_FAILURE);
     }
 
     /* Delete previously allocated RequiredSubscriptions, including all
@@ -134,6 +139,7 @@ int run_publisher_application(unsigned int domain_id, unsigned int sample_count)
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "RequiredSubscriptionsTypeSupport::delete_data error "
                   << retcode << std::endl;
+        // we don't exit with error status here because the sample has been sent
     }
 
     // Delete all entities (DataWriter, Topic, Publisher, DomainParticipant)
