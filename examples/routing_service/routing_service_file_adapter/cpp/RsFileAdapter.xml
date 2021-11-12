@@ -31,7 +31,7 @@
                 <registered_type name="ShapeType" type_name="ShapeType"/>
             </connection>
             <participant name="DDSConnection">
-                <domain_id>69</domain_id>
+                <domain_id>0</domain_id>
                 <registered_type name="ShapeType" type_name="ShapeType"/>
             </participant>
             <session name="session">
@@ -71,7 +71,7 @@
                 <registered_type name="ShapeType" type_name="ShapeType"/>
             </connection>
             <participant name="DDSConnection">
-                <domain_id>69</domain_id>
+                <domain_id>0</domain_id>
                 <registered_type name="ShapeType" type_name="ShapeType"/>
             </participant>
             <session name="session">
