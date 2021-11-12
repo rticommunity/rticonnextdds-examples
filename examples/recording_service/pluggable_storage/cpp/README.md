@@ -100,7 +100,7 @@ Then you can call CMake like this:
 
 ```bash
 cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
-      -DCONNEXTDDS_ARCH=<connext architecture>
+      -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0
       -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 ```
 
@@ -126,7 +126,7 @@ Service script can use the specific target binary instead of using the standard
 host binary. This can be done by using the `CONNEXTDDS_ARCH` variable.
 
 ```bash
-export CONNEXTDDS_ARCH=<connext target architecture>
+export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 ```
 
 Run the service as follows:
@@ -225,7 +225,7 @@ installation folder. For example:
 cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 ```
 
-Also, If you installed libraries for multiple target architecture on your system
+Also, if you installed libraries for multiple target architecture on your system
 (i.e., you installed more than one target rtipkg), you can use the
 CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
 you want to link against. For example:

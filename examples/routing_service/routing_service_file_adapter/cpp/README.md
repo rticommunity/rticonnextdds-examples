@@ -31,9 +31,9 @@ For more details, please refer to the *RTI Routing Service SDK* documentation.
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
--   `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release and
+-   `CMAKE_BUILD_TYPE`: Specifies the build mode. Valid values are Release and
     Debug
--   `BUILD_SHARED_LIBS`: whether to build the library as a shared library or not.
+-   `BUILD_SHARED_LIBS`: Whether to build the library as a shared library or not.
     This should be set to ON when loading the plugin from the Routing Service
     executable. However, Routing Service supports loading of static libraries when
     using the service as a library. See note below.
@@ -72,7 +72,7 @@ Solutions, you can specify the configuration mode to build as follows:
 cmake --build . --config Release|Debug
 ```
 
-In case you are using Windows x64, you have to add the option -A in the cmake
+In case you are using Windows x64, you have to add the option -A in the CMake
 command as follow:
 
 ```bash
@@ -136,7 +136,7 @@ export CONNEXTDDS_ARCH=<ARCH>
 Here is an output from a sample run:
 
 ```bash
-export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<
+export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Target Architecture>
 
 export SHAPE_TOPIC="Triangle"
 

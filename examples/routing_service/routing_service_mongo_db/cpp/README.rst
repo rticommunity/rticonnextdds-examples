@@ -129,7 +129,7 @@ To run Routing Service, you will need first to set up your environment as follow
 
     .. code::
 
-    export CONNEXTDDS_ARCH=<Connext DDS Architecture>
+    export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 
 
 And then you can run the following command, providing the domain ID of your choice:
