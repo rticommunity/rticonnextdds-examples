@@ -1,0 +1,64 @@
+<?xml version="1.0"?>
+<!--
+    (c) 2016 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+    RTI grants Licensee a license to use, modify, compile, and create derivative
+    works of the Software.  Licensee has the right to distribute object form only
+    for use with RTI products.  The Software is provided "as is", with no warranty
+    of any type, including any warranty for fitness for any purpose. RTI is under
+    no obligation to maintain or support the Software.  RTI shall not be liable for
+    any incidental or consequential damages arising out of the use or inability to
+    use the software.
+-->
+
+<!-- RTI Data Distribution Service Deployment -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/latest/rti_web_integration_service.xsd">
+
+    <!-- This QoS Profile enables a reliable DataReader that will keep only
+         the last sample in its cache.
+    -->
+    <qos_library name="SimpleShapesDemoQoSLib">
+        <qos_profile name="SimpleShapesDemoQosProfile" is_default_qos="true">
+            <datareader_qos>
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                </reliability>
+                <history>
+                    <depth>10</depth>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                </history>
+            </datareader_qos>
+        </qos_profile>
+    </qos_library>
+
+    <!--
+        This configuration contains a complete scenario for interacting with RTI
+        Shapes Demo. That is, it creates all the necessary Topics, DataWriters,
+        and DataReaders to publish and subscribe to Squares, Circles, and
+        Triangles. The data types and domains in "MyParticipant" refer to the
+        ones defined in resource/xml/RTI_WEB_INTEGRATION_SERVICE.xml.
+        Note that this file is automatically loaded by Web Integration Service
+        at startup.
+    -->
+    <web_integration_service name="webSocketShapesDemo">
+        <application name="ShapesDemoApp">
+            <domain_participant name="MyParticipant"
+                                domain_ref="ShapesDomainLibrary::ShapesDomain">
+                <register_type name="ShapeType" type_ref="ShapeType" />
+                <topic name="Square" register_type_ref="ShapeType" />
+                <topic name="Circle" register_type_ref="ShapeType" />
+                <topic name="Triangle" register_type_ref="ShapeType" />
+                <publisher name="MyPublisher">
+                    <data_writer name="MySquareWriter" topic_ref="Square" />
+                    <data_writer name="MyCircleWriter" topic_ref="Circle" />
+                    <data_writer name="MyTriangleWriter" topic_ref="Triangle" />
+                </publisher>
+                <subscriber name="MySubscriber">
+                    <data_reader name="MySquareReader" topic_ref="Square" />
+                    <data_reader name="MyCircleReader" topic_ref="Circle" />
+                    <data_reader name="MyTriangleReader" topic_ref="Triangle" />
+                </subscriber>
+            </domain_participant>
+        </application>
+    </web_integration_service>
+</dds>

@@ -9,6 +9,7 @@ java/*
 !NetworkCaptureSubscriber.java
 !README.md
 !USER_QOS_PROFILES.xml
+!build.gradle
 
 # Capture files
 *.pcap

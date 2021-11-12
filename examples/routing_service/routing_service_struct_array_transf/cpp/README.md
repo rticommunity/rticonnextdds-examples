@@ -75,7 +75,9 @@ Steps:
 1.  Run the publisher application on domain 0. You should observe the following
     output:
 
-    ```plaintext
+    ```bash
+    ./SensorAttributesCollectionPublisher 0
+
     Writing SensorAttributesCollection, count 0
     [sensor_array: {[id: 0, value: nan, is_active: 1], [id: 0, value: inf, is_active: 1],  [id: 0, value: inf, is_active: 1], [id: 0, value: inf, is_active: 1]}]
     Writing SensorAttributesCollection, count 1
@@ -86,16 +88,20 @@ Steps:
 2.  Run the subscriber application on domain 0. You should observe that no data
     is received and output will look like this:
 
-    ```plaintext
+    ```bash
+    ./SensorDataSubscriber 0
+
     SensorData subscriber sleeping for 4 sec...
     SensorData subscriber sleeping for 4 sec...
     SensorData subscriber sleeping for 4 sec...
     ...
     ```
 
-3.  Now run *RoutingService* to provide communication from the publisher
+3.  Now run *RTI Routing Service* to provide communication from the publisher
     application to the subscriber application. Run the following command from
-    the example build directory for *Windows*:
+    the example build directory:
+
+    On *Windows*:
 
     ```sh
     %NDDSHOME%\bin\rtiroutingservice ^
@@ -103,7 +109,7 @@ Steps:
            -cfgName RsStructArrayTransf
     ```
 
-    And for *Linux*:
+    On *Linux*:
 
     ```sh
     $NDDSHOME/bin/rtiroutingservice \
@@ -112,7 +118,7 @@ Steps:
     ```
 
     You should see how the subscriber application now receives samples with the
-    follow:
+    following output:
 
     ```plaintext
     SensorData subscriber sleeping for 4 sec...

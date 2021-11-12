@@ -39,7 +39,6 @@ jobs:
           python-version: 3.7
       - name: Install necessary tools
         run: |
-          pip install sultan
           npm install markdownlint-cli@0.23.1
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'
@@ -47,8 +46,8 @@ jobs:
         run: |
           base_commit="${{ github.event.pull_request.base.sha }}"
           head_commit="${{ github.event.pull_request.head.sha }}"
-          linux_format.py -py -cxx -r "${base_commit}...${head_commit}"
+          linux_format.py -py -clang -r "${base_commit}...${head_commit}"
       - name: Perform format check in normal push
         if: github.event_name == 'push'
         working-directory: ${{ github.workspace }}
-        run: linux_format.py -py -cxx -a
+        run: linux_format.py -py -clang -a

@@ -8,161 +8,68 @@
 # is under no obligation to maintain or support the Software.  RTI shall not be
 # liable for any incidental or consequential damages arising out of the use or
 # inability to use the software.
-"""Build examples and perform static analysis.
+"""Run static analysis over all the built examples.
 
 The environment variable RTI_PACKAGE_VERSION must be assigned to find the
-correct RTIConnextDDS package version.
+correct RTIConnextDDS package version. Also, the examples must be compiled
+to be able to run the static analysis.
 
 """
+
 import os
 import sys
-import time
-import datetime
-
+import subprocess
 from pathlib import Path
-from sultan.api import Sultan
-
-
-def stream_sultan_output(result):
-    """Stream command output.
-
-    Args:
-        result (sultan.result.Result): Command result object.
-
-    """
-    while True:
-        complete = result.is_complete
-
-        for line in result.stdout:
-            print(line)
-
-        for line in result.stderr:
-            print(line)
-
-        if complete:
-            break
-
-        time.sleep(1)
 
 
 def main():
-    time_script_start = time.perf_counter()
-
-    rti_connext_dds_version = os.getenv("RTI_PACKAGE_VERSION")
-
-    if not rti_connext_dds_version:
-        print(
-            "Environment variable RTI_PACKAGE_VERSION not found, skipping..."
-        )
-        sys.exit()
-
     try:
-        examples_dir = Path("examples/connext_dds").resolve()
+        rti_installation_path = Path(
+            os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+        ).resolve(strict=True)
     except FileNotFoundError:
-        sys.exit("Error: Examples directory not found.")
-
-    build_dir = examples_dir.joinpath("build")
+        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
-        rti_connext_dds_dir = (
-            Path.home()
-            .joinpath(
-                "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-            )
-            .resolve()
+        build_dir = Path("examples/connext_dds/build").resolve(strict=True)
+    except FileNotFoundError:
+        sys.exit(
+            "Error: build directory not found, compile the examples before "
+            "running this script."
         )
+
+    found_rti_connext_dds = list(
+        rti_installation_path.glob("rti_connext_dds-?.?.?")
+    )
+
+    if not found_rti_connext_dds:
+        sys.exit("Error: RTIConnextDDS not found.")
+
+    rti_connext_dds_dir = found_rti_connext_dds[0]
+
+    try:
+        rti_connext_dds_include_dir = rti_connext_dds_dir.joinpath(
+            "include"
+        ).resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: RTIConnextDDS not found.")
 
-    if not rti_connext_dds_dir.exists():
-        sys.exit("Error: RTIConnextDDS not found.")
-
-    try:
-        cmake_build_all_path = Path(
-            "resources/cmake/ConnextDdsBuildAllConfigurations.cmake"
-        ).resolve()
-    except FileNotFoundError:
-        sys.exit("Error: Path not found {}.".format(examples_dir))
-
-    if not examples_dir.exists():
-        sys.exit("Examples directory not found.")
-
-    if not cmake_build_all_path.exists():
-        sys.exit("Cmake script to build all configurations not found.")
-
-    build_dir.mkdir(exist_ok=True)
-
-    if not build_dir.exists():
-        sys.exit("Build dir not found.")
-
-    print("Building the examples...", flush=True)
-    time_build_start = time.perf_counter()
-
-    with Sultan.load(cwd=build_dir) as sultan:
-        build_gen_result = sultan.cmake(
-            "-DSTATIC_ANALYSIS=ON",
-            "-DBUILD_SHARED_LIBS=ON",
-            "-DCMAKE_BUILD_TYPE=Release",
-            "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
-            examples_dir,
-        ).run(halt_on_nonzero=False, streaming=True)
-        stream_sultan_output(build_gen_result)
-
-        if build_gen_result.rc != 0:
-            sys.exit("There was some errors during build.")
-
-        building_result = sultan.cmake("--build .", "--config Release").run(
-            halt_on_nonzero=False, streaming=True
-        )
-        stream_sultan_output(building_result)
-
-        if building_result.rc != 0:
-            sys.exit("There was some errors during build.")
-
-        time_build_end = time.perf_counter()
-
-        print("Analyzing the build...", flush=True)
-        time_analysis_start = time.perf_counter()
-
-        connextdds_installation_include = Path.home().joinpath(
-            "rti_connext_dds-{}".format(rti_connext_dds_version), "include"
-        )
-
-        static_analysis_result = sultan.analyze__build(
+    static_analysis_result = subprocess.run(
+        [
+            "analyze-build",
             "--verbose",
             "--status-bugs",
-            "--exclude {}".format(connextdds_installation_include),
+            "--exclude",
+            rti_connext_dds_include_dir,
             "--exclude",
             ".",
             "-o",
             ".",
-        ).run(halt_on_nonzero=False, streaming=True)
-
-        stream_sultan_output(static_analysis_result)
-
-    time_analysis_end = time.perf_counter()
-    time_script_end = time.perf_counter()
-
-    time_script_elapsed = datetime.timedelta(
-        seconds=round(time_script_end - time_script_start)
-    )
-    time_build_elapsed = datetime.timedelta(
-        seconds=round(time_build_end - time_build_start)
-    )
-    time_analysis_elapsed = datetime.timedelta(
-        seconds=round(time_analysis_end - time_analysis_start)
+        ],
+        cwd=build_dir,
     )
 
-    print(
-        "> Build:    {}\n> Analysis: {}\n{}\n> Total:    {}\n".format(
-            time_build_elapsed,
-            time_analysis_elapsed,
-            "-" * 19,
-            time_script_elapsed,
-        )
-    )
-
-    if static_analysis_result.rc != 0:
+    if static_analysis_result.returncode != 0:
         sys.exit("There where some errors during static analysis.")
 
 

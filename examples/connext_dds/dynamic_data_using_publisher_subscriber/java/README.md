@@ -1,105 +1,81 @@
-# Example code: Using Dynamic Data to publish and subscribe
+# Example Code: Using Dynamic Data to publish and subscribe
 
-## Building Java Example
+## Building the Example :wrench:
 
-Before compiling or running the example, make sure the environment variable
-`NDDSHOME` is set to the directory where your version of *RTI Connext* is
-installed.
+To build this example, first set all the environment variables as follows:
 
-Run *rtiddsgen* with the `-example` option and the target architecture of your
-choice (e.g., *i86Win32VS2010*). The *RTI Connext Core Libraries and Utilities
-Getting Started Guide* describes this process in detail. Follow the same
-procedure to generate the code and build the examples. **Do not use the
-`-replace` option.** Assuming you want to generate an example for
-*i86Win32VS2010* run:
+On *Linux* and *macOS* systems run:
 
 ```sh
-rtiddsgen -language Java -example i86Win32VS2010 Shapes.idl
+source <install_dir>/recource/scripts/rtisetenv_<target>.<bash|tcsh|zsh>
 ```
-
-You will see messages that look like this:
-
-```plaintext
-File C:\...\java\ShapesSubscriber.java already exists and will not
-be replaced with updated content. If you would like to get a new file with the
-new content, either remove this file or supply -replace option.
-File C:\...\java\ShapesPublisher.java already exists and will not
-be replaced with updated content. If you would like to get a new file with the
-new content, either remove this file or supply -replace option.
-```
-
-This is normal and is only informing you that the subscriber/publisher code has
-not been replaced, which is fine since all the source files for the example are
-already provided.
-
-Before compiling in Java, make sure that the desired version of the *javac*
-compiler is in your `PATH` environment variable.
 
 On *Windows* systems run:
 
 ```sh
-javac -classpath .;%NDDSHOME%\lib\java\nddsjava.jar *.java
+<install_dir>\resource\scripts\rtisetenv_<target>.bat
 ```
 
-On *UNIX* systems (including Linux and MacOS X):
+Once you have run rtisetenv, run `gradle` to generate the Java's `.class`
+and `.jar` files from the `<example_dir>/java` directory. This will also call
+`rtiddsgen` for you:
 
 ```sh
-javac -classpath .:$NDDSHOME/lib/java/nddsjava.jar *.java
+gradle build
 ```
 
-## Running Java Example
-
-### Publisher/Subscriber in command prompt
-
-In two separate command prompt windows for the publisher and subscriber. Run the
-following commands from the example directory:
-
-On *Windows* systems run:
+If you need to clean all the generated files run:
 
 ```sh
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ShapeTypePublisher <domain_id> <sample #>
-java -cp .;%NDDSHOME%\lib\java\nddsjava.jar ShapeTypeSubscriber <domain_id> <sample #>
+gradle clean
 ```
+
+## Running the Example
+
+Run the following commands in two separate command prompts, one for the
+publisher and another one for the subscriber, both from the example directory:
 
 On *UNIX* systems run:
 
 ```sh
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar ShapeTypePublisher <domain_id> <sample #>
-java -cp .:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber <domain_id> <sample #>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypePublisher <domain_id> <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber <domain_id> <sleep_periods>
+```
+
+On *Windows* systems run:
+
+```sh
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" ShapeTypePublisher <domain_id> <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" ShapeTypeSubscriber <domain_id> <sleep_periods>
+```
+
+Alternatively, you can use `gradle` to run this example:
+
+```sh
+gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods>"
 ```
 
 The applications accept up to two arguments:
 
-1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
+1.  The `<domain_id>`. Both applications must use the same domain ID in
+order to communicate. The default is 0.
 
 2.  How long the examples should run, measured in samples. A value of '0'
-    instructs the application to run forever; this is the default.
+instructs the application to run forever; this is the default.
 
-### Interconnection between this example and *Shapes Demo* tool
+## Gradle Build Infrastructure
 
-First of all, remember that you have to work in the same domain both in *Shape
-Demo* and your command prompt.
+The `build.gradle` script that builds this example uses a generic plugin called
+`com.github.rticommunity.connext-dds-build-example` that defines all the
+necessary constructs to:
 
-1.  Publish using this example and subscribe using *Shapes Demo*:
+1.  Run RTI Code Generator to generate the serialization/deserialization code
+for the types defined in the IDL file associated with the example.
 
-    1.  Open a new *Shapes Demo* window.
+2.  Build the corresponding Publisher and Subscriber applications.
 
-    2.  Create a new Square subscriber with default options.
+3.  Generate the `.jar` and configure the Class-Path in the MANIFEST.
 
-    3.  Run the publisher in a new command prompt like explained before (use the
-        `<sample #>` = 0 option to run an indefinitely).
-
-        You will see a Square moving from left to right. Also, its size will
-        increase until it reaches a maximum size. When the max size or the end
-        of the canvas are reached, it restarts.
-
-2.  Subscribe using this example and publish using *Shapes Demo*:
-
-    1.  Open a new command prompt and create a new subscriber like explained
-        before.
-
-    2.  Create a publisher (Square) in *Shapes Demo*.
-
-        You will see the full description of the data published by *Shapes Demo*
-        in your command prompt.
+You will find the definition of the plugin, along with detailed
+documentation, in `../../../../resources/gradle_plugin`.

@@ -16,6 +16,10 @@ cd build
 cmake -DBUILD_SHARED_LIBS=ON ..
 ```
 
+**Note**: when compiling on a Windows 64-bit machine you will need to add the
+`-A x64` parameter to the call to CMake. See
+[Customizing the Build](#customizing-the-build) for more details.
+
 Once you have run CMake, you will find a number of new files in your build
 directory (the list of generated files will depend on the specific CMake
 Generator). To build the example, run CMake as follows:
