@@ -1781,18 +1781,12 @@ RTI_INT32 NDDS_Transport_FILE_get_receive_interfaces_cEA(
     /* Set the meaningful bytes of the address */
     {
         struct in_addr ipAddr;
-        unsigned int ipAddrNetworkOrder;
 
         inet_aton(me->_property.address, &ipAddr);
-        ipAddrNetworkOrder = ipAddr.s_addr;
-        interface_array_inout[0].address.network_ordered_value[15] =
-                (ipAddrNetworkOrder) % 256;
-        interface_array_inout[0].address.network_ordered_value[14] =
-                (ipAddrNetworkOrder >> 8) % 256;
-        interface_array_inout[0].address.network_ordered_value[13] =
-                (ipAddrNetworkOrder >> 16) % 256;
-        interface_array_inout[0].address.network_ordered_value[12] =
-                (ipAddrNetworkOrder >> 24) % 256;
+        memcpy(
+                interface_array_inout[0].address.network_ordered_value + 12,
+                &ipAddr,
+                4);
     }
 
 
