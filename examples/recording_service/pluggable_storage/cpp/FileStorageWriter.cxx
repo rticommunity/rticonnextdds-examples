@@ -137,8 +137,8 @@ void FileStreamWriter::store(
     using namespace rti::core::xtypes;
     using namespace dds::sub;
 
-    const int32_t count = sample_seq.size();
-    for (int32_t i = 0; i < count; ++i) {
+    const size_t count = sample_seq.size();
+    for (size_t i = 0; i < count; ++i) {
         const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
         int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
@@ -155,8 +155,7 @@ void FileStreamWriter::store(
                        << std::endl;
             // Get and store the sample's msg field
             data_file_ << "    Data.msg: "
-                       << sample_seq[i]->value<dds::core::string>("msg").c_str()
-                       << std::endl;
+                       << sample_seq[i]->value<dds::core::string>("msg").c_str();
         }
         stored_sample_count_++;
     }
@@ -179,8 +178,8 @@ void PubDiscoveryFileStreamWriter::store(
 {
     using namespace dds::sub;
 
-    const int32_t count = sample_seq.size();
-    for (int32_t i = 0; i < count; ++i) {
+    const size_t count = sample_seq.size();
+    for (size_t i = 0; i < count; ++i) {
         const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
         int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
@@ -194,8 +193,7 @@ void PubDiscoveryFileStreamWriter::store(
         if (sample_info->valid()) {
             pub_file_ << "Topic name: " << sample_seq[i]->topic_name()
                       << std::endl;
-            pub_file_ << "Type name: " << sample_seq[i]->type_name()
-                      << std::endl;
+            pub_file_ << "Type name: " << sample_seq[i]->type_name();
         }
         stored_sample_count_++;
     }

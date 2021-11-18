@@ -194,16 +194,26 @@ int FileStorageWriter_connect(void *storage_writer_data)
             (struct FileStorageWriter *) storage_writer_data;
     int64_t current_time = -1;
 
-    writer->file.file = fopen(writer->file.file_name, "w");
+#ifdef RTI_WIN32
+    fopen_s(&writer->file.file, writer->file.file_name, "w");
+#else
+	writer->file.file = fopen(writer->file.file_name, "w");
+#endif
     if (writer->file.file == NULL) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->file.file_name);
         return FALSE;
     }
-    strcpy(writer->info_file.file_name, writer->file.file_name);
-    strcat(writer->info_file.file_name, ".info");
-    writer->info_file.file = fopen(writer->info_file.file_name, "w");
+#ifdef RTI_WIN32
+    strcpy_s(writer->info_file.file_name, 1024, writer->file.file_name);
+	strcat_s(writer->info_file.file_name, 1024, ".info");
+	fopen_s(&writer->info_file.file, writer->info_file.file_name, "w");
+#else
+	strcpy(writer->info_file.file_name, writer->file.file_name);
+	strcat(writer->info_file.file_name, ".info");
+	writer->info_file.file = fopen(writer->info_file.file_name, "w");
+#endif
     if (writer->info_file.file == NULL) {
         printf("%s: %s\n",
                "Failed to open file for writing",
@@ -427,7 +437,11 @@ int FileStorageWriter_initialize(
         free(writer);
         return FALSE;
     }
-    strcpy(writer->file.file_name, file_name);
+#ifdef RTI_WIN32
+	strcpy_s(writer->file.file_name, 1024, file_name);
+#else
+	strcpy(writer->file.file_name, file_name);
+#endif
 
     if (!FileStorageWriter_connect(writer)) {
         printf("Failed to connect to storage\n");
