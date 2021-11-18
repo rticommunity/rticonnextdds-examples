@@ -16,7 +16,7 @@
 #include <limits>
 
 #ifdef RTI_WIN32
-#undef max
+    #undef max
 #endif
 
 #define NANOSECS_PER_SEC 1000000000ll

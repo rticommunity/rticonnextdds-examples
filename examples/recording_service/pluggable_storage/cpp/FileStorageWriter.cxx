@@ -154,8 +154,9 @@ void FileStreamWriter::store(
             data_file_ << "    Data.id: " << sample_seq[i]->value<int32_t>("id")
                        << std::endl;
             // Get and store the sample's msg field
-            data_file_ << "    Data.msg: "
-                       << sample_seq[i]->value<dds::core::string>("msg").c_str();
+            data_file_
+                    << "    Data.msg: "
+                    << sample_seq[i]->value<dds::core::string>("msg").c_str();
         }
         stored_sample_count_++;
     }

@@ -197,7 +197,7 @@ int FileStorageWriter_connect(void *storage_writer_data)
 #ifdef RTI_WIN32
     fopen_s(&writer->file.file, writer->file.file_name, "w");
 #else
-	writer->file.file = fopen(writer->file.file_name, "w");
+	  writer->file.file = fopen(writer->file.file_name, "w");
 #endif
     if (writer->file.file == NULL) {
         printf("%s: %s\n",
@@ -207,12 +207,12 @@ int FileStorageWriter_connect(void *storage_writer_data)
     }
 #ifdef RTI_WIN32
     strcpy_s(writer->info_file.file_name, 1024, writer->file.file_name);
-	strcat_s(writer->info_file.file_name, 1024, ".info");
-	fopen_s(&writer->info_file.file, writer->info_file.file_name, "w");
+	  strcat_s(writer->info_file.file_name, 1024, ".info");
+	  fopen_s(&writer->info_file.file, writer->info_file.file_name, "w");
 #else
-	strcpy(writer->info_file.file_name, writer->file.file_name);
-	strcat(writer->info_file.file_name, ".info");
-	writer->info_file.file = fopen(writer->info_file.file_name, "w");
+	  strcpy(writer->info_file.file_name, writer->file.file_name);
+	  strcat(writer->info_file.file_name, ".info");
+	  writer->info_file.file = fopen(writer->info_file.file_name, "w");
 #endif
     if (writer->info_file.file == NULL) {
         printf("%s: %s\n",
@@ -438,9 +438,9 @@ int FileStorageWriter_initialize(
         return FALSE;
     }
 #ifdef RTI_WIN32
-	strcpy_s(writer->file.file_name, 1024, file_name);
+	  strcpy_s(writer->file.file_name, 1024, file_name);
 #else
-	strcpy(writer->file.file_name, file_name);
+	  strcpy(writer->file.file_name, file_name);
 #endif
 
     if (!FileStorageWriter_connect(writer)) {
