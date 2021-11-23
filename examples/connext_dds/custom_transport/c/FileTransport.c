@@ -1482,6 +1482,12 @@ static RTI_INT32 NDDS_Transport_FILE_create_sendresource_srEA(
 
     *sendresource_out = NULL;
 
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
+        printf("WARNING: The destination address cannot be NULL.");
+        return 0;
+    }
+
     /* multicast not supported */
     if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
         if (NDDS_Transport_Log1Enabled(me)) {
@@ -1540,6 +1546,12 @@ static RTI_INT32 NDDS_Transport_FILE_share_sendresource_srEA(
 
     struct NDDS_Transport_SendResource_FILE *sendResourceStruct =
             (struct NDDS_Transport_SendResource_FILE *) *sendresource_in;
+
+    /* Check if dest_address_in is null */
+    if (dest_address_in == NULL) {
+        printf("WARNING: The destination address cannot be NULL.");
+        return 0;
+    }
 
     /* multicast not supported */
     if (NDDS_Transport_Address_is_multicast(dest_address_in)) {
@@ -1769,18 +1781,12 @@ RTI_INT32 NDDS_Transport_FILE_get_receive_interfaces_cEA(
     /* Set the meaningful bytes of the address */
     {
         struct in_addr ipAddr;
-        unsigned int ipAddrNetworkOrder;
 
         inet_aton(me->_property.address, &ipAddr);
-        ipAddrNetworkOrder = ipAddr.s_addr;
-        interface_array_inout[0].address.network_ordered_value[15] =
-                (ipAddrNetworkOrder) % 256;
-        interface_array_inout[0].address.network_ordered_value[14] =
-                (ipAddrNetworkOrder >> 8) % 256;
-        interface_array_inout[0].address.network_ordered_value[13] =
-                (ipAddrNetworkOrder >> 16) % 256;
-        interface_array_inout[0].address.network_ordered_value[12] =
-                (ipAddrNetworkOrder >> 24) % 256;
+        memcpy(
+                interface_array_inout[0].address.network_ordered_value + 12,
+                &ipAddr,
+                4);
     }
 
 

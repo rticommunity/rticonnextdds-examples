@@ -45,16 +45,19 @@ namespace application {
         unsigned int domain_id;
         unsigned int set_count;
         rti::config::Verbosity verbosity;
+        bool use_xml_qos;
 
         ApplicationArguments(
             ParseReturn parse_result_param,
             unsigned int domain_id_param,
             unsigned int set_count_param,
-            rti::config::Verbosity verbosity_param)
+            rti::config::Verbosity verbosity_param, 
+            bool use_xml_qos_param)
             : parse_result(parse_result_param),
             domain_id(domain_id_param),
             set_count(set_count_param),
-            verbosity(verbosity_param) {}
+            verbosity(verbosity_param),
+            use_xml_qos(use_xml_qos_param) {}
     };
 
     inline void set_verbosity(
@@ -89,6 +92,7 @@ namespace application {
         unsigned int domain_id = 0;
         unsigned int set_count = (std::numeric_limits<unsigned int>::max)();
         rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
+        bool use_xml_qos = true;
 
         while (arg_processing < argc) {
             if ((argc > arg_processing + 1) 
@@ -105,6 +109,11 @@ namespace application {
             && (strcmp(argv[arg_processing], "-v") == 0
             || strcmp(argv[arg_processing], "--verbosity") == 0)) {
                 set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
+                arg_processing += 2;
+            } else if ((argc > arg_processing + 1)
+            && (strcmp(argv[arg_processing], "-x") == 0
+            || strcmp(argv[arg_processing], "--xml_qos") == 0)) {
+                use_xml_qos = atoi(argv[arg_processing + 1]) == 0 ? false : true;
                 arg_processing += 2;
             } else if (strcmp(argv[arg_processing], "-h") == 0
             || strcmp(argv[arg_processing], "--help") == 0) {
@@ -130,11 +139,14 @@ namespace application {
             "                               Default: infinite\n"
             "    -v, --verbosity    <int>   Logging verbosity.\n"\
             "                               Range: 0-3 \n"
-            "                               Default: 1"
+            "                               Default: 1\n"
+            "    -x, --xml_qos     <0|1>    Whether to set the QoS using XML or programatically.\n"\
+            "                               Default: 1 (use XML) \n"
             << std::endl;
         }
 
-        return ApplicationArguments(parse_result, domain_id, set_count, verbosity);
+        return ApplicationArguments(
+                parse_result, domain_id, set_count, verbosity, use_xml_qos);
     }
 
 }  // namespace application

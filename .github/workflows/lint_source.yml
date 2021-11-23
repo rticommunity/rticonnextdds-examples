@@ -1,0 +1,38 @@
+name: C/C++ source code lint
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.[ch]x?x?'
+      - '**/*.java'
+      - '**/*.cs'
+
+jobs:
+  lint-sourcecode:
+    runs-on: ubuntu-18.04
+    name: Lint job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Add scripts to the PATH
+        run: echo "${{ github.workspace }}/resources/ci_cd/" >> $GITHUB_PATH
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install necessary tools
+        run: pip install clang-format==9.0.0
+      - name: Perform linting
+        working-directory: ${{ github.workspace }}
+        run: |
+          base_commit="${{ github.event.pull_request.base.sha }}"
+          head_commit="${{ github.event.pull_request.head.sha }}"
+          linux_format.py -md -py -r "${base_commit}...${head_commit}"

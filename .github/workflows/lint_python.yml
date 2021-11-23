@@ -1,0 +1,48 @@
+name: Python code lint
+
+defaults:
+  run:
+    shell: bash
+
+on:
+  push:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.py'
+
+  pull_request:
+    branches:
+      - master
+      - develop
+    paths:
+      - '**/*.py'
+
+jobs:
+  lint-python:
+    runs-on: ubuntu-18.04
+    name: Lint job
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - name: Add scripts to the PATH
+        run: echo "${{ github.workspace }}/resources/ci_cd/" >> $GITHUB_PATH
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.7
+      - name: Install necessary tools
+        run: pip install black==21.5b1
+      - name: Perform format check in a pull request
+        if: github.event_name == 'pull_request'
+        working-directory: ${{ github.workspace }}
+        run: |
+          base_commit="${{ github.event.pull_request.base.sha }}"
+          head_commit="${{ github.event.pull_request.head.sha }}"
+          linux_format.py -md -clang -r "${base_commit}...${head_commit}"
+      - name: Perform format check in normal push
+        if: github.event_name == 'push'
+        working-directory: ${{ github.workspace }}
+        run: linux_format.py -md -clang -a

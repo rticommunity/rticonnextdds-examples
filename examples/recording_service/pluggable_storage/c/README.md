@@ -52,12 +52,6 @@ Recording Service API* documentation.
 In order to build this example, you need to provide the following variables to
 `CMake`:
 
--   `CONNEXTDDS_DIR`: pointing to the installation of RTI Connext DDS to be
-    used.
-
--   `CONNEXTDDS_ARCH`: the RTI Connext DDS Target architecture to be used in
-    your system.
-
 -   `CMAKE_BUILD_TYPE`: specifies the build mode. Valid values are Release
     and Debug.
 
@@ -69,8 +63,7 @@ Build the example code by running the following command:
 ```bash
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
-      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
 cmake --build .
 ```
 
@@ -84,8 +77,7 @@ In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 
 ```bash
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture>
-      -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
 ```
 
 **Cross-compilation**.
@@ -128,8 +120,12 @@ HelloMsg_publisher <your domain ID>
 To run the example, you just need to run the following command from the `build`
 folder (where the storage writer plugin shared library has been created).
 
+Also, you have to export your architecture. This way the script can use the
+specific target binary instead of using the standard host binary.
+
 ```bash
 cd build
+export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 <connext dir>/bin/rtirecordingservice -cfgFile ../pluggable_storage_example.xml
         -cfgName C_StorageExample -domainIdBase <your domain ID>
 ```
@@ -137,7 +133,7 @@ cd build
 After running this command, you will see the following output:
 
 ```bash
-RTI Recording Service (Recorder) 6.0.0 starting...
+RTI Recording Service (Recorder) 6.1.0 starting...
 RTI Recording Service started
 ```
 
@@ -180,3 +176,53 @@ the `C_PluggableStorage.dat.info` file) will be much earlier than the first
 recorded sample. For this example, we recommend that you run the publisher
 before you run *Recorder*, so the start time and the time of the first sample
 will be similar.
+
+## Customizing the Build
+
+### Configuring Build Type and Generator
+
+By default, CMake will generate build files using the most common generator for
+your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
+solution on Windows), \. You can use the following CMake variables to modify the
+default behavior:
+
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+
+-   `-G` -- CMake generator. The generator is the native build system to use
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+
+For example, to build a example in Debug/Static mode run CMake as follows:
+
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
+```
+
+### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform.If you installed Connext DDS in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+installation folder. For example:
+
+```sh
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
+```
+
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
+CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
+you want to link against. For example:
+
+```sh
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+```

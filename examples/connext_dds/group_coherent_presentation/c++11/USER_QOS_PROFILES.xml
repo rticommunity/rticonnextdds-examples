@@ -29,9 +29,6 @@
                 <publication_name>
                     <name>group_coherentDataWriter</name>
                 </publication_name>
-                <durability>
-                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-                </durability>
             </datawriter_qos>
 
             <!-- QoS used to configure the data reader created in the example code -->
@@ -39,9 +36,6 @@
                 <subscription_name>
                     <name>group_coherentDataReader</name>
                 </subscription_name>
-                <durability>
-                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-                </durability>
             </datareader_qos>
 
             <publisher_qos>
@@ -57,8 +51,8 @@
                     <access_scope>GROUP_PRESENTATION_QOS</access_scope>
                     <coherent_access>true</coherent_access>
                     <ordered_access>true</ordered_access>
-                    <!-- Uncomment so that incomplete coherent sets are not dropped -->
-                    <drop_incomplete_coherent_set>false</drop_incomplete_coherent_set>
+                    <!-- Uncomment so that incomplete coherent sets are not dropped 
+                    <drop_incomplete_coherent_set>false</drop_incomplete_coherent_set> -->
                 </presentation>
             </subscriber_qos>
 

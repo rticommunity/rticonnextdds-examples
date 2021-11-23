@@ -1,0 +1,53 @@
+/*
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
+
+rootProject.name = 'rticonnextdds-examples'
+
+includeBuild '../../resources/gradle_plugin'
+include 'asynchronous_publication:java'
+include 'batching:java'
+include 'builtin_qos_profiles:java'
+include 'builtin_topics:java'
+include 'coherent_presentation:java'
+include 'content_filtered_topic:java'
+include 'content_filtered_topic_string_filter:java'
+include 'custom_content_filter:java'
+include 'custom_flow_controller:java'
+include 'deadline_contentfilter:java'
+include 'detect_samples_dropped:java'
+include 'dynamic_data_access_union_discriminator:java'
+include 'dynamic_data_nested_structs:java'
+include 'dynamic_data_sequences:java'
+include 'dynamic_data_using_publisher_subscriber:java'
+include 'fragmented_data_statistics:java'
+include 'get_publishers:java'
+include 'instance_statistics:java'
+include 'keyed_data:java'
+include 'keyed_data_advanced:java'
+include 'listeners:java'
+include 'logging_config:java'
+include 'multichannel:java'
+include 'network_capture:01_shared_memory_and_udp:java'
+include 'ordered_presentation:java'
+include 'ordered_presentation_group:java'
+include 'partitions:java'
+include 'polling_querycondition:java'
+include 'polling_read:java'
+include 'printing_qos:java'
+include 'property_qos:java'
+include 'time_based_filter:java'
+include 'using_qos_profiles:java'
+include 'using_sequences:java'
+include 'using_typecodes:java'
+include 'waitset_query_cond:java'
+include 'waitset_status_cond:java'
+include 'waitsets:java'

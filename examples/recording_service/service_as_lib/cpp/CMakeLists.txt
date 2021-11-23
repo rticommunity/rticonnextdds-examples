@@ -40,27 +40,19 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 
 find_package(
-    RTIConnextDDS "6.0.0"
+    RTIConnextDDS "6.1.0"
     REQUIRED
     COMPONENTS
         core
         routing_service
+        recording_service
 )
-
-# Select the adequate version of the Recording Service library depending on the
-# build type
-set(recording_lib "rtirecordingservice")
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(recording_lib "${recording_lib}d")
-endif()
-
-find_library(
-    recordingservicelib
-    NAMES ${recording_lib}
-    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
 
 # Copy recorder and replay configuration files to binary directory
 add_custom_command(
@@ -107,6 +99,6 @@ target_include_directories(
 target_link_libraries(
     ServiceAsLibExample
     RTIConnextDDS::cpp2_api
-    "${recordingservicelib}"
+    RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )

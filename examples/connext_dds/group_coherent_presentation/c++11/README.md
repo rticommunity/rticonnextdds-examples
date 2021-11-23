@@ -39,21 +39,31 @@ In two separate command prompt windows for the publisher and subscriber. Run the
 following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
+On *Windows* systems run:
+
 ```sh
-# Do not forget to replace the path separator to "\" on Windows.
 group_coherent_publisher.exe  -d <domain_id> -s <sets_to_send>
 group_coherent_subscriber.exe -d <domain_id>
 ```
 
-The applications accept up to three arguments:
+On *UNIX* systems run:
 
-1.  -d: The `<domain_id>`. Both applications must use the same domain ID in 
+```sh
+./group_coherent_publisher  -d <domain_id> -s <sets_to_send>
+./group_coherent_subscriber -d <domain_id>
+```
+
+The applications accept up to four arguments:
+
+1.  -d: The `<domain_id>`. Both applications must use the same domain ID in
     order to communicate. The default is 0.
 
-2.  -s: (Publisher only) How many coherent sets to publish before cleanly 
+2.  -s: (Publisher only) How many coherent sets to publish before cleanly
     shutting down.
 
-3.  -v The logging verbosity to use (range 0-3, default: 1)
+3.  -v: The logging verbosity to use (range 0-3, default: 1)
+
+4.  -x: Whether or not to get the QoS from xml (<0|1>, default: 1)
 
 ## Customizing the Build
 

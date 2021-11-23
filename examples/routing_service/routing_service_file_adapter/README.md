@@ -18,11 +18,4 @@ plugin API is used to create new adapters; it is supported in C, C++11 and Java.
 ## Example Description
 
 This example shows how to create a simple adapter using the RTI Routing Service
-Adapter SDK. The adapter scans the file system in one specific folder defined in
-the XML configuration file. For every file present in that folder, it creates a
-stream to communicate with the output. The data that will flow in this stream
-are the lines inside the files. In summary, we have a stream for every file in
-the specified folder, and every stream transports on the other side the text
-lines contained inside the specific file. In the output, the adapter will take
-care of creating a file for every stream received. The files will be created on
-a specific path, which you can also configure in the XML configuration file.
+Adapter SDK.
