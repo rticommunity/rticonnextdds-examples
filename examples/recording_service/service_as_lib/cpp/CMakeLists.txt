@@ -27,18 +27,6 @@ if(NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR ${msg})
 endif()
 
-if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
-    set(msg
-        "You have selected to build the library in debug mode. It's recommended "
-        "to run the debug version of Recording Service or otherwise you may run "
-        "into undefined behavior")
-    message(WARNING ${msg})
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
