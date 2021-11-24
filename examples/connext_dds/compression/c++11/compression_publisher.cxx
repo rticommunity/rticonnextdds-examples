@@ -143,9 +143,6 @@ int main(int argc, char *argv[])
     // Sets Connext verbosity to help debugging
     rti::config::Logger::instance().verbosity(arguments.verbosity);
 
-    /* Set the maximun string length */
-    max_string_length = arguments.max_string_length;
-
     try {
         run_publisher_application(
                 arguments.domain_id,

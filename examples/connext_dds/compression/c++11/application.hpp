@@ -44,7 +44,6 @@ namespace application {
         ParseReturn parse_result;
         unsigned int domain_id;
         unsigned int sample_count;
-        unsigned int max_string_length;
         std::string compression_id;
         std::string input_file;
         rti::config::Verbosity verbosity;
@@ -53,14 +52,12 @@ namespace application {
             ParseReturn parse_result_param,
             unsigned int domain_id_param,
             unsigned int sample_count_param,
-            unsigned int max_string_length_param,
             std::string compression_id_param,
             std::string input_file_param,
             rti::config::Verbosity verbosity_param)
             : parse_result(parse_result_param),
             domain_id(domain_id_param),
             sample_count(sample_count_param),
-            max_string_length(max_string_length_param),
             compression_id(compression_id_param),
             input_file(input_file_param),
             verbosity(verbosity_param) {}
@@ -97,7 +94,6 @@ namespace application {
         ParseReturn parse_result = ParseReturn::ok;
         unsigned int domain_id = 0;
         unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
-        unsigned int max_string_length = 4096;
         std::string compression_id;
         std::string input_file;
         rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
@@ -112,11 +108,6 @@ namespace application {
             && (strcmp(argv[arg_processing], "-s") == 0
             || strcmp(argv[arg_processing], "--sample-count") == 0)) {
                 sample_count = atoi(argv[arg_processing + 1]);
-                arg_processing += 2;
-            } else if ((argc > arg_processing + 1)
-            && (strcmp(argv[arg_processing], "-m") == 0
-            || strcmp(argv[arg_processing], "--max-string-length") == 0)) {
-                max_string_length = atoi(argv[arg_processing + 1]);
                 arg_processing += 2;
             } else if ((argc > arg_processing + 1)
             && (strcmp(argv[arg_processing], "-c") == 0
@@ -176,7 +167,6 @@ namespace application {
                 parse_result,
                 domain_id,
                 sample_count,
-                max_string_length,
                 compression_id,
                 input_file,
                 verbosity);
