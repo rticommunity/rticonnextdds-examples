@@ -16,6 +16,7 @@
 #include <time.h>
 
 #include "ndds/ndds_c.h"
+#include "ndds/osapi/osapi_utility.h"
 #include "recordingservice/recordingservice_storagewriter.h"
 
 #include "FileStorageWriter.h"
@@ -35,7 +36,22 @@
 
 #define NANOSECS_PER_SEC 1000000000ll
 #define FileStorageWriter_FILE_NAME_MAX 1024
+#define FileStorageWriter_INFO_EXT ".info"
 #define FILENAME_PROPERTY_NAME "example.c_pluggable_storage.filename"
+
+int RTI_fopen(FILE **file, const char * file_name, const char * mode) {
+    int error_code = 0;
+#ifdef RTI_WIN32
+    error_code = fopen_s(file, file_name, mode);
+#else
+    (*file) = fopen(file_name, mode);
+
+    if ((*file) == NULL) {
+        error_code = 1;
+    }
+#endif
+    return error_code;
+}
 
 struct FileRecord {
     char file_name[FileStorageWriter_FILE_NAME_MAX];
@@ -193,28 +209,32 @@ int FileStorageWriter_connect(void *storage_writer_data)
     struct FileStorageWriter *writer =
             (struct FileStorageWriter *) storage_writer_data;
     int64_t current_time = -1;
-
-#ifdef RTI_WIN32
-    fopen_s(&writer->file.file, writer->file.file_name, "w");
-#else
-    writer->file.file = fopen(writer->file.file_name, "w");
-#endif
-    if (writer->file.file == NULL) {
+    if (RTI_fopen(&writer->file.file, writer->file.file_name, "w") != 0) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->file.file_name);
         return FALSE;
     }
-#ifdef RTI_WIN32
-    strcpy_s(writer->info_file.file_name, 1024, writer->file.file_name);
-    strcat_s(writer->info_file.file_name, 1024, ".info");
-    fopen_s(&writer->info_file.file, writer->info_file.file_name, "w");
-#else
-    strcpy(writer->info_file.file_name, writer->file.file_name);
-    strcat(writer->info_file.file_name, ".info");
-    writer->info_file.file = fopen(writer->info_file.file_name, "w");
-#endif
-    if (writer->info_file.file == NULL) {
+
+    if (RTIOsapiUtility_strncpy(
+            writer->info_file.file_name,
+            FileStorageWriter_FILE_NAME_MAX,
+            writer->file.file_name,
+            strlen(writer->file.file_name)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", writer->file.file_name);
+        return FALSE;
+    }
+
+    if (RTIOsapiUtility_strncat(
+            writer->info_file.file_name,
+            FileStorageWriter_FILE_NAME_MAX,
+            FileStorageWriter_INFO_EXT,
+            strlen(FileStorageWriter_INFO_EXT)) == NULL) {
+        printf("%s: %s\n", "Failed to append string", FileStorageWriter_INFO_EXT);
+        return FALSE;
+    }
+
+    if (RTI_fopen(&writer->info_file.file, writer->info_file.file_name, "w") != 0) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->info_file.file_name);
@@ -437,11 +457,15 @@ int FileStorageWriter_initialize(
         free(writer);
         return FALSE;
     }
-#ifdef RTI_WIN32
-    strcpy_s(writer->file.file_name, 1024, file_name);
-#else
-    strcpy(writer->file.file_name, file_name);
-#endif
+
+    if (RTIOsapiUtility_strncpy(
+            writer->file.file_name,
+            FileStorageWriter_FILE_NAME_MAX,
+            file_name,
+            strlen(file_name)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", file_name);
+        return FALSE;
+    }
 
     if (!FileStorageWriter_connect(writer)) {
         printf("Failed to connect to storage\n");
