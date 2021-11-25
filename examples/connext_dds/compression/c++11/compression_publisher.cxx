@@ -49,7 +49,8 @@ void run_publisher_application(
     // Create a Publisher
     dds::pub::Publisher publisher(participant);
 
-    dds::pub::qos::DataWriterQos datawriter_qos;
+    dds::pub::qos::DataWriterQos datawriter_qos =
+            dds::core::QosProvider::Default().datawriter_qos();
 
     if (compression_id.find("NONE") != std::string::npos) {
         datawriter_qos.policy<dds::core::policy::DataRepresentation>()
@@ -80,8 +81,11 @@ void run_publisher_application(
                         DDS_COMPRESSION_ID_LZ4_BIT));
     }
 
-    // Create a DataWriter with default QoS
-    dds::pub::DataWriter<StringLine> writer(publisher, topic);
+    // Create a DataWriter
+    dds::pub::DataWriter<StringLine> writer(publisher, topic, datawriter_qos);
+
+    // Wait at least 1 second for discovery
+    rti::util::sleep(dds::core::Duration::from_secs(1));
 
     std::vector<StringLine> samples;
     if (!input_file.empty()) {
@@ -124,6 +128,7 @@ void run_publisher_application(
         // Send once every 100 millisec
         rti::util::sleep(dds::core::Duration(0, 100000));
     }
+    std::cout << "Written StringLine, count " << sample_count << std::endl;
 }
 
 int main(int argc, char *argv[])

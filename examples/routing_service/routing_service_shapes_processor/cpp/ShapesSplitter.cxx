@@ -96,7 +96,7 @@ rti::routing::processor::Processor *ShapesSplitterPlugin::create_processor(
         rti::routing::processor::Route &,
         const rti::routing::PropertySet &properties)
 {
-    ti::routing::Logger::instance().local("ShapesSplitter Processor created");
+    rti::routing::Logger::instance().local("ShapesSplitter Processor created");
     return new ShapesSplitter();
 }
 

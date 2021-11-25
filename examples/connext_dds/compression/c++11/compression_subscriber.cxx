@@ -84,6 +84,22 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
         // Wait for data and report if it does not arrive in 1 second
         waitset.dispatch(dds::core::Duration(1));
     }
+
+    struct NDDS_Transport_UDPv4_Statistics subParticipantUdpStats;
+    if (NDDS_Transport_Support_get_udpv4_statistics(
+                participant->native_participant(),
+                &subParticipantUdpStats)
+            != DDS_RETCODE_OK) {
+        std::cout << "Failed reading Udp Statistic" << std::endl;
+    }
+
+    std::cout << std::endl
+              << "--> Read: " << samples_read << " samples from which "
+              << reader->datareader_cache_status().compressed_sample_count()
+              << " have been compressed" << std::endl;
+    std::cout << std::endl
+              << "--> User Bytes received: "
+              << subParticipantUdpStats.user_bytes_received << std::endl;
 }
 
 int main(int argc, char *argv[])

@@ -43,6 +43,9 @@ $cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
 cmake --build .
 ```
 
+**Note**: when compiling on a Windows 64-bit machine you will need to add the
+`-A x64` parameter to the call to CMake.
+
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
 Solutions, you can specify the configuration mode to build as follows:
 
@@ -88,10 +91,13 @@ set that value to ```SHAPE_TOPIC``` before starting Routing Service.
 another file both using the FileAdapter plug-in. As before you should set the
 appropriate value of ```SHAPE_TOPIC``` before starting Routing Service.
 
-To run Routing Service, you will need first to set up your environment as follows:
+To run Routing Service, you will need first to set up your environment as follows.
+
+Before running the RTI Routing Service, you need to specify where the
+`fileadapter` library is located as shown below:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>
+$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>:<Path to fileadapter library>
 ```
 
 ```bash
@@ -151,6 +157,12 @@ Received Sample:
    y: 112
    shapesize: 30
 ```
+
+**Note**: when running on Windows systems, remove the quotes from the value of
+the ``SHAPE_TOPIC`` environment variable.
+
+```bash
+set SHAPE_TOPIC=Triangle
 
 The general behavior of this example, can be controlled using properties and the
 ```SHAPE_TOPIC``` environment variable. You can modify properties in the Routing

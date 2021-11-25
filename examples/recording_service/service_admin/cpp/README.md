@@ -34,23 +34,20 @@ The following files are part of the example:
     profiles in both the application and the *Recording Service* we ensure the
     QoS matching and the reliability of the communication.
 
+-   `replay_remote_admin.xml`: this is a configuration file for Replay
+    Service that enables remote administration, and uses the QoS profiles
+    defined in the XML QoS profiles file defined above. By using the same QoS
+    profiles in both the application and the *Replay Service* we ensure the
+    QoS matching and the reliability of the communication.
+
 ## Building the Example
-
-In order to build this example, you need to provide the following variables to
-`CMake`:
-
--   `CONNEXTDDS_DIR`: pointing to the installation of RTI Connext DDS to be
-    used.
-
--   `CONNEXTDDS_ARCH`: the RTI Connext DDS Target architecture to be used in
-    your system.
 
 Build the example code by running the following command:
 
 ```sh
 mkdir build
 cd build
-cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
+cmake ..
 cmake --build .
 ```
 
@@ -66,16 +63,6 @@ binary directory so that *Recording Service* can be run directly from this
 directory as well.
 
 > **Note:**
->
-> In order to build, `CMake` will invoke *RTI DDS Code Generator* on the
-> `ServiceCommon.idl`, `ServiceAdmin.idl` and `RecordingServiceTypes.idl` files
-> that can be found in `$(CONNEXTDDS_DIR)/resource/idl` directory. These files
-> define the communication interface for the remote administration platform and
-> any *Recording Service*-specific types (`RecordingServiceTypes.idl`). The
-> resulting generated C++ code will be stored in a folder called `generated` in
-> the CMake build directory.
->
-> **Cross-compilation**:
 >
 > When you need to cross-compile the example, the above
 > command will not work, the assigned compiler won't be the cross-compiler and
@@ -107,12 +94,20 @@ shipped with the example, called `recorder_remote_admin.xml`:
 
 ```sh
 cd <binary directory>
-$(CONNEXTDDS_DIR)/bin/rtirecordingservice
+$(NDDSHOME)/bin/rtirecordingservice
         -cfgFile recorder_remote_admin.xml -cfgName remote_admin
 ```
 
+Or in the case of *Replay Service*:
+
+```sh
+cd <binary directory>
+$(NDDSHOME)/bin/rtireplayservice
+        -cfgFile replay_remote_admin.xml -cfgName remote_admin
+```
+
 Note: you can run from other directory, just make sure the
-`recorder_remote_admin.xml` and `USER_QOS_PROFILES.xml`
+`recorder_remote_admin.xml`, `replay_remote_admin.xml` and `USER_QOS_PROFILES.xml`
 
 Once the *Recording Service* instance is running, it is ready to receive remote
 command requests. The administration app receives the following command-line
@@ -122,7 +117,8 @@ parameters:
     UPDATE, DELETE).
 
 -   The identifier of the resource we're accessing, e.g.
-    `recording_services/remote_admin/state`
+    `recording_services/remote_admin/state` or
+    `/replay_services/remote_admin/playback:continue`
 
 -   [Optional] The arguments that the command kind needs for performing the
     action, e.g. `paused` (if the objective state of the service is *paused*)
@@ -141,6 +137,34 @@ parameters:
     symbolically define time ranges to be replayed or converted. This command
     requires a name parameter and optionally, a description (remember to use
     quotes for multi-word descriptions).
+
+-   [Optional] `--add-breakpoint`: this command-line parameter allows the user
+    to define a breakpoint for *Replay Service*. These breakpoints will be used
+    in the debug mode of Replay. This command requires a timestamp in nanosecond
+    form and optionally, a breakpoint name.
+
+-   [Optional] `--remove-breakpoint`: it allows the user to remove an
+    existing breakpoint of the replay. This command requires the timestamp or
+    name of the breakpoint to be removed.
+
+-   [Optional] `--goto-breakpoint`: this command-line parameter is used to jump
+    to a existed breakpoint. This command requires the timestamp or name of the
+    specific breakpoint.
+
+-   [Optional] `--continue-seconds`: this command-line parameter allows the user
+    to continue the replay for a specific amount of seconds. This command
+    requires the number of seconds to be replayed.
+
+-   [Optional] `--continue-slices`: it allows the user to continue the
+    replay for a specific amount of slices. This command requires the number of
+    slices to be replayed.
+
+-   [Optional] `--current-timestamp`: it allows the user to jump in time
+    forward and backward in *Replay Service*. This command requires a timestamp
+    in nanosecond format.
+
+Note: In order to run the *Replay Service* debug mode commands you must
+uncomment the debug mode configuration inside `replay_remote_admin.xml`.
 
 To run the administration app, you should go to the binary directory, or if you
 run from other directories, make sure the `USER_QOS_PROFILES.xml` file is
@@ -165,6 +189,68 @@ different commands to the service.
     ```plaintext
     Requester DELETE /recording_services/remote_admin
     ```
+
+4.  Sending an add breakpoint command
+
+    ```plaintext
+    Requester UPDATE /replay_services/remote_admin/playback:add_breakpoint --add-breakpoint 1613896947838268998 "breakpoint_1"
+    ```
+
+5.  Sending a Continue command
+
+    ```plaintext
+    Requester UPDATE /replay_services/remote_admin/playback:continue
+    ```
+
+## Customizing the Build
+
+### Configuring Build Type and Generator
+
+By default, CMake will generate build files using the most common generator for
+your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
+solution on Windows), \. You can use the following CMake variables to modify the
+default behavior:
+
+-   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+
+-   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+
+-   `-G` -- CMake generator. The generator is the native build system to use
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+
+For example, to build a example in Debug/Static mode run CMake as follows:
+
+```sh
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
+```
+
+### Configuring Connext DDS Installation Path and Architecture
+
+The CMake build infrastructure will try to guess the location of your Connext
+DDS installation and the Connext DDS architecture based on the default settings
+for your host platform.If you installed Connext DDS in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+installation folder. For example:
+
+```sh
+cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
+```
+
+Also, If you installed libraries for multiple target architecture on your system
+(i.e., you installed more than one target rtipkg), you can use the
+CONNEXTDDS_ARCH variable to indicate the architecture of the specific libraries
+you want to link against. For example:
+
+```sh
+cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+```
 
 ## Requirements
 

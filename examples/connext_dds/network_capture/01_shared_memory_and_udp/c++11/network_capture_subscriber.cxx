@@ -15,6 +15,7 @@
 
 #include <dds/sub/ddssub.hpp>
 #include <dds/core/ddscore.hpp>
+#include <rti/util/util.hpp>
 #include <rti/config/Logger.hpp>  // for logging
 #include "network_capture.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c
@@ -57,7 +58,7 @@ void run_subscriber_application(
     dds::domain::DomainParticipant participant(domain_id);
     dds::topic::Topic<NetworkCapture> topic(
             participant,
-            "Example NetworkCapture");
+            "Network capture shared memory example");
     dds::sub::Subscriber subscriber(participant);
     dds::sub::DataReader<NetworkCapture> reader(subscriber, topic);
 

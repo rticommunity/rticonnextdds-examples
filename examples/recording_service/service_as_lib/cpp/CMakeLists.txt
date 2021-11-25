@@ -27,20 +27,11 @@ if(NOT CMAKE_BUILD_TYPE)
     message(FATAL_ERROR ${msg})
 endif()
 
-if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)
-    set(msg
-        "You have selected to build the library in debug mode. It's recommended "
-        "to run the debug version of Recording Service or otherwise you may run "
-        "into undefined behavior")
-    message(WARNING ${msg})
-endif()
-
-if(NOT CMAKE_BUILD_TYPE)
-    set(CMAKE_BUILD_TYPE Release)
-endif()
-
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
 
 find_package(
     RTIConnextDDS "6.1.0"
@@ -48,19 +39,8 @@ find_package(
     COMPONENTS
         core
         routing_service
+        recording_service
 )
-
-# Select the adequate version of the Recording Service library depending on the
-# build type
-set(recording_lib "rtirecordingservice")
-if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-    set(recording_lib "${recording_lib}d")
-endif()
-
-find_library(
-    recordingservicelib
-    NAMES ${recording_lib}
-    PATHS "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}")
 
 # Copy recorder and replay configuration files to binary directory
 add_custom_command(
@@ -107,6 +87,6 @@ target_include_directories(
 target_link_libraries(
     ServiceAsLibExample
     RTIConnextDDS::cpp2_api
-    "${recordingservicelib}"
+    RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )

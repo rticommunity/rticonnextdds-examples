@@ -49,6 +49,8 @@ the *Topic* names, and the aggregation pattern is very simple: it produces
 `Triangle` samples whose position is obtained from `Square` samples, and the
 size is obtained from the `y` coordinate obtained from `Circle` samples.
 
+**Note**: samples of topics `Square` and `Circle` are routed without modification.
+
 The aggregation logic relies on the reception samples from the `Square`input to
 trigger data forwarding, and merge available data from the `Circle` input. Note
 that for the purpose of this example, the names of the inputs and outputs are

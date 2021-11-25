@@ -62,6 +62,10 @@ or inability to use the software.
             </datawriter_qos>
 
             <datareader_qos>
+                <subscription_name>
+                    <name>compressionDataReader</name>
+                </subscription_name>
+
                 <representation>
                     <compression_settings>
                         <!--
@@ -75,13 +79,6 @@ or inability to use the software.
                         <compression_ids>MASK_ALL</compression_ids>
                     </compression_settings>
                 </representation>
-            </datareader_qos>
-
-            <!-- QoS used to configure the data reader created in the example code -->                
-            <datareader_qos>
-                <subscription_name>
-                    <name>compressionDataReader</name>
-                </subscription_name>
             </datareader_qos>
 
             <participant_qos>

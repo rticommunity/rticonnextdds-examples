@@ -1,0 +1,80 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/6.1.0/rti_cloud_discovery_service.xsd">
+    <cloud_discovery_service name="AllDomains">
+        <transport>
+            <element>
+                <alias>builtin.udpv4_wan</alias>
+                <receive_port>7400</receive_port>
+                <property>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
+                        <value>$(PUBLIC_ADDRESS)</value>
+                    </element>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
+                        <value>1400</value>
+                    </element>
+                    <element>
+                        <name>dds.participant.protocol.rtps_overhead</name>
+                        <value>256</value>
+                    </element>
+                </property>
+            </element>
+        </transport>
+        
+        <forwarder>
+            <event>
+                <refresh_period>
+                    <sec>5</sec>
+                    <nanosec>0</nanosec>
+                </refresh_period>
+            </event>
+        </forwarder>
+    </cloud_discovery_service>
+
+    <cloud_discovery_service name="AllDomainsSecure">
+        <transport>
+            <element>
+                <alias>builtin.udpv4_wan</alias>
+                <receive_port>7400</receive_port>
+                <property>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
+                        <value>$(PUBLIC_ADDRESS)</value>
+                    </element>
+                    <element>
+                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
+                        <value>1400</value>
+                    </element>
+                    <element>
+                        <name>dds.participant.protocol.rtps_overhead</name>
+                        <value>256</value>
+                    </element>
+                </property>
+            </element>
+        </transport>
+
+        <security>
+            <property>
+                <element>
+                    <name>com.rti.serv.secure.authentication.participant_discovery_protection_key</name>
+                    <value>str:key1</value>
+                </element>
+                <element>
+                    <name>com.rti.serv.secure.cryptography.rtps_protection_key</name>
+                    <value>str:key0</value>
+                </element>
+            </property>
+        </security>
+
+        <forwarder>
+            <event>
+                <refresh_period>
+                    <sec>5</sec>
+                    <nanosec>0</nanosec>
+                </refresh_period>
+            </event>
+        </forwarder>
+    </cloud_discovery_service>
+</dds>
