@@ -39,7 +39,8 @@
 #define FileStorageWriter_INFO_EXT ".info"
 #define FILENAME_PROPERTY_NAME "example.c_pluggable_storage.filename"
 
-int RTI_fopen(FILE **file, const char * file_name, const char * mode) {
+int RTI_fopen(FILE **file, const char *file_name, const char *mode)
+{
     int error_code = 0;
 #ifdef RTI_WIN32
     error_code = fopen_s(file, file_name, mode);

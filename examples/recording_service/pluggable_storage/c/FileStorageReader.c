@@ -27,7 +27,8 @@
 
 #define NANOSECS_PER_SEC 1000000000
 
-int RTI_fopen(FILE **file, const char * file_name, const char * mode) {
+int RTI_fopen(FILE **file, const char *file_name, const char *mode)
+{
     int error_code = 0;
 #ifdef RTI_WIN32
     error_code = fopen_s(file, file_name, mode);
