@@ -17,10 +17,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ndds/ndds_c.h"
-#include "ndds/osapi/osapi_utility.h"
-#include "recordingservice/recordingservice_storagereader.h"
-#include "routingservice/routingservice_infrastructure.h"
+#include <ndds/ndds_c.h>
+#include <osapi/osapi_utility.h>
+#include <recordingservice_storagereader.h>
+#include <routingservice/routingservice_infrastructure.h>
 
 #include "FileStorageReader.h"
 #include "FileStorageUtils.h"
