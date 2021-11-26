@@ -20,6 +20,7 @@
 #include "recordingservice/recordingservice_storagewriter.h"
 
 #include "FileStorageWriter.h"
+#include "FileStorageUtils.h"
 
 #ifdef _WIN32
     #define PRIu64 "I64u"
@@ -38,21 +39,6 @@
 #define FileStorageWriter_FILE_NAME_MAX 1024
 #define FileStorageWriter_INFO_EXT ".info"
 #define FILENAME_PROPERTY_NAME "example.c_pluggable_storage.filename"
-
-int RTI_fopen(FILE **file, const char *file_name, const char *mode)
-{
-    int error_code = 0;
-#ifdef RTI_WIN32
-    error_code = fopen_s(file, file_name, mode);
-#else
-    (*file) = fopen(file_name, mode);
-
-    if ((*file) == NULL) {
-        error_code = 1;
-    }
-#endif
-    return error_code;
-}
 
 struct FileRecord {
     char file_name[FileStorageWriter_FILE_NAME_MAX];

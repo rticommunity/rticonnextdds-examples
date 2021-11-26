@@ -141,7 +141,7 @@ void FileStreamWriter::store(
     for (size_t i = 0; i < count; ++i) {
         const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
-        int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
+        int64_t timestamp = static_cast<int64_t>(sample_info->reception_timestamp().sec())
                 * NANOSECS_PER_SEC;
         timestamp += sample_info->reception_timestamp().nanosec();
 
@@ -183,7 +183,7 @@ void PubDiscoveryFileStreamWriter::store(
     for (size_t i = 0; i < count; ++i) {
         const SampleInfo &sample_info = *(info_seq[i]);
         // we first first print the sample's metadata
-        int64_t timestamp = (int64_t) sample_info->reception_timestamp().sec()
+        int64_t timestamp = static_cast<int64_t>(sample_info->reception_timestamp().sec())
                 * NANOSECS_PER_SEC;
         timestamp += sample_info->reception_timestamp().nanosec();
 

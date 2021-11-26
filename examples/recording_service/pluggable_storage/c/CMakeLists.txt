@@ -83,6 +83,7 @@ add_library(
     FileStorageWriter
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
 )
 
 add_dependencies(FileStorageWriter generated_code)
@@ -107,6 +108,7 @@ add_library(
     FileStorageReader
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
 )
 
 add_dependencies(FileStorageReader generated_code)
