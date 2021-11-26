@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <iostream>
 #include <fstream>
@@ -38,7 +38,8 @@ void run_publisher_application(
         const std::string &input_file)
 {
     // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/best-practices/use-modern-c-types-correctly)
+    // (see
+    // https://community.rti.com/best-practices/use-modern-c-types-correctly)
 
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
@@ -111,14 +112,13 @@ void run_publisher_application(
     std::vector<StringLine>::iterator it = samples.begin();
 
     for (unsigned int samples_written = 0;
-            !application::shutdown_requested && samples_written < sample_count;
-            samples_written++, ++it) {
-
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++, ++it) {
         /* Loop over the lines on the file */
-        if (it==samples.end()) {
+        if (it == samples.end()) {
             it = samples.begin();
         }
-        if (!(samples_written%10)) {
+        if (!(samples_written % 10)) {
             std::cout << "Writing StringLine, count " << samples_written
                       << std::endl;
         }
@@ -133,7 +133,6 @@ void run_publisher_application(
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -154,10 +153,10 @@ int main(int argc, char *argv[])
                 arguments.sample_count,
                 arguments.compression_id,
                 arguments.input_file);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_publisher_application(): " << ex.what()
-        << std::endl;
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
