@@ -15,6 +15,10 @@
 #include "dds/dds.hpp"
 #include <limits>
 
+#ifdef RTI_WIN32
+    #undef max
+#endif
+
 #define NANOSECS_PER_SEC 1000000000ll
 
 
@@ -219,11 +223,6 @@ bool FileStorageStreamReader::read_sample()
         if (data_file_->fail()) {
             throw std::runtime_error(
                     "Failed to read current data.msg field from file");
-        }
-        std::getline(*data_file_, prefix);
-        if (prefix != std::string("")) {
-            throw std::runtime_error(
-                    "Failed to terminator for sample from file");
         }
     }
     return true;

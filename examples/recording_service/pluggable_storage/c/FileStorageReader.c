@@ -17,11 +17,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "ndds/ndds_c.h"
-#include "recordingservice/recordingservice_storagereader.h"
-#include "routingservice/routingservice_infrastructure.h"
+#include <ndds/ndds_c.h>
+#include <osapi/osapi_utility.h>
+#include <recordingservice/recordingservice_storagereader.h>
+#include <routingservice/routingservice_infrastructure.h>
 
 #include "FileStorageReader.h"
+#include "FileStorageUtils.h"
 #include "HelloMsg.h"
 
 #define NANOSECS_PER_SEC 1000000000
@@ -209,17 +211,41 @@ int FileStorageStreamInfoReader_initialize(
     stream_reader->base_discovery_stream_reader.stream_reader_data =
             stream_reader;
 
-    stream_reader->file_record.file = fopen(fileName, "r");
-    if (stream_reader->file_record.file == NULL) {
+    if (RTI_fopen(&stream_reader->file_record.file, fileName, "r") != 0) {
         perror("Failed to open file");
         return FALSE;
     }
-    strcpy(stream_reader->file_record.fileName, fileName);
-    strcpy(stream_reader->info_file_record.fileName, fileName);
-    strcat(stream_reader->info_file_record.fileName, ".info");
-    stream_reader->info_file_record.file =
-            fopen(stream_reader->info_file_record.fileName, "r");
-    if (stream_reader->info_file_record.file == NULL) {
+
+    if (RTIOsapiUtility_strncpy(
+            stream_reader->file_record.fileName,
+            FILENAME_MAX,
+            fileName,
+            strlen(fileName)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", fileName);
+        return FALSE;
+    }
+    if (RTIOsapiUtility_strncpy(
+            stream_reader->info_file_record.fileName,
+            FILENAME_MAX,
+            fileName,
+            strlen(fileName)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", fileName);
+        return FALSE;
+    }
+
+    if (RTIOsapiUtility_strncat(
+            stream_reader->info_file_record.fileName,
+            FILENAME_MAX,
+            ".info",
+            strlen(".info")) == NULL) {
+        printf("%s: %s\n", "Failed to append string", ".info");
+        return FALSE;
+    }
+
+    if (RTI_fopen(
+            &stream_reader->info_file_record.file,
+            stream_reader->info_file_record.fileName,
+            "r") != 0) {
         perror("Failed to open info file");
         return FALSE;
     }
@@ -515,10 +541,20 @@ int FileStorageStreamReader_initialize(
         return FALSE;
     }
 
-    strcpy(stream_reader->file_record.fileName, file_name);
-    stream_reader->file_record.file =
-            fopen(stream_reader->file_record.fileName, "r");
-    if (stream_reader->file_record.file == NULL) {
+    if (RTIOsapiUtility_strncpy(
+            stream_reader->file_record.fileName,
+            FILENAME_MAX,
+            file_name,
+            strlen(file_name)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", file_name);
+        return FALSE;
+    }
+
+    if (RTI_fopen(
+            &stream_reader->file_record.file,
+            stream_reader->file_record.fileName,
+            "r") != 0) {
+        perror("Failed to open record file");
         return FALSE;
     }
     /*
@@ -769,7 +805,15 @@ struct RTI_RecordingServiceStorageReader *FileStorageReader_create(
         free(storage_reader);
         return NULL;
     }
-    strcpy(storage_reader->file_name, file_name);
+
+    if (RTIOsapiUtility_strncpy(
+            storage_reader->file_name,
+            FileStorageReader_FILE_NAME_MAX,
+            file_name,
+            strlen(file_name)) == NULL) {
+        printf("%s: %s\n", "Failed to copy string", file_name);
+        return FALSE;
+    }
 
     RTI_RecordingServiceStorageReader_initialize(
             &storage_reader->as_storage_reader);

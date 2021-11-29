@@ -83,6 +83,8 @@ add_library(
     FileStorageWriter
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.h"
 )
 
 add_dependencies(FileStorageWriter generated_code)
@@ -99,7 +101,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
-        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the library that will provide the storage reader plugin
@@ -107,6 +108,7 @@ add_library(
     FileStorageReader
         "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
 )
 
 add_dependencies(FileStorageReader generated_code)
@@ -123,7 +125,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
-        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the publisher application
