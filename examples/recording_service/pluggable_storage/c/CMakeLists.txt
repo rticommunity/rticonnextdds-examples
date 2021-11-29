@@ -101,8 +101,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
-        ${CONNEXTDDS_INCLUDE_DIRS}
-        "${CONNEXTDDS_DIR}/include/recordingservice"
 )
 
 # Define the library that will provide the storage reader plugin
@@ -127,8 +125,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_BINARY_DIR}/generated"
-        ${CONNEXTDDS_INCLUDE_DIRS}
-        "${CONNEXTDDS_DIR}/include/recordingservice"
 )
 
 # Define the publisher application
