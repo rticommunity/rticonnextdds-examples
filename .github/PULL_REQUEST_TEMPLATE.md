@@ -22,5 +22,5 @@
 -->
 <!-- Uncomment bellow if you added a Java example and updated examples/connext_dds/settings.gradle -->
 <!--
--   [ ] I added a new Java example and updated `examples/connext_dds/settings.gradle`.
+-   [ ] I have added a new Java example and updated `examples/connext_dds/settings.gradle` accordingly.
 -->
