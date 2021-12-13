@@ -66,7 +66,7 @@ The applications accept up to three arguments:
     LZ4.
 
 4.  (Publisher only) Path to the file to read. The file will be read line by
-    line (each line represents a sample). If no file is given, a 1K sample 
+    line (each line represents a sample). If no file is given, a 1K sample
     filled with zeros will be sent.
 
 ## Customizing the Build
