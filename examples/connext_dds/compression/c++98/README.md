@@ -42,15 +42,15 @@ the application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-compression_publisher.exe  -d <domain_id> -s <samples_to_send> -c <compression_id> -i <input_file>
-compression_subscriber.exe -d <domain_id> -s <samples_to_receive>
+compression_publisher.exe  -d <domain_id> -s <samples_to_send> -c <compression_id> -i <input_file> -v <verbosity 0-3>
+compression_subscriber.exe -d <domain_id> -s <samples_to_receive> -v <verbosity 0-3>
 ```
 
 On *UNIX* systems:
 
 ```sh
-./compression_publisher  -d <domain_id> -s <samples_to_send> -c <compression_id> -i <input_file>
-./compression_subscriber -d <domain_id> -s <samples_to_receive>
+./compression_publisher  -d <domain_id> -s <samples_to_send> -c <compression_id> -i <input_file> -v <verbosity 0-3>
+./compression_subscriber -d <domain_id> -s <samples_to_receive> -v <verbosity 0-3>
 ```
 
 The applications accept up to three arguments:
