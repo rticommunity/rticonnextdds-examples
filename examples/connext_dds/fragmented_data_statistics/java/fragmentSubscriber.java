@@ -21,29 +21,39 @@ import com.rti.dds.infrastructure.RETCODE_TIMEOUT;
 import com.rti.dds.infrastructure.ResourceLimitsQosPolicy;
 import com.rti.dds.infrastructure.StatusKind;
 import com.rti.dds.infrastructure.WaitSet;
-import com.rti.dds.subscription.*;
+import com.rti.dds.subscription.DataReaderProtocolStatus;
+import com.rti.dds.subscription.InstanceStateKind;
+import com.rti.dds.subscription.ReadCondition;
+import com.rti.dds.subscription.SampleInfo;
+import com.rti.dds.subscription.SampleInfoSeq;
+import com.rti.dds.subscription.SampleStateKind;
+import com.rti.dds.subscription.Subscriber;
+import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
 
 /**
-* Simple example showing all Connext code in one place for readability.
-*/
+ * Simple example showing all Connext code in one place for readability.
+ */
 public class fragmentSubscriber extends Application implements AutoCloseable {
-
-    private DomainParticipant participant = null; // Usually one per application
+    private DomainParticipant participant = null;  // Usually one per
+                                                   // application
     private fragmentDataReader reader = null;
     private final fragmentSeq dataSeq = new fragmentSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
-    private int processData() {
+    private int processData()
+    {
         int samplesRead = 0;
 
         try {
             // Take available data from DataReader's queue
-            reader.take(dataSeq, infoSeq,
-            ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-            SampleStateKind.ANY_SAMPLE_STATE,
-            ViewStateKind.ANY_VIEW_STATE,
-            InstanceStateKind.ANY_INSTANCE_STATE);
+            reader.take(
+                    dataSeq,
+                    infoSeq,
+                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                    SampleStateKind.ANY_SAMPLE_STATE,
+                    ViewStateKind.ANY_VIEW_STATE,
+                    InstanceStateKind.ANY_INSTANCE_STATE);
 
             for (int i = 0; i < dataSeq.size(); ++i) {
                 SampleInfo info = infoSeq.get(i);
@@ -63,50 +73,51 @@ public class fragmentSubscriber extends Application implements AutoCloseable {
         return samplesRead;
     }
 
-    private void runApplication() {
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
-            DomainParticipantFactory.get_instance().create_participant(
-                getDomainId(),
-                DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                DomainParticipantFactory.get_instance().create_participant(
+                        getDomainId(),
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         // A Subscriber allows an application to create one or more DataReaders
-        Subscriber subscriber = Objects.requireNonNull(
-            participant.create_subscriber(
-                DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+        Subscriber subscriber =
+                Objects.requireNonNull(participant.create_subscriber(
+                        DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         // Register the datatype to use when creating the Topic
         String typeName = fragmentTypeSupport.get_type_name();
         fragmentTypeSupport.register_type(participant, typeName);
 
         // Create a Topic with a name and a datatype
-        Topic topic = Objects.requireNonNull(
-            participant.create_topic(
+        Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example fragment",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
-                null, // listener
+                null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
         // This DataReader reads data on "Example fragment" Topic
         reader = (fragmentDataReader) Objects.requireNonNull(
-            subscriber.create_datareader(
-                topic,
-                Subscriber.DATAREADER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                subscriber.create_datareader(
+                        topic,
+                        Subscriber.DATAREADER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         // Create ReadCondition that triggers when data in reader's queue
         ReadCondition condition = reader.create_readcondition(
-            SampleStateKind.ANY_SAMPLE_STATE,
-            ViewStateKind.ANY_VIEW_STATE,
-            InstanceStateKind.ANY_INSTANCE_STATE);
+                SampleStateKind.ANY_SAMPLE_STATE,
+                ViewStateKind.ANY_VIEW_STATE,
+                InstanceStateKind.ANY_INSTANCE_STATE);
 
-        // WaitSet will be woken when the attached condition is triggered, or timeout
+        // WaitSet will be woken when the attached condition is triggered, or
+        // timeout
         WaitSet waitset = new WaitSet();
         waitset.attach_condition(condition);
         final Duration_t waitTimeout = new Duration_t(1, 0);
@@ -126,42 +137,49 @@ public class fragmentSubscriber extends Application implements AutoCloseable {
 
             } catch (RETCODE_TIMEOUT timeout) {
                 // No data received, not a problem
-                System.out.printf("No data after %d seconds.%n", waitTimeout.sec);
+                System.out.printf(
+                        "No data after %d seconds.%n",
+                        waitTimeout.sec);
             }
             reader.get_datareader_protocol_status(status);
-            System.out.println("Fragmented Data Statistics:\n"
-                + "\t received_fragment_count "
-                + status.received_fragment_count + "\n"
-                +"\t dropped_fragment_count "
-                + status.dropped_fragment_count + "\n"
-                +"\t sent_nack_fragment_count "
-                + status.sent_nack_fragment_count + "\n"
-                +"\t sent_nack_fragment_bytes "
-                + status.sent_nack_fragment_bytes);
+            System.out.println(
+                    "Fragmented Data Statistics:\n"
+                    + "\t received_fragment_count "
+                    + status.received_fragment_count + "\n"
+                    + "\t dropped_fragment_count "
+                    + status.dropped_fragment_count + "\n"
+                    + "\t sent_nack_fragment_count "
+                    + status.sent_nack_fragment_count + "\n"
+                    + "\t sent_nack_fragment_bytes "
+                    + status.sent_nack_fragment_bytes);
         }
     }
 
-    @Override
-    public void close() {
-        // Delete all entities (DataReader, Topic, Subscriber, DomainParticipant)
+    @Override public void close()
+    {
+        // Delete all entities (DataReader, Topic, Subscriber,
+        // DomainParticipant)
         if (participant != null) {
             participant.delete_contained_entities();
 
-            DomainParticipantFactory.get_instance()
-            .delete_participant(participant);
+            DomainParticipantFactory.get_instance().delete_participant(
+                    participant);
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (fragmentSubscriber subscriberApplication = new fragmentSubscriber()) {
+        try (fragmentSubscriber subscriberApplication =
+                     new fragmentSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
         }
 
-        // Releases the memory used by the participant factory. Optional at application exit.
+        // Releases the memory used by the participant factory. Optional at
+        // application exit.
         DomainParticipantFactory.finalize_instance();
     }
 }

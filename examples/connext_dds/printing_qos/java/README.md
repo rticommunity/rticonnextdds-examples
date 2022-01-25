@@ -38,14 +38,14 @@ publisher and another one for the subscriber, both from the example directory:
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingPublisher -d <domain_id> -s <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingPublisher  -d <domain_id> -s <samples_to_send>
 java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar printingSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 On *Windows* systems run:
 
 ```sh
-java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" printingPublisher -d <domain_id> -s <samples_to_send>
+java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" printingPublisher  -d <domain_id> -s <samples_to_send>
 java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" printingSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
@@ -61,9 +61,8 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in order
 to communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher
-and sleep periods for the subscriber. A value of '0' instructs the application
-to run forever; this is the default.
+2.  How long the examples should run, measured in samples. The default is
+    infinite.
 
 ## Gradle Build Infrastructure
 
