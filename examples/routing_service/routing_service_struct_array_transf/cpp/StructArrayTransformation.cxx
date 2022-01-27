@@ -23,57 +23,58 @@ using dds::sub::SampleInfo;
  * (see TransformedSensorDataExample.idl).
  *
  */
-DynamicData *StructArrayTransformation::convert_sample(
-        const DynamicData *input_sample)
+
+DynamicData* StructArrayTransformation::convert_sample(
+	const DynamicData* input_sample)
 {
-    SensorAttributesCollection native_collection =
-            rti::core::xtypes::convert<SensorAttributesCollection>(
-                    *input_sample);
+	SensorData native_sensor_data;
+	// We obtain the array of SensorAttributes:
+	DynamicData array_sensor = input_sample->value<DynamicData>("sensor_array");
+	int32_t size = array_sensor.member_count();
+	for (int32_t count = 0; count < size; ++count) {
+		// We get the SensorAttributes from the array:
+		DynamicData sensor_attributes_native =
+			array_sensor.value<DynamicData>(count + 1);
+		// We fill SensorData with the values from SensorAttributesCollection:
+		native_sensor_data.id()[count] =
+			sensor_attributes_native.value<uint32_t>("id");
+		native_sensor_data.value()[count] =
+			sensor_attributes_native.value<float>("value");
+		native_sensor_data.is_active()[count] =
+			sensor_attributes_native.value<bool>("is_active");
+	}
 
-    SensorData native_sensor_data;
-
-    /* Map elements from SensorAttributesCollection to SensorData */
-    for (int32_t count = 0; count < native_collection.sensor_array().size();
-         ++count) {
-        native_sensor_data.id().at(count) =
-                native_collection.sensor_array().at(count).id();
-        native_sensor_data.value().at(count) =
-                native_collection.sensor_array().at(count).value();
-        native_sensor_data.is_active().at(count) =
-                native_collection.sensor_array().at(count).is_active();
-    }
-
-    return new DynamicData(rti::core::xtypes::convert(native_sensor_data));
+	return new DynamicData(rti::core::xtypes::convert(native_sensor_data));
 }
 
 void StructArrayTransformation::transform(
-        std::vector<DynamicData *> &output_sample_seq,
-        std::vector<SampleInfo *> &output_info_seq,
-        const std::vector<DynamicData *> &input_sample_seq,
-        const std::vector<SampleInfo *> &input_info_seq)
+	std::vector<DynamicData*>& output_sample_seq,
+	std::vector<SampleInfo*>& output_info_seq,
+	const std::vector<DynamicData*>& input_sample_seq,
+	const std::vector<SampleInfo*>& input_info_seq)
 {
-    // resize the output sample and info sequences to hold as many samples
-    // as the input sequences
-    output_sample_seq.resize(input_sample_seq.size());
-    output_info_seq.resize(input_info_seq.size());
+	// resize the output sample and info sequences to hold as many samples
+	// as the input sequences
+	output_sample_seq.resize(input_sample_seq.size());
+	output_info_seq.resize(input_info_seq.size());
 
-    // Convert each individual input sample
-    for (size_t i = 0; i < input_sample_seq.size(); ++i) {
-        // convert data
-        output_sample_seq[i] = convert_sample(input_sample_seq[i]);
-        // copy info as is
-        output_info_seq[i] = new SampleInfo(*input_info_seq[i]);
-    }
+	// Convert each individual input sample
+	for (size_t i = 0; i < input_sample_seq.size(); ++i) {
+		// convert data
+		output_sample_seq[i] = convert_sample(input_sample_seq[i]);
+		// copy info as is
+		output_info_seq[i] = new SampleInfo(*input_info_seq[i]);
+	}
 }
 
 void StructArrayTransformation::return_loan(
-        std::vector<DynamicData *> &sample_seq,
-        std::vector<SampleInfo *> &info_seq)
+	std::vector<DynamicData*>& sample_seq,
+	std::vector<SampleInfo*>& info_seq)
 {
-    for (size_t i = 0; i < sample_seq.size(); ++i) {
-        delete sample_seq[i];
-        delete info_seq[i];
-    }
+	for (size_t i = 0; i < sample_seq.size(); ++i) {
+		delete sample_seq[i];
+		delete info_seq[i];
+	}
 }
 
 
@@ -81,24 +82,24 @@ void StructArrayTransformation::return_loan(
  * --- StructArrayTransformationPlugin ----------------------------------------
  */
 StructArrayTransformationPlugin::StructArrayTransformationPlugin(
-        const rti::routing::PropertySet &)
+	const rti::routing::PropertySet&)
 {
-    // no configuration properties for this plug-in
+	// no configuration properties for this plug-in
 }
 
-rti::routing::transf::Transformation *
-        StructArrayTransformationPlugin::create_transformation(
-                const rti::routing::TypeInfo &,
-                const rti::routing::TypeInfo &,
-                const rti::routing::PropertySet &)
+rti::routing::transf::Transformation*
+StructArrayTransformationPlugin::create_transformation(
+	const rti::routing::TypeInfo&,
+	const rti::routing::TypeInfo&,
+	const rti::routing::PropertySet&)
 {
-    return new StructArrayTransformation();
+	return new StructArrayTransformation();
 }
 
 void StructArrayTransformationPlugin::delete_transformation(
-        rti::routing::transf::Transformation *transformation)
+	rti::routing::transf::Transformation* transformation)
 {
-    delete transformation;
+	delete transformation;
 }
 
 
