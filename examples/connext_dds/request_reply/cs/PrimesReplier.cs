@@ -166,6 +166,5 @@ namespace PrimeCalculator
             replier.Dispose();
             participant.Dispose();
         }
-
     }
 } // namespace PrimeCalculator

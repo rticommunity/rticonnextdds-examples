@@ -1,6 +1,7 @@
 # Example Code: Request-Reply
 
 ## Concept
+
 Request-reply is a communication pattern offered in addition to
 publish-subscribe.  Sometimes an application needs to get a one-time snapshot
 of information; for example, to make a query into a database or retrieve
@@ -12,12 +13,13 @@ See the [User's Manual](https://community.rti.com/static/documentation/connext-d
 for more information.
 
 ## Example Description
+
 This example shows how to create two applications:
 
-- A replier application waits for requests to calculate prime numbers under
-  a certain number. When it receives a request, performs the calculation,
-  sending replies with intermediate results as they are computed.
+-   A replier application waits for requests to calculate prime numbers under
+    a certain number. When it receives a request, performs the calculation,
+    sending replies with intermediate results as they are computed.
 
-- A requester application sends a request with the number specified in the
-  command line, waits for the replies, and prints the prime numbers it
-  receives.
+-   A requester application sends a request with the number specified in the
+    command line, waits for the replies, and prints the prime numbers it
+    receives.
