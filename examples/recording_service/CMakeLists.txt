@@ -12,9 +12,9 @@ set(CMAKE_MODULE_PATH
 
 include(ConnextDdsAddExamplesSubdirectories)
 
-# connextdds_add_examples_subdirectories(
-#     EXAMPLES
-#         "pluggable_storage"
-#         "service_admin"
-#         "service_as_lib"
-# )
+connextdds_add_examples_subdirectories(
+    EXAMPLES
+        "pluggable_storage"
+        # "service_admin"
+        # "service_as_lib"
+)

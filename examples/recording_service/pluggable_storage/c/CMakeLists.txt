@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (PluggableStorage)
+project (PluggableStorageC)
 
 set(CMAKE_DEBUG_POSTFIX "d")
 
@@ -51,121 +51,119 @@ find_package(
         routing_service
 )
 
-# Create the directory that's going to contain the generated code files
-add_custom_target(
-    generated_code_dir ALL
-    COMMAND ${CMAKE_COMMAND} -E make_directory "${CMAKE_BINARY_DIR}/generated")
-
-set(HELLOMSG_C_SOURCES
-    "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
-    "${CMAKE_BINARY_DIR}/generated/HelloMsgPlugin.c"
-    "${CMAKE_BINARY_DIR}/generated/HelloMsgSupport.c"
+# Run Codegen to generate the source code files for the types
+include(ConnextDdsCodegen)
+connextdds_rtiddsgen_run(
+    IDL_FILE
+        "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
+    OUTPUT_DIRECTORY
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
+    LANG C
 )
 
-# Generate type plug-in files for the storage type
-add_custom_command(
-    OUTPUT ${HELLOMSG_C_SOURCES}
-    MAIN_DEPENDENCY "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
-    COMMAND ${RTICODEGEN} -language C -update typefiles
-            -platform ${CONNEXTDDS_ARCH} -d "${CMAKE_BINARY_DIR}/generated"
-            "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg.idl"
-)
-
-add_custom_target(
-    generated_code
+add_custom_target(${PROJECT_NAME}_codegen_sources
     DEPENDS
-        generated_code_dir
-        ${HELLOMSG_C_SOURCES}
+        ${HelloMsg_C_GENERATED_SOURCES}
 )
 
 # Define the library that will provide the storage writer plugin
 add_library(
-    FileStorageWriter
-        "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
+    FileStorageWriterC
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
 )
 
-add_dependencies(FileStorageWriter generated_code)
+add_dependencies(FileStorageWriterC ${PROJECT_NAME}_codegen_sources)
 
 target_link_libraries(
-    FileStorageWriter
+    FileStorageWriterC
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
-    FileStorageWriter
+    FileStorageWriterC
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
-        "${CMAKE_BINARY_DIR}/generated"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
         "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the library that will provide the storage reader plugin
 add_library(
-    FileStorageReader
-        "${CMAKE_BINARY_DIR}/generated/HelloMsg.c"
+    FileStorageReaderC
+        "${CMAKE_CURRENT_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
 )
 
-add_dependencies(FileStorageReader generated_code)
+add_dependencies(FileStorageReaderC ${PROJECT_NAME}_codegen_sources)
 
 target_link_libraries(
-    FileStorageReader
+    FileStorageReaderC
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 target_include_directories(
-    FileStorageReader
+    FileStorageReaderC
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
-        "${CMAKE_BINARY_DIR}/generated"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
         "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the publisher application
 add_executable(
-    HelloMsg_publisher
-    ${HELLOMSG_C_SOURCES}
+    ${PROJECT_NAME}_HelloMsg_publisher
+    ${HelloMsg_C_GENERATED_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_publisher.c"
 )
 
-add_dependencies(HelloMsg_publisher generated_code)
+add_dependencies(${PROJECT_NAME}_HelloMsg_publisher ${PROJECT_NAME}_codegen_sources)
+
+set_target_properties(${PROJECT_NAME}_HelloMsg_publisher
+    PROPERTIES
+        OUTPUT_NAME "HelloMsg_publisher"
+)
 
 target_include_directories(
-    HelloMsg_publisher
+    ${PROJECT_NAME}_HelloMsg_publisher
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
-        "${CMAKE_BINARY_DIR}/generated"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 
 target_link_libraries(
-    HelloMsg_publisher
+    ${PROJECT_NAME}_HelloMsg_publisher
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
 
 # Define the subscriber application
 add_executable(
-    HelloMsg_subscriber
-    ${HELLOMSG_C_SOURCES}
+    ${PROJECT_NAME}_HelloMsg_subscriber
+    ${HelloMsg_C_GENERATED_SOURCES}
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloMsg_subscriber.c"
 )
 
-add_dependencies(HelloMsg_subscriber generated_code)
+add_dependencies(${PROJECT_NAME}_HelloMsg_subscriber ${PROJECT_NAME}_codegen_sources)
+
+set_target_properties(${PROJECT_NAME}_HelloMsg_subscriber
+    PROPERTIES
+        OUTPUT_NAME "HelloMsg_subscriber"
+)
 
 target_include_directories(
-    HelloMsg_subscriber
+    ${PROJECT_NAME}_HelloMsg_subscriber
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
-        "${CMAKE_BINARY_DIR}/generated"
+        "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 
 target_link_libraries(
-    HelloMsg_subscriber
+    ${PROJECT_NAME}_HelloMsg_subscriber
     RTIConnextDDS::c_api
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
