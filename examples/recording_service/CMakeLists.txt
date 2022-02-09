@@ -16,5 +16,5 @@ connextdds_add_examples_subdirectories(
     EXAMPLES
         "pluggable_storage"
         "service_admin"
-        # "service_as_lib"
+        "service_as_lib"
 )
