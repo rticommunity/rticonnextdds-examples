@@ -20,7 +20,11 @@ if(NOT DEFINED CONNEXTDDS_DIR)
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
+
 find_package(
     RTIConnextDDS "6.1.0"
     REQUIRED
