@@ -25,7 +25,7 @@ endif()
 
 connextdds_add_examples_subdirectories(
     EXAMPLES
-        # "file_adapter"
+        "file_adapter"
         "file_to_dds_configuration"
         ${routing_service_mongo_db_example_dir}
         "monitoring"
