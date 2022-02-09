@@ -10,13 +10,15 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (RecorderRemoteAdmin)
+project (RecorderRemoteAdminC++11)
 
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
+
+include(ConnextDdsAddExample)
 
 find_package(
     RTIConnextDDS "6.1.0"
@@ -28,53 +30,34 @@ find_package(
         recording_service
 )
 
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml"
-)
-
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/recorder_remote_admin.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/recorder_remote_admin.xml"
-)
-
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/replay_remote_admin.xml"
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/replay_remote_admin.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/replay_remote_admin.xml"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/replay_remote_admin.xml"
-)
-
-add_custom_target(
-    copy_config_files
-    DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/recorder_remote_admin.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/replay_remote_admin.xml"
-)
-
 # Main application
 add_executable(
     Requester
     "${CMAKE_CURRENT_SOURCE_DIR}/Requester.cxx"
 )
 
-set_target_properties(
-    Requester
-    PROPERTIES CXX_STANDARD 11)
-
-add_dependencies(Requester copy_config_files)
+target_compile_features(Requester PRIVATE cxx_std_11)
 
 target_link_libraries(
     Requester
     RTIConnextDDS::messaging_cpp2_api
     RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
+)
+
+connextdds_copy_qos_profile(
+    TARGET_PREFIX "${PROJECT_NAME}_DefaultXml_"
+    DEPENDANT_TARGET Requester
+)
+
+connextdds_copy_qos_profile(
+    TARGET_PREFIX "${PROJECT_NAME}_RecorderXml_"
+    DEPENDANT_TARGET Requester
+    FILENAME "recorder_remote_admin.xml"
+)
+
+connextdds_copy_qos_profile(
+    TARGET_PREFIX "${PROJECT_NAME}_ReplayXml_"
+    DEPENDANT_TARGET Requester
+    FILENAME "replay_remote_admin.xml"
 )
