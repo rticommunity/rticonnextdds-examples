@@ -86,8 +86,8 @@ StructArrayTransformationPlugin::StructArrayTransformationPlugin(
     // no configuration properties for this plug-in
 }
 
-rti::routing::transf::Transformation *
-        StructArrayTransformationPlugin::create_transformation(
+rti::routing::transf::Transformation *StructArrayTransformationPlugin::
+        create_transformation(
                 const rti::routing::TypeInfo &,
                 const rti::routing::TypeInfo &,
                 const rti::routing::PropertySet &)

@@ -110,7 +110,8 @@ void RTI_RoutingServiceFileAdapter_delete_type_code(DDS_TypeCode *type_code)
     factory = DDS_TypeCodeFactory_get_instance();
     if (factory == NULL) {
         fprintf(stdout,
-                "ERROR getting instance DDS_TypeCodeFactory deleting typecode\n");
+                "ERROR getting instance DDS_TypeCodeFactory deleting "
+                "typecode\n");
         return;
     } else {
         if (type_code != NULL) {
@@ -491,13 +492,13 @@ void RTI_RoutingServiceFileStreamReader_delete(
 /*****************************************************************************/
 
 RTI_RoutingServiceStreamReader
-        RTI_RoutingServiceFileConnection_create_stream_reader(
-                RTI_RoutingServiceConnection connection,
-                RTI_RoutingServiceSession session,
-                const struct RTI_RoutingServiceStreamInfo *stream_info,
-                const struct RTI_RoutingServiceProperties *properties,
-                const struct RTI_RoutingServiceStreamReaderListener *listener,
-                RTI_RoutingServiceEnvironment *env)
+RTI_RoutingServiceFileConnection_create_stream_reader(
+        RTI_RoutingServiceConnection connection,
+        RTI_RoutingServiceSession session,
+        const struct RTI_RoutingServiceStreamInfo *stream_info,
+        const struct RTI_RoutingServiceProperties *properties,
+        const struct RTI_RoutingServiceStreamReaderListener *listener,
+        RTI_RoutingServiceEnvironment *env)
 {
     struct RTI_RoutingServiceFileStreamReader *stream_reader = NULL;
     int read_period = 0;
@@ -650,12 +651,12 @@ void RTI_RoutingServiceFileConnection_delete_stream_reader(
 /*****************************************************************************/
 
 RTI_RoutingServiceStreamWriter
-        RTI_RoutingServiceFileConnection_create_stream_writer(
-                RTI_RoutingServiceConnection connection,
-                RTI_RoutingServiceSession session,
-                const struct RTI_RoutingServiceStreamInfo *stream_info,
-                const struct RTI_RoutingServiceProperties *properties,
-                RTI_RoutingServiceEnvironment *env)
+RTI_RoutingServiceFileConnection_create_stream_writer(
+        RTI_RoutingServiceConnection connection,
+        RTI_RoutingServiceSession session,
+        const struct RTI_RoutingServiceStreamInfo *stream_info,
+        const struct RTI_RoutingServiceProperties *properties,
+        RTI_RoutingServiceEnvironment *env)
 {
     struct RTI_RoutingServiceFileStreamWriter *stream_writer = NULL;
 
@@ -693,7 +694,7 @@ RTI_RoutingServiceStreamWriter
     /* Get the configuration properties in <route>/<output>/<property> */
 
     flush_property = RTI_RoutingServiceProperties_lookup_property(
-            properties, 
+            properties,
             FILE_ADAPTER_FLUSH);
     if (flush_property != NULL) {
         if (!strcmp(flush_property, "yes") || !strcmp(flush_property, "true")
@@ -782,18 +783,18 @@ void RTI_RoutingServiceFileConnection_delete_stream_writer(
 /* ========================================================================= */
 
 RTI_RoutingServiceConnection
-        RTI_RoutingServiceFileAdapterPlugin_create_connection(
-                struct RTI_RoutingServiceAdapterPlugin *adapter,
-                const char *routing_service_name,
-                const char *routing_service_group_name,
-                const struct RTI_RoutingServiceStreamReaderListener
-                        *output_disc_listener,
-                const struct RTI_RoutingServiceStreamReaderListener
-                        *input_disc_listener,
-                const struct RTI_RoutingServiceTypeInfo **registeredTypes,
-                int registeredTypeCount,
-                const struct RTI_RoutingServiceProperties *properties,
-                RTI_RoutingServiceEnvironment *env)
+RTI_RoutingServiceFileAdapterPlugin_create_connection(
+        struct RTI_RoutingServiceAdapterPlugin *adapter,
+        const char *routing_service_name,
+        const char *routing_service_group_name,
+        const struct RTI_RoutingServiceStreamReaderListener
+                *output_disc_listener,
+        const struct RTI_RoutingServiceStreamReaderListener
+                *input_disc_listener,
+        const struct RTI_RoutingServiceTypeInfo **registeredTypes,
+        int registeredTypeCount,
+        const struct RTI_RoutingServiceProperties *properties,
+        RTI_RoutingServiceEnvironment *env)
 {
     const char *is_input_connection = NULL;
     const char *path = NULL;
@@ -827,7 +828,7 @@ RTI_RoutingServiceConnection
     }
 
     path = RTI_RoutingServiceProperties_lookup_property(
-            properties, 
+            properties,
             FILE_ADAPTER_CONNECTION_FOLDER_PATH);
     /*
      * if the property is not found, then we are going to assign default value.
@@ -846,7 +847,7 @@ RTI_RoutingServiceConnection
      */
     if ((is_input_connection != NULL)
         && !strcmp(
-                is_input_connection, 
+                is_input_connection,
                 FILE_ADAPTER_CONNECTION_DIRECTION_INPUT)) {
         fprintf(stdout, "Connection: This is an input connection\n");
         connection->is_input = 1;
@@ -968,9 +969,9 @@ RTI_RoutingServiceStreamReader RTI_RoutingService_getInputDiscoveryReader(
 
 /* Entry point to the adapter plugin */
 struct RTI_RoutingServiceAdapterPlugin *
-        RTI_RoutingServiceFileAdapterPlugin_create(
-                const struct RTI_RoutingServiceProperties *properties,
-                RTI_RoutingServiceEnvironment *env)
+RTI_RoutingServiceFileAdapterPlugin_create(
+        const struct RTI_RoutingServiceProperties *properties,
+        RTI_RoutingServiceEnvironment *env)
 {
     struct RTI_RoutingServiceFileAdapterPlugin *adapter = NULL;
     struct RTI_RoutingServiceVersion adapterVersion = { 1, 0, 0, 0 };

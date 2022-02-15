@@ -103,7 +103,8 @@ struct RTI_RoutingServiceFileStreamReader {
     /*the array of filenames present in the source directory*/
     char **discovery_data;
     /*
-     * counter for discovery_data array, indicate the last entry that has been read
+     * counter for discovery_data array, indicate the last entry that has been
+     * read
      */
     int discovery_data_counter_read;
     /* counter for discovery data array, indicate the

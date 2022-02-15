@@ -50,8 +50,7 @@ void ShapesAggregator::on_output_enabled(
     output_data_ = output.get<DynamicData>().create_data();
 }
 
-void ShapesAggregator::on_data_available(
-        rti::routing::processor::Route &route)
+void ShapesAggregator::on_data_available(rti::routing::processor::Route &route)
 {
     // Use squares as 'leading' input. For each Square instance, get the
     // equivalent instance from the Circle topic
@@ -91,7 +90,8 @@ void ShapesAggregator::on_data_available(
  */
 
 
-ShapesAggregatorPlugin::ShapesAggregatorPlugin(const rti::routing::PropertySet &)
+ShapesAggregatorPlugin::ShapesAggregatorPlugin(
+        const rti::routing::PropertySet &)
 {
     rti::routing::Logger::instance().local("ShapesAggregator Plugin loaded");
 }
@@ -101,7 +101,8 @@ rti::routing::processor::Processor *ShapesAggregatorPlugin::create_processor(
         rti::routing::processor::Route &,
         const rti::routing::PropertySet &)
 {
-    rti::routing::Logger::instance().local("ShapesAggregator Processor created");
+    rti::routing::Logger::instance().local(
+            "ShapesAggregator Processor created");
     return new ShapesAggregator();
 }
 
