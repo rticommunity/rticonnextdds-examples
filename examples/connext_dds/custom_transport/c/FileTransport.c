@@ -1783,10 +1783,9 @@ RTI_INT32 NDDS_Transport_FILE_get_receive_interfaces_cEA(
         struct in_addr ipAddr;
 
         inet_aton(me->_property.address, &ipAddr);
-        memcpy(
-                interface_array_inout[0].address.network_ordered_value + 12,
-                &ipAddr,
-                4);
+        memcpy(interface_array_inout[0].address.network_ordered_value + 12,
+               &ipAddr,
+               4);
     }
 
 
