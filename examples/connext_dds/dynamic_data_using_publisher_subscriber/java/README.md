@@ -38,8 +38,8 @@ publisher and another one for the subscriber, both from the example directory:
 On *UNIX* systems run:
 
 ```sh
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypePublisher <domain_id> <samples_to_send>
-java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber <domain_id> <sleep_periods>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypePublisher  -d <domain_id> -s <samples_to_send>
+java -cp build/libs/java.jar:$NDDSHOME/lib/java/nddsjava.jar ShapeTypeSubscriber -d <domain_id> -s <samples_to_receive>
 ```
 
 On *Windows* systems run:
@@ -52,8 +52,8 @@ java -cp "build\libs\java.jar";"%NDDSHOME%\lib\java\nddsjava.jar" ShapeTypeSubsc
 Alternatively, you can use `gradle` to run this example:
 
 ```sh
-gradle run -PmainClass=Publisher --args="<domain_id> <samples_to_send>"
-gradle run -PmainClass=Subscriber --args="<domain_id> <sleep_periods>"
+gradle run -PmainClass=Publisher --args="-d <domain_id> -s <samples_to_send>"
+gradle run -PmainClass=Subscriber --args="-d <domain_id> -s <samples_to_receive>"
 ```
 
 The applications accept up to two arguments:
@@ -61,8 +61,8 @@ The applications accept up to two arguments:
 1.  The `<domain_id>`. Both applications must use the same domain ID in
 order to communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples. A value of '0'
-instructs the application to run forever; this is the default.
+2.  How long the examples should run, measured in samples. The default is
+    infinite.
 
 ## Gradle Build Infrastructure
 

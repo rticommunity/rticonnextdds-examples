@@ -18,25 +18,28 @@ import com.rti.dds.subscription.*;
 import com.rti.dds.topic.Topic;
 
 /**
-* Simple example showing all Connext code in one place for readability.
-*/
+ * Simple example showing all Connext code in one place for readability.
+ */
 public class printingSubscriber extends Application implements AutoCloseable {
-
-    private DomainParticipant participant = null; // Usually one per application
+    private DomainParticipant participant = null;  // Usually one per
+                                                   // application
     private printingDataReader reader = null;
     private final printingSeq dataSeq = new printingSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
-    private int processData() {
+    private int processData()
+    {
         int samplesRead = 0;
 
         try {
             // Take available data from DataReader's queue
-            reader.take(dataSeq, infoSeq,
-            ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
-            SampleStateKind.ANY_SAMPLE_STATE,
-            ViewStateKind.ANY_VIEW_STATE,
-            InstanceStateKind.ANY_INSTANCE_STATE);
+            reader.take(
+                    dataSeq,
+                    infoSeq,
+                    ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
+                    SampleStateKind.ANY_SAMPLE_STATE,
+                    ViewStateKind.ANY_VIEW_STATE,
+                    InstanceStateKind.ANY_INSTANCE_STATE);
 
             for (int i = 0; i < dataSeq.size(); ++i) {
                 SampleInfo info = infoSeq.get(i);
@@ -56,29 +59,29 @@ public class printingSubscriber extends Application implements AutoCloseable {
         return samplesRead;
     }
 
-    private void runApplication() {
+    private void runApplication()
+    {
         // Start communicating in a domain
         participant = Objects.requireNonNull(
-            DomainParticipantFactory.get_instance().create_participant(
-                getDomainId(),
-                DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                DomainParticipantFactory.get_instance().create_participant(
+                        getDomainId(),
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         QosPrintFormat format = new QosPrintFormat();
         DomainParticipantQos participantQos = new DomainParticipantQos();
         participant.get_qos(participantQos);
-        System.out.println(
-                participantQos.toString(
-                        DomainParticipant.DOMAINPARTICIPANT_QOS_PRINT_ALL,
-                        format));
+        System.out.println(participantQos.toString(
+                DomainParticipant.DOMAINPARTICIPANT_QOS_PRINT_ALL,
+                format));
 
         // A Subscriber allows an application to create one or more DataReaders
-        Subscriber subscriber = Objects.requireNonNull(
-            participant.create_subscriber(
-                DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+        Subscriber subscriber =
+                Objects.requireNonNull(participant.create_subscriber(
+                        DomainParticipant.SUBSCRIBER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         SubscriberQos subscriberQos = new SubscriberQos();
         subscriber.get_qos(subscriberQos);
@@ -89,21 +92,20 @@ public class printingSubscriber extends Application implements AutoCloseable {
         printingTypeSupport.register_type(participant, typeName);
 
         // Create a Topic with a name and a datatype
-        Topic topic = Objects.requireNonNull(
-            participant.create_topic(
+        Topic topic = Objects.requireNonNull(participant.create_topic(
                 "Example printing",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
-                null, // listener
+                null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
         // This DataReader reads data on "Example printing" Topic
         reader = (printingDataReader) Objects.requireNonNull(
-            subscriber.create_datareader(
-                topic,
-                Subscriber.DATAREADER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                subscriber.create_datareader(
+                        topic,
+                        Subscriber.DATAREADER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         DataReaderQos readerQos = new DataReaderQos();
         reader.get_qos(readerQos);
@@ -111,11 +113,12 @@ public class printingSubscriber extends Application implements AutoCloseable {
 
         // Create ReadCondition that triggers when data in reader's queue
         ReadCondition condition = reader.create_readcondition(
-            SampleStateKind.ANY_SAMPLE_STATE,
-            ViewStateKind.ANY_VIEW_STATE,
-            InstanceStateKind.ANY_INSTANCE_STATE);
+                SampleStateKind.ANY_SAMPLE_STATE,
+                ViewStateKind.ANY_VIEW_STATE,
+                InstanceStateKind.ANY_INSTANCE_STATE);
 
-        // WaitSet will be woken when the attached condition is triggered, or timeout
+        // WaitSet will be woken when the attached condition is triggered, or
+        // timeout
         WaitSet waitset = new WaitSet();
         waitset.attach_condition(condition);
         final Duration_t waitTimeout = new Duration_t(1, 0);
@@ -134,32 +137,38 @@ public class printingSubscriber extends Application implements AutoCloseable {
 
             } catch (RETCODE_TIMEOUT timeout) {
                 // No data received, not a problem
-                System.out.printf("No data after %d seconds.%n", waitTimeout.sec);
+                System.out.printf(
+                        "No data after %d seconds.%n",
+                        waitTimeout.sec);
             }
         }
     }
 
-    @Override
-    public void close() {
-        // Delete all entities (DataReader, Topic, Subscriber, DomainParticipant)
+    @Override public void close()
+    {
+        // Delete all entities (DataReader, Topic, Subscriber,
+        // DomainParticipant)
         if (participant != null) {
             participant.delete_contained_entities();
 
-            DomainParticipantFactory.get_instance()
-            .delete_participant(participant);
+            DomainParticipantFactory.get_instance().delete_participant(
+                    participant);
         }
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         // Create example and run: Uses try-with-resources,
         // subscriberApplication.close() automatically called
-        try (printingSubscriber subscriberApplication = new printingSubscriber()) {
+        try (printingSubscriber subscriberApplication =
+                     new printingSubscriber()) {
             subscriberApplication.parseArguments(args);
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
         }
 
-        // Releases the memory used by the participant factory. Optional at application exit.
+        // Releases the memory used by the participant factory. Optional at
+        // application exit.
         DomainParticipantFactory.finalize_instance();
     }
 }
