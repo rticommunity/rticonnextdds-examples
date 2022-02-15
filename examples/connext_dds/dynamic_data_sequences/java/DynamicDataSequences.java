@@ -15,12 +15,12 @@ import com.rti.dds.typecode.*;
 
 /*********
  * IDL representation for this example ************
- * 
- * public class SimpleStruct { 
+ *
+ * public class SimpleStruct {
  *     long a_member;
  * };
- * 
- * public class TypeWithSequence { 
+ *
+ * public class TypeWithSequence {
  *     sequence<SimpleStruct,5> sequence_member;
  * };
  */
@@ -32,21 +32,25 @@ public class DynamicDataSequences {
      */
     public static boolean BIN_API = false;
 
-    static TypeCode sequenceElementGetTypeCode() {
+    static TypeCode sequenceElementGetTypeCode()
+    {
         StructMember members[] = new StructMember[0];
         TypeCode tc;
 
         /* First, we create the typeCode for the simple struct */
         try {
             tc = TypeCodeFactory.TheTypeCodeFactory.create_struct_tc(
-                    "SimpleStruct", members);
+                    "SimpleStruct",
+                    members);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
         }
 
         try {
-            tc.add_member("a_member", TypeCode.MEMBER_ID_INVALID,
+            tc.add_member(
+                    "a_member",
+                    TypeCode.MEMBER_ID_INVALID,
                     TypeCode.TC_LONG,
                     TypeCode.NONKEY_MEMBER);
         } catch (Exception e) {
@@ -55,10 +59,10 @@ public class DynamicDataSequences {
         }
 
         return tc;
-
     }
 
-    static TypeCode sequenceGetTypeCode() {
+    static TypeCode sequenceGetTypeCode()
+    {
         TypeCode tc;
 
         TypeCode seqElementTC = sequenceElementGetTypeCode();
@@ -70,17 +74,18 @@ public class DynamicDataSequences {
         /* We create the typeCode for the sequence */
         try {
             tc = TypeCodeFactory.TheTypeCodeFactory.create_sequence_tc(
-                    MAX_SEQ_LEN, seqElementTC);
+                    MAX_SEQ_LEN,
+                    seqElementTC);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
         }
 
         return tc;
-
     }
 
-    static TypeCode typeWithSequenceGetTypecode() {
+    static TypeCode typeWithSequenceGetTypecode()
+    {
         StructMember members[] = new StructMember[0];
         TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
@@ -89,24 +94,28 @@ public class DynamicDataSequences {
         }
 
         TypeCode tc = TypeCodeFactory.TheTypeCodeFactory.create_struct_tc(
-                "TypeWithSequence", members);
+                "TypeWithSequence",
+                members);
         if (tc == null) {
             System.err.println("! Unable to create Type with sequence TC");
         }
 
         try {
-            tc.add_member("sequence_member", TypeCode.MEMBER_ID_INVALID,
-                    sequenceTC, TypeCode.NONKEY_MEMBER);
+            tc.add_member(
+                    "sequence_member",
+                    TypeCode.MEMBER_ID_INVALID,
+                    sequenceTC,
+                    TypeCode.NONKEY_MEMBER);
         } catch (Exception e) {
             System.err.println(e.getMessage());
             return null;
         }
 
         return tc;
-
     }
 
-    public static void writeData(DynamicData sample) {
+    public static void writeData(DynamicData sample)
+    {
         /* Creating TypeCodes */
         TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
@@ -120,9 +129,10 @@ public class DynamicDataSequences {
             return;
         }
 
-        DynamicData seqMember = new DynamicData(sequenceTC,
-                DynamicData.PROPERTY_DEFAULT);
-        DynamicData seqElement = new DynamicData(sequenceElementTC,
+        DynamicData seqMember =
+                new DynamicData(sequenceTC, DynamicData.PROPERTY_DEFAULT);
+        DynamicData seqElement = new DynamicData(
+                sequenceElementTC,
                 DynamicData.PROPERTY_DEFAULT);
 
         for (int i = 0; i < MAX_SEQ_LEN; ++i) {
@@ -134,36 +144,41 @@ public class DynamicDataSequences {
              * details about the differences between these two APIs.
              */
 
-            if (BIN_API == true) { // bind API
+            if (BIN_API == true) {  // bind API
                 try {
                     seqMember.bind_complex_member(seqElement, null, i + 1);
-                    seqElement.set_int("a_member",
-                            DynamicData.MEMBER_ID_UNSPECIFIED, i);
-                    System.out.println("Writing sequence element #" + (i + 1)
-                            + " : ");
+                    seqElement.set_int(
+                            "a_member",
+                            DynamicData.MEMBER_ID_UNSPECIFIED,
+                            i);
+                    System.out.println(
+                            "Writing sequence element #" + (i + 1) + " : ");
                     seqElement.print(null, 1);
                     seqMember.unbind_complex_member(seqElement);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
-            } else { // get API
+            } else {  // get API
                 try {
-                    seqElement.set_int("a_member",
-                            DynamicData.MEMBER_ID_UNSPECIFIED, i);
-                    System.out.println("Writing sequence element #" + (i + 1)
-                            + " : ");
+                    seqElement.set_int(
+                            "a_member",
+                            DynamicData.MEMBER_ID_UNSPECIFIED,
+                            i);
+                    System.out.println(
+                            "Writing sequence element #" + (i + 1) + " : ");
                     seqElement.print(null, 1);
                     seqMember.set_complex_member(null, i + 1, seqElement);
                 } catch (Exception e) {
                     System.err.println(e.getMessage());
                 }
             }
-
         }
 
         try {
-            sample.set_complex_member("sequence_member",
-                    DynamicData.MEMBER_ID_UNSPECIFIED, seqMember);
+            sample.set_complex_member(
+                    "sequence_member",
+                    DynamicData.MEMBER_ID_UNSPECIFIED,
+                    seqMember);
         } catch (Exception e) {
             System.err.println(e.getMessage());
         }
@@ -177,25 +192,27 @@ public class DynamicDataSequences {
         }
 
         return;
-
     }
 
-    public static void readData(DynamicData sample) {
+    public static void readData(DynamicData sample)
+    {
         TypeCode sequenceTC = sequenceGetTypeCode();
         if (sequenceTC == null) {
             System.err.println("! Unable to get sequence Typecode");
             return;
         }
 
-        DynamicData seqMember = new DynamicData(sequenceTC,
-                DynamicData.PROPERTY_DEFAULT);
-        DynamicData seqElement = new DynamicData(null,
-                DynamicData.PROPERTY_DEFAULT);
+        DynamicData seqMember =
+                new DynamicData(sequenceTC, DynamicData.PROPERTY_DEFAULT);
+        DynamicData seqElement =
+                new DynamicData(null, DynamicData.PROPERTY_DEFAULT);
 
         int seqLen = 0;
         DynamicDataInfo info = new DynamicDataInfo();
 
-        sample.get_complex_member(seqMember, "sequence_member",
+        sample.get_complex_member(
+                seqMember,
+                "sequence_member",
                 DynamicData.MEMBER_ID_UNSPECIFIED);
 
         /*
@@ -214,13 +231,13 @@ public class DynamicDataSequences {
              * method. The main difference, is that in that case the members are
              * not copied, just referenced
              */
-            if (BIN_API) { // using bind API
+            if (BIN_API) {  // using bind API
                 try {
                     seqMember.bind_complex_member(seqElement, null, i + 1);
                 } catch (Exception e) {
                     System.out.println(e.getMessage());
                 }
-            } else { // using get API
+            } else {  // using get API
                 try {
                     seqMember.get_complex_member(seqElement, null, i + 1);
                 } catch (Exception e) {
@@ -239,19 +256,18 @@ public class DynamicDataSequences {
                 }
             }
         }
-
     }
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args)
+    {
         TypeCode wSequenceTC = typeWithSequenceGetTypecode();
         if (wSequenceTC == null) {
             System.err.println("! Unable to create wSequence TypeCode");
             return;
         }
 
-        DynamicData sample = new DynamicData(wSequenceTC,
-                DynamicData.PROPERTY_DEFAULT);
+        DynamicData sample =
+                new DynamicData(wSequenceTC, DynamicData.PROPERTY_DEFAULT);
         System.out.println("***** Writing a sample *****");
         writeData(sample);
 
