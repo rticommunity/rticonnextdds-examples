@@ -4,9 +4,29 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.11)
-project(rtiexamples)
+project(rticonnextdds-examples)
+
+option(CONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES
+    "Build the Persistence Service examples"
+    OFF
+)
+option(CONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES
+    "Build the Recording Service examples"
+    OFF
+)
+option(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES
+    "Build the Routing Service examples"
+    OFF
+)
 
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/connext_dds")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistence_service")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recording_service")
-add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/routing_service")
+
+if(CONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistence_service")
+endif()
+if(CONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recording_service")
+endif()
+if(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/routing_service")
+endif()

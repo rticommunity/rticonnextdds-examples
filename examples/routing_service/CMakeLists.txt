@@ -4,7 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.11)
-project(rtiexamples-routing-service)
+project(rticonnextdds-examples-routing-service)
 set(CMAKE_MODULE_PATH
     ${CMAKE_MODULE_PATH}
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake"
@@ -13,11 +13,11 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExamplesSubdirectories)
 
 # Mongo DB C++ Driver may not be installed, so we don't build it by default
-option(BUILD_MONGODB_EXAMPLE
+option(CONNEXTDDS_BUILD_MONGODB_EXAMPLE
     "Build the Mongo DB C++ Routing Service example"
     OFF
 )
-if(BUILD_MONGODB_EXAMPLE)
+if(CONNEXTDDS_BUILD_MONGODB_EXAMPLE)
     set(routing_service_mongo_db_example_dir "mongo_db")
 else()
     set(routing_service_mongo_db_example_dir)
