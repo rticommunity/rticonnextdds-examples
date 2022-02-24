@@ -7,15 +7,15 @@ cmake_minimum_required(VERSION 3.11)
 project(rticonnextdds-examples)
 
 option(CONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES
-    "Build the Persistence Service examples"
+    "Build Persistence Service examples"
     OFF
 )
 option(CONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES
-    "Build the Recording Service examples"
+    "Build Recording Service examples"
     OFF
 )
 option(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES
-    "Build the Routing Service examples"
+    "Build Routing Service examples"
     OFF
 )
 
