@@ -6,10 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rti.ConnextDds.Extra" Version="6.1.1" />
-    <PackageReference Include="System.CommandLine" Version="2.0.0-*" />
+    <PackageReference Include="Rti.ConnextDds" Version="6.1.1" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1"/>
     <PackageReference Include="System.Linq.Async" Version="5.0.0-*" />
-
   </ItemGroup>
 
 </Project>
