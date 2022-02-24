@@ -49,7 +49,7 @@ XML" chapter in the RTI Connext DDS Core Libraries User's Manual.
 -->
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="file:////home/sam/rti_connext_dds-6.1.0/resource/schema/rti_dds_qos_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.1/rti_dds_qos_profiles.xsd">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.

@@ -18,4 +18,4 @@ In this directory you will find some examples illustrating the most important
 features of RTI Routing Service, including support for custom Adapters and
 Processors. For more information, please refer to the [RTI Routing Service
 User's
-Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/services/routing_service/introduction.html).
+Manual](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/services/routing_service/introduction.html).
