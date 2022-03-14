@@ -17,7 +17,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Rti.Dds.Core;
 using Rti.Dds.Domain;
-using Rti.Dds.RequestReply;
+using Rti.RequestReply;
 using Rti.Dds.Subscription;
 
 namespace PrimeCalculator
