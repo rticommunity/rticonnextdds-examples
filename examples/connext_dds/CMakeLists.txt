@@ -98,6 +98,7 @@ connextdds_add_examples_subdirectories(
         "detect_samples_dropped"
         "dynamic_data_access_union_discriminator"
         "dynamic_data_nested_structs"
+        "dynamic_data_request_reply"
         "dynamic_data_sequences"
         "fragmented_data_statistics"
         "group_coherent_presentation"

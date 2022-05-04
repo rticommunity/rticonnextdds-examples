@@ -1,7 +1,6 @@
 
 # Request-Reply DynamicData Application
 
-
 ## Building the Example :wrench:
 
 To build this example, first run CMake to generate the corresponding build
@@ -36,22 +35,21 @@ if you generated a Visual Studio solution, open the solution and follow the
 regular build process.
 Running this Example
 
-
 ## Running the Example
 
 This example is composed of two applications: a requester and a replier.
 
 To run this example on a UNIX-based system, type the following in two
 different command shells, either on the same machine or on different machines:
-```
+
+```sh
 build/PrimeNumberReplier [<domain_id>]
 build/PrimeNumberRequester <n> [<primes_per_reply>] [<domain_id>]
 ```
+
 The Requester and the Replier are configured by the file USER_QOS_PROFILES.xml
 located in this directory. You can modify this file to change the example's
 behavior.
 
-For more information on using Requesters and Repliers, please consult the 
+For more information on using Requesters and Repliers, please consult the
 RTI Core Libraries and Utilities Getting Started Guide and User's Manual.
-
-

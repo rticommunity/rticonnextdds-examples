@@ -13,10 +13,11 @@ As applications become more complex, it often becomes necessary to use other
 communication patterns in addition to publish-subscribe.
 
 Connext DDS includes support for the *Request-Reply* communication pattern,
-which has two roles: 
-* The requester (service consumer or client) sends a request message and waits
+which has two roles:
+
+-   The requester (service consumer or client) sends a request message and waits
 for a reply message.
-* The replier (service provider) receives the request message and responds with
+-   The replier (service provider) receives the request message and responds with
 a reply message.
 
 ## Example description
@@ -28,7 +29,7 @@ Within this example the Requester application requests a list of prime numbers
 from `1` to `n`. Then the Replier application computes the prime numbers and
 replies with the given sequence of prime numbers to the Requester.
 
-For this example we dinamicaly define two data types, one for the request 
+For this example we dinamicaly define two data types, one for the request
 samples and the other for the reply samples. The request data type is the
 following:
 
@@ -40,6 +41,7 @@ struct PrimeNumberRequest {
 ```
 
 And then the reply data types:
+
 ```cpp
 const long PRIME_SEQUENCE_MAX_LENGTH = 1024;
 enum PrimeNumberCalculationStatus {

@@ -10,28 +10,25 @@
  ******************************************************************************/
 
 #include "Primes.hpp"
-#include <rti/request/rtirequest.hpp> // full request-reply API
-#include <rti/config/Logger.hpp> // Logger to configure logging verbosity
+#include <rti/request/rtirequest.hpp>  // full request-reply API
+#include <rti/config/Logger.hpp>       // Logger to configure logging verbosity
 
 using namespace dds::core::xtypes;
 
 class PrimeNumberReplierExample {
-
 private:
     dds::domain::DomainParticipant participant;
     PrimeNumberTypeBuilder type_builder;
 
 public:
-    PrimeNumberReplierExample(int domain_id)
-        : participant(domain_id)
+    PrimeNumberReplierExample(int domain_id) : participant(domain_id)
     {
     }
 
 private:
-
     void calculate_and_send_primes(
             rti::request::Replier<DynamicData, DynamicData> replier,
-            const rti::sub::LoanedSample<DynamicData>& request)
+            const rti::sub::LoanedSample<DynamicData> &request)
     {
         DynamicData request_data(request.data());
         int n = request_data.value<int32_t>("n");
@@ -39,8 +36,10 @@ private:
                 request_data.value<int32_t>("primes_per_reply"));
 
         DynamicData reply(type_builder.reply_type());
-        reply.value<int32_t>("status",
-                static_cast<int32_t>(PrimeNumberCalculationStatus::REPLY_IN_PROGRESS));
+        reply.value<int32_t>(
+                "status",
+                static_cast<int32_t>(
+                        PrimeNumberCalculationStatus::REPLY_IN_PROGRESS));
 
         // prime[i] indicates if i is a prime number
         // Initially, we assume all of them are prime
@@ -49,7 +48,7 @@ private:
         prime[0] = false;
         prime[1] = false;
 
-        int m = (int) std::sqrt((float)n);
+        int m = (int) std::sqrt((float) n);
         std::vector<int32_t> primes;
 
         for (int i = 2; i <= m; i++) {
@@ -87,14 +86,16 @@ private:
         // Send the last reply. Indicate that the calculation is complete and
         // send any prime number left in the sequence
         reply.set_values("primes", primes);
-        reply.value<int32_t>("status",
-                static_cast<int32_t>(PrimeNumberCalculationStatus::REPLY_COMPLETED));
+        reply.value<int32_t>(
+                "status",
+                static_cast<int32_t>(
+                        PrimeNumberCalculationStatus::REPLY_COMPLETED));
         replier.send_reply(reply, request.info());
     }
 
 public:
     void run_example()
-    {   
+    {
         rti::request::ReplierParams replier_params(participant);
 
         auto qos_provider = dds::core::QosProvider::Default();
@@ -112,8 +113,9 @@ public:
         // Receive requests and process them
         const auto MAX_WAIT = dds::core::Duration::from_secs(20);
         auto requests = replier.receive_requests(MAX_WAIT);
-        while (requests.length() > 0) { // end the requester when no requests received in MAX_WAIT
-            for (const auto& request : requests) {
+        while (requests.length() > 0) {  // end the requester when no requests
+                                         // received in MAX_WAIT
+            for (const auto &request : requests) {
                 if (!request.info().valid()) {
                     continue;
                 }
@@ -124,21 +126,21 @@ public:
                         request_data.value<int32_t>("primes_per_reply"));
 
                 // This constant is defined in Primes.h
-                if (n <= 0 ||
-                    primes_per_reply <= 0 ||
-                    primes_per_reply > PRIME_SEQUENCE_MAX_LENGTH) {
-
+                if (n <= 0 || primes_per_reply <= 0
+                    || primes_per_reply > PRIME_SEQUENCE_MAX_LENGTH) {
                     std::cout << "Cannot process request" << std::endl;
 
                     // Send reply indicating error
                     DynamicData error_reply(type_builder.reply_type());
-                    error_reply.value<int32_t>("status",
-                        static_cast<int32_t>(PrimeNumberCalculationStatus::REPLY_ERROR));
+                    error_reply.value<int32_t>(
+                            "status",
+                            static_cast<int32_t>(
+                                    PrimeNumberCalculationStatus::REPLY_ERROR));
                     replier.send_reply(error_reply, request.info());
 
                 } else {
-                    std::cout << "Calculating prime numbers below "
-                              << n << "... " << std::endl;
+                    std::cout << "Calculating prime numbers below " << n
+                              << "... " << std::endl;
 
                     calculate_and_send_primes(replier, request);
 
@@ -163,7 +165,7 @@ int replier_main(int domain_id)
 
     try {
         PrimeNumberReplierExample(domain_id).run_example();
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cout << "Exception: " << ex.what() << std::endl;
         return -1;
     }

@@ -10,8 +10,8 @@
  ******************************************************************************/
 
 #include "Primes.hpp"
-#include <rti/request/rtirequest.hpp> // full request-reply API
-#include <rti/config/Logger.hpp> // Logger to configure logging verbosity
+#include <rti/request/rtirequest.hpp>  // full request-reply API
+#include <rti/config/Logger.hpp>       // Logger to configure logging verbosity
 
 using namespace dds::core::xtypes;
 
@@ -20,8 +20,7 @@ private:
     dds::domain::DomainParticipant participant;
 
 public:
-    PrimeNumberRequesterExample(int domain_id)
-        : participant(domain_id)
+    PrimeNumberRequesterExample(int domain_id) : participant(domain_id)
     {
     }
 
@@ -41,7 +40,8 @@ public:
         requester_params.request_type(type_builder.request_type());
         requester_params.reply_type(type_builder.reply_type());
 
-        rti::request::Requester<DynamicData, DynamicData> requester(requester_params);
+        rti::request::Requester<DynamicData, DynamicData> requester(
+                requester_params);
 
         while (rti::request::matched_replier_count(requester) == 0) {
             rti::util::sleep(dds::core::Duration::from_millisecs(100));
@@ -68,22 +68,27 @@ public:
             }
 
             // Print the prime numbers we receive
-            for (const auto& reply : replies) {
+            for (const auto &reply : replies) {
                 if (!reply.info().valid()) {
                     continue;
                 }
 
-                std::vector<int32_t> primes = reply.data().get_values<int32_t>("primes");
+                std::vector<int32_t> primes =
+                        reply.data().get_values<int32_t>("primes");
                 for (auto prime : primes) {
                     std::cout << prime << " ";
                 }
 
                 int32_t status = reply.data().value<int32_t>("status");
-                if (status != static_cast<int32_t>(PrimeNumberCalculationStatus::REPLY_IN_PROGRESS)) {
+                if (status
+                    != static_cast<int32_t>(
+                            PrimeNumberCalculationStatus::REPLY_IN_PROGRESS)) {
                     in_progress = false;
-                    if (status == static_cast<int32_t>(PrimeNumberCalculationStatus::REPLY_ERROR)) {
+                    if (status
+                        == static_cast<int32_t>(
+                                PrimeNumberCalculationStatus::REPLY_ERROR)) {
                         throw std::runtime_error("Error in replier");
-                    } else { // reply->status == COMPLETED
+                    } else {  // reply->status == COMPLETED
                         std::cout << "DONE";
                     }
                 }
@@ -108,7 +113,7 @@ int requester_main(int n, int primes_per_reply, int domain_id)
 
     try {
         PrimeNumberRequesterExample(domain_id).run_example(n, primes_per_reply);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         std::cout << "Exception: " << ex.what() << std::endl;
         return -1;
     }
