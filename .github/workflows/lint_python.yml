@@ -32,9 +32,9 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
-          python-version: 3.8
+          python-version: 3.7
       - name: Install necessary tools
-        run: pip install black==22.1.0
+        run: pip install black==22.3.0
       - name: Perform format check in a pull request
         if: github.event_name == 'pull_request'
         working-directory: ${{ github.workspace }}
