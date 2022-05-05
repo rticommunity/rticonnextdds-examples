@@ -259,7 +259,6 @@ if __name__ == "__main__":
             ".hxx",
             ".c",
             ".cxx",
-            ".cs",
             ".java",
         }
         clang_format_cmd: List[str]

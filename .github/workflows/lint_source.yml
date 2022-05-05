@@ -12,7 +12,6 @@ on:
     paths:
       - '**/*.[ch]x?x?'
       - '**/*.java'
-      - '**/*.cs'
 
 jobs:
   lint-sourcecode:
