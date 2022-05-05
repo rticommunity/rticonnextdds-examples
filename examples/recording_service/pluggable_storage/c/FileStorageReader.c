@@ -217,35 +217,39 @@ int FileStorageStreamInfoReader_initialize(
     }
 
     if (RTIOsapiUtility_strncpy(
-            stream_reader->file_record.fileName,
-            FILENAME_MAX,
-            fileName,
-            strlen(fileName)) == NULL) {
+                stream_reader->file_record.fileName,
+                FILENAME_MAX,
+                fileName,
+                strlen(fileName))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", fileName);
         return FALSE;
     }
     if (RTIOsapiUtility_strncpy(
-            stream_reader->info_file_record.fileName,
-            FILENAME_MAX,
-            fileName,
-            strlen(fileName)) == NULL) {
+                stream_reader->info_file_record.fileName,
+                FILENAME_MAX,
+                fileName,
+                strlen(fileName))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", fileName);
         return FALSE;
     }
 
     if (RTIOsapiUtility_strncat(
-            stream_reader->info_file_record.fileName,
-            FILENAME_MAX,
-            ".info",
-            strlen(".info")) == NULL) {
+                stream_reader->info_file_record.fileName,
+                FILENAME_MAX,
+                ".info",
+                strlen(".info"))
+        == NULL) {
         printf("%s: %s\n", "Failed to append string", ".info");
         return FALSE;
     }
 
     if (RTI_fopen(
-            &stream_reader->info_file_record.file,
-            stream_reader->info_file_record.fileName,
-            "r") != 0) {
+                &stream_reader->info_file_record.file,
+                stream_reader->info_file_record.fileName,
+                "r")
+        != 0) {
         perror("Failed to open info file");
         return FALSE;
     }
@@ -377,10 +381,10 @@ int FileStorageStreamReader_addSampleToData(
     current_info = DDS_SampleInfoSeq_get_reference(
             &stream_reader->taken_info,
             current_length);
-    current_info->reception_timestamp.sec = (DDS_Long)(
-            stream_reader->current_timestamp / (int64_t) NANOSECS_PER_SEC);
-    current_info->reception_timestamp.nanosec = (DDS_Long)(
-            stream_reader->current_timestamp % (int64_t) NANOSECS_PER_SEC);
+    current_info->reception_timestamp.sec =
+            (DDS_Long) (stream_reader->current_timestamp / (int64_t) NANOSECS_PER_SEC);
+    current_info->reception_timestamp.nanosec =
+            (DDS_Long) (stream_reader->current_timestamp % (int64_t) NANOSECS_PER_SEC);
     current_info->valid_data =
             (stream_reader->current_valid_data ? DDS_BOOLEAN_TRUE
                                                : DDS_BOOLEAN_FALSE);
@@ -542,18 +546,20 @@ int FileStorageStreamReader_initialize(
     }
 
     if (RTIOsapiUtility_strncpy(
-            stream_reader->file_record.fileName,
-            FILENAME_MAX,
-            file_name,
-            strlen(file_name)) == NULL) {
+                stream_reader->file_record.fileName,
+                FILENAME_MAX,
+                file_name,
+                strlen(file_name))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", file_name);
         return FALSE;
     }
 
     if (RTI_fopen(
-            &stream_reader->file_record.file,
-            stream_reader->file_record.fileName,
-            "r") != 0) {
+                &stream_reader->file_record.file,
+                stream_reader->file_record.fileName,
+                "r")
+        != 0) {
         perror("Failed to open record file");
         return FALSE;
     }
@@ -625,10 +631,10 @@ void FileStorageReader_delete_stream_reader(
  * the given end time.
  */
 struct RTI_RecordingServiceStorageStreamReader *
-        FileStorageReader_create_stream_reader(
-                void *storage_reader_data,
-                const struct RTI_RoutingServiceStreamInfo *stream_info,
-                const struct RTI_RoutingServiceProperties *properties)
+FileStorageReader_create_stream_reader(
+        void *storage_reader_data,
+        const struct RTI_RoutingServiceStreamInfo *stream_info,
+        const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageReader *storage_reader =
             (struct FileStorageReader *) storage_reader_data;
@@ -724,9 +730,9 @@ void FileStorageReader_delete_stream_info_reader(
  * time should be ignored - this is, not discovered).
  */
 struct RTI_RecordingServiceStorageStreamInfoReader *
-        FileStorageReader_create_stream_info_reader(
-                void *storage_reader_data,
-                const struct RTI_RoutingServiceProperties *properties)
+FileStorageReader_create_stream_info_reader(
+        void *storage_reader_data,
+        const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageReader *storage_reader =
             (struct FileStorageReader *) storage_reader_data;
@@ -807,10 +813,11 @@ struct RTI_RecordingServiceStorageReader *FileStorageReader_create(
     }
 
     if (RTIOsapiUtility_strncpy(
-            storage_reader->file_name,
-            FileStorageReader_FILE_NAME_MAX,
-            file_name,
-            strlen(file_name)) == NULL) {
+                storage_reader->file_name,
+                FileStorageReader_FILE_NAME_MAX,
+                file_name,
+                strlen(file_name))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", file_name);
         return FALSE;
     }
