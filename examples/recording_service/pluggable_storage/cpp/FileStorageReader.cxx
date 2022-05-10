@@ -57,9 +57,8 @@ FileStorageReader::~FileStorageReader()
 {
 }
 
-rti::recording::storage::StorageStreamInfoReader *
-        FileStorageReader::create_stream_info_reader(
-                const rti::routing::PropertySet &)
+rti::recording::storage::StorageStreamInfoReader *FileStorageReader::
+        create_stream_info_reader(const rti::routing::PropertySet &)
 {
     return new FileStorageStreamInfoReader(&info_file_);
 }
@@ -70,8 +69,8 @@ void FileStorageReader::delete_stream_info_reader(
     delete stream_info_reader;
 }
 
-rti::recording::storage::StorageStreamReader *
-        FileStorageReader::create_stream_reader(
+rti::recording::storage::StorageStreamReader *FileStorageReader::
+        create_stream_reader(
                 const rti::routing::StreamInfo &,
                 const rti::routing::PropertySet &)
 {
@@ -281,7 +280,7 @@ void FileStorageStreamReader::read(
         read_sampleInfo.valid_data =
                 current_valid_data_ ? DDS_BOOLEAN_TRUE : DDS_BOOLEAN_FALSE;
         read_sampleInfo.reception_timestamp.sec =
-                (DDS_Long)(current_timestamp_ / (int64_t) NANOSECS_PER_SEC);
+                (DDS_Long) (current_timestamp_ / (int64_t) NANOSECS_PER_SEC);
         read_sampleInfo.reception_timestamp.nanosec =
                 current_timestamp_ % (int64_t) NANOSECS_PER_SEC;
         dds::sub::SampleInfo *cpp_sample_info = new dds::sub::SampleInfo;
