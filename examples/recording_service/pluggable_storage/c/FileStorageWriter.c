@@ -204,24 +204,29 @@ int FileStorageWriter_connect(void *storage_writer_data)
     }
 
     if (RTIOsapiUtility_strncpy(
-            writer->info_file.file_name,
-            FileStorageWriter_FILE_NAME_MAX,
-            writer->file.file_name,
-            strlen(writer->file.file_name)) == NULL) {
+                writer->info_file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                writer->file.file_name,
+                strlen(writer->file.file_name))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", writer->file.file_name);
         return FALSE;
     }
 
     if (RTIOsapiUtility_strncat(
-            writer->info_file.file_name,
-            FileStorageWriter_FILE_NAME_MAX,
-            FileStorageWriter_INFO_EXT,
-            strlen(FileStorageWriter_INFO_EXT)) == NULL) {
-        printf("%s: %s\n", "Failed to append string", FileStorageWriter_INFO_EXT);
+                writer->info_file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                FileStorageWriter_INFO_EXT,
+                strlen(FileStorageWriter_INFO_EXT))
+        == NULL) {
+        printf("%s: %s\n",
+               "Failed to append string",
+               FileStorageWriter_INFO_EXT);
         return FALSE;
     }
 
-    if (RTI_fopen(&writer->info_file.file, writer->info_file.file_name, "w") != 0) {
+    if (RTI_fopen(&writer->info_file.file, writer->info_file.file_name, "w")
+        != 0) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->info_file.file_name);
@@ -295,7 +300,7 @@ int FileStorageWriter_disconnect(void *storage_writer_data)
  * the case of the user-data creation function.
  */
 struct RTI_RecordingServiceStoragePublicationWriter *
-        FileStorageWriter_create_publication_writer(void *storage_writer_data)
+FileStorageWriter_create_publication_writer(void *storage_writer_data)
 {
     struct RTI_RecordingServiceStoragePublicationWriter *stream_writer = NULL;
 
@@ -335,10 +340,10 @@ struct RTI_RecordingServiceStoragePublicationWriter *
  * HelloMsg topic/type defined in the example.
  */
 struct RTI_RecordingServiceStorageStreamWriter *
-        FileStorageWriter_create_stream_writer(
-                void *storage_writer_data,
-                const struct RTI_RoutingServiceStreamInfo *stream_info,
-                const struct RTI_RoutingServiceProperties *properties)
+FileStorageWriter_create_stream_writer(
+        void *storage_writer_data,
+        const struct RTI_RoutingServiceStreamInfo *stream_info,
+        const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageWriter *writer =
             (struct FileStorageWriter *) storage_writer_data;
@@ -446,10 +451,11 @@ int FileStorageWriter_initialize(
     }
 
     if (RTIOsapiUtility_strncpy(
-            writer->file.file_name,
-            FileStorageWriter_FILE_NAME_MAX,
-            file_name,
-            strlen(file_name)) == NULL) {
+                writer->file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                file_name,
+                strlen(file_name))
+        == NULL) {
         printf("%s: %s\n", "Failed to copy string", file_name);
         return FALSE;
     }

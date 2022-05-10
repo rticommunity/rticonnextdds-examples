@@ -1,14 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
+ * (c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <iostream>
 
@@ -28,10 +28,13 @@
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "fragment.hpp"
 
-void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
+void run_publisher_application(
+        unsigned int domain_id,
+        unsigned int sample_count)
 {
     // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
+    // (see
+    // https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html)
 
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
@@ -46,14 +49,15 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::pub::DataWriter<fragment> writer(publisher, topic);
 
     fragment data;
-    // Create the data to be written, ensuring it is larger than message_size_max */
+    // Create the data to be written, ensuring it is larger than
+    // message_size_max */
     data.data().resize(8000);
 
     rti::core::status::DataWriterProtocolStatus status;
 
     for (unsigned int samples_written = 0;
-    !application::shutdown_requested && samples_written < sample_count;
-    samples_written++) {
+         !application::shutdown_requested && samples_written < sample_count;
+         samples_written++) {
         // Modify the data to be written here
         data.x(static_cast<int32_t>(samples_written));
 
@@ -73,7 +77,7 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
                   << "\n\t pulled_fragment_count "
                   << status.pulled_fragment_count()
                   << "\n\t pulled_fragment_bytes "
-                  <<  status.pulled_fragment_bytes()
+                  << status.pulled_fragment_bytes()
                   << "\n\t received_nack_fragment_count "
                   << status.received_nack_fragment_count()
                   << "\n\t received_nack_fragment_bytes "
@@ -83,7 +87,6 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
 
 int main(int argc, char *argv[])
 {
-
     using namespace application;
 
     // Parse arguments and handle control-C
@@ -100,10 +103,10 @@ int main(int argc, char *argv[])
 
     try {
         run_publisher_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_publisher_application(): " << ex.what()
-        << std::endl;
+                  << std::endl;
         return EXIT_FAILURE;
     }
 
