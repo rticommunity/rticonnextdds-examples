@@ -199,8 +199,8 @@ int run_subscriber_application(
     untyped_reader->get_datareader_cache_status(cacheStatus);
 
     std::cout << std::endl
-              << "--> Read: " << samples_read << " samples from witch "
-              << cacheStatus.compressed_sample_count << " has been compressed"
+              << "--> Read: " << samples_read << " samples from which "
+              << cacheStatus.compressed_sample_count << " have been compressed"
               << std::endl;
     std::cout << std::endl
               << "--> User Bytes received: "

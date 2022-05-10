@@ -23,7 +23,7 @@ DataReaderProtocolStatus:
 | DataReaderProtocolStatus| out_of_range_rejected_sample_count | The number of samples dropped by the DataReader due to the receive window being full and the sample received out-of-order. |
 
 For more information about the counters, please refer to the API Reference HTML
-documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataReaders.htm).
+documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataReaders.htm).
 
 ## Example Description
 

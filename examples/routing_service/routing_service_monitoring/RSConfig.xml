@@ -10,7 +10,7 @@
  -->
 <?xml version="1.0"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_routing_service.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.1/rti_routing_service.xsd">
     <routing_service name="TopicBridgeExampleA2B" group_name="GroupA">
         <monitoring>
             <!-- The domain used to publish the monitoring topics -->
