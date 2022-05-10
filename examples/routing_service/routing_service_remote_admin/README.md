@@ -4,7 +4,7 @@
 
 *Routing Service* uses the common Remote Administration Platform (see [Remote
 Administration
-Platform](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/services/routing_service/common/remote_admin_platform.html))
+Platform](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/services/routing_service/common/remote_admin_platform.html))
 This example shows how to use the platform to send remote commands to a running
 instance of Routing Service.
 

@@ -13,14 +13,14 @@ cmake_minimum_required(VERSION 3.11)
 project(FileAdapterC)
 
 if(NOT DEFINED CONNEXTDDS_DIR)
-    set(msg 
+    set(msg
         "Please set the CMake variable CONNEXTDDS_DIR "
         "to point to your installation of RTI Connext DDS")
     message(FATAL_ERROR ${msg})
 endif()
 
 if (NOT UNIX)
-    set(msg 
+    set(msg
         "This example uses the pthreads library "
         "which is only available on UNIX-like systems")
     message(FATAL_ERROR ${msg})
@@ -29,7 +29,7 @@ endif()
 # Find RTI Connext dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
 find_package(
-    RTIConnextDDS "6.1.0"
+    RTIConnextDDS "6.1.1"
     REQUIRED
     COMPONENTS
         core

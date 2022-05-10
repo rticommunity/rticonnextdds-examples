@@ -9,4 +9,4 @@ performance, resource usage, and behavior of their system.
 In this directory you will find examples illustrating some of the most
 important features of RTI Prototyper. For more information, please refer to the
 [RTI Prototyper Getting Started
-Guide](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/tools/prototyper/index.htm).
+Guide](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/tools/prototyper/index.htm).
