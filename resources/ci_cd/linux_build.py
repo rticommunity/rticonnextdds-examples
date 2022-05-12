@@ -30,7 +30,7 @@ def main():
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
-        examples_dir = Path("examples/connext_dds").resolve(strict=True)
+        examples_dir = Path("examples").resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: Examples directory not found.")
 

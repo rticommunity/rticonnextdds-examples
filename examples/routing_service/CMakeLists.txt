@@ -17,10 +17,9 @@ option(CONNEXTDDS_BUILD_MONGODB_EXAMPLE
     "Build the Mongo DB C++ Routing Service example"
     OFF
 )
+set(routing_service_mongo_db_example_dir)
 if(CONNEXTDDS_BUILD_MONGODB_EXAMPLE)
     set(routing_service_mongo_db_example_dir "mongo_db")
-else()
-    set(routing_service_mongo_db_example_dir)
 endif()
 
 connextdds_add_examples_subdirectories(
