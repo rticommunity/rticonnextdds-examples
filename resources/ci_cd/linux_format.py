@@ -259,7 +259,6 @@ if __name__ == "__main__":
             ".hxx",
             ".c",
             ".cxx",
-            ".cs",
             ".java",
         }
         clang_format_cmd: List[str]
@@ -269,7 +268,13 @@ if __name__ == "__main__":
                 str(current_script_dir.joinpath("diff_clang_format.sh"))
             ]
         else:
-            clang_format_cmd = ["git", "clang-format", "--diff"]
+            clang_format_cmd = [
+                "git",
+                "clang-format",
+                "--style",
+                "file",
+                "--diff",
+            ]
 
         clang_format_filtered_file_list: List[str] = filter_files(
             file_list, clang_format_suffix_list

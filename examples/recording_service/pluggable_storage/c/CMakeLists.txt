@@ -44,7 +44,7 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(
-    RTIConnextDDS "6.1.0"
+    RTIConnextDDS "6.1.1"
     REQUIRED
     COMPONENTS
         core
@@ -71,6 +71,8 @@ add_library(
     FileStorageWriterC
         "${CMAKE_CURRENT_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageWriter.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.h"
 )
 
 add_dependencies(FileStorageWriterC ${PROJECT_NAME}_codegen_sources)
@@ -87,7 +89,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}/generated"
-        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the library that will provide the storage reader plugin
@@ -95,6 +96,7 @@ add_library(
     FileStorageReaderC
         "${CMAKE_CURRENT_BINARY_DIR}/generated/HelloMsg.c"
         "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageReader.c"
+        "${CMAKE_CURRENT_SOURCE_DIR}/FileStorageUtils.c"
 )
 
 add_dependencies(FileStorageReaderC ${PROJECT_NAME}_codegen_sources)
@@ -111,7 +113,6 @@ target_include_directories(
     PUBLIC
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${CMAKE_CURRENT_BINARY_DIR}/generated"
-        "${CONNEXTDDS_INCLUDE_DIRS}/recordingservice"
 )
 
 # Define the publisher application

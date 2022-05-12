@@ -21,7 +21,7 @@ set(CMAKE_MODULE_PATH
 include(ConnextDdsAddExample)
 
 find_package(
-    RTIConnextDDS "6.1.0"
+    RTIConnextDDS "6.1.1"
     REQUIRED
     COMPONENTS
         core
