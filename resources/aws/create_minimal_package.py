@@ -419,6 +419,7 @@ def select_files_for_minimun_package(installation_path):
         "resource/app/app_support/rtiddsgen/**/*",
         "resource/app/jre/**/*",
         "resource/app/lib/java/**/*",
+        "resource/idl/**/*",
         "resource/scripts/**/*",
     )
     selected_files = []
