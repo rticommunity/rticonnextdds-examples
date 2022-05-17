@@ -439,14 +439,10 @@ int FileStorageWriter_initialize(
     if (file_name == NULL) {
         printf("Failed to find property with name=%s\n",
                FILENAME_PROPERTY_NAME);
-        /* Cleanup on failure */
-        free(writer);
         return FALSE;
     }
     if (strlen(file_name) >= FileStorageWriter_FILE_NAME_MAX) {
         printf("File name too long (%s)\n", file_name);
-        /* Cleanup on failure */
-        free(writer);
         return FALSE;
     }
 
@@ -462,7 +458,6 @@ int FileStorageWriter_initialize(
 
     if (!FileStorageWriter_connect(writer)) {
         printf("Failed to connect to storage\n");
-        free(writer);
         return FALSE;
     }
     return TRUE;

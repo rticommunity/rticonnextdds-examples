@@ -115,6 +115,7 @@ void *RTI_RoutingServiceFileAdapter_discovery_thread(void *arg)
     dir = opendir(connection->path);
     if (dir == NULL) {
         fprintf(stderr, "checkingThread: error opening directory\n");
+        return NULL;
     }
 
     /*every 5 seconds we check if there are new files in the directory*/

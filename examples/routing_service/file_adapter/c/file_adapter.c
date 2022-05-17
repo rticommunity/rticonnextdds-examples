@@ -741,6 +741,7 @@ RTI_RoutingServiceFileConnection_create_stream_writer(
                 env,
                 "Could not open file for write: %s",
                 filename);
+        free(filename);
         return NULL;
     }
     free(filename);

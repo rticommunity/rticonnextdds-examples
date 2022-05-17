@@ -135,7 +135,7 @@ static int publisher_main(
     DDS_Publisher *publisher = NULL;
     DDS_Topic *topic = NULL;
     DDS_DataWriter *writer = NULL;
-    struct DDS_DataWriterQos writer_qos = DDS_DataWriterQos_INITIALIZER;
+    struct DDS_DataWriterQos writer_qos;
     hello_worldDataWriter *hello_world_writer = NULL;
     hello_world *instance = NULL;
     DDS_ReturnCode_t retcode;
