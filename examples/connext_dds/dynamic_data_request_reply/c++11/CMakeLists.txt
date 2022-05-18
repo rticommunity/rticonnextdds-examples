@@ -11,15 +11,13 @@ set(CMAKE_MODULE_PATH
 )
 
 # Find the RTI Connext DDS libraries
-if(NOT RTIConnextDDS_FOUND)
-    find_package(RTIConnextDDS
-        "6.1.0"
-        REQUIRED
-        COMPONENTS
-            core
-            messaging_api
-    )
-endif()
+find_package(RTIConnextDDS
+    "6.1.0"
+    REQUIRED
+    COMPONENTS
+        core
+        messaging_api
+)
 
 add_executable(prime_number_requester_cxx2
     "${CMAKE_CURRENT_SOURCE_DIR}/PrimeNumberRequester.cxx"
