@@ -10,7 +10,7 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project(ServiceAsLib)
+project(ServiceAsLibC++11)
 
 if(NOT BUILD_SHARED_LIBS)
     set(msg
@@ -33,6 +33,8 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 
+include(ConnextDdsAddExample)
+
 find_package(
     RTIConnextDDS "6.1.1"
     REQUIRED
@@ -42,41 +44,13 @@ find_package(
         recording_service
 )
 
-# Copy recorder and replay configuration files to binary directory
-add_custom_command(
-    OUTPUT ${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/recorder_config.xml"
-)
-
-add_custom_command(
-    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
-    COMMAND ${CMAKE_COMMAND} -E copy
-        "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
-    DEPENDS "${CMAKE_CURRENT_SOURCE_DIR}/replay_config.xml"
-)
-
-add_custom_target(
-    copy_config_files
-    DEPENDS
-        "${CMAKE_CURRENT_BINARY_DIR}/recorder_config.xml"
-        "${CMAKE_CURRENT_BINARY_DIR}/replay_config.xml"
-)
-
 # Define the subscriber application
 add_executable(
     ServiceAsLibExample
     "${CMAKE_CURRENT_SOURCE_DIR}/ServiceAsLibExample.cxx"
 )
 
-set_target_properties(
-    ServiceAsLibExample
-    PROPERTIES CXX_STANDARD 11)
-
-add_dependencies(ServiceAsLibExample copy_config_files)
+target_compile_features(ServiceAsLibExample PRIVATE cxx_std_11)
 
 target_include_directories(
     ServiceAsLibExample
@@ -89,4 +63,16 @@ target_link_libraries(
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
+)
+
+connextdds_copy_qos_profile(
+    TARGET_PREFIX "${PROJECT_NAME}_RecorderXml_"
+    DEPENDANT_TARGET ServiceAsLibExample
+    FILENAME "recorder_config.xml"
+)
+
+connextdds_copy_qos_profile(
+    TARGET_PREFIX "${PROJECT_NAME}_ReplayXml_"
+    DEPENDANT_TARGET ServiceAsLibExample
+    FILENAME "replay_config.xml"
 )

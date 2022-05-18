@@ -19,14 +19,14 @@ using namespace rti::community::examples;
  *  --- Cluster address
  * -----------------------------------------------------------------
  */
-template <>
+template<>
 const std::string &MongoConfig::name<MongoConfig::CLUSTER_ADDRESS>()
 {
     static std::string __name("mongo.cluster_address");
     return __name;
 }
 
-template <>
+template<>
 std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
         const rti::routing::PropertySet &properties)
 {
@@ -43,14 +43,14 @@ std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
  *  --- User & Pass
  * ---------------------------------------------------------------------
  */
-template <>
+template<>
 const std::string &MongoConfig::name<MongoConfig::USER_AND_PASS>()
 {
     static std::string __name("mongo.uri_params");
     return __name;
 }
 
-template <>
+template<>
 std::string MongoConfig::parse<MongoConfig::USER_AND_PASS>(
         const rti::routing::PropertySet &properties)
 {
@@ -67,14 +67,14 @@ std::string MongoConfig::parse<MongoConfig::USER_AND_PASS>(
  *  ---  Uri params
  * ---------------------------------------------------------------------
  */
-template <>
+template<>
 const std::string &MongoConfig::name<MongoConfig::URI_PARAMS>()
 {
     static std::string __name("mongo.uri_params");
     return __name;
 }
 
-template <>
+template<>
 std::string MongoConfig::parse<MongoConfig::URI_PARAMS>(
         const rti::routing::PropertySet &properties)
 {
@@ -91,14 +91,14 @@ std::string MongoConfig::parse<MongoConfig::URI_PARAMS>(
  *  --- Database name
  * -------------------------------------------------------------------
  */
-template <>
+template<>
 const std::string &MongoConfig::name<MongoConfig::DB_NAME>()
 {
     static std::string __name("mongo.db_name");
     return __name;
 }
 
-template <>
+template<>
 std::string MongoConfig::parse<MongoConfig::DB_NAME>(
         const rti::routing::PropertySet &properties)
 {

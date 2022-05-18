@@ -20,7 +20,11 @@ if(NOT DEFINED CONNEXTDDS_DIR)
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CONNEXTDDS_DIR}/resource/cmake")
+set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+)
+
 find_package(
     RTIConnextDDS "6.1.1"
     REQUIRED
@@ -29,7 +33,7 @@ find_package(
         routing_service
 )
 
-add_library(fileadapter
+add_library(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/FileAdapter.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/FileConnection.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/FileInputDiscoveryStreamReader.cxx"
@@ -37,22 +41,22 @@ add_library(fileadapter
     "${CMAKE_CURRENT_SOURCE_DIR}/FileStreamWriter.cxx"
 )
 
-set_property(TARGET fileadapter PROPERTY CXX_STANDARD 11)
-set_property(TARGET fileadapter PROPERTY CXX_STANDARD_REQUIRED ON)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
+set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
-target_link_libraries(fileadapter
+target_link_libraries(${PROJECT_NAME}
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
 )
 
 # To differentiate between debug and release builds
-set_target_properties(fileadapter
+set_target_properties(${PROJECT_NAME}
     PROPERTIES
         DEBUG_POSTFIX "d"
 )
 
 # Copy the sample data files into the binary directory
-ADD_CUSTOM_COMMAND(TARGET fileadapter
+ADD_CUSTOM_COMMAND(TARGET ${PROJECT_NAME}
     POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E copy
         "${CMAKE_CURRENT_SOURCE_DIR}/Input_Circle.csv"

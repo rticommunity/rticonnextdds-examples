@@ -115,6 +115,7 @@ void *RTI_RoutingServiceFileAdapter_discovery_thread(void *arg)
     dir = opendir(connection->path);
     if (dir == NULL) {
         fprintf(stderr, "checkingThread: error opening directory\n");
+        return NULL;
     }
 
     /*every 5 seconds we check if there are new files in the directory*/
@@ -144,7 +145,8 @@ void *RTI_RoutingServiceFileAdapter_discovery_thread(void *arg)
                     if (array_files[index] == NULL) {
                         fprintf(stderr,
                                 "checkingThread:"
-                                "Error allocating memory for discovery array\n");
+                                "Error allocating memory for discovery "
+                                "array\n");
                         continue;
                     }
 
@@ -165,7 +167,8 @@ void *RTI_RoutingServiceFileAdapter_discovery_thread(void *arg)
                         fprintf(stdout,
                                 "checkingThread: You reached the "
                                 "maximum number of files in the directory "
-                                "you can have (>= %d)!\n RoutingService no longer "
+                                "you can have (>= %d)!\n RoutingService no "
+                                "longer "
                                 "gets notified for creating new streams\n"
                                 "For increasing number of files, increase "
                                 "the size of MAX_VEC_FILE in the header "

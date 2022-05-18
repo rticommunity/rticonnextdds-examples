@@ -29,7 +29,7 @@
          of the StorageReader -->
     <plugin_library name="StorageLibrary">
         <storage_plugin name="ExamplePlugin">
-            <dll>FileStorageReader</dll>
+            <dll>FileStorageReaderC</dll>
             <create_function>FileStorageReader_create</create_function>
         </storage_plugin>
     </plugin_library>

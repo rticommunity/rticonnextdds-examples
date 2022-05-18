@@ -26,7 +26,7 @@
          of the StorageWriter -->     
     <plugin_library name="StorageLibrary">
         <storage_plugin name="ExamplePlugin">
-            <dll>FileStorageWriter</dll>
+            <dll>FileStorageWriterC</dll>
             <create_function>FileStorageWriter_create_instance</create_function>
         </storage_plugin>
     </plugin_library>
