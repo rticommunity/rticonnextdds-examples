@@ -219,7 +219,7 @@ static int subscriber_main(int domain_id, int sample_count, int drs)
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
             DDS_DataReaderListener_INITIALIZER;
-    struct DDS_DataReaderQos reader_qos = DDS_DataReaderQos_INITIALIZER;
+    struct DDS_DataReaderQos reader_qos;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
