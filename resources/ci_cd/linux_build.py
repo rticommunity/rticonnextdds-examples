@@ -30,7 +30,7 @@ def main():
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
-        examples_dir = Path("examples/connext_dds").resolve(strict=True)
+        examples_dir = Path("examples").resolve(strict=True)
     except FileNotFoundError:
         sys.exit("Error: Examples directory not found.")
 
@@ -55,6 +55,9 @@ def main():
             "-DBUILD_SHARED_LIBS=ON",
             "-DCMAKE_BUILD_TYPE=Release",
             "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
+            "-DCONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES=ON",
+            "-DCONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES=ON",
+            "-DCONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES=ON",
             f"-DCONNEXTDDS_DIR={rti_connext_dds_dir}",
             examples_dir,
         ],

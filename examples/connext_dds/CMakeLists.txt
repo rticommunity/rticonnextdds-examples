@@ -14,7 +14,7 @@ include(ConnextDdsAddExamplesSubdirectories)
 
 # Find the ConnextDDS libraries. This will look for core and API libraries
 find_package(RTIConnextDDS
-    "6.1.0"
+    "6.1.1"
     REQUIRED
     COMPONENTS
         core
@@ -67,7 +67,7 @@ connextdds_add_examples_subdirectories(
         "custom_flow_controller"
         "custom_transport"
         "deadline_contentfilter"
-        "discovery_snapshot"
+        # "discovery_snapshot"
         "dynamic_data_using_publisher_subscriber"
         "flat_data_api"
         "flat_data_latency"

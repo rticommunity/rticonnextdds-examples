@@ -55,7 +55,7 @@ String ^DataWriterQos::ToString(DataWriterQos ^base)
 ```
 
 For more information about the use of these APIs, please refer to the API
-Reference HTML documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/QoS_Profile_Inheritance.htm#19.3.3.5_Viewing_Resolved_QoS_Values).
+Reference HTML documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/QoS_Profile_Inheritance.htm#19.3.3.5_Viewing_Resolved_QoS_Values).
 
 In addition to new APIs, when logging verbosity is set to at least LOCAL, and
 category is set to API, the QoS configuration being used by an entity is logged
