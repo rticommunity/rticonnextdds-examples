@@ -9,7 +9,7 @@
 # inability to use the software.
 # ------------------------------------------------------------------------------
 
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 ENV DEBIAN_FRONTEND="noninteractive"
 
@@ -21,9 +21,9 @@ RUN apt update && apt install -y \
     make \
     cmake \
     python3 \
-    clang-tools-10 \
+    clang-tools-13 \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH=/usr/share/clang/scan-build-py-10/bin:${PATH}
+ENV PATH=/usr/share/clang/scan-build-py-13/bin:${PATH}
 
 USER jenkins
