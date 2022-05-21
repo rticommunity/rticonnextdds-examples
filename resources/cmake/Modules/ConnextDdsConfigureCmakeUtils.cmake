@@ -36,6 +36,14 @@ set(CONNEXTDDS_CMAKE_UTILS_DIR
 )
 
 function(connextdds_configure_cmake_utils)
+    if(NOT "${CONNEXTDDS_CMAKE_UTILS_DIR}/cmake/Modules/" IN_LIST CMAKE_MODULE_PATH)
+        set(CMAKE_MODULE_PATH
+            ${CMAKE_MODULE_PATH}
+            "${CONNEXTDDS_CMAKE_UTILS_DIR}/cmake/Modules/"
+            PARENT_SCOPE
+        )
+    endif()
+
     if(CONNEXTDDS_CMAKE_UTILS_CONFIGURED)
         return()
     endif()
@@ -51,7 +59,7 @@ function(connextdds_configure_cmake_utils)
 
     # This is a git repository and we can use the git submodules update command
     # in order to initialize the git-submodule rticonnextdds-cmake-utils
-    if(git_submodule_status_out MATCHES "^-")
+    if(git_submodule_status_out and git_submodule_status_out MATCHES "^-")
         message(STATUS
             "The rticonnextdds-cmake-utils submodule is yet not configured,"
             " initializing..."
@@ -79,26 +87,33 @@ function(connextdds_configure_cmake_utils)
             " manually"
         )
         set(CONNEXTDDS_VERSION "6.1.1" CACHE STRING "")
+        set(_gh_file_name "rticonnextdds-cmake-utils-release-${CONNEXTDDS_VERSION}")
         file(DOWNLOAD
             "https://github.com/rticommunity/rticonnextdds-cmake-utils/archive/refs/heads/release/${CONNEXTDDS_VERSION}.zip"
-            "${CONNEXTDDS_CMAKE_UTILS_DIR}/rticonnextdds-cmake-utils.zip"
+            "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
         )
         execute_process(
             COMMAND
-                ${CMAKE_COMMAND} -E tar xf "${CONNEXTDDS_CMAKE_UTILS_DIR}/rticonnextdds-cmake-utils.zip" --format=zip "${CONNEXTDDS_CMAKE_UTILS_DIR}/"
-            COMMAND
-                ${CMAKE_COMMAND} -E remove "${CONNEXTDDS_CMAKE_UTILS_DIR}/rticonnextdds-cmake-utils.zip"
+                ${CMAKE_COMMAND} -E tar xf
+                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
+                    --format=zip
+            WORKING_DIRECTORY "${CONNEXTDDS_CMAKE_UTILS_DIR}"
         )
-    else()
-        message(FATAL_ERROR
-            "There was an unexpected outcome when trying to find the"
-            " rticonnextdds-cmake-utils git-submodule")
+        execute_process(
+            COMMAND
+                ${CMAKE_COMMAND} -E copy_directory
+                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}"
+                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/"
+        )
+        execute_process(
+            COMMAND
+                ${CMAKE_COMMAND} -E remove
+                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
+            COMMAND
+                ${CMAKE_COMMAND} -E remove_directory
+                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}"
+        )
     endif()
 
-    set(CMAKE_MODULE_PATH
-        ${CMAKE_MODULE_PATH}
-        "${CONNEXTDDS_CMAKE_UTILS_DIR}/cmake/Modules/"
-        PARENT_SCOPE
-    )
     set(CONNEXTDDS_CMAKE_UTILS_CONFIGURED TRUE CACHE BOOL "" FORCE)
 endfunction()
