@@ -28,10 +28,11 @@ if(NOT CMAKE_BUILD_TYPE)
 endif()
 
 # Find RTI Connext dependencies
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 include(ConnextDdsAddExample)
 

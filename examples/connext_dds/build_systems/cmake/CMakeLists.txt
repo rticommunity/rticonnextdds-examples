@@ -9,10 +9,11 @@ project(rtiexamples-hello-world)
 
 # Add the folder where the FindRTIConnextDDS.cmake file is placed to the
 # CMAKE_MODULE_PATH variable
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 # Find the ConnextDDS libraries. This will look fo the core and API libraries
 # only
