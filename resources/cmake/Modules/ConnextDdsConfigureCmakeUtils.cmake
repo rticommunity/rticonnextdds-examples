@@ -24,7 +24,9 @@ Initializes the `rticonnextdds-cmake-utils
 <https://github.com/rticommunity/rticonnextdds-cmake-utils>` git-submodule
 which contains multiple util modules to build the examples. Then, it sets
 up the `CMAKE_MODULE_PATH <https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html>`
-variable to use this new repository modules.
+variable to use this new repository modules. If the rticonnextdds-examples
+repository has been downloaded as a zip, or the git tool is unavailable, the
+rticonnextdds-cmake-utils repository will be downloaded from GitHub directly.
 
 #]]
 
@@ -50,22 +52,32 @@ function(connextdds_configure_cmake_utils)
     # This is a git repository and we can use the git submodules update command
     # in order to initialize the git-submodule rticonnextdds-cmake-utils
     if(git_submodule_status_out MATCHES "^-")
+        message(STATUS
+            "The rticonnextdds-cmake-utils submodule is yet not configured,"
+            " initializing..."
+        )
         execute_process(
             COMMAND git submodule update --init --recursive
+            OUTPUT_VARIABLE submodule_update_out
             ERROR_VARIABLE submodule_update_err
         )
-        if(submodule_update_err)
+        if(NOT submodule_update_out)
             message(FATAL_ERROR
-                "There was a problem initializing a submodule:\n"
+                "There was a problem initializing the submodule:\n"
                 "${submodule_update_err}"
             )
         endif()
         unset(submodule_update_err)
     # This is not a git repository or git tool is not installed, so we are going
     # to download the rticonnextdds-cmake-utils zip file
-    endif(git_submodule_status_err
+    elseif(git_submodule_status_err
         OR git_submodule_status_res STREQUAL "No such file or directory"
     )
+        message(STATUS
+            "The rticonnextdds-examples installation is not a git repository or"
+            " git tool is not installed. Downloading rticonnextdds-cmake-utils"
+            " manually"
+        )
         set(CONNEXTDDS_VERSION "6.1.1" CACHE STRING "")
         file(DOWNLOAD
             "https://github.com/rticommunity/rticonnextdds-cmake-utils/archive/refs/heads/release/${CONNEXTDDS_VERSION}.zip"
@@ -77,57 +89,16 @@ function(connextdds_configure_cmake_utils)
             COMMAND
                 ${CMAKE_COMMAND} -E remove "${CONNEXTDDS_CMAKE_UTILS_DIR}/rticonnextdds-cmake-utils.zip"
         )
-        # ExternalProject_Add(downloadCmakeUtils
-        #     URL "https://github.com/rticommunity/rticonnextdds-cmake-utils/archive/refs/heads/release/${CONNEXTDDS_VERSION}.zip"
-        #     BUILD_IN_SOURCE 1
-        #     CONFIGURE_COMMAND ""
-        #     BUILD_COMMAND ""
-        #     INSTALL_COMMAND
-        #         ${CMAKE_COMMAND} -E copy_directory "." "${CONNEXTDDS_CMAKE_UTILS_DIR"
-        # )
+    else()
+        message(FATAL_ERROR
+            "There was an unexpected outcome when trying to find the"
+            " rticonnextdds-cmake-utils git-submodule")
     endif()
 
-
-    # # The repository was downloaded without git tool or it is not installed in
-    # # the system, so we have to manage it manually.
-    # elseif(git_submodule_status_res)
-
-
-    #     find_path(CONNEXTDDS_CMAKE_UTILS_MODULES_DIR
-    #         NAMES
-    #             "FindRTIConnextDDS.cmake"
-    #         PATHS
-    #             "${CONNEXTDDS_CMAKE_UTILS_DIR}/"
-    #             "${CONNEXTDDS_EXAMPLES_CMAKE_DIR}/rticonnextdds-cmake-utils/"
-    #         PATH_SUFFIXES
-    #             "cmake/Modules/"
-    #         NO_DEFAULT_PATH
-    #     )
-    #     if(CONNEXTDDS_CMAKE_UTILS_MODULES_DIR
-    #         STREQUAL "CONNEXTDDS_CMAKE_UTILS_MODULES_DIR-NOTFOUND"
-    #     )
-    #         message(FATAL_ERROR
-    #             "Please, clone the desired version of rticonnextdds-cmake-utils"
-    #             " repository from the branches page"
-    #             " https://github.com/rticommunity/rticonnextdds-cmake-utils/branches"
-    #             " into the resources/cmake/rticonnextdds-cmake-utils directory"
-    #         )
-    #     endif()
-    #     list(APPEND CMAKE_MODULE_PATH 
-    #         "${CONNEXTDDS_CMAKE_UTILS_MODULES_DIR}/"
-    #     )
-    #     set(CONNEXTDDS_CMAKE_UTILS_CONFIGURED
-    #         TRUE CACHE BOOL
-    #         "rticonnextdds-cmake-utils repository is configured correctly" FORCE)
-
-    # endif()
-
-
-    # unset(git_submodule_status_res)
-    # unset(git_submodule_status_out)
-    # unset(git_submodule_status_err)
-
-
-
+    set(CMAKE_MODULE_PATH
+        ${CMAKE_MODULE_PATH}
+        "${CONNEXTDDS_CMAKE_UTILS_DIR}/cmake/Modules/"
+        PARENT_SCOPE
+    )
+    set(CONNEXTDDS_CMAKE_UTILS_CONFIGURED TRUE CACHE BOOL "" FORCE)
 endfunction()
-
