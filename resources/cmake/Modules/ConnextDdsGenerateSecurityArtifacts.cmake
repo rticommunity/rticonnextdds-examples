@@ -81,7 +81,6 @@ function(connextdds_generate_security_artifacts)
         list(APPEND artifacts_input_files "${xml}.xml")
     endforeach()
 
-    message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
     add_custom_command(
         OUTPUT ${artifacts_input_files}
         PRE_BUILD
