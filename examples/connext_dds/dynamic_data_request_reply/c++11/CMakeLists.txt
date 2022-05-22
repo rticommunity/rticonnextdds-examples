@@ -12,7 +12,7 @@ set(CMAKE_MODULE_PATH
 
 # Find the RTI Connext DDS libraries
 find_package(RTIConnextDDS
-    "6.1.0"
+    "6.1.1"
     REQUIRED
     COMPONENTS
         core
