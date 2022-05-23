@@ -24,6 +24,6 @@ RUN apt update && apt install -y \
     clang-tools-13 \
     && rm -rf /var/lib/apt/lists/*
 
-ENV PATH=/usr/share/clang/scan-build-13/bin:${PATH}
+ENV PATH=/usr/lib/llvm-13/bin:${PATH}
 
 USER jenkins
