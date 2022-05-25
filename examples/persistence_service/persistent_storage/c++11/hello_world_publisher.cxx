@@ -11,6 +11,7 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <rti/util/util.hpp>      // for sleep()
 
 #include "hello_world.hpp"
 #include <dds/dds.hpp>
