@@ -1,0 +1,151 @@
+<?xml version="1.0"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd">
+
+    <qos_library name="RequestReplyExampleProfiles">
+    
+        <!-- Default QoS:
+             
+             This profile contains the QoS that Requesters and Repliers 
+             would use by default. We can use it as a base profile to inherit
+             from and override some parameters 
+         -->
+        <qos_profile name="default">
+            <datawriter_qos>
+            
+                <!-- Strict reliable -->
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    <max_blocking_time>
+                        <sec>10</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+                
+                <!-- These are typical protocol parameters for a reliable
+                     DataWriter -->
+                <protocol>
+                    <rtps_reliable_writer>
+                        <max_heartbeat_retries>
+                            LENGTH_UNLIMITED
+                        </max_heartbeat_retries>
+                        <heartbeats_per_max_samples>
+                            2
+                        </heartbeats_per_max_samples>
+                        <heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>100000000</nanosec> <!--100ms -->
+                        </heartbeat_period>
+                        <fast_heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>10000000</nanosec> <!--10ms -->
+                        </fast_heartbeat_period>
+                        <late_joiner_heartbeat_period>
+                            <sec>0</sec>
+                            <nanosec>10000000</nanosec> <!--10ms -->
+                        </late_joiner_heartbeat_period>
+                        <max_nack_response_delay>
+                            <sec>0</sec>
+                            <nanosec>0</nanosec>
+                        </max_nack_response_delay>
+                        <min_nack_response_delay>
+                            <sec>0</sec>
+                            <nanosec>0</nanosec>
+                        </min_nack_response_delay>
+                        <max_send_window_size>32</max_send_window_size>
+                        <min_send_window_size>32</min_send_window_size>
+                    </rtps_reliable_writer>
+                </protocol>
+                
+                <writer_resource_limits>
+                    <!-- This setting enables efficient communication
+                         between a replier and an arbitrary number of requesters 
+                     -->
+                    <max_remote_reader_filters>
+                        LENGTH_UNLIMITED
+                    </max_remote_reader_filters>
+                </writer_resource_limits>
+            </datawriter_qos>
+            
+            <datareader_qos>
+                <!-- Strict reliable -->
+                <reliability>
+                    <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    <max_blocking_time>
+                        <sec>10</sec>
+                        <nanosec>0</nanosec>
+                    </max_blocking_time>
+                </reliability>
+                
+                <history>
+                    <kind>KEEP_ALL_HISTORY_QOS</kind>
+                </history>
+                
+                <!-- These are typical protocol parameters for a reliable
+                     DataReader -->
+                <protocol>
+                    <rtps_reliable_reader>
+                        <max_heartbeat_response_delay>
+                            <sec>0</sec>
+                            <nanosec>0</nanosec>
+                        </max_heartbeat_response_delay>
+                        <min_heartbeat_response_delay>
+                            <sec>0</sec>
+                            <nanosec>0</nanosec>
+                        </min_heartbeat_response_delay>
+                    </rtps_reliable_reader>
+                </protocol>
+                
+            </datareader_qos>
+            
+        </qos_profile>
+    
+        <!-- This is the profile used by the Requester. 
+             It inherits from "default", defined above, 
+             and overrides some QoS -->
+        <qos_profile name="RequesterExampleProfile" 
+                     base_name="default">
+
+            <!-- QoS for the data writer that sends requests -->
+            <datawriter_qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
+
+            <!-- QoS for the data reader that receives replies -->
+            <datareader_qos>
+                <durability>
+                    <kind>VOLATILE_DURABILITY_QOS</kind>
+                </durability>
+            </datareader_qos>
+        </qos_profile>
+
+        <!-- This is the profile used by the Replier. 
+             It inherits from "default", defined above, 
+             and overrides some QoS -->
+        <qos_profile name="ReplierExampleProfile"
+                     base_name="default">
+        
+            <!-- QoS for the data writer that sends replies -->
+            <datawriter_qos>
+                <durability>
+                    <kind>VOLATILE_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
+
+            <!-- QoS for the data reader that receives requests -->
+            <datareader_qos>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datareader_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>
