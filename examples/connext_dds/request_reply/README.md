@@ -1,7 +1,7 @@
 # Example Code: Request-Reply
 
-:warning: **Note**: This is available in other languages when you install
-**Connext DDS**.
+:warning: **Note**: This example is available in other languages in the
+example directory of the **Connext DDS** installation.
 
 ## Concept
 
