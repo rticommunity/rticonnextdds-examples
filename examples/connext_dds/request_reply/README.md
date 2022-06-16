@@ -1,5 +1,8 @@
 # Example Code: Request-Reply
 
+:warning: **Note**: This is available in other languages when you install
+**Connext DDS**.
+
 ## Concept
 
 Request-reply is a communication pattern offered in addition to
