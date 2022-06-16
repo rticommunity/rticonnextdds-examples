@@ -1,4 +1,4 @@
-# Example Code: MultiChannel
+# Example Code: Request-Reply
 
 If you haven't used the RTI Connext C# API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
