@@ -188,7 +188,7 @@ int main()
     /* Creating the typeCode of the outer_struct that contains an inner_struct
      */
     outer_tc = outer_struct_get_typecode(factory);
-    if (inner_tc == NULL) {
+    if (outer_tc == NULL) {
         fprintf(stderr, "! Unable to create typeCode\n");
         goto fail;
     }
@@ -211,7 +211,7 @@ int main()
 
     inner_data =
             DDS_DynamicData_new(inner_tc, &DDS_DYNAMIC_DATA_PROPERTY_DEFAULT);
-    if (outer_data == NULL) {
+    if (inner_data == NULL) {
         fprintf(stderr, "! Unable to create inner dynamicData\n");
         goto fail;
     }
