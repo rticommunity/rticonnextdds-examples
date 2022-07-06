@@ -3,7 +3,7 @@
 [![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rticommunity/rticonnextdds-examples/Build%20and%20run%20static%20analysis?event=push)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
 
 This repository includes examples on how to use specific features of RTI
-Connext DDS.
+Connext.
 
 To contribute enhancements or additional examples to the repository, follow the
 instructions on our [RTI Connext DDS Examples
