@@ -367,9 +367,10 @@
 # ^^^^^^^^^^^^^^^^^^^
 # It is compatible with the following platforms listed in the
 # RTI Connext DDS Core Libraries Platform Notes:
-# - Linux platforms: i86, x64 and aarch64
+# - Linux platforms: i86, x64 and ARMv8
 # - Darwin platforms: OS X 10.11-10.13
 # - Windows platforms: i86 and x64
+# - QNX platforms: x64 and ARMv8
 # - Raspbian Wheezy 7.0 (3.x kernel) on ARMv6 (armv6vfphLinux3.xgcc4.7.2)
 # - Android 5.0 and 5.1 (armv7aAndroid5.0gcc4.9ndkr10e)
 #
@@ -1187,6 +1188,27 @@ elseif(CONNEXTDDS_ARCH MATCHES "Android")
         "RTI_UNIX"
         "LINUX RTI_ANDROID"
     )
+elseif(CONNEXTDDS_ARCH MATCHES "QNX7")
+    set(CONNEXTDDS_EXTERNAL_LIBS
+        "-lm"
+        "-lsocket"
+    )
+    set(CONNEXTDDS_COMPILE_DEFINITIONS
+        "RTI_QNX"
+        "RTI_QNX7"
+    )
+
+    if(CONNEXTDDS_ARCH MATCHES "cxx")
+        set(CONNEXTDDS_COMPILE_OPTIONS "-Y_cxx")
+    elseif(CONNEXTDDS_ARCH MATCHES "gpp")
+        set(CONNEXTDDS_COMPILE_OPTIONS "-Y_gpp")
+    endif()
+
+    if(CONNEXTDDS_ARCH MATCHES "armv8")
+        list(APPEND CONNEXTDDS_COMPILE_OPTIONS "-Vgcc/5.4.0,gcc_ntoaarch64le")
+    elseif(CONNEXTDDS_ARCH MATCHES "x64")
+        list(APPEND CONNEXTDDS_COMPILE_OPTIONS "-Vgcc/5.4.0,gcc_ntox86_64")
+    endif()
 else()
     message(FATAL_ERROR
         "${CONNEXTDDS_ARCH} architecture is unsupported by this module"
@@ -1870,6 +1892,8 @@ if(RTIConnextDDS_FOUND)
                 "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
             INTERFACE_COMPILE_DEFINITIONS
                 "${target_definitions}"
+            INTERFACE_COMPILE_OPTIONS
+                "${CONNEXTDDS_COMPILE_OPTIONS}"
     )
 
     # C API
