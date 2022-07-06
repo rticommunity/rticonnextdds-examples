@@ -367,11 +367,11 @@
 # ^^^^^^^^^^^^^^^^^^^
 # It is compatible with the following platforms listed in the
 # RTI Connext DDS Core Libraries Platform Notes:
-# - All the Linux i86 and x64 platforms
+# - Linux platforms: i86, x64 and aarch64
+# - Darwin platforms: OS X 10.11-10.13
+# - Windows platforms: i86 and x64
 # - Raspbian Wheezy 7.0 (3.x kernel) on ARMv6 (armv6vfphLinux3.xgcc4.7.2)
 # - Android 5.0 and 5.1 (armv7aAndroid5.0gcc4.9ndkr10e)
-# - All the Windows i86 and x64 platforms
-# - All the Darwin platforms (OS X 10.11-10.13)
 #
 # Logging in versions lower than CMake 3.15
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -1098,6 +1098,13 @@ elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(connextdds_host_arch ${connextdds_host_arch} "x64Linux")
     elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i686")
         set(connextdds_host_arch ${connextdds_host_arch} "i86Linux")
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "aarch64")
+        set(connextdds_host_arch
+            ${connextdds_host_arch}
+            "i86Linux"
+            "x64Linux"
+            "armv8"
+        )
     else()
         message(FATAL_ERROR
             "${CMAKE_HOST_SYSTEM} is not supported as host architecture"
@@ -1123,11 +1130,12 @@ if(CONNEXTDDS_ARCH MATCHES "Linux")
         "RTI_LINUX"
     )
 
-    if(CONNEXTDDS_ARCH MATCHES "x64Linux")
+    if(CONNEXTDDS_ARCH MATCHES "x64Linux|armv8")
         list(APPEND CONNEXTDDS_COMPILE_DEFINITIONS
             "RTI_64BIT"
         )
     endif()
+
 elseif(CONNEXTDDS_ARCH MATCHES "Win")
     # Windows Platforms
     set(CONNEXTDDS_EXTERNAL_LIBS
