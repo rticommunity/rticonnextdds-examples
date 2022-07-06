@@ -1877,7 +1877,7 @@ if(RTIConnextDDS_FOUND)
         TARGET "cpp2_api"
         VAR "CONNEXTDDS_CPP2_API"
         DEPENDENCIES
-            RTIConnextDDS::cpp_api
+            RTIConnextDDS::c_api
     )
 
     # Metp
