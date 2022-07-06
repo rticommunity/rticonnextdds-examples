@@ -1512,6 +1512,58 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
 
 endif()
 
+# Find the Security Plugins - this is for the WolfSSL case.
+if(security_plugins_wolfssl IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    list(APPEND rti_versions_field_names_host
+        "secure_base"
+        "secure_host_wolfssl"
+    )
+
+    list(APPEND rti_versions_field_names_target
+        "secure_target_libraries_wolfssl"
+    )
+
+    # Find all flavors of libnddssecurity
+    set(security_plugins_wolfssl_libs
+        "nddssecurity"
+        "nddsc"
+        "nddscore"
+    )
+    get_all_library_variables(
+        "${security_plugins_wolfssl_libs}"
+        "SECURITY_PLUGINS"
+    )
+
+    if(SECURITY_PLUGINS_FOUND)
+        if(CONNEXTDDS_WOLFSSL_DIR)
+            find_package(WolfSSL
+                REQUIRED ${CONNEXTDDS_WOLFSSL_VERSION}
+                PATHS
+                    "${CONNEXTDDS_WOLFSSL_DIR}")
+        elseif(CONNEXTDDS_WOLFSSL_VERSION)
+            find_package(WolfSSL REQUIRED ${CONNEXTDDS_WOLFSSL_VERSION})
+        else()
+            find_package(WolfSSL REQUIRED)
+        endif()
+
+        # Add WolfSSL include directories to the list of CONNEXTDDS_INCLUDE_DIRS
+        list(APPEND CONNEXTDDS_INCLUDE_DIRS
+            "${wolfSSL_INCLUDE_DIRS}"
+        )
+
+        # Add OpenSSL libraries to the list of CONNEXTDDS_EXTERNAL_LIBS
+        set(CONNEXTDDS_EXTERNAL_LIBS
+            ${wolfSSL_LIBRARY}
+            ${CONNEXTDDS_EXTERNAL_LIBS}
+        )
+
+        set(RTIConnextDDS_security_plugins_wolfssl_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_security_plugins_wolfssl_FOUND FALSE)
+    endif()
+
+endif()
+
 #####################################################################
 # Monitoring Liraries Component Variables                           #
 #####################################################################
