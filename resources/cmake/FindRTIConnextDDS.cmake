@@ -1519,16 +1519,11 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
     )
 
     if(SECURITY_PLUGINS_FOUND)
-        if(CONNEXTDDS_OPENSSL_DIR)
-            find_package(OpenSSL
-                REQUIRED ${CONNEXTDDS_OPENSSL_VERSION}
-                PATHS
-                    "${CONNEXTDDS_OPENSSL_DIR}")
-        elseif(CONNEXTDDS_OPENSSL_VERSION)
-            find_package(OpenSSL REQUIRED ${CONNEXTDDS_OPENSSL_VERSION})
-        else()
-            find_package(OpenSSL REQUIRED)
-        endif()
+        # We set the OPENSSL ROOT_DIR whether or not the variable
+        # CONNEXTDDS_OPENSSL_DIR is empty because it will just be used for
+        # searching. An empty path will not have any effect in the search.
+        set(OPENSSL_ROOT_DIR "${CONNEXTDDS_OPENSSL_DIR}")
+        find_package(OpenSSL ${CONNEXTDDS_OPENSSL_VERSION} REQUIRED)
 
         # Add OpenSSL include directories to the list of
         # CONNEXTDDS_INCLUDE_DIRS
