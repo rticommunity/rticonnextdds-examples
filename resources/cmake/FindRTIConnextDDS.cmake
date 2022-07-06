@@ -575,11 +575,19 @@ else()
             ${RTICODEGEN} -version
         OUTPUT_VARIABLE codegen_version_string
     )
+    # Sanitize Codegen output. When run for the first time, it shows some paths
+    # and CMake doesn't like Windows paths
+    string(REPLACE "\\" "/" codegen_version_string "${codegen_version_string}")
     connextdds_log_debug("Command output:")
     connextdds_log_debug("${codegen_version_string}")
-
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-        RTICODEGEN_VERSION "${codegen_version_string}")
+    # Instead of searching for a version (also found in the NDDSHOME directory
+    # showed by Codegen when run for the first time), try to match a safer
+    # string and then select the matching group for the version
+    string(REGEX MATCH
+        "rtiddsgen version ([0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?)"
+	    _ "${codegen_version_string}"
+    )
+    set(RTICODEGEN_VERSION "${CMAKE_MATCH_1}")
     connextdds_log_verbose("Codegen version: ${RTICODEGEN_VERSION}")
 endif()
 
