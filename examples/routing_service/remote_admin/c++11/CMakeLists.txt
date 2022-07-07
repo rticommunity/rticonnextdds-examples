@@ -38,7 +38,7 @@ connextdds_rtiddsgen_run(
     LANG
       "C++11"
     OUTPUT_DIRECTORY
-      "${PROJECT_BINARY_DIR}/generated"
+      "${CMAKE_CURRENT_BINARY_DIR}/generated"
     ${CODEGEN_FLAGS}
 )
 
@@ -48,7 +48,7 @@ connextdds_rtiddsgen_run(
     LANG
       "C++11"
     OUTPUT_DIRECTORY
-      "${PROJECT_BINARY_DIR}/generated"
+      "${CMAKE_CURRENT_BINARY_DIR}/generated"
     ${CODEGEN_FLAGS}
 )
 
@@ -56,15 +56,15 @@ connextdds_rtiddsgen_run(
 add_executable(${PROJECT_NAME}
     "${ServiceCommon_CXX11_SOURCES}"
     "${ServiceAdmin_CXX11_SOURCES}"
-    "${PROJECT_SOURCE_DIR}/src/ArgumentsParser.cxx"
-    "${PROJECT_SOURCE_DIR}/src/Requester.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/ArgumentsParser.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/Requester.cxx"
 )
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-    "${PROJECT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}/include"
     "${CONNEXTDDS_INCLUDE_DIRS}"
-    "${PROJECT_BINARY_DIR}/generated"
+    "${CMAKE_CURRENT_BINARY_DIR}/generated"
 )
 
 set_target_properties(${PROJECT_NAME}
