@@ -39,11 +39,12 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     heart_rate_topic = dds.Topic(participant, "HeartRate", HeartRate)
     temperature_topic = dds.Topic(participant, "Temperature", Temperature)
 
-    # TODO: write example of how to set QoS programatically
     subscriber_qos = dds.QosProvider.default.subscriber_qos
     subscriber = dds.Subscriber(participant, subscriber_qos)
-
     reader_qos = dds.QosProvider.default.datareader_qos
+
+    # Create one Reader per Topic using the Subscriber and DataReader QoS
+    # specified in the xml file
     alarm_reader = dds.DataReader(subscriber, alarm_topic, reader_qos)
     heart_rate_reader = dds.DataReader(subscriber,
                                        heart_rate_topic,
@@ -144,9 +145,6 @@ def main():
     assert 0 <= args.verbosity < 4
 
     # Sets Connext verbosity to help debugging
-
-    # Note: Switch case introduced in Python 3.10, I either do a dictionary 
-    # of functions for mapping or spam if statements
     verbosity = dds.Verbosity.EXCEPTION
     if args.verbosity == 0:
         verbosity = dds.Verbosity.SILENT

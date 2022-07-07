@@ -17,8 +17,6 @@ from GroupCoherentExampleType import AlarmCode, Alarm, HeartRate, Temperature
 
 
 def get_patient_heart_rate():
-    # TODO: Check if this creates heart_rates every single function call.
-    # In the C++ example this is a static array
     heart_rates = [35, 56, 85, 110]
     return random.choice(heart_rates)
 
@@ -41,6 +39,8 @@ def run_publisher_application(domain_id: int, sample_count: int):
     publisher = dds.Publisher(participant, publisher_qos)
     writer_qos = dds.QosProvider.default.datawriter_qos
 
+    # Create one Writer per Topic using the Publisher and DataWriter QoS 
+    # specified in the xml file
     alarm_writer = dds.DataWriter(publisher, alarm_topic, writer_qos)
     heart_rate_writer = dds.DataWriter(publisher, heart_rate_topic, writer_qos)
     temperature_writer = dds.DataWriter(
@@ -48,6 +48,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
         temperature_topic,
         writer_qos)
 
+    # Create the three datatypes and initialize the values
     alarm_data = Alarm()
     alarm_data.patient_id = 1
     alarm_data.alarm_code = AlarmCode.PATIENT_OK
@@ -76,7 +77,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
                 # a single coherent set of data so that we can correlate
                 # the alarm with the set of vitals that triggered it
                 print("Patient's vitals are abnormal, raising alarm and"
-                      "sending coherent set")
+                      " sending coherent set")
                 with dds.CoherentSet(publisher):   # Start a coherent set
                     heart_rate_writer.write(heart_rate_data)
                     temperature_writer.write(temperature_data)
@@ -131,9 +132,6 @@ def main():
     assert 0 <= args.verbosity < 4
 
     # Sets Connext verbosity to help debugging
-
-    # Note: Switch case introduced in Python 3.10, I either do a dictionary 
-    # of functions for mapping or spam if statements
     verbosity = dds.Verbosity.EXCEPTION
     if args.verbosity == 0:
         verbosity = dds.Verbosity.SILENT
