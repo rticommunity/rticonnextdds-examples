@@ -70,8 +70,6 @@ target_include_directories(${PROJECT_NAME}
 set_target_properties(${PROJECT_NAME}
     PROPERTIES CXX_STANDARD 11)
 
-# add_dependencies(${PROJECT_NAME} ${PROJECT_NAME}-copy_config_files)
-
 target_link_libraries(${PROJECT_NAME}
     RTIConnextDDS::cpp2_api
     RTIConnextDDS::messaging_cpp2_api
