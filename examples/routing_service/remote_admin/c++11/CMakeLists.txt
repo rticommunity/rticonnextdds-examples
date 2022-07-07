@@ -34,7 +34,7 @@ include(ConnextDdsCodegen)
 
 connextdds_rtiddsgen_run(
     IDL_FILE
-      "$ENV{NDDSHOME}/resource/idl/ServiceCommon.idl"
+      "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
     LANG
       "C++11"
     OUTPUT_DIRECTORY
@@ -44,7 +44,7 @@ connextdds_rtiddsgen_run(
 
 connextdds_rtiddsgen_run(
     IDL_FILE
-      "$ENV{NDDSHOME}/resource/idl/ServiceAdmin.idl"
+      "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
     LANG
       "C++11"
     OUTPUT_DIRECTORY
