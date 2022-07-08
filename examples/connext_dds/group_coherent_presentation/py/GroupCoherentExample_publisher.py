@@ -48,7 +48,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
         temperature_topic,
         writer_qos)
 
-    # Create the three datatypes and initialize the values
+    # Create the three data samples and initialize the values
     alarm_data = Alarm()
     alarm_data.patient_id = 1
     alarm_data.alarm_code = AlarmCode.PATIENT_OK
