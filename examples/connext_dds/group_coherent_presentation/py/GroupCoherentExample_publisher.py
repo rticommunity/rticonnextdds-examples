@@ -50,16 +50,8 @@ def run_publisher_application(domain_id: int, sample_count: int):
 
     # Create the three data samples and initialize the values
     alarm_data = Alarm(patient_id=1, alarm_code=AlarmCode.PATIENT_OK)
-    alarm_data.patient_id = 1
-    alarm_data.alarm_code = AlarmCode.PATIENT_OK
-
-    heart_rate_data = HeartRate()
-    heart_rate_data.patient_id = 1
-    heart_rate_data.beats_per_minute = 65
-
-    temperature_data = Temperature()
-    temperature_data.patient_id = 1
-    temperature_data.temperature = 98.6
+    heart_rate_data = HeartRate(patient_id=1, beats_per_minute=65)
+    temperature_data = Temperature(patient_id=1, temperature=98.6)
 
     # Below we will write a coherent set any time the patient's vitals are
     # abnormal. Otherwise we will publish the patient's vital normally
@@ -95,12 +87,6 @@ def run_publisher_application(domain_id: int, sample_count: int):
             break
 
     print('preparing to shut down...')
-    alarm_writer.close()
-    heart_rate_writer.close()
-    temperature_writer.close()
-    alarm_topic.close()
-    heart_rate_topic.close()
-    temperature_topic.close()
     participant.close()
 
 

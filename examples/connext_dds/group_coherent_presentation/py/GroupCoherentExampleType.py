@@ -23,7 +23,7 @@ class AlarmCode(IntEnum):
 
 
 @idl.struct(
-    type_annotations={
+    member_annotations={
         'patient_id': [idl.key]
     }
 )
@@ -33,7 +33,7 @@ class Alarm:
 
 
 @idl.struct(
-    type_annotations={
+    member_annotations={
         'patient_id': [idl.key]
     }
 )
@@ -43,7 +43,7 @@ class HeartRate:
 
 
 @idl.struct(
-    type_annotations={
+    member_annotations={
         'patient_id': [idl.key]
     }
 )

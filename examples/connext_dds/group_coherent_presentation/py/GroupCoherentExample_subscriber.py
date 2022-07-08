@@ -46,12 +46,14 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     # Create one Reader per Topic using the Subscriber and DataReader QoS
     # specified in the xml file
     alarm_reader = dds.DataReader(subscriber, alarm_topic, reader_qos)
-    heart_rate_reader = dds.DataReader(subscriber,
-                                       heart_rate_topic,
-                                       reader_qos)
-    temperature_reader = dds.DataReader(subscriber,
-                                        temperature_topic,
-                                        reader_qos)
+    heart_rate_reader = dds.DataReader(
+        subscriber,
+        heart_rate_topic,
+        reader_qos)
+    temperature_reader = dds.DataReader(
+        subscriber,
+        temperature_topic,
+        reader_qos)
 
     # Initialize samples_read to zero
     samples_read = 0
@@ -107,13 +109,6 @@ def run_subscriber_application(domain_id: int, sample_count: int):
             break
 
     print('preparing to shut down...')
-
-    alarm_reader.close()
-    heart_rate_reader.close()
-    temperature_reader.close()
-    alarm_topic.close()
-    heart_rate_topic.close()
-    temperature_topic.close()
     participant.close()
 
 
