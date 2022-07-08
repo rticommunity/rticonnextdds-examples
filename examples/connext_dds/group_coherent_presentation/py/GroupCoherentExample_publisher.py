@@ -49,7 +49,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
         writer_qos)
 
     # Create the three data samples and initialize the values
-    alarm_data = Alarm()
+    alarm_data = Alarm(patient_id=1, alarm_code=AlarmCode.PATIENT_OK)
     alarm_data.patient_id = 1
     alarm_data.alarm_code = AlarmCode.PATIENT_OK
 
