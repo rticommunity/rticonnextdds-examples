@@ -24,7 +24,7 @@ def process_data(reader):
 
     for (data, info) in samples:
         if info.valid:
-            print("Received: {}".format(data))
+            print(f"Received: {data}")
             samples_read += 1
 
     return samples_read
