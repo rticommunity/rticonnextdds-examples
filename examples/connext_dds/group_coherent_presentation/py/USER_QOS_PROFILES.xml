@@ -44,7 +44,7 @@
                     <ordered_access>true</ordered_access>
                 </presentation>
                 <publisher_name>
-                    <name>HelloPublisher</name>
+                    <name>Group Coheren Publisher</name>
                 </publisher_name>
             </publisher_qos>
 
@@ -57,13 +57,13 @@
                     <!-- <drop_incomplete_coherent_set>false</drop_incomplete_coherent_set>  -->
                 </presentation>
                 <subscriber_name>
-                    <name>HelloSubscriber</name>
+                    <name>Group Coherent Subscriber</name>
                 </subscriber_name>
             </subscriber_qos>
 
             <participant_qos>
                 <participant_name>
-                    <name>Group Coherent Presentation C++11 example</name>
+                    <name>Group Coherent Presentation Python example</name>
                     <role_name>group_coherentParticipantRole</role_name>
                 </participant_name>
             </participant_qos>
