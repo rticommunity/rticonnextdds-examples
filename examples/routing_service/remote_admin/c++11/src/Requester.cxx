@@ -17,6 +17,9 @@
 
 #include "ArgumentsParser.hpp"
 
+#include <chrono>
+#include <thread>
+
 // using namespace rti::request;
 using namespace dds::core;
 using namespace RTI::Service;
@@ -77,7 +80,7 @@ int main(int argc, char *argv[])
             matched_status =
                     requester.request_datawriter().publication_matched_status();
             wait_count++;
-            rti::util::sleep(Duration(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
 
         if (matched_status.current_count() < 1) {

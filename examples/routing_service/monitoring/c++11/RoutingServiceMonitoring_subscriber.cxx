@@ -21,6 +21,7 @@
 #include <exception>
 #include <iostream>
 #include <map>
+#include <sstream>
 
 #include "RoutingServiceMonitoring.hpp"
 
