@@ -155,7 +155,7 @@ def main():
     try:
         run_subscriber_application(args.domain, args.count)
     except Exception as e:
-        print("Exception in run_subscriber_application(): ", e)
+        print(f"Exception in run_subscriber_application(): ", e)
     return
 
 
