@@ -13,7 +13,7 @@ import time
 import argparse
 
 import rti.connextdds as dds
-from GroupCoherentExampleType import AlarmCode, Alarm, HeartRate, Temperature
+from GroupCoherentExample import AlarmCode, Alarm, HeartRate, Temperature
 
 
 def get_patient_heart_rate():
