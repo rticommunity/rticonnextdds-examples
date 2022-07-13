@@ -133,7 +133,7 @@ def main():
     try:
         run_publisher_application(args.domain, args.count)
     except Exception as e:
-        print(f"Exception in run_publisher_application(): ", e)
+        print(f"Exception in run_publisher_application(): {e}")
     return
 
 
