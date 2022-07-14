@@ -10,31 +10,28 @@
  * to use the software.
  */
 
-module GroupCoherentExample
-{
-    enum AlarmCode {
-        PATIENT_OK = 0,
-        PATIENT_REQUEST = 1,
-        SENSOR_OFFLINE = 2,
-        ABNORMAL_READING = 3
-    };
+enum AlarmCode {
+	PATIENT_OK = 0,
+	PATIENT_REQUEST = 1,
+	SENSOR_OFFLINE = 2,
+	ABNORMAL_READING = 3
+};
 
-    struct Alarm {
-        @key
-        int32 patient_id;
-        AlarmCode alarm_code;
-    };
+struct Alarm {
+	@key
+	int32 patient_id;
+	AlarmCode alarm_code;
+};
 
-    struct HeartRate {
-        @key
-        int32 patient_id;
-        uint32 beats_per_minute;
-    };
+struct HeartRate {
+	@key
+	int32 patient_id;
+	uint32 beats_per_minute;
+};
 
-    struct Temperature {
-        @key
-        int32 patient_id;
-        float temperature;
-    };
+struct Temperature {
+	@key
+	int32 patient_id;
+	float temperature;
 };
 
