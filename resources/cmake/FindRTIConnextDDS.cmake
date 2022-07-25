@@ -367,11 +367,12 @@
 # ^^^^^^^^^^^^^^^^^^^
 # It is compatible with the following platforms listed in the
 # RTI Connext DDS Core Libraries Platform Notes:
-# - All the Linux i86 and x64 platforms
+# - Linux platforms: i86, x64 and ARMv8
+# - Darwin platforms: OS X 10.11-10.13
+# - Windows platforms: i86 and x64
+# - QNX platforms: x64 and ARMv8
 # - Raspbian Wheezy 7.0 (3.x kernel) on ARMv6 (armv6vfphLinux3.xgcc4.7.2)
 # - Android 5.0 and 5.1 (armv7aAndroid5.0gcc4.9ndkr10e)
-# - All the Windows i86 and x64 platforms
-# - All the Darwin platforms (OS X 10.11-10.13)
 #
 # Logging in versions lower than CMake 3.15
 # ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -575,11 +576,19 @@ else()
             ${RTICODEGEN} -version
         OUTPUT_VARIABLE codegen_version_string
     )
+    # Sanitize Codegen output. When run for the first time, it shows some paths
+    # and CMake doesn't like Windows paths
+    string(REPLACE "\\" "/" codegen_version_string "${codegen_version_string}")
     connextdds_log_debug("Command output:")
     connextdds_log_debug("${codegen_version_string}")
-
-    string(REGEX MATCH "[0-9]+\\.[0-9]+\\.[0-9]+"
-        RTICODEGEN_VERSION "${codegen_version_string}")
+    # Instead of searching for a version (also found in the NDDSHOME directory
+    # showed by Codegen when run for the first time), try to match a safer
+    # string and then select the matching group for the version
+    string(REGEX MATCH
+        "rtiddsgen version ([0-9]+\\.[0-9]+\\.[0-9]+(\\.[0-9]+)?)"
+	    _ "${codegen_version_string}"
+    )
+    set(RTICODEGEN_VERSION "${CMAKE_MATCH_1}")
     connextdds_log_verbose("Codegen version: ${RTICODEGEN_VERSION}")
 endif()
 
@@ -1098,6 +1107,13 @@ elseif(CMAKE_HOST_SYSTEM_NAME MATCHES "Linux")
         set(connextdds_host_arch ${connextdds_host_arch} "x64Linux")
     elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "i686")
         set(connextdds_host_arch ${connextdds_host_arch} "i86Linux")
+    elseif(CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "aarch64")
+        set(connextdds_host_arch
+            ${connextdds_host_arch}
+            "i86Linux"
+            "x64Linux"
+            "armv8"
+        )
     else()
         message(FATAL_ERROR
             "${CMAKE_HOST_SYSTEM} is not supported as host architecture"
@@ -1123,11 +1139,12 @@ if(CONNEXTDDS_ARCH MATCHES "Linux")
         "RTI_LINUX"
     )
 
-    if(CONNEXTDDS_ARCH MATCHES "x64Linux")
+    if(CONNEXTDDS_ARCH MATCHES "x64Linux|armv8")
         list(APPEND CONNEXTDDS_COMPILE_DEFINITIONS
             "RTI_64BIT"
         )
     endif()
+
 elseif(CONNEXTDDS_ARCH MATCHES "Win")
     # Windows Platforms
     set(CONNEXTDDS_EXTERNAL_LIBS
@@ -1171,6 +1188,27 @@ elseif(CONNEXTDDS_ARCH MATCHES "Android")
         "RTI_UNIX"
         "LINUX RTI_ANDROID"
     )
+elseif(CONNEXTDDS_ARCH MATCHES "QNX7")
+    set(CONNEXTDDS_EXTERNAL_LIBS
+        "-lm"
+        "-lsocket"
+    )
+    set(CONNEXTDDS_COMPILE_DEFINITIONS
+        "RTI_QNX"
+        "RTI_QNX7"
+    )
+
+    if(CONNEXTDDS_ARCH MATCHES "cxx")
+        set(CONNEXTDDS_COMPILE_OPTIONS "-Y_cxx")
+    elseif(CONNEXTDDS_ARCH MATCHES "gpp")
+        set(CONNEXTDDS_COMPILE_OPTIONS "-Y_gpp")
+    endif()
+
+    if(CONNEXTDDS_ARCH MATCHES "armv8")
+        list(APPEND CONNEXTDDS_COMPILE_OPTIONS "-Vgcc/5.4.0,gcc_ntoaarch64le")
+    elseif(CONNEXTDDS_ARCH MATCHES "x64")
+        list(APPEND CONNEXTDDS_COMPILE_OPTIONS "-Vgcc/5.4.0,gcc_ntox86_64")
+    endif()
 else()
     message(FATAL_ERROR
         "${CONNEXTDDS_ARCH} architecture is unsupported by this module"
@@ -1481,16 +1519,11 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
     )
 
     if(SECURITY_PLUGINS_FOUND)
-        if(CONNEXTDDS_OPENSSL_DIR)
-            find_package(OpenSSL
-                REQUIRED ${CONNEXTDDS_OPENSSL_VERSION}
-                PATHS
-                    "${CONNEXTDDS_OPENSSL_DIR}")
-        elseif(CONNEXTDDS_OPENSSL_VERSION)
-            find_package(OpenSSL REQUIRED ${CONNEXTDDS_OPENSSL_VERSION})
-        else()
-            find_package(OpenSSL REQUIRED)
-        endif()
+        # We set the OPENSSL ROOT_DIR whether or not the variable
+        # CONNEXTDDS_OPENSSL_DIR is empty because it will just be used for
+        # searching. An empty path will not have any effect in the search.
+        set(OPENSSL_ROOT_DIR "${CONNEXTDDS_OPENSSL_DIR}")
+        find_package(OpenSSL ${CONNEXTDDS_OPENSSL_VERSION} REQUIRED)
 
         # Add OpenSSL include directories to the list of
         # CONNEXTDDS_INCLUDE_DIRS
@@ -1508,6 +1541,58 @@ if(security_plugins IN_LIST RTIConnextDDS_FIND_COMPONENTS)
         set(RTIConnextDDS_security_plugins_FOUND TRUE)
     else()
         set(RTIConnextDDS_security_plugins_FOUND FALSE)
+    endif()
+
+endif()
+
+# Find the Security Plugins - this is for the WolfSSL case.
+if(security_plugins_wolfssl IN_LIST RTIConnextDDS_FIND_COMPONENTS)
+    list(APPEND rti_versions_field_names_host
+        "secure_base"
+        "secure_host_wolfssl"
+    )
+
+    list(APPEND rti_versions_field_names_target
+        "secure_target_libraries_wolfssl"
+    )
+
+    # Find all flavors of libnddssecurity
+    set(security_plugins_wolfssl_libs
+        "nddssecurity"
+        "nddsc"
+        "nddscore"
+    )
+    get_all_library_variables(
+        "${security_plugins_wolfssl_libs}"
+        "SECURITY_PLUGINS"
+    )
+
+    if(SECURITY_PLUGINS_FOUND)
+        if(CONNEXTDDS_WOLFSSL_DIR)
+            find_package(WolfSSL
+                REQUIRED ${CONNEXTDDS_WOLFSSL_VERSION}
+                PATHS
+                    "${CONNEXTDDS_WOLFSSL_DIR}")
+        elseif(CONNEXTDDS_WOLFSSL_VERSION)
+            find_package(WolfSSL REQUIRED ${CONNEXTDDS_WOLFSSL_VERSION})
+        else()
+            find_package(WolfSSL REQUIRED)
+        endif()
+
+        # Add WolfSSL include directories to the list of CONNEXTDDS_INCLUDE_DIRS
+        list(APPEND CONNEXTDDS_INCLUDE_DIRS
+            "${wolfSSL_INCLUDE_DIRS}"
+        )
+
+        # Add OpenSSL libraries to the list of CONNEXTDDS_EXTERNAL_LIBS
+        set(CONNEXTDDS_EXTERNAL_LIBS
+            ${wolfSSL_LIBRARY}
+            ${CONNEXTDDS_EXTERNAL_LIBS}
+        )
+
+        set(RTIConnextDDS_security_plugins_wolfssl_FOUND TRUE)
+    else()
+        set(RTIConnextDDS_security_plugins_wolfssl_FOUND FALSE)
     endif()
 
 endif()
@@ -1802,6 +1887,8 @@ if(RTIConnextDDS_FOUND)
                 "${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}"
             INTERFACE_COMPILE_DEFINITIONS
                 "${target_definitions}"
+            INTERFACE_COMPILE_OPTIONS
+                "${CONNEXTDDS_COMPILE_OPTIONS}"
     )
 
     # C API
@@ -1825,7 +1912,7 @@ if(RTIConnextDDS_FOUND)
         TARGET "cpp2_api"
         VAR "CONNEXTDDS_CPP2_API"
         DEPENDENCIES
-            RTIConnextDDS::cpp_api
+            RTIConnextDDS::c_api
     )
 
     # Metp
