@@ -5,11 +5,11 @@
         <transport>
             <element>
                 <alias>builtin.udpv4_wan</alias>
-                <receive_port>7400</receive_port>
+                <receive_port>$(RTI_CDS_PORT)</receive_port>
                 <property>
                     <element>
                         <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
-                        <value>$(PUBLIC_ADDRESS)</value>
+                        <value>$(RTI_CDS_PUBLIC_ADDR)</value>
                     </element>
                     <element>
                         <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
@@ -37,11 +37,11 @@
         <transport>
             <element>
                 <alias>builtin.udpv4_wan</alias>
-                <receive_port>7400</receive_port>
+                <receive_port>$(RTI_CDS_PORT)</receive_port>
                 <property>
                     <element>
                         <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
-                        <value>$(PUBLIC_ADDRESS)</value>
+                        <value>$(RTI_CDS_PUBLIC_ADDR)</value>
                     </element>
                     <element>
                         <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>

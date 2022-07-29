@@ -121,15 +121,15 @@ External Participant.
     configuration file. You can also use different numbers for the private UDP
     port (&lt;host&gt;) and the public UDP port (&lt;public&gt;).
 
-2)  Set the environment variable PUBLIC_ADDRESS to be the
-    public IP address in which the application will receive data. Usually this
+2)  Set the environment variables RTI_CDS_PORT and RTI_CDS_PUBLIC_ADDR to be the
+    public IP address and port where the application will receive data. Usually this
     is the public IP address of the NAT-enabled router behind which the
     application runs.
 
 `real_time_wan_transport_publisher`
 
-1)  Set the environment variable PUBLIC_ADDRESS to the public IP address in
-    which the ``real_time_wan_transport_subscriber`` application receives data.
+1)  Set the environment variables RTI_CDS_PORT and RTI_CDS_PUBLIC_ADDR to the public IP address
+    and port where the ``real_time_wan_transport_subscriber`` application receives data.
 
 ## Prerequisites before running scenario 3 or 4
 
@@ -153,8 +153,8 @@ router.
     with the new number in the XML configuration files `USER_QOS_PROFILES.xml`
     and `CLOUD_DISCOVERY_SERVICE.xml`.
 
-3)  Set the environment variable `PUBLIC_ADDRESS` to the public IP address in
-    which the Cloud Discovery services runs. This environment variable will
+3)  Set the environment variables RTI_CDS_PORT and `RTI_CDS_PUBLIC_ADDR` to the public IP address and port
+    where the Cloud Discovery services runs. This environment variable will
     have to be set for the publisher and subscriber applications and for RTI
     Cloud Discovery Service.
 

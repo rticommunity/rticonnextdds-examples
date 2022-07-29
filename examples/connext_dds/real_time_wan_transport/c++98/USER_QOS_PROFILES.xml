@@ -175,7 +175,7 @@
     <qos_profile name="Publisher_Scenario_1" base_name="Base_Profile">
       <participant_qos>
         <discovery>
-          <initial_peers>0@udpv4_wan://$(PUBLIC_ADDRESS):16000</initial_peers>
+          <initial_peers>0@udpv4_wan://$(RTI_CDS_PUBLIC_ADDR):$(RTI_CDS_PORT)</initial_peers>
         </discovery>
       </participant_qos>
     </qos_profile>
@@ -184,11 +184,11 @@
       <participant_qos>
         <transport_builtin>
           <udpv4_wan>
-            <public_address>$(PUBLIC_ADDRESS)</public_address>
+            <public_address>$(RTI_CDS_PUBLIC_ADDR)</public_address>
             <comm_ports>
               <default>
-                <host>16000</host>
-                <public>16000</public>
+                <host>$(RTI_CDS_PORT)</host>
+                <public>$(RTI_CDS_PORT)</public>
               </default>
             </comm_ports>
           </udpv4_wan>
@@ -223,7 +223,7 @@
     <qos_profile name="Publisher_Scenario_3" base_name="Base_Profile">
       <participant_qos>
         <discovery>
-          <initial_peers>rtps@udpv4_wan://$(PUBLIC_ADDRESS):7400</initial_peers>
+          <initial_peers>rtps@udpv4_wan://$(RTI_CDS_PUBLIC_ADDR):$(RTI_CDS_PORT)</initial_peers>
         </discovery>
       </participant_qos>
     </qos_profile>
@@ -231,7 +231,7 @@
     <qos_profile name="Subscriber_Scenario_3" base_name="Base_Profile">
       <participant_qos>
         <discovery>
-          <initial_peers>rtps@udpv4_wan://$(PUBLIC_ADDRESS):7400</initial_peers>
+          <initial_peers>rtps@udpv4_wan://$(RTI_CDS_PUBLIC_ADDR):$(RTI_CDS_PORT)</initial_peers>
         </discovery>
       </participant_qos>
     </qos_profile>
