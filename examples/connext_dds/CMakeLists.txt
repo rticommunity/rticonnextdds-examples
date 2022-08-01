@@ -109,4 +109,5 @@ connextdds_add_examples_subdirectories(
         "network_capture/04_advanced_api"
         "printing_qos"
         "required_subscription"
+        "crypto_algorithms"
 )

@@ -1,0 +1,6 @@
+# Build directory
+build/
+
+# Solution and project files are created by rtidddsgen
+*.sln
+*.vcxproj

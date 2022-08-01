@@ -632,7 +632,7 @@ function(connextdds_openssl_generate_signed_ca)
     # use the same serial file for each certificate and there could be problems
     # when creating them in parallel. We specify a custom path.
     get_filename_component(serial_file ${_OPENSSL_OUTPUT_CERT_FILE} NAME_WE)
-    string(APPEND serial_file ${serial_file} ".srl")
+    string(APPEND serial_file ".srl")
 
     # Optional args
     set(optional_args)
@@ -776,7 +776,7 @@ function(connextdds_openssl_generate_signed_certificate)
     # use the same serial file for each certificate and there could be problems
     # when creating them in parallel. We specify a custom path.
     get_filename_component(serial_file ${_OPENSSL_OUTPUT_CERT_FILE} NAME_WE)
-    string(APPEND serial_file ${serial_file} ".srl")
+    string(APPEND serial_file ".srl")
 
     # Optional arguments
 
