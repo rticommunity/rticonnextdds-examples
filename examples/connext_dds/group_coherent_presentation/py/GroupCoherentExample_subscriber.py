@@ -9,25 +9,66 @@
 # damages arising out of the use or inability to use the software.
 #
 import argparse
+from concurrent.futures import process
 
 import rti.connextdds as dds
 from GroupCoherentExample import AlarmCode, Alarm, HeartRate, Temperature
 
 
-def process_data(reader):
+# a listener for the datatypes used for the patient
+class PatientDRListener(dds.NoOpDataReaderListener):
+    def on_sample_lost(
+        self,
+        reader: dds.AnyDataReader,
+        status: dds.SampleLostStatus):
+        if status.last_reason == dds.SampleLostState.LOST_BY_INCOMPLETE_COHERENT_SET:
+            print(f"Lost {status.total_count_change} \
+                samples in an incomplete coherent set.\n")
 
-    # Take all samples.  Samples are loaned to application, loan is
-    # returned when LoanedSamples destructor called or when you return
-    # the loan explicitly.
-    samples_read = 0
-    samples = reader.take()
 
-    for (data, info) in samples:
-        if info.valid:
-            print(f"Received: {data}")
-            samples_read += 1
+def print_coherent_set_info(info: dds.SampleInfo):
+    # The coherent_set_info in the SampleInfo is only present if the sample is
+    # part of a coherent set. We therefore need to check if it is present
+    # before accessing any of the members
+    if info.coherent_set_info is not None:
+        set_info = info.coherent_set_info
+        print(f"Sample is part of \
+            {'an incomplete' if set_info.incomplete_coherent_set else 'a complete'} \
+            group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n")
+    else:
+        print("Sample is not part of a coherent set.\n")
 
-    return samples_read
+
+def process_data(subscriber: dds.Subscriber):
+    with dds.CoherentAccess(subscriber):    # Begin coherent access
+        # readers is a list of dds.AnyDataReaders
+        readers = dds.Subscriber.find_datareaders(subscriber, dds.SampleState.NOT_READ)
+        for reader in readers:
+            # Convert from AnyDataReader to a typed DataReader
+            r = dds.DataReader(reader)
+            #TODO: remove if and elif since they're all the same logic in each condition
+            #TODO: I can do for data, info in r.take()
+            if reader.topic_name == "Alarm":
+                # Take all samples.  Samples are loaned to application, loan is
+                # returned when LoanedSamples destructor called or when you return
+                # the loan explicitly.
+                samples = r.take()
+                for sample in samples:
+                    data, info = sample
+                    print(data)
+                    print_coherent_set_info(info)
+            elif reader.topic_name == "HeartRate":
+                samples = r.take()
+                for sample in samples:
+                    data, info = sample
+                    print(data)
+                    print_coherent_set_info(info)
+            elif reader.topic_name == "Temperature":
+                samples = r.take()
+                for sample in samples:
+                    data, info = sample
+                    print(data)
+                    print_coherent_set_info(info)
 
 
 def run_subscriber_application(domain_id: int, sample_count: int):
@@ -55,22 +96,27 @@ def run_subscriber_application(domain_id: int, sample_count: int):
         temperature_topic,
         reader_qos)
 
-    # Initialize samples_read to zero
-    samples_read = 0
+    # attach listeners to the readers
+    alarm_reader.set_listener(PatientDRListener(), dds.StatusMask.SAMPLE_LOST)
+    heart_rate_reader.set_listener(
+        PatientDRListener(),
+        dds.StatusMask.SAMPLE_LOST)
+    temperature_reader.set_listener(
+        PatientDRListener(),
+        dds.StatusMask.SAMPLE_LOST)
 
     # Associate a handler with the status condition. This will run when the
     # condition is triggered, in the context of the dispatch call (see below)
     # condition argument is not used
     def alarm_handler(_):
-        nonlocal samples_read
-        nonlocal alarm_reader
-        samples_read += process_data(alarm_reader)
+        nonlocal subscriber
+        process_data(subscriber)
 
-    # Obtain the DataReader's Status Condition
-    status_condition = dds.StatusCondition(alarm_reader)
+    # Obtain the Subscriber's Status Condition
+    status_condition = dds.StatusCondition(subscriber)
 
-    # Enable the 'data available' status and set the handler.
-    status_condition.enabled_statuses = dds.StatusMask.DATA_AVAILABLE
+    # Enable the 'data on readers' status and set the handler.
+    status_condition.enabled_statuses = dds.StatusMask.DATA_ON_READERS
     status_condition.set_handler(alarm_handler)
 
     # Create a WaitSet and attach the StatusCondition
@@ -78,26 +124,20 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     waitset += status_condition
 
     def heart_rate_handler(_):
-        nonlocal samples_read
-        nonlocal heart_rate_reader
-        samples_read += process_data(heart_rate_reader)
+        nonlocal subscriber
+        process_data(subscriber)
 
-    status_condition = dds.StatusCondition(heart_rate_reader)
-    status_condition.enabled_statuses = dds.StatusMask.DATA_AVAILABLE
     status_condition.set_handler(heart_rate_handler)
     waitset += status_condition
 
     def temperature_handler(_):
-        nonlocal samples_read
-        nonlocal temperature_reader
-        samples_read += process_data(temperature_reader)
+        nonlocal subscriber
+        process_data(subscriber)
 
-    status_condition = dds.StatusCondition(temperature_reader)
-    status_condition.enabled_statuses = dds.StatusMask.DATA_AVAILABLE
     status_condition.set_handler(temperature_handler)
     waitset += status_condition
 
-    while samples_read < sample_count:
+    while True:
         # Catch control c interrupt
         try:
             # Dispatch will call the handlers associated to the
