@@ -44,7 +44,7 @@
                     <ordered_access>true</ordered_access>
                 </presentation>
                 <publisher_name>
-                    <name>Group Coheren Publisher</name>
+                    <name>Group Coherent Publisher</name>
                 </publisher_name>
             </publisher_qos>
 
