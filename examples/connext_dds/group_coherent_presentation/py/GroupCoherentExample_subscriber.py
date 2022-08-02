@@ -22,8 +22,7 @@ class PatientDRListener(dds.NoOpDataReaderListener):
         reader: dds.AnyDataReader,
         status: dds.SampleLostStatus):
         if status.last_reason == dds.SampleLostState.LOST_BY_INCOMPLETE_COHERENT_SET:
-            print(f"Lost {status.total_count_change} \
-                samples in an incomplete coherent set.\n")
+            print(f"Lost {status.total_count_change} samples in an incomplete coherent set.\n")
 
 
 def print_coherent_set_info(info: dds.SampleInfo):

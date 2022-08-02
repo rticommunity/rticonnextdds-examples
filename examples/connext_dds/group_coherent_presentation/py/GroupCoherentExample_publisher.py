@@ -68,8 +68,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
                 # patients vitals along with the alarm to be delivered as
                 # a single coherent set of data so that we can correlate
                 # the alarm with the set of vitals that triggered it
-                print("Patient's vitals are abnormal, raising alarm and"
-                      " sending coherent set")
+                print("Patient's vitals are abnormal, raising alarm and sending coherent set")
                 with dds.CoherentSet(publisher):   # Start a coherent set
                     heart_rate_writer.write(heart_rate_data)
                     temperature_writer.write(temperature_data)
