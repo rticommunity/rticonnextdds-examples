@@ -46,30 +46,13 @@ def process_data(subscriber: dds.Subscriber):
         for reader in readers:
             # Convert from AnyDataReader to a typed DataReader
             r = dds.DataReader(reader)
-            #TODO: remove if and elif since they're all the same logic in each condition
-            #TODO: I can do for data, info in r.take()
-            if reader.topic_name == "Alarm":
-                # Take all samples.  Samples are loaned to application, loan is
-                # returned when LoanedSamples destructor called or when you return
-                # the loan explicitly.
-                samples = r.take()
-                for sample in samples:
-                    data, info = sample
-                    print(data)
-                    print_coherent_set_info(info)
-            elif reader.topic_name == "HeartRate":
-                samples = r.take()
-                for sample in samples:
-                    data, info = sample
-                    print(data)
-                    print_coherent_set_info(info)
-            elif reader.topic_name == "Temperature":
-                samples = r.take()
-                for sample in samples:
-                    data, info = sample
-                    print(data)
-                    print_coherent_set_info(info)
-
+            # Take all samples.  Samples are loaned to application, loan is
+            # returned when LoanedSamples destructor called or when you return
+            # the loan explicitly.
+            for data, info in r.take():
+                print(data)
+                print_coherent_set_info(info)
+                
 
 def run_subscriber_application(domain_id: int, sample_count: int):
     # Start communicating in a domain, usually one participant per application
