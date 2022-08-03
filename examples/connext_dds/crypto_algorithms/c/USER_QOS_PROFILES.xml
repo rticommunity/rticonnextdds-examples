@@ -106,7 +106,7 @@
               </element>
               <element>
                 <name>dds.sec.access.governance</name>
-                <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+                <value>file:security/ecdsa02_p384/xml/signed/signed_Governance.p7s</value>
               </element>
               <element>
                 <name>dds.sec.access.permissions</name>
@@ -146,16 +146,16 @@
     <qos_profile name="ECDSA_P256_MINIMAL_A" base_name="ECDSA_P256_A">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                  <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
-                </element>
-                <element>
-                    <name>dds.sec.authentication.key_establishment_algorithm</name>
-                    <value>ECDHE-CEUM+P256</value>
-                  </element>
-              </value>
+            <value>
+              <element>
+                <name>dds.sec.access.governance</name>
+                <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P256</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>
@@ -163,16 +163,16 @@
       <qos_profile name="ECDSA_P256_MINIMAL_B" base_name="ECDSA_P256_B">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                  <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
-                </element>
-                <element>
-                    <name>dds.sec.authentication.key_establishment_algorithm</name>
-                    <value>ECDHE-CEUM+P256</value>
-                  </element>
-              </value>
+            <value>
+              <element>
+                <name>dds.sec.access.governance</name>
+                <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P256</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>
@@ -185,16 +185,16 @@
     <qos_profile name="ECDSA_P384_MINIMAL_A" base_name="ECDSA_P384_A">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                  <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
-                </element>
-              </value>
+            <value>
               <element>
-                <name>dds.sec.authentication.key_establishment_algorithm</name>
-                <value>ECDHE-CEUM+P384</value>
+                <name>dds.sec.access.governance</name>
+                <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
               </element>
+              <element>
+              <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+              <value>ECDHE-CEUM+P384</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>
@@ -202,47 +202,67 @@
       <qos_profile name="ECDSA_P384_MINIMAL_B" base_name="ECDSA_P384_B">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                  <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
-                </element>
-                <element>
-                    <name>dds.sec.authentication.key_establishment_algorithm</name>
-                    <value>ECDHE-CEUM+P384</value>
-                  </element>
-              </value>
+            <value>
+              <element>
+                <name>dds.sec.access.governance</name>
+                <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P384</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>
 
     <!--
-        =====================================================================
+        ================================================================
         scenario4: ECDSA P384 and P256 mixed and using the opposite KEST
-        =====================================================================
+        ================================================================
     -->
     <qos_profile name="ECDSA_P384_KEST_P256_A" base_name="ECDSA_P384_A">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                  <name>dds.sec.authentication.key_establishment_algorithm</name>
-                  <value>ECDHE-CEUM+P256</value>
-                </element>
-              </value>
+            <value>
+              <element>
+                <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P256</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.cryptography.encryption_algorithm</name>
+                <value>AES128+GCM</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.authentication.alternative_ca_files</name>
+                <value>file:security/ecdsa01_p256/certs/caCert.pem</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.access_control.alternative_permissions_authority_files</name>
+                <value>file:security/ecdsa01_p256/certs/caCert.pem</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>
 
-      <qos_profile name="ECDSA_P256_KEST_P384_B" base_name="ECDSA_P384_B">
+      <qos_profile name="ECDSA_P256_KEST_P384_B" base_name="ECDSA_P256_B">
         <domain_participant_qos>
           <property>
-              <value>
-                <element>
-                    <name>dds.sec.authentication.key_establishment_algorithm</name>
-                    <value>ECDHE-CEUM+P384</value>
-                  </element>
-              </value>
+            <value>
+              <element>
+                <name>com.rti.serv.secure.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P384</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.authentication.alternative_ca_files</name>
+                <value>file:security/ecdsa02_p384/certs/caCert.pem</value>
+              </element>
+              <element>
+                <name>com.rti.serv.secure.access_control.alternative_permissions_authority_files</name>
+                <value>file:security/ecdsa02_p384/certs/caCert.pem</value>
+              </element>
+            </value>
           </property>
         </domain_participant_qos>
       </qos_profile>

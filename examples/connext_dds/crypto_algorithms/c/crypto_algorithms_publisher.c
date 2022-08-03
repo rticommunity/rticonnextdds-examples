@@ -225,7 +225,7 @@ int main(int argc, char *argv[])
         } else if (strcmp(argv[3], "scenario3") == 0) {
             profile = "ECDSA_P384_MINIMAL_A";
         } else if (strcmp(argv[3], "scenario4") == 0) {
-            profile = "ECDSA_P256_KEST_P384_A";
+            profile = "ECDSA_P384_KEST_P256_A";
         } else {
             fprintf(
                     stderr,
