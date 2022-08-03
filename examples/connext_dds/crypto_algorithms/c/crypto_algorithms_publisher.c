@@ -10,10 +10,6 @@
  * to use the software.
  */
 
-/*
- * TODO SEC-1750: Add brief description.
- */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include "ndds/ndds_c.h"
