@@ -80,6 +80,7 @@ function(connextdds_generate_security_artifacts)
             RESOURCE_DIRECTORY "${CONNEXTDDS_RESOURCE_DIR}/security"
             OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01_p256"
             ECPARAM_NAME "prime256v1"
+            DIGEST "SHA256"
             DAYS ${expiration_days}
         )
     endif()
@@ -90,6 +91,7 @@ function(connextdds_generate_security_artifacts)
             RESOURCE_DIRECTORY "${CONNEXTDDS_RESOURCE_DIR}/security"
             OUTPUT_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa02_p384"
             ECPARAM_NAME "secp384r1"
+            DIGEST "SHA384"
             DAYS ${expiration_days}
         )
     endif()
@@ -124,6 +126,7 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
         RESOURCE_DIRECTORY
         OUTPUT_DIRECTORY
         ECPARAM_NAME
+        DIGEST
         DAYS
     )
     set(multi_args)
@@ -169,7 +172,9 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
         "${peer2_config_file}"
     )
     foreach(xml ${xmls_name})
-        list(APPEND artifacts_input_files "${xml}.xml")
+        list(APPEND artifacts_input_files
+            "${ARGS_OUTPUT_DIRECTORY}/xml/${xml}.xml"
+        )
     endforeach()
     set(dependencies ${dependencies} ${artifacts_input_files} PARENT_SCOPE)
 
@@ -199,12 +204,12 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
     # Openssl configuration.
     # ##########################################################################
     # Set output files.
-    set(ca_key_file "${certificates_output_dir}/ca_key.pem")
-    set(ca_cert_file "${certificates_output_dir}/ca_cert.pem")
-    set(peer1_key_file "${certificates_output_dir}/peer1_key.pem")
-    set(peer1_cert_file "${certificates_output_dir}/peer1_cert.pem")
-    set(peer2_key_file "${certificates_output_dir}/peer2_key.pem")
-    set(peer2_cert_file "${certificates_output_dir}/peer2_cert.pem")
+    set(ca_key_file "${certificates_output_dir}/caKey.pem")
+    set(ca_cert_file "${certificates_output_dir}/caCert.pem")
+    set(peer1_key_file "${certificates_output_dir}/peer01Key.pem")
+    set(peer1_cert_file "${certificates_output_dir}/peer01Cert.pem")
+    set(peer2_key_file "${certificates_output_dir}/peer02Key.pem")
+    set(peer2_cert_file "${certificates_output_dir}/peer02Cert.pem")
     list(APPEND artifacts_output_files
         "${ca_key_file}"
         "${ca_cert_file}"
@@ -223,10 +228,10 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
         OUTPUT_CERT_FILE "${ca_cert_file}"
         CRL_NUMBER_FILE "${openssl_temporary_dir}/crlNumber"
         TEXT
-        DIGEST SHA256
         DAYS ${ARGS_DAYS}
         ECPARAM_NAME ${ARGS_ECPARAM_NAME}
         ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparam"
+        DIGEST ${ARGS_DIGEST}
         CONFIG_FILE "${ca_config_file}"
         WORKING_DIRECTORY "${ARGS_OUTPUT_DIRECTORY}"
     )
@@ -234,7 +239,6 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
     # RootCa signs Peer01Cert.
     connextdds_openssl_generate_signed_certificate(
         OUTPUT_CERT_FILE "${peer1_cert_file}"
-        OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_dir}/peer1_req_cert.pem"
         OUTPUT_KEY_FILE "${peer1_key_file}"
         TEXT
         ECPARAM_NAME ${ARGS_ECPARAM_NAME}
@@ -244,13 +248,13 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
         CA_CONFIG_FILE "${ca_config_file}"
         CA_CERT_FILE "${ca_cert_file}"
         DAYS ${ARGS_DAYS}
+        DIGEST ${ARGS_DIGEST}
         WORKING_DIRECTORY "${ARGS_OUTPUT_DIRECTORY}"
     )
 
     # RootCa signs Peer02Cert.
     connextdds_openssl_generate_signed_certificate(
         OUTPUT_CERT_FILE "${peer2_cert_file}"
-        OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_dir}/peer2_req_cert.pem"
         OUTPUT_KEY_FILE "${peer2_key_file}"
         TEXT
         ECPARAM_NAME ${ARGS_ECPARAM_NAME}
@@ -260,6 +264,7 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
         CA_CONFIG_FILE "${ca_config_file}"
         CA_CERT_FILE "${ca_cert_file}"
         DAYS ${ARGS_DAYS}
+        DIGEST ${ARGS_DIGEST}
         WORKING_DIRECTORY "${ARGS_OUTPUT_DIRECTORY}"
     )
 

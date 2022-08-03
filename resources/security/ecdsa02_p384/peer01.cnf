@@ -6,5 +6,5 @@ countryName=US
 stateOrProvinceName=CA
 localityName=Santa Clara
 organizationName=Real Time Innovations
-commonName=RTI ECDSA01 (p384) PEER01
+commonName=RTI ECDSA02 (p384) PEER01
 emailAddress=rticonnextdds-examples-ecdsa02Peer01@rti.com

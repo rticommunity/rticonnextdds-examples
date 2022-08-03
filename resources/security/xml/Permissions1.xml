@@ -3,8 +3,16 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/dds_security_permissions.xsd">
     <permissions>
-        <grant name="ecdsa01_peer1">
+        <grant name="ecdsa01_peer01">
             <subject_name>C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, CN=RTI ECDSA01 (p256) PEER01/emailAddress=rticonnextdds-examples-ecdsa01Peer01@rti.com</subject_name>
+            <validity>
+                <not_before>2022-01-20T00:00:00</not_before>
+                <not_after>2032-01-20T00:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="ecdsa02_peer01">
+            <subject_name>C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, CN=RTI ECDSA02 (p384) PEER01/emailAddress=rticonnextdds-examples-ecdsa02Peer01@rti.com</subject_name>
             <validity>
                 <not_before>2022-01-20T00:00:00</not_before>
                 <not_after>2032-01-20T00:00:00</not_after>
