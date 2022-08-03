@@ -50,7 +50,7 @@ static int publisher_shutdown(
     return status;
 }
 
-int publisher_main(int domainId, int sample_count)
+int publisher_main(int domainId, int sample_count, const char *profile)
 {
     DDS_DomainParticipant *participant = NULL;
     DDS_Publisher *publisher = NULL;
@@ -72,7 +72,7 @@ int publisher_main(int domainId, int sample_count)
             DDS_TheParticipantFactory,
             &participant_qos,
             "crypto_algorithms_Library",
-            "crypto_algorithms_Profile");
+            profile);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "Unable to get default participant qos\n");
         return -1;
@@ -98,7 +98,7 @@ int publisher_main(int domainId, int sample_count)
             DDS_TheParticipantFactory,
             domainId,
             "crypto_algorithms_Library",
-            "crypto_algorithms_Profile",
+            profile,
             NULL,
             DDS_STATUS_MASK_NONE);
 #endif
@@ -229,6 +229,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0; /* infinite loop */
+    const char *profile = "ECDSA_P256_A";
 
     if (argc >= 2) {
         domain_id = atoi(argv[1]);
@@ -236,7 +237,21 @@ int main(int argc, char *argv[])
     if (argc >= 3) {
         sample_count = atoi(argv[2]);
     }
+    if (argc >= 4) {
+        if (strcmp(argv[3], "p256") == 0) {
+            profile = "ECDSA_P256_A";
+        } else if (strcmp(argv[3], "p384") == 0) {
+            profile = "ECDSA_P384_A";
+        } else {
+            fprintf(
+                    stderr,
+                    "invalid profile. Valid profiles: <unspecified "
+                    "(defaults to ECDSA_P256_A)>, ECDSA_P256_A, "
+                    "and ECDSA_P384_A.\n");
+            return -1;
+        }
+    }
 
-    return publisher_main(domain_id, sample_count);
+    return publisher_main(domain_id, sample_count, profile);
 }
 
