@@ -163,7 +163,12 @@ function(_connextdds_generate_security_artifacts_for_ecdsa)
     set(ca_config_file "${ARGS_OUTPUT_DIRECTORY}/ca.cnf")
     set(peer1_config_file "${ARGS_OUTPUT_DIRECTORY}/peer01.cnf")
     set(peer2_config_file "${ARGS_OUTPUT_DIRECTORY}/peer02.cnf")
-    set(xmls_name Governance Permissions1 Permissions2)
+    set(xmls_name
+            Governance
+            GovernanceMinimalTrafficAlgorithms
+            Permissions1
+            Permissions2
+    )
 
     set(artifacts_input_files)
     list(APPEND artifacts_input_files

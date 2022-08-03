@@ -42,15 +42,15 @@ application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 ```sh
-network_capture_publisher.exe  <domain_id> <samples_to_send>
-network_capture_subscriber.exe <domain_id>  <samples_to_send>
+network_capture_publisher.exe  <domain_id> <samples_to_send> <profile>
+network_capture_subscriber.exe <domain_id>  <samples_to_send> <profile>
 ```
 
 UNIX systems:
 
 ```sh
-./network_capture_publisher  <domain_id> <samples_to_send>
-./network_capture_subscriber <domain_id> <samples_to_send>
+./network_capture_publisher  <domain_id> <samples_to_send> <scenario>
+./network_capture_subscriber <domain_id> <samples_to_send> <scenario>
 ```
 
 The applications accept up to two arguments:
@@ -61,6 +61,11 @@ The applications accept up to two arguments:
 2.  How long the examples should run, measured in samples for the publisher and
     sleep periods for the subscriber. A value of '0' instructs the application
     to run forever; this is the default.
+
+3. The scenario that we are testing in the example. Each scenario translates to
+   a Qos profile for the DomainParticipant that the application creates. Read
+   the README document in the root directory of the `crypto_algorithms` example
+   for a description of each scenario.
 
 ## Customizing the Build
 

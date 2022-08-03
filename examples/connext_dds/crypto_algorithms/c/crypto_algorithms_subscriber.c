@@ -198,10 +198,6 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /*
-     * To customize subscriber QoS, use the configuration file
-     * USER_QOS_PROFILES.xml
-     */
     subscriber = DDS_DomainParticipant_create_subscriber(
             participant,
             &DDS_SUBSCRIBER_QOS_DEFAULT,
@@ -222,9 +218,6 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /*
-     * To customize topic QoS, use the configuration file USER_QOS_PROFILES.xml.
-     */
     topic = DDS_DomainParticipant_create_topic(
             participant,
             "Example CryptoAlgorithms",
@@ -238,7 +231,6 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /* Set up a data reader listener */
     reader_listener.on_requested_deadline_missed  =
             CryptoAlgorithmsListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
@@ -254,10 +246,6 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
     reader_listener.on_data_available =
             CryptoAlgorithmsListener_on_data_available;
 
-    /*
-     * To customize data reader QoS, use the configuration file
-     * USER_QOS_PROFILES.xml.
-     */
     reader = DDS_Subscriber_create_datareader(
             subscriber,
             DDS_Topic_as_topicdescription(topic),
@@ -294,16 +282,22 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
     if (argc >= 4) {
-        if (strcmp(argv[3], "p256") == 0) {
+        if (strcmp(argv[3], "scenario0") == 0) {
             profile = "ECDSA_P256_B";
-        } else if (strcmp(argv[3], "p384") == 0) {
+        } else if (strcmp(argv[3], "scenario1") == 0) {
             profile = "ECDSA_P384_B";
+        } else if (strcmp(argv[3], "scenario2") == 0) {
+            profile = "ECDSA_P256_MINIMAL_B";
+        } else if (strcmp(argv[3], "scenario3") == 0) {
+            profile = "ECDSA_P384_MINIMAL_B";
+        } else if (strcmp(argv[3], "scenario4") == 0) {
+            profile = "ECDSA_P256_KEST_P384_B";
         } else {
             fprintf(
                     stderr,
-                    "invalid profile. Valid profiles: <unspecified "
-                    "(defaults to ECDSA_P256_B)>, ECDSA_P256_B, "
-                    "and ECDSA_P384_B.\n");
+                    "invalid scenario. Valid values: <unspecified "
+                    "(defaults to scenario0)>, scenario0, scenario1, "
+                    "scenario2, scenario3, scenario4\n");
             return -1;
         }
     }

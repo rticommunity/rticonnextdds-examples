@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/dds_security_governance.xsd">
+    <domain_access_rules>
+        <domain_rule>
+            <domains>
+                <id_range>
+                    <min>0</min>
+                </id_range>
+            </domains>
+
+            <!--
+              This configuration allows for the default algorithms
+              defined in the OMG DDS Security 1.1 spec.
+            -->
+            <allowed_security_algorithms>
+                <digital_signature_identity_trust_chain>
+                    <algorithm>RSASSA-PSS-MGF1SHA256+2048+SHA256</algorithm>
+                    <algorithm>RSASSA-PKCS1-V1_5+2048+SHA256</algorithm>
+                    <algorithm>ECDSA+P256+SHA256</algorithm>
+                </digital_signature_identity_trust_chain>
+
+                <digital_signature>
+                    <algorithm>RSASSA-PSS-MGF1SHA256+2048+SHA256</algorithm>
+                    <algorithm>ECDSA+P256+SHA256</algorithm>
+                </digital_signature>
+
+                <key_establishment>
+                    <algorithm>DHE+MODP-2048-256</algorithm>
+                    <algorithm>ECDHE-CEUM+P256</algorithm>
+                </key_establishment>
+
+                <symmetric_cipher>
+                    <algorithm>AES128+GCM</algorithm>
+                    <algorithm>AES256+GCM</algorithm>
+                </symmetric_cipher>
+            </allowed_security_algorithms>
+            <!--
+                Use the allowed_security_algorithms above to minimize discovery
+                overhead.
+            -->
+
+            <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
+            <enable_join_access_control>true</enable_join_access_control>
+            <discovery_protection_kind>NONE</discovery_protection_kind>
+            <liveliness_protection_kind>NONE</liveliness_protection_kind>
+            <rtps_protection_kind>ENCRYPT</rtps_protection_kind>
+            <topic_access_rules>
+                <topic_rule>
+                    <topic_expression>*</topic_expression>
+                    <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
+                    <enable_read_access_control>true</enable_read_access_control>
+                    <enable_write_access_control>true</enable_write_access_control>
+                    <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
+                    <data_protection_kind>NONE</data_protection_kind>
+                </topic_rule>
+            </topic_access_rules>
+        </domain_rule>
+    </domain_access_rules>
+</dds>

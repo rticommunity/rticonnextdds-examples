@@ -12,6 +12,12 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
       xsi:noNamespaceSchemaLocation="file:////home/colmenero/rti_connext_dds/rti_connext_dds-7.0.0-openssl/resource/schema/rti_dds_qos_profiles.xsd">
   <qos_library name="crypto_algorithms_Library">
+
+    <!--
+        =========================================================
+        scenario0: ECDSA P256 and all crypto algorithms supported
+        =========================================================
+    -->
     <qos_profile name="ECDSA_P256_A"
         base_name="BuiltinQosLib::Generic.Security"
         is_default_qos="true">
@@ -45,8 +51,10 @@
             </value>
           </property>
 
-          <!-- temporary -->
-          <transport_builtin><mask>UDPv4</mask></transport_builtin>
+          <!-- Enable UDP to capture traffic externally with Wireshark -->
+          <transport_builtin>
+            <mask>UDPv4 | UDPv6 | SHMEM</mask>
+        </transport_builtin>
       </domain_participant_qos>
     </qos_profile>
 
@@ -71,34 +79,39 @@
       </domain_participant_qos>
     </qos_profile>
 
+    <!--
+        =========================================================
+        scenario1: ECDSA P384 and all crypto algorithms supported
+        =========================================================
+    -->
     <qos_profile name="ECDSA_P384_A" base_name="ECDSA_P256_A">
       <domain_participant_qos>
         <property>
             <value>
-            <element>
+              <element>
                 <name>dds.sec.auth.identity_ca</name>
                 <value>file:security/ecdsa02_p384/certs/caCert.pem</value>
-            </element>
-            <element>
+              </element>
+              <element>
                 <name>dds.sec.auth.identity_certificate</name>
                 <value>file:security/ecdsa02_p384/certs/peer01Cert.pem</value>
-            </element>
-            <element>
+              </element>
+              <element>
                 <name>dds.sec.auth.private_key</name>
                 <value>file:security/ecdsa02_p384/certs/peer01Key.pem</value>
-            </element>
-            <element>
+              </element>
+              <element>
                 <name>dds.sec.access.permissions_ca</name>
                 <value>file:security/ecdsa02_p384/certs/caCert.pem</value>
-            </element>
-            <element>
+              </element>
+              <element>
                 <name>dds.sec.access.governance</name>
-                <value>file:security/ecdsa02_p384/xml/signed/signed_Governance.p7s</value>
-            </element>
-            <element>
+                <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+              </element>
+              <element>
                 <name>dds.sec.access.permissions</name>
                 <value>file:security/ecdsa02_p384/xml/signed/signed_Permissions1.p7s</value>
-            </element>
+              </element>
             </value>
         </property>
       </domain_participant_qos>
@@ -121,6 +134,115 @@
                 <value>file:security/ecdsa02_p384/xml/signed/signed_Permissions2.p7s</value>
               </element>
             </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+    <!--
+        =====================================================================
+        scenario2: ECDSA P256 and default/minimal crypto algorithms supported
+        =====================================================================
+    -->
+    <qos_profile name="ECDSA_P256_MINIMAL_A" base_name="ECDSA_P256_A">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+                </element>
+                <element>
+                    <name>dds.sec.authentication.key_establishment_algorithm</name>
+                    <value>ECDHE-CEUM+P256</value>
+                  </element>
+              </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+      <qos_profile name="ECDSA_P256_MINIMAL_B" base_name="ECDSA_P256_B">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa01_p256/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+                </element>
+                <element>
+                    <name>dds.sec.authentication.key_establishment_algorithm</name>
+                    <value>ECDHE-CEUM+P256</value>
+                  </element>
+              </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+    <!--
+        =====================================================================
+        scenario3: ECDSA P384 and default/minimal crypto algorithms supported
+        =====================================================================
+    -->
+    <qos_profile name="ECDSA_P384_MINIMAL_A" base_name="ECDSA_P384_A">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+                </element>
+              </value>
+              <element>
+                <name>dds.sec.authentication.key_establishment_algorithm</name>
+                <value>ECDHE-CEUM+P384</value>
+              </element>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+      <qos_profile name="ECDSA_P384_MINIMAL_B" base_name="ECDSA_P384_B">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa02_p384/xml/signed/signed_GovernanceMinimalTrafficAlgorithms.p7s</value>
+                </element>
+                <element>
+                    <name>dds.sec.authentication.key_establishment_algorithm</name>
+                    <value>ECDHE-CEUM+P384</value>
+                  </element>
+              </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+    <!--
+        =====================================================================
+        scenario4: ECDSA P384 and P256 mixed and using the opposite KEST
+        =====================================================================
+    -->
+    <qos_profile name="ECDSA_P384_KEST_P256_A" base_name="ECDSA_P384_A">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                  <name>dds.sec.authentication.key_establishment_algorithm</name>
+                  <value>ECDHE-CEUM+P256</value>
+                </element>
+              </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+
+      <qos_profile name="ECDSA_P256_KEST_P384_B" base_name="ECDSA_P384_B">
+        <domain_participant_qos>
+          <property>
+              <value>
+                <element>
+                    <name>dds.sec.authentication.key_establishment_algorithm</name>
+                    <value>ECDHE-CEUM+P384</value>
+                  </element>
+              </value>
           </property>
         </domain_participant_qos>
       </qos_profile>

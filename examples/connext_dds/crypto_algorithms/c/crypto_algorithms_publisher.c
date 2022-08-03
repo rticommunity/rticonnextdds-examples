@@ -109,10 +109,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /*
-     * To customize publisher QoS, use the configuration file
-     * USER_QOS_PROFILES.xml
-     */
     publisher = DDS_DomainParticipant_create_publisher(
             participant,
             &DDS_PUBLISHER_QOS_DEFAULT,
@@ -124,7 +120,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /* Register type before creating topic */
     type_name = CryptoAlgorithmsTypeSupport_get_type_name();
     retcode = CryptoAlgorithmsTypeSupport_register_type(
             participant,
@@ -135,9 +130,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /*
-     * To customize topic QoS, use the configuration file USER_QOS_PROFILES.xml.
-     */
     topic = DDS_DomainParticipant_create_topic(
             participant,
             "Example CryptoAlgorithms",
@@ -151,10 +143,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /*
-     * To customize data writer QoS, use the configuration file
-     * USER_QOS_PROFILES.xml
-     */
     writer = DDS_Publisher_create_datawriter(
             publisher,
             topic,
@@ -173,7 +161,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    /* Create data sample for writing */
     instance = CryptoAlgorithmsTypeSupport_create_data_ex(DDS_BOOLEAN_TRUE);
     if (instance == NULL) {
         fprintf(stderr, "CryptoAlgorithmsTypeSupport_create_data error\n");
@@ -203,15 +190,6 @@ int publisher_main(int domainId, int sample_count, const char *profile)
 
     }
 
-    /*
-    retcode = CryptoAlgorithmsDataWriter_unregister_instance(
-        CryptoAlgorithms_writer, instance, &instance_handle);
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "unregister instance error %d\n", retcode);
-    }
-     */
-
-    /* Delete data sample */
     retcode = CryptoAlgorithmsTypeSupport_delete_data_ex(
             instance,
             DDS_BOOLEAN_TRUE);
@@ -238,16 +216,22 @@ int main(int argc, char *argv[])
         sample_count = atoi(argv[2]);
     }
     if (argc >= 4) {
-        if (strcmp(argv[3], "p256") == 0) {
+        if (strcmp(argv[3], "scenario0") == 0) {
             profile = "ECDSA_P256_A";
-        } else if (strcmp(argv[3], "p384") == 0) {
+        } else if (strcmp(argv[3], "scenario1") == 0) {
             profile = "ECDSA_P384_A";
+        } else if (strcmp(argv[3], "scenario2") == 0) {
+            profile = "ECDSA_P256_MINIMAL_A";
+        } else if (strcmp(argv[3], "scenario3") == 0) {
+            profile = "ECDSA_P384_MINIMAL_A";
+        } else if (strcmp(argv[3], "scenario4") == 0) {
+            profile = "ECDSA_P256_KEST_P384_A";
         } else {
             fprintf(
                     stderr,
-                    "invalid profile. Valid profiles: <unspecified "
-                    "(defaults to ECDSA_P256_A)>, ECDSA_P256_A, "
-                    "and ECDSA_P384_A.\n");
+                    "invalid scenario. Valid values: <unspecified "
+                    "(defaults to scenario0)>, scenario0, scenario1, "
+                    "scenario2, scenario3, scenario4\n");
             return -1;
         }
     }
