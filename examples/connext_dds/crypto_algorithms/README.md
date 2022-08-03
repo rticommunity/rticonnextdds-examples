@@ -10,20 +10,19 @@ signature, key establishment, and symmetric cipher algorithms. The example also
 shows how the `<allowed_security_algorithms>` tag of the Governance Document
 affects DomainParticipant matching.
 
-
 ## Example description
 
 You can run a publisher and/or a subscriber with the following scenarios:
 
-- **scenario0**: Communication between publisher and subscriber should take
-  place.
-  - All security algorithms are allowed.
-  - Digital signature algorithm: `ECDSA+P256+SHA256`.
-  - Key establishment algorithm: `ECDHE-CEUM+P256` (detected from the Identity
-    Certificate because the default value of the
-    `authentication.key_establishment_algorithm` property is `AUTO`).
-  - Symmetric cipher algorithm: `AES256+GCM` (default value of the
-    `cryptography.encryption_algorithm` property)
+-    **scenario0**: Communication between publisher and subscriber should take
+     place.
+     - All security algorithms are allowed.
+     - Digital signature algorithm: `ECDSA+P256+SHA256`.
+     - Key establishment algorithm: `ECDHE-CEUM+P256` (detected from the
+      Identity Certificate because the default value of the
+      `authentication.key_establishment_algorithm` property is `AUTO`).
+     - Symmetric cipher algorithm: `AES256+GCM` (default value of the
+       `cryptography.encryption_algorithm` property)
 
 - **scenario1**: Communication between publisher and subscriber should take
   place.
