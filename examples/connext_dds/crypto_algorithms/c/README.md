@@ -55,12 +55,12 @@ UNIX systems:
 
 The applications accept up to two arguments:
 
-1.  The `<domain #>`. Both applications must use the same domain # in order to
-    communicate. The default is 0.
+1. The `<domain #>`. Both applications must use the same domain # in order to
+   communicate. The default is 0.
 
-2.  How long the examples should run, measured in samples for the publisher and
-    sleep periods for the subscriber. A value of '0' instructs the application
-    to run forever; this is the default.
+2. How long the examples should run, measured in samples for the publisher and
+   sleep periods for the subscriber. A value of '0' instructs the application
+   to run forever; this is the default.
 
 3. The scenario that we are testing in the example. Each scenario translates to
    a Qos profile for the DomainParticipant that the application creates. Read

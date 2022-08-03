@@ -260,7 +260,7 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
 
     for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("CryptoAlgorithms subscriber sleeping for %d sec...\n",
-                poll_period.sec);
+               poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
     }
@@ -302,4 +302,3 @@ int main(int argc, char *argv[])
 
     return subscriber_main(domain_id, sample_count, profile);
 }
-

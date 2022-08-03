@@ -232,4 +232,3 @@ int main(int argc, char *argv[])
 
     return publisher_main(domain_id, sample_count, profile);
 }
-
