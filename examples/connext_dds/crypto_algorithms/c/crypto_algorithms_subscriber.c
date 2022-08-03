@@ -21,50 +21,50 @@
 #include "crypto_algorithmsSupport.h"
 
 void CryptoAlgorithmsListener_on_requested_deadline_missed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedDeadlineMissedStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_requested_incompatible_qos(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_RequestedIncompatibleQosStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_sample_rejected(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleRejectedStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_liveliness_changed(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_LivelinessChangedStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_sample_lost(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SampleLostStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_subscription_matched(
-        void* listener_data,
-        DDS_DataReader* reader,
+        void *listener_data,
+        DDS_DataReader *reader,
         const struct DDS_SubscriptionMatchedStatus *status)
 {
 }
 
 void CryptoAlgorithmsListener_on_data_available(
-        void* listener_data,
-        DDS_DataReader* reader)
+        void *listener_data,
+        DDS_DataReader *reader)
 {
     CryptoAlgorithmsDataReader *CryptoAlgorithms_reader = NULL;
     struct CryptoAlgorithmsSeq data_seq = DDS_SEQUENCE_INITIALIZER;
@@ -97,21 +97,21 @@ void CryptoAlgorithmsListener_on_data_available(
         if (DDS_SampleInfoSeq_get_reference(&info_seq, i)->valid_data) {
             printf("Received data\n");
             CryptoAlgorithmsTypeSupport_print_data(
-                CryptoAlgorithmsSeq_get_reference(&data_seq, i));
+                    CryptoAlgorithmsSeq_get_reference(&data_seq, i));
         }
     }
 
     retcode = CryptoAlgorithmsDataReader_return_loan(
-        CryptoAlgorithms_reader,
-        &data_seq, &info_seq);
+            CryptoAlgorithms_reader,
+            &data_seq,
+            &info_seq);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "return loan error %d\n", retcode);
     }
 }
 
 /* Delete all entities */
-static int subscriber_shutdown(
-        DDS_DomainParticipant *participant)
+static int subscriber_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -124,7 +124,8 @@ static int subscriber_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -146,12 +147,12 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
     DDS_Subscriber *subscriber = NULL;
     DDS_Topic *topic = NULL;
     struct DDS_DataReaderListener reader_listener =
-    DDS_DataReaderListener_INITIALIZER;
+            DDS_DataReaderListener_INITIALIZER;
     DDS_DataReader *reader = NULL;
     DDS_ReturnCode_t retcode;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t poll_period = {4,0};
+    struct DDS_Duration_t poll_period = { 4, 0 };
 
 #ifdef RTI_STATIC
     struct DDS_DomainParticipantQos participant_qos =
@@ -231,7 +232,7 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    reader_listener.on_requested_deadline_missed  =
+    reader_listener.on_requested_deadline_missed =
             CryptoAlgorithmsListener_on_requested_deadline_missed;
     reader_listener.on_requested_incompatible_qos =
             CryptoAlgorithmsListener_on_requested_incompatible_qos;
@@ -239,8 +240,7 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
             CryptoAlgorithmsListener_on_sample_rejected;
     reader_listener.on_liveliness_changed =
             CryptoAlgorithmsListener_on_liveliness_changed;
-    reader_listener.on_sample_lost =
-            CryptoAlgorithmsListener_on_sample_lost;
+    reader_listener.on_sample_lost = CryptoAlgorithmsListener_on_sample_lost;
     reader_listener.on_subscription_matched =
             CryptoAlgorithmsListener_on_subscription_matched;
     reader_listener.on_data_available =
@@ -258,9 +258,8 @@ int subscriber_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-        printf(
-                "CryptoAlgorithms subscriber sleeping for %d sec...\n",
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
+        printf("CryptoAlgorithms subscriber sleeping for %d sec...\n",
                 poll_period.sec);
 
         NDDS_Utility_sleep(&poll_period);
@@ -293,8 +292,7 @@ int main(int argc, char *argv[])
         } else if (strcmp(argv[3], "scenario4") == 0) {
             profile = "ECDSA_P256_KEST_P384_B";
         } else {
-            fprintf(
-                    stderr,
+            fprintf(stderr,
                     "invalid scenario. Valid values: <unspecified "
                     "(defaults to scenario0)>, scenario0, scenario1, "
                     "scenario2, scenario3, scenario4\n");

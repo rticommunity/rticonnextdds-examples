@@ -20,8 +20,7 @@
 #include "crypto_algorithms.h"
 #include "crypto_algorithmsSupport.h"
 
-static int publisher_shutdown(
-        DDS_DomainParticipant *participant)
+static int publisher_shutdown(DDS_DomainParticipant *participant)
 {
     DDS_ReturnCode_t retcode;
     int status = 0;
@@ -34,7 +33,8 @@ static int publisher_shutdown(
         }
 
         retcode = DDS_DomainParticipantFactory_delete_participant(
-            DDS_TheParticipantFactory, participant);
+                DDS_TheParticipantFactory,
+                participant);
         if (retcode != DDS_RETCODE_OK) {
             fprintf(stderr, "delete_participant error %d\n", retcode);
             status = -1;
@@ -62,7 +62,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
     DDS_InstanceHandle_t instance_handle = DDS_HANDLE_NIL;
     const char *type_name = NULL;
     int count = 0;
-    struct DDS_Duration_t send_period = {4,0};
+    struct DDS_Duration_t send_period = { 4, 0 };
 
 #ifdef RTI_STATIC
     struct DDS_DomainParticipantQos participant_qos =
@@ -121,9 +121,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
     }
 
     type_name = CryptoAlgorithmsTypeSupport_get_type_name();
-    retcode = CryptoAlgorithmsTypeSupport_register_type(
-            participant,
-            type_name);
+    retcode = CryptoAlgorithmsTypeSupport_register_type(participant, type_name);
     if (retcode != DDS_RETCODE_OK) {
         fprintf(stderr, "register_type error %d\n", retcode);
         publisher_shutdown(participant);
@@ -168,8 +166,7 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         return -1;
     }
 
-    for (count=0; (sample_count == 0) || (count < sample_count); ++count) {
-
+    for (count = 0; (sample_count == 0) || (count < sample_count); ++count) {
         printf("Writing CryptoAlgorithms, count %d\n", count);
 
         RTIOsapiUtility_snprintf(
@@ -187,15 +184,13 @@ int publisher_main(int domainId, int sample_count, const char *profile)
         }
 
         NDDS_Utility_sleep(&send_period);
-
     }
 
     retcode = CryptoAlgorithmsTypeSupport_delete_data_ex(
             instance,
             DDS_BOOLEAN_TRUE);
     if (retcode != DDS_RETCODE_OK) {
-        fprintf(
-                stderr,
+        fprintf(stderr,
                 "CryptoAlgorithmsTypeSupport_delete_data error %d\n",
                 retcode);
     }
@@ -227,8 +222,7 @@ int main(int argc, char *argv[])
         } else if (strcmp(argv[3], "scenario4") == 0) {
             profile = "ECDSA_P384_KEST_P256_A";
         } else {
-            fprintf(
-                    stderr,
+            fprintf(stderr,
                     "invalid scenario. Valid values: <unspecified "
                     "(defaults to scenario0)>, scenario0, scenario1, "
                     "scenario2, scenario3, scenario4\n");
