@@ -116,13 +116,13 @@ def main():
     assert args.count >= 0
     assert 0 <= args.verbosity < 4
 
-    d = {0: dds.Verbosity.SILENT,
-         1: dds.Verbosity.EXCEPTION,
-         2: dds.Verbosity.WARNING,
-         3: dds.Verbosity.STATUS_ALL}
+    verbosity_levels = {0: dds.Verbosity.SILENT,
+                        1: dds.Verbosity.EXCEPTION,
+                        2: dds.Verbosity.WARNING,
+                        3: dds.Verbosity.STATUS_ALL}
 
     # Sets Connext verbosity to help debugging
-    verbosity = d.get(args.verbosity, dds.Verbosity.EXCEPTION)
+    verbosity = verbosity_levels.get(args.verbosity, dds.Verbosity.EXCEPTION)
 
     dds.Logger.instance.verbosity = verbosity
 
