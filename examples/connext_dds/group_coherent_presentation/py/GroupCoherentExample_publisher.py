@@ -116,16 +116,13 @@ def main():
     assert args.count >= 0
     assert 0 <= args.verbosity < 4
 
+    d = {0: dds.Verbosity.SILENT,
+         1: dds.Verbosity.EXCEPTION,
+         2: dds.Verbosity.WARNING,
+         3: dds.Verbosity.STATUS_ALL}
+
     # Sets Connext verbosity to help debugging
-    verbosity = dds.Verbosity.EXCEPTION
-    if args.verbosity == 0:
-        verbosity = dds.Verbosity.SILENT
-    elif args.verbosity == 1:
-        verbosity = dds.Verbosity.EXCEPTION
-    elif args.verbosity == 2:
-        verbosity = dds.Verbosity.WARNING
-    else:
-        verbosity = dds.Verbosity.STATUS_ALL
+    verbosity = d.get(args.verbosity, dds.Verbosity.EXCEPTION)
 
     dds.Logger.instance.verbosity = verbosity
 
