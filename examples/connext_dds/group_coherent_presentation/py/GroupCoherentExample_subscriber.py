@@ -31,9 +31,10 @@ def print_coherent_set_info(info: dds.SampleInfo):
     # before accessing any of the members
     if info.coherent_set_info is not None:
         set_info = info.coherent_set_info
-        print(f"Sample is part of \
-            {'an incomplete' if set_info.incomplete_coherent_set else 'a complete'} \
-            group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n")
+        print(
+            f"Sample is part of "
+            f"{'an incomplete' if set_info.incomplete_coherent_set else 'a complete'}"
+            f" group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n")
     else:
         print("Sample is not part of a coherent set.\n")
 
