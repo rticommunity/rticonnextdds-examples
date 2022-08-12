@@ -28,6 +28,7 @@ connextdds_add_examples_subdirectories(
         "file_to_dds_configuration"
         ${routing_service_mongo_db_example_dir}
         "monitoring"
+        "remote_admin"
         "shapes_processor"
         "struct_array_transf"
 )
