@@ -42,15 +42,15 @@ application loads the QoS defined in USER_QOS_PROFILES.xml):
 On Windows systems run:
 
 ```sh
-network_capture_publisher.exe  <domain_id> <samples_to_send> <profile>
-network_capture_subscriber.exe <domain_id>  <samples_to_send> <profile>
+crypto_algorithms_publisher.exe  <domain_id> <samples_to_send> <scenario>
+crypto_algorithms_subscriber.exe <domain_id>  <samples_to_send> <scenario>
 ```
 
 UNIX systems:
 
 ```sh
-./network_capture_publisher  <domain_id> <samples_to_send> <scenario>
-./network_capture_subscriber <domain_id> <samples_to_send> <scenario>
+./crypto_algorithms_publisher  <domain_id> <samples_to_send> <scenario>
+./crypto_algorithms_subscriber <domain_id> <samples_to_send> <scenario>
 ```
 
 The applications accept up to two arguments:
