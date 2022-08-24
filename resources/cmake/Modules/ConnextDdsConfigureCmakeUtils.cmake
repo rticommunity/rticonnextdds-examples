@@ -30,9 +30,13 @@ rticonnextdds-cmake-utils repository will be downloaded from GitHub directly.
 
 #]]
 
+set(CONNEXTDDS_EXAMPLES_RESOURCES_DIR
+    "${CMAKE_CURRENT_LIST_DIR}/../../"
+    CACHE PATH "rticonnextdds-examples resource dir" FORCE
+)
 set(CONNEXTDDS_CMAKE_UTILS_DIR
-    "${CMAKE_CURRENT_LIST_DIR}/../rticonnextdds-cmake-utils"
-    CACHE PATH "rticonnextdds-cmake-utils repository dir" FORCE
+    "${CONNEXTDDS_EXAMPLES_RESOURCES_DIR}/cmake/rticonnextdds-cmake-utils"
+    CACHE PATH "rticonnextdds-cmake-utils repository dir"
 )
 
 function(connextdds_configure_cmake_utils)
@@ -50,6 +54,7 @@ function(connextdds_configure_cmake_utils)
 
     execute_process(
         COMMAND git submodule status "${CONNEXTDDS_CMAKE_UTILS_DIR}"
+        WORKING_DIRECTORY "${CONNEXTDDS_EXAMPLES_RESOURCES_DIR}"
         RESULT_VARIABLE git_submodule_status_res
         OUTPUT_VARIABLE git_submodule_status_out
         ERROR_VARIABLE git_submodule_status_err
@@ -59,7 +64,7 @@ function(connextdds_configure_cmake_utils)
 
     # This is a git repository and we can use the git submodules update command
     # in order to initialize the git-submodule rticonnextdds-cmake-utils
-    if(git_submodule_status_out and git_submodule_status_out MATCHES "^-")
+    if(git_submodule_status_out AND git_submodule_status_out MATCHES "^-")
         message(STATUS
             "The rticonnextdds-cmake-utils submodule is yet not configured,"
             " initializing..."
