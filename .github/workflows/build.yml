@@ -85,7 +85,9 @@ jobs:
 
       # If this workflow was triggered by a push event, it will download the
       # repository with the changes.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
         if: ${{ github.event_name == 'push' }}
 
       # Setup Python. If you need another version, just change it below.
