@@ -28,7 +28,7 @@ jobs:
       # Upload the artifacts to GitHub so that they can be used in the next
       # workflow.
       - name: Upload generated artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: pr
           path: ${GITHUB_WORKSPACE}/
