@@ -20,18 +20,15 @@ jobs:
         with:
           submodules: true
 
-      # Save the PR number for the next workflow and copy the examples and
-      # resources folders to create the current workflow artifact.
+      # Save the PR number for the next workflow to create the current
+      # workflow artifact along with the repository itself.
       - name: Save PR number
-        run: |
-          mkdir -p ./pr
-          echo ${{ github.event.number }} > ./pr/NR
-          cp -a $PWD pr/
+        run: echo ${{ github.event.number }} > ${GITHUB_WORKSPACE}/NR
 
-      # Upload the artifacts (examples, resources and PR number) to GitHub so
-      # that they can be used in the next workflow.
+      # Upload the artifacts to GitHub so that they can be used in the next
+      # workflow.
       - name: Upload generated artifact
         uses: actions/upload-artifact@v2
         with:
           name: pr
-          path: pr/
+          path: ${GITHUB_WORKSPACE}/
