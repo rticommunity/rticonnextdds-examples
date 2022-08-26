@@ -15,23 +15,26 @@
 ConnexDdsConfigureCmakeUtils
 ----------------------------
 
-Macro that performs the submodule initialization in order to setup the CMake
-buildsystem.::
+Macro that checks that the submodule is properly configured in order to setup
+the CMake buildsystem.::
 
     connextdds_configure_cmake_utils()
 
-Initializes the `rticonnextdds-cmake-utils
-<https://github.com/rticommunity/rticonnextdds-cmake-utils>` git-submodule
-which contains multiple util modules to build the examples. Then, it sets
-up the `CMAKE_MODULE_PATH <https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html>`
+Checks if `rticonnextdds-cmake-utils
+<https://github.com/rticommunity/rticonnextdds-cmake-utils>` git-submodule is
+configured. If not an error will be shown that contains the command with which
+set it up. This repo contains multiple util modules to build the examples. Then,
+it sets up the
+`CMAKE_MODULE_PATH <https://cmake.org/cmake/help/latest/variable/CMAKE_MODULE_PATH.html>`
 variable to use this new repository modules. If the rticonnextdds-examples
-repository has been downloaded as a zip, or the git tool is unavailable, the
-rticonnextdds-cmake-utils repository will be downloaded from GitHub directly.
+repository has been downloaded as a zip, or the git tool is unavailable, an
+error will be risen with useful information about how to download it from GitHub
+directly.
 
 #]]
 
 set(CONNEXTDDS_EXAMPLES_RESOURCES_DIR
-    "${CMAKE_CURRENT_LIST_DIR}/../../"
+    "${CMAKE_CURRENT_LIST_DIR}/../.."
     CACHE PATH "rticonnextdds-examples resource dir" FORCE
 )
 set(CONNEXTDDS_CMAKE_UTILS_DIR
@@ -62,61 +65,28 @@ function(connextdds_configure_cmake_utils)
         ERROR_STRIP_TRAILING_WHITESPACE
     )
 
-    # This is a git repository and we can use the git submodules update command
-    # in order to initialize the git-submodule rticonnextdds-cmake-utils
+    # This is a git repository and the submodule is not initialized.
     if(git_submodule_status_out AND git_submodule_status_out MATCHES "^-")
-        message(STATUS
+        message(FATAL_ERROR
             "The rticonnextdds-cmake-utils submodule is yet not configured,"
-            " initializing..."
+            " please, run the following command in order to clone it from the "
+            " root of the repository:\n\tgit submodule update --init --"
+            " resources/cmake/rticonnextdds-cmake-utils\n"
         )
-        execute_process(
-            COMMAND git submodule update --init --recursive
-            OUTPUT_VARIABLE submodule_update_out
-            ERROR_VARIABLE submodule_update_err
-        )
-        if(NOT submodule_update_out)
-            message(FATAL_ERROR
-                "There was a problem initializing the submodule:\n"
-                "${submodule_update_err}"
-            )
-        endif()
-        unset(submodule_update_err)
-    # This is not a git repository or git tool is not installed, so we are going
-    # to download the rticonnextdds-cmake-utils zip file
-    elseif(git_submodule_status_err
-        OR git_submodule_status_res STREQUAL "No such file or directory"
+    # This is not a git repository or the git tool is not installed we ensure
+    # there is no FindPackage script in the submodule, to ensure it is not
+    # downloaded yet.
+    elseif((git_submodule_status_err
+            OR git_submodule_status_res STREQUAL "No such file or directory")
+        AND NOT EXISTS "${CONNEXTDDS_CMAKE_UTILS_DIR}/cmake/Modules/FindRTIConnextDDS.cmake"
     )
-        message(STATUS
+        message(FATAL_ERROR
             "The rticonnextdds-examples installation is not a git repository or"
-            " git tool is not installed. Downloading rticonnextdds-cmake-utils"
-            " manually"
-        )
-        set(CONNEXTDDS_VERSION "6.1.1" CACHE STRING "")
-        set(_gh_file_name "rticonnextdds-cmake-utils-release-${CONNEXTDDS_VERSION}")
-        file(DOWNLOAD
-            "https://github.com/rticommunity/rticonnextdds-cmake-utils/archive/refs/heads/release/${CONNEXTDDS_VERSION}.zip"
-            "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
-        )
-        execute_process(
-            COMMAND
-                ${CMAKE_COMMAND} -E tar xf
-                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
-                    --format=zip
-            WORKING_DIRECTORY "${CONNEXTDDS_CMAKE_UTILS_DIR}"
-        )
-        execute_process(
-            COMMAND
-                ${CMAKE_COMMAND} -E copy_directory
-                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}"
-                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/"
-        )
-        execute_process(
-            COMMAND
-                ${CMAKE_COMMAND} -E remove
-                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}.zip"
-            COMMAND
-                ${CMAKE_COMMAND} -E remove_directory
-                    "${CONNEXTDDS_CMAKE_UTILS_DIR}/${_gh_file_name}"
+            " `git` tool is not installed. Please, in order to be able to build"
+            " the examples, donwload the corresponding release from the"
+            " rticonnextdds-cmake-utils repository and unzip it in its"
+            " directory `resources/cmake/rticonnextdds-cmake-utils`:\n\t"
+            "https://github.com/rticommunity/rticonnextdds-cmake-utils/releases\n"
         )
     endif()
 
