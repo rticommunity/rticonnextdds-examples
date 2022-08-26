@@ -3,7 +3,7 @@
 # to which the pull request was opened.
 name: PR handler
 
-on:  
+on:
   pull_request:
     branches:
       - master
@@ -23,7 +23,7 @@ jobs:
       # Save the PR number for the next workflow to create the current
       # workflow artifact along with the repository itself.
       - name: Save PR number
-        run: echo ${{ github.event.number }} > ${GITHUB_WORKSPACE}/NR
+        run: echo ${{ github.event.number }} > ${{ github.workspace }}/NR
 
       # Upload the artifacts to GitHub so that they can be used in the next
       # workflow.
@@ -31,4 +31,5 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: pr
-          path: ${GITHUB_WORKSPACE}/
+          path: ${{ github.workspace }}
+          if-no-files-found: error
