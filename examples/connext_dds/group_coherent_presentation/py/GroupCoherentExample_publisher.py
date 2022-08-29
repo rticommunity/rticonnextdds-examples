@@ -39,7 +39,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
     publisher = dds.Publisher(participant, publisher_qos)
     writer_qos = dds.QosProvider.default.datawriter_qos
 
-    # Create one Writer per Topic using the Publisher and DataWriter QoS 
+    # Create one Writer per Topic using the Publisher and DataWriter QoS
     # specified in the xml file
     alarm_writer = dds.DataWriter(publisher, alarm_topic, writer_qos)
     heart_rate_writer = dds.DataWriter(publisher, heart_rate_topic, writer_qos)
@@ -60,10 +60,12 @@ def run_publisher_application(domain_id: int, sample_count: int):
         try:
             heart_rate_data.beats_per_minute = get_patient_heart_rate()
             temperature_data.temperature = get_patient_temperature()
-            if heart_rate_data.beats_per_minute >= 100 or \
-                heart_rate_data.beats_per_minute <= 40 or \
-                temperature_data.temperature >= 100.0 or \
-                temperature_data.temperature <= 95.0:
+            if (
+                heart_rate_data.beats_per_minute >= 100
+                or heart_rate_data.beats_per_minute <= 40
+                or temperature_data.temperature >= 100.0
+                or temperature_data.temperature <= 95.0
+            ):
                 # Sound an alarm. In this case, we want all of the
                 # patients vitals along with the alarm to be delivered as
                 # a single coherent set of data so that we can correlate
@@ -85,7 +87,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
         except KeyboardInterrupt:
             break
 
-    print('preparing to shut down...')
+    print("preparing to shut down...")
     participant.close()
 
 
@@ -94,32 +96,39 @@ def main():
         description="RTI Connext DDS Example: Using Group Coherent \
         Presentation (Publisher)"
     )
-    parser.add_argument("-d",
-                        "--domain",
-                        type=int,
-                        default=0,
-                        help="DDS Domain ID | Range: 0-232 | Default: 0")
-    parser.add_argument("-c",
-                        "--count",
-                        type=int,
-                        default=50,
-                        help="Number of samples to send | Default 50")
-    parser.add_argument("-v",
-                        "--verbosity",
-                        type=int,
-                        default=1,
-                        help="How much debugging output to show \
-                        | Range: 0-3 | Default: 1")
+    parser.add_argument(
+        "-d",
+        "--domain",
+        type=int,
+        default=0,
+        help="DDS Domain ID | Range: 0-232 | Default: 0",
+    )
+    parser.add_argument(
+        "-c",
+        "--count",
+        type=int,
+        default=50,
+        help="Number of samples to send | Default 50",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbosity",
+        type=int,
+        default=1,
+        help="How much debugging output to show | Range: 0-3 | Default: 1",
+    )
 
     args = parser.parse_args()
-    assert 0 <= args.domain  < 233
+    assert 0 <= args.domain < 233
     assert args.count >= 0
     assert 0 <= args.verbosity < 4
 
-    verbosity_levels = {0: dds.Verbosity.SILENT,
-                        1: dds.Verbosity.EXCEPTION,
-                        2: dds.Verbosity.WARNING,
-                        3: dds.Verbosity.STATUS_ALL}
+    verbosity_levels = {
+        0: dds.Verbosity.SILENT,
+        1: dds.Verbosity.EXCEPTION,
+        2: dds.Verbosity.WARNING,
+        3: dds.Verbosity.STATUS_ALL,
+    }
 
     # Sets Connext verbosity to help debugging
     verbosity = verbosity_levels.get(args.verbosity, dds.Verbosity.EXCEPTION)
@@ -133,5 +142,5 @@ def main():
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

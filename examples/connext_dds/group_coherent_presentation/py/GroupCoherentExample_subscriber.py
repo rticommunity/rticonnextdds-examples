@@ -34,13 +34,14 @@ def print_coherent_set_info(info: dds.SampleInfo):
         print(
             f"Sample is part of "
             f"{'an incomplete' if set_info.incomplete_coherent_set else 'a complete'}"
-            f" group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n")
+            f" group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n"
+        )
     else:
         print("Sample is not part of a coherent set.\n")
 
 
 def process_data(subscriber: dds.Subscriber):
-    with dds.CoherentAccess(subscriber):    # Begin coherent access
+    with dds.CoherentAccess(subscriber):  # Begin coherent access
         # readers is a list of dds.AnyDataReaders
         readers = dds.Subscriber.find_datareaders(subscriber, dds.SampleState.NOT_READ)
         for reader in readers:
@@ -131,7 +132,7 @@ def run_subscriber_application(domain_id: int, sample_count: int):
         except KeyboardInterrupt:
             break
 
-    print('preparing to shut down...')
+    print("preparing to shut down...")
     participant.close()
 
 
@@ -140,32 +141,39 @@ def main():
         description="RTI Connext DDS Example: Using Group Coherent \
         Presentation (Publisher)"
     )
-    parser.add_argument("-d",
-                        "--domain",
-                        type=int,
-                        default=0,
-                        help="DDS Domain ID | Range: 0-232 | Default: 0")
-    parser.add_argument("-c",
-                        "--count",
-                        type=int,
-                        default=50,
-                        help="Number of samples to send | Default 50")
-    parser.add_argument("-v",
-                        "--verbosity",
-                        type=int,
-                        default=1,
-                        help="How much debugging output to show \
-                        | Range: 0-3 | Default: 1")
+    parser.add_argument(
+        "-d",
+        "--domain",
+        type=int,
+        default=0,
+        help="DDS Domain ID | Range: 0-232 | Default: 0",
+    )
+    parser.add_argument(
+        "-c",
+        "--count",
+        type=int,
+        default=50,
+        help="Number of samples to send | Default 50",
+    )
+    parser.add_argument(
+        "-v",
+        "--verbosity",
+        type=int,
+        default=1,
+        help="How much debugging output to show | Range: 0-3 | Default: 1",
+    )
 
     args = parser.parse_args()
-    assert 0 <= args.domain  < 233
+    assert 0 <= args.domain < 233
     assert args.count >= 0
     assert 0 <= args.verbosity < 4
 
-    verbosity_levels = {0: dds.Verbosity.SILENT,
-                        1: dds.Verbosity.EXCEPTION,
-                        2: dds.Verbosity.WARNING,
-                        3: dds.Verbosity.STATUS_ALL}
+    verbosity_levels = {
+        0: dds.Verbosity.SILENT,
+        1: dds.Verbosity.EXCEPTION,
+        2: dds.Verbosity.WARNING,
+        3: dds.Verbosity.STATUS_ALL,
+    }
 
     # Sets Connext verbosity to help debugging
     verbosity = verbosity_levels.get(args.verbosity, dds.Verbosity.EXCEPTION)
@@ -179,5 +187,5 @@ def main():
     return
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()
