@@ -5,10 +5,11 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-dynamic-data-access-union-discriminator)
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 add_executable(dynamic_data_union_example_cxx2
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_union_example.cxx"
