@@ -83,7 +83,7 @@ function(connextdds_configure_cmake_utils)
         message(FATAL_ERROR
             "The rticonnextdds-examples installation is not a git repository or"
             " `git` tool is not installed. Please, in order to be able to build"
-            " the examples, donwload the corresponding release from the"
+            " the examples, download the corresponding release from the"
             " rticonnextdds-cmake-utils repository and unzip it in its"
             " directory `resources/cmake/rticonnextdds-cmake-utils`:\n\t"
             "https://github.com/rticommunity/rticonnextdds-cmake-utils/releases\n"
