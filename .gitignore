@@ -73,3 +73,5 @@ gradle-app.setting
 .gradletasknamecache
 
 .settings
+
+.venv
