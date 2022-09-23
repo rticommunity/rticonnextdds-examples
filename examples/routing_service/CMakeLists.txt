@@ -23,13 +23,17 @@ if(CONNEXTDDS_BUILD_MONGODB_EXAMPLE)
     set(routing_service_mongo_db_example_dir "mongo_db")
 endif()
 
+set(BUILD_EXAMPLES_ROUTING_SERVICE
+    "file_adapter"
+    "file_to_dds_configuration"
+    "${routing_service_mongo_db_example_dir}"
+    "monitoring"
+    "remote_admin"
+    "shapes_processor"
+    "struct_array_transf"
+)
+
 connextdds_add_examples_subdirectories(
     EXAMPLES
-        "file_adapter"
-        "file_to_dds_configuration"
-        ${routing_service_mongo_db_example_dir}
-        "monitoring"
-        "remote_admin"
-        "shapes_processor"
-        "struct_array_transf"
+        ${BUILD_EXAMPLES_ROUTING_SERVICE}
 )

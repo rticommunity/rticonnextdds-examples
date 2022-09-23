@@ -13,9 +13,13 @@ connextdds_configure_cmake_utils()
 
 include(ConnextDdsAddExamplesSubdirectories)
 
+set(BUILD_EXAMPLES_RECORDING_SERVICE
+    "pluggable_storage"
+    "service_admin"
+    "service_as_lib"
+)
+
 connextdds_add_examples_subdirectories(
     EXAMPLES
-        "pluggable_storage"
-        "service_admin"
-        "service_as_lib"
+        ${BUILD_EXAMPLES_RECORDING_SERVICE}
 )
