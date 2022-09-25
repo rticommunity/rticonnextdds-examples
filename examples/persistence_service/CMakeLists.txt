@@ -13,9 +13,11 @@ connextdds_configure_cmake_utils()
 
 include(ConnextDdsAddExamplesSubdirectories)
 
-set(BUILD_EXAMPLES_PERSISTENCE_SERVICE
-    "persistent_storage"
-)
+if(NOT DEFINED BUILD_EXAMPLES_PERSISTENCE_SERVICE)
+    set(BUILD_EXAMPLES_PERSISTENCE_SERVICE
+        "persistent_storage"
+    )
+endif()
 
 connextdds_add_examples_subdirectories(
     EXAMPLES
