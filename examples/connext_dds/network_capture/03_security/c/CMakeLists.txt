@@ -10,12 +10,24 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../../resources/cmake"
 )
 
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "6.1.1"
+        REQUIRED
+        COMPONENTS
+            core
+            security_plugins
+    )
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "network_capture"
     LANG "C"
+    DEPENDENCIES
+        RTIConnextDDS::security_plugins
 )
 
 include (ConnextDdsGenerateSecurityArtifacts)
