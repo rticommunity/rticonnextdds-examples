@@ -68,10 +68,8 @@ function(connextdds_generate_security_artifacts)
     # are.
     # This relies on the fact that every example sets CMAKE_CURRENT_SOURCE_DIR
     # so that its last item points to the cmake resource directory.
-    # CONNEXTDDS_RESOURCE_DIR must be set to run OpenSSL functions.
-    list(GET CMAKE_MODULE_PATH -1 CONNEXTDDS_RESOURCE_DIR)
-    set(CONNEXTDDS_RESOURCE_DIR "${CONNEXTDDS_RESOURCE_DIR}/..")
-    set (resources_input_dir "${CONNEXTDDS_RESOURCE_DIR}/security")
+    # CONNEXTDDS_EXAMPLES_RESOURCES_DIR must be set to run OpenSSL functions.
+    set (resources_input_dir "${CONNEXTDDS_EXAMPLES_RESOURCES_DIR}/security")
 
     # These are the files that we copied from resources_input_dir.
     # They are the .cnf openssl configuration files that will be used to
@@ -90,7 +88,6 @@ function(connextdds_generate_security_artifacts)
         list(APPEND artifacts_input_files "${xml}.xml")
     endforeach()
 
-    message("CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
     add_custom_command(
         OUTPUT ${artifacts_input_files}
         PRE_BUILD
