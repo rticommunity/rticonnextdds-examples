@@ -1,0 +1,110 @@
+<?xml version="1.0"?>
+<!--
+Description
+XML QoS Profile for lbediscovery
+
+(c) Copyright, Real-Time Innovations, 2022.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are
+subject to this license. The software is provided "as is", with no warranty
+of any type, including any warranty for fitness for any purpose. RTI is
+under no obligation to maintain or support the software. RTI shall not be
+liable for any incidental or consequential damages arising out of the use
+or inability to use the software.
+-->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_profiles.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS Library is a named set of QoS profiles.
+    -->
+    <qos_library name="ShapeType_QoSLibrary">
+        <!-- QoS profile used for enabling LBED in a DomainParticipant -->
+        <qos_profile name="StaticEndpointDiscovery">
+            <domain_participant_qos>
+                <discovery_config>
+                    <builtin_discovery_plugins>DPSE</builtin_discovery_plugins>
+                </discovery_config>
+            </domain_participant_qos>
+        </qos_profile>
+
+        <!-- The QoS profile used by the publishing entities -->
+        <qos_profile name="ShapeType_PublisherProfile"
+                base_name="ShapeType_QoSLibrary::StaticEndpointDiscovery">
+            <domain_participant_qos>
+                <participant_name>
+                    <name>ShapeTypePublisherParticipant</name>
+                </participant_name>
+            </domain_participant_qos>
+            <!-- Since the example uses XML-Based Application creation, there
+                is no need to set the rtps_object_id of the DataWriters -->
+        </qos_profile>
+
+        <!-- The QoS profile used by the subscribing entities -->
+        <qos_profile name="ShapeType_SubscriberProfile"
+                base_name="ShapeType_QoSLibrary::StaticEndpointDiscovery">
+            <domain_participant_qos>
+                <participant_name>
+                    <name>ShapeTypeSubscriberParticipant</name>
+                </participant_name>
+            </domain_participant_qos>
+            <!-- Since the example uses XML-Based Application creation, there
+                is no need to set the rtps_object_id of the DataReaders -->
+        </qos_profile>
+    </qos_library>
+
+    <!-- The XML Type definition of ShapeType required by LBED -->
+    <types>
+        <struct name= "ShapeType">
+            <member name="color" stringMaxLength="128" type="string" key="true"/>
+            <member name="x" type="int32"/>
+            <member name="y" type="int32"/>
+            <member name="shapesize" type="int32"/>
+        </struct>
+    </types>
+
+    <domain_library name="ShapeType_DomainLibrary">
+        <!-- IMPORTANT: change the domain_id value if you plan to use a
+            domain different than 0 -->
+        <domain name="ShapeType_Domain" domain_id="0">
+            <register_type name="ShapeType" type_ref="ShapeType"/>
+            <topic name="ShapeTypeTopic" register_type_ref="ShapeType"/>
+        </domain>
+    </domain_library>
+
+    <!-- The DDS-XML definition of the application. It will be used by both
+        XML-Based Application Creation and LBED -->
+    <domain_participant_library name="ShapeType_DomainParticipantLibrary">
+        <domain_participant name="ShapeTypePublisherParticipant"
+                domain_ref="ShapeType_DomainLibrary::ShapeType_Domain">
+            <publisher name="Pub">
+                <!-- In LBED, the multiplicity attribute can only be used
+                    along with XML-Based Application Creation -->
+                <data_writer name="DW" topic_ref="ShapeTypeTopic" multiplicity="2"/>
+            </publisher>
+        </domain_participant>
+
+        <domain_participant name="ShapeTypeSubscriberParticipant"
+                domain_ref="ShapeType_DomainLibrary::ShapeType_Domain">
+            <subscriber name="Sub">
+                <!-- In LBED, the multiplicity attribute can only be used
+                    along with XML-Based Application Creation -->
+                <data_reader name="RED_DR" topic_ref="ShapeTypeTopic" multiplicity="2">
+                    <content_filter name="ShapeTypeContentFilterRed" kind="builtin.sql">
+                        <expression>color MATCH 'RED'</expression>
+                    </content_filter>
+                </data_reader>
+
+                <!-- In LBED, the multiplicity attribute can only be used
+                    along with XML-Based Application Creation -->
+                <data_reader name="BLUE_DR" topic_ref="ShapeTypeTopic" multiplicity="2">
+                    <content_filter name="ShapeTypeContentFilterBlue" kind="builtin.sql">
+                        <expression>color MATCH 'BLUE'</expression>
+                    </content_filter>
+                </data_reader>
+            </subscriber>
+        </domain_participant>
+    </domain_participant_library>
+</dds>
