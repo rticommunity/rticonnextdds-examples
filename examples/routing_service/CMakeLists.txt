@@ -23,8 +23,8 @@ if(CONNEXTDDS_BUILD_MONGODB_EXAMPLE)
     set(routing_service_mongo_db_example_dir "mongo_db")
 endif()
 
-if(NOT DEFINED BUILD_EXAMPLES_ROUTING_SERVICE)
-    set(BUILD_EXAMPLES_ROUTING_SERVICE
+if(NOT DEFINED CONNEXTDDS_ROUTING_SERVICE_EXAMPLES)
+    set(CONNEXTDDS_ROUTING_SERVICE_EXAMPLES
         "file_adapter"
         "file_to_dds_configuration"
         "${routing_service_mongo_db_example_dir}"
@@ -37,5 +37,5 @@ endif()
 
 connextdds_add_examples_subdirectories(
     EXAMPLES
-        ${BUILD_EXAMPLES_ROUTING_SERVICE}
+        ${CONNEXTDDS_ROUTING_SERVICE_EXAMPLES}
 )

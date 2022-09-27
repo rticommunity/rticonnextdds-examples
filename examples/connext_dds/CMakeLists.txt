@@ -54,8 +54,8 @@ if(STATIC_ANALYSIS)
             EXCLUDE_FROM_ALL TRUE)
 endif()
 
-if(NOT DEFINED BUILD_EXAMPLES_CONNEXT_DDS)
-    set(BUILD_EXAMPLES_CONNEXT_DDS
+if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
+    set(CONNEXTDDS_CONNEXT_DDS_EXAMPLES
         "asynchronous_publication"
         "asyncwaitset"
         "batching"
@@ -116,5 +116,5 @@ endif()
 
 connextdds_add_examples_subdirectories(
     EXAMPLES
-        ${BUILD_EXAMPLES_CONNEXT_DDS}
+        ${CONNEXTDDS_CONNEXT_DDS_EXAMPLES}
 )
