@@ -76,6 +76,7 @@ connextdds_add_examples_subdirectories(
         "keyed_data"
         "keyed_data_advanced"
         "lambda_content_filter"
+        "lbediscovery"
         "listeners"
         "logging_config"
         "multichannel"
