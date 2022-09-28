@@ -75,15 +75,21 @@ or inability to use the software.
     </domain_library>
 
     <!-- The DDS-XML definition of the application. It will be used by both
-        XML-Based Application Creation and LBED -->
+        XML-Based Application Creation and LBED. We specify the QoS
+        profile each entity use because XML-Based Application Creation
+        needs to know with which QoS profile entities should be created -->
     <domain_participant_library name="ShapeType_DomainParticipantLibrary">
         <domain_participant name="ShapeTypePublisherParticipant"
                 domain_ref="ShapeType_DomainLibrary::ShapeType_Domain">
             <publisher name="Pub">
                 <!-- In LBED, the multiplicity attribute can only be used
                     along with XML-Based Application Creation -->
-                <data_writer name="DW" topic_ref="ShapeTypeTopic" multiplicity="2"/>
+                <data_writer name="DW" topic_ref="ShapeTypeTopic" multiplicity="2">
+                    <datawriter_qos base_name="ShapeType_QoSLibrary::ShapeType_PublisherProfile"/>
+                </data_writer>
+                <publisher_qos base_name="ShapeType_QoSLibrary::ShapeType_PublisherProfile"/>
             </publisher>
+            <domain_participant_qos base_name="ShapeType_QoSLibrary::ShapeType_PublisherProfile"/>
         </domain_participant>
 
         <domain_participant name="ShapeTypeSubscriberParticipant"
@@ -95,6 +101,7 @@ or inability to use the software.
                     <content_filter name="ShapeTypeContentFilterRed" kind="builtin.sql">
                         <expression>color MATCH 'RED'</expression>
                     </content_filter>
+                    <datareader_qos base_name="ShapeType_QoSLibrary::ShapeType_SubscriberProfile"/>
                 </data_reader>
 
                 <!-- In LBED, the multiplicity attribute can only be used
@@ -103,8 +110,11 @@ or inability to use the software.
                     <content_filter name="ShapeTypeContentFilterBlue" kind="builtin.sql">
                         <expression>color MATCH 'BLUE'</expression>
                     </content_filter>
+                    <datareader_qos base_name="ShapeType_QoSLibrary::ShapeType_SubscriberProfile"/>
                 </data_reader>
+                <subscriber_qos base_name="ShapeType_QoSLibrary::ShapeType_SubscriberProfile"/>
             </subscriber>
+            <domain_participant_qos base_name="ShapeType_QoSLibrary::ShapeType_SubscriberProfile"/>
         </domain_participant>
     </domain_participant_library>
 </dds>
