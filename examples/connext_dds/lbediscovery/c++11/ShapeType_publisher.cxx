@@ -40,11 +40,11 @@ void run_publisher_application(
                     params);
 
     // Retrieve both DataWriters
-    dds::pub::DataWriter<ShapeType> red_writer =
+    auto red_writer =
             rti::pub::find_datawriter_by_name<dds::pub::DataWriter<ShapeType>>(
                     participant,
                     "Pub::DW");
-    dds::pub::DataWriter<ShapeType> blue_writer =
+    auto blue_writer =
             rti::pub::find_datawriter_by_name<dds::pub::DataWriter<ShapeType>>(
                     participant,
                     "Pub::DW#1");
