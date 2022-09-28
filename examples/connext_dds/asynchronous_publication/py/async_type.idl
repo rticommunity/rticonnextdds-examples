@@ -10,6 +10,6 @@
  * use or inability to use the software.
  */
 
- struct async {
+ struct async_type {
     int32 x;
 };
