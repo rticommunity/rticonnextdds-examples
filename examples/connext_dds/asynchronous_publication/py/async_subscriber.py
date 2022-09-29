@@ -10,7 +10,6 @@
 #
 import argparse
 
-# Note, I have not run this program yet. Need to pull on my local laptop so that I can download the wheel
 import rti.connextdds as dds
 # Note: cannot do 'from async' because async is a keyword since Python 3.5 
 # therefore I have to update the name of async.idl to async_type.idl

@@ -11,7 +11,6 @@
 import argparse
 import time
 
-# Note, I have not run this program yet. Need to pull on my local laptop so that I can download the wheel
 import rti.connextdds as dds
 # Note: cannot do 'from async' because async is a keyword since Python 3.5 
 # therefore I have to update the name of async.idl to async_type.idl
@@ -28,7 +27,6 @@ def run_publisher_application(domain_id: int, sample_count: int):
     # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     writer_qos = dds.QosProvider.default.datawriter_qos
 
-    # Note: Update this to Python
     # If you want to change the DataWriter's QoS programmatically rather than
     # using the XML file, uncomment the following lines.
 
@@ -49,7 +47,7 @@ def run_publisher_application(domain_id: int, sample_count: int):
     #writer_qos.history.keep_all.keep_last(12)
 
     # Set flowcontroller for DataWriter
-    writer_qos.publish_mode.asynchronous()
+    # writer_qos.publish_mode.asynchronous()
     # Note figure out what FlowController::FIXED_RATE_NAME is
     # writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME)
 
