@@ -41,12 +41,11 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
     reader_qos = dds.QosProvider.default.datareader_qos
 
-    # Note: Update this to Python
-    """ # If you want to change the DataWriter's QoS programmatically rather than
+    # If you want to change the DataReader's QoS programmatically rather than
     # using the XML file, uncomment the following lines.
 
-    reader_qos << Reliability::Reliable();
-    reader_qos << History::KeepAll();"""
+    # reader_qos.reliability.reliable()
+    # reader_qos.history.kind = dds.HistoryKind.KEEP_ALL
 
     # Create a DataReader with the QoS in our profile
     reader = dds.DataReader(participant.implicit_subscriber, topic, reader_qos)

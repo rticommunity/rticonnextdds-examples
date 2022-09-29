@@ -29,28 +29,29 @@ def run_publisher_application(domain_id: int, sample_count: int):
     writer_qos = dds.QosProvider.default.datawriter_qos
 
     # Note: Update this to Python
-    """ # If you want to change the DataWriter's QoS programmatically rather than
+    # If you want to change the DataWriter's QoS programmatically rather than
     # using the XML file, uncomment the following lines.
 
     # In this case, we set the publish mode QoS to asynchronous publish mode,
     # which enables asynchronous publishing. We also set the flow controller
     # to be the fixed rate flow controller, and we increase the history depth.
-    writer_qos << Reliability::Reliable(Duration(60));
-
-    DataWriterProtocol writer_protocol_qos;
-    RtpsReliableWriterProtocol rtps_writer_protocol;
-    rtps_writer_protocol.min_send_window_size(50);
-    rtps_writer_protocol.max_send_window_size(50);
-    writer_protocol_qos.rtps_reliable_writer(rtps_writer_protocol);
-    writer_qos << writer_protocol_qos;
+    # writer_qos.reliability.reliable(dds.Duration(60))
+    # writer_qos.data_writer_protocol.rtps_reliable_writer.min_send_window_size = 50
+    # writer_qos.data_writer_protocol.rtps_reliable_writer.max_send_window_size = 50
 
     # Since samples are only being sent once per second, DataWriter will need
     # to keep them on queue.  History defaults to only keeping the last
     # sample enqueued, so we increase that here.
-    writer_qos << History::KeepLast(12);
+
+    # Note: Admin Console is reporting history depth of 1 still regardless of changes in the QoS file or programatically 
+    #writer_qos.history.depth = 12
+    #writer_qos.history.kind = dds.HistoryKind.KEEP_ALL
+    #writer_qos.history.keep_all.keep_last(12)
 
     # Set flowcontroller for DataWriter
-    writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME); """
+    writer_qos.publish_mode.asynchronous()
+    # Note figure out what FlowController::FIXED_RATE_NAME is
+    # writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME)
 
     # Create a DataWriter with the QoS in our profile
     writer = dds.DataWriter(participant.implicit_publisher, topic, writer_qos)
