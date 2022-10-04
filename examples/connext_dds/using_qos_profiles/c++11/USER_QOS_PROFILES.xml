@@ -15,7 +15,7 @@
     variable NDDS_QOS_PROFILES is defined and points to this file. For more information
     about XML QoS Profiles see Chapter 15 in the RTI Connext user manual. -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.1/rti_dds_qos_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
     <!-- QoS Library containing the QoS profile used in the generated example.
         A QoS library is a named set of QoS profiles. -->
     <qos_library name="profiles_Library">

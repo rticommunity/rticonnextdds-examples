@@ -9,9 +9,12 @@
  use the software.
  ******************************************************************************/
 
-#include "Primes.hpp"
+#include <cmath>
+
 #include <rti/request/rtirequest.hpp>  // full request-reply API
 #include <rti/config/Logger.hpp>       // Logger to configure logging verbosity
+
+#include "Primes.hpp"
 
 using namespace dds::core::xtypes;
 

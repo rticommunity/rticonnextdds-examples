@@ -18,7 +18,7 @@ connextdds_configure_cmake_utils()
 # Find the ConnextDDS libraries. This will look fo the core and API libraries
 # only
 find_package(RTIConnextDDS
-    "6.1.1"
+    "7.0.0"
     REQUIRED
     COMPONENTS
         core

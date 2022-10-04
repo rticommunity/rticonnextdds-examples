@@ -133,7 +133,7 @@ export CONNEXTDDS_ARCH=x64Linux3gcc5.4.0
 After running this command, you will see the following output:
 
 ```bash
-RTI Recording Service (Recorder) 6.1.1 starting...
+RTI Recording Service (Recorder) 7.0.0 starting...
 RTI Recording Service started
 ```
 

@@ -12,7 +12,7 @@ configuration parameters that never change. Other times an application needs to
 ask a remote application to perform an action on its behalf; for example, to
 invoke a remote procedure call or a service.
 
-See the [User's Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/RequestReplyOverview.htm)
+See the [User's Manual](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/RequestReplyOverview.htm)
 for more information.
 
 ## Example Description

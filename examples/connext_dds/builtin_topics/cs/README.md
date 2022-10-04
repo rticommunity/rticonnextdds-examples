@@ -1,7 +1,7 @@
 # Example Code: Builtin Topics
 
 If you haven't used the RTI Connext C# API before, first check the
-[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
+[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
 ## Building the Example :wrench:
 
@@ -59,14 +59,14 @@ Running HelloWorldPublisher on domain 0
 Writing HelloWorld, count 0
 Writing HelloWorld, count 1
 Writing HelloWorld, count 2
-Discovered participant: [Key = 20-B4-01-01-79-B5-48-B8-8D-36-F5-B8-C1-01-00-00, DomainId = 0, ProductVersion = 6.1.1.0, ...]
+Discovered participant: [Key = 20-B4-01-01-79-B5-48-B8-8D-36-F5-B8-C1-01-00-00, DomainId = 0, ProductVersion = 7.0.0.0, ...]
     * Authorization DENIED
 Writing HelloWorld, count 3
 Writing HelloWorld, count 4
 Writing HelloWorld, count 5
 Writing HelloWorld, count 6
 Writing HelloWorld, count 7
-Discovered participant: [Key = 7A-88-01-01-E0-E5-4F-89-87-14-5F-A3-C1-01-00-00, DomainId = 0, ProductVersion = 6.1.1.0, ...]
+Discovered participant: [Key = 7A-88-01-01-E0-E5-4F-89-87-14-5F-A3-C1-01-00-00, DomainId = 0, ProductVersion = 7.0.0.0, ...]
     * Authorization OK
 Discovered subscription: [Key = 7A-88-01-01-E0-E5-4F-89-87-14-5F-A3-04-00-00-80, ParticipantKey = 7A-88-01-01-E0-E5-4F-89-87-14-5F-A3-C1-01-00-00, TopicName = Example msg, TypeName = HelloWorld, ...]
 Writing HelloWorld, count 8

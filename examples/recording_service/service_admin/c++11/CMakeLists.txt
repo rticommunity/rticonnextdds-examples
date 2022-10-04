@@ -22,7 +22,7 @@ connextdds_configure_cmake_utils()
 include(ConnextDdsAddExample)
 
 find_package(
-    RTIConnextDDS "6.1.1"
+    RTIConnextDDS "7.0.0"
     REQUIRED
     COMPONENTS
         core
