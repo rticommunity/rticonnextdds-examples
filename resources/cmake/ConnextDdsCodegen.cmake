@@ -446,7 +446,6 @@ function(_connextdds_codegen_get_generated_file_list)
             # Set in the parent scope
             set(${_CODEGEN_VAR}_GENERATED_SOURCES ${sources} PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SOURCES ${sources} PARENT_SCOPE)
-            set(${_CODEGEN_VAR}_HEADERS ${headers} PARENT_SCOPE)
             set(${_CODEGEN_VAR}_PUBLISHER_SOURCE PARENT_SCOPE)
             set(${_CODEGEN_VAR}_SUBSCRIBER_SOURCE PARENT_SCOPE)
         endif()

@@ -29,13 +29,13 @@ find_package(
 
 # Flags for code generation
 set(CODEGEN_FLAGS UNBOUNDED)
-set(IDL_GEN_CODE_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/${RTI_ARCH}/generated/")
+set(IDL_GEN_CODE_OUTPUT_DIR "${CMAKE_SOURCE_DIR}/build/generated/")
 # Include the CodegenRTIConnextDDS cmake module
 include(ConnextDdsCodegen)
 
 connextdds_rtiddsgen_run(
     IDL_FILE
-      "$ENV{NDDSHOME}/resource/idl/ServiceCommon.idl"
+      "${CONNEXTDDS_DIR}/resource/idl/ServiceCommon.idl"
     LANG
       "C++11"
     OUTPUT_DIRECTORY
@@ -47,7 +47,7 @@ connextdds_rtiddsgen_run(
 
 connextdds_rtiddsgen_run(
     IDL_FILE
-      "$ENV{NDDSHOME}/resource/idl/ServiceAdmin.idl"
+      "${CONNEXTDDS_DIR}/resource/idl/ServiceAdmin.idl"
     LANG
       "C++11"
     OUTPUT_DIRECTORY

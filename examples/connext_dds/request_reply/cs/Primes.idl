@@ -1,0 +1,83 @@
+/*
+* (c) Copyright, Real-Time Innovations, 2022.  All rights reserved.
+* RTI grants Licensee a license to use, modify, compile, and create derivative
+* works of the software solely for use with RTI Connext DDS. Licensee may
+* redistribute copies of the software provided that all such copies are subject
+* to this license. The software is provided "as is", with no warranty of any
+* type, including any warranty for fitness for any purpose. RTI is under no
+* obligation to maintain or support the software. RTI shall not be liable for
+* any incidental or consequential damages arising out of the use or inability
+* to use the software.
+*/
+
+module PrimeCalculator {
+
+/* 
+ * This is the request type. 
+ *
+ * It simply contains an integer that requests all the prime numbers below it.
+ *
+ */
+struct PrimeNumberRequest {
+        /*
+         * Requests the calculation of the prime numbers below n
+         */
+        long n;
+        
+        /*
+         * How many prime numbers should be included in each reply sample.
+         * 
+         * A smaller value means that results are received more frequently
+         * (and hence more data samples are sent)
+         */
+        long primes_per_reply;
+};
+
+/* --- Reply type: --------------------------------------------------------- */
+
+/*
+ * Maximum size of the a sequence of prime numbers
+ */
+const long PRIME_SEQUENCE_MAX_LENGTH = 1024;
+
+
+/*
+ * Indicates the status of one of the multiple possible replies for a request
+ */
+enum PrimeNumberCalculationStatus {
+        /*
+         * Indicates that this reply contains a new sequence of
+         * prime numbers for a request, but there are still more to come
+         */
+        REPLY_IN_PROGRESS,
+        /*
+         * Indicates that this is the last sequence of 
+         * prime numbers for a request.
+         */
+        REPLY_COMPLETED,
+        /*
+         * Indicates that there was an error. After an error
+         * there won't be any more replies for a request
+         */
+        REPLY_ERROR
+};
+
+/*
+ * This is the reply type. 
+ * 
+ * The replier sends sequences of prime numbers as they are being calculated.
+ *  
+ */
+struct PrimeNumberReply {
+        /*
+         * A sequence of prime numbers
+         */
+        sequence<long, PRIME_SEQUENCE_MAX_LENGTH> primes;
+        
+        /*
+         * Status information about this reply
+         */
+         PrimeNumberCalculationStatus status;
+};
+
+};
