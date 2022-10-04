@@ -27,7 +27,6 @@ for all of them.
 ]]
 
 include(CMakeParseArguments)
-include(ConnextDdsArgumentChecks)
 
 function(connextdds_add_examples_subdirectories)
     set(optional_args)
@@ -39,9 +38,11 @@ function(connextdds_add_examples_subdirectories)
         "${multi_value_args}"
         ${ARGN}
     )
-    connextdds_check_required_arguments(
-        _ADD_EXAMPLES_ARGS_EXAMPLES
-    )
+
+    if(NOT _ADD_EXAMPLES_ARGS_EXAMPLES)
+        message(WARNING "No examples specified, skipping directory.")
+        return()
+    endif()
 
     set(LANGUAGE_FOLDER_NAMES c c++98 c++11)
 
