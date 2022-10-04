@@ -4,10 +4,10 @@
 
 The *RTI Limited Bandwidth Endpoint Discovery (LBED) Plugin* reduces discovery
 time and network traffic by locally defining information about the endpoints
-that need to be discovered in an XML file. The default dynamic discovery process,
-on the other hand, sends the information about the endpoints over the network.
-Therefore, LBED requires all the endpoints to be known ahead of time and each
-must be declared in an XML file.
+that need to be discovered in an XML file. The Simple Endpoint Discovery Protocol
+(SEDP), the default dynamic endpoint discovery process, on the other hand, sends
+the information about the endpoints over the network. Therefore, LBED requires all
+the endpoints to be known ahead of time and each must be declared in an XML file.
 
 One of the requirements for using LBED in an application is that every endpoint
 must define a value for the RTPS object ID. The RTPS object ID is an integer
@@ -19,8 +19,8 @@ Discovery, so this auto-assigned RTPS object ID will not be propagated to other
 endpoints. In order for remote endpoints to be discovered, LBED needs to know
 the RTPS object ID of a remote participant's entities before discovery initiates.
 
-If your application uses XML-Based Application Creation, you do not have to
-manually specify the RTPS object ID. In this unique case, LBED is able to
+If your application uses XML-Based Application Creation, however, you do not have
+to manually specify the RTPS object ID. In this unique case, LBED is able to
 automatically infer which RTPS object ID Connext will assign to each endpoint.
 
 ## Example description
@@ -56,7 +56,7 @@ a SIGINT/SIGTERM signal. The application will finish gracefully.
 
 The Subscriber application has four `ShapeType` DataReaders, all in the
 `ShapeTypeTopic`. Two of them have a `ContentFilterTopic` that filters samples
-with `color=RED`. The other two, filter samples with `color=BLUE`.
+with `color=RED`. The other two filter samples with `color=BLUE`.
 
 Each pair of endpoints are instances of the same two DataReaders: they are
 created using the DDS-XML `multiplicity` attribute. Notice that the

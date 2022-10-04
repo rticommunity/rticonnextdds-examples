@@ -10,10 +10,12 @@
  * to use the software.
  */
 
+@appendable
 struct ShapeType
 {
-    string<128> color; //@key
+    @key
+    string<128> color;
     long x;
     long y;
     long shapesize;
-};//@Extensibility EXTENSIBLE_EXTENSIBILITY 
+};

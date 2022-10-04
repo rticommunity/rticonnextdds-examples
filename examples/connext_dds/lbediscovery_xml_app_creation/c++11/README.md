@@ -27,7 +27,7 @@ Studio solutions, you can specify the configuration mode to build as follows:
 cmake --build . --config Release|Debug
 ```
 
-Alternatively, you can use directly the generated infrastructure (e.g.,
+Alternatively, you can directly use the generated infrastructure (e.g.,
 Makefiles or Visual Studio Solutions) to build the example. If you generated
 Makefiles in the configuration process, run make to build the example. Likewise,
 if you generated a Visual Studio solution, open the solution and follow the
@@ -96,12 +96,12 @@ cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. \
     -G "Visual Studio 15 2017" -A x64
 ```
 
-### Configuring Connext DDS Installation Path and Architecture
+### Configuring Connext Installation Path and Architecture
 
 The CMake build infrastructure will try to guess the location of your Connext
-DDS installation and the Connext DDS architecture based on the default settings
-for your host platform. If you installed Connext DDS in a custom location, you
-can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+DDS installation and the Connext architecture based on the default settings
+for your host platform. If you installed Connext in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
 installation folder. For example:
 
 ```sh
@@ -135,7 +135,7 @@ You will find the definition of connextdds_add_example, along with detailed
 documentation, in
 [resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
 
-For a more comprehensive example on how to build an RTI Connext DDS application
+For a more comprehensive example on how to build an RTI Connext application
 using CMake, please refer to the
 [hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
 a comprehensive CMakeLists.txt script with all the steps and instructions
