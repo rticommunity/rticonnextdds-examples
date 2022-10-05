@@ -4,6 +4,7 @@ If you haven't used the RTI Connext Python API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
 ## Building the Example :wrench:
+
 First use **rtiddsgen** to generate the python type file from
 `GroupCoherentExample.idl`:
 
