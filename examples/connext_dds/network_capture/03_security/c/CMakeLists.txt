@@ -11,15 +11,13 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
-if(NOT RTIConnextDDS_FOUND)
-    find_package(RTIConnextDDS
-        "6.1.1"
-        REQUIRED
-        COMPONENTS
-            core
-            security_plugins
-    )
-endif()
+find_package(RTIConnextDDS
+    "6.1.1"
+    REQUIRED
+    COMPONENTS
+        core
+        security_plugins
+)
 
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
