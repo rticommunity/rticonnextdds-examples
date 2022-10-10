@@ -58,20 +58,19 @@ void run_subscriber_application(
                     "ShapeTypeSubscriberParticipant",
                     params);
 
-    const unsigned int reader_number = 4;
+    const unsigned int reader_count = 4;
     const std::string reader_names[] = { "Sub::RED_DR",
                                          "Sub::RED_DR#1",
                                          "Sub::BLUE_DR",
                                          "Sub::BLUE_DR#1" };
     std::vector<dds::sub::DataReader<ShapeType>> readers;
-    std::vector<dds::core::cond::WaitSet> waitsets(reader_number);
-    std::vector<unsigned int> samples_read(reader_number);
-    dds::sub::DataReader<ShapeType> reader = dds::core::null;
+    std::vector<dds::core::cond::WaitSet> waitsets(reader_count);
+    std::vector<unsigned int> samples_read(reader_count);
 
     // Retrieve the four DataReaders and configure their
     // ReadConditions and Waitsets
-    for (int i = 0; i < reader_number; i++) {
-        reader = rti::sub::find_datareader_by_name<
+    for (unsigned int i = 0; i < reader_count; i++) {
+        auto reader = rti::sub::find_datareader_by_name<
                 dds::sub::DataReader<ShapeType>>(participant, reader_names[i]);
         if (reader == dds::core::null) {
             throw std::runtime_error(
@@ -96,8 +95,8 @@ void run_subscriber_application(
                    samples_read.end(),
                    below_sample_count)) {
         // Run the handlers of the active conditions. Wait for up to 1 second.
-        for (int i = 0; i < reader_number; i++) {
-            waitsets[i].dispatch(dds::core::Duration(1));
+        for (auto &waitset : waitsets) {
+            waitset.dispatch(dds::core::Duration(1));
         }
     }
 }
