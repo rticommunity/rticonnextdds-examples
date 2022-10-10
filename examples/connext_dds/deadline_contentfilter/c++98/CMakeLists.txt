@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "deadline_contentfilter"
-    LANG "C++"
+    LANG "C++98"
 )

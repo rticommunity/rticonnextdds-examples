@@ -16,7 +16,7 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "numbers"
-    LANG "C++"
+    LANG "C++98"
 )
 
 target_include_directories(property_qos_publisher_cpp

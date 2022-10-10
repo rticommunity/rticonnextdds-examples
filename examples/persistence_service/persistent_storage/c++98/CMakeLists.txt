@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "hello_world"
-    LANG "C++"
+    LANG "C++98"
 )

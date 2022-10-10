@@ -16,6 +16,6 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "DroppedSamplesExample"
-    LANG "C++"
+    LANG "C++98"
     NO_REQUIRE_QOS
 )

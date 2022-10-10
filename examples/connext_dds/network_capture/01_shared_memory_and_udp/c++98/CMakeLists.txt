@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "network_capture"
-    LANG "C++"
+    LANG "C++98"
 )

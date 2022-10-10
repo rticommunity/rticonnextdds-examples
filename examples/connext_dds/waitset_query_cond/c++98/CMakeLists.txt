@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "waitset_query_cond"
-    LANG "C++"
+    LANG "C++98"
 )

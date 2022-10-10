@@ -16,7 +16,7 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "compression"
-    LANG "C++"
+    LANG "C++98"
     CODEGEN_ARGS
         STRING_SIZE 4096 # NOTE: Modify this value to change the lengh line limit
 )
