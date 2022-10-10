@@ -22,7 +22,7 @@
 
 int process_data(
         dds::sub::DataReader<ShapeType> reader,
-        std::string reader_name)
+        const std::string reader_name)
 {
     // Take all samples
     int count = 0;
@@ -65,7 +65,7 @@ void run_subscriber_application(
                                          "Sub::BLUE_DR#1" };
     std::vector<dds::sub::DataReader<ShapeType>> readers;
     std::vector<dds::core::cond::WaitSet> waitsets(reader_count);
-    std::vector<unsigned int> samples_read(reader_count);
+    std::vector<int> samples_read(reader_count);
 
     // Retrieve the four DataReaders and configure their
     // ReadConditions and Waitsets
@@ -86,7 +86,7 @@ void run_subscriber_application(
                 });
     }
 
-    auto below_sample_count = [sample_count](unsigned int count) {
+    auto below_sample_count = [sample_count](int count) {
         return count < sample_count;
     };
     while (!application::shutdown_requested
