@@ -54,8 +54,8 @@ if(STATIC_ANALYSIS)
             EXCLUDE_FROM_ALL TRUE)
 endif()
 
-connextdds_add_examples_subdirectories(
-    EXAMPLES
+if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
+    set(CONNEXTDDS_CONNEXT_DDS_EXAMPLES
         "asynchronous_publication"
         "asyncwaitset"
         "batching"
@@ -111,4 +111,10 @@ connextdds_add_examples_subdirectories(
         "network_capture/04_advanced_api"
         "printing_qos"
         "required_subscription"
+    )
+endif()
+
+connextdds_add_examples_subdirectories(
+    EXAMPLES
+        ${CONNEXTDDS_CONNEXT_DDS_EXAMPLES}
 )
