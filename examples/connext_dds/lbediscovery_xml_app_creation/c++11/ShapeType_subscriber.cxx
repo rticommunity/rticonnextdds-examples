@@ -22,7 +22,7 @@
 
 int process_data(
         dds::sub::DataReader<ShapeType> reader,
-        const std::string reader_name)
+        const std::string &reader_name)
 {
     // Take all samples
     int count = 0;
