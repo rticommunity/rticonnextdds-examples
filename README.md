@@ -14,9 +14,8 @@ Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rti
 for further information about how to contribute with new examples to this repository.
 
 The examples contained in the
-[master](https://github.com/rticommunity/rticonnextdds-examples/tree/master) and
-[develop](https://github.com/rticommunity/rticonnextdds-examples/tree/develop)
-branches of this repository have been built and tested against RTI Connext DDS
+[master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
+branch of this repository have been built and tested against RTI Connext DDS
 7.0.0. If you need examples that have been built and tested against older
 versions of RTI Connext DDS, please check out the appropriate branch:
 

@@ -11,12 +11,22 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "6.1.1"
+    REQUIRED
+    COMPONENTS
+        core
+        security_plugins
+)
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "network_capture"
     LANG "C"
+    DEPENDENCIES
+        RTIConnextDDS::security_plugins
 )
 
 include (ConnextDdsGenerateSecurityArtifacts)

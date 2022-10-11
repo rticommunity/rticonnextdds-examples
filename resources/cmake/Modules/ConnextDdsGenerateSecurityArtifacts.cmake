@@ -25,6 +25,15 @@ So far this means:
  - Publishing and subscribing to any domain and topic is allowed, only for those
    peers.
 
+Note regarding wolfSSL:
+  - If you are compiling an example that depends on either the Security Plugins
+    for wolfSSL or on the wolfSSL crypto library, you may still depend on
+    OpenSSL for generating the security artifacts. In that case, make sure that
+    you set the OPENSSL_ROOT_DIR variable during the cmake configuration step.
+    This variable shall point to the root directory of an OpenSSL installation.
+    Doing so will ensure that the include(UseOpenSSL) call in this cmake file
+    finds the OpenSSL binary that we need to generate and sign certificates,
+    Governance, and Permissions Documents.
 #]]
 
 include(UseOpenSSL)
