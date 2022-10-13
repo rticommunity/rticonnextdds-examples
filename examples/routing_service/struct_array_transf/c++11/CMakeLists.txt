@@ -55,7 +55,6 @@ add_custom_command(
     COMMAND
         ${RTICODEGEN}
             -language C++11
-            -stl
             -replace -d ${CMAKE_CURRENT_BINARY_DIR}
             "${CMAKE_CURRENT_SOURCE_DIR}/SensorData.idl"
 )
