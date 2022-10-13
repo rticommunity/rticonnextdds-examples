@@ -44,9 +44,8 @@ def run_publisher_application(domain_id: int, sample_count: int):
     alarm_writer = dds.DataWriter(publisher, alarm_topic, writer_qos)
     heart_rate_writer = dds.DataWriter(publisher, heart_rate_topic, writer_qos)
     temperature_writer = dds.DataWriter(
-        publisher,
-        temperature_topic,
-        writer_qos)
+        publisher, temperature_topic, writer_qos
+    )
 
     # Create the three data samples and initialize the values
     alarm_data = Alarm(patient_id=1, alarm_code=AlarmCode.PATIENT_OK)
@@ -70,8 +69,10 @@ def run_publisher_application(domain_id: int, sample_count: int):
                 # patients vitals along with the alarm to be delivered as
                 # a single coherent set of data so that we can correlate
                 # the alarm with the set of vitals that triggered it
-                print("Patient's vitals are abnormal, raising alarm and sending coherent set")
-                with dds.CoherentSet(publisher):   # Start a coherent set
+                print(
+                    "Patient's vitals are abnormal, raising alarm and sending coherent set"
+                )
+                with dds.CoherentSet(publisher):  # Start a coherent set
                     heart_rate_writer.write(heart_rate_data)
                     temperature_writer.write(temperature_data)
 

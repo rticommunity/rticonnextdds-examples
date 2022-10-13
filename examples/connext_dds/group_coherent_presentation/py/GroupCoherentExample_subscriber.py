@@ -18,11 +18,15 @@ from GroupCoherentExample import AlarmCode, Alarm, HeartRate, Temperature
 # a listener for the datatypes used for the patient
 class PatientDRListener(dds.NoOpDataReaderListener):
     def on_sample_lost(
-        self,
-        reader: dds.AnyDataReader,
-        status: dds.SampleLostStatus):
-        if status.last_reason == dds.SampleLostState.LOST_BY_INCOMPLETE_COHERENT_SET:
-            print(f"Lost {status.total_count_change} samples in an incomplete coherent set.\n")
+        self, reader: dds.AnyDataReader, status: dds.SampleLostStatus
+    ):
+        if (
+            status.last_reason
+            == dds.SampleLostState.LOST_BY_INCOMPLETE_COHERENT_SET
+        ):
+            print(
+                f"Lost {status.total_count_change} samples in an incomplete coherent set.\n"
+            )
 
 
 def print_coherent_set_info(info: dds.SampleInfo):
@@ -43,7 +47,9 @@ def print_coherent_set_info(info: dds.SampleInfo):
 def process_data(subscriber: dds.Subscriber):
     with dds.CoherentAccess(subscriber):  # Begin coherent access
         # readers is a list of dds.AnyDataReaders
-        readers = dds.Subscriber.find_datareaders(subscriber, dds.SampleState.NOT_READ)
+        readers = dds.Subscriber.find_datareaders(
+            subscriber, dds.SampleState.NOT_READ
+        )
         for reader in readers:
             # Convert from AnyDataReader to a typed DataReader
             r = dds.DataReader(reader)
@@ -72,22 +78,20 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     # specified in the xml file
     alarm_reader = dds.DataReader(subscriber, alarm_topic, reader_qos)
     heart_rate_reader = dds.DataReader(
-        subscriber,
-        heart_rate_topic,
-        reader_qos)
+        subscriber, heart_rate_topic, reader_qos
+    )
     temperature_reader = dds.DataReader(
-        subscriber,
-        temperature_topic,
-        reader_qos)
+        subscriber, temperature_topic, reader_qos
+    )
 
     # attach listeners to the readers
     alarm_reader.set_listener(PatientDRListener(), dds.StatusMask.SAMPLE_LOST)
     heart_rate_reader.set_listener(
-        PatientDRListener(),
-        dds.StatusMask.SAMPLE_LOST)
+        PatientDRListener(), dds.StatusMask.SAMPLE_LOST
+    )
     temperature_reader.set_listener(
-        PatientDRListener(),
-        dds.StatusMask.SAMPLE_LOST)
+        PatientDRListener(), dds.StatusMask.SAMPLE_LOST
+    )
 
     # Associate a handler with the status condition. This will run when the
     # condition is triggered, in the context of the dispatch call (see below)
