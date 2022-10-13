@@ -13,9 +13,11 @@
 #include <cstdlib>
 #include <iostream>
 
-#include "hello_world.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
+#include <rti/util/util.hpp> // for sleep()
+
+#include "hello_world.hpp"
 
 using namespace dds::core;
 using namespace dds::core::status;
