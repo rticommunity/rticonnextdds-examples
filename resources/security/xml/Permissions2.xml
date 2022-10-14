@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.1/dds_security_permissions.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/dds_security_permissions.xsd">
     <permissions>
         <grant name="ecdsa01_peer2">
             <subject_name>C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, CN=rticonnextdds-examples/emailAddress=ecdsa01-peer2</subject_name>

@@ -12,10 +12,13 @@
 #include <algorithm>
 #include <cstdlib>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
-#include "hello_world.hpp"
 #include <dds/dds.hpp>
 #include <rti/core/ListenerBinder.hpp>
+
+#include "hello_world.hpp"
 
 using namespace dds::core;
 using namespace dds::core::status;
@@ -73,7 +76,7 @@ void subscriber_main(int domain_id, int sample_count, bool drs)
     for (int count = 0; sample_count == 0 || count < sample_count; ++count) {
         std::cout << "hello_world subscriber sleeping for 4 sec..."
                   << std::endl;
-        rti::util::sleep(Duration(4));
+        std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }
 

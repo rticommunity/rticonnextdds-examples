@@ -21,5 +21,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "profiles"
-    LANG "C++"
+    LANG "C++98"
 )

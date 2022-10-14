@@ -12,10 +12,11 @@
 
 #include <algorithm>
 #include <iostream>
+#include <thread>
+#include <chrono>
 
 #include <dds/core/ddscore.hpp>
 #include <dds/sub/ddssub.hpp>
-// Or simply include <dds/dds.hpp>
 
 #include "HelloMsg.hpp"
 
@@ -70,8 +71,7 @@ void subscriber_main(int domain_id, int sample_count)
 
     while (listener.count() < sample_count || sample_count == 0) {
         std::cout << "HelloMsg subscriber sleeping for 4 sec..." << std::endl;
-
-        rti::util::sleep(dds::core::Duration(4));
+        std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 
     // Unset the listener to allow the reader destruction

@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "waitset_statuscond"
-    LANG "C++"
+    LANG "C++98"
 )

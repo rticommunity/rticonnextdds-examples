@@ -14,6 +14,8 @@
 #include <stdexcept>
 #include <stdio.h>
 #include <stdlib.h>
+#include <chrono>
+#include <thread>
 
 #include "Requester.hpp"
 
@@ -506,7 +508,7 @@ Application::Application(ArgumentsParser &args_parser)
                                           .current_count();
     int32_t wait_cycles = 1200;
     while (current_pub_matches < 1 && wait_cycles > 0) {
-        rti::util::sleep(dds::core::Duration::from_millisecs(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         current_pub_matches = command_requester_->request_datawriter()
                                       .publication_matched_status()
                                       .current_count();
@@ -526,7 +528,7 @@ Application::Application(ArgumentsParser &args_parser)
                                           .current_count();
     wait_cycles = 1200;
     while (current_sub_matches < 1 && wait_cycles > 0) {
-        rti::util::sleep(dds::core::Duration::from_millisecs(50));
+        std::this_thread::sleep_for(std::chrono::milliseconds(50));
         current_sub_matches = command_requester_->reply_datareader()
                                       .subscription_matched_status()
                                       .current_count();

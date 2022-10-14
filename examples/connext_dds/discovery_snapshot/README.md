@@ -127,7 +127,7 @@ and subscribing sides. The default value for this QoS is
 exclusive ownership and a data reader with shared ownership. If you delete or
 comment these lines, you will fix the issue. For more information about the
 ownership QoS, please refer to the
-[User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/OWNERSHIP_QosPolicy.htm#7.5.17_OWNERSHIP_QosPolicy%3FTocPath%3DPart%25202%253A%2520Core%2520Concepts%7C7.%2520Sending%2520Data%7C7.5%2520DataWriter%2520QosPolicies%7C7.5.17%2520OWNERSHIP%2520QosPolicy%7C_____0).
+[User Manuals](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/OWNERSHIP_QosPolicy.htm#7.5.17_OWNERSHIP_QosPolicy%3FTocPath%3DPart%25202%253A%2520Core%2520Concepts%7C7.%2520Sending%2520Data%7C7.5%2520DataWriter%2520QosPolicies%7C7.5.17%2520OWNERSHIP%2520QosPolicy%7C_____0).
 
 After deleting these lines and retry, writer and reader will communicate
 and you will obtain the following discovery snapshot, that shows that both

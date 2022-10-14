@@ -11,9 +11,12 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <thread>
+#include <chrono>
+
+#include <dds/dds.hpp>
 
 #include "hello_world.hpp"
-#include <dds/dds.hpp>
 
 using namespace dds::core;
 using namespace dds::domain;
@@ -54,11 +57,11 @@ void publisher_main(
         sample.data(initial_value++);
         writer.write(sample);
 
-        rti::util::sleep(Duration(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     while (sleep != 0) {
-        rti::util::sleep(Duration(1));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         sleep--;
     }
 }

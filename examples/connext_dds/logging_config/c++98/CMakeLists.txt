@@ -16,6 +16,6 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "logging"
-    LANG "C++"
+    LANG "C++98"
     DISABLE_SUBSCRIBER
 )

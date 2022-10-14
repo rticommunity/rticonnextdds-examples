@@ -17,7 +17,7 @@ being maintained by a DataReader or DataWriter.
 | DataWriterCacheStatus | unregistered_instance_count | The number of instances currently in the DataWriter's queue that the DataWriter has unregistered from via the FooDataWriter_unregister_instance operation. |
 
 For more information about the counters, please refer to the API Reference HTML
-documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataReaders.htm).
+documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataReaders.htm).
 
 ## Example Description
 

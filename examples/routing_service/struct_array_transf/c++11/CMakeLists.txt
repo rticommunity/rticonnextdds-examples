@@ -36,7 +36,7 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 find_package(
-    RTIConnextDDS "6.1.1"
+    RTIConnextDDS "7.0.0"
     REQUIRED
     COMPONENTS
         core
@@ -55,7 +55,6 @@ add_custom_command(
     COMMAND
         ${RTICODEGEN}
             -language C++11
-            -stl
             -replace -d ${CMAKE_CURRENT_BINARY_DIR}
             "${CMAKE_CURRENT_SOURCE_DIR}/SensorData.idl"
 )

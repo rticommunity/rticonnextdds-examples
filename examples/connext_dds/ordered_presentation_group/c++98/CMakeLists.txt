@@ -16,5 +16,5 @@ include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "ordered_group"
-    LANG "C++"
+    LANG "C++98"
 )

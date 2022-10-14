@@ -8,7 +8,7 @@ environment variables for itself as well as receive environment variables
 from other instances.  These are published to the XML defined EnvironmentTopic.
 
 All the DDS entities are described in a single XML file using
-[Connext DDS XML Application Creation](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/xml_application_creation/)
+[Connext DDS XML Application Creation](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/xml_application_creation/)
 In code we make use of these entities by loading the file with the QosProvider
 and looking up a individual entity by name.
 
@@ -23,7 +23,7 @@ receive data from other publishers, not our own.
 The code for this example is laid out in the following way:
 
 1)  XML file *application.xml* (also known as a QoS file) is defined using the
-[RTI DDS Profiles Schema](http://community.rti.com/schema/6.1.1/rti_dds_profiles.xsd).
+[RTI DDS Profiles Schema](http://community.rti.com/schema/7.0.0/rti_dds_profiles.xsd).
 This file defines the type ```KeyValuePair```, the topic ```EnvironmentTopic```
 as well as the ```Participant``` and all its child publisher, subscriber,
 reader and writer.
