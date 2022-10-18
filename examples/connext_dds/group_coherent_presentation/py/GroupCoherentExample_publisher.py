@@ -44,7 +44,9 @@ def run_publisher_application(domain_id: int, sample_count: int):
     alarm_writer = dds.DataWriter(publisher, alarm_topic, writer_qos)
     heart_rate_writer = dds.DataWriter(publisher, heart_rate_topic, writer_qos)
     temperature_writer = dds.DataWriter(
-        publisher, temperature_topic, writer_qos
+        publisher,
+        temperature_topic,
+        writer_qos,
     )
 
     # Create the three data samples and initialize the values
@@ -70,7 +72,8 @@ def run_publisher_application(domain_id: int, sample_count: int):
                 # a single coherent set of data so that we can correlate
                 # the alarm with the set of vitals that triggered it
                 print(
-                    "Patient's vitals are abnormal, raising alarm and sending coherent set"
+                    "Patient's vitals are abnormal, raising alarm and sending"
+                    " coherent set"
                 )
                 with dds.CoherentSet(publisher):  # Start a coherent set
                     heart_rate_writer.write(heart_rate_data)
@@ -94,8 +97,10 @@ def run_publisher_application(domain_id: int, sample_count: int):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="RTI Connext DDS Example: Using Group Coherent \
-        Presentation (Publisher)"
+        description=(
+            "RTI Connext DDS Example: Using Group Coherent Presentation"
+            " (Publisher)"
+        )
     )
     parser.add_argument(
         "-d",

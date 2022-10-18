@@ -25,7 +25,8 @@ class PatientDRListener(dds.NoOpDataReaderListener):
             == dds.SampleLostState.LOST_BY_INCOMPLETE_COHERENT_SET
         ):
             print(
-                f"Lost {status.total_count_change} samples in an incomplete coherent set.\n"
+                f"Lost {status.total_count_change} samples in an incomplete"
+                " coherent set.\n"
             )
 
 
@@ -36,9 +37,10 @@ def print_coherent_set_info(info: dds.SampleInfo):
     if info.coherent_set_info is not None:
         set_info = info.coherent_set_info
         print(
-            f"Sample is part of "
-            f"{'an incomplete' if set_info.incomplete_coherent_set else 'a complete'}"
-            f" group coherent set with SN({set_info.group_coherent_set_sequence_number.value})\n"
+            "Sample is part of"
+            f" {'an incomplete' if set_info.incomplete_coherent_set else 'a complete'} group"
+            " coherent set with"
+            f" SN({set_info.group_coherent_set_sequence_number.value})\n"
         )
     else:
         print("Sample is not part of a coherent set.\n")
@@ -78,19 +80,25 @@ def run_subscriber_application(domain_id: int, sample_count: int):
     # specified in the xml file
     alarm_reader = dds.DataReader(subscriber, alarm_topic, reader_qos)
     heart_rate_reader = dds.DataReader(
-        subscriber, heart_rate_topic, reader_qos
+        subscriber,
+        heart_rate_topic,
+        reader_qos,
     )
     temperature_reader = dds.DataReader(
-        subscriber, temperature_topic, reader_qos
+        subscriber,
+        temperature_topic,
+        reader_qos,
     )
 
     # attach listeners to the readers
     alarm_reader.set_listener(PatientDRListener(), dds.StatusMask.SAMPLE_LOST)
     heart_rate_reader.set_listener(
-        PatientDRListener(), dds.StatusMask.SAMPLE_LOST
+        PatientDRListener(),
+        dds.StatusMask.SAMPLE_LOST,
     )
     temperature_reader.set_listener(
-        PatientDRListener(), dds.StatusMask.SAMPLE_LOST
+        PatientDRListener(),
+        dds.StatusMask.SAMPLE_LOST,
     )
 
     # Associate a handler with the status condition. This will run when the
@@ -142,8 +150,10 @@ def run_subscriber_application(domain_id: int, sample_count: int):
 
 def main():
     parser = argparse.ArgumentParser(
-        description="RTI Connext DDS Example: Using Group Coherent \
-        Presentation (Publisher)"
+        description=(
+            "RTI Connext DDS Example: Using Group Coherent Presentation"
+            " (Publisher)"
+        )
     )
     parser.add_argument(
         "-d",
