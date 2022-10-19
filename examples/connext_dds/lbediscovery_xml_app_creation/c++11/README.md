@@ -1,6 +1,6 @@
 # Example Code: LBED and XML-Based Application Creation
 
-## Building the Example :wrench
+## Building the Example :wrench:
 
 To build this example, first run CMake to generate the corresponding build
 files. We recommend you use a separate directory to store all the generated
