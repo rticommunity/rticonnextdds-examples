@@ -15,7 +15,7 @@ Create zip archive with minimal files to allow compilation of the examples.
 Examples:
     From installation path::
 
-        python create_minimal_package.py -p /home/user/rti_connext_dds-6.1.0
+        python create_minimal_package.py -p /home/user/rti_connext_dds-7.0.0
 
     From installer archive url::
 
@@ -419,6 +419,7 @@ def select_files_for_minimun_package(installation_path):
         "resource/app/app_support/rtiddsgen/**/*",
         "resource/app/jre/**/*",
         "resource/app/lib/java/**/*",
+        "resource/idl/**/*",
         "resource/scripts/**/*",
     )
     selected_files = []

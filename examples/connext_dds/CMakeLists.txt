@@ -5,16 +5,17 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-connext-dds)
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 include(ConnextDdsAddExamplesSubdirectories)
 
 # Find the ConnextDDS libraries. This will look for core and API libraries
 find_package(RTIConnextDDS
-    "6.1.0"
+    "7.0.0"
     REQUIRED
     COMPONENTS
         core
@@ -53,8 +54,8 @@ if(STATIC_ANALYSIS)
             EXCLUDE_FROM_ALL TRUE)
 endif()
 
-connextdds_add_examples_subdirectories(
-    EXAMPLES
+if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
+    set(CONNEXTDDS_CONNEXT_DDS_EXAMPLES
         "asynchronous_publication"
         "asyncwaitset"
         "batching"
@@ -67,7 +68,7 @@ connextdds_add_examples_subdirectories(
         "custom_flow_controller"
         "custom_transport"
         "deadline_contentfilter"
-        "discovery_snapshot"
+        # "discovery_snapshot"
         "dynamic_data_using_publisher_subscriber"
         "flat_data_api"
         "flat_data_latency"
@@ -100,6 +101,7 @@ connextdds_add_examples_subdirectories(
         "detect_samples_dropped"
         "dynamic_data_access_union_discriminator"
         "dynamic_data_nested_structs"
+        "dynamic_data_request_reply"
         "dynamic_data_sequences"
         "fragmented_data_statistics"
         "group_coherent_presentation"
@@ -110,4 +112,10 @@ connextdds_add_examples_subdirectories(
         "network_capture/04_advanced_api"
         "printing_qos"
         "required_subscription"
+    )
+endif()
+
+connextdds_add_examples_subdirectories(
+    EXAMPLES
+        ${CONNEXTDDS_CONNEXT_DDS_EXAMPLES}
 )

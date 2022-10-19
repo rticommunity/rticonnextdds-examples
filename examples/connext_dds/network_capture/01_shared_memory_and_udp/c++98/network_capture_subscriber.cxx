@@ -66,6 +66,8 @@ unsigned int process_data(NetworkCaptureDataReader *typed_reader)
     if (retcode != DDS_RETCODE_OK) {
         std::cerr << "return loan error " << retcode << std::endl;
     }
+
+    return samples_read;
 }
 
 int run_subscriber_application(

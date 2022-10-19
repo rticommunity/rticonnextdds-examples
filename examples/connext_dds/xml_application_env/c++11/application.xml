@@ -24,7 +24,7 @@ For more information about XML-Based Application Creation, see the
 RTI Connext DDS Core Libraries XML-Based Application Creation Getting Started Guide.
 -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_profiles.xsd">
   
   <!-- QoS Library containing the QoS profile used in the example. 
           KeepLastReliable is used as the base profile. -->
