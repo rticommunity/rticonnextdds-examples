@@ -98,9 +98,14 @@ if __name__ == "__main__":
         description="RTI Connext DDS Example: Using Builtin Topics (Publisher)"
     )
     parser.add_argument(
-        "-p", "--password", type=str, help="Password to authenticate participants"
+        "-p",
+        "--password",
+        type=str,
+        help="Password to authenticate participants",
     )
-    parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
+    parser.add_argument(
+        "-d", "--domain", type=int, default=0, help="DDS Domain ID"
+    )
     parser.add_argument(
         "-c", "--count", type=int, default=0, help="Number of samples to send"
     )

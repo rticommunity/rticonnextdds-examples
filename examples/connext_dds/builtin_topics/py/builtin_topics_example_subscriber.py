@@ -26,7 +26,9 @@ class MsgListener(dds.NoOpDataReaderListener):
 def subscriber_main(domain_id, sample_count, participant_auth):
     participant_qos = dds.QosProvider.default.participant_qos
     resource_limits_qos = participant_qos.resource_limits
-    max_participant_user_data = resource_limits_qos.participant_user_data_max_length
+    max_participant_user_data = (
+        resource_limits_qos.participant_user_data_max_length
+    )
 
     # Set the participant auth string as user data bytes
     if len(participant_auth) > max_participant_user_data:
@@ -57,9 +59,14 @@ if __name__ == "__main__":
         description="RTI Connext DDS Example: Using Builtin Topics (Subscriber)"
     )
     parser.add_argument(
-        "-p", "--password", type=str, help="Password to authenticate participants"
+        "-p",
+        "--password",
+        type=str,
+        help="Password to authenticate participants",
     )
-    parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
+    parser.add_argument(
+        "-d", "--domain", type=int, default=0, help="DDS Domain ID"
+    )
     parser.add_argument(
         "-c", "--count", type=int, default=0, help="Number of samples to send"
     )
