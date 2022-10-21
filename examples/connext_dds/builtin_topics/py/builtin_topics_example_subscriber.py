@@ -43,7 +43,8 @@ def subscriber_main(domain_id, sample_count, participant_auth):
         topic,
         qos=participant.default_datareader_qos,
         listener=MsgListener(),
-        mask=dds.StatusMask.DATA_AVAILABLE)
+        mask=dds.StatusMask.DATA_AVAILABLE,
+    )
 
     count = 0
     while (sample_count == 0) or (count < sample_count):
