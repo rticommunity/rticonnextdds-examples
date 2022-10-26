@@ -15,7 +15,7 @@ set(CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
 )
 find_package(RTIConnextDDS
-    "6.1.1"
+    "6.1.2"
     REQUIRED
     COMPONENTS
         core

@@ -44,7 +44,7 @@ set(CMAKE_MODULE_PATH
 )
 
 find_package(
-    RTIConnextDDS "6.1.1"
+    RTIConnextDDS "6.1.2"
     REQUIRED
     COMPONENTS
         core

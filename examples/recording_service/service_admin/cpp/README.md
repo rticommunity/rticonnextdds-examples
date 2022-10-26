@@ -4,7 +4,7 @@
 
 *Recording Service* uses the common Remote Administration Platform (see [Remote
 Administration
-Platform](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/services/recording_service/common/remote_admin_platform.html))
+Platform](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/manuals/connext_dds_professional/services/recording_service/common/remote_admin_platform.html))
 This example shows how to use the platform to send remote commands to a running
 instance of Recording Service. Note that this application can also work with a
 running instance of *RTI Routing Service*, as the admin platform is common to

@@ -2,7 +2,7 @@
 
 :warning: **Note**: This example uses the **Legacy .NET API**. Until it is
 updated, you can learn more about the **new Connext DDS C# API** in the
-[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
+[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
 
 ## Building C# Example
 

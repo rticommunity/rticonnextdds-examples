@@ -22,9 +22,9 @@
 //  <rti/rti.hpp>
 //
 // For more information about the headers and namespaces, see:
-//    https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__DDSNamespaceModule.html
+//    https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp2/group__DDSNamespaceModule.html
 // For information on how to use extensions, see:
-//    https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html
+//    https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html
 
 #include "compression.hpp"
 #include "application.hpp"  // for command line parsing and ctrl-c

@@ -15,7 +15,7 @@ perform operations in a running instance of a MongoDB database.
 This example assumes that you are familiar with both `Routing Service` and `MongoDB`.
 You can find the reference documentation for both products following the links below:
 
-- `RTI Routing Service User's Manual (version 6.1.1) <https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/manuals/connext_dds_professional/services/routing_service/index.html>`_
+- `RTI Routing Service User's Manual (version 6.1.2) <https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/manuals/connext_dds_professional/services/routing_service/index.html>`_
 - `Mongo DB Manual (current version) <https://docs.mongodb.com/manual/>`_
 - `Mongo DB C++ Driver (v3) <http://mongocxx.org/mongocxx-v3/>`_
 

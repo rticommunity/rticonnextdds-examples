@@ -158,7 +158,7 @@ include_guard(DIRECTORY)
 # Find the RTI Connext DDS libraries
 if(NOT RTIConnextDDS_FOUND)
     find_package(RTIConnextDDS
-        "6.1.1"
+        "6.1.2"
         REQUIRED
         COMPONENTS
             core

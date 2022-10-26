@@ -14,7 +14,7 @@ include(ConnextDdsAddExamplesSubdirectories)
 
 # Find the ConnextDDS libraries. This will look for core and API libraries
 find_package(RTIConnextDDS
-    "6.1.1"
+    "6.1.2"
     REQUIRED
     COMPONENTS
         core

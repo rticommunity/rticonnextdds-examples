@@ -35,12 +35,12 @@ simplify the code in these functions. For more information about error managemen
 in the FlatData API, see:
 
 -   Error management in Builders
-    ([C++98](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html),
-    [C++11](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
+    ([C++98](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp/group__RTIFlatBuildersModule.html),
+    [C++11](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp2/group__RTIFlatBuildersModule.html))
 
 -   Error management in Offsets
-    ([C++98](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html),
-    [C++11](https://community.rti.com/static/documentation/connext-dds/6.1.1/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
+    ([C++98](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp/group__RTIFlatOffsetsModule.html),
+    [C++11](https://community.rti.com/static/documentation/connext-dds/6.1.2/doc/api/connext_dds/api_cpp2/group__RTIFlatOffsetsModule.html)).
 
 ## Building the Example :wrench:
 
