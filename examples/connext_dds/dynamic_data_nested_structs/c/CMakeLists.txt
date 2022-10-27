@@ -5,15 +5,16 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-dynamic-data-nested_struct)
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 # Find the RTI Connext DDS libraries
 if(NOT RTIConnextDDS_FOUND)
     find_package(RTIConnextDDS
-        "6.1.0"
+        "7.0.0"
         REQUIRED
         COMPONENTS
             core

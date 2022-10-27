@@ -189,11 +189,6 @@ int FileStorageStreamInfoReader_initialize(
         struct FileStorageStreamInfoReader *stream_reader,
         const char *fileName)
 {
-    if (fileName == NULL) {
-        printf("%s: null file passed as a parameter\n", RTI_FUNCTION_NAME);
-        return FALSE;
-    }
-
     RTI_RecordingServiceStorageStreamInfoReader_initialize(
             &stream_reader->base_discovery_stream_reader);
     stream_reader->base_discovery_stream_reader.read =
@@ -210,6 +205,11 @@ int FileStorageStreamInfoReader_initialize(
             FileStorageStreamInfoReader_finished;
     stream_reader->base_discovery_stream_reader.stream_reader_data =
             stream_reader;
+
+    if (fileName == NULL) {
+        printf("%s: null file passed as a parameter\n", RTI_FUNCTION_NAME);
+        return FALSE;
+    }
 
     if (RTI_fopen(&stream_reader->file_record.file, fileName, "r") != 0) {
         perror("Failed to open file");
@@ -542,6 +542,7 @@ int FileStorageStreamReader_initialize(
     RTI_UNUSED_PARAMETER(domain_id);
 
     if (stream_info->stream_name == NULL) {
+        stream_reader->as_stream_reader.stream_reader_data = NULL;
         return FALSE;
     }
 
@@ -651,6 +652,7 @@ FileStorageReader_create_stream_reader(
         printf("%s: could not find %s property in property set\n",
                RTI_FUNCTION_NAME,
                RTI_RECORDING_SERVICE_DOMAIN_ID_PROPERTY_NAME);
+        return NULL;
     }
     errno = 0;
     domain_id = strtol(domain_id_str, NULL, 10);
@@ -670,9 +672,13 @@ FileStorageReader_create_stream_reader(
                 stream_info,
                 domain_id)) {
         printf("%s: !init %s\n", RTI_FUNCTION_NAME, "FileStorageStreamReader");
-        FileStorageReader_delete_stream_reader(
-                storage_reader_data,
-                &stream_reader->as_stream_reader);
+        if ((&stream_reader->as_stream_reader)->stream_reader_data != NULL) {
+            FileStorageReader_delete_stream_reader(
+                    storage_reader_data,
+                    &stream_reader->as_stream_reader);
+        } else {
+            free(stream_reader);
+        }
         return NULL;
     }
     return &stream_reader->as_stream_reader;
@@ -744,6 +750,11 @@ FileStorageReader_create_stream_info_reader(
             sizeof(struct FileStorageStreamInfoReader));
     if (stream_reader == NULL) {
         printf("Failed to allocate FileStorageStreamInfoReader instance\n");
+        return NULL;
+    }
+    if (storage_reader->file_name == NULL) {
+        printf("%s: null file passed as a parameter\n", RTI_FUNCTION_NAME);
+        free(stream_reader);
         return NULL;
     }
     if (!FileStorageStreamInfoReader_initialize(

@@ -10,15 +10,16 @@ if(NOT BUILD_SHARED_LIBS)
     message(WARNING "Static linking is not supported for this example")
     return()
 endif()
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
 connextdds_add_example(
     IDL "profiles"
-    LANG "C++"
+    LANG "C++98"
 )

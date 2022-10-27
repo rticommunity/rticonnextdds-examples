@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/dds_security_governance.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/dds_security_governance.xsd">
     <domain_access_rules>
         <domain_rule>
             <domains>

@@ -15,20 +15,20 @@ or inability to use the software.
 -->
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
     <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
     -->
     <qos_library name="compression_Library">
 
-        <!-- QoS profile used to configure reliable communication between the DataWriter 
+        <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
 
              A QoS profile groups a set of related QoS.
         -->
         <qos_profile name="compression_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->                
+            <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <publication_name>
                     <name>compressionDataWriter</name>

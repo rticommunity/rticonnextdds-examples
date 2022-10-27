@@ -85,7 +85,9 @@ jobs:
 
       # If this workflow was triggered by a push event, it will download the
       # repository with the changes.
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
+        with:
+          submodules: true
         if: ${{ github.event_name == 'push' }}
 
       # Setup Python. If you need another version, just change it below.
@@ -93,6 +95,12 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3.7
+
+      - name: Set up Clang
+        uses: egor-tensin/setup-clang@v1
+        with:
+          version: 13
+          platform: x64
 
       # Install the dependencies to run the Python scripts.
       - name: Install dependencies
