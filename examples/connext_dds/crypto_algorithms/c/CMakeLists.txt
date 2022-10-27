@@ -6,10 +6,11 @@
 cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-crypto-algorithms)
 
-set(CMAKE_MODULE_PATH
-    ${CMAKE_MODULE_PATH}
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake"
+list(APPEND CMAKE_MODULE_PATH
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
+include(ConnextDdsConfigureCmakeUtils)
+connextdds_configure_cmake_utils()
 
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
