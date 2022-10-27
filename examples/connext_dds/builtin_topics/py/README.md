@@ -1,12 +1,7 @@
-# Example Code: Group Coherent Presentation
+# Example Code: Builtin Topics
 
 If you haven't used the RTI Connext Python API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
-
-## Building the Example :wrench:
-
-There is no need to generate code from IDL because this example uses the
-`String` builtin type.
 
 ## Running the Example
 
