@@ -18,27 +18,27 @@
               <value>
                 <element>
                   <name>dds.sec.auth.identity_ca</name>
-                  <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+                  <value>file:security/ecdsa01_p256/certs/caCert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.auth.identity_certificate</name>
-                  <value>file:security/ecdsa01/certs/peer1_cert.pem</value>
+                  <value>file:security/ecdsa01_p256/certs/peer01Cert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.auth.private_key</name>
-                  <value>file:security/ecdsa01/certs/peer1_key.pem</value>
+                  <value>file:security/ecdsa01_p256/certs/peer01Key.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions_ca</name>
-                  <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+                  <value>file:security/ecdsa01_p256/certs/caCert.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+                  <value>file:security/ecdsa01_p256/xml/signed/signed_Governance.p7s</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions</name>
-                  <value>file:security/ecdsa01/xml/signed/signed_Permissions1.p7s</value>
+                  <value>file:security/ecdsa01_p256/xml/signed/signed_Permissions1.p7s</value>
                 </element>
                 <!--
                 This property breaks compatibility with 6.0.0 but without it
@@ -58,15 +58,15 @@
             <value>
               <element>
                 <name>dds.sec.auth.identity_certificate</name>
-                <value>file:security/ecdsa01/certs/peer2_cert.pem</value>
+                <value>file:security/ecdsa01_p256/certs/peer02Cert.pem</value>
               </element>
               <element>
                 <name>dds.sec.auth.private_key</name>
-                <value>file:security/ecdsa01/certs/peer2_key.pem</value>
+                <value>file:security/ecdsa01_p256/certs/peer02Key.pem</value>
               </element>
               <element>
                 <name>dds.sec.access.permissions</name>
-                <value>file:security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
+                <value>file:security/ecdsa01_p256/xml/signed/signed_Permissions2.p7s</value>
               </element>
             </value>
           </property>

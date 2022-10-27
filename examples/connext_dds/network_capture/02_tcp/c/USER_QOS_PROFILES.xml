@@ -195,15 +195,15 @@
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.tls.verify.ca_file</name>
-              <value>security/ecdsa01/certs/ca_cert.pem</value>
+              <value>security/ecdsa01_p256/certs/caCert.pem</value>
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.tls.identity.certificate_chain_file</name>
-              <value>security/ecdsa01/certs/peer1_cert.pem</value>
+              <value>security/ecdsa01_p256/certs/peer01Cert.pem</value>
             </element>
             <element>
               <name>dds.transport.TCPv4.tcp1.tls.identity.private_key_file</name>
-              <value>security/ecdsa01/certs/peer1_key.pem</value>
+              <value>security/ecdsa01_p256/certs/peer01Key.pem</value>
             </element>
           </value>
         </property>
