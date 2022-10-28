@@ -16,6 +16,9 @@ cd build
 cmake -DBUILD_SHARED_LIBS=ON ..
 ```
 
+**Note**: when building on Windows, you need to pass the `-A x64` flag
+to cmake.
+
 Once you have run CMake, you will find a number of new files in your build
 directory (the list of generated files will depend on the specific CMake
 Generator). To build the example, run CMake as follows:
