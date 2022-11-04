@@ -31,25 +31,25 @@ connextdds_rtiddsgen_run(
         "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld.idl"
     OUTPUT_DIRECTORY
         "${CMAKE_CURRENT_BINARY_DIR}/src"
-    LANG C
+    LANG C++98
 )
 
 add_custom_target(codegen_sources
     DEPENDS
-        ${HelloWorld_C_SOURCES}
+        ${HelloWorld_CXX98_SOURCES}
 )
 
 # Create the target for the publisher executable
 add_executable(HelloWorld_publisher
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
-    ${HelloWorld_C_SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.cxx"
+    ${HelloWorld_CXX98_SOURCES}
 )
 
 # Link against the ConnextDDS libraries
 target_link_libraries(
     HelloWorld_publisher
     PRIVATE
-        RTIConnextDDS::c_api
+        RTIConnextDDS::cpp_api
 )
 
 # Include the folder with the type header files
@@ -60,15 +60,15 @@ target_include_directories(HelloWorld_publisher
 
 # Create the target for the subscriber executable
 add_executable(HelloWorld_subscriber
-    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_subscriber.c"
-    ${HelloWorld_C_SOURCES}
+    "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_subscriber.cxx"
+    ${HelloWorld_CXX98_SOURCES}
 )
 
 # Link against the ConnextDDS libraries
 target_link_libraries(
     HelloWorld_subscriber
     PRIVATE
-        RTIConnextDDS::c_api
+        RTIConnextDDS::cpp_api
 )
 # Include the folder with the type header files
 target_include_directories(HelloWorld_subscriber

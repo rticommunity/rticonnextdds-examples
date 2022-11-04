@@ -59,6 +59,7 @@ if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
         "asynchronous_publication"
         "asyncwaitset"
         "batching"
+        "build_systems/cmake"
         "builtin_qos_profiles"
         "builtin_topics"
         "coherent_presentation"
