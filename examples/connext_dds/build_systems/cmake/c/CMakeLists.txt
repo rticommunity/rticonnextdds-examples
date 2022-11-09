@@ -34,51 +34,51 @@ connextdds_rtiddsgen_run(
     LANG C
 )
 
-add_custom_target(codegen_sources
+add_custom_target(HelloWorld_codegen_sources_c
     DEPENDS
         ${HelloWorld_C_SOURCES}
 )
 
 # Create the target for the publisher executable
-add_executable(HelloWorld_publisher
+add_executable(HelloWorld_publisher_c
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_publisher.c"
     ${HelloWorld_C_SOURCES}
 )
 
 # Link against the ConnextDDS libraries
 target_link_libraries(
-    HelloWorld_publisher
+    HelloWorld_publisher_c
     PRIVATE
         RTIConnextDDS::c_api
 )
 
 # Include the folder with the type header files
-target_include_directories(HelloWorld_publisher
+target_include_directories(HelloWorld_publisher_c
     PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
 # Create the target for the subscriber executable
-add_executable(HelloWorld_subscriber
+add_executable(HelloWorld_subscriber_c
     "${CMAKE_CURRENT_SOURCE_DIR}/HelloWorld_subscriber.c"
     ${HelloWorld_C_SOURCES}
 )
 
 # Link against the ConnextDDS libraries
 target_link_libraries(
-    HelloWorld_subscriber
+    HelloWorld_subscriber_c
     PRIVATE
         RTIConnextDDS::c_api
 )
 # Include the folder with the type header files
-target_include_directories(HelloWorld_subscriber
+target_include_directories(HelloWorld_subscriber_c
     PRIVATE
     "${CMAKE_CURRENT_BINARY_DIR}/src"
 )
 
 
 # Copy the USER_QOS_PROFILES.xml
-add_custom_target(copy_qos
+add_custom_target(HelloWorld_copy_qos_c
     DEPENDS
         "${CMAKE_CURRENT_BINARY_DIR}/USER_QOS_PROFILES.xml"
 )
@@ -98,14 +98,14 @@ add_custom_command(
 
 # Copy the USER_QOS_PROFILES.XML when the publisher is built and ensure
 # Codegen is called
-add_dependencies(HelloWorld_publisher
-    copy_qos
-    codegen_sources
+add_dependencies(HelloWorld_publisher_c
+    HelloWorld_copy_qos_c
+    HelloWorld_codegen_sources_c
 )
 
 # Copy the USER_QOS_PROFILES.XML when the subscriber is built and ensure
 # Codegen is called
-add_dependencies(HelloWorld_subscriber
-    copy_qos
-    codegen_sources
+add_dependencies(HelloWorld_subscriber_c
+    HelloWorld_copy_qos_c
+    HelloWorld_codegen_sources_c
 )
