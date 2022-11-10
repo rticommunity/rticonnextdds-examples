@@ -30,7 +30,7 @@ dotnet run -- --pub --password <required password>
 dotnet run -- --sub --password <password >
 ```
 
-The application acceps several arguments:
+The application accepts several arguments:
 
 1.  `--pub` or `--sub` run the publisher or subscriber application.
 
