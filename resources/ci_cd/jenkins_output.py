@@ -79,7 +79,7 @@ def main():
 
     text = text.replace("@EXTRA_ROWS@", extra_rows)
 
-    with open("Dockerfile", "r") as file:
+    with open("resources/docker/Dockerfile.x64Linux4gcc7.3.0", "r") as file:
         dockerfile = file.read()
         text = text.replace("@DOCKERFILE@", dockerfile)
 
