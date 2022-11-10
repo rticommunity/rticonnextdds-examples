@@ -27,7 +27,7 @@ pipeline {
         stage('Build sequence') {
             agent {
                 dockerfile {
-                    filename 'Dockerfile'
+                    filename 'resources/docker/Dockerfile.x64Linux4gcc7.3.0'
                     label 'docker'
                 }
             }
