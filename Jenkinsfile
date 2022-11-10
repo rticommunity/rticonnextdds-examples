@@ -48,6 +48,7 @@ pipeline {
 
                         script {
                             detailsText = readFile("jenkins_output.md")
+                            connextdds_arch = sh(script: 'echo ${CONNEXTDDS_ARCH}', returnStdout: true).trim()
                         }
 
                         publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME,
@@ -60,7 +61,7 @@ pipeline {
                                 "files": [
                                 {
                                     "pattern": "connext-ci/pro/weekly/",
-                                    "props": "rti.artifact.architecture=${env.CONNEXTDDS_ARCH};rti.artifact.kind=staging",
+                                    "props": "rti.artifact.architecture=${connextdds_arch};rti.artifact.kind=staging",
                                     "sortBy": ["created"],
                                     "sortOrder": "desc",
                                     "limit": 1,
