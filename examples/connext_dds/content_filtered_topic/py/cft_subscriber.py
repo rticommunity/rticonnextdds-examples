@@ -120,4 +120,3 @@ if __name__ == "__main__":
         subscriber_main(args.domain, args.count, not args.normal_topic)
     except KeyboardInterrupt:
         pass
-

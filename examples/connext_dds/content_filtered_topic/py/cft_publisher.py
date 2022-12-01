@@ -58,4 +58,3 @@ if __name__ == "__main__":
         publisher_main(args.domain, args.count)
     except KeyboardInterrupt:
         pass
-

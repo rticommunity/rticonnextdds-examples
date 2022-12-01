@@ -11,6 +11,7 @@
 
 import rti.types as idl
 
+
 @idl.struct
 class CftExample:
     x: int = 0
