@@ -248,6 +248,7 @@ int FileStorageWriter_connect(void *storage_writer_data)
     fprintf(writer->info_file.file,
             "Start timestamp: %" PRIi64 "\n",
             current_time);
+    fflush(writer->info_file.file);
     return TRUE;
 }
 
