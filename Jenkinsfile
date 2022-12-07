@@ -76,7 +76,7 @@ pipeline {
 
                         sh '''
                         cp ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/openssl-*/* \
-                            ${RTI_INSTALLATION_PATH}/lib/${CONNEXTDDS_ARCH}
+                            ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/
                         '''
 
                         sh 'python3 resources/ci_cd/jenkins_output.py'
