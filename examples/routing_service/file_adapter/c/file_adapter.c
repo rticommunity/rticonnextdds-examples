@@ -275,7 +275,8 @@ void RTI_RoutingServiceFileStreamReader_read(
         fprintf(stdout, "StreamReader: called function read for data\n");
 
         *sample_list =
-                calloc(self->samples_per_read, sizeof(RTI_RoutingServiceSample));
+                calloc(self->samples_per_read,
+                       sizeof(RTI_RoutingServiceSample));
         if (*sample_list == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
                     env,
