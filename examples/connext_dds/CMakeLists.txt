@@ -77,6 +77,7 @@ if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
         "keyed_data"
         "keyed_data_advanced"
         "lambda_content_filter"
+        "lbediscovery_xml_app_creation"
         "listeners"
         "logging_config"
         "multichannel"
