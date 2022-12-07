@@ -227,7 +227,7 @@ void RTI_RoutingServiceFileStreamReader_read(
          */
         *sample_list =
                 calloc(new_discovered_samples,
-                       sizeof(struct RTI_RoutingServiceStreamInfo *));
+                       sizeof(RTI_RoutingServiceSample));
         if (*sample_list == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
                     env,
@@ -275,7 +275,7 @@ void RTI_RoutingServiceFileStreamReader_read(
         fprintf(stdout, "StreamReader: called function read for data\n");
 
         *sample_list =
-                calloc(self->samples_per_read, sizeof(DDS_DynamicData *));
+                calloc(self->samples_per_read, sizeof(RTI_RoutingServiceSample));
         if (*sample_list == NULL) {
             RTI_RoutingServiceEnvironment_set_error(
                     env,
