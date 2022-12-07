@@ -27,7 +27,7 @@ pipeline {
         stage('Build sequence') {
             agent {
                 dockerfile {
-                    filename 'Dockerfile'
+                    filename 'resources/docker/Dockerfile.x64Linux4gcc7.3.0'
                     label 'docker'
                 }
             }
@@ -48,6 +48,7 @@ pipeline {
 
                         script {
                             detailsText = readFile("jenkins_output.md")
+                            connextdds_arch = sh(script: 'echo ${CONNEXTDDS_ARCH}', returnStdout: true).trim()
                         }
 
                         publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME,
@@ -56,23 +57,28 @@ pipeline {
 
                         rtDownload (
                             serverId: 'rti-artifactory',
-                            spec: '''{
+                            spec: """{
                                 "files": [
                                 {
                                     "pattern": "connext-ci/pro/weekly/",
-                                    "props": "rti.artifact.architecture=x64Linux4gcc7.3.0;rti.artifact.kind=staging",
+                                    "props": "rti.artifact.architecture=${connextdds_arch};rti.artifact.kind=staging",
                                     "sortBy": ["created"],
                                     "sortOrder": "desc",
                                     "limit": 1,
                                     "flat": true
                                 }]
-                            }''',
+                            }""",
                         )
 
                         // We cannot use the explode option because it is bugged.
                         // https://www.jfrog.com/jira/browse/HAP-1154
-                        sh 'tar zxvf connextdds-staging-x64Linux4gcc7.3.0.tgz unlicensed/'
-                        
+                        sh 'tar zxvf connextdds-staging-${CONNEXTDDS_ARCH}.tgz unlicensed/'
+
+                        sh '''
+                        cp ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/openssl-*/* \
+                            ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/
+                        '''
+
                         sh 'python3 resources/ci_cd/jenkins_output.py'
 
                         script {
@@ -101,14 +107,14 @@ pipeline {
 
                 stage('Build') {
                     steps {
-                        publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME, 
-                            status: 'IN_PROGRESS', summary: ':wrench: Building all the examples...', 
+                        publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME,
+                            status: 'IN_PROGRESS', summary: ':wrench: Building all the examples...',
                             title: 'Building', text: detailsText
 
-                        sh  """#!/bin/bash
-                               set -o pipefail
-                               python3 resources/ci_cd/linux_build.py | tee $RTI_LOGS_FILE
-                            """
+                        sh '''#!/bin/bash
+                        set -o pipefail
+                        python3 resources/ci_cd/linux_build.py | tee ${RTI_LOGS_FILE}
+                        '''
                     }
 
                     post {
@@ -135,14 +141,14 @@ pipeline {
 
                 stage('Static Analysis') {
                     steps {
-                        publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME, 
+                        publishChecks detailsURL: DETAILS_URL, name: STAGE_NAME,
                             status: 'IN_PROGRESS', title: 'In progress', text: detailsText,
                             summary: ':mag: Analysing all the examples...'
 
-                        sh  """#!/bin/bash
-                               set -o pipefail
-                               python3 resources/ci_cd/linux_static_analysis.py | tee $RTI_LOGS_FILE
-                            """
+                        sh '''#!/bin/bash
+                        set -o pipefail
+                        python3 resources/ci_cd/linux_static_analysis.py | tee ${RTI_LOGS_FILE}
+                        '''
                     }
 
                     post {
