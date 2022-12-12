@@ -21,7 +21,7 @@ on:
 
 jobs:
   lint-markdown:
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-20.04
     name: Lint job
     steps:
       - uses: actions/checkout@v2
