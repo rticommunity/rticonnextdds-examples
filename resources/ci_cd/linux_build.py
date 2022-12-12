@@ -66,7 +66,6 @@ def main():
 
     rti_connext_dds_dir = found_rti_connext_dds[0]
     build_dir = examples_dir.joinpath("build")
-
     build_dir.mkdir(exist_ok=True)
     string_separator = f"\n{'*'*80}\n"
 

@@ -160,7 +160,6 @@ struct NDDS_Transport_RecvResource_FILE {
     FILE *_file;
     /* The port number associated with the resource */
     int _portNum;
-
     int _fileDescriptor;
     int _receiveMessageCount;
 };
