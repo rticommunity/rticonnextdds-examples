@@ -18,7 +18,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     name: Build examples
 
     # This job will be executed if the "PR handler" finalized successfully or
