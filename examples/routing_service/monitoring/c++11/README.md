@@ -125,7 +125,7 @@ executable is generated.
 You will find the definition of connextdds_add_application, along with detailed
 documentation, in
 [resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
-](../../../../resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake).
+](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
 
 You will find the definition of connextdds_rtiddsgen_run, along with detailed
 documentation, in
