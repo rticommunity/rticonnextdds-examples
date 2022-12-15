@@ -10,4 +10,4 @@ DDS also supports the Request-Reply communication pattern.
 In this directory you will find examples that illustrate some of the most
 important features of the RTI Connext DDS core libraries. For more information
 out, please refer to the [RTI Connext DDS User's
-Manual](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
+Manual](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/getting_started_guide/index.html).

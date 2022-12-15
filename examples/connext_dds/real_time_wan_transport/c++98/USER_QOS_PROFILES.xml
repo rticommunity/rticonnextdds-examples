@@ -1,7 +1,6 @@
 <?xml version="1.0"?>
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/6.1.0/rti_dds_qos_profiles.xsd"
-    version="6.1.0">
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
   <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
@@ -17,7 +16,12 @@
         <transport_builtin>
           <mask>UDPv4_WAN</mask>
           <udpv4_wan>
-            <binding_ping_period>1000</binding_ping_period>
+            <binding_ping_period>3000</binding_ping_period>
+            <!-- 
+              For WAN communications, it is not a good idea to rely on 
+              IP fragmentation. This setting Disables IP fragmentation 
+            -->
+            <message_size_max>1400</message_size_max>
           </udpv4_wan>
         </transport_builtin>
         <discovery_config>
@@ -25,7 +29,37 @@
             <sec>5</sec>
             <nanosec>0</nanosec>
           </participant_liveliness_assert_period>
+          <!-- Required when IP fragmentation is disabled -->
+          <publication_writer_publish_mode>
+            <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </publication_writer_publish_mode>
+          <subscription_writer_publish_mode>
+              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </subscription_writer_publish_mode>
+          <secure_volatile_writer_publish_mode>
+              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </secure_volatile_writer_publish_mode>
+          <service_request_writer_publish_mode>
+              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
+          </service_request_writer_publish_mode>
         </discovery_config>
+        <property>
+          <value>
+            <element>
+              <!--
+                Connext DDS adds protocol information to every RTPS message 
+                it sends out. If DDS-level fragmentation is used, the amount 
+                of overhead reserved per RTPS message for this protocol 
+                information may become relatively large. This property, 
+                with a default value of 512, is used to adjust the overhead 
+                of the RTPS protocol without including security so that
+                the user payload utilization ratio is larger.
+              -->
+              <name>dds.participant.protocol.rtps_overhead</name>
+              <value>256</value>
+            </element>
+          </value>
+        </property>
       </participant_qos>
     </qos_profile>
 

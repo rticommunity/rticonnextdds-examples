@@ -140,7 +140,7 @@ cd build
 After running this command, you will see the following output:
 
 ```bash
-RTI Recording Service (Recorder) 6.1.0 starting...
+RTI Recording Service (Recorder) 7.0.0 starting...
 RTI Recording Service started
 ```
 

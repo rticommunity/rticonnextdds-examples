@@ -15,10 +15,12 @@
 #include <stdlib.h>
 #include <time.h>
 
-#include "ndds/ndds_c.h"
-#include "recordingservice/recordingservice_storagewriter.h"
+#include <ndds/ndds_c.h>
+#include <osapi/osapi_utility.h>
+#include <recordingservice/recordingservice_storagewriter.h>
 
 #include "FileStorageWriter.h"
+#include "FileStorageUtils.h"
 
 #ifdef _WIN32
     #define PRIu64 "I64u"
@@ -35,6 +37,7 @@
 
 #define NANOSECS_PER_SEC 1000000000ll
 #define FileStorageWriter_FILE_NAME_MAX 1024
+#define FileStorageWriter_INFO_EXT ".info"
 #define FILENAME_PROPERTY_NAME "example.c_pluggable_storage.filename"
 
 struct FileRecord {
@@ -193,18 +196,37 @@ int FileStorageWriter_connect(void *storage_writer_data)
     struct FileStorageWriter *writer =
             (struct FileStorageWriter *) storage_writer_data;
     int64_t current_time = -1;
-
-    writer->file.file = fopen(writer->file.file_name, "w");
-    if (writer->file.file == NULL) {
+    if (RTI_fopen(&writer->file.file, writer->file.file_name, "w") != 0) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->file.file_name);
         return FALSE;
     }
-    strcpy(writer->info_file.file_name, writer->file.file_name);
-    strcat(writer->info_file.file_name, ".info");
-    writer->info_file.file = fopen(writer->info_file.file_name, "w");
-    if (writer->info_file.file == NULL) {
+
+    if (RTIOsapiUtility_strncpy(
+                writer->info_file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                writer->file.file_name,
+                strlen(writer->file.file_name))
+        == NULL) {
+        printf("%s: %s\n", "Failed to copy string", writer->file.file_name);
+        return FALSE;
+    }
+
+    if (RTIOsapiUtility_strncat(
+                writer->info_file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                FileStorageWriter_INFO_EXT,
+                strlen(FileStorageWriter_INFO_EXT))
+        == NULL) {
+        printf("%s: %s\n",
+               "Failed to append string",
+               FileStorageWriter_INFO_EXT);
+        return FALSE;
+    }
+
+    if (RTI_fopen(&writer->info_file.file, writer->info_file.file_name, "w")
+        != 0) {
         printf("%s: %s\n",
                "Failed to open file for writing",
                writer->info_file.file_name);
@@ -226,6 +248,7 @@ int FileStorageWriter_connect(void *storage_writer_data)
     fprintf(writer->info_file.file,
             "Start timestamp: %" PRIi64 "\n",
             current_time);
+    fflush(writer->info_file.file);
     return TRUE;
 }
 
@@ -278,7 +301,7 @@ int FileStorageWriter_disconnect(void *storage_writer_data)
  * the case of the user-data creation function.
  */
 struct RTI_RecordingServiceStoragePublicationWriter *
-        FileStorageWriter_create_publication_writer(void *storage_writer_data)
+FileStorageWriter_create_publication_writer(void *storage_writer_data)
 {
     struct RTI_RecordingServiceStoragePublicationWriter *stream_writer = NULL;
 
@@ -318,10 +341,10 @@ struct RTI_RecordingServiceStoragePublicationWriter *
  * HelloMsg topic/type defined in the example.
  */
 struct RTI_RecordingServiceStorageStreamWriter *
-        FileStorageWriter_create_stream_writer(
-                void *storage_writer_data,
-                const struct RTI_RoutingServiceStreamInfo *stream_info,
-                const struct RTI_RoutingServiceProperties *properties)
+FileStorageWriter_create_stream_writer(
+        void *storage_writer_data,
+        const struct RTI_RoutingServiceStreamInfo *stream_info,
+        const struct RTI_RoutingServiceProperties *properties)
 {
     struct FileStorageWriter *writer =
             (struct FileStorageWriter *) storage_writer_data;
@@ -417,21 +440,25 @@ int FileStorageWriter_initialize(
     if (file_name == NULL) {
         printf("Failed to find property with name=%s\n",
                FILENAME_PROPERTY_NAME);
-        /* Cleanup on failure */
-        free(writer);
         return FALSE;
     }
     if (strlen(file_name) >= FileStorageWriter_FILE_NAME_MAX) {
         printf("File name too long (%s)\n", file_name);
-        /* Cleanup on failure */
-        free(writer);
         return FALSE;
     }
-    strcpy(writer->file.file_name, file_name);
+
+    if (RTIOsapiUtility_strncpy(
+                writer->file.file_name,
+                FileStorageWriter_FILE_NAME_MAX,
+                file_name,
+                strlen(file_name))
+        == NULL) {
+        printf("%s: %s\n", "Failed to copy string", file_name);
+        return FALSE;
+    }
 
     if (!FileStorageWriter_connect(writer)) {
         printf("Failed to connect to storage\n");
-        free(writer);
         return FALSE;
     }
     return TRUE;

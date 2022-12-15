@@ -190,7 +190,6 @@ class ConnextDdsBuildExample implements Plugin<Project> {
 
                 /** The list of files to delete */
                 def filesToDelete = [
-                    "Application.java",
                     "${baseFileName}.java",
                     "${baseFileName}DataReader.java",
                     "${baseFileName}DataWriter.java",

@@ -1,0 +1,76 @@
+<?xml version="1.0"?>
+<!--
+Description
+XML QoS Profile for RequiredSubscriptions
+
+(c) Copyright, Real-Time Innovations, 2021.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are
+subject to this license. The software is provided "as is", with no warranty
+of any type, including any warranty for fitness for any purpose. RTI is
+under no obligation to maintain or support the software. RTI shall not be
+liable for any incidental or consequential damages arising out of the use
+or inability to use the software.
+-->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="RequiredSubscriptions_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="RequiredSubscriptions_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>RequiredSubscriptionsDataWriter</name>
+                    <role_name>Writer</role_name>
+                </publication_name>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+                <availability>
+                    <enable_required_subscriptions>true</enable_required_subscriptions>
+                    <required_matched_endpoint_groups>
+                        <element>
+                            <role_name>Reader</role_name>
+                            <quorum_count>1</quorum_count>
+                        </element>
+                    </required_matched_endpoint_groups>
+                </availability>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>RequiredSubscriptionsDataReader</name>
+                    <role_name>Reader</role_name>
+                </subscription_name>
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datareader_qos>
+            <domain_participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>RequiredSubscriptionsParticipant</name>
+                    <role_name>RequiredSubscriptionsParticipantRole</role_name>
+                </participant_name>
+
+            </domain_participant_qos>
+        </qos_profile>
+
+    </qos_library>
+</dds>

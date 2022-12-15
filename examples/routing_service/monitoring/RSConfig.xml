@@ -1,0 +1,58 @@
+<!--
+ (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_routing_service.xsd">
+    <routing_service name="TopicBridgeExampleA2B" group_name="GroupA">
+        <monitoring>
+            <!-- The domain used to publish the monitoring topics -->
+            <domain_id>11</domain_id>
+            <status_publication_period>
+                <sec>6</sec>
+                <nanosec>0</nanosec>
+            </status_publication_period>
+            <statistics_sampling_period>
+                <sec>3</sec>
+                <nanosec>0</nanosec>
+            </statistics_sampling_period>
+        </monitoring>
+
+        <domain_route name="DomainRoute">
+            <participant name="domainA">
+               <domain_id>0</domain_id>
+            </participant>
+
+            <participant name="domainB">
+               <domain_id>1</domain_id>
+            </participant>
+
+            <session name="Session">
+                <topic_route name="SquaresToCircles">
+                    <route_types>true</route_types>
+                    <publish_with_original_info>true</publish_with_original_info>
+                    <input participant="domainA">
+                        <registered_type_name>
+                            ShapeType
+                        </registered_type_name>
+                        <topic_name>Square</topic_name>
+                    </input>
+
+                    <output participant="domainB">
+                        <registered_type_name>
+                            ShapeType
+                        </registered_type_name>
+                        <topic_name>Circle</topic_name>
+                    </output>
+                </topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>

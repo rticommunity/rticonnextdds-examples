@@ -18,7 +18,7 @@ RTI Connext DDS provides information about fragmented data statistics.
 | DataReaderProtocolStatus | sent_nack_fragment_bytes | The number of NACK fragment bytes that have been sent from a DataReader to a DataWriter. |
 
 For more information about the counters, please refer to the API Reference HTML
-documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/6.1.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataWriters.htm).
+documentation or the [User Manuals](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/users_manual/index.htm#users_manual/Statuses_for_DataWriters.htm).
 
 ## Example Description
 

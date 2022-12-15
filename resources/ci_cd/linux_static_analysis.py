@@ -31,7 +31,7 @@ def main():
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
     try:
-        build_dir = Path("examples/connext_dds/build").resolve(strict=True)
+        build_dir = Path("examples/build").resolve(strict=True)
     except FileNotFoundError:
         sys.exit(
             "Error: build directory not found, compile the examples before "
