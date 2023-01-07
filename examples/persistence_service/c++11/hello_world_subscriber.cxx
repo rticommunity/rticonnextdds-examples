@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2023 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software. Licensee has the right to distribute object form only
  for use with RTI products. The Software is provided "as is", with no warranty
@@ -97,7 +97,8 @@ int main(int argc, char *argv[])
                       << "\t-domain_id <domain ID> (default: 0)" << std::endl
                       << "\t-sample_count <number of published samples> "
                       << "(default: 0 (infinite))" << std::endl
-                      << "\t-persistent <1 if persistent durability should be used> "
+                      << "\t-persistent <1 if persistent durability should be "
+                         "used> "
                       << "(default: 0 (transient))" << std::endl;
             return -1;
         }

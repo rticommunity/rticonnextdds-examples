@@ -90,7 +90,8 @@ int main(int argc, char *argv[])
                       << "(default: 0 (infinite))" << std::endl
                       << "\t-initial_value <first sample value> (default: 0)"
                       << std::endl
-                      << "\t-persistent <1 if persistent durability should be used> "
+                      << "\t-persistent <1 if persistent durability should be "
+                         "used> "
                       << "(default: 0 (transient))" << std::endl
                       << "\t-sleep <sleep time in seconds before finishing> "
                       << "(default: 0)" << std::endl;

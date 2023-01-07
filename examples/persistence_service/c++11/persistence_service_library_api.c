@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2023 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software. Licensee has the right to distribute object form only
  for use with RTI products. The Software is provided "as is", with no warranty
@@ -21,7 +21,7 @@ static int service_main(int domainId, int isPersistent)
             RTI_PersistenceServiceProperty_INITIALIZER;
     struct RTI_PersistenceService *service = NULL;
     DDS_Boolean ok = DDS_BOOLEAN_FALSE;
-    struct DDS_Duration_t sleepPeriod = {0, 1000000000};
+    struct DDS_Duration_t sleepPeriod = { 0, 1000000000 };
 
     property.cfg_file = "PersistenceServiceConfig.xml";
     property.cfg_name = isPersistent ? "defaultPersistent" : "defaultTransient";
@@ -68,10 +68,10 @@ int main(int argc, char *argv[])
             isPersistent = atoi(argv[i++]);
         } else {
             printf("%s [options]\n"
-                    "\t-domain_id <domain ID> (default: 0)\n"
-                    "\t-persistent <1 if persistent durability should be used> "
-                    "(default: 0 (transient))\n",
-                    argv[0]);
+                   "\t-domain_id <domain ID> (default: 0)\n"
+                   "\t-persistent <1 if persistent durability should be used> "
+                   "(default: 0 (transient))\n",
+                   argv[0]);
             return -1;
         }
     }
