@@ -72,122 +72,127 @@ Before follwing the steps in this example make sure that you have set the
 `NDDSHOME` environment variable to point to the top level directory where
 *RTI Connext DDS* is installed.
 
-1. Run *Persistence Service* from the top level directory for this example
-   that contains the `PersistenceServiceConfig.xml`. You can choose from
-   `defaultTransient` or `defaultPersistent` depending on the kind of scenario
-   you are running. You can also control on which domain ID *Persistence Service*
-   runs by using the `-domainId` argument.
+1.  Run *Persistence Service* from the top level directory for this example
+    that contains the `PersistenceServiceConfig.xml`. You can choose from
+    `defaultTransient` or `defaultPersistent` depending on the kind of scenario
+    you are running. You can also control on which domain ID *Persistence Service*
+    runs by using the `-domainId` argument.
 
-   For this step we use the `defaultTransient` configuration while running on
-   domain ID 70.
+    For this step we use the `defaultTransient` configuration while running on
+    domain ID 70.
 
-   ```sh
-   $NDDSHOME/bin/rtipersistenceservice -cfgName defaultTransient
-   -cfgFile PersistenceServiceConfig.xml -domainId 70
-   ```
+    ```sh
+    $NDDSHOME/bin/rtipersistenceservice -cfgName defaultTransient
+    -cfgFile PersistenceServiceConfig.xml -domainId 70
+    ```
 
-   If everything goes well you should see:
-   ```sh
-   RTI Persistence Service started
-   ```
+    If everything goes well you should see:
 
-   Note: If you want to use the `defaultPersistent` configuration you need to
-   create a directory named `MyDirectory` in the your present working directory.
-   The files containing the samples will be located in there. If you want to
-   change the location you can use the tag `<directory>` under `<filesystem>`.
+    ```sh
+    RTI Persistence Service started
+    ```
 
-2. Run the publisher from the `build` directory you created when compiling the
-   example. The publisher and subscriber have the `-domain_id` and `-persistent`
-   arguments to control the domain ID and the type of *Persistence Service*
-   scenario you are running.
+    Note: If you want to use the `defaultPersistent` configuration you need to
+    create a directory named `MyDirectory` in the your present working directory.
+    The files containing the samples will be located in there. If you want to
+    change the location you can use the tag `<directory>` under `<filesystem>`.
 
-   For this step we use the opt for using `-persistent 0` to match step 2 of
-   *Persistence Service* while running on domain ID 70.
+2.  Run the publisher from the `build` directory you created when compiling the
+    example. The publisher and subscriber have the `-domain_id` and `-persistent`
+    arguments to control the domain ID and the type of *Persistence Service*
+    scenario you are running.
 
-   ```sh
-   ./hello_world_publisher -domain_id 70 -persistent 0 -sample_count 10
-   ```
+    For this step we use the opt for using `-persistent 0` to match step 2 of
+    *Persistence Service* while running on domain ID 70.
 
-   Note: The `-sample_count` argument controls how many samples the publisher
-   will publish.
+    ```sh
+    ./hello_world_publisher -domain_id 70 -persistent 0 -sample_count 10
+    ```
 
-   If everything goes well you should see:
-   ```sh
-   Writing hello_world, count 0
-   Writing hello_world, count 1
-   Writing hello_world, count 2
-   Writing hello_world, count 3
-   Writing hello_world, count 4
-   ```
+    Note: The `-sample_count` argument controls how many samples the publisher
+    will publish.
 
-3. Run the subscriber from the `build` directory you created when compiling the
-   example. The publisher and subscriber have the `-domain_id` and `-persistent`
-   arguments to control the domain ID and the type of *Persistence Service*
-   scenario you are running.
+    If everything goes well you should see:
 
-   For this step we use the `defaultTransient` configuration while running on
-   domain ID 70.
+    ```sh
+    Writing hello_world, count 0
+    Writing hello_world, count 1
+    Writing hello_world, count 2
+    Writing hello_world, count 3
+    Writing hello_world, count 4
+    ```
 
-   ```sh
-   ./hello_world_subscriber -domain_id 70 -persistent 0
-   ```
+3.  Run the subscriber from the `build` directory you created when compiling the
+    example. The publisher and subscriber have the `-domain_id` and `-persistent`
+    arguments to control the domain ID and the type of *Persistence Service*
+    scenario you are running.
 
-   If everything goes well you should see:
-   ```sh
-   [data: 0]
-   [data: 1]
-   [data: 2]
-   [data: 3]
-   [data: 4]
-   ```
+    For this step we use the `defaultTransient` configuration while running on
+    domain ID 70.
 
-4. Stop the publisher by pressing CTRL-C.
+    ```sh
+    ./hello_world_subscriber -domain_id 70 -persistent 0
+    ```
 
-5. Start a new subscriber and verify that it receives samples from *Persistence
-   Service* in the absence of the original publisher.
+    If everything goes well you should see:
 
-   ```sh
-   ./hello_world_subscriber -domain_id 70 -persistent 0
-   ```
+    ```sh
+    [data: 0]
+    [data: 1]
+    [data: 2]
+    [data: 3]
+    [data: 4]
+    ```
 
-   If everything goes well you should see:
-   ```sh
-   [data: 0]
-   [data: 1]
-   [data: 2]
-   [data: 3]
-   [data: 4]
-   ```
+4.  Stop the publisher by pressing CTRL-C.
 
-6. Stop RTI Persistence Service and the two subscribers by pressing CTRL-C.
+5.  Start a new subscriber and verify that it receives samples from *Persistence
+    Service* in the absence of the original publisher.
 
-7. Restart RTI Persistence Service. This time we use the `defaultPersistent`
-   configuration to persist data to the disk.
+    ```sh
+    ./hello_world_subscriber -domain_id 70 -persistent 0
+    ```
 
-   ```sh
-   $NDDSHOME/bin/rtipersistenceservice -cfgName defaultPersistent
-   -cfgFile PersistenceServiceConfig.xml -domainId 70
-   ```
+    If everything goes well you should see:
 
-8. Repeat steps 2 to 6 but this time use `-persistent 1` when starting the
-   publisher or subscriber application.
+    ```sh
+    [data: 0]
+    [data: 1]
+    [data: 2]
+    [data: 3]
+    [data: 4]
+    ```
 
-9. For the last step, we will be using the sample application that demonstrates
-   the usage of *Persistence Service* Library API. The `PersistenceServiceLibraryAPI`
-   application is created when this example is compiled.
+6.  Stop RTI Persistence Service and the two subscribers by pressing CTRL-C.
 
-   It takes the `-domain_id` and `-persistent` arguments like the publisher and
-   subscriber applications.
+7.  Restart RTI Persistence Service. This time we use the `defaultPersistent`
+    configuration to persist data to the disk.
 
-   Run `PersistenceServiceLibraryAPI` from the top level directory for this example
-   that contains the `PersistenceServiceConfig.xml`
+    ```sh
+    $NDDSHOME/bin/rtipersistenceservice -cfgName defaultPersistent
+    -cfgFile PersistenceServiceConfig.xml -domainId 70
+    ```
 
-   Rerun steps 2 to 6 for each invocation of `PersistenceServiceLibraryAPI` -
-   one with `-persistent 0` that corresponds to `defaultTransient`, and one with
-   `-persistent 1` that corresponds to `defaultPersistent`.
-   ```sh
-   ./build/PersistenceServiceLibraryAPI -domain_id 70 -persistent <0|1>
-   ```
+8.  Repeat steps 2 to 6 but this time use `-persistent 1` when starting the
+    publisher or subscriber application.
+
+9.  For the last step, we will be using the sample application that demonstrates
+    the usage of *Persistence Service* Library API. The `PersistenceServiceLibraryAPI`
+    application is created when this example is compiled.
+
+    It takes the `-domain_id` and `-persistent` arguments like the publisher and
+    subscriber applications.
+
+    Run `PersistenceServiceLibraryAPI` from the top level directory for this example
+    that contains the `PersistenceServiceConfig.xml`
+
+    Rerun steps 2 to 6 for each invocation of `PersistenceServiceLibraryAPI` -
+    one with `-persistent 0` that corresponds to `defaultTransient`, and one with
+    `-persistent 1` that corresponds to `defaultPersistent`.
+
+    ```sh
+    ./build/PersistenceServiceLibraryAPI -domain_id 70 -persistent <0|1>
+    ```
 
 ## Customizing the Build
 
