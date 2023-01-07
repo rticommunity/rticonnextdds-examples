@@ -1,10 +1,10 @@
 /*******************************************************************************
- (c) 2005-2015 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ (c) 2005-2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
- works of the Software.  Licensee has the right to distribute object form only
- for use with RTI products.  The Software is provided "as is", with no warranty
+ works of the Software. Licensee has the right to distribute object form only
+ for use with RTI products. The Software is provided "as is", with no warranty
  of any type, including any warranty for fitness for any purpose. RTI is under
- no obligation to maintain or support the Software.  RTI shall not be liable for
+ no obligation to maintain or support the Software. RTI shall not be liable for
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
@@ -28,7 +28,7 @@ void publisher_main(
         int domain_id,
         int sample_count,
         int initial_value,
-        bool use_durable_writer_history,
+        int is_persistent,
         int sleep)
 {
     // Create a DomainParticipant with default Qos
@@ -37,16 +37,12 @@ void publisher_main(
     // Create a Topic -- and automatically register the type
     Topic<hello_world> topic(participant, "Example hello_world");
 
-    // If you use Durable Writer History, you need to set several properties.
-    // These properties are set in the USER_QOS_PROFILE.xml file,
-    // "durable_writer_history_Profile" profile. See that file for further
-    // details.
-    std::string qos_libname = "persistence_example_Library";
-    DataWriterQos writer_qos = use_durable_writer_history
+    std::string qos_libname = "PersistenceExampleLibrary";
+    DataWriterQos writer_qos = is_persistent
             ? QosProvider::Default().datawriter_qos(
-                    qos_libname + "::durable_writer_history_Profile")
+                    qos_libname + "::PersistentProfile")
             : QosProvider::Default().datawriter_qos(
-                    qos_libname + "::persistence_service_Profile");
+                    qos_libname + "::TransientProfile");
 
     // Create a DataWriter (Publisher created in-line)
     DataWriter<hello_world> writer(Publisher(participant), topic, writer_qos);
@@ -71,7 +67,7 @@ int main(int argc, char *argv[])
     int domain_id = 0;
     int sample_count = 0;  // Infinite loop
     int initial_value = 0;
-    bool use_durable_writer_history = false;
+    int is_persistent = 0;
     int sleep = 0;
 
     for (int i = 1; i < argc;) {
@@ -85,8 +81,8 @@ int main(int argc, char *argv[])
             sample_count = atoi(argv[i++]);
         } else if (param == "-initial_value" && i < argc) {
             initial_value = atoi(argv[i++]);
-        } else if (param == "-dwh" && i < argc) {
-            use_durable_writer_history = (atoi(argv[i++]) == 1);
+        } else if (param == "-persistent" && i < argc) {
+            is_persistent = atoi(argv[i++]);
         } else {
             std::cout << argv[0] << " [options]" << std::endl
                       << "\t-domain_id <domain ID> (default: 0)" << std::endl
@@ -94,9 +90,9 @@ int main(int argc, char *argv[])
                       << "(default: 0 (infinite))" << std::endl
                       << "\t-initial_value <first sample value> (default: 0)"
                       << std::endl
+                      << "\t-persistent <1 if persistent durability should be used> "
+                      << "(default: 0 (transient))" << std::endl
                       << "\t-sleep <sleep time in seconds before finishing> "
-                      << "(default: 0)" << std::endl
-                      << "\t-dwh <1|0> Enable/Disable durable writer history "
                       << "(default: 0)" << std::endl;
             return -1;
         }
@@ -111,7 +107,7 @@ int main(int argc, char *argv[])
                 domain_id,
                 sample_count,
                 initial_value,
-                use_durable_writer_history,
+                is_persistent,
                 sleep);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions

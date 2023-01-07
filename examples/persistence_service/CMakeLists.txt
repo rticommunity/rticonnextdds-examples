@@ -15,7 +15,7 @@ include(ConnextDdsAddExamplesSubdirectories)
 
 if(NOT DEFINED CONNEXTDDS_PERSISTENCE_SERVICE_EXAMPLES)
     set(CONNEXTDDS_PERSISTENCE_SERVICE_EXAMPLES
-        "persistent_storage"
+        "c++11"
     )
 endif()
 
