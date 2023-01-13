@@ -5,7 +5,7 @@
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
 cmake_minimum_required(VERSION 3.11)
-project(rtiexamples-cloud-discovery-service-library-api-c++11)
+project(rticonnextdds-examples-cloud-discovery-service)
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )

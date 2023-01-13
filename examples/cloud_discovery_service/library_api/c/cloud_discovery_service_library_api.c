@@ -26,7 +26,8 @@ static int service_main(const char *cfgName, const char *cfgFile)
     property.service_name = DDS_String_dup(cfgName);
     property.application_name = DDS_String_dup("CloudDiscoveryService-LibraryAPI-C");
 
-    property.service_verbosity = RTI_CDS_LOG_VERBOSITY_EXCEPTIONS;
+    /* Dial up the logging at service level */
+    property.service_verbosity = RTI_CDS_LOG_VERBOSITY_ALL;
     property.dds_verbosity = RTI_CDS_LOG_VERBOSITY_EXCEPTIONS;
 
 

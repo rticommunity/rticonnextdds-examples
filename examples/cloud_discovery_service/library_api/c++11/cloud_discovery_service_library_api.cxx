@@ -24,10 +24,10 @@ void service_main(std::string cfg_name, std::string cfg_file)
                     .service_name(cfg_name)
                     .application_name("CloudDiscoveryService-LibraryAPI-CXX11"));
 
-    // Use logger API of CDS
+    //  Dial up the logging at service level using the public logger API
     rti::cds::Logger::instance().service_verbosity(
             static_cast<rti::config::Verbosity::type>(
-                    rti::config::Verbosity::EXCEPTION));
+                    rti::config::Verbosity::STATUS_ALL));
 
     service.start();
 
