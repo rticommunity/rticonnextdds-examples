@@ -7,21 +7,15 @@
 cmake_minimum_required(VERSION 3.11)
 project(rticonnextdds-examples-persistence-service)
 list(APPEND CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake/Modules"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
-include(ConnextDdsAddExamplesSubdirectories)
+# Include ConnextDdsAddExample.cmake from resources/cmake
+include(ConnextDdsAddExample)
 
-if(NOT DEFINED CONNEXTDDS_PERSISTENCE_SERVICE_EXAMPLES)
-    set(CONNEXTDDS_PERSISTENCE_SERVICE_EXAMPLES
-        "library_api"
-        "persistent_storage"
-    )
-endif()
-
-connextdds_add_examples_subdirectories(
-    EXAMPLES
-        ${CONNEXTDDS_PERSISTENCE_SERVICE_EXAMPLES}
+connextdds_add_example(
+    IDL "hello_world"
+    LANG "C++11"
 )

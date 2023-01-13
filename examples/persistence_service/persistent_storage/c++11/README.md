@@ -1,24 +1,3 @@
-# Example Code: Persistence Service and Library API
-
-## Persistence Service
-
-In many applications, we need to store data samples so they can be delivered to
-subscribing applications that join the system at a later time or to avoid
-receiving old data each time we re-join to the same publisher. Or maybe we need
-to keep the data available even once our publishing application has terminated.
-In *RTI Connext DDS* this behavior can be achieved using *Persistence Service*.
-
-*Persistence Service* is a *Connext* application that saves data samples to
-transient or permanent storage, so they can be delivered to subscribing
-applications that join the system at a later time - even if the publishing
-application has already terminated.
-
-When configured to run in `PERSISTENT` mode, *Persistence Service* uses the
-filesystem. For each persistent topic, it collects all the data written by
-the corresponding persistent *DataWriters* and stores them into persistent
-storage. When configured to run in `TRANSIENT` mode, *Persistence Service*
-stores the data in memory.
-
 ## Example Description
 
 This example includes publisher and subscriber applications provided to send
@@ -28,10 +7,6 @@ The `PersistenceServiceConfig.xml` file persists the `Example hello_world`
 topic published by the provided publisher and subscriber. You can adjust the
 domain ID used by passing the `-domainId` argument to the *Persistence Service*
 executable or `-domain_id` argument to the provided publisher and subscriber.
-
-The example also includes a demonstration of how to use the *Persistence Service*
-Library API for encapsulating the functionality of *Persistence Service* within
-your own application. The Library API is supported for C.
 
 ## Building the Example :wrench:
 
@@ -68,7 +43,7 @@ regular build process.
 
 ## Running the example
 
-Before follwing the steps in this example make sure that you have set the
+Before following the steps in this example make sure that you have set the
 `NDDSHOME` environment variable to point to the top level directory where
 *RTI Connext DDS* is installed.
 
@@ -92,7 +67,7 @@ Before follwing the steps in this example make sure that you have set the
     RTI Persistence Service started
     ```
 
-    Note: If you want to use the `defaultPersistent` configuration you need to
+    **Note:** If you want to use the `defaultPersistent` configuration you need to
     create a directory named `MyDirectory` in the your present working directory.
     The files containing the samples will be located in there. If you want to
     change the location you can use the tag `<directory>` under `<filesystem>`.
@@ -109,7 +84,7 @@ Before follwing the steps in this example make sure that you have set the
     ./hello_world_publisher -domain_id 70 -persistent 0 -sample_count 10
     ```
 
-    Note: The `-sample_count` argument controls how many samples the publisher
+    **Note**: The `-sample_count` argument controls how many samples the publisher
     will publish.
 
     If everything goes well you should see:
@@ -175,24 +150,6 @@ Before follwing the steps in this example make sure that you have set the
 
 8.  Repeat steps 2 to 6 but this time use `-persistent 1` when starting the
     publisher or subscriber application.
-
-9.  For the last step, we will be using the sample application that demonstrates
-    the usage of *Persistence Service* Library API. The `PersistenceServiceLibraryAPI`
-    application is created when this example is compiled.
-
-    It takes the `-domain_id` and `-persistent` arguments like the publisher and
-    subscriber applications.
-
-    Run `PersistenceServiceLibraryAPI` from the top level directory for this example
-    that contains the `PersistenceServiceConfig.xml`
-
-    Rerun steps 2 to 6 for each invocation of `PersistenceServiceLibraryAPI` -
-    one with `-persistent 0` that corresponds to `defaultTransient`, and one with
-    `-persistent 1` that corresponds to `defaultPersistent`.
-
-    ```sh
-    ./build/PersistenceServiceLibraryAPI -domain_id 70 -persistent <0|1>
-    ```
 
 ## Customizing the Build
 
