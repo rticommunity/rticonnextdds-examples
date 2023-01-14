@@ -38,6 +38,7 @@ regular build process.
 Once the example is built it will generate the `CloudDiscoveryServiceLibraryAPIC`
 executable. This executable takes two arguments that are similar to the Cloud
 Discovery Service executable shipped with the Connext installation:
+
 - `-cfgFile`: Specifies the QoS configuration file name
 - `-cfgName`: Specified the top level configuration name
 
@@ -57,7 +58,6 @@ Service instance to achieve discovery between them. For more details on how to m
 this setup for your specific transport requirements refer to the [Tutorials
 Section](https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/addon_products/cloud_discovery_service/tutorials.html)
 in the Cloud Discovery Service User's Manual.
-
 
 ## Customizing the Build
 

@@ -38,6 +38,7 @@ regular build process.
 Once the example is built it will generate the `CloudDiscoveryServiceLibraryAPICXX11`
 executable. This executable takes two arguments that are similar to the Cloud
 Discovery Service executable shipped with the Connext installation:
+
 - `-cfgFile`: Specifies the QoS configuration file name
 - `-cfgName`: Specified the top level configuration name
 
