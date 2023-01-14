@@ -24,7 +24,8 @@ static int service_main(const char *cfgName, const char *cfgFile)
 
     property.cfg_file = DDS_String_dup(cfgFile);
     property.service_name = DDS_String_dup(cfgName);
-    property.application_name = DDS_String_dup("CloudDiscoveryService-LibraryAPI-C");
+    property.application_name =
+            DDS_String_dup("CloudDiscoveryService-LibraryAPI-C");
 
     /* Dial up the logging at service level */
     property.service_verbosity = RTI_CDS_LOG_VERBOSITY_ALL;
@@ -64,8 +65,8 @@ static int service_main(const char *cfgName, const char *cfgFile)
 
 int main(int argc, char *argv[])
 {
-    #define DEFAULT_CFG_NAME "LibraryAPIDemo"
-    #define DEFAULT_CFG_FILE "CloudDiscoveryServiceConfig.xml"
+#define DEFAULT_CFG_NAME "LibraryAPIDemo"
+#define DEFAULT_CFG_FILE "CloudDiscoveryServiceConfig.xml"
 
     const char *cfgName = DEFAULT_CFG_NAME;
     const char *cfgFile = DEFAULT_CFG_FILE;
@@ -80,10 +81,10 @@ int main(int argc, char *argv[])
             cfgFile = argv[i++];
         } else {
             printf("%s [options]\n"
-                   "\t-cfgName <Top level configuration name> (default: \""
-                   DEFAULT_CFG_NAME "\")\n"
-                   "\t-cfgFile <QoS configuration file name> (default: \""
-                   DEFAULT_CFG_FILE "\")\n",
+                   "\t-cfgName <Top level configuration name> (default: "
+                   "\"" DEFAULT_CFG_NAME "\")\n"
+                   "\t-cfgFile <QoS configuration file name> (default: "
+                   "\"" DEFAULT_CFG_FILE "\")\n",
                    argv[0]);
             return -1;
         }

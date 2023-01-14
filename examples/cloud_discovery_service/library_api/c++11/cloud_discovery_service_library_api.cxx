@@ -22,7 +22,8 @@ void service_main(std::string cfg_name, std::string cfg_file)
             rti::cds::ServiceProperty()
                     .cfg_file(cfg_file)
                     .service_name(cfg_name)
-                    .application_name("CloudDiscoveryService-LibraryAPI-CXX11"));
+                    .application_name(
+                            "CloudDiscoveryService-LibraryAPI-CXX11"));
 
     //  Dial up the logging at service level using the public logger API
     rti::cds::Logger::instance().service_verbosity(
@@ -57,12 +58,13 @@ int main(int argc, char *argv[])
         } else if (param == "-cfgFile" && i < argc) {
             cfg_file = argv[i++];
         } else {
-            std::cout << argv[0]
-                      << " [options]" << std::endl
-                      << "\t-cfgName <Top level configuration name> (default: \""
-                      << DEFAULT_CFG_NAME << "\")" << std::endl
-                      << "\t-cfgFile <QoS configuration file name> (default: \""
-                      << DEFAULT_CFG_FILE << "\")" << std::endl;
+            std::cout
+                    << argv[0]
+                    << " [options]" << std::endl
+                    << "\t-cfgName <Top level configuration name> (default: \""
+                    << DEFAULT_CFG_NAME << "\")" << std::endl
+                    << "\t-cfgFile <QoS configuration file name> (default: \""
+                    << DEFAULT_CFG_FILE << "\")" << std::endl;
             return -1;
         }
     }
