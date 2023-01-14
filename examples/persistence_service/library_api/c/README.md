@@ -37,7 +37,7 @@ regular build process.
 
 Before following the steps in this example make sure that you have set the
 `NDDSHOME` environment variable to point to the top level directory where
-*RTI Connext DDS* is installed.
+*RTI Connext* is installed.
 
 **Note:** This example utilizes the publisher and subscriber application created
 by compiling the example [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
@@ -92,12 +92,12 @@ For example, to build a example in Debug/Static mode run CMake as follows:
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
 ```
 
-### Configuring Connext DDS Installation Path and Architecture
+### Configuring Connext Installation Path and Architecture
 
 The CMake build infrastructure will try to guess the location of your Connext
-DDS installation and the Connext DDS architecture based on the default settings
-for your host platform.If you installed Connext DDS in a custom location, you
-can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+DDS installation and the Connext architecture based on the default settings
+for your host platform.If you installed Connext in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
 installation folder. For example:
 
 ```sh
@@ -131,7 +131,7 @@ You will find the definition of connextdds_add_example, along with detailed
 documentation, in
 [resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
 
-For a more comprehensive example on how to build an RTI Connext DDS application
+For a more comprehensive example on how to build an RTI Connext application
 using CMake, please refer to the
 [hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
 a comprehensive CMakeLists.txt script with all the steps and instructions

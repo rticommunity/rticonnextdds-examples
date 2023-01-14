@@ -6,7 +6,7 @@ In many applications, we need to store data samples so they can be delivered to
 subscribing applications that join the system at a later time or to avoid
 receiving old data each time we re-join to the same publisher. Or maybe we need
 to keep the data available even once our publishing application has terminated.
-In *RTI Connext DDS* this behavior can be achieved using *Persistence Service*.
+In *RTI Connext* this behavior can be achieved using *Persistence Service*.
 
 *Persistence Service* is a *Connext* application that saves data samples to
 transient or permanent storage, so they can be delivered to subscribing
