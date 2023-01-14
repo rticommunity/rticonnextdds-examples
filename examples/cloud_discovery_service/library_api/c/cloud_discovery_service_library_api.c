@@ -82,7 +82,8 @@ int main(int argc, char *argv[])
         } else {
             printf("%s [options]\n"
                    "\t-cfgName <Top level configuration name> (default: "
-                   "\"" DEFAULT_CFG_NAME "\")\n"
+                   "\"" DEFAULT_CFG_NAME
+                   "\")\n"
                    "\t-cfgFile <QoS configuration file name> (default: "
                    "\"" DEFAULT_CFG_FILE "\")\n",
                    argv[0]);
