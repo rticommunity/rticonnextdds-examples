@@ -1,4 +1,4 @@
-## Example Description
+# Example Description
 
 This example includes publisher and subscriber applications provided to send
 and receive simple integers under the `hello_world` type.
