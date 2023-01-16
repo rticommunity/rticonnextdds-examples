@@ -4,7 +4,7 @@
 # must display this notice unaltered.
 # This code contains trade secrets of Real-Time Innovations, Inc.
 
-cmake_minimum_required(VERSION 3.11)
+cmake_minimum_required(VERSION 3.12)
 project(rticonnextdds-examples-persistence-service)
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../resources/cmake/Modules"
