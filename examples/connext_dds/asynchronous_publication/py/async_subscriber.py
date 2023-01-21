@@ -9,81 +9,53 @@
 # damages arising out of the use or inability to use the software.
 #
 import argparse
+import rti.asyncio
 
 import rti.connextdds as dds
-# Note: cannot do 'from async' because async is a keyword since Python 3.5 
+
+# Note: cannot do 'from async' because async is a keyword since Python 3.5
 # therefore I have to update the name of async.idl to async_type.idl
 from async_type import async_type
 
 
-def process_data(reader: dds.DataReader):
-    # Take all samples. Samples are loaned to application, loan is
-    # returned when LoanedSamples destructor is called or when you
-    # return the loan explicitly
-    samples_read = 0
-    samples = reader.take()
-
-    for (data, info) in samples:
-        if info.valid:
-            print("Received: {}".format(data))
-            samples_read += 1
-    return samples_read
+async def process_data(reader: dds.DataReader):
+    # Print data as it arrives, suspending the coroutine until data is
+    # available.
+    async for data in reader.take_data_async():
+        print(f"Received: {data}")
 
 
-def run_subscriber_application(domain_id: int, sample_count: int):
+def run_subscriber_application(
+    domain_id: int, sample_count: int, use_xml_qos: bool = False
+):
     # Start communicating in a domain, usually one participant per application
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic
     topic = dds.Topic(participant, "Example async", async_type)
 
-    # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    reader_qos = dds.QosProvider.default.datareader_qos
+    if use_xml_qos:
+        # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+        reader_qos = dds.QosProvider.default.datareader_qos
+    else:
+        # Configure the DataReaderQos in code, to the same effect as the XML file.
+        reader_qos = participant.default_datareader_qos
+        reader_qos.reliability = dds.Reliability.reliable()
+        reader_qos.history.kind = dds.HistoryKind.KEEP_ALL
 
-    # If you want to change the DataReader's QoS programmatically rather than
-    # using the XML file, uncomment the following lines.
-
-    # reader_qos.reliability.reliable()
-    # reader_qos.history.kind = dds.HistoryKind.KEEP_ALL
-
-    # Create a DataReader with the QoS in our profile
+    # Create a DataReader with the QoS in our profile or configured programatically
     reader = dds.DataReader(participant.implicit_subscriber, topic, reader_qos)
 
-    # Initialize samples_read to zero
-    samples_read = 0
-
-    # Assocaite a handler with the status condition. This will run when the
-    # condition is triggered, in the context of the dispatch call (see below)
-    # condition argument is not used 
-    def handler(_):
-        nonlocal samples_read
-        nonlocal reader
-        samples_read += process_data(reader)
-
-    # Obtain the DataReader's Status Condition
-    status_condition = dds.StatusCondition(reader)
-
-    # Enable the 'data_available' status and set the handler
-    status_condition.enabled_statuses = dds.StatusMask.DATA_AVAILABLE
-    status_condition.set_handler(handler)
-
-    # Create a WaitSet and attach the StatusCondition
-    waitset = dds.WaitSet()
-    waitset += status_condition
-
-    while samples_read < sample_count:
-        # Catch control c interrupt
-        try:
-            # Dispatch wil call the handlers associated to the WaitSet conditions
-            # when they activate
-            print("async subscriber sleeping up to 1 sec...")
-            waitset.dispatch(dds.Duration(1))  # Wait up to 1s each time
-        except KeyboardInterrupt:
-            break
+    try:
+        print("async subscriber sleeping")
+        rti.asyncio.run(process_data(reader))
+        # await process_data(reader)
+    except KeyboardInterrupt:
+        pass
 
     print("preparing to shut down...")
-    reader.close()
-    topic.close()
+    # rti.asyncio.close(process_data(reader))
+    # Note: Exception thrown here. I assume it's because the coroutine is still running
     participant.close()
 
 
@@ -112,6 +84,13 @@ def main():
         default=1,
         help="How much debugging output to show | Range: 0-3 | Default: 1",
     )
+    parser.add_argument(
+        "-q",
+        "--qos",
+        action="store_true",
+        default=False,
+        help="Use QoS profile from USER_QOS_PROFILES.xml | Default: False",
+    )
 
     args = parser.parse_args()
     assert 0 <= args.domain < 233
@@ -131,7 +110,8 @@ def main():
     dds.Logger.instance.verbosity = verbosity
 
     try:
-        run_subscriber_application(args.domain, args.count)
+        # rti.asyncio.run(run_subscriber_application(args.domain, args.count, args.qos))
+        run_subscriber_application(args.domain, args.count, args.qos)
     except Exception as e:
         print(f"Exception in run_subscriber_application(): {e}")
     return
