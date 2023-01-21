@@ -12,46 +12,47 @@ import argparse
 import time
 
 import rti.connextdds as dds
-# Note: cannot do 'from async' because async is a keyword since Python 3.5 
+
+# Note: cannot do 'from async' because async is a keyword since Python 3.5
 # therefore I have to update the name of async.idl to async_type.idl
 from async_type import async_type
 
 
-def run_publisher_application(domain_id: int, sample_count: int):
+def run_publisher_application(
+    domain_id: int, sample_count: int, use_xml_qos: bool = False
+):
     # Start communicating in a domain, usually one participant per application
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic
     topic = dds.Topic(participant, "Example async", async_type)
 
-    # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
-    writer_qos = dds.QosProvider.default.datawriter_qos
+    if use_xml_qos:
+        # Retrieve the default DataWriter QoS, from USER_QOS_PROFILES.xml
+        writer_qos = dds.QosProvider.default.datawriter_qos
+    else:
+        # Configure the DataWriterQos in code, to the same effect as the XML file.
+        writer_qos = participant.default_datawriter_qos
+        writer_qos.reliability = dds.Reliability.reliable(
+            dds.Duration.from_seconds(60)
+        )
+        # Note: Admin Console is reporting history depth of 1 still regardless of changes in the QoS file or programatically
+        # writer_qos.history. = dds.History.keep_last(12)
+        writer_qos.history.kind = dds.HistoryKind.KEEP_LAST
+        writer_qos.history.depth = 12
+        writer_qos.data_writer_protocol.rtps_reliable_writer.min_send_window_size = (
+            50
+        )
+        writer_qos.data_writer_protocol.rtps_reliable_writer.max_send_window_size = (
+            50
+        )
 
-    # If you want to change the DataWriter's QoS programmatically rather than
-    # using the XML file, uncomment the following lines.
+        # Note: Without specifying a name it defaults to DDS_DEFAULT_FLOW_CONTROLLER_NAME. Do I need to specify the name?
+        writer_qos.publish_mode = dds.PublishMode.asynchronous(
+            "DDS_FIXED_RATE_FLOW_CONTROLLER_NAME"
+        )
 
-    # In this case, we set the publish mode QoS to asynchronous publish mode,
-    # which enables asynchronous publishing. We also set the flow controller
-    # to be the fixed rate flow controller, and we increase the history depth.
-    # writer_qos.reliability.reliable(dds.Duration(60))
-    # writer_qos.data_writer_protocol.rtps_reliable_writer.min_send_window_size = 50
-    # writer_qos.data_writer_protocol.rtps_reliable_writer.max_send_window_size = 50
-
-    # Since samples are only being sent once per second, DataWriter will need
-    # to keep them on queue.  History defaults to only keeping the last
-    # sample enqueued, so we increase that here.
-
-    # Note: Admin Console is reporting history depth of 1 still regardless of changes in the QoS file or programatically 
-    #writer_qos.history.depth = 12
-    #writer_qos.history.kind = dds.HistoryKind.KEEP_ALL
-    #writer_qos.history.keep_all.keep_last(12)
-
-    # Set flowcontroller for DataWriter
-    # writer_qos.publish_mode.asynchronous()
-    # Note figure out what FlowController::FIXED_RATE_NAME is
-    # writer_qos << PublishMode::Asynchronous(FlowController::FIXED_RATE_NAME)
-
-    # Create a DataWriter with the QoS in our profile
+    # Create a DataWriter with the QoS in our profile or configured programatically
     writer = dds.DataWriter(participant.implicit_publisher, topic, writer_qos)
 
     # Create data sample for writing
@@ -61,14 +62,16 @@ def run_publisher_application(domain_id: int, sample_count: int):
         try:
             # Modify the data to be sent here
             sample.x = count
-            print("Writing async_type, count {}".format(count))
+            print(f"Writing async_type, count {count}")
             writer.write(sample)
             time.sleep(1)
         except KeyboardInterrupt:
             break
+    # You can wait until all written samples have been actually published
+    # (note that this doesn't ensure that they have actually been received
+    # if the sample required retransmission)
+    writer.wait_for_asynchronous_publishing
     print("preparing to shut down...")
-    writer.close()
-    topic.close()
     participant.close()
 
 
@@ -97,6 +100,13 @@ def main():
         default=1,
         help="How much debugging output to show | Range: 0-3 | Default: 1",
     )
+    parser.add_argument(
+        "-q",
+        "--qos",
+        action="store_true",
+        default=False,
+        help="Use QoS profile from USER_QOS_PROFILES.xml | Default: False",
+    )
 
     args = parser.parse_args()
     assert 0 <= args.domain < 233
@@ -116,7 +126,8 @@ def main():
     dds.Logger.instance.verbosity = verbosity
 
     try:
-        run_publisher_application(args.domain, args.count)
+        # Note: C# example doesn't seem to allow using the use_xml_qos option?
+        run_publisher_application(args.domain, args.count, args.qos)
     except Exception as e:
         print(f"Exception in run_publisher_application(): {e}")
     return
