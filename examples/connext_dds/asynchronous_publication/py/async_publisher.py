@@ -13,8 +13,6 @@ import time
 
 import rti.connextdds as dds
 
-# Note: cannot do 'from async' because async is a keyword since Python 3.5
-# therefore I have to update the name of async.idl to async_type.idl
 from async_type import async_type
 
 
@@ -70,9 +68,8 @@ def run_publisher_application(
     # You can wait until all written samples have been actually published
     # (note that this doesn't ensure that they have actually been received
     # if the sample required retransmission)
-    writer.wait_for_asynchronous_publishing
+    writer.wait_for_asynchronous_publishing()
     print("preparing to shut down...")
-    participant.close()
 
 
 def main():
