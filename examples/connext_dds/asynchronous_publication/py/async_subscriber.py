@@ -13,8 +13,6 @@ import rti.asyncio
 
 import rti.connextdds as dds
 
-# Note: cannot do 'from async' because async is a keyword since Python 3.5
-# therefore I have to update the name of async.idl to async_type.idl
 from async_type import async_type
 
 
@@ -40,7 +38,7 @@ def run_subscriber_application(
     else:
         # Configure the DataReaderQos in code, to the same effect as the XML file.
         reader_qos = participant.default_datareader_qos
-        reader_qos.reliability = dds.Reliability.reliable()
+        reader_qos.reliability.kind = dds.ReliabilityKind.RELIABLE
         reader_qos.history.kind = dds.HistoryKind.KEEP_ALL
 
     # Create a DataReader with the QoS in our profile or configured programatically
@@ -54,9 +52,6 @@ def run_subscriber_application(
         pass
 
     print("preparing to shut down...")
-    # rti.asyncio.close(process_data(reader))
-    # Note: Exception thrown here. I assume it's because the coroutine is still running
-    participant.close()
 
 
 def main():
