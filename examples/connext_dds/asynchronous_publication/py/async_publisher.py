@@ -68,7 +68,7 @@ def run_publisher_application(
     # You can wait until all written samples have been actually published
     # (note that this doesn't ensure that they have actually been received
     # if the sample required retransmission)
-    writer.wait_for_asynchronous_publishing()
+    writer.wait_for_asynchronous_publishing(dds.Duration(10))
     print("preparing to shut down...")
 
 
