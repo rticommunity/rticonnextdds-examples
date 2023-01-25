@@ -17,36 +17,20 @@ find_package(
     REQUIRED
     COMPONENTS
         core
+        persistence_service
 )
 
 add_executable(PersistenceServiceLibraryAPIC
     "${CMAKE_CURRENT_SOURCE_DIR}/persistence_service_library_api.c"
 )
 
-# TODO: Refactor these once https://github.com/rticommunity/rticonnextdds-cmake-utils/issues/75
-# is resolved.
-target_compile_definitions(PersistenceServiceLibraryAPIC
+target_link_libraries(PersistenceServiceLibraryAPIC
     PUBLIC
-        ${CONNEXTDDS_COMPILE_DEFINITIONS})
+        RTIConnextDDS::persistence_service_c
+)
 
+# To differentiate between release and debug executables
 set_target_properties(PersistenceServiceLibraryAPIC
     PROPERTIES
         DEBUG_POSTFIX "d"
-)
-
-target_include_directories(PersistenceServiceLibraryAPIC
-    PUBLIC
-        ${CONNEXTDDS_INCLUDE_DIRS}
-        ${CONNEXTDDS_DIR}/include/persistence/
-)
-
-target_link_directories(PersistenceServiceLibraryAPIC
-    PUBLIC
-        ${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}
-)
-
-target_link_libraries(PersistenceServiceLibraryAPIC
-    PUBLIC
-        RTIConnextDDS::c_api
-        rtipersistenceservice
 )
