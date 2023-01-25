@@ -34,8 +34,6 @@ def run_publisher_application(
         writer_qos.reliability = dds.Reliability.reliable(
             dds.Duration.from_seconds(60)
         )
-        # Note: Admin Console is reporting history depth of 1 still regardless of changes in the QoS file or programatically
-        # writer_qos.history. = dds.History.keep_last(12)
         writer_qos.history.kind = dds.HistoryKind.KEEP_LAST
         writer_qos.history.depth = 12
         writer_qos.data_writer_protocol.rtps_reliable_writer.min_send_window_size = (
@@ -45,7 +43,6 @@ def run_publisher_application(
             50
         )
 
-        # Note: Without specifying a name it defaults to DDS_DEFAULT_FLOW_CONTROLLER_NAME. Do I need to specify the name?
         writer_qos.publish_mode = dds.PublishMode.asynchronous(
             "DDS_FIXED_RATE_FLOW_CONTROLLER_NAME"
         )
@@ -123,7 +120,6 @@ def main():
     dds.Logger.instance.verbosity = verbosity
 
     try:
-        # Note: C# example doesn't seem to allow using the use_xml_qos option?
         run_publisher_application(args.domain, args.count, args.qos)
     except Exception as e:
         print(f"Exception in run_publisher_application(): {e}")

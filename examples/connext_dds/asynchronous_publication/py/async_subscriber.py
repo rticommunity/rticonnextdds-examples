@@ -47,7 +47,6 @@ def run_subscriber_application(
     try:
         print("async subscriber sleeping")
         rti.asyncio.run(process_data(reader))
-        # await process_data(reader)
     except KeyboardInterrupt:
         pass
 
@@ -105,7 +104,6 @@ def main():
     dds.Logger.instance.verbosity = verbosity
 
     try:
-        # rti.asyncio.run(run_subscriber_application(args.domain, args.count, args.qos))
         run_subscriber_application(args.domain, args.count, args.qos)
     except Exception as e:
         print(f"Exception in run_subscriber_application(): {e}")
