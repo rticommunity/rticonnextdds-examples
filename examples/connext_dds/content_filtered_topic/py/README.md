@@ -1,4 +1,4 @@
-# Example Code: Builtin Topics
+# Example Code: Content-Filtered Topic
 
 If you haven't used the RTI Connext Python API before, first check the
 [Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds_professional/getting_started_guide/index.html).
