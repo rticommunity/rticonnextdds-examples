@@ -17,6 +17,7 @@ find_package(
     REQUIRED
     COMPONENTS
         core
+        cloud_discovery_service
 )
 
 add_executable(CloudDiscoveryServiceLibraryAPICXX11
@@ -27,34 +28,19 @@ set_property(
     TARGET CloudDiscoveryServiceLibraryAPICXX11
     PROPERTY CXX_STANDARD 11
 )
+
 set_property(
     TARGET CloudDiscoveryServiceLibraryAPICXX11
     PROPERTY CXX_STANDARD_REQUIRED ON
 )
 
-# TODO: Refactor these once https://github.com/rticommunity/rticonnextdds-cmake-utils/issues/75
-# is resolved.
-target_compile_definitions(CloudDiscoveryServiceLibraryAPICXX11
+target_link_libraries(CloudDiscoveryServiceLibraryAPICXX11
     PUBLIC
-        ${CONNEXTDDS_COMPILE_DEFINITIONS})
+        RTIConnextDDS::cloud_discovery_service_cpp2
+)
 
+# To differentiate between release and debug executables
 set_target_properties(CloudDiscoveryServiceLibraryAPICXX11
     PROPERTIES
         DEBUG_POSTFIX "d"
-)
-
-target_include_directories(CloudDiscoveryServiceLibraryAPICXX11
-    PUBLIC
-        ${CONNEXTDDS_INCLUDE_DIRS}
-)
-
-target_link_directories(CloudDiscoveryServiceLibraryAPICXX11
-    PUBLIC
-        ${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}
-)
-
-target_link_libraries(CloudDiscoveryServiceLibraryAPICXX11
-    PUBLIC
-        RTIConnextDDS::cpp2_api
-        rticlouddiscoveryservice
 )

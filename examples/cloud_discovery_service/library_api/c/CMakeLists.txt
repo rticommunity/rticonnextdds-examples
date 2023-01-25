@@ -17,35 +17,20 @@ find_package(
     REQUIRED
     COMPONENTS
         core
+        cloud_discovery_service
 )
 
 add_executable(CloudDiscoveryServiceLibraryAPIC
     "${CMAKE_CURRENT_SOURCE_DIR}/cloud_discovery_service_library_api.c"
 )
 
-# TODO: Refactor these once https://github.com/rticommunity/rticonnextdds-cmake-utils/issues/75
-# is resolved.
-target_compile_definitions(CloudDiscoveryServiceLibraryAPIC
+target_link_libraries(CloudDiscoveryServiceLibraryAPIC
     PUBLIC
-        ${CONNEXTDDS_COMPILE_DEFINITIONS})
+        RTIConnextDDS::cloud_discovery_service_c
+)
 
+# To differentiate between release and debug executables
 set_target_properties(CloudDiscoveryServiceLibraryAPIC
     PROPERTIES
         DEBUG_POSTFIX "d"
-)
-
-target_include_directories(CloudDiscoveryServiceLibraryAPIC
-    PUBLIC
-        ${CONNEXTDDS_INCLUDE_DIRS}
-)
-
-target_link_directories(CloudDiscoveryServiceLibraryAPIC
-    PUBLIC
-        ${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}
-)
-
-target_link_libraries(CloudDiscoveryServiceLibraryAPIC
-    PUBLIC
-        RTIConnextDDS::c_api
-        rticlouddiscoveryservice
 )
