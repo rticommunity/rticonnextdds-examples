@@ -49,9 +49,12 @@ You can run the generated executable from the `build` folder as follows:
 ```
 
 **Note:** The file `WebIntegrationServiceConfig.xml` has only one configuration called
-`LibraryAPIDemo` that starts the Web Integration Service instance on HTTP port `8080`. This port can be changed by adding the corresponding option to tte serviceProperty before starting the service..
+`LibraryAPIDemo` that starts the Web Integration Service instance on HTTP port `8080`.
+This port can be changed by adding the corresponding option to tte serviceProperty
+before starting the service.
 
-Now you can run a shapes demo application and publish some shapes. Then, you will see they in your web browser under hhttp://localhost:8080/.
+Now you can run a shapes demo application and publish some shapes. Then, you
+will see them in your web browser under <http://localhost:8080/>.
 
 ## Customizing the Build
 
