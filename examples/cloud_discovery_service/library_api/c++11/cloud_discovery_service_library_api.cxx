@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
+ (c) 2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software. Licensee has the right to distribute object form only
  for use with RTI products. The Software is provided "as is", with no warranty
@@ -14,16 +14,17 @@
 #include <chrono>
 #include <map>
 
+#include <dds/core/ddscore.hpp>
 #include <rti/cds/Service.hpp>
 
-void service_main(std::string cfg_name, std::string cfg_file)
+void service_main(std::string cfg_name, std::string cfg_file, int run_for_secs)
 {
-    rti::cds::Service service(
-            rti::cds::ServiceProperty()
-                    .cfg_file(cfg_file)
-                    .service_name(cfg_name)
-                    .application_name(
-                            "CloudDiscoveryService-LibraryAPI-CXX11"));
+    rti::cds::ServiceProperty service_property = rti::cds::ServiceProperty()
+            .cfg_file(cfg_file)
+            .service_name(cfg_name)
+            .application_name(
+                    "CloudDiscoveryService-LibraryAPI-CXX11");
+    rti::cds::Service service(service_property);
 
     //  Dial up the logging at service level using the public logger API
     rti::cds::Logger::instance().service_verbosity(
@@ -34,10 +35,9 @@ void service_main(std::string cfg_name, std::string cfg_file)
 
     std::cout << "ConfigName=" << cfg_name << ", "
               << "ConfigFile=" << cfg_file << std::endl;
-    // Infinite loop until the user terminates the process
-    while (1) {
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-    }
+
+    // Sleep for the running period
+    std::this_thread::sleep_for(std::chrono::seconds(run_for_secs));
 
     service.stop();
 }
@@ -49,6 +49,7 @@ int main(int argc, char *argv[])
 
     std::string cfg_name = DEFAULT_CFG_NAME;
     std::string cfg_file = DEFAULT_CFG_FILE;
+    int run_for_secs = 60;
 
     for (int i = 1; i < argc;) {
         const std::string &param = argv[i++];
@@ -57,14 +58,18 @@ int main(int argc, char *argv[])
             cfg_name = argv[i++];
         } else if (param == "-cfgFile" && i < argc) {
             cfg_file = argv[i++];
+        } else if (param == "-runForSecs" && i < argc) {
+            run_for_secs = atoi(argv[i++]);
         } else {
             std::cout
                     << argv[0] << " [options]" << std::endl
                     << "\t-cfgName <Top level configuration name> (default: \""
                     << DEFAULT_CFG_NAME << "\")" << std::endl
                     << "\t-cfgFile <QoS configuration file name> (default: \""
-                    << DEFAULT_CFG_FILE << "\")" << std::endl;
-            return -1;
+                    << DEFAULT_CFG_FILE << "\")" << std::endl
+                    << "\t-runForSecs <Running time of the application> "
+                    << "(default: 60 secs)" << std::endl;
+            return EXIT_FAILURE;
         }
     }
 
@@ -73,12 +78,16 @@ int main(int argc, char *argv[])
     // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
 
     try {
-        service_main(cfg_name, cfg_file);
+        service_main(cfg_name, cfg_file, run_for_secs);
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in service_main: " << ex.what() << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
-    return 0;
+    // Releases the memory used by the participant factory.
+    // Optional at application exit
+    // dds::domain::DomainParticipant::finalize_participant_factory();
+
+    return EXIT_SUCCESS;
 }

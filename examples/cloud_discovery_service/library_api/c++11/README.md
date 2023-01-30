@@ -48,6 +48,9 @@ You can run the generated executable from the `build` folder as follows:
 ./CloudDiscoveryServiceLibraryAPICXX11 -cfgFile ../CloudDiscoveryServiceConfig.xml
 ```
 
+Additionally the `CloudDiscoveryServiceLibraryAPICXX11` executable also takes a third
+argument called `-runForSecs` that controls how long the application executes.
+
 **Note:** The file `CloudDiscoveryServiceConfig.xml` has only one configuration called
 `LibraryAPIDemo` that starts the Cloud Discovery Service instance on port `7400`
 while utilizing the `UDPv4` transport. These values can be changed by modifying
