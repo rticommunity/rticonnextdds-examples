@@ -37,21 +37,6 @@ int service_shutdown(
         RTI_CDS_Property_finalize(property);
     }
 
-    /*
-     * RTI Data Distribution Service provides the finalize_instance() method on
-     * domain participant factory for users who want to release memory used
-     * by the participant factory. Uncomment the following block of code for
-     * clean destruction of the singleton.
-     */
-    /*
-    DDS_ReturnCode_t retcode;
-    retcode = DDS_DomainParticipantFactory_finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-    */
-
     return EXIT_SUCCESS;
 }
 
@@ -102,6 +87,7 @@ int main(int argc, char *argv[])
     const char *cfgFile = "CloudDiscoveryServiceConfig.xml";    /* default */
     int i = 0;
     int runForSecs = 60;
+    int retVal = 0;
 
     for (i = 1; i < argc;) {
         char *param = argv[i++];
@@ -134,5 +120,22 @@ int main(int argc, char *argv[])
             NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
-    return service_main(cfgName, cfgFile, runForSecs);
+    retVal = service_main(cfgName, cfgFile, runForSecs);
+
+    /*
+     * RTI Data Distribution Service provides the finalize_instance() method on
+     * domain participant factory for users who want to release memory used
+     * by the participant factory. Uncomment the following block of code for
+     * clean destruction of the singleton.
+     */
+    /*
+    DDS_ReturnCode_t retcode;
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        retVal = EXIT_FAILURE;
+    }
+    */
+
+    return retVal;
 }
