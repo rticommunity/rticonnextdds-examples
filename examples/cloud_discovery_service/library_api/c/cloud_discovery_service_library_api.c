@@ -15,10 +15,47 @@
 #include "ndds/ndds_c.h"
 #include "clouddiscoveryservice/clouddiscoveryservice_service.h"
 
-static int service_main(
-        const char *cfgName,
-        const char *cfgFile,
-        int runForSecs)
+int service_shutdown(
+        struct RTI_CDS_Service *service,
+        struct RTI_CDS_Property *property)
+{
+    DDS_Boolean ok = DDS_BOOLEAN_FALSE;
+
+    if (service != NULL) {
+        ok = RTI_CDS_Service_stop(service);
+        if (!ok) {
+            printf("Error stopping the Cloud Discovery Service instance\n");
+            return EXIT_FAILURE;
+        }
+
+        /* Deleting the service instance for resource cleanup */
+        RTI_CDS_Service_delete(service);
+    }
+
+    if (property != NULL) {
+        /* Deleting the service property to free the strings */
+        RTI_CDS_Property_finalize(property);
+    }
+
+    /*
+     * RTI Data Distribution Service provides the finalize_instance() method on
+     * domain participant factory for users who want to release memory used
+     * by the participant factory. Uncomment the following block of code for
+     * clean destruction of the singleton.
+     */
+    /*
+    DDS_ReturnCode_t retcode;
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+    */
+
+    return EXIT_SUCCESS;
+}
+
+int service_main(const char *cfgName, const char *cfgFile, int runForSecs)
 {
     struct RTI_CDS_Service *service = NULL;
     struct RTI_CDS_Property property = RTI_CDS_Property_INITIALIZER;
@@ -40,12 +77,14 @@ static int service_main(
     service = RTI_CDS_Service_new(&property);
     if (service == NULL) {
         printf("Error creating the Cloud Discovery Service instance\n");
+        service_shutdown(service, &property);
         return EXIT_FAILURE;
     }
 
     ok = RTI_CDS_Service_start(service);
     if (!ok) {
         printf("Error starting the Cloud Discovery Service instance\n");
+        service_shutdown(service, &property);
         return EXIT_FAILURE;
     }
 
@@ -54,43 +93,13 @@ static int service_main(
     /* Sleep for the running period */
     NDDS_Utility_sleep(&runningPeriod);
 
-    ok = RTI_CDS_Service_stop(service);
-    if (!ok) {
-        printf("Error stopping the Cloud Discovery Service instance\n");
-        return EXIT_FAILURE;
-    }
-
-    /* Deleting the service instance for resource cleanup */
-    RTI_CDS_Service_delete(service);
-
-    /* Deleting the service property to free the strings */
-    RTI_CDS_Property_finalize(&property);
-
-    /*
-     * RTI Data Distribution Service provides the finalize_instance() method on
-     * domain participant factory for users who want to release memory used
-     * by the participant factory. Uncomment the following block of code for
-     * clean destruction of the singleton.
-     */
-    /*
-    DDS_ReturnCode_t retcode;
-    retcode = DDS_DomainParticipantFactory_finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-    */
-
-   return EXIT_SUCCESS;
+   return service_shutdown(service, &property);
 }
 
 int main(int argc, char *argv[])
 {
-#define DEFAULT_CFG_NAME "LibraryAPIDemo"
-#define DEFAULT_CFG_FILE "CloudDiscoveryServiceConfig.xml"
-
-    const char *cfgName = DEFAULT_CFG_NAME;
-    const char *cfgFile = DEFAULT_CFG_FILE;
+    const char *cfgName = "LibraryAPIDemo";    /* default */
+    const char *cfgFile = "CloudDiscoveryServiceConfig.xml";    /* default */
     int i = 0;
     int runForSecs = 60;
 
@@ -106,14 +115,14 @@ int main(int argc, char *argv[])
         } else {
             printf("%s [options]\n"
                    "\t-cfgName <Top level configuration name> (default: "
-                   "\"" DEFAULT_CFG_NAME
-                   "\")\n"
+                   "\"%s\")\n"
                    "\t-cfgFile <QoS configuration file name> (default: "
-                   "\"" DEFAULT_CFG_FILE
-                   "\")\n"
+                   "\"%s\")\n"
                    "\t-runForSecs <Running time of the application> (default: "
                    "60 secs)\n",
-                   argv[0]);
+                   argv[0],
+                   cfgName,
+                   cfgFile);
             return EXIT_FAILURE;
         }
     }

@@ -44,11 +44,8 @@ void service_main(std::string cfg_name, std::string cfg_file, int run_for_secs)
 
 int main(int argc, char *argv[])
 {
-    const std::string DEFAULT_CFG_NAME = "LibraryAPIDemo";
-    const std::string DEFAULT_CFG_FILE = "CloudDiscoveryServiceConfig.xml";
-
-    std::string cfg_name = DEFAULT_CFG_NAME;
-    std::string cfg_file = DEFAULT_CFG_FILE;
+    std::string cfg_name = "LibraryAPIDemo";    // default
+    std::string cfg_file = "CloudDiscoveryServiceConfig.xml";    // default
     int run_for_secs = 60;
 
     for (int i = 1; i < argc;) {
@@ -64,9 +61,9 @@ int main(int argc, char *argv[])
             std::cout
                     << argv[0] << " [options]" << std::endl
                     << "\t-cfgName <Top level configuration name> (default: \""
-                    << DEFAULT_CFG_NAME << "\")" << std::endl
+                    << cfg_name << "\")" << std::endl
                     << "\t-cfgFile <QoS configuration file name> (default: \""
-                    << DEFAULT_CFG_FILE << "\")" << std::endl
+                    << cfg_file << "\")" << std::endl
                     << "\t-runForSecs <Running time of the application> "
                     << "(default: 60 secs)" << std::endl;
             return EXIT_FAILURE;
