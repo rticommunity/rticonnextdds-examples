@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     const char *cfgFile = "CloudDiscoveryServiceConfig.xml"; /* default */
     int i = 0;
     int runForSecs = 60;
-    int retVal = 0;
+    int retVal = EXIT_SUCCESS;
 
     for (i = 1; i < argc;) {
         char *param = argv[i++];
