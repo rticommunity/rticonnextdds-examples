@@ -84,7 +84,7 @@ int main(int argc, char *argv[])
     int isPersistent = 0;
     int i = 0;
     int runForSecs = 60;
-    int retVal = 0;
+    int retVal = EXIT_SUCCESS;
 
     for (i = 1; i < argc;) {
         char *param = argv[i++];
@@ -100,8 +100,8 @@ int main(int argc, char *argv[])
                    "\t-domain_id <domain ID> (default: 0)\n"
                    "\t-persistent <1 if persistent durability should be used> "
                    "(default: 0 (transient))\n"
-                   "\t-run_for_secs <Running time of the application> (default: "
-                   "60 secs)\n",
+                   "\t-run_for_secs <Running time of the application> "
+                   "(default: 60 secs)\n",
                    argv[0]);
             return EXIT_FAILURE;
         }

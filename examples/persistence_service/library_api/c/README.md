@@ -67,7 +67,8 @@ under the top level `examples/persistence_service` directory.
     ```
 
     Also run step 9 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
-    example when running `PersistenceServiceLibraryAPI` with the `-persistent 1` argument.
+    example when running `PersistenceServiceLibraryAPI` with the `-persistent 1`
+    argument.
 
 ## Customizing the Build
 
