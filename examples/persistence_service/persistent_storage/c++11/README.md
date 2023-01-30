@@ -61,7 +61,7 @@ Before following the steps in this example make sure that you have set the
     -cfgFile PersistenceServiceConfig.xml -domainId 70
     ```
 
-    If everything goes well you should see:
+    You should see the output:
 
     ```sh
     RTI Persistence Service started
@@ -71,6 +71,8 @@ Before following the steps in this example make sure that you have set the
     create a directory named `MyDirectory` in the your present working directory.
     The files containing the samples will be located in there. If you want to
     change the location you can use the tag `<directory>` under `<filesystem>`.
+    If you already had the `MyDirectory` directory, make sure you clean its
+    contents to avoid receiveing samples from your previous runs.
 
 2.  Run the publisher from the `build` directory you created when compiling the
     example. The publisher and subscriber have the `-domain_id` and `-persistent`
@@ -87,7 +89,7 @@ Before following the steps in this example make sure that you have set the
     **Note**: The `-sample_count` argument controls how many samples the publisher
     will publish.
 
-    If everything goes well you should see:
+    You should see the output:
 
     ```sh
     Writing hello_world, count 0
@@ -109,7 +111,7 @@ Before following the steps in this example make sure that you have set the
     ./hello_world_subscriber -domain_id 70 -persistent 0
     ```
 
-    If everything goes well you should see:
+    You should see the output:
 
     ```sh
     [data: 0]
@@ -128,7 +130,7 @@ Before following the steps in this example make sure that you have set the
     ./hello_world_subscriber -domain_id 70 -persistent 0
     ```
 
-    If everything goes well you should see:
+    You should see the output:
 
     ```sh
     [data: 0]
@@ -150,6 +152,30 @@ Before following the steps in this example make sure that you have set the
 
 8.  Repeat steps 2 to 6 but this time use `-persistent 1` when starting the
     publisher or subscriber application.
+
+9.  Restart RTI Persistence Service with the `defaultPersistent` configuration.
+
+    ```sh
+    $NDDSHOME/bin/rtipersistenceservice -cfgName defaultPersistent
+    -cfgFile PersistenceServiceConfig.xml -domainId 70
+    ```
+
+    Start a subscriber and verify that it receives the persisted samples from
+    RTI Persistence Service:
+
+    ```sh
+    ./hello_world_subscriber -domain_id 70 -persistent 1
+    ```
+
+    You should see the output:
+
+    ```sh
+    [data: 0]
+    [data: 1]
+    [data: 2]
+    [data: 3]
+    [data: 4]
+    ```
 
 ## Customizing the Build
 

@@ -51,10 +51,13 @@ under the top level `examples/persistence_service` directory.
     subscriber applications under [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
     example.
 
+    Additionally the `PersistenceServiceLibraryAPI` executable also takes a third
+    argument called `-run_for_secs` that controls how long the application executes.
+
     Run `PersistenceServiceLibraryAPI` from the top level directory for this example
     that contains the `PersistenceServiceConfig.xml`
 
-    Rerun steps 2 to 6 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+    Run steps 2 to 6 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
     example for each invocation of `PersistenceServiceLibraryAPI` -
     one with `-persistent 0` that corresponds to `defaultTransient`, and one with
     `-persistent 1` that corresponds to `defaultPersistent`.
@@ -62,6 +65,9 @@ under the top level `examples/persistence_service` directory.
     ```sh
     ./build/PersistenceServiceLibraryAPI -domain_id 70 -persistent <0|1>
     ```
+
+    Also run step 9 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+    example when running `PersistenceServiceLibraryAPI` with the `-persistent 1` argument.
 
 ## Customizing the Build
 

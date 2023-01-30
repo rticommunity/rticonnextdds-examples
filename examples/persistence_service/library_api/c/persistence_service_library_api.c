@@ -1,5 +1,5 @@
 /*******************************************************************************
- (c) 2005-2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
+ (c) 2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
  works of the Software. Licensee has the right to distribute object form only
  for use with RTI products. The Software is provided "as is", with no warranty
@@ -15,13 +15,15 @@
 #include "ndds/ndds_c.h"
 #include "persistence/persistence_service.h"
 
-static int service_main(int domainId, int isPersistent)
+static int service_main(int domainId, int isPersistent, int runForSecs)
 {
     struct RTI_PersistenceServiceProperty property =
             RTI_PersistenceServiceProperty_INITIALIZER;
     struct RTI_PersistenceService *service = NULL;
     DDS_Boolean ok = DDS_BOOLEAN_FALSE;
-    struct DDS_Duration_t sleepPeriod = { 0, 1000000000 };
+    struct DDS_Duration_t runningPeriod = { 0, 0 };
+
+    runningPeriod.sec = runForSecs;
 
     property.cfg_file = "PersistenceServiceConfig.xml";
     property.cfg_name = isPersistent ? "defaultPersistent" : "defaultTransient";
@@ -37,20 +39,45 @@ static int service_main(int domainId, int isPersistent)
     service = RTI_PersistenceService_new(&property);
     if (service == NULL) {
         printf("Error creating the Persistence Service instance\n");
-        return -1;
+        return EXIT_FAILURE;
     }
 
     ok = RTI_PersistenceService_start(service);
     if (!ok) {
         printf("Error starting the Persistence Service instance\n");
-        return -1;
+        return EXIT_FAILURE;
     }
 
     printf("DomainID=%d, ConfigurationName=%s\n", domainId, property.cfg_name);
-    /* Infinite loop until the user terminates the process */
-    while (1) {
-        NDDS_Utility_sleep(&sleepPeriod);
+
+    /* Sleep for the running period */
+    NDDS_Utility_sleep(&runningPeriod);
+
+    ok = RTI_PersistenceService_stop(service);
+    if (!ok) {
+        printf("Error stopping the Persistence Service instance\n");
+        return EXIT_FAILURE;
     }
+
+    /* Deleting the service instance for resource cleanup */
+    RTI_PersistenceService_delete(service);
+
+    /*
+     * RTI Data Distribution Service provides the finalize_instance() method on
+     * domain participant factory for users who want to release memory used
+     * by the participant factory. Uncomment the following block of code for
+     * clean destruction of the singleton.
+     */
+    /*
+    DDS_ReturnCode_t retcode;
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+    */
+
+    return EXIT_SUCCESS;
 }
 
 int main(int argc, char *argv[])
@@ -58,6 +85,7 @@ int main(int argc, char *argv[])
     int domainId = 0;
     int isPersistent = 0;
     int i = 0;
+    int runForSecs = 60;
 
     for (i = 1; i < argc;) {
         char *param = argv[i++];
@@ -66,13 +94,17 @@ int main(int argc, char *argv[])
             domainId = atoi(argv[i++]);
         } else if (strcmp(param, "-persistent") == 0 && i < argc) {
             isPersistent = atoi(argv[i++]);
+        } else if (strcmp(param, "-run_for_secs") == 0 && i < argc) {
+            runForSecs = atoi(argv[i++]);
         } else {
             printf("%s [options]\n"
                    "\t-domain_id <domain ID> (default: 0)\n"
                    "\t-persistent <1 if persistent durability should be used> "
-                   "(default: 0 (transient))\n",
+                   "(default: 0 (transient))\n"
+                   "\t-run_for_secs <Running time of the application> (default: "
+                   "60 secs)\n",
                    argv[0]);
-            return -1;
+            return EXIT_FAILURE;
         }
     }
 
@@ -83,5 +115,5 @@ int main(int argc, char *argv[])
             NDDS_CONFIG_LOG_VERBOSITY_STATUS_ALL);
     */
 
-    return service_main(domainId, isPersistent);
+    return service_main(domainId, isPersistent, runForSecs);
 }
