@@ -78,13 +78,13 @@ int service_main(const char *cfgName, const char *cfgFile, int runForSecs)
     /* Sleep for the running period */
     NDDS_Utility_sleep(&runningPeriod);
 
-   return service_shutdown(service, &property);
+    return service_shutdown(service, &property);
 }
 
 int main(int argc, char *argv[])
 {
-    const char *cfgName = "LibraryAPIDemo";    /* default */
-    const char *cfgFile = "CloudDiscoveryServiceConfig.xml";    /* default */
+    const char *cfgName = "LibraryAPIDemo";                  /* default */
+    const char *cfgFile = "CloudDiscoveryServiceConfig.xml"; /* default */
     int i = 0;
     int runForSecs = 60;
     int retVal = 0;

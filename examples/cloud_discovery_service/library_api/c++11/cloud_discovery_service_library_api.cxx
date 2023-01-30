@@ -19,11 +19,11 @@
 
 void service_main(std::string cfg_name, std::string cfg_file, int run_for_secs)
 {
-    rti::cds::ServiceProperty service_property = rti::cds::ServiceProperty()
-            .cfg_file(cfg_file)
-            .service_name(cfg_name)
-            .application_name(
-                    "CloudDiscoveryService-LibraryAPI-CXX11");
+    rti::cds::ServiceProperty service_property =
+            rti::cds::ServiceProperty()
+                    .cfg_file(cfg_file)
+                    .service_name(cfg_name)
+                    .application_name("CloudDiscoveryService-LibraryAPI-CXX11");
     rti::cds::Service service(service_property);
 
     //  Dial up the logging at service level using the public logger API
@@ -44,8 +44,8 @@ void service_main(std::string cfg_name, std::string cfg_file, int run_for_secs)
 
 int main(int argc, char *argv[])
 {
-    std::string cfg_name = "LibraryAPIDemo";    // default
-    std::string cfg_file = "CloudDiscoveryServiceConfig.xml";    // default
+    std::string cfg_name = "LibraryAPIDemo";                   // default
+    std::string cfg_file = "CloudDiscoveryServiceConfig.xml";  // default
     int run_for_secs = 60;
 
     for (int i = 1; i < argc;) {
