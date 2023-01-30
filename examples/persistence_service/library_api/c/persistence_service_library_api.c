@@ -15,7 +15,43 @@
 #include "ndds/ndds_c.h"
 #include "persistence/persistence_service.h"
 
-static int service_main(int domainId, int isPersistent, int runForSecs)
+int service_shutdown(struct RTI_PersistenceService *service)
+{
+    DDS_Boolean ok = DDS_BOOLEAN_FALSE;
+
+    if (service != NULL) {
+        ok = RTI_PersistenceService_stop(service);
+        if (!ok) {
+            printf("Error stopping the Persistence Service instance\n");
+            return EXIT_FAILURE;
+        }
+
+        /* Deleting the service instance for resource cleanup */
+        RTI_PersistenceService_delete(service);
+
+        /* Finalize the globals */
+        RTI_PersistenceService_finalize_globals();
+    }
+
+    /*
+     * RTI Data Distribution Service provides the finalize_instance() method on
+     * domain participant factory for users who want to release memory used
+     * by the participant factory. Uncomment the following block of code for
+     * clean destruction of the singleton.
+     */
+    /*
+    DDS_ReturnCode_t retcode;
+    retcode = DDS_DomainParticipantFactory_finalize_instance();
+    if (retcode != DDS_RETCODE_OK) {
+        fprintf(stderr, "finalize_instance error %d\n", retcode);
+        status = -1;
+    }
+    */
+
+   return EXIT_SUCCESS;
+}
+
+int service_main(int domainId, int isPersistent, int runForSecs)
 {
     struct RTI_PersistenceServiceProperty property =
             RTI_PersistenceServiceProperty_INITIALIZER;
@@ -45,6 +81,7 @@ static int service_main(int domainId, int isPersistent, int runForSecs)
     ok = RTI_PersistenceService_start(service);
     if (!ok) {
         printf("Error starting the Persistence Service instance\n");
+        service_shutdown(service);
         return EXIT_FAILURE;
     }
 
@@ -53,31 +90,7 @@ static int service_main(int domainId, int isPersistent, int runForSecs)
     /* Sleep for the running period */
     NDDS_Utility_sleep(&runningPeriod);
 
-    ok = RTI_PersistenceService_stop(service);
-    if (!ok) {
-        printf("Error stopping the Persistence Service instance\n");
-        return EXIT_FAILURE;
-    }
-
-    /* Deleting the service instance for resource cleanup */
-    RTI_PersistenceService_delete(service);
-
-    /*
-     * RTI Data Distribution Service provides the finalize_instance() method on
-     * domain participant factory for users who want to release memory used
-     * by the participant factory. Uncomment the following block of code for
-     * clean destruction of the singleton.
-     */
-    /*
-    DDS_ReturnCode_t retcode;
-    retcode = DDS_DomainParticipantFactory_finalize_instance();
-    if (retcode != DDS_RETCODE_OK) {
-        fprintf(stderr, "finalize_instance error %d\n", retcode);
-        status = -1;
-    }
-    */
-
-    return EXIT_SUCCESS;
+    return service_shutdown(service);
 }
 
 int main(int argc, char *argv[])
