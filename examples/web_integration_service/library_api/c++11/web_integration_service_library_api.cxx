@@ -57,7 +57,7 @@ int main(int argc, char *argv[])
     setup_signal_handlers();
 
     std::string cfg_name = "LibraryAPIDemo";
-    std::string cfg_file = "../WebIntegrationServiceConfig.xml";
+    std::string cfg_file = "WebIntegrationServiceConfig.xml";
 
     for (int i = 1; i < argc;) {
         const std::string &param = argv[i++];
@@ -70,9 +70,9 @@ int main(int argc, char *argv[])
             std::cout
                     << argv[0] << " [options]" << std::endl
                     << "\t-cfgName <Top level configuration name> (default: \""
-                    << DEFAULT_CFG_NAME << "\")" << std::endl
+                    << cfg_name << "\")" << std::endl
                     << "\t-cfgFile <QoS configuration file name> (default: \""
-                    << DEFAULT_CFG_FILE << "\")" << std::endl;
+                    << cfg_file << "\")" << std::endl;
             return -1;
         }
     }

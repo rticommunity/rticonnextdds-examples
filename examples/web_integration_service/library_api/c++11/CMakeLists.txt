@@ -20,6 +20,12 @@ find_package(
         web_integration_service
 )
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/WebIntegrationServiceConfig.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/WebIntegrationServiceConfig.xml"
+    COPYONLY
+)
+
 add_executable(WebIntegrationServiceLibraryAPICXX11
     "${CMAKE_CURRENT_SOURCE_DIR}/web_integration_service_library_api.cxx"
 )
