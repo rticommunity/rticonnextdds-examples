@@ -38,7 +38,7 @@ namespace PartitionsExample
             using DomainParticipant participant = DomainParticipantFactory.Instance.CreateParticipant(domainId);
 
             // A Topic has a name and a datatype.
-            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example PartitionsExample_HelloWorld");
+            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example partitions");
 
             // A Publisher allows an application to create one or more DataWriters
             // Publisher QoS is configured in USER_QOS_PROFILES.xml

@@ -195,7 +195,7 @@ default behavior:
     more details.
     (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
--   `-G` -- CMake generator. The generator is the native build system to use
+-   `-G` -- CMake generator. The generator is the native build system used to
     build the source code. All the valid values are described described in the
     CMake documentation [CMake Generators
     Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)

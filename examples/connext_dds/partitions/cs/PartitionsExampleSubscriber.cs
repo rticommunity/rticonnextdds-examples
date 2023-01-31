@@ -43,7 +43,7 @@ namespace PartitionsExample
             using DomainParticipant participant = DomainParticipantFactory.Instance.CreateParticipant(domainId);
 
             // A Topic has a name and a datatype.
-            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example PartitionsExample_HelloWorld");
+            Topic<HelloWorld> topic = participant.CreateTopic<HelloWorld>("Example partitions");
 
             // Configure the Subscriber's Partition QoS policy.
             SubscriberQos subscriberQos;
