@@ -20,6 +20,12 @@ find_package(
         cloud_discovery_service
 )
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/CloudDiscoveryServiceConfig.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/CloudDiscoveryServiceConfig.xml"
+    COPYONLY
+)
+
 add_executable(CloudDiscoveryServiceLibraryAPICXX11
     "${CMAKE_CURRENT_SOURCE_DIR}/cloud_discovery_service_library_api.cxx"
 )

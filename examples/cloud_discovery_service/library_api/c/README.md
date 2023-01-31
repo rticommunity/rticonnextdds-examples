@@ -42,10 +42,10 @@ Discovery Service executable shipped with the Connext installation:
 - `-cfgFile`: Specifies the QoS configuration file name
 - `-cfgName`: Specified the top level configuration name
 
-You can run the generated executable from the `build` folder as follows:
+You can run the generated executable as follows:
 
 ```sh
-./CloudDiscoveryServiceLibraryAPIC -cfgFile ../CloudDiscoveryServiceConfig.xml
+./CloudDiscoveryServiceLibraryAPIC -cfgFile CloudDiscoveryServiceConfig.xml
 ```
 
 Additionally the `CloudDiscoveryServiceLibraryAPIC` executable also takes a third
