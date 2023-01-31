@@ -17,10 +17,8 @@
 
 int service_shutdown(struct RTI_PersistenceService *service)
 {
-    DDS_Boolean ok = DDS_BOOLEAN_FALSE;
-
     if (service != NULL) {
-        ok = RTI_PersistenceService_stop(service);
+        DDS_Boolean ok = RTI_PersistenceService_stop(service);
         if (!ok) {
             printf("Error stopping the Persistence Service instance\n");
             return EXIT_FAILURE;

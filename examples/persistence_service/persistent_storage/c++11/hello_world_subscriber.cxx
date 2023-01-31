@@ -44,7 +44,7 @@ public:
     }
 };
 
-void subscriber_main(int domain_id, int sample_count, int is_persistent)
+void subscriber_main(int domain_id, int sample_count, bool is_persistent)
 {
     // Create a DomainParticipant with default Qos
     DomainParticipant participant(domain_id);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
 {
     int domain_id = 0;
     int sample_count = 0;  // Infinite loop
-    int is_persistent = 0;
+    bool is_persistent = false;
 
     for (int i = 1; i < argc;) {
         const std::string &param = argv[i++];
@@ -91,7 +91,7 @@ int main(int argc, char *argv[])
         } else if (param == "-sample_count" && i < argc) {
             sample_count = atoi(argv[i++]);
         } else if (param == "-persistent" && i < argc) {
-            is_persistent = atoi(argv[i++]);
+            is_persistent = atoi(argv[i++]) ? true : false;
         } else {
             std::cout << argv[0] << " [options]" << std::endl
                       << "\t-domain_id <domain ID> (default: 0)" << std::endl

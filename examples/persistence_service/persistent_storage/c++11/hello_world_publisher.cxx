@@ -28,7 +28,7 @@ void publisher_main(
         int domain_id,
         int sample_count,
         int initial_value,
-        int is_persistent,
+        bool is_persistent,
         int sleep)
 {
     // Create a DomainParticipant with default Qos
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
     int domain_id = 0;
     int sample_count = 0;  // Infinite loop
     int initial_value = 0;
-    int is_persistent = 0;
+    bool is_persistent = false;
     int sleep = 0;
 
     for (int i = 1; i < argc;) {
@@ -82,7 +82,7 @@ int main(int argc, char *argv[])
         } else if (param == "-initial_value" && i < argc) {
             initial_value = atoi(argv[i++]);
         } else if (param == "-persistent" && i < argc) {
-            is_persistent = atoi(argv[i++]);
+            is_persistent = atoi(argv[i++]) ? true : false;
         } else {
             std::cout << argv[0] << " [options]" << std::endl
                       << "\t-domain_id <domain ID> (default: 0)" << std::endl
