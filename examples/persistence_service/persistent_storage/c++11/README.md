@@ -47,10 +47,9 @@ Before following the steps in this example make sure that you have set the
 `NDDSHOME` environment variable to point to the top level directory where
 *RTI Connext* is installed.
 
-1.  Run *Persistence Service* from the top level directory for this example
-    that contains the `PersistenceServiceConfig.xml`. You can choose from
-    `defaultTransient` or `defaultPersistent` depending on the kind of scenario
-    you are running. You can also control on which domain ID *Persistence Service*
+1.  Run *Persistence Service* by using either the `defaultTransient` or
+    `defaultPersistent` configuration, depending on the kind of scenario you
+    are running. You can also control on which domain ID *Persistence Service*
     runs by using the `-domainId` argument.
 
     For this step we use the `defaultTransient` configuration while running on
@@ -72,7 +71,7 @@ Before following the steps in this example make sure that you have set the
     The files containing the samples will be located in there. If you want to
     change the location you can use the tag `<directory>` under `<filesystem>`.
     If you already had the `MyDirectory` directory, make sure you clean its
-    contents to avoid receiveing samples from your previous runs.
+    contents to avoid receiving samples from your previous runs.
 
 2.  Run the publisher from the `build` directory you created when compiling the
     example. The publisher and subscriber have the `-domain_id` and `-persistent`

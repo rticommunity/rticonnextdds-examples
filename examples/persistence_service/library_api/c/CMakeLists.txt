@@ -20,6 +20,12 @@ find_package(
         persistence_service
 )
 
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/PersistenceServiceConfig.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/PersistenceServiceConfig.xml"
+    COPYONLY
+)
+
 add_executable(PersistenceServiceLibraryAPIC
     "${CMAKE_CURRENT_SOURCE_DIR}/persistence_service_library_api.c"
 )

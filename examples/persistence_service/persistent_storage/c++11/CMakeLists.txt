@@ -19,3 +19,9 @@ connextdds_add_example(
     IDL "hello_world"
     LANG "C++11"
 )
+
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/PersistenceServiceConfig.xml"
+    "${CMAKE_CURRENT_BINARY_DIR}/PersistenceServiceConfig.xml"
+    COPYONLY
+)
