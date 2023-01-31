@@ -12,16 +12,31 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
-# Include ConnextDdsAddExample.cmake from resources/cmake
-include(ConnextDdsAddExample)
-
-connextdds_add_example(
-    IDL "hello_world"
-    LANG "C++11"
+find_package(
+    RTIConnextDDS "7.0.0"
+    REQUIRED
+    COMPONENTS
+        core
+        persistence_service
 )
 
 configure_file(
     "${CMAKE_CURRENT_SOURCE_DIR}/PersistenceServiceConfig.xml"
     "${CMAKE_CURRENT_BINARY_DIR}/PersistenceServiceConfig.xml"
     COPYONLY
+)
+
+add_executable(PersistenceServiceLibraryAPIC
+    "${CMAKE_CURRENT_SOURCE_DIR}/persistence_service_library_api.c"
+)
+
+target_link_libraries(PersistenceServiceLibraryAPIC
+    PUBLIC
+        RTIConnextDDS::persistence_service_c
+)
+
+# To differentiate between release and debug executables
+set_target_properties(PersistenceServiceLibraryAPIC
+    PROPERTIES
+        DEBUG_POSTFIX "d"
 )

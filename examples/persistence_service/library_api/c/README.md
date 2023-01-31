@@ -1,4 +1,4 @@
-# Example Code: Persistent Storage
+# Example Code: Persistence Service Library API in C
 
 ## Building the Example :wrench:
 
@@ -20,7 +20,7 @@ Generator). To build the example, run CMake as follows:
 cmake --build .
 ```
 
-**Note**: if you are using a multi-configuration generator, such as Visual
+**Note**: If you are using a multi-configuration generator, such as Visual
 Studio solutions, you can specify the configuration mode to build as follows:
 
 ```sh
@@ -33,71 +33,39 @@ Makefiles in the configuration process, run make to build the example. Likewise,
 if you generated a Visual Studio solution, open the solution and follow the
 regular build process.
 
-## Running the Example
+## Running the example
 
-In two separate command prompt windows for the publisher and subscriber. Run the
-following commands from the example directory (this is necessary to ensure the
-application loads the QoS defined in *USER_QOS_PROFILES.xml*):
+Before following the steps in this example make sure that you have set the
+`NDDSHOME` environment variable to point to the top level directory where
+*RTI Connext* is installed.
 
-**Note: If you are using *TimesTen*, you may need run the command prompt as
-administrator. Otherwise, none of the scenarios will not run correctly.**
+**Note:** This example utilizes the publisher and subscriber application created
+by compiling the example [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+under the top level `examples/persistence_service` directory.
 
-**For TimesTen users**: In addition, you need to uncomment some lines in the
-*USER_QOS_PROFILES.xml* and *persistence_service_configuration.xml* to load the
-correct driver (we assuming you have installed *TimesTen 11.2.1*). Refer to
-those documents for further details.
+1.  We will be using the sample application that demonstrates
+    the usage of *Persistence Service* Library API. The `PersistenceServiceLibraryAPI`
+    application is created when this example is compiled.
 
--   Durable Writer History scenario
+    It takes the `-domain_id` and `-persistent` arguments like the publisher and
+    subscriber applications under [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+    example.
 
-    ```sh
-    # Do not forget to replace the path separator to "\" on Windows.
-    hello_world_subscriber
-    hello_world_publisher -sample_count 5 -initial_value 0 -dwh 1
-    hello_world_subscriber
-    hello_world_publisher -sample_count 5 -initial_value 5 -dwh 1
-    ```
+    Additionally the `PersistenceServiceLibraryAPI` executable also takes a third
+    argument called `-run_for_secs` that controls how long the application executes.
 
--   Durable Reader State Scenario
-
-    ```sh
-    # Do not forget to replace the path separator to "\" on Windows.
-    hello_world_subscriber.exe -drs 1
-    hello_world_publisher.exe -sample_count 5 -initial_value 0 -sleep 60
-    stop hello_world_subscriber
-    hello_world_subscriber.exe
-    hello_world_subscriber.exe -drs 1
-    ```
-
--   Persistence Service Scenario
+    Run steps 2 to 6 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+    example for each invocation of `PersistenceServiceLibraryAPI` -
+    one with `-persistent 0` that corresponds to `defaultTransient`, and one with
+    `-persistent 1` that corresponds to `defaultPersistent`.
 
     ```sh
-    # Do not forget to replace the path separator to "\" and
-    # "$NDDSHOME" by "%NDDSHOME%" on Windows.
-
-    # Run persistence service (in the same folder that there are
-    # persistence_service_configuration.xml):
-    "$NDDSHOME/bin/rtipersistenceservice" -cfgFile persistence_service_configuration.xml -cfgName <persistence_service_database|persistence_service_filesystem>
-
-    hello_world_subscriber
-    hello_world_publisher -sample_count 5 -initial_value 0
-    hello_world_subscriber
+    ./PersistenceServiceLibraryAPI -domain_id 70 -persistent <0|1>
     ```
 
-The applications accepts different arguments:
-
-```plaintext
-hello_world_subscriber:
-    -domainId <domain ID> (default: 0)
-    -sample_count <sample_count> (default: infinite => 0)
-    -drs <1|0> Enable/Disable durable reader state (default: 0)
-
-hello_world_publisher:
-    -domainId <domain ID> (default: 0)
-    -sample_count <number of published samples> (default: infinite)
-    -initial_value <first sample value> (default: 0)
-    -sleep <sleep time in seconds before finishing> (default: 0)
-    -dwh <1|0> Enable/Disable durable writer history (default: 0)
-```
+    Also run step 9 of the [persistent_storage/c++11](../../persistent_storage/c%2B%2B11/)
+    example when running `PersistenceServiceLibraryAPI` with the `-persistent 1`
+    argument.
 
 ## Customizing the Build
 
@@ -128,12 +96,12 @@ For example, to build a example in Debug/Static mode run CMake as follows:
 cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=ON .. -G "Visual Studio 15 2017" -A x64
 ```
 
-### Configuring Connext DDS Installation Path and Architecture
+### Configuring Connext Installation Path and Architecture
 
 The CMake build infrastructure will try to guess the location of your Connext
-DDS installation and the Connext DDS architecture based on the default settings
-for your host platform.If you installed Connext DDS in a custom location, you
-can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext DDS
+DDS installation and the Connext architecture based on the default settings
+for your host platform.If you installed Connext in a custom location, you
+can use the CONNEXTDDS_DIR variable to indicate the path to your RTI Connext
 installation folder. For example:
 
 ```sh
@@ -167,7 +135,7 @@ You will find the definition of connextdds_add_example, along with detailed
 documentation, in
 [resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
 
-For a more comprehensive example on how to build an RTI Connext DDS application
+For a more comprehensive example on how to build an RTI Connext application
 using CMake, please refer to the
 [hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
 a comprehensive CMakeLists.txt script with all the steps and instructions
