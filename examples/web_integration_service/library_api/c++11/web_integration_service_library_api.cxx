@@ -13,7 +13,7 @@
 #include <map>
 
 #include "ndds/ndds_cpp.h"
-#include "rti/webdds/Service.hpp"
+#include <rti/webdds/Service.hpp>
 
 static bool shutdown_requested;
 
@@ -39,8 +39,6 @@ void service_main(std::string cfg_name, std::string cfg_file)
 
     rti::webdds::Service service(std::move(service_property));
 
-    setup_signal_handlers();
-
     std::cout << "Web Integration Service successfully created\n";
 
     service.start();
@@ -54,15 +52,12 @@ void service_main(std::string cfg_name, std::string cfg_file)
     service.stop();
 }
 
-#if !(defined(RTI_VXWORKS) && !defined(__RTP__)) && !defined(RTI_PSOS) \
-        && !defined(RTI_IOS)
 int main(int argc, char *argv[])
 {
-    const std::string DEFAULT_CFG_NAME = "LibraryAPIDemo";
-    const std::string DEFAULT_CFG_FILE = "../WebIntegrationServiceConfig.xml";
+    setup_signal_handlers();
 
-    std::string cfg_name = DEFAULT_CFG_NAME;
-    std::string cfg_file = DEFAULT_CFG_FILE;
+    std::string cfg_name = "LibraryAPIDemo";
+    std::string cfg_file = "../WebIntegrationServiceConfig.xml";
 
     for (int i = 1; i < argc;) {
         const std::string &param = argv[i++];
@@ -87,9 +82,8 @@ int main(int argc, char *argv[])
     } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in service_main: " << ex.what() << std::endl;
-        return -1;
+        return EXIT_FAILURE;
     }
 
     return 0;
 }
-#endif

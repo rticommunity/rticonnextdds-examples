@@ -17,6 +17,7 @@ find_package(
     REQUIRED
     COMPONENTS
         core
+        web_integration_service
 )
 
 add_executable(WebIntegrationServiceLibraryAPICXX11
@@ -32,29 +33,7 @@ set_property(
     PROPERTY CXX_STANDARD_REQUIRED ON
 )
 
-# TODO: Refactor these once https://github.com/rticommunity/rticonnextdds-cmake-utils/issues/75
-# is resolved.
-target_compile_definitions(WebIntegrationServiceLibraryAPICXX11
-    PUBLIC
-        ${CONNEXTDDS_COMPILE_DEFINITIONS})
-
-set_target_properties(WebIntegrationServiceLibraryAPICXX11
-    PROPERTIES
-        DEBUG_POSTFIX "d"
-)
-
-target_include_directories(WebIntegrationServiceLibraryAPICXX11
-    PUBLIC
-        ${CONNEXTDDS_INCLUDE_DIRS}
-)
-
-target_link_directories(WebIntegrationServiceLibraryAPICXX11
-    PUBLIC
-        ${CONNEXTDDS_DIR}/lib/${CONNEXTDDS_ARCH}
-)
-
 target_link_libraries(WebIntegrationServiceLibraryAPICXX11
     PUBLIC
-        RTIConnextDDS::cpp2_api
-        rtiwebintegrationserviced
+        RTIConnextDDS::web_integration_service_cpp2
 )
