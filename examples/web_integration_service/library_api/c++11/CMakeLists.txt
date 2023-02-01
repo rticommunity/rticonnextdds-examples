@@ -26,8 +26,15 @@ configure_file(
     COPYONLY
 )
 
+set(WEB_INTEGRATION_SERVICE_EXAMPLES_DIR "${CMAKE_CURRENT_SOURCE_DIR}/../../")
+configure_file(
+    "${CMAKE_CURRENT_SOURCE_DIR}/web_integration_service_library_api.cxx.in"
+    "${CMAKE_CURRENT_BINARY_DIR}/web_integration_service_library_api.cxx"
+    @ONLY
+)
+
 add_executable(WebIntegrationServiceLibraryAPICXX11
-    "${CMAKE_CURRENT_SOURCE_DIR}/web_integration_service_library_api.cxx"
+    "${CMAKE_CURRENT_BINARY_DIR}/web_integration_service_library_api.cxx"
 )
 
 set_property(
