@@ -155,7 +155,7 @@ the default behavior:
     more details.
     (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
--   `-G` -- CMake generator. The generator is the native build system to use
+-   `-G` -- CMake generator. The generator is the native build system used to
     build the source code. All the valid values are described described in the
     CMake documentation [CMake Generators
     Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
@@ -203,7 +203,8 @@ constructs to:
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in
-[resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
+[resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
+](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the

@@ -18,6 +18,10 @@ option(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES
     "Build Routing Service examples"
     OFF
 )
+option(CONNEXTDDS_BUILD_CLOUD_DISCOVERY_SERVICE_EXAMPLES
+    "Build Cloud Discovery Service examples"
+    OFF
+)
 
 option(CONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES
     "Build Web Integration Service examples"
@@ -37,4 +41,7 @@ if(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES)
 endif()
 if(CONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/web_integration_service")
+endif()
+if(CONNEXTDDS_BUILD_CLOUD_DISCOVERY_SERVICE_EXAMPLES)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/cloud_discovery_service")
 endif()

@@ -75,18 +75,18 @@ solution on Windows), \. You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
-and Debug. See the [CMake documentation for more details.
-(Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+    and Debug. See the [CMake documentation for more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
 -   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
-dynamic linking and OFF for static linking. See [CMake documentation for
-more details.
-(Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+    dynamic linking and OFF for static linking. See [CMake documentation for
+    more details.
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
 
--   `-G` -- CMake generator. The generator is the native build system to use
-build the source code. All the valid values are described described in the
-CMake documentation [CMake Generators
-Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+-   `-G` -- CMake generator. The generator is the native build system used to
+    build the source code. All the valid values are described described in the
+    CMake documentation [CMake Generators
+    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
 
 For example, to build a example in Debug/Static mode run CMake as follows:
 
@@ -131,7 +131,8 @@ and subscriber executables are generated.
 
 You will find the definition of connextdds_add_example, along with detailed
 documentation, in
-[resources/cmake/ConnextDdsAddExample.cmake](../../../../resources/cmake/ConnextDdsAddExample.cmake).
+[resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
+](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the

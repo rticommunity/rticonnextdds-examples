@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/7.0.0/rti_persistence_service.xsd">
+    <!-- ================================================================= -->
+    <!-- Persist all data in memory -->
+    <!-- ================================================================= -->
+    <persistence_service name="defaultTransient">
+        <annotation>
+            <documentation>
+                Persists in memory all topics published with TRANSIENT durability.
+            </documentation>
+        </annotation>
+        <participant name="defaultParticipant">
+            <persistence_group name="persistAll">
+                <filter>*</filter>
+                <datawriter_qos>
+                    <history>
+                        <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    </history>
+                    <reliability>
+                        <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    </reliability>
+                </datawriter_qos>
+                <datareader_qos>
+                    <history>
+                        <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    </history>
+                    <reliability>
+                        <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    </reliability>
+                </datareader_qos>
+            </persistence_group>
+            <domain_participant_qos>
+                <transport_builtin>
+                    <mask>UDPv4</mask>
+                </transport_builtin>
+                <discovery>
+                    <initial_peers>
+                        <element>localhost</element>
+                    </initial_peers>
+                </discovery>
+            </domain_participant_qos>
+        </participant>
+    </persistence_service>
+    <!-- ================================================================= -->
+    <!-- Persist all data in disk -->
+    <!-- ================================================================= -->
+    <persistence_service name="defaultPersistent">
+        <annotation>
+            <documentation>
+                Persists in the file system all topics published with PERSISTENT durability.
+            </documentation>
+        </annotation>
+        <persistent_storage>
+            <filesystem>
+                <directory>MyDirectory</directory>
+                <file_prefix>MyPersistenceFiles_</file_prefix>
+            </filesystem>
+        </persistent_storage>
+        <participant name="defaultParticipant">
+            <persistence_group name="persistAll">
+                <filter>*</filter>
+                <datawriter_qos>
+                    <history>
+                        <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    </history>
+                    <reliability>
+                        <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    </reliability>
+                </datawriter_qos>
+                <datareader_qos>
+                    <history>
+                        <kind>KEEP_ALL_HISTORY_QOS</kind>
+                    </history>
+                    <reliability>
+                        <kind>RELIABLE_RELIABILITY_QOS</kind>
+                    </reliability>
+                </datareader_qos>
+            </persistence_group>
+            <domain_participant_qos>
+                <transport_builtin>
+                    <mask>UDPv4</mask>
+                </transport_builtin>
+                <discovery>
+                    <initial_peers>
+                        <element>localhost</element>
+                    </initial_peers>
+                </discovery>
+            </domain_participant_qos>
+        </participant>
+    </persistence_service>
+</dds>
