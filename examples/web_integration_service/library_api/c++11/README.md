@@ -41,6 +41,7 @@ Integration Service executable shipped with the Connext installation:
 
 - `-cfgFile`: Specifies the QoS configuration file name
 - `-cfgName`: Specified the top level configuration name
+- `-documentRoot`: Specified the path to be served by the web server
 
 You can run the generated executable from the `build` folder as follows:
 
