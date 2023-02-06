@@ -31,7 +31,8 @@ def subscriber_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     topic = dds.Topic(
-        participant, "Example waitset_query_cond", waitset_query_cond)
+        participant, "Example waitset_query_cond", waitset_query_cond
+    )
     reader_qos = dds.QosProvider.default.datareader_qos
     reader = dds.DataReader(dds.Subscriber(participant), topic, reader_qos)
 
@@ -94,7 +95,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="RTI Connext DDS Example: Waitsets with Query Conditions (Subscriber)"
     )
-    parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
+    parser.add_argument(
+        "-d", "--domain", type=int, default=0, help="DDS Domain ID"
+    )
     parser.add_argument(
         "-c", "--count", type=int, default=0, help="Number of samples to send"
     )

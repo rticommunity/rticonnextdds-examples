@@ -20,7 +20,8 @@ def publisher_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     topic = dds.Topic(
-        participant, "Example waitset_query_cond", waitset_query_cond)
+        participant, "Example waitset_query_cond", waitset_query_cond
+    )
     writer = dds.DataWriter(dds.Publisher(participant), topic)
 
     instance = waitset_query_cond()
@@ -40,7 +41,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description="RTI Connext DDS Example: Waitsets with Query Conditions (Publisher)"
     )
-    parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
+    parser.add_argument(
+        "-d", "--domain", type=int, default=0, help="DDS Domain ID"
+    )
     parser.add_argument(
         "-c", "--count", type=int, default=0, help="Number of samples to send"
     )

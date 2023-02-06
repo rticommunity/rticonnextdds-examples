@@ -12,8 +12,8 @@ import rti.idl as idl
 
 
 @idl.struct(
-    member_annotations = {
-        'name': [idl.key],
+    member_annotations={
+        "name": [idl.key],
     }
 )
 class waitset_query_cond:
