@@ -12,6 +12,7 @@
 #include <csignal>
 #include <map>
 
+#include <dds/core/ddscore.hpp>
 #include <rti/webdds/Service.hpp>
 
 static bool shutdown_requested = false;
