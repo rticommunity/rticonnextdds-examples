@@ -36,22 +36,24 @@ regular build process.
 ## Running the Example
 
 Once the example is built it will generate the `WebIntegrationServiceLibraryAPICXX11`
-executable. This executable takes two arguments that are similar to the Web
+executable. This executable takes three arguments that are similar to the Web
 Integration Service executable shipped with the Connext installation:
 
 - `-cfgFile`: Specifies the QoS configuration file name
-- `-cfgName`: Specified the top level configuration name
-- `-documentRoot`: Specified the path to be served by the web server
+- `-cfgName`: Specifies the top level configuration name
+- `-documentRoot`: Specifies the path to be served by the web server
 
 You can run the generated executable from the `build` folder as follows:
 
 ```sh
-./WebIntegrationServiceLibraryAPICXX11 -cfgFile ../WebIntegrationServiceConfig.xml
+./WebIntegrationServiceLibraryAPICXX11 -cfgFile ./WebIntegrationServiceConfig.xml /
+        -cfgName LibraryAPIDemo /
+        -documentRoot ../../../../web_integration_service/
 ```
 
 **Note:** The file `WebIntegrationServiceConfig.xml` has only one configuration called
 `LibraryAPIDemo` that starts the Web Integration Service instance on HTTP port `8080`.
-This port can be changed by adding the corresponding option to tte serviceProperty
+This port can be changed by adding the corresponding option to `serviceProperty`
 before starting the service.
 
 Now you can run a shapes demo application and publish some shapes. Then, you

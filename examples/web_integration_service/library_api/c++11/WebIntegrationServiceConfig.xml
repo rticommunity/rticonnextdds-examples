@@ -12,7 +12,7 @@
 
 <!-- RTI Data Distribution Service Deployment -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/@CONNEXTDDS_VERSION@/rti_web_integration_service.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_web_integration_service.xsd">
 
     <!-- Here we define ShapeType, which is the type associated with all
         the Shape topics (i.e., Circles, Triangles, and Squares). -->

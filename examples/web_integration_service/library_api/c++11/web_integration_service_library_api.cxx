@@ -14,7 +14,7 @@
 
 #include <rti/webdds/Service.hpp>
 
-static bool shutdown_requested;
+static bool shutdown_requested = false;
 
 void stop_handler(int value)
 {
@@ -23,7 +23,6 @@ void stop_handler(int value)
 }
 void setup_signal_handlers()
 {
-    shutdown_requested = false;
     signal(SIGINT, stop_handler);
     signal(SIGTERM, stop_handler);
 }
@@ -36,10 +35,8 @@ void service_main(
 {
     rti::webdds::ServiceProperty service_property;
 
-    service_property
-            .cfgfile(cfg_file)
-            .cfgname(cfg_name)
-            .document_root(document_root);
+    service_property.cfgfile(cfg_file).cfgname(cfg_name).document_root(
+            document_root);
 
     rti::webdds::Service service(std::move(service_property));
 
@@ -50,7 +47,7 @@ void service_main(
     std::cout << "Web Integration Service running ...\n";
 
     while (!shutdown_requested) {
-        std::this_thread::sleep_for(std::chrono::seconds(2));
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 
     service.stop();
@@ -94,5 +91,5 @@ int main(int argc, char *argv[])
         return EXIT_FAILURE;
     }
 
-    return 0;
+    return EXIT_SUCCESS;
 }
