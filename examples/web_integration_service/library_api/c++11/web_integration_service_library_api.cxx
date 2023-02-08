@@ -62,7 +62,7 @@ int main(int argc, char *argv[])
     std::string document_root = "../../../../web_integration_service/";
 
     for (int i = 1; i < argc;) {
-        const std::string &param = argv[i++];
+        const std::string param = argv[i++];
 
         if (param == "-cfgName" && i < argc) {
             cfg_name = argv[i++];
@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
                     << cfg_file << "\")" << std::endl
                     << "\t-documentRoot <Document root directory> (default: \""
                     << document_root << "\")" << std::endl;
-            return -1;
+            return EXIT_FAILURE;
         }
     }
 
