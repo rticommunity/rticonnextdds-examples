@@ -90,6 +90,8 @@ int main(int argc, char *argv[])
         std::cerr << "Exception in service_main: " << ex.what() << std::endl;
         return EXIT_FAILURE;
     }
-
+    // Releases the memory used by the participant factory.
+    // Optional at application exit
+    dds::domain::DomainParticipant::finalize_participant_factory();
     return EXIT_SUCCESS;
 }
