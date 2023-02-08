@@ -68,7 +68,7 @@ This case the domain id is set to 10, but can be any number from 0-255.
 
 By default, CMake will generate build files using the most common generator for
 your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
-solution on Windows). You can use the following CMake variables to modify the
+Solutions on Windows). You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` - specifies the build mode. Valid values are `Release`
@@ -122,9 +122,9 @@ to:
 
 2.  Build the application executable.
 
-3.  Copy the application.xml file into the directory where the executable is generated.
+3.  Copy the `application.xml` file into the directory where the executable is generated.
 
-You will find the definition of connextdds_add_application, along with detailed
+You will find the definition of `connextdds_add_application`, along with detailed
 documentation, in
 [resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
 ](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
@@ -132,5 +132,5 @@ documentation, in
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the
 [hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
-a comprehensive CMakeLists.txt script with all the steps and instructions
+a comprehensive `CMakeLists.txt` script with all the steps and instructions
 described in detail.

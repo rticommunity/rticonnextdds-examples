@@ -78,7 +78,7 @@ cmake -DCONNEXTDDS_DIR=<connext dir> \
 
 By default, CMake will generate build files using the most common generator for
 your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
-solution on Windows). You can use the following CMake variables to modify the
+Solutions on Windows). You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` - specifies the build mode. Valid values are `Release`

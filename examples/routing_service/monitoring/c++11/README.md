@@ -63,7 +63,7 @@ The applications accept up to two arguments:
 
 By default, CMake will generate build files using the most common generator for
 your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
-solution on Windows). You can use the following CMake variables to modify the
+Solutions on Windows). You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` - specifies the build mode. Valid values are `Release`
@@ -126,12 +126,12 @@ documentation, in
 [resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
 ](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
 
-You will find the definition of connextdds_rtiddsgen_run, along with detailed
+You will find the definition of `connextdds_rtiddsgen_run`, along with detailed
 documentation, in
 [resources/cmake/ConnextDdsCodegen.cmake](../../../../resources/cmake/ConnextDdsCodegen.cmake).
 
 For a more comprehensive example on how to build an RTI Connext DDS application
 using CMake, please refer to the
 [hello_world](../../../connext_dds/build_systems/cmake/) example, which includes
-a comprehensive CMakeLists.txt script with all the steps and instructions
+a comprehensive `CMakeLists.txt` script with all the steps and instructions
 described in detail.
