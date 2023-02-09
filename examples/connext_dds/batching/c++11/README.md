@@ -74,19 +74,19 @@ your host platform (e.g., Makefiles on Unix-like systems and Visual Studio
 Solutions on Windows), \. You can use the following CMake variables to modify the
 default behavior:
 
--   `-DCMAKE_BUILD_TYPE` -- specifies the build mode. Valid values are Release
+-   `-DCMAKE_BUILD_TYPE` - specifies the build mode. Valid values are Release
     and Debug. See the [CMake documentation for more details.
     (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
 
--   `-DBUILD_SHARED_LIBS` -- specifies the link mode. Valid values are ON for
+-   `-DBUILD_SHARED_LIBS` - specifies the link mode. Valid values are ON for
     dynamic linking and OFF for static linking. See [CMake documentation for
-    more details.
-    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
+    more details
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html).
 
--   `-G` -- CMake generator. The generator is the native build system used to
+-   `-G` - CMake generator. The generator is the native build system used to
     build the source code. All the valid values are described described in the
     CMake documentation [CMake Generators
-    Section.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+    Section](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
 
 For example, to build a example in Debug/Static mode run CMake as follows:
 

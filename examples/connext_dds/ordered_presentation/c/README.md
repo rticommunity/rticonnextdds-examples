@@ -166,13 +166,12 @@ default behavior:
 
 -   `-DBUILD_SHARED_LIBS` - specifies the link mode. Valid values are `ON` for
     dynamic linking and `OFF` for static linking. See [CMake documentation for
-    more details.
-    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html)
-
+    more details
+    (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html).
 -   `-G` - CMake generator. The generator is the native build system used to
     build the source code. All the valid values are described in the CMake
     documentation for [CMake
-    Generators.](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html)
+    Generators](https://cmake.org/cmake/help/latest/manual/cmake-generators.7.html).
 
 For example, to build an example in Debug/Dynamic mode run CMake as follows:
 
