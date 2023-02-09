@@ -177,7 +177,7 @@ installation folder. For example:
 cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 ```
 
-Also, if you installed libraries for multiple target architecture on your system
+Also, if you installed libraries for multiple target architectures on your system
 (i.e., you installed more than one target `.rtipkg` file), you can use the
 `CONNEXTDDS_ARCH` variable to indicate the architecture of the specific libraries
 you want to link against. For example:
