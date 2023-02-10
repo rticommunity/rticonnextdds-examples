@@ -141,8 +141,8 @@ Solutions on Windows). You can use the following CMake variables to modify the
 default behavior:
 
 -   `-DCMAKE_BUILD_TYPE` - specifies the build mode. Valid values are `Release`
-    and `Debug`. See the [CMake documentation for more details.
-    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html)
+    and `Debug`. See the [CMake documentation for more details
+    (Optional)](https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html).
 
 -   `-DBUILD_SHARED_LIBS` - specifies the link mode. Valid values are `ON` for
     dynamic linking and `OFF` for static linking. See [CMake documentation for
