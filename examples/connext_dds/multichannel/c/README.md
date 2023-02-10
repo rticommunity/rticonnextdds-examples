@@ -154,6 +154,7 @@ default behavior:
     dynamic linking and `OFF` for static linking. See [CMake documentation for
     more details
     (Optional)](https://cmake.org/cmake/help/latest/variable/BUILD_SHARED_LIBS.html).
+
 -   `-G` - CMake generator. The generator is the native build system used to
     build the source code. All the valid values are described in the CMake
     documentation for [CMake
