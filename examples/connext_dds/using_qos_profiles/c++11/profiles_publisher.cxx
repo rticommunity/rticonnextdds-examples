@@ -45,7 +45,7 @@ void run_publisher_application(
             qos_provider.datawriter_qos(
                     "profiles_Library::transient_local_profile"));
 
-    // Create a DataReader with the QoS profile "volatile_profile",
+    // Create a DataWriter with the QoS profile "volatile_profile",
     // from the QoS library "profiles_Library".
     dds::pub::DataWriter<profiles> writer_volatile(
             publisher,
