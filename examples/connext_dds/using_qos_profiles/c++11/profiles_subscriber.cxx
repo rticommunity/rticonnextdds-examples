@@ -77,8 +77,8 @@ void run_subscriber_application(
     auto transient_listener =
             std::make_shared<ProfilesListener>("transient_local_profile");
 
-    // Create a DataWriter with the QoS profile "transient_local_profile" that
-    // it is inside the QoS library "profiles_Library".
+    // Create a DataReader with the QoS profile "transient_local_profile", which
+    // is in the QoS library "profiles_Library".
     dds::sub::DataReader<profiles> reader_transient_local(
             subscriber,
             topic,

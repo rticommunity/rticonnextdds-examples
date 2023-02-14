@@ -78,6 +78,7 @@ def main():
         "-DCONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES=ON",
         "-DCONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES=ON",
         "-DCONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES=ON",
+        "-DCONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES=ON",
         f"-DCONNEXTDDS_DIR={str(rti_connext_dds_dir)}",
         *args.cmake_options,
         str(examples_dir),
