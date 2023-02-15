@@ -13,6 +13,7 @@ cmake_minimum_required(VERSION 3.11)
 project (PluggableStorageC++11)
 
 set(CMAKE_DEBUG_POSTFIX "d")
+set(CMAKE_CXX_STANDARD 11)
 
 if(NOT BUILD_SHARED_LIBS)
     set(msg

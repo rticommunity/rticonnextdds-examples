@@ -11,6 +11,7 @@
  */
 
 #include <iostream>
+#include <sstream>
 
 #include <dds/pub/ddspub.hpp>
 #include <rti/util/util.hpp>  // for sleep()
