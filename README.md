@@ -27,3 +27,19 @@ versions of RTI Connext DDS, please check out the appropriate branch:
 - [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
 - [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
 - [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
+
+## Cloning Repository
+
+To clone the repository you will need to run `git clone` as follows to download
+both the repository and its submodule dependencies:
+
+```bash
+git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-gateway-opcua.git
+```
+
+If you forget to clone the repository with `--recurse-submodule`, simply run
+the following command to pull all the dependencies:
+
+```bash
+git submodule update --init --recursive
+```
