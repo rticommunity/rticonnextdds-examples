@@ -1,6 +1,6 @@
 # rticonnextdds-examples
 
-[![GitHub Workflow Status](https://img.shields.io/github/workflow/status/rticommunity/rticonnextdds-examples/Build%20and%20run%20static%20analysis?event=push)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
+[![Build and run static analysis](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
 
 This repository includes examples on how to use specific features of RTI
 Connext DDS.
