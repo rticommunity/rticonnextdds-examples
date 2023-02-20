@@ -83,11 +83,13 @@ The output of the participant snapshot will be:
 
 ```plaintext
 ----------------------------------------------------------------------------
-Remote participants that match the local participant domain=0 name="discovery_snapshotParticipant"
-role="discovery_snapshotParticipantRole" id="1" guid_prefix="0x0101E315,0x5357026F,0x42882524"
+Participant guid="0x0101E315,0x5357026F,0x42882524:0x000001C1" domain_id=0 name="discovery_snapshotParticipant"
+role="discovery_snapshotParticipantRole"
 ----------------------------------------------------------------------------
-1. 0x0101A343,0x260898AB,0xDEE35DB5 name="discovery_snapshotParticipant" role="discovery_snapshotParticipantRole"
-unicastLocators="udpv4://192.168.1.36:7411,udpv4://10.2.190.25:7411,shmem://C268:F783:F9C1:8665:B8B1:B40F:0000:0000:7411"
+Matched Participants:
+----------------------------------------------------------------------------
+guid="0x0101A343,0x260898AB,0xDEE35DB5:0x000001C1" name="discovery_snapshotParticipant" role="discovery_snapshotParticipantRole"
+unicastLocators="udpv4://10.70.2.165:7411 udpv4://10.70.1.162:7411 shmem://CA1B:28DA:1E18:F955:3727:3AFE:0000:0000:7411"
 ----------------------------------------------------------------------------
 ```
 
@@ -98,14 +100,19 @@ The output of the data writer snapshot will be:
 
 ```plaintext
 ----------------------------------------------------------------------------
-Remote readers that match the local writer domain=0 name="discovery_snapshotDataWriter"
-guid="0x0101E315,0x5357026F,0x42882524:0x80000003" topic="Example DiscoverySnapshot" type="DiscoverySnapshot"
+Writer guid="0x0101E315,0x5357026F,0x42882524:0x80000003" topic="Example DiscoverySnapshot" type="DiscoverySnapshot"
+keyed_type="false" name="discovery_snapshotDataWriter"
 ----------------------------------------------------------------------------
-Compatible readers:
-Incompatible readers:
-1. 0x0101A343,0x260898AB,0xDEE35DB5:0x80000004 name="discovery_snapshotDataReader"
-kind="unkeyed user datareader" unicastLocators="udpv4://192.168.1.36:7411,udpv4://10.2.190.25:7411,
-shmem://C268:F783:F9C1:8665:B8B1:B40F:0000:0000:7411" reason="Incompatible QoS"
+Matched Readers:
+----------------------------------------------------------------------------
+(Empty)
+----------------------------------------------------------------------------
+Not Matched Readers (on the Same Topic):
+----------------------------------------------------------------------------
+guid="0x0101A343,0x260898AB,0xDEE35DB5:0x80000004" name="discovery_snapshotDataReader"
+unicastLocators="udpv4://10.70.2.165:7413 udpv4://10.70.1.162:7413 shmem://CA1B:28DA:1E18:F955:3727:3AFE:0000:0000:7413"
+reason="QoS"
+----------------------------------------------------------------------------
 ```
 
 This means that writer and reader match each other (because the reader appears
@@ -135,12 +142,17 @@ writer and reader are compatible:
 
 ```plaintext
 ----------------------------------------------------------------------------
-Remote readers that match the local writer domain=0 name="discovery_snapshotDataWriter"
-guid="0x01011EA8,0xA5946F68,0x476E6EE4:0x80000003" topic="Example DiscoverySnapshot" type="DiscoverySnapshot"
+Reader guid="0x01011EA8,0xA5946F68,0x476E6EE4:0x80000004" topic="Example DiscoverySnapshot" type="DiscoverySnapshot" keyed_type="false"
+name="discovery_snapshotDataWriter"
 ----------------------------------------------------------------------------
-Compatible readers:
-1. 0x01019F51,0x23EFD9CC,0xA11429BC:0x80000004 name="discovery_snapshotDataReader"
-kind="unkeyed user datareader" unicastLocators="udpv4://192.168.1.36:7411,udpv4://10.2.190.25:7411,
-shmem://C268:F783:F9C1:8665:B8B1:B40F:0000:0000:7411" liveliness="ALIVE"
-Incompatible readers:
+Matched Writers:
+----------------------------------------------------------------------------
+guid="0x01019F51,0x23EFD9CC,0xA11429BC:0x80000003" name="discovery_snapshotDataReader"
+unicastLocators="udpv4://10.70.2.165:7411 udpv4://10.70.1.162:7411 shmem://CA1B:28DA:1E18:F955:3727:3AFE:0000:0000:7411"
+status="ALIVE"
+----------------------------------------------------------------------------
+Not Matched Writers (on the Same Topic):
+----------------------------------------------------------------------------
+(Empty)
+----------------------------------------------------------------------------
 ```
