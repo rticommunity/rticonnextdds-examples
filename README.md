@@ -34,7 +34,7 @@ To clone the repository you will need to run `git clone` as follows to download
 both the repository and its submodule dependencies:
 
 ```bash
-git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-gateway-opcua.git
+git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-examples.git
 ```
 
 If you forget to clone the repository with `--recurse-submodule`, simply run
