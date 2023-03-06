@@ -56,9 +56,7 @@ def replier_main(domain_id):
         datareader_qos=reader_qos,
     )
 
-    print(
-        f"Prime calculation replier started on domain {domain_id}"
-    )
+    print(f"Prime calculation replier started on domain {domain_id}")
 
     max_wait = dds.Duration.from_seconds(20)
     requests: Sequence[

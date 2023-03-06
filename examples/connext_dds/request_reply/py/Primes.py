@@ -23,13 +23,19 @@ class PrimeNumberRequest:
     n: idl.int32 = 0
     primes_per_reply: idl.int32 = 0
 
+
 @idl.enum
 class PrimeNumberCalculationStatus(IntEnum):
     REPLY_IN_PROGRESS = 0
     REPLY_COMPLETED = 1
     REPLY_ERROR = 2
 
+
 @idl.struct
 class PrimeNumberReply:
-    primes: Sequence[idl.int32] = field(default_factory = idl.array_factory(idl.int32))
-    status: PrimeNumberCalculationStatus = PrimeNumberCalculationStatus.REPLY_IN_PROGRESS
+    primes: Sequence[idl.int32] = field(
+        default_factory=idl.array_factory(idl.int32)
+    )
+    status: PrimeNumberCalculationStatus = (
+        PrimeNumberCalculationStatus.REPLY_IN_PROGRESS
+    )

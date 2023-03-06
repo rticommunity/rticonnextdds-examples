@@ -37,6 +37,7 @@ def is_prime(val):
 
 request_serviced = True
 
+
 def request_handler(request: Primes.PrimeNumberRequest):
     global request_serviced
     request_serviced = True
