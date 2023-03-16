@@ -1,4 +1,3 @@
 [submodule "resources/cmake/rticonnextdds-cmake-utils"]
 	path = resources/cmake/rticonnextdds-cmake-utils
 	url = https://github.com/rticommunity/rticonnextdds-cmake-utils.git
-	branch = main
