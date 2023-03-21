@@ -9,9 +9,9 @@
  * any incidental or consequential damages arising out of the use or inability
  * to use the software.
  */
-def DETAILS_URL="https://community.rti.com/"
+def DETAILS_URL = "https://community.rti.com/"
 
-void publishInProgressCheck(Map config) {
+def publishInProgressCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: config.title,
@@ -21,7 +21,7 @@ void publishInProgressCheck(Map config) {
     )
 }
 
-void publishPassedCheck(Map config) {
+def publishPassedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Passed',
@@ -33,7 +33,7 @@ void publishPassedCheck(Map config) {
     )
 }
 
-void publishFailedCheck(Map config) {
+def publishFailedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Failed',
@@ -45,7 +45,7 @@ void publishFailedCheck(Map config) {
     )
 }
 
-void publishAbortedCheck(Map config) {
+def publishAbortedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Aborted',
@@ -57,7 +57,7 @@ void publishAbortedCheck(Map config) {
     )
 }
 
-void runBuildStage(String buildMode, String linkMode) {
+def runBuildStage(String buildMode, String linkMode) {
     checkName = "Build ${buildMode}/${linkMode}"
     env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
     env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
