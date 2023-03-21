@@ -127,6 +127,7 @@ pipeline {
             stages {
                 stage('Download Packages') {
                     steps {
+                        sh 'python3 resources/ci_cd/jenkins_output.py'
                         publishPassedCheck(
                             name: 'Waiting for executor',
                             title: 'Passed',
@@ -140,7 +141,6 @@ pipeline {
                             ).trim()
                         }
 
-                        sh 'python3 resources/ci_cd/jenkins_output.py'
                         publishInProgressCheck(
                             title: 'Downloading',
                             summary: ':arrow_down: Downloading RTI Connext DDS libraries...',
