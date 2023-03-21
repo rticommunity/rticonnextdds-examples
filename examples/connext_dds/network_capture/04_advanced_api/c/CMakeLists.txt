@@ -11,6 +11,13 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "7.0.0"
+    REQUIRED
+    COMPONENTS
+        security_plugins
+)
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
