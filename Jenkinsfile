@@ -59,10 +59,12 @@ def publishAbortedCheck(Map config) {
 }
 
 void buildStage(String buildMode, String linkMode) {
+    checkName = "Build ${buildMode}/${linkMode}"
     env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
     env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
     publishInProgressCheck(
-        title: 'Building ${buildMode}/${linkMode}',
+        name: checkName,
+        title: "Building ${buildMode}/${linkMode}",
         summary: ':wrench: Building all the examples...',
     )
     cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
@@ -81,7 +83,8 @@ void buildStage(String buildMode, String linkMode) {
     sh 'python3 resources/ci_cd/jenkins_output.py'
     if (returnCode) {
         publishFailedCheck(
-            summary: ':warning: There was an error building the examples.'
+            name: checkName,
+            summary: ':warning: There was an error building the examples.',
         )
         error(
             'There were errors building the examples in'
@@ -90,7 +93,8 @@ void buildStage(String buildMode, String linkMode) {
         )
     }
     publishPassedCheck(
-        summary: ':white_check_mark: All the examples were built succesfully.'
+        name: checkName,
+        summary: ':white_check_mark: All the examples were built succesfully.',
     )
 }
 
@@ -206,8 +210,9 @@ pipeline {
                             }
                         }
                         stages {
-                            stage("Build ${buildMode}/${linkMode}") {
+                            stage('Build mode') {
                                 steps {
+                                    echo("Build ${buildMode}/${linkMode}")
                                     buildStage(buildMode, linkMode)
                                 }
                                 post {
