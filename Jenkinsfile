@@ -11,18 +11,17 @@
  */
 def DETAILS_URL="https://community.rti.com/"
 
-def publishInProgressCheck(Map config) {
+void publishInProgressCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: config.title,
         summary: config.summary,
         status: 'IN_PROGRESS',
-        text: readFile(env.RTI_JENKINS_OUTPUT_FILE),
         detailsURL: DETAILS_URL,
     )
 }
 
-def publishPassedCheck(Map config) {
+void publishPassedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Passed',
@@ -34,7 +33,7 @@ def publishPassedCheck(Map config) {
     )
 }
 
-def publishFailedCheck(Map config) {
+void publishFailedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Failed',
@@ -46,7 +45,7 @@ def publishFailedCheck(Map config) {
     )
 }
 
-def publishAbortedCheck(Map config) {
+void publishAbortedCheck(Map config) {
     publishChecks(
         name: config.get('name', STAGE_NAME),
         title: 'Aborted',
@@ -58,7 +57,7 @@ def publishAbortedCheck(Map config) {
     )
 }
 
-void buildStage(String buildMode, String linkMode) {
+void runBuildStage(String buildMode, String linkMode) {
     checkName = "Build ${buildMode}/${linkMode}"
     env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
     env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
@@ -210,10 +209,10 @@ pipeline {
                             }
                         }
                         stages {
-                            stage('Build mode') {
+                            stage('Build single mode') {
                                 steps {
                                     echo("Build ${buildMode}/${linkMode}")
-                                    buildStage(buildMode, linkMode)
+                                    runBuildStage(buildMode, linkMode)
                                 }
                                 post {
                                     aborted {
