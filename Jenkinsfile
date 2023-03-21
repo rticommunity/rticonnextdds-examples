@@ -83,14 +83,18 @@ def buildStage(config) {
 
             sh 'python3 resources/ci_cd/jenkins_output.py'
             if (returnCode) {
-                publishFailedCheck(summary: ':warning: There was an error building the examples.')
+                publishFailedCheck(
+                    summary: ':warning: There was an error building the examples.'
+                )
                 error(
-                    'There were errors building the examples in '
-                    "${config.buildMode} mode when linking in "
-                    "${config.linkMode} mode."
+                    'There were errors building the examples in'
+                    + " ${config.buildMode} mode when linking in"
+                    + " ${config.linkMode} mode."
                 )
             }
-            publishPassedCheck(summary: ':white_check_mark: All the examples were built succesfully.')
+            publishPassedCheck(
+                summary: ':white_check_mark: All the examples were built succesfully.'
+            )
         }
     }
     return stage
