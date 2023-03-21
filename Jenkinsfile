@@ -217,7 +217,7 @@ pipeline {
                 }
 
                 stage('Build') {
-                    parallel buildAllStages()
+                    parallel buildAllStages
                 }
 
                 stage('Static Analysis') {
