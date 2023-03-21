@@ -13,47 +13,47 @@ def DETAILS_URL = "https://community.rti.com/"
 
 def publishInProgressCheck(Map config) {
     publishChecks(
-        name: config.get('name', STAGE_NAME),
+        name: config.get('name', "${STAGE_NAME}"),
         title: config.title,
         summary: config.summary,
         status: 'IN_PROGRESS',
-        detailsURL: DETAILS_URL,
+        detailsURL: "${DETAILS_URL}",
     )
 }
 
 def publishPassedCheck(Map config) {
     publishChecks(
-        name: config.get('name', STAGE_NAME),
+        name: config.get('name', "${STAGE_NAME}"),
         title: 'Passed',
         summary: config.summary,
         status: 'COMPLETED',
         conclusion: 'SUCCESS',
         text: readFile(env.RTI_JENKINS_OUTPUT_FILE),
-        detailsURL: DETAILS_URL,
+        detailsURL: "${DETAILS_URL}",
     )
 }
 
 def publishFailedCheck(Map config) {
     publishChecks(
-        name: config.get('name', STAGE_NAME),
+        name: config.get('name', "${STAGE_NAME}"),
         title: 'Failed',
         summary: config.summary,
         status: 'COMPLETED',
         conclusion: 'FAILURE',
         text: readFile(env.RTI_JENKINS_OUTPUT_FILE),
-        detailsURL: DETAILS_URL,
+        detailsURL: "${DETAILS_URL}",
     )
 }
 
 def publishAbortedCheck(Map config) {
     publishChecks(
-        name: config.get('name', STAGE_NAME),
+        name: config.get('name', "${STAGE_NAME}"),
         title: 'Aborted',
         summary: config.summary,
         status: 'COMPLETED',
         conclusion: 'CANCELED',
         text: readFile(env.RTI_JENKINS_OUTPUT_FILE),
-        detailsURL: DETAILS_URL,
+        detailsURL: "${DETAILS_URL}",
     )
 }
 
