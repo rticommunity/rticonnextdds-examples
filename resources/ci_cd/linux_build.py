@@ -34,7 +34,8 @@ def find_connext_dir() -> Path:
         ).resolve(strict=True)
     except FileNotFoundError as error:
         raise FileNotFoundError(
-            f"The RTI_INSTALLATION_PATH environment variable does not exist: {error.filename}"
+            "The RTI_INSTALLATION_PATH environment variable does not exist:"
+            f" {error.filename}"
         ) from error
 
     found_rti_connext_dds = list(
@@ -54,8 +55,18 @@ def parse_args():
     """Parse the CLI options."""
     parser = argparse.ArgumentParser()
     parser.add_argument("--build-dir", type=str, default="build")
-    parser.add_argument("--build-mode", type=str, choices=("release", "debug"), default="release")
-    parser.add_argument("--link-mode", type=str, choices=("dynamic", "static"), default="dynamic")
+    parser.add_argument(
+        "--build-mode",
+        type=str,
+        choices=("release", "debug"),
+        default="release",
+    )
+    parser.add_argument(
+        "--link-mode",
+        type=str,
+        choices=("dynamic", "static"),
+        default="dynamic",
+    )
     parser.add_argument("--connext-dir", type=Path)
     parser.add_argument(
         "-D",
@@ -82,7 +93,9 @@ def main():
         sys.exit(f"Error: Examples directory not found: {error.filename}")
 
     try:
-        connext_dir: Path = (args.connext_dir or find_connext_dir()).resolve(strict=True)
+        connext_dir: Path = (args.connext_dir or find_connext_dir()).resolve(
+            strict=True
+        )
     except FileNotFoundError as error:
         error_message = str(error)
         if error.filename:
