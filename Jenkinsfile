@@ -58,63 +58,40 @@ def publishAbortedCheck(Map config) {
     )
 }
 
-def buildStage(config) {
-    def stage = {
-        def stageName = "Build ${config.buildMode}/${config.linkMode}"
-        stage(stageName) {
-            env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${config.buildMode}_${config.linkMode}.log"
-            env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${config.buildMode}_${config.linkMode}.md"
-            publishInProgressCheck(
-                title: 'Building',
-                summary: ':wrench: Building all the examples...',
-            )
-            cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
-            cmd += " --build-mode ${config.buildMode}"
-            cmd += " --link-mode ${config.linkMode}"
-            cmd += " --build-dir build_${config.buildMode}_${config.linkMode}"
-            cmd += ' | tee $RTI_LOGS_FILE'
-            def returnCode = sh(
-                """#!/bin/bash
-                    set -o pipefail
-                    ${cmd}
-                """,
-                returnStatus=true,
-            )
+void buildStage(String buildMode, String linkMode) {
+    env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
+    env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
+    publishInProgressCheck(
+        title: 'Building ${buildMode}/${linkMode}',
+        summary: ':wrench: Building all the examples...',
+    )
+    cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
+    cmd += " --build-mode ${buildMode}"
+    cmd += " --link-mode ${linkMode}"
+    cmd += " --build-dir build_${buildMode}_${linkMode}"
+    cmd += ' | tee $RTI_LOGS_FILE'
+    def returnCode = sh(
+        """#!/bin/bash
+            set -o pipefail
+            ${cmd}
+        """,
+        returnStatus=true,
+    )
 
-            sh 'python3 resources/ci_cd/jenkins_output.py'
-            if (returnCode) {
-                publishFailedCheck(
-                    summary: ':warning: There was an error building the examples.'
-                )
-                error(
-                    'There were errors building the examples in'
-                    + " ${config.buildMode} mode when linking in"
-                    + " ${config.linkMode} mode."
-                )
-            }
-            publishPassedCheck(
-                summary: ':white_check_mark: All the examples were built succesfully.'
-            )
-        }
+    sh 'python3 resources/ci_cd/jenkins_output.py'
+    if (returnCode) {
+        publishFailedCheck(
+            summary: ':warning: There was an error building the examples.'
+        )
+        error(
+            'There were errors building the examples in'
+            + " ${buildMode} mode when linking in"
+            + " ${linkMode} mode."
+        )
     }
-    return stage
-}
-
-def buildAllStages() {
-    def buildTypes = ["release", "debug"]
-    def linkTypes = ["dynamic", "static"]
-    def stages = [:]
-
-    for (buildMode in buildTypes) {
-        for (linkMode in linkTypes) {
-            stages["${buildMode}/${linkMode}"] = buildStage(
-                buildMode: buildMode,
-                linkMode: linkMode,
-            )
-        }
-    }
-
-    return stages
+    publishPassedCheck(
+        summary: ':white_check_mark: All the examples were built succesfully.'
+    )
 }
 
 pipeline {
@@ -216,8 +193,34 @@ pipeline {
                     }
                 }
 
-                stage('Build') {
-                    parallel buildAllStages
+                stage('Build all modes') {
+                    matrix {
+                        axes {
+                            axis {
+                                name 'buildMode'
+                                values 'release', 'debug'
+                            }
+                            axis {
+                                name 'linkMode'
+                                values 'static', 'dynamic'
+                            }
+                        }
+                        stages {
+                            stage("Build ${buildMode}/${linkMode}") {
+                                steps {
+                                    buildStage(buildMode, linkMode)
+                                }
+                                post {
+                                    aborted {
+                                        publishAbortedCheck(
+                                            title: 'Aborted',
+                                            summary: ':no_entry: The build was aborted.',
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
 
                 stage('Static Analysis') {
