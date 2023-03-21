@@ -26,9 +26,37 @@ def cmake_option_conversion(string):
     return f"-D{string}"
 
 
+def find_connext_dir() -> Path:
+    """Try to find the Connext dir from a base installation directory."""
+    try:
+        rti_installation_path = Path(
+            os.getenv("RTI_INSTALLATION_PATH") or Path.home()
+        ).resolve(strict=True)
+    except FileNotFoundError as error:
+        raise FileNotFoundError(
+            f"The RTI_INSTALLATION_PATH environment variable does not exist: {error.filename}"
+        ) from error
+
+    found_rti_connext_dds = list(
+        rti_installation_path.glob("rti_connext_dds-?.?.?")
+    )
+
+    if not found_rti_connext_dds:
+        raise FileNotFoundError(
+            "No Connext installations found in the"
+            f" {str(rti_installation_path)} directory"
+        )
+
+    return found_rti_connext_dds.pop()
+
+
 def parse_args():
     """Parse the CLI options."""
     parser = argparse.ArgumentParser()
+    parser.add_argument("--build-dir", type=str, default="build")
+    parser.add_argument("--build-mode", type=str, choices=("release", "debug"), default="release")
+    parser.add_argument("--link-mode", type=str, choices=("dynamic", "static"), default="dynamic")
+    parser.add_argument("--connext-dir", type=Path)
     parser.add_argument(
         "-D",
         action="append",
@@ -38,48 +66,45 @@ def parse_args():
         metavar="CMAKE OPTION",
         dest="cmake_options",
     )
+    args = parser.parse_args()
+    args.shared_libs = "ON" if args.link_mode == "dynamic" else "OFF"
+    args.build_mode = args.build_mode.capitalize()
 
-    return parser.parse_args()
+    return args
 
 
 def main():
     args = parse_args()
 
     try:
-        rti_installation_path = Path(
-            os.getenv("RTI_INSTALLATION_PATH") or Path.home()
-        ).resolve(strict=True)
-    except FileNotFoundError:
-        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
+        examples_dir: Path = Path("examples").resolve(strict=True)
+    except FileNotFoundError as error:
+        sys.exit(f"Error: Examples directory not found: {error.filename}")
 
     try:
-        examples_dir = Path("examples").resolve(strict=True)
-    except FileNotFoundError:
-        sys.exit("Error: Examples directory not found.")
+        connext_dir: Path = (args.connext_dir or find_connext_dir()).resolve(strict=True)
+    except FileNotFoundError as error:
+        error_message = str(error)
+        if error.filename:
+            error_message = f"Could not find the connext dir: {error.filename}"
+        sys.exit(f"Error: {error_message}")
 
-    found_rti_connext_dds = list(
-        rti_installation_path.glob("rti_connext_dds-?.?.?")
-    )
-
-    if not found_rti_connext_dds:
-        sys.exit("Error: RTIConnextDDS not found.")
-
-    rti_connext_dds_dir = found_rti_connext_dds[0]
-    build_dir = examples_dir.joinpath("build")
-    build_dir.mkdir(exist_ok=True)
+    build_dir_path = examples_dir.joinpath(args.build_dir)
+    build_dir_path.mkdir(exist_ok=True)
     string_separator = f"\n{'*'*80}\n"
 
     build_gen_cmd = [
         "cmake",
         "-DSTATIC_ANALYSIS=ON",
-        "-DBUILD_SHARED_LIBS=ON",
-        "-DCMAKE_BUILD_TYPE=Release",
+        f"-DBUILD_SHARED_LIBS={args.shared_libs}",
+        f"-DCMAKE_BUILD_TYPE={args.build_mode}",
         "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON",
         "-DCONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES=ON",
         "-DCONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES=ON",
         "-DCONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES=ON",
+        "-DCONNEXTDDS_BUILD_CLOUD_DISCOVERY_SERVICE_EXAMPLES=ON",
         "-DCONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES=ON",
-        f"-DCONNEXTDDS_DIR={str(rti_connext_dds_dir)}",
+        f"-DCONNEXTDDS_DIR={str(connext_dir)}",
         *args.cmake_options,
         str(examples_dir),
     ]
@@ -92,13 +117,13 @@ def main():
 
     build_gen_result = subprocess.run(
         build_gen_cmd,
-        cwd=build_dir,
+        cwd=build_dir_path,
     )
 
     if build_gen_result.returncode:
         sys.exit("There were some errors during the build system generation.")
 
-    build_run_cmd = ["cmake", "--build", ".", "--config", "Release"]
+    build_run_cmd = ["cmake", "--build", ".", "--config", args.build_mode]
 
     print(
         "\n[RTICommunity] Compiling the examples..."
@@ -108,7 +133,7 @@ def main():
 
     build_run_result = subprocess.run(
         build_run_cmd,
-        cwd=build_dir,
+        cwd=build_dir_path,
     )
 
     if build_run_result.returncode:
