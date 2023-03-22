@@ -76,7 +76,7 @@ def runBuildStage(String buildMode, String linkMode) {
             set -o pipefail
             ${cmd}
         """,
-        returnStatus=true,
+        returnStatus: true,
     )
 
     sh 'python3 resources/ci_cd/jenkins_output.py'
