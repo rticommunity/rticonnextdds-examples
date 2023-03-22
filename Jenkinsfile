@@ -72,7 +72,7 @@ def runBuildStage(String buildMode, String linkMode) {
     cmd += " --build-dir build_${buildMode}_${linkMode}"
     cmd += ' | tee $RTI_LOGS_FILE'
     def returnCode = sh(
-        """#!/bin/bash
+        script: """#!/bin/bash
             set -o pipefail
             ${cmd}
         """,
