@@ -122,6 +122,7 @@ pipeline {
             environment {
                 RTI_INSTALLATION_PATH = "${WORKSPACE}/unlicensed"
                 RTI_LOGS_FILE = "${WORKSPACE}/output_logs.txt"
+                RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output.md"
             }
 
             stages {
