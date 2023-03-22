@@ -18,6 +18,7 @@ import argparse
 import os
 import subprocess
 import sys
+
 from pathlib import Path
 
 
@@ -51,10 +52,10 @@ def find_connext_dir() -> Path:
     return found_rti_connext_dds.pop()
 
 
-def parse_args():
+def parse_args() -> argparse.Namespace:
     """Parse the CLI options."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--build-dir", type=str, default="build")
+    parser.add_argument("--build-dir", type=Path, default="build")
     parser.add_argument(
         "--build-mode",
         type=str,
@@ -68,6 +69,7 @@ def parse_args():
         default="dynamic",
     )
     parser.add_argument("--connext-dir", type=Path)
+    parser.add_argument("--examples-dir", type=Path, default="examples")
     parser.add_argument(
         "-D",
         action="append",
@@ -85,10 +87,10 @@ def parse_args():
 
 
 def main():
-    args = parse_args()
+    args: argparse.Namespace = parse_args()
 
     try:
-        examples_dir: Path = Path("examples").resolve(strict=True)
+        examples_dir: Path = args.examples_dir.resolve(strict=True)
     except FileNotFoundError as error:
         sys.exit(f"Error: Examples directory not found: {error.filename}")
 
@@ -105,8 +107,8 @@ def main():
             )
         sys.exit(f"Error: {error_message}")
 
-    build_dir_path = examples_dir.joinpath(args.build_dir)
-    build_dir_path.mkdir(exist_ok=True)
+    build_dir_path: Path = args.build_dir.resolve()
+    build_dir_path.mkdir(parents=True, exist_ok=True)
     string_separator = f"\n{'*'*80}\n"
 
     build_gen_cmd = [

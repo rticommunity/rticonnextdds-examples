@@ -69,7 +69,7 @@ def runBuildStage(String buildMode, String linkMode) {
     cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
     cmd += " --build-mode ${buildMode}"
     cmd += " --link-mode ${linkMode}"
-    cmd += " --build-dir build_${buildMode}_${linkMode}"
+    cmd += " --build-dir ${get_build_directory(buildMode, linkMode)}"
     cmd += ' | tee $RTI_LOGS_FILE'
     def returnCode = sh(
         script: """#!/bin/bash
@@ -95,6 +95,10 @@ def runBuildStage(String buildMode, String linkMode) {
         name: checkName,
         summary: ':white_check_mark: All the examples were built succesfully.',
     )
+}
+
+def get_build_directory(String buildMode, String linkMode) {
+    return "build_${buildMode}_${linkMode}"
 }
 
 pipeline {
@@ -131,7 +135,6 @@ pipeline {
                         sh 'python3 resources/ci_cd/jenkins_output.py'
                         publishPassedCheck(
                             name: 'Waiting for executor',
-                            title: 'Passed',
                             summary: ':white_check_mark: Executor found.',
                         )
 
@@ -178,19 +181,16 @@ pipeline {
                         }
                         success {
                             publishPassedCheck(
-                                title: 'Passed',
                                 summary: ':white_check_mark: RTI Connext DDS libraries downloaded.',
                             )
                         }
                         failure {
                             publishFailedCheck(
-                                title: 'Failed',
                                 summary: ':warning: Failed downloading RTI Connext DDS libraries.',
                             )
                         }
                         aborted {
                             publishAbortedCheck(
-                                title: 'Aborted',
                                 summary: ':no_entry: The download of RTI Connext DDS libraries was aborted.',
                             )
                         }
@@ -218,7 +218,6 @@ pipeline {
                                 post {
                                     aborted {
                                         publishAbortedCheck(
-                                            title: 'Aborted',
                                             summary: ':no_entry: The build was aborted.',
                                         )
                                     }
@@ -230,15 +229,19 @@ pipeline {
 
                 stage('Static Analysis') {
                     steps {
-                        publishPassedCheck(
-                            title: 'In progress',
+                        publishInProgressCheck(
+                            title: 'Analyzing',
                             summary: ':mag: Analyzing all the examples...',
                         )
-
-                        sh '''#!/bin/bash
+                        script {
+                            cmd = 'python3 resources/ci_cd/linux_static_analysis.py'
+                            cmd += " --build-dir ${get_build_directory('release', 'dynamic')}"
+                            cmd += ' | tee $RTI_LOGS_FILE'
+                        }
+                        sh """#!/bin/bash
                             set -o pipefail
-                            python3 resources/ci_cd/linux_static_analysis.py | tee ${RTI_LOGS_FILE}
-                        '''
+                            ${cmd}
+                        """
                     }
 
                     post {
@@ -247,19 +250,16 @@ pipeline {
                         }
                         success {
                             publishPassedCheck(
-                                title: 'Passed',
                                 summary: ':white_check_mark: Succesfully analysed',
                             )
                         }
                         failure {
                             publishFailedCheck(
-                                title: 'Failed',
                                 summary: ':warning: The static analysis failed',
                             )
                         }
                         aborted {
                             publishAbortedCheck(
-                                title: 'Aborted',
                                 summary: ':no_entry: The static analysis was aborted',
                             )
                         }
@@ -274,7 +274,6 @@ pipeline {
                 aborted {
                     publishAbortedCheck(
                         name: 'Waiting for executor',
-                        title: 'Aborted',
                         summary: ':no_entry: The pipeline was aborted',
                     )
                 }
