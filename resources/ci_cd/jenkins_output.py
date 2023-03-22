@@ -104,6 +104,7 @@ def main():
     jenkins_output_file = Path(
         os.getenv("RTI_JENKINS_OUTPUT_FILE", "jenkins_output.md")
     )
+    jenkins_output_file.parent.mkdir(parents=True, exist_ok=True)
     jenkins_output_file.write_text(text)
 
 

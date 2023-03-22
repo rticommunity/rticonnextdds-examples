@@ -231,7 +231,7 @@ pipeline {
                     steps {
                         publishPassedCheck(
                             title: 'In progress',
-                            summary: ':mag: Analysing all the examples...',
+                            summary: ':mag: Analyzing all the examples...',
                         )
 
                         sh '''#!/bin/bash

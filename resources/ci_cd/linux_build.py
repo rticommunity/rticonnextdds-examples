@@ -27,7 +27,7 @@ def cmake_option_conversion(string):
 
 
 def find_connext_dir() -> Path:
-    """Try to find the Connext dir from a base installation directory."""
+    """Try to find the Connext directory from a base installation directory."""
     try:
         rti_installation_path = Path(
             os.getenv("RTI_INSTALLATION_PATH") or Path.home()
@@ -99,7 +99,10 @@ def main():
     except FileNotFoundError as error:
         error_message = str(error)
         if error.filename:
-            error_message = f"Could not find the connext dir: {error.filename}"
+            error_message = (
+                "Could not find the Connext installation directory:"
+                f" {error.filename}"
+            )
         sys.exit(f"Error: {error_message}")
 
     build_dir_path = examples_dir.joinpath(args.build_dir)
