@@ -59,8 +59,6 @@ def publishAbortedCheck(Map config) {
 
 def runBuildStage(String buildMode, String linkMode) {
     def checkName = "Build ${buildMode}/${linkMode}"
-    env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
-    env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
     publishInProgressCheck(
         name: checkName,
         title: "Building ${buildMode}/${linkMode}",
@@ -124,8 +122,8 @@ pipeline {
             }
 
             environment {
-                RTI_INSTALLATION_PATH = "${WORKSPACE}/unlicensed"
-                RTI_LOGS_FILE = "${WORKSPACE}/output_logs.txt"
+                RTI_INSTALLATION_PATH = "${env.WORKSPACE}/unlicensed"
+                RTI_LOGS_FILE = "${env.WORKSPACE}/output_logs.txt"
                 RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output.md"
             }
 
@@ -211,6 +209,10 @@ pipeline {
                         }
                         stages {
                             stage('Build single mode') {
+                                environment {
+                                    RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
+                                    RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
+                                }
                                 steps {
                                     echo("Build ${buildMode}/${linkMode}")
                                     runBuildStage(buildMode, linkMode)
