@@ -139,7 +139,7 @@ pipeline {
                         )
 
                         script {
-                            def connextdds_arch = sh(
+                            connextdds_arch = sh(
                                 script: 'echo $CONNEXTDDS_ARCH',
                                 returnStdout: true
                             ).trim()
@@ -234,7 +234,7 @@ pipeline {
                             summary: ':mag: Analyzing all the examples...',
                         )
                         script {
-                            def cmd = 'python3 resources/ci_cd/linux_static_analysis.py'
+                            cmd = 'python3 resources/ci_cd/linux_static_analysis.py'
                             cmd += " --build-dir ${get_build_directory('release', 'dynamic')}"
                             cmd += ' | tee $RTI_LOGS_FILE'
                         }
