@@ -24,6 +24,8 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "network_capture"
     LANG "C"
+    DEPENDENCIES
+        RTIConnextDDS::security_plugins
 )
 
 include (ConnextDdsGenerateSecurityArtifacts)
