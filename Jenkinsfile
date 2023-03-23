@@ -58,7 +58,7 @@ def publishAbortedCheck(Map config) {
 }
 
 def runBuildStage(String buildMode, String linkMode) {
-    checkName = "Build ${buildMode}/${linkMode}"
+    def checkName = "Build ${buildMode}/${linkMode}"
     env.RTI_LOGS_FILE = "${env.WORKSPACE}/output_${buildMode}_${linkMode}.log"
     env.RTI_JENKINS_OUTPUT_FILE = "${env.WORKSPACE}/jenkins_output_${buildMode}_${linkMode}.md"
     publishInProgressCheck(
@@ -66,7 +66,7 @@ def runBuildStage(String buildMode, String linkMode) {
         title: "Building ${buildMode}/${linkMode}",
         summary: ':wrench: Building all the examples...',
     )
-    cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
+    def cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
     cmd += " --build-mode ${buildMode}"
     cmd += " --link-mode ${linkMode}"
     cmd += " --build-dir ${get_build_directory(buildMode, linkMode)}"
@@ -139,7 +139,7 @@ pipeline {
                         )
 
                         script {
-                            connextdds_arch = sh(
+                            def connextdds_arch = sh(
                                 script: 'echo $CONNEXTDDS_ARCH',
                                 returnStdout: true
                             ).trim()
@@ -234,7 +234,7 @@ pipeline {
                             summary: ':mag: Analyzing all the examples...',
                         )
                         script {
-                            cmd = 'python3 resources/ci_cd/linux_static_analysis.py'
+                            def cmd = 'python3 resources/ci_cd/linux_static_analysis.py'
                             cmd += " --build-dir ${get_build_directory('release', 'dynamic')}"
                             cmd += ' | tee $RTI_LOGS_FILE'
                         }
