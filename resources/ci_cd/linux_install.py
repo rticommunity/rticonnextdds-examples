@@ -14,15 +14,15 @@ The environment variable RTI_MIN_PACKAGE_URL must be assigned for downloading
 the minimal installation archive.
 
 """
-import os
 import io
+import os
 import sys
 import zipfile
 
-from urllib import request
 from pathlib import Path
-from zipfile import ZipFile, ZipInfo
+from urllib import request
 from urllib.error import URLError
+from zipfile import ZipFile, ZipInfo
 
 
 class ZipFileWithPermissions(ZipFile):
