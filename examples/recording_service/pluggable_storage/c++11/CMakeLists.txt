@@ -19,7 +19,8 @@ if(NOT BUILD_SHARED_LIBS)
     set(msg
         "Static linking is not supported for this example. You can build it "
         "using the -DBUILD_SHARED_LIBS=ON CMake parameter")
-    message(FATAL_ERROR ${msg})
+    message(WARNING ${msg})
+    return()
 endif()
 
 if(NOT CMAKE_BUILD_TYPE)
@@ -27,7 +28,8 @@ if(NOT CMAKE_BUILD_TYPE)
         "Not specifying CMAKE_BUILD_TYPE can lead to undefined behaviour and "
         "is not supported for this example. Please provide a valid value for "
         "the CMAKE_BUILD_TYPE parameter")
-    message(FATAL_ERROR ${msg})
+    message(WARNING ${msg})
+    return()
 endif()
 
 if(CONNEXTDDS_IMPORTED_TARGETS_DEBUG)

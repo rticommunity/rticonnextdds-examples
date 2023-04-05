@@ -40,12 +40,12 @@ Examples: Run linters on staged changes::
         ./linux_format.py -c 8c0859a --disable-markdownlint
 
 """
+import subprocess
 import sys
 
-from argparse import ArgumentParser, RawDescriptionHelpFormatter, Namespace
+from argparse import ArgumentParser, Namespace, RawDescriptionHelpFormatter
 from pathlib import Path
-from typing import List, Set, Optional
-import subprocess
+from typing import List, Optional, Set
 
 
 class FormatError(Exception):
