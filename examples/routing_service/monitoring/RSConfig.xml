@@ -1,3 +1,4 @@
+<?xml version="1.0"?>
 <!--
  (c) 2021 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  RTI grants Licensee a license to use, modify, compile, and create derivative
@@ -8,7 +9,6 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  -->
-<?xml version="1.0"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_routing_service.xsd">
     <routing_service name="TopicBridgeExampleA2B" group_name="GroupA">

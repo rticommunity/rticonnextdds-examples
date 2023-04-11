@@ -12,13 +12,6 @@
 cmake_minimum_required(VERSION 3.11)
 project(FileAdapterC++11)
 
-if(NOT DEFINED CONNEXTDDS_DIR)
-    set(msg 
-        "Please set the CMake variable CONNEXTDDS_DIR "
-        "to point to your installation of RTI Connext DDS")
-    message(FATAL_ERROR ${msg})
-endif()
-
 # Find RTI Connext dependencies
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
