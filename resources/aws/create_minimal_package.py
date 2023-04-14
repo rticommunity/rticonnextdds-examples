@@ -421,6 +421,7 @@ def select_files_for_minimun_package(installation_path):
         "resource/app/lib/java/**/*",
         "resource/idl/**/*",
         "resource/scripts/**/*",
+        "third_party/civetweb*/**/*",
     )
     selected_files = []
 
