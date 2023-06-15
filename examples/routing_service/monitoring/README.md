@@ -79,8 +79,8 @@ This section describes the steps to test this example:
 rtiroutingservice -cfgFile RSConfig.xml -cfgName TopicBridgeExampleA2B
 ```
 
-2.  Open *ShapesDemo* on domain 0 and publish a **Circle**
-3.  Open another instance of *ShapesDemo* on domain 1 and subscribe to **Square**
+2.  Open *ShapesDemo* on domain 0 and publish a **Square**
+3.  Open another instance of *ShapesDemo* on domain 1 and subscribe to **Circle**
 2.  Open a console and build the application code as it shown in c++11/README.md.
 3.  Cd the build folder
 4.  Run the subscriber application on domain 11 in a console:

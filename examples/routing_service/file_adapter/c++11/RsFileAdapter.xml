@@ -17,7 +17,7 @@
                 - Executable directory
                 - Environment library path
             -->
-            <dll>fileadapter</dll>
+            <dll>FileAdapterC++11</dll>
             <create_function>FileAdapter_create_adapter_plugin</create_function>
         </adapter_plugin>
     </plugin_library>

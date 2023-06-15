@@ -101,8 +101,11 @@ def main():
 
     text = text.replace("@LOGS@", replace or "There are no logs for this job")
 
-    with open("jenkins_output.md", "w") as file:
-        file.write(text)
+    jenkins_output_file = Path(
+        os.getenv("RTI_JENKINS_OUTPUT_FILE", "jenkins_output.md")
+    )
+    jenkins_output_file.parent.mkdir(parents=True, exist_ok=True)
+    jenkins_output_file.write_text(text)
 
 
 if __name__ == "__main__":
