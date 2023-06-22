@@ -64,6 +64,8 @@ def requester_main(domain_id, n, primes_per_reply):
         ):
             raise dds.TimeoutError("Timed out waiting for replies")
 
+        # It's possible to call requester.take_replies(), but that method also
+        # returns SampleInfo objects, which we don't need here.
         replies: Sequence[
             Primes.PrimeNumberReply
         ] = requester.reply_datareader.take_data()

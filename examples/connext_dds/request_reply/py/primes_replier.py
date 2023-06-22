@@ -33,6 +33,54 @@ def is_prime(val):
     return True
 
 
+def calculate_and_send_primes(
+        replier: Replier,
+        request: Primes.PrimeNumberRequest,
+        request_info: dds.SampleInfo
+):
+    n = request.n
+    primes_per_reply = request.primes_per_reply
+
+    reply = Primes.PrimeNumberReply()
+    reply.primes = dds.Int32Seq(primes_per_reply)
+    reply.status = Primes.PrimeNumberCalculationStatus.REPLY_IN_PROGRESS
+
+    # prime[i] indicates if i is a prime number
+    # Initially, we assume all of them except 0 and 1 are
+    prime = [True] * (n + 1)
+    prime[0] = False
+    prime[1] = False
+
+    m = int(math.sqrt(n))
+
+    for i in range(2, m + 1):
+        if prime[i]:
+            for j in range (i * i, n + 1, i):
+                prime[j] = False
+
+            # Add a new prime number to the reply
+            reply.primes.append(i)
+
+            if len(reply.primes) == primes_per_reply:
+                # Send a reply now
+                replier.send_reply(reply, request_info, final=False)
+                reply.primes.clear()
+
+    # Calculation is done. Send remaining prime numbers
+    for i in range(m + 1, n + 1):
+        if prime[i]:
+            reply.primes.append(i)
+
+        if len(reply.primes) == primes_per_reply:
+            replier.send_reply(reply, request_info, final=False)
+            reply.primes.clear()
+
+    # Send the last reply. Indicate that the calculation is complete and
+    # send any prime number left in the sequence
+    reply.status = Primes.PrimeNumberCalculationStatus.REPLY_COMPLETED
+    replier.send_reply(reply, request_info)
+
+
 def replier_main(domain_id):
     # Get the QoS from a profile in USER_QOS_PROFILES.xml (the default
     # QosProvider will load the USER_QOS_PROFILES.xml file from the current
@@ -68,39 +116,7 @@ def replier_main(domain_id):
             if not request_info.valid:
                 continue
 
-            if request.n <= 0 or request.primes_per_reply <= 0:
-                error_reply = Primes.PrimeNumberReply(
-                    status=Primes.PrimeNumberCalculationStatus.REPLY_ERROR
-                )
-                replier.send_reply(error_reply, request_info)
-            else:
-                n = request.n
-                print(f"Calculating prime numbers below {n}...")
-
-                max_count = request.primes_per_reply
-                primes = dds.Int32Seq()
-
-                reply = Primes.PrimeNumberReply()
-                for m in range(1, n + 1):
-                    if is_prime(m):
-                        primes.append(m)
-                        if len(primes) == max_count:
-                            reply.primes = primes
-                            reply.status = (
-                                Primes.PrimeNumberCalculationStatus.REPLY_IN_PROGRESS
-                            )
-                            replier.send_reply(
-                                reply, request_info, final=False
-                            )
-                            primes.clear()
-
-                reply.primes = primes
-                reply.status = (
-                    Primes.PrimeNumberCalculationStatus.REPLY_COMPLETED
-                )
-                replier.send_reply(reply, request_info)
-
-                print("DONE")
+            calculate_and_send_primes(replier, request, request_info)
 
         requests = replier.receive_requests(max_wait)
 
