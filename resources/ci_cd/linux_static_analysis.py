@@ -52,7 +52,7 @@ def find_connext_dir() -> Path:
 def parse_args() -> argparse.Namespace:
     """Parse the CLI options."""
     parser = argparse.ArgumentParser()
-    parser.add_argument("--build-dir", type=Path, default="examples/build")
+    parser.add_argument("--build-dir", type=Path, default="build")
     parser.add_argument("--connext-dir", type=Path)
     args = parser.parse_args()
 
