@@ -34,9 +34,9 @@ def is_prime(val):
 
 
 def calculate_and_send_primes(
-        replier: Replier,
-        request: Primes.PrimeNumberRequest,
-        request_info: dds.SampleInfo
+    replier: Replier,
+    request: Primes.PrimeNumberRequest,
+    request_info: dds.SampleInfo,
 ):
     n = request.n
     primes_per_reply = request.primes_per_reply
@@ -55,7 +55,7 @@ def calculate_and_send_primes(
 
     for i in range(2, m + 1):
         if prime[i]:
-            for j in range (i * i, n + 1, i):
+            for j in range(i * i, n + 1, i):
                 prime[j] = False
 
             # Add a new prime number to the reply
