@@ -42,7 +42,7 @@ def calculate_and_send_primes(
     primes_per_reply = request.primes_per_reply
 
     reply = Primes.PrimeNumberReply()
-    reply.primes = dds.Int32Seq(primes_per_reply)
+    reply.primes = dds.Int32Seq()
     reply.status = Primes.PrimeNumberCalculationStatus.REPLY_IN_PROGRESS
 
     # prime[i] indicates if i is a prime number
