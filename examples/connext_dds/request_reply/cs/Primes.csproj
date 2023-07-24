@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Rti.ConnextDds.RequestReply" Version="7.1.0"/>
+    <PackageReference Include="Rti.ConnextDds.RequestReply" Version="7.2.0"/>
     <PackageReference Include="System.CommandLine" Version="2.0.0-beta1.21308.1" />
   </ItemGroup>
 
