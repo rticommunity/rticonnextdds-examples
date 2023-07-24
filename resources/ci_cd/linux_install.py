@@ -14,39 +14,20 @@ The environment variable RTI_MIN_PACKAGE_URL must be assigned for downloading
 the minimal installation archive.
 
 """
-import io
 import os
 import sys
-import zipfile
+import tempfile
+import urllib.request
 
+from distutils.spawn import find_executable
 from pathlib import Path
-from urllib import request
+from subprocess import call
 from urllib.error import URLError
-from zipfile import ZipFile, ZipInfo
-
-
-class ZipFileWithPermissions(ZipFile):
-    """Custom ZipFile class handling file permissions.
-
-    Code from https://stackoverflow.com/a/54748564
-    """
-
-    def _extract_member(self, member, targetpath, pwd):
-        if not isinstance(member, ZipInfo):
-            member = self.getinfo(member)
-
-        targetpath = super()._extract_member(member, str(targetpath), pwd)
-        attr = member.external_attr >> 16
-
-        if attr != 0:
-            Path(targetpath).chmod(attr)
-
-        return targetpath
 
 
 def main():
     rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
-
+    temp_dir = Path(tempfile.gettempdir())
     if not rti_minimal_package_url:
         sys.exit(
             "Environment variable RTI_MIN_PACKAGE_URL not found, skipping..."
@@ -59,23 +40,38 @@ def main():
     except FileNotFoundError:
         sys.exit("The RTI_INSTALLATION_PATH does not exist.")
 
+    cmake_command = find_executable("cmake")
+    if cmake_command is None:
+        sys.exit("CMake must be installed in order to use the script.")
+
     try:
-        resp = request.urlopen(rti_minimal_package_url)
+        rti_zipped_file_name = Path(
+            urllib.request.url2pathname(rti_minimal_package_url)
+        ).name
+        rti_zipped_file_path = temp_dir.joinpath(rti_zipped_file_name)
+        urllib.request.urlretrieve(
+            rti_minimal_package_url, rti_zipped_file_path
+        )
     except URLError as e:
         sys.exit("Error opening the URL: {}".format(e))
 
-    print("Extracting minimal installation.")
-
     try:
-        with ZipFileWithPermissions(io.BytesIO(resp.read())) as rti_zipfile:
-            bad_file_name = rti_zipfile.testzip()
+        return_value = call(
+            [
+                cmake_command,
+                "-E",
+                "tar",
+                "xf",
+                str(rti_zipped_file_path),
+                "--format=zip",
+            ],
+            cwd=rti_installation_path,
+        )
+    except FileNotFoundError:
+        sys.exit("The CMake executable could not be found.")
 
-            if bad_file_name:
-                sys.exit("Bad file found in the archive.")
-
-            rti_zipfile.extractall(rti_installation_path)
-    except zipfile.BadZipFile as e:
-        sys.exit("Error opening zip file: {}".format(e))
+    if return_value:
+        sys.exit("There were error extracting the package")
 
 
 if __name__ == "__main__":

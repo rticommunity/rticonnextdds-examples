@@ -18,6 +18,11 @@ find_package(RTIConnextDDS
         security_plugins
 )
 
+if(NOT RTIConnextDDS::security_plugins)
+    message(WARNING "RTIConnextDDS::security_plugins component is missing. Skipping example")
+    return()
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
