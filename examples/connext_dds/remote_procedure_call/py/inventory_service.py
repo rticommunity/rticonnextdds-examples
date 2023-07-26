@@ -15,7 +15,13 @@ import rti.rpc as rpc
 import rti.asyncio
 from asyncio import sleep
 
-from Inventory import Item, InventoryContents, InventoryService, UnknownItemError
+from Inventory import (
+    Item,
+    InventoryContents,
+    InventoryService,
+    UnknownItemError,
+)
+
 
 class InventoryImpl(InventoryService):
     """Implements a simple InventoryService"""
@@ -28,7 +34,8 @@ class InventoryImpl(InventoryService):
 
     def get_inventory(self):
         return InventoryContents(
-            [Item(name, qty) for name, qty in self.inventory.items()])
+            [Item(name, qty) for name, qty in self.inventory.items()]
+        )
 
     async def add_item(self, item: Item):
         if self.delay > 0:
@@ -68,7 +75,7 @@ async def main():
         "--delay",
         type=int,
         default=0,
-        help="Delay in seconds for the add and remove operations (default: 0)"
+        help="Delay in seconds for the add and remove operations (default: 0)",
     )
 
     args = parser.parse_args()
@@ -77,6 +84,7 @@ async def main():
     service = rpc.Service(InventoryImpl(args.delay), participant, "Inventory")
 
     await service.run()
+
 
 if __name__ == "__main__":
     dds.Logger.instance.verbosity = dds.Verbosity.WARNING

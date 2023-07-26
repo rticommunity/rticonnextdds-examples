@@ -16,8 +16,10 @@ import rti.asyncio
 
 from Inventory import Item, InventoryService, UnknownItemError
 
+
 class InventoryClient(InventoryService, rpc.ClientBase):
     ...
+
 
 async def run_client(args):
     participant = dds.DomainParticipant(args.domain)

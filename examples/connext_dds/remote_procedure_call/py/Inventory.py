@@ -23,6 +23,7 @@ class Item:
     name: str = ""
     quantity: int = 0
 
+
 @idl.struct
 class InventoryContents:
     items: Sequence[Item] = field(default_factory=list)
