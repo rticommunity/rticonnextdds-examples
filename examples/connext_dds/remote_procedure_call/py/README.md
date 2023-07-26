@@ -11,19 +11,18 @@ This example is composed of two applications: a service and a client.
 In one command prompt window run the service application:
 
 ```sh
-$ python inventory_service.py
+python inventory_service.py
 ```
 
 The client application can add or remove items to the inventory. On a new
 window run the following commands:
 
 ```sh
-$ python inventory_client.py --add bananas
-$ python inventory_client.py --remove apples --quantity 99
+python inventory_client.py --add bananas
+python inventory_client.py --remove apples --quantity 99
 ```
 
 (Use ``-h`` to see the full list of arguments.)
-
 
 ## Expected output
 
@@ -57,6 +56,7 @@ $ python inventory_client.py -r pears
 Unknown item: pears
 ...
 ```
+
 ## Concurrency
 
 The example also demonstrates the service concurrency model. The service
@@ -68,12 +68,13 @@ Close the service from the previous section and start a new one:
 
 ```sh
 $ python inventory_service.py --delay 10
+
 ```
 
 On another window run a client:
 
 ```sh
-./Inventory_publisher --add bananas
+$ python inventory_client.py --add bananas
 
 Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
 ```
@@ -81,7 +82,7 @@ Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quant
 And on another window run another client:
 
 ```sh
-./Inventory_publisher --add bananas
+$ python inventory_client.py --add bananas
 
 Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
 ```

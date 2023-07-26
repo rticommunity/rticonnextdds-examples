@@ -53,8 +53,8 @@ The client application can add or remove items to the inventory. On a new
 shell run the following commands:
 
 ```sh
-$ build/Inventory_client --add bananas
-$ build/Inventory_client --remove apples --quantity 99
+build/Inventory_client --add bananas
+build/Inventory_client --remove apples --quantity 99
 ```
 
 (Use ``-h`` to see the full list of arguments.)
