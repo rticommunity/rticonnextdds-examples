@@ -8,19 +8,7 @@
  any incidental or consequential damages arising out of the use or inability to
  use the software.
  ******************************************************************************/
-/* $Id: Intra.c,v 1.20 2008/10/22 19:16:46 jim Exp $
 
- (c) Copyright, Real-Time Innovations, $Date: 2008/10/22 19:16:46 $.
- All rights reserved.
- No duplications, whole or partial, manual or electronic, may be made
- without express written permission.  Any such copies, or
- revisions thereof, must display this notice unaltered.
- This code contains trade secrets of Real-Time Innovations, Inc.
-
- modification history
------------- -------
-18apr2013,gpc  Written
-=========================================================================*/
 #include "signal.h"
 #include "sys/errno.h"
 #include "sys/stat.h"
