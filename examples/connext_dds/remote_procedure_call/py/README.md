@@ -67,8 +67,7 @@ simulating a long running operation.
 Close the service from the previous section and start a new one:
 
 ```sh
-$ python inventory_service.py --delay 10
-
+python inventory_service.py --delay 10
 ```
 
 On another window run a client:
