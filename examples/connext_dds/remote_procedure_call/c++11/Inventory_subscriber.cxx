@@ -1,18 +1,14 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
-* RTI grants Licensee a license to use, modify, compile, and create derivative
-* works of the software solely for use with RTI Connext DDS. Licensee may
-* redistribute copies of the software provided that all such copies are subject
-* to this license. The software is provided "as is", with no warranty of any
-* type, including any warranty for fitness for any purpose. RTI is under no
-* obligation to maintain or support the software. RTI shall not be liable for
-* any incidental or consequential damages arising out of the use or inability
-* to use the software.
-*/
-
-/* Inventory_service.cxx
-
-*/
+ * (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+ * RTI grants Licensee a license to use, modify, compile, and create derivative
+ * works of the software solely for use with RTI Connext DDS. Licensee may
+ * redistribute copies of the software provided that all such copies are subject
+ * to this license. The software is provided "as is", with no warranty of any
+ * type, including any warranty for fitness for any purpose. RTI is under no
+ * obligation to maintain or support the software. RTI shall not be liable for
+ * any incidental or consequential damages arising out of the use or inability
+ * to use the software.
+ */
 
 #include <iostream>
 #include <mutex>
@@ -66,6 +62,7 @@ public:
             inventory.erase(item.name());
         }
     }
+
 private:
     std::map<std::string, int> inventory;
 
@@ -98,7 +95,7 @@ int main(int argc, char *argv[])
     dds::domain::DomainParticipant participant(arguments.domain_id);
 
     // Create an instance of the service interface
-    auto service_impl = std::make_shared< InventoryImpl>();
+    auto service_impl = std::make_shared<InventoryImpl>();
 
     // A server provides the execution environment (a thread pool) for one or
     // more services
@@ -127,4 +124,3 @@ int main(int argc, char *argv[])
 
     return 0;
 }
-
