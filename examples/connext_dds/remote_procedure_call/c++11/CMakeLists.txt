@@ -30,7 +30,7 @@ include(ConnextDdsAddExample)
 connextdds_add_example(
     IDL "Inventory"
     LANG "C++11"
-    # SUB_NAME "service"
-    # PUB_NAME "client"
+    SUB_NAME "service"
+    PUB_NAME "client"
     DEPENDENCIES RTIConnextDDS::messaging_cpp2_api
 )
