@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <mutex>
+#include <thread>
 #include <map>
 #include <rti/config/Logger.hpp>
 
@@ -22,7 +23,7 @@
 
 class InventoryImpl : public InventoryService {
 public:
-    InventoryImpl()
+    InventoryImpl(unsigned int delay_param = 0) : delay(delay_param)
     {
         inventory["apples"] = 100;
         inventory["oranges"] = 50;
@@ -42,6 +43,10 @@ public:
 
     void add_item(const ::Item &item) override
     {
+        if (delay > 0) {
+            std::this_thread::sleep_for(std::chrono::seconds(delay));
+        }
+
         std::lock_guard<std::mutex> lock(mutex);
         if (inventory.find(item.name()) == inventory.end()) {
             inventory[item.name()] = item.quantity();
@@ -52,6 +57,10 @@ public:
 
     void remove_item(const ::Item &item) override
     {
+        if (delay > 0) {
+            std::this_thread::sleep_for(std::chrono::seconds(delay));
+        }
+
         std::lock_guard<std::mutex> lock(mutex);
         if (inventory.find(item.name()) == inventory.end()) {
             throw UnknownItemError(item.name());
@@ -64,7 +73,8 @@ public:
     }
 
 private:
-    std::map<std::string, int> inventory;
+    unsigned int delay; // artificial delay in seconds to simulate processing
+    std::map<std::string, int> inventory; // stores the items and quantities
 
     // The mutex protects the map from concurrent access, since the server
     // can process concurrent remote calls.
@@ -95,7 +105,7 @@ int main(int argc, char *argv[])
     dds::domain::DomainParticipant participant(arguments.domain_id);
 
     // Create an instance of the service interface
-    auto service_impl = std::make_shared<InventoryImpl>();
+    auto service_impl = std::make_shared<InventoryImpl>(arguments.delay);
 
     // A server provides the execution environment (a thread pool) for one or
     // more services

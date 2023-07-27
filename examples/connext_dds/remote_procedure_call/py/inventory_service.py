@@ -27,7 +27,7 @@ class InventoryImpl(InventoryService):
     """Implements a simple InventoryService"""
 
     def __init__(self, delay: int = 0):
-        """Creates an InventoryImpl with an few initial items"""
+        """Creates an InventoryImpl with a few initial items"""
 
         self.delay = delay
         self.inventory = {"apples": 100, "oranges": 50}

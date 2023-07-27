@@ -23,9 +23,11 @@ void run_client(
     // Create a DomainParticipant with default Qos
     dds::domain::DomainParticipant participant(domain_id);
 
-    // Create a ClientParams to provide a service name
+    // Create a ClientParams to provide a service name and a maximum wait time
+    // for remote calls
     dds::rpc::ClientParams client_params(participant);
     client_params.service_name("Inventory");
+    client_params.function_call_max_wait(dds::core::Duration(20));
 
     // Create a client with the ClientParams
     ::InventoryServiceClient client(client_params);

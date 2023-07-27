@@ -75,7 +75,7 @@ On another window run a client:
 ```sh
 $ python inventory_client.py --add bananas
 
-Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
+Initial inventory:  InventoryContents(items=[Item(name='apples', quantity=100), Item(name='oranges', quantity=50)])
 ```
 
 And on another window run another client:
@@ -83,7 +83,7 @@ And on another window run another client:
 ```sh
 $ python inventory_client.py --add bananas
 
-Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
+Initial inventory:  InventoryContents(items=[Item(name='apples', quantity=100), Item(name='oranges', quantity=50)])
 ```
 
 Note how the second client was able to get the inventory while the *add*
@@ -92,15 +92,13 @@ operation from the first client is still running.
 After 10 seconds, the first client will finish:
 
 ```sh
-Add 1 bananas
-Updated inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50], [name: bananas, quantity: 1]}]
+Updated inventory:  InventoryContents(items=[Item(name='apples', quantity=100), Item(name='oranges', quantity=50), Item(name='bananas', quantity=1)])
 ```
 
 Followed by the second client:
 
 ```sh
-Add 1 bananas
-Updated inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50], [name: bananas, quantity: 2]}]
+Updated inventory:  InventoryContents(items=[Item(name='apples', quantity=100), Item(name='oranges', quantity=50), Item(name='bananas', quantity=2)])
 ```
 
 For a description of the concurrency model, see the

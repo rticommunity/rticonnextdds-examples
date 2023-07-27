@@ -20,10 +20,15 @@ from Inventory import Item, InventoryService, UnknownItemError
 class InventoryClient(InventoryService, rpc.ClientBase):
     ...
 
+async def wait_for_service(client: InventoryClient):
+    while client.matched_service_count == 0:
+        await sleep(0.1)
 
 async def run_client(args):
     participant = dds.DomainParticipant(args.domain)
-    client = InventoryClient(participant, "Inventory")
+    client = InventoryClient(participant, "Inventory",
+                             max_wait_per_call=dds.Duration(20))
+    await wait_for_service(client)
 
     print("Initial inventory: ", await client.get_inventory())
 

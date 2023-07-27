@@ -1,4 +1,4 @@
-# (c) 2018 Copyright, Real-Time Innovations, Inc. All rights reserved.
+# (c) 2023 Copyright, Real-Time Innovations, Inc. All rights reserved.
 # RTI grants Licensee a license to use, modify, compile, and create derivative
 # works of the software solely for use with RTI Connext DDS. Licensee may
 # redistribute copies of the software provided that all such copies are subject

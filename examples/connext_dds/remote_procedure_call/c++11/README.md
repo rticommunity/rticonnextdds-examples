@@ -91,3 +91,51 @@ $ build/Inventory_client --remove pears
 Unknown item: pears
 ...
 ```
+
+## Concurrency
+
+The example also demonstrates the service concurrency model. The service
+application can be run with the `--delay <seconds>` argument. This makes the
+*add* and *remove* operations sleep for the specified number of seconds,
+simulating a long running operation.
+
+Close the service from the previous section and start a new one:
+
+```sh
+build/Inventory_service --delay 10
+```
+
+On another window run a client:
+
+```sh
+$ build/Inventory_client --add bananas
+
+Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
+```
+
+And on another window run another client:
+
+```sh
+$ build/Inventory_client --add bananas
+
+Initial inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50]}]
+```
+
+Note how the second client was able to get the inventory while the *add*
+operation from the first client is still running.
+
+After 10 seconds, the first client will finish:
+
+```sh
+Updated inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50], [name: bananas, quantity: 1]}]
+```
+
+Followed by the second client:
+
+```sh
+Updated inventory: [items: {[name: apples, quantity: 100], [name: oranges, quantity: 50], [name: bananas, quantity: 2]}]
+```
+
+A service runs its operations in a thread pool; the number of threads can be
+configured with the `dds::rpc::ServerParams` argument. The example sets the
+number of threads to 4.
