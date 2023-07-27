@@ -73,8 +73,8 @@ public:
     }
 
 private:
-    unsigned int delay; // artificial delay in seconds to simulate processing
-    std::map<std::string, int> inventory; // stores the items and quantities
+    unsigned int delay;  // artificial delay in seconds to simulate processing
+    std::map<std::string, int> inventory;  // stores the items and quantities
 
     // The mutex protects the map from concurrent access, since the server
     // can process concurrent remote calls.
