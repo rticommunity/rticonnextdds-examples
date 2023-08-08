@@ -29,7 +29,7 @@ For more details, please refer to the *RTI Routing Service SDK* documentation.
 ## Building C++ example
 
 In order to build this example, you need to define the variables `CONNEXTDDS_DIR`
-and `CONNEXTDDS_ARCH`. You can do so by exporting them manually, by sourcing 
+and `CONNEXTDDS_ARCH`. You can do so by exporting them manually, by sourcing
 the `rtisetenv` script for your architecture, or by passing them to the `cmake`
 command as arguments:
 

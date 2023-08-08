@@ -45,7 +45,7 @@ cmake --build .
 >
 > You do not need to define `CONNEXTDDS_ARCH` if you only have one architecture
 > target installed in your system.
-
+>
 > **Note**:
 >
 > When using a multi-configuration generator, make sure you specify
