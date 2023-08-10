@@ -34,6 +34,6 @@ Instructions on how to run _Web Integration Service_ and the client
 applications for each specific language are available under:
 
 - [js/README.md](./js/README.md)
-- [python/README.md](python/README.md)
+- [python/README.md](./python/README.md)
 
 ![Alt text](../../resources/img/long_polling.png "Long Polling Example Screenshot")
