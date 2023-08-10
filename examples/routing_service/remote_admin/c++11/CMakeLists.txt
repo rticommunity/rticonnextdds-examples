@@ -32,6 +32,8 @@ find_package(
 set(CODEGEN_FLAGS UNBOUNDED)
 # Include the CodegenRTIConnextDDS cmake module
 include(ConnextDdsCodegen)
+# Include ConnextDdsAddExample.cmake from resources/cmake
+include(ConnextDdsAddExample)
 
 connextdds_rtiddsgen_run(
     IDL_FILE
