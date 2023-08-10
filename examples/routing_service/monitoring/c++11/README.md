@@ -20,7 +20,7 @@ cmake --build .
 **Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
 architecture target installed in your system.
 
-Alternatively to using `cmake --build`, you can use directly the generated
+Instead of using `cmake --build`, you can directly use the generated
 infrastructure (e.g., Makefiles or Visual Studio Solutions) to build the example.
 If you generated Makefiles in the configuration process, run make to build the
 example. Likewise, if you generated a Visual Studio solution, open the solution

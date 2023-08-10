@@ -29,8 +29,8 @@ The following files are part of the example:
 ## Building the Example
 
 In order to build this example, you need to define the variable `CONNEXTDDS_DIR`
-You can do so by exporting them manually, by sourcing the `rtisetenv` script for
-your architecture, or by passing them to the `cmake` command as arguments:
+You can do so by exporting it manually, by sourcing the `rtisetenv` script for
+your architecture, or by passing it to the `cmake` command as arguments:
 
 ```bash
 mkdir build
