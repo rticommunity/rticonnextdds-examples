@@ -1,0 +1,163 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2023 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_dds_qos_profiles.xsd">
+
+  <qos_library name="SecurityExampleProfiles">
+
+    <!-- Default QoS:
+
+             This profile contains the QoS that applications would use by
+             default. We can use it as a base profile to inherit from and
+             override some parameters.
+         -->
+    <qos_profile name="A" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_ca</name>
+              <value>file:../dds_security/cert/ecdsa01/ca/ecdsa01RootCaCert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/ecdsa01/identities/ecdsa01Peer01Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/ecdsa01/identities/ecdsa01Peer01Key.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.access.permissions_ca</name>
+              <value>file:../dds_security/cert/ecdsa01/ca/ecdsa01RootCaCert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.access.governance</name>
+              <value>file:../dds_security/xml/signed/signed_Governance.p7s</value>
+            </element>
+            <element>
+              <name>dds.sec.access.permissions</name>
+              <value>file:../dds_security/xml/signed/signed_PermissionsA.p7s</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+    <qos_profile name="B" base_name="A">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/ecdsa01/identities/ecdsa01Peer02Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/ecdsa01/identities/ecdsa01Peer02Key.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.password</name>
+              <value>VG9tQjEy</value>
+            </element>
+            <element>
+              <name>dds.sec.access.permissions</name>
+              <value>file:../dds_security/xml/signed/signed_PermissionsB.p7s</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+    <qos_profile name="RSA_A" base_name="A">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_ca</name>
+              <value>file:../dds_security/cert/rsa01/ca/rsa01RootCaCert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/rsa01/identities/rsa01Peer01Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/rsa01/identities/rsa01Peer01Key.pem</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+    <qos_profile name="RSA_B" base_name="RSA_A">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/rsa01/identities/rsa01Peer02Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/rsa01/identities/rsa01Peer02Key.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.password</name>
+              <value>Um9iRzg3</value>
+            </element>
+            <element>
+              <name>dds.sec.access.permissions</name>
+              <value>file:../dds_security/xml/signed/signed_PermissionsB.p7s</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+    <qos_profile name="ECDSA_P384_A" base_name="A">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_ca</name>
+              <value>file:../dds_security/cert/ecdsa07_p384/ca/ecdsa07RootCaCert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/ecdsa07_p384/identities/ecdsa07Peer02Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/ecdsa07_p384/identities/ecdsa07Peer02Key.pem</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+    <qos_profile name="ECDSA_P384_B" base_name="ECDSA_P384_A">
+      <domain_participant_qos>
+        <property>
+          <value>
+            <element>
+              <name>dds.sec.auth.identity_certificate</name>
+              <value>file:../dds_security/cert/ecdsa07_p384/identities/ecdsa07Peer03Cert.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.auth.private_key</name>
+              <value>file:../dds_security/cert/ecdsa07_p384/identities/ecdsa07Peer03Key.pem</value>
+            </element>
+            <element>
+              <name>dds.sec.access.permissions</name>
+              <value>file:../dds_security/xml/signed/signed_PermissionsB.p7s</value>
+            </element>
+          </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+  </qos_library>
+</dds>

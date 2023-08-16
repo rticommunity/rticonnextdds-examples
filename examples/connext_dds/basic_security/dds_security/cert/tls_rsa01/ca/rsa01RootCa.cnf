@@ -1,0 +1,120 @@
+#
+# OpenSSL configuration file for RTI rsa01RootCa Certificate Authority
+
+####################################################################
+[ ca ]
+default_ca	= CA_default		# The default ca section
+
+# Variables defining this CA
+name = rsa01RootCa                        # Name
+desc =                                    # Description
+
+# File names
+cert = ${name}Cert$desc.pem               # Certificate
+key  = private/${name}Key$desc.pem        # Private key
+idx  = database/${name}Index$desc         # Database index
+crl  = ${name}$desc.crl                   # CRL
+crln = database/${name}Crlnumber$desc     # Current CRL numbers
+
+####################################################################
+[ CA_default ]
+dir             = ./ca                    # Where everything is kept
+certs           = $dir/certs              # Where the issued certs are kept
+crl_dir         = $dir/crl                # Where the issued crl are kept
+database        = $dir/${ca::idx}         # Database index file
+#unique_subject  = no                     # Set to 'no' to allow creation of
+                                          # several ctificates with same subject.
+
+certificate     = $dir/${ca::cert}        # The CA certificate
+crlnumber       = $dir/${ca::crln}        # The current crl number
+                                          # must be commented out to leave a V1 CRL
+crl             = $dir/${ca::crl}         # The current CRL
+private_key     = $dir/${ca::key}         # The private key
+RANDFILE        = $dir/private/.rand      # private random number file
+
+#x509_extensions        = usr_cert        # The extentions to add to the cert
+
+# Comment out the following two lines for the "traditional"
+# (and highly broken) format.
+name_opt        = ca_default              # Subject Name options
+cert_opt        = ca_default              # Certificate field options
+
+# Extension copying option: use with caution.
+# copy_extensions = copy
+
+# Extensions to add to a CRL. Note: Netscape communicator chokes on V2 CRLs
+# so this is commented out by default to leave a V1 CRL.
+# crlnumber must also be commented out to leave a V1 CRL.
+# crl_extensions	= crl_ext
+
+default_days    = 1825                    # how long to certify for
+default_crl_days= 30                      # how long before next CRL
+default_md      = sha256                  # which md to use.
+preserve        = no                      # keep passed DN ordering
+
+# A few difference way of specifying how similar the request should look
+# For type CA, the listed attributes must be the same, and the optional
+# and supplied fields are just that :-)
+policy          = policy_match
+
+# For the CA policy
+[ policy_match ]
+countryName             = match
+stateOrProvinceName     = match
+organizationName        = match
+organizationalUnitName  = optional
+commonName              = supplied
+emailAddress            = optional
+
+####################################################################
+[ req ]
+prompt                  = no
+default_bits            = 1024
+distinguished_name	    = req_distinguished_name
+#attributes             = req_attributes
+x509_extensions         = v3_ca # The extentions to add to the self signed cert
+
+# Passwords for private keys if not present they will be prompted for
+input_password          = xyz123
+
+[ req_distinguished_name ]
+countryName             = US
+stateOrProvinceName	    = CA
+localityName            = Santa Clara
+0.organizationName	    = Real Time Innovations
+commonName              = RTI RSA01 ROOT CA
+emailAddress            = rsa01RootCa@rti.com
+
+[ v3_ca ]
+# Extensions for a typical CA
+# PKIX recommendation.
+
+subjectKeyIdentifier    = hash
+
+authorityKeyIdentifier  = keyid:always,issuer:always
+
+# This is what PKIX recommends but some broken software chokes on critical
+# extensions.
+#basicConstraints       = critical,CA:true
+# So we do this instead.
+basicConstraints        = CA:true
+
+# Key usage: this is typical for a CA certificate. However since it will
+# prevent it being used as an test self-signed certificate it is best
+# left out by default.
+# keyUsage = cRLSign, keyCertSign
+
+# Some might want this also
+# nsCertType = sslCA, emailCA
+
+# Include email address in subject alt name: another PKIX recommendation
+# subjectAltName=email:copy
+# Copy issuer details
+# issuerAltName=issuer:copy
+
+# DER hex encoding of an extension: beware experts only!
+# obj=DER:02:03
+# Where 'obj' is a standard or added object
+# You can even override a supported extension:
+# basicConstraints= critical, DER:30:03:01:01:FF
+

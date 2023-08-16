@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="Participant_rsa01Peer02">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, emailAddress=rsa01Peer02@rti.com, CN=RTI RSA01 PEER02</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <allow_rule>
+                <domains>
+                    <id>0</id>
+                </domains>
+                <!--
+                Use this to expand the range of domains.
+                <domains>
+                    <id_range>
+                        <min>0</min>
+                        <max>
+                    </id_range>
+                </domains>
+                -->
+                <publish>
+                    <topics>
+                        <topic>Cir*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P1*</partition>
+                    </partitions>
+                </publish>
+                <subscribe>
+                    <topics>
+                        <topic>Sq*</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P2*</partition>
+                    </partitions>
+                </subscribe>
+                <subscribe>
+                    <topics>
+                        <topic>Triangle</topic>
+                    </topics>
+                    <partitions>
+                        <partition>P*</partition>
+                    </partitions>
+                </subscribe>
+            </allow_rule>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="Participant_ecdsa01Peer02">
+            <subject_name>C=US, ST=CA, O=Real Time Innovations, emailAddress=ecdsa01Peer02@rti.com, CN=RTI ECDSA01 (p256) PEER02</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="Participant_ecdsa07Peer03">
+            <subject_name>C = US, ST = CA, O = Real Time Innovations, CN = RTI ECDSA07 (p384) PEER03 (p384), emailAddress = ecdsa07Peer03@rti.com</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2022-06-01T13:00:00</not_before>
+                <not_after>2032-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
