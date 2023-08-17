@@ -70,7 +70,7 @@ private IP address:port (192.168.1.1:1234 in the figure below) and a public
 IP address:port (50.10.23.45:2345 in the figure below).
 
 ![Internal to External Participant](
-   resources/images/InternalToExternal.png?raw=true
+   ./resources/images/InternalToExternal.png?raw=true
    "Internal to External Participant")
 
 Scenarios 3 and 4 require that both Internal Participants are behind a
@@ -79,7 +79,7 @@ reachable in a public address (60.10.23.45:2345 in the Figure below) to
 facilitate the NAT traversal process.
 
 ![Internal to Internal Participant](
-   resources/images/InternalToInternal.png?raw=true
+   ./resources/images/InternalToInternal.png?raw=true
    "Internal to Internal Participant").
 
 ## Prerequisites before running example
