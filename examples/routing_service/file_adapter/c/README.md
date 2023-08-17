@@ -15,20 +15,23 @@ configuration file.
 
 ## Building C example
 
-In order to build this example, you need to provide the following variables to
-`CMake`:
-
-- `CONNEXTDDS_DIR`
-- `CONNEXTDDS_ARCH` (needed only if you have multiple architectures installed)
+In order to build this example, you need to define the variables `CONNEXTDDS_DIR`
+and `CONNEXTDDS_ARCH`. You can do so by exporting it manually, by sourcing
+the `rtisetenv` script for your architecture, or by passing them to the `cmake`
+command as arguments:
 
 ```bash
-$mkdir build
-$cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
-    -DCONNEXTDDS_ARCH=<Connext DDS Architecture>
-    -DBUILD_SHARED_LIBS=ON|OFF
-    -DCMAKE_BUILD_TYPE=Debug|Release ..
+mkdir build
+cd build
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DCONNEXTDDS_ARCH=<Connext DDS Architecture> \ # If not exported
+      -DBUILD_SHARED_LIBS=ON|OFF \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
+
+**Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
+architecture target installed in your system.
 
 **Note:** Since this example uses the `pthread` library, it only works on
 UNIX-like systems. It has been successfully tested on Ubuntu and macOS.

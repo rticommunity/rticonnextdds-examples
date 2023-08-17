@@ -28,22 +28,25 @@ For more details, please refer to the *RTI Routing Service SDK* documentation.
 
 ## Building C++ example
 
-In order to build this example, you need to provide the following variables to
-`CMake`:
-
-- `CONNEXTDDS_DIR`
-- `CONNEXTDDS_ARCH`
+In order to build this example, you need to define the variables `CONNEXTDDS_DIR`
+and `CONNEXTDDS_ARCH`. You can do so by exporting them manually, by sourcing
+the `rtisetenv` script for your architecture, or by passing them to the `cmake`
+command as arguments:
 
 ```bash
-$mkdir build
-$cmake -DCONNEXTDDS_DIR=<Connext DDS Directory>
-    -DCONNEXTDDS_ARCH=<Connext DDS Architecture>
-    -DBUILD_SHARED_LIBS=ON|OFF
-    -DCMAKE_BUILD_TYPE=Debug|Release ..
+mkdir build
+cd build
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DCONNEXTDDS_ARCH=<Connext DDS Architecture> \ # If not exported
+      -DBUILD_SHARED_LIBS=ON|OFF \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
 
-**Note**: when compiling on a Windows 64-bit machine you will need to add the
+**Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
+architecture target installed in your system.
+
+**Note**: When compiling on a Windows 64-bit machine you will need to add the
 `-A x64` parameter to the call to CMake.
 
 **Note:** If you are using a multi-configuration generator, such as Visual Studio
