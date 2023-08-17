@@ -14,9 +14,15 @@ from hello import HelloWorld
 import time
 import argparse
 import textwrap
+import pathlib
 
+
+XML_FILE_PATH = str(pathlib.Path(
+    __file__).parent.absolute()) + "/SecureQos.xml"
 
 # Process incoming data in a listener, print out each sample
+
+
 class SecurityListener(dds.NoOpDataReaderListener):
     def on_data_available(self, reader):
         for sample in reader.take_data():
@@ -25,8 +31,9 @@ class SecurityListener(dds.NoOpDataReaderListener):
 
 def subscriber_main(domain_id, sample_count, profile):
     print(f"Running with profile {profile}")
-
-    participant = dds.DomainParticipant(domain_id)
+    provider = dds.QosProvider(XML_FILE_PATH)
+    qos = provider.participant_qos_from_profile(f"SecurityExampleProfiles::{profile}")
+    participant = dds.DomainParticipant(domain_id, qos)
 
     topic = dds.Topic(participant, "Example HelloWorld", HelloWorld)
 
@@ -65,8 +72,8 @@ if __name__ == "__main__":
     args = parser.parse_args()
     assert 0 <= args.domain < 233
     assert args.count >= 0
-    assert args.profile.upper() in ["A", "B", "RSA_A", "RSA_B", "ECDSA_P384_A", "ECDSA_P384_B"]
-
+    assert args.profile.upper() in [
+        "A", "B", "RSA_A", "RSA_B", "ECDSA_P384_A", "ECDSA_P384_B"]
 
     try:
         subscriber_main(args.domain, args.count, args.profile.upper())
