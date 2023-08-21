@@ -14,7 +14,7 @@ import math
 from typing import Sequence, Tuple
 
 import rti.connextdds as dds
-from rti.request import Replier
+from rti.rpc import Replier
 import Primes
 
 

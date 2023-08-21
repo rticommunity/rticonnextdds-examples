@@ -14,7 +14,7 @@ import time
 from typing import Sequence
 
 import rti.connextdds as dds
-from rti.request import Requester
+from rti.rpc import Requester
 import Primes
 
 
