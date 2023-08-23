@@ -25,9 +25,6 @@ automatically infer which RTPS object ID Connext will assign to each endpoint.
 
 ## Example description
 
-**Note:** For running this example, you need to have installed the
-*RTI Limited Bandwidth Endpoint Discovery Plugin* add-on product.
-
 This example shows how to configure LBED when your application uses XML-Based
 Application Creation. You will learn that, in this specific case, you don't need
 to define an RTPS object ID for every endpoint, and that you can use the DDS-XML
