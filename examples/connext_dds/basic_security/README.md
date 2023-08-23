@@ -1,86 +1,55 @@
 # Example Code: Basic Security
 
-This is the same example as seen in hello_security in the examples in the rti_workspace.
+## Welcome to Connext!
 
-Welcome to Connext!
+This is the same example as seen in hello_security in the examples in the 
+rti_workspace. The other APIs examples are available when RTI Connext is 
+installed in the `<homedirectory>/rti_workspace` folder.
 
-Running this Example
-====================
+## About Security Plugins
 
-Linux and macOS systems
------------------------
-If you are using dynamic libraries, your LD_LIBRARY_PATH must include
-$NDDSHOME/lib/<architecture>.
-You must also include the path to your crypto libraries. If you are compiling
-against the Security Plugins with OpenSSL, your LD_LIBRARY_PATH must include
-$NDDSHOME/third_party/openssl-<version>/<architecture>/<release or debug>/lib
-(location of libcrypto.so and libssl.so).
-If you are compiling against the Security Plugins for use with wolfSSL, your
-LD_LIBRARY_PATH must include $NDDSHOME/third_party/wolfssl-<version>/<architecture>/<release or debug>/lib
-(location of libwolfssl.so).
+RTI Security Plugins allow you to address your security requirements in a
+granular way. It is assumed that you have a familiarity with RTI Connext for 
+this example.
 
-If using Certicom Security Builder Engine for QNX, your LD_LIBRARY_PATH must include
-$NDDSHOME/third_party/openssl-<version>/<architecture>/release/lib/:$CERTICOM_SBENGINEHOME/tools/sb/sb-$CERTICOMOS/lib/:$CERTICOM_SBENGINEHOME/lib/$CERTICOMOS.
+The main aspects of security that are covered are
 
-To run this example, type the following commands in two different command shells (one command in each shell), either
-on the same machine or on different machines:
+* Authentication - Verifying the identity of the application and/or user that
+invokes actions on DDS. 
+* Access Control - Provides a way to enforce policy decision on what DDS-related
+operations an authenticated entity can perform (ie which Domains it can join, 
+which topics it can publish and subscribe to, etc)
+* Cryptography - Implements (or interfaces with libraries that implement)
+cryptographic operations such as encryption, decryption, hashing, digital 
+signatures, etc
+* Logging - Auditing of all DDS security-related events
 
-  > python3 secure_pub.py
-  > python3 secure_sub.py
+Additionally, The Security Plugins can potentially run over any transport, 
+including the builtin UDP transport with multicast and TCP transport.
+The OMG DDS Security specification addresses the security aspect of the 
+communication in a one-to-many, friendly, data-centric way, enabling 
+applications to define different security policies based on the nature of the 
+shared data. This gives the benefits of no single point of failure, high 
+performance, and high scalability
 
-Windows systems
----------------
-If using dynamic libraries, your PATH must include
-%NDDSHOME%\lib\<architecture> and %NDDSHOME%\third_party\openssl-<version>\<architecture>\<release or debug>\bin
-(location of the libcrypto and libssl DLLs).
+## Securing a DDS Domain
 
-To run this example, type the following commands in two different command shells (one command in each shell), either
-on the same machine or on different machines:
+In a DDS Secure system, a Governance Document defines the security requirements 
+for communication. This file contains a mapping between Domain IDs and the 
+security policies that DomainParticipants must follow to interact in that 
+Domain.
 
-  > python3 secure_pub.py
-  > python3 secure_sub.py
+As you can see, the rules that compose the Governance Document specify how your 
+system is protected. All the DomainParticipants in your secure system need to 
+load the same 2 Governance Document, either by having a copy of it, or by 
+accessing a single Governance Document from a common location.
 
-Accepted parameters
--------------------
+In addition to meeting the security requirements specified in the Governance 
+Document, every DomainParticipant joining a Secure Domain must be associated 
+with a Permissions Document. This Permissions Document contains a set of grants,
+which determine what the local participant is allowed to do in the Domain.
 
-The following parameters are accepted:
-* -d for the domain id
-* -c for the number of samples to send
-* -p for the profile (A, B, RSA_A, RSA_B, ECDSA_P384_A, or ECDSA_P384_B)
+## More information
 
-
-To run this example
-using the "rsa"(**) algorithm suite, add a "-p" command-line argument: "rsa".
-Pass "p384" (***) for the "-p" command-line argument if you want to use the
-"ecdsa secp384r1" algorithm suite.
-
-* The "ecdsa" algorithm suite consists of ECDSA+P256+SHA256 (digital signature
-  for identity trust chain and authentication) and ECDHE-CEUM+P256 (key establishment).
-** The "rsa" algorithm suite consists of RSASSA-PKCS1-V1_5+2048+SHA256 (digital
-   signature for identity trust chain), RSASSA-PSS-MGF1SHA256+2048+SHA256
-   (digital signature for authentication) and ECDHE-CEUM+P256 (key
-   establishment).
-*** The "ecdsa secp384r1" algorithm suite consists of ECDSA+P384+SHA384 (digital
-   signature for identity trust chain and authentication), and ECDHE-CEUM+P384
-   (key establishment).
-
-Troubleshooting this Example
-============================
-If you see the following error:
-
-Cryptography_encrypt:error:0607B083:lib(6):func(123):reason(131)
-
-you are likely linking against an older version of OpenSSL. You need version
-1.0.1c or later.
-
-For more information, please consult the "RTI Security Plugins Getting Started
-Guide".
-
-
-Differences between the Python Version and other APIs
-=====================================================
-
-In order to accommodate the file location changes the profile in XML
-was modified so that the file locations are correct. Additionally, the
-profile file name has been changed to SecureQos.xml because QoS profiles
-are handled slightly differently in Python.
+For more information about using RTI Connext with security, follow the 
+[Getting Started Guide](https://community.rti.com/static/documentation/connext-dds/current/doc/manuals/connext_dds_secure/getting_started_guide/index.html)

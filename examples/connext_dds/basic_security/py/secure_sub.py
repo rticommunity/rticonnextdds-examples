@@ -17,8 +17,9 @@ import textwrap
 import pathlib
 
 
-XML_FILE_PATH = str(pathlib.Path(
-    __file__).parent.absolute()) + "/SecureQos.xml"
+XML_FILE_PATH = (
+    str(pathlib.Path(__file__).parent.absolute()) + "/SecureQos.xml"
+)
 
 # Process incoming data in a listener, print out each sample
 
@@ -32,13 +33,20 @@ class SecurityListener(dds.NoOpDataReaderListener):
 def subscriber_main(domain_id, sample_count, profile):
     print(f"Running with profile {profile}")
     provider = dds.QosProvider(XML_FILE_PATH)
-    qos = provider.participant_qos_from_profile(f"SecurityExampleProfiles::{profile}")
+    qos = provider.participant_qos_from_profile(
+        f"SecurityExampleProfiles::{profile}"
+    )
     participant = dds.DomainParticipant(domain_id, qos)
 
     topic = dds.Topic(participant, "Example HelloWorld", HelloWorld)
 
-    reader = dds.DataReader(dds.Subscriber(participant), topic)
-    reader.set_listener(SecurityListener(), dds.StatusMask.DATA_AVAILABLE)
+    reader = dds.DataReader(
+        dds.Subscriber(participant),
+        topic,
+        dds.DataReaderQos(),
+        SecurityListener(),
+        dds.StatusMask.DATA_AVAILABLE,
+    )
 
     count = 0
     while (sample_count == 0) or (count < sample_count):
@@ -52,7 +60,12 @@ if __name__ == "__main__":
         description="RTI Connext DDS Example: Using Security (Subscriber)"
     )
     parser.add_argument(
-        "-d", "--domain", type=int, default=0, help="DDS Domain ID"
+        "-d",
+        "--domain",
+        type=int,
+        default=0,
+        help="DDS Domain ID",
+        choices=range(0, 233),
     )
     parser.add_argument(
         "-c",
@@ -67,13 +80,12 @@ if __name__ == "__main__":
         type=str,
         default="A",
         help="Security profile to use (A, B, RSA_A, RSA_B, ECDSA_P384_A, or ECDSA_P384_B)",
+        choices=["A", "B", "RSA_A", "RSA_B", "ECDSA_P384_A", "ECDSA_P384_B"],
     )
 
     args = parser.parse_args()
-    assert 0 <= args.domain < 233
-    assert args.count >= 0
-    assert args.profile.upper() in [
-        "A", "B", "RSA_A", "RSA_B", "ECDSA_P384_A", "ECDSA_P384_B"]
+    if args.count < 0:
+        raise argparse.ArgumentTypeError("Count must be >= 0")
 
     try:
         subscriber_main(args.domain, args.count, args.profile.upper())

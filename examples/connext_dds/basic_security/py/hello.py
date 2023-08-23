@@ -18,8 +18,8 @@ import os
 
 
 @idl.struct(
-    member_annotations = {
-        'msg': [idl.bound(128)],
+    member_annotations={
+        "msg": [idl.bound(128)],
     }
 )
 class HelloWorld:
