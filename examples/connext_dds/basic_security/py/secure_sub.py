@@ -84,8 +84,6 @@ if __name__ == "__main__":
     )
 
     args = parser.parse_args()
-    if args.count < 0:
-        raise argparse.ArgumentTypeError("Count must be >= 0")
 
     try:
         subscriber_main(args.domain, args.count, args.profile.upper())
