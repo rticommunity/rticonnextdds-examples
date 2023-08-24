@@ -1,8 +1,8 @@
 # Example Code: Basic Security
 
-### Running this Example
+## Running this Example
 
-## Initial Setup
+### Initial Setup
 
 In order to run this example you must have security certificates. The easiest
 way to acquire them is to copy them from the rti_workspace examples.
@@ -12,7 +12,7 @@ example will work with no modifications to the SecureQos.xml file.
 Otherwise, the strings in SecureQos.xml must be updated to reflect the locations
 of the certificates.
 
-## Linux and macOS systems
+### Linux and macOS systems
 
 Your LD_LIBRARY_PATH or (DYLD_LIBRARY_PATH for macOS) must include
 `$NDDSHOME/lib/<architecture>`.
@@ -35,7 +35,7 @@ machines:
   > python3 secure_pub.py
   > python3 secure_sub.py
 
-## Windows systems
+### Windows systems
 
 Your PATH must include
 `%NDDSHOME%\lib\<architecture>` and
@@ -49,7 +49,7 @@ machines:
   > python3 secure_pub.py
   > python3 secure_sub.py
 
-## Accepted parameters
+### Accepted parameters
 
 The following parameters are accepted:
 
@@ -72,7 +72,7 @@ signature for identity trust chain), RSASSA-PSS-MGF1SHA256+2048+SHA256
 signature for identity trust chain and authentication), and ECDHE-CEUM+P384
 (key establishment).
 
-## Troubleshooting this Example
+### Troubleshooting this Example
 
 If you see the following error:
 
