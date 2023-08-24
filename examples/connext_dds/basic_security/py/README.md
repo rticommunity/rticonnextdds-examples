@@ -1,6 +1,6 @@
 # Example Code: Basic Security
 
-## Running this Example
+### Running this Example
 
 ## Initial Setup
 
