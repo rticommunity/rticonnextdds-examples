@@ -1,5 +1,7 @@
 # Example Code: Basic Security
 
+## Running this Example
+
 ## Initial Setup
 
 In order to run this example you must have security certificates. The easiest
@@ -9,15 +11,6 @@ If this folder is copied in whole to examples/connext_dds/basic_security the
 example will work with no modifications to the SecureQos.xml file.
 Otherwise, the strings in SecureQos.xml must be updated to reflect the locations
 of the certificates.
-
-## Running this Example
-
-To run this example, type the following commands in two different command
-shells (one command in each shell), either on the same machine or on different
-machines:
-
-  > python3 secure_pub.py
-  > python3 secure_sub.py
 
 ## Linux and macOS systems
 
@@ -35,12 +28,26 @@ If using Certicom Security Builder Engine for QNX, your LD_LIBRARY_PATH must
 include
 `$NDDSHOME/third_party/openssl-<version>/<architecture>/release/lib/:$CERTICOM_SBENGINEHOME/tools/sb/sb-$CERTICOMOS/lib/:$CERTICOM_SBENGINEHOME/lib/$CERTICOMOS.`
 
+To run this example, type the following commands in two different command
+shells (one command in each shell), either on the same machine or on different
+machines:
+
+  > python3 secure_pub.py
+  > python3 secure_sub.py
+
 ## Windows systems
 
 Your PATH must include
 `%NDDSHOME%\lib\<architecture>` and
 `%NDDSHOME%\third_party\openssl-<version>\<architecture>\<release or debug>\bin`
 (location of the libcrypto and libssl DLLs).
+
+To run this example, type the following commands in two different command
+shells (one command in each shell), either on the same machine or on different
+machines:
+
+  > python3 secure_pub.py
+  > python3 secure_sub.py
 
 ## Accepted parameters
 
