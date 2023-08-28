@@ -37,8 +37,8 @@ def publisher_main(domain_id, sample_count, profile):
     # Increment count every time we send a sample
     count = 0
     while sample_count == 0 or count < sample_count:
-        sample.msg = f"Hello World {count}"
-        print(f"Writing sample, {sample}")
+        sample.msg = f"Hello World Secure {count}"
+        print(f"Writing Hello World Secure, count {sample}")
         writer.write(sample)
         time.sleep(1)
         count += 1

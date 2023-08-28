@@ -4,13 +4,13 @@
 
 ### Initial Setup
 
-In order to run this example you must have security certificates. The easiest
-way to acquire them is to copy them from the rti_workspace examples.
-They can be found in `<rti_workspace>/<version>/examples/dds_security`.
-If this folder is copied in whole to examples/connext_dds/basic_security the
-example will work with no modifications to the SecureQos.xml file.
-Otherwise, the strings in SecureQos.xml must be updated to reflect the locations
-of the certificates.
+In order to run this example you require some security artifacts (certificates,
+signed Governance and Permissions Document). The easiest way to acquire them is
+to copy them from the rti_workspace examples. They can be found in
+`<rti_workspace>/<version>/examples/dds_security`. If this folder is copied in
+whole to `examples/connext_dds/basic_security` the example will work with no
+modifications to the SecureQos.xml file. Otherwise, the strings in
+SecureQos.xml must be updated to reflect the locations of these artifacts.
 
 ### Linux and macOS systems
 
@@ -19,8 +19,8 @@ Your LD_LIBRARY_PATH or (DYLD_LIBRARY_PATH for macOS) must include
 You must also include the path to your crypto libraries. They are in
 `$NDDSHOME/third_party/openssl-<version>/<architecture>/<release or debug>/lib`
 (location of libcrypto.so and libssl.so).
-If you are using the Security Plugins for use with wolfSSL, your
-LD_LIBRARY_PATH must include
+If you are using the Security Plugins for wolfSSL, your LD_LIBRARY_PATH must
+include
 `$NDDSHOME/third_party/wolfssl-<version>/<architecture>/<release or debug>/lib`
 (location of libwolfssl.so).
 
@@ -71,15 +71,3 @@ signature for identity trust chain), RSASSA-PSS-MGF1SHA256+2048+SHA256
 -   The "ecdsa secp384r1" algorithm suite consists of ECDSA+P384+SHA384 (digital
 signature for identity trust chain and authentication), and ECDHE-CEUM+P384
 (key establishment).
-
-### Troubleshooting this Example
-
-If you see the following error:
-
-`Cryptography_encrypt:error:0607B083:lib(6):func(123):reason(131)`
-
-you are likely using an older version of OpenSSL. You need version
-1.0.1c or later.
-
-For more information, please consult the "RTI Security Plugins Getting Started
-Guide".
