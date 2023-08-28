@@ -32,8 +32,8 @@ To run this example, type the following commands in two different command
 shells (one command in each shell), either on the same machine or on different
 machines:
 
-  > python3 secure_pub.py
-  > python3 secure_sub.py
+  > python3 secure_publisher.py
+  > python3 secure_subscriber.py
 
 ### Windows systems
 
@@ -46,8 +46,8 @@ To run this example, type the following commands in two different command
 shells (one command in each shell), either on the same machine or on different
 machines:
 
-  > python3 secure_pub.py
-  > python3 secure_sub.py
+  > python3 secure_publisher.py
+  > python3 secure_subscriber.py
 
 ### Accepted parameters
 
