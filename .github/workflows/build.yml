@@ -18,7 +18,11 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        architecture: [{name: x64Linux4gcc7.3.0, os: ubuntu-20.04}]
+
+    runs-on: ${{ matrix.architecture.os }}
     name: Build examples
 
     # This job will be executed if the "PR handler" finalized successfully or
@@ -110,9 +114,10 @@ jobs:
       # This script downloads the mandatory libraries of RTI Connext DDS for
       # compiling the examples
       - name: Install RTI Connext DDS
-        run: python resources/ci_cd/linux_install.py
+        run: python resources/ci_cd/linux_install.py -a ${{ matrix.architecture.name }}
         env:
-          RTI_MIN_PACKAGE_URL: ${{ secrets.RTI_MIN_PACKAGE_URL }}
+          RTI_AWS_BUCKET: ${{ secrets.RTI_AWS_BUCKET }}
+          RTI_AWS_PATH: ${{ secrets.RTI_AWS_PATH }}
 
       # This script will compile the examples and execute the static analysis.
       - name: Build all the examples
