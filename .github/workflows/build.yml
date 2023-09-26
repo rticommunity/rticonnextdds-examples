@@ -116,6 +116,8 @@ jobs:
       - name: Install RTI Connext DDS
         run: python resources/ci_cd/linux_install.py -a ${{ matrix.architecture.name }}
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           RTI_AWS_BUCKET: ${{ secrets.RTI_AWS_BUCKET }}
           RTI_AWS_PATH: ${{ secrets.RTI_AWS_PATH }}
 
