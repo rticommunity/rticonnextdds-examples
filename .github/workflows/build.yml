@@ -109,7 +109,7 @@ jobs:
       # Install the dependencies to run the Python scripts.
       - name: Install dependencies
         run: |
-          pip install scan-build
+          pip install -r resources/ci_cd/requirements.txt
 
       # This script downloads the mandatory libraries of RTI Connext DDS for
       # compiling the examples
