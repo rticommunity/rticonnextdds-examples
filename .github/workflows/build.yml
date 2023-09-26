@@ -67,10 +67,16 @@ jobs:
         run: unzip pr.zip
 
       # Save the PR number to send messages to the user that opened it.
-      - name: Save PR number
+      - name: Get PR number
         if: ${{ github.event_name == 'workflow_run' }}
         id: pr_number
         run: echo '::set-output name=PR_NUMBER::'$(cat NR)
+
+      # Save the PR number to send messages to the user that opened it.
+      - name: Get target branch
+        if: ${{ github.event_name == 'workflow_run' }}
+        id: target_branch
+        run: echo '::set-output name=TARGET_BRANCH::'$(cat targetbranch)
 
       # Send an information message to the user that opened the pull request.
       - name: Send information message
@@ -86,6 +92,13 @@ jobs:
               issue_number: issue_number,
               body: `The compilation is starting. Take a look [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
             });
+
+      # Filter: we clone
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target_branch.outputs.TARGET_BRANCH }}
+          filter: resource/ci_cd/
+        if: ${{ github.event_name == 'workflow_run' }}
 
       # If this workflow was triggered by a push event, it will download the
       # repository with the changes.

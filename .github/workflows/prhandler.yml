@@ -25,11 +25,18 @@ jobs:
       - name: Save PR number
         run: echo ${{ github.event.number }} > ${{ github.workspace }}/NR
 
+      # Save the PR number for the next workflow to create the current
+      # workflow artifact along with the repository itself.
+      - name: Save target branch
+        run: echo ${{ github.base_ref }} > ${{ github.workspace }}/targetbranch
+
       # Upload the artifacts to GitHub so that they can be used in the next
       # workflow.
       - name: Upload generated artifact
         uses: actions/upload-artifact@v3
         with:
           name: pr
-          path: ${{ github.workspace }}
+          path: |
+            ${{ github.workspace }}
+            !${{ github.workspace }}/resources/ci_cd
           if-no-files-found: error
