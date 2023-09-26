@@ -70,7 +70,7 @@ jobs:
       - name: Get target branch
         if: ${{ github.event_name == 'workflow_run' }}
         id: target_branch
-        run: echo '::set-output name=TARGET_BRANCH::'$(cat targetbranch)
+        run: echo "TARGET_BRANCH=$(cat targetbranch)" >> $GITHUB_OUTPUT
 
       # Filter: we clone just the scripts from the target branch for sefaty reasons
       - uses: actions/checkout@v4
@@ -113,7 +113,7 @@ jobs:
       - name: Get PR number
         if: ${{ github.event_name == 'workflow_run' }}
         id: pr_number
-        run: echo '::set-output name=PR_NUMBER::'$(cat NR)
+        run: echo "PR_NUMBER=$(cat NR)" >> $GITHUB_OUTPUT
 
       # Send an information message to the user that opened the pull request.
       - name: Send information message
