@@ -39,4 +39,5 @@ jobs:
           path: |
             ${{ github.workspace }}
             !${{ github.workspace }}/resources/ci_cd
+            !${{ github.workspace }}/.git
           if-no-files-found: error
