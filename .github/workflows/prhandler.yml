@@ -32,7 +32,7 @@ jobs:
 
       # Upload the artifacts to GitHub so that they can be used in the next
       # workflow.
-      - name: Upload generated artifact
+      - name: Upload PR changes
         uses: actions/upload-artifact@v3
         with:
           name: pr
@@ -45,7 +45,7 @@ jobs:
 
       # Upload the artifacts to GitHub so that they can be used in the next
       # workflow.
-      - name: Upload generated artifact
+      - name: Upload target branch name
         uses: actions/upload-artifact@v3
         with:
           name: targetbranch
