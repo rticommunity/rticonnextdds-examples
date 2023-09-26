@@ -14,46 +14,73 @@ The environment variable RTI_MIN_PACKAGE_URL must be assigned for downloading
 the minimal installation archive.
 
 """
+import argparse
 import os
 import sys
 import tempfile
-import urllib.request
-
 from distutils.spawn import find_executable
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from subprocess import call
 from urllib.error import URLError
 
+import boto3
+
+ROOT_DIR = Path(__file__).resolve().parents[2]
+
+
+def parse_args() -> argparse.Namespace:
+    """Parse the CLI options."""
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-a", "--architecture", type=str, required=True)
+    parser.add_argument(
+        "-i",
+        "--install-parent-dir",
+        type=Path,
+        default=os.getenv("RTI_INSTALLATION_PATH") or Path.home(),
+    )
+    parser.add_argument(
+        "-b", "--bucket", type=str, default=os.getenv("RTI_AWS_BUCKET")
+    )
+    parser.add_argument(
+        "-p",
+        "--s3-path",
+        type=PurePosixPath,
+        default=os.getenv("RTI_AWS_PATH"),
+    )
+
+    args = parser.parse_args()
+
+    return args
+
 
 def main():
-    rti_minimal_package_url = os.getenv("RTI_MIN_PACKAGE_URL")
-    temp_dir = Path(tempfile.gettempdir())
-    if not rti_minimal_package_url:
-        sys.exit(
-            "Environment variable RTI_MIN_PACKAGE_URL not found, skipping..."
-        )
+    args = parse_args()
+    version = ROOT_DIR.joinpath("VERSION").read_text()
+    downloaded_zipped_file_path = Path(
+        tempfile.gettempdir(),
+        f"rti_connext_dds-{version}-lm-{args.architecture}.zip",
+    )
+    remote_zipped_file_path = PurePosixPath(
+        args.s3_path, version, downloaded_zipped_file_path.name
+    )
+    s3 = boto3.client("s3")
 
     try:
-        rti_installation_path = Path(
-            os.getenv("RTI_INSTALLATION_PATH") or Path.home()
-        ).resolve(strict=True)
+        rti_install_parent_dir = Path(args.install_parent_dir).resolve(
+            strict=True
+        )
     except FileNotFoundError:
-        sys.exit("The RTI_INSTALLATION_PATH does not exist.")
+        sys.exit(f"File not found: {args.install_parent_dir}")
 
     cmake_command = find_executable("cmake")
     if cmake_command is None:
         sys.exit("CMake must be installed in order to use the script.")
 
     try:
-        rti_zipped_file_name = Path(
-            urllib.request.url2pathname(rti_minimal_package_url)
-        ).name
-        rti_zipped_file_path = temp_dir.joinpath(rti_zipped_file_name)
-        urllib.request.urlretrieve(
-            rti_minimal_package_url, rti_zipped_file_path
-        )
+        with open(downloaded_zipped_file_path, "wb") as f:
+            s3.download_fileobj(args.bucket, str(remote_zipped_file_path), f)
     except URLError as e:
-        sys.exit("Error opening the URL: {}".format(e))
+        sys.exit(f"Error opening the object: {e}")
 
     try:
         return_value = call(
@@ -62,10 +89,10 @@ def main():
                 "-E",
                 "tar",
                 "xf",
-                str(rti_zipped_file_path),
+                str(downloaded_zipped_file_path),
                 "--format=zip",
             ],
-            cwd=rti_installation_path,
+            cwd=rti_install_parent_dir,
         )
     except FileNotFoundError:
         sys.exit("The CMake executable could not be found.")
