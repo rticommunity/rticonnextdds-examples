@@ -72,7 +72,8 @@ jobs:
         id: target_branch
         run: echo "TARGET_BRANCH=$(cat targetbranch)" >> $GITHUB_OUTPUT
 
-      # Filter: we clone just the scripts from the target branch for sefaty reasons
+      # Sparse-checkout: we clone just the scripts from the target branch for
+      # sefaty reasons.
       - uses: actions/checkout@v4
         with:
           ref: ${{ steps.target_branch.outputs.TARGET_BRANCH }}
