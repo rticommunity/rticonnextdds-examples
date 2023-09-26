@@ -78,6 +78,14 @@ jobs:
         id: target_branch
         run: echo '::set-output name=TARGET_BRANCH::'$(cat targetbranch)
 
+      # Filter: we clone just the scripts from the target branch for sefaty reasons
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.target_branch.outputs.TARGET_BRANCH }}
+          sparse-checkout: resources/ci_cd/
+          sparse-checkout-cone-mode: false
+        if: ${{ github.event_name == 'workflow_run' }}
+
       # Send an information message to the user that opened the pull request.
       - name: Send information message
         if: ${{ github.event_name == 'workflow_run' }}
@@ -92,14 +100,6 @@ jobs:
               issue_number: issue_number,
               body: `The compilation is starting. Take a look [here](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}).`
             });
-
-      # Filter: we clone
-      - uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.target_branch.outputs.TARGET_BRANCH }}
-          sparse-checkout: resources/ci_cd/
-          sparse-checkout-cone-mode: false
-        if: ${{ github.event_name == 'workflow_run' }}
 
       # If this workflow was triggered by a push event, it will download the
       # repository with the changes.
