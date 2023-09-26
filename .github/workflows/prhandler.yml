@@ -40,4 +40,15 @@ jobs:
             ${{ github.workspace }}
             !${{ github.workspace }}/resources/ci_cd
             !${{ github.workspace }}/.git
+            !${{ github.workspace }}/targetbranch
+          if-no-files-found: error
+
+      # Upload the artifacts to GitHub so that they can be used in the next
+      # workflow.
+      - name: Upload generated artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: targetbranch
+          path: |
+            ${{ github.workspace }}/targetbranch
           if-no-files-found: error
