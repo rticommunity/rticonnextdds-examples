@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 
-<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.1.0/rti_dds_qos_profiles.xsd">
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_dds_qos_profiles.xsd">
 
     <qos_library name="RequestReplyExampleProfiles">
         <!-- Default QoS:

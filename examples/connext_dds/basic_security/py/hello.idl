@@ -1,0 +1,3 @@
+struct HelloWorld {
+    string<128> msg;
+};

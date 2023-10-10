@@ -16,6 +16,7 @@
 #include <iostream>
 #include <csignal>
 #include <dds/core/ddscore.hpp>
+#include <rti/config/Logger.hpp>
 
 namespace application {
 
@@ -24,17 +25,26 @@ enum class ParseReturn { ok, failure, exit };
 struct ApplicationArguments {
     ParseReturn parse_result;
     unsigned int domain_id;
-    unsigned int sample_count;
+    bool add;
+    std::string item_name;
+    unsigned int quantity;
+    unsigned int delay;
     rti::config::Verbosity verbosity;
 
     ApplicationArguments(
             ParseReturn parse_result_param,
             unsigned int domain_id_param,
-            unsigned int sample_count_param,
+            bool add_param,
+            const std::string &item_name_param,
+            unsigned int quantity_param,
+            unsigned int delay_param,
             rti::config::Verbosity verbosity_param)
             : parse_result(parse_result_param),
               domain_id(domain_id_param),
-              sample_count(sample_count_param),
+              add(add_param),
+              item_name(item_name_param),
+              quantity(quantity_param),
+              delay(delay_param),
               verbosity(verbosity_param)
     {
     }
@@ -64,13 +74,16 @@ inline void set_verbosity(
 }
 
 // Parses application arguments for example.
-inline ApplicationArguments parse_arguments(int argc, char *argv[])
+inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
 {
     int arg_processing = 1;
     bool show_usage = false;
     ParseReturn parse_result = ParseReturn::ok;
     unsigned int domain_id = 0;
-    unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
+    unsigned int quantity = 1;
+    unsigned int delay = 0;
+    std::string item_name = "";
+    bool add = true;
     rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
 
     while (arg_processing < argc) {
@@ -81,9 +94,9 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[])
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
-                && (strcmp(argv[arg_processing], "-s") == 0
-                    || strcmp(argv[arg_processing], "--sample-count") == 0)) {
-            sample_count = atoi(argv[arg_processing + 1]);
+                && (strcmp(argv[arg_processing], "-q") == 0
+                    || strcmp(argv[arg_processing], "--quantity") == 0)) {
+            quantity = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
@@ -92,12 +105,32 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[])
             set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
             arg_processing += 2;
         } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-a") == 0
+                    || strcmp(argv[arg_processing], "--add") == 0)) {
+            add = true;
+            item_name = argv[arg_processing + 1];
+            arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-r") == 0
+                    || strcmp(argv[arg_processing], "--remove") == 0)) {
+            add = false;
+            item_name = argv[arg_processing + 1];
+            arg_processing += 2;
+        } else if (
                 strcmp(argv[arg_processing], "-h") == 0
                 || strcmp(argv[arg_processing], "--help") == 0) {
             std::cout << "Example application." << std::endl;
             show_usage = true;
             parse_result = ParseReturn::exit;
             break;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-t") == 0
+                    || strcmp(argv[arg_processing], "--delay") == 0)) {
+            delay = atoi(argv[arg_processing + 1]);
+            arg_processing += 2;
         } else {
             std::cout << "Bad parameter." << std::endl;
             show_usage = true;
@@ -105,27 +138,35 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[])
             break;
         }
     }
+
+    if (client && item_name.empty()) {
+        std::cout << "Must add or remove an an item name." << std::endl;
+        show_usage = true;
+        parse_result = ParseReturn::failure;
+    }
+
     if (show_usage) {
-        std::cout << "Usage:\n"
-                     "    -d, --domain       <int>   Domain ID this "
-                     "application will\n"
-                     "                               subscribe in.  \n"
-                     "                               Default: 0\n"
-                     "    -s, --sample_count <int>   Number of samples to "
-                     "receive before\n"
-                     "                               cleanly shutting down. \n"
-                     "                               Default: infinite\n"
-                     "    -v, --verbosity    <int>   How much debugging output "
-                     "to show.\n"
-                     "                               Range: 0-3 \n"
-                     "                               Default: 1"
-                  << std::endl;
+        std::cout << "Usage:\n"\
+        "    -d, --domain       <int>   Domain ID this application will\n" \
+        "                               subscribe in.  \n"
+        "                               Default: 0\n"\
+        "    -a, --add <item_name>      Add an item to the inventory\n"\
+        "    -r, --remove <item_name>   Remove an item from the inventory\n"\
+        "    -q, --quantity <int>       Number of items to add or remove\n"\
+        "                               Default: 1\n"
+        "    -v, --verbosity    <int>   How much debugging output to show.\n"\
+        "                               Range: 0-3 \n"
+        "                               Default: 1"
+        << std::endl;
     }
 
     return ApplicationArguments(
             parse_result,
             domain_id,
-            sample_count,
+            add,
+            item_name,
+            quantity,
+            delay,
             verbosity);
 }
 
