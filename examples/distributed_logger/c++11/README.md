@@ -13,6 +13,14 @@ The following files are part of the example:
 - src/Hello.cxx
 - include/distlogSupport.h (this header is needed to use
 Modern C++ Distributed Logger in RTI Connextdds 7.2.0)
+- CMakeLists.txt
+
+Note: The `CMakeLists.txt` in this example uses the latest version
+of `FindRTIConnextDDS.cmake` from the
+[cmake-utils](https://github.com/rticommunity/rticonnextdds-cmake-utils)
+repository to find the Modern C++ Distributed Logger libraries.
+If you are using RTI Connext 7.2.0, you may want to use a newer version from
+that repository as well.
 
 ## Building the Example
 
