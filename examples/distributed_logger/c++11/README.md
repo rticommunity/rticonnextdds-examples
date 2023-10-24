@@ -11,7 +11,8 @@ RTI Spy or RTI Admin Console to visualize the log messages being sent.
 The following files are part of the example:
 
 - src/Hello.cxx
-- include/distlogSupport.h (this header is needed to use Modern C++ Distributed Logger in RTI Connextdds 7.2.0)
+- include/distlogSupport.h (this header is needed to use
+Modern C++ Distributed Logger in RTI Connextdds 7.2.0)
 
 ## Building the Example
 

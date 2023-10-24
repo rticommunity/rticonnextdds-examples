@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
 
     try {
         hello_main(application, domain_id, sleep, iterations);
-        
+
         // Finalize Domain Participant Factory
         dds::domain::DomainParticipant::finalize_participant_factory();
     } catch (const exception &ex) {
