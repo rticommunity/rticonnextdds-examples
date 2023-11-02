@@ -12,7 +12,7 @@
 
 #include <iostream>
 
-#include <rti/util/util.hpp> // for rti::util::sleep()
+#include <rti/util/util.hpp>  // for rti::util::sleep()
 #include <rti/distlogger/DistLogger.hpp>
 
 using namespace std;
@@ -40,7 +40,7 @@ void distlogger_example_main(
 
     // Instantiate Distributed Logger
     DistLogger dist_logger = DistLogger::get_instance();
-    
+
     // RTI Distributed Logger provides the ability to interact with its
     // topics directly. However, for the sake of simplicity in this example,
     // you may use RTI Tools such as RTI Spy or RTI Admin Console to visualize
@@ -80,8 +80,7 @@ int main(int argc, char *argv[])
         } else if ((param == "-s" || param == "--sleep") && i < argc) {
             sleep = atoi(argv[i++]);
         } else {
-            cout << argv[0]
-                 << " [options]\n"
+            cout << argv[0] << " [options]\n"
                  << "\t-d, --domain_id <domain ID> (default: 0)\n"
                  << "\t-s, --sleep <seconds between iterations> (default: 1)\n"
                  << "\t-i, --iterations <number of iterations> (default: 50)\n"

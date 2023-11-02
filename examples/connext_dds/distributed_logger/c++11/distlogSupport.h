@@ -15,5 +15,4 @@
 
 #define RTI_DL_DEFAULT_LEVEL (600L)
 
-#endif  /* distlogSupport_h */
-
+#endif /* distlogSupport_h */

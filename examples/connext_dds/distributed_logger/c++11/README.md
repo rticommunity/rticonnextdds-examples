@@ -4,8 +4,8 @@
 
 The following files are part of the example:
 
-- DistLoggerExample.cxx
-- distlogSupport.h (necessary header to use Modern C++ Distributed Logger
+-   DistLoggerExample.cxx
+-   distlogSupport.h (necessary header to use Modern C++ Distributed Logger
 in RTI Connextdds 7.2.0)
 
 Note: The `CMakeLists.txt` in this example uses the latest version
