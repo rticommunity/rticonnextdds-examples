@@ -10,11 +10,11 @@
 #  use or inability to use the software.
 #
 cmake_minimum_required(VERSION 3.11)
-project (ModernCppDistLogger)
+project (DistLoggerExample)
 
 # Find RTI Connext dependencies
 list(APPEND CMAKE_MODULE_PATH
-    "${CMAKE_CURRENT_SOURCE_DIR}/../../../resources/cmake/Modules"
+    "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
@@ -27,12 +27,9 @@ find_package(
       distributed_logger
 )
 
-# Include ConnextDdsAddExample.cmake from resources/cmake
-include(ConnextDdsAddExample)
-
 # Main application
 add_executable(${PROJECT_NAME}
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/Hello.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/DistLoggerExample.cxx"
 )
 
 target_link_libraries(${PROJECT_NAME}
@@ -43,7 +40,7 @@ target_link_libraries(${PROJECT_NAME}
 
 target_include_directories(${PROJECT_NAME}
     PRIVATE
-    "${CMAKE_CURRENT_SOURCE_DIR}/include"
+    "${CMAKE_CURRENT_SOURCE_DIR}"
     "${CONNEXTDDS_INCLUDE_DIRS}"
 )
 

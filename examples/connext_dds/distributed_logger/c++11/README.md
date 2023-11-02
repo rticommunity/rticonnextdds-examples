@@ -2,18 +2,11 @@
 
 ## Description of the Requester Application
 
-This example implements a simple application running a personalized
-Modern C++ Distributed Logger instance that logs multiple messages
-for a number of specified iterations.
-The user should use this example in combination with RTI Tools such as
-RTI Spy or RTI Admin Console to visualize the log messages being sent.
-
 The following files are part of the example:
 
-- src/Hello.cxx
-- include/distlogSupport.h (this header is needed to use
-Modern C++ Distributed Logger in RTI Connextdds 7.2.0)
-- CMakeLists.txt
+- DistLoggerExample.cxx
+- distlogSupport.h (necessary header to use Modern C++ Distributed Logger
+in RTI Connextdds 7.2.0)
 
 Note: The `CMakeLists.txt` in this example uses the latest version
 of `FindRTIConnextDDS.cmake` from the
@@ -74,6 +67,53 @@ cmake -DCONNEXTDDS_DIR=<connext dir> \
       -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above> \
       -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
+
+## Running the Example
+
+### Example Application
+
+Run the application in a terminal as follows:
+
+On *Windows* systems run:
+
+```sh
+DistLoggerExample.exe [options]
+```
+
+On *UNIX* systems run:
+
+```sh
+./DistLoggerExample [options]
+```
+
+where the options are:
+
+-   `-d, --domain`: Domain ID.
+
+    **Default**: 0.
+
+-   `-s, --sleep`: Number of seconds to sleep between iterations.
+
+    **Default**: 1.
+
+-   `-i, --iterations`: Number of logging iterations.
+
+    **Default**: 50.
+
+-   `-h, --help`: Displays application usage and exits.
+
+You should see the messages that are being logged on each iteration printed
+on the terminal.
+
+### Visualizing the log messages
+
+Once the example application is running, open RTI Spy or
+RTI Admin Console.
+You should be able to visualize the logging messages being sent
+by the application.
+
+To learn more about RTI Tools, refer to their section in the
+[Connext DDS documentation](https://community.rti.com/documentation).
 
 ## Customizing the Build
 

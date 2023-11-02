@@ -20,7 +20,7 @@ using namespace dds::domain;
 using namespace rti::dist_logger;
 
 
-void hello_main(
+void distlogger_example_main(
         const string application_kind,
         const int domain_id,
         const int sleep,
@@ -85,19 +85,20 @@ int main(int argc, char *argv[])
                  << "\t-d, --domain_id <domain ID> (default: 0)\n"
                  << "\t-s, --sleep <seconds between iterations> (default: 1)\n"
                  << "\t-i, --iterations <number of iterations> (default: 50)\n"
+                 << "\t-h, --help Display this message.\n"
                  << endl;
             return -1;
         }
     }
 
     try {
-        hello_main(application, domain_id, sleep, iterations);
+        distlogger_example_main(application, domain_id, sleep, iterations);
 
         // Finalize Domain Participant Factory
         dds::domain::DomainParticipant::finalize_participant_factory();
     } catch (const exception &ex) {
         // This will catch DDS exceptions
-        cerr << "Exception in hello_main: " << ex.what() << endl;
+        cerr << "Exception in distlogger_example_main: " << ex.what() << endl;
         return -1;
     }
 
