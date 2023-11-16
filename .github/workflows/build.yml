@@ -139,10 +139,10 @@ jobs:
         if: ${{ github.event_name == 'push' }}
 
       # Setup Python. If you need another version, just change it below.
-      - name: Setup Python 3.7
+      - name: Setup Python 3.11
         uses: actions/setup-python@v2
         with:
-          python-version: 3.7
+          python-version: 3.11
 
       - name: Set up Clang
         uses: egor-tensin/setup-clang@v1
