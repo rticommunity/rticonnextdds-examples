@@ -22,7 +22,7 @@ or RTI Admin Console.
 For example, you may find RTI Spy in your RTI Connext DDS installation
 and run it from a terminal as follows:
 
-```bash
+```sh
 cd rti_connext_dds-7.2.0/bin
 ./rtiddsspy -printSample
 ```
@@ -31,7 +31,7 @@ Once the Distributed Logger example is running in a different terminal,
 you should start seeing state information along with the logged messages
 on RTI Spy:
 
-```text
+```txt
 RTI Connext DDS Spy built with DDS version: 7.2.0
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 rtiddsspy is listening for data, press CTRL+C to stop it.

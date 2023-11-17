@@ -1,19 +1,25 @@
 # Example Code: Modern C++ Distributed Logger Application
 
-## Description of the Requester Application
+## Example Structure
 
 The following files are part of the example:
 
--   DistLoggerExample.cxx
--   distlogSupport.h (necessary header to use Modern C++ Distributed Logger
-in RTI Connextdds 7.2.0)
+-   `DistLoggerExample.cxx`
+-   `distlogSupport.h`
 
-Note: The `CMakeLists.txt` in this example uses the latest version
-of `FindRTIConnextDDS.cmake` from the
-[cmake-utils](https://github.com/rticommunity/rticonnextdds-cmake-utils)
-repository to find the Modern C++ Distributed Logger libraries.
-If you are using RTI Connext 7.2.0, you may want to use a newer version from
-that repository as well.
+> **Note**:
+>
+> The `distlogSupport.h` header is necessary to use Modern C++ Distributed
+> Logger in RTI Connextdds 7.2.0.
+>
+> **Note**:
+>
+> The `CMakeLists.txt` file in this example uses the latest version
+> of `FindRTIConnextDDS.cmake` from the
+> [cmake-utils](https://github.com/rticommunity/rticonnextdds-cmake-utils)
+> repository to find the Modern C++ Distributed Logger libraries.
+> If you are using RTI Connext 7.2.0, you may want to use a newer version from
+> that repository as well.
 
 ## Building the Example
 
@@ -21,7 +27,7 @@ In order to build this example, you need to define the variable `CONNEXTDDS_DIR`
 You can do so by exporting it manually, by sourcing the `rtisetenv` script for
 your architecture, or by passing it to the `cmake` command as arguments:
 
-```bash
+```sh
 mkdir build
 cd build
 cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
