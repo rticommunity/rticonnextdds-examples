@@ -4,8 +4,8 @@
 
 The following files are part of the example:
 
--   `DistLoggerExample.cxx`
--   `distlogSupport.h`
+- `DistLoggerExample.cxx`
+- `distlogSupport.h`
 
 > **Note**:
 >
