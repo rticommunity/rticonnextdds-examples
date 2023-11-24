@@ -1,4 +1,4 @@
-# Example code: Using Dynamic Data to publish and subscribe
+# Example code: Access Union Discriminators in Dynamic Data
 
 ## Building the Example :wrench:
 
