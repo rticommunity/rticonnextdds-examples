@@ -21,13 +21,15 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
-# Find the ConnextDDS libraries. This will look for core and API libraries
-find_package(RTIConnextDDS
-    "7.0.0"
-    REQUIRED
-    COMPONENTS
-        core
-)
+# Find the RTI Connext DDS libraries
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "7.0.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
 
 add_executable(dynamic_data_union_example_cxx2
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_union_example.cxx"
