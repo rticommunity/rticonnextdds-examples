@@ -41,7 +41,6 @@ int32_t get_enum_ordinal_value_by_name(
         DynamicType struct_dynamic_type,
         std::string enum_element)
 {
-
     // Get value using scenario 1 of `print_enum_ordinal_value_by_name`
     const StructType &dynamic_struct =
             static_cast<const StructType &>(struct_dynamic_type);
@@ -55,7 +54,6 @@ int32_t get_enum_ordinal_value_by_name(
 void print_enum_ordinal_values_from_dynamic_type(
         DynamicType struct_dynamic_type)
 {
-
     // If you need a switch/case statement you can use
     // enum_dynamic_type.kind().underlying()
     if (struct_dynamic_type.kind() == TypeKind::STRUCTURE_TYPE) {
