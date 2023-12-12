@@ -34,20 +34,33 @@ option(CONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES
     OFF
 )
 
+option(CONNEXTDDS_BUILD_CONNEXT_SECURE_EXAMPLES
+    "Build Connext Secure examples"
+    OFF
+)
+
 add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/connext_dds")
 
 if(CONNEXTDDS_BUILD_PERSISTENCE_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/persistence_service")
 endif()
+
 if(CONNEXTDDS_BUILD_RECORDING_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/recording_service")
 endif()
+
 if(CONNEXTDDS_BUILD_ROUTING_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/routing_service")
 endif()
+
 if(CONNEXTDDS_BUILD_WEB_INTEGRATION_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/web_integration_service")
 endif()
+
 if(CONNEXTDDS_BUILD_CLOUD_DISCOVERY_SERVICE_EXAMPLES)
     add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/cloud_discovery_service")
+endif()
+
+if(CONNEXTDDS_BUILD_CONNEXT_SECURE_EXAMPLES)
+    add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/connext_secure")
 endif()
