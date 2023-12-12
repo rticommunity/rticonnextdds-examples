@@ -1,0 +1,76 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----BA222823706118EEC41E08F8433E9EC4"
+
+This is an S/MIME signed message
+
+------BA222823706118EEC41E08F8433E9EC4
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="WhitelistParticipantA">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantA@rti.com, CN = Whitelist Participant A</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="WhitelistParticipantB">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantB@rti.com, CN = Whitelist Participant B</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="WhitelistParticipantC">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantC@rti.com, CN = Whitelist Participant C</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2022-06-01T13:00:00</not_before>
+                <not_after>2032-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
+
+------BA222823706118EEC41E08F8433E9EC4
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEfQYJKoZIhvcNAQcCoIIEbjCCBGoCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggI3MIICMzCCAdkCFH0Fu5IfjKtd+i7Im2GHhuQcyLQAMAoGCCqG
+SM49BAMCMIGbMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1Nh
+bnRhIENsYXJhMR4wHAYDVQQKDBVSZWFsIFRpbWUgSW5ub3ZhdGlvbnMxIzAhBgNV
+BAMMGlJUSSBFQ0RTQTAxIChwMjU2KSBST09UIENBMSQwIgYJKoZIhvcNAQkBFhVl
+Y2RzYTAxUm9vdENhQHJ0aS5jb20wHhcNMjMxMTA5MTc0MzU3WhcNMjgxMTA3MTc0
+MzU3WjCBmzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW50
+YSBDbGFyYTEeMBwGA1UECgwVUmVhbCBUaW1lIElubm92YXRpb25zMSMwIQYDVQQD
+DBpSVEkgRUNEU0EwMSAocDI1NikgUk9PVCBDQTEkMCIGCSqGSIb3DQEJARYVZWNk
+c2EwMVJvb3RDYUBydGkuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEXKyA
+PTos8iYCvDZ3NROHBHNIlYsSWAIi1QX3nZf3UlOrz6iSNDfzXGMg9ErCXdSoNfPz
+jmJXD/1yCS0PICOSHTAKBggqhkjOPQQDAgNIADBFAiEAuHtAbWqgxsfmHcQzX94z
+qNzv+ketLIdsH5VStTTE+GoCIHLC4uCHjmzpHxaNyqlhb5B4YEelxaZTc59ieiHL
+WM/hMYICCjCCAgYCAQEwgbQwgZsxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEU
+MBIGA1UEBwwLU2FudGEgQ2xhcmExHjAcBgNVBAoMFVJlYWwgVGltZSBJbm5vdmF0
+aW9uczEjMCEGA1UEAwwaUlRJIEVDRFNBMDEgKHAyNTYpIFJPT1QgQ0ExJDAiBgkq
+hkiG9w0BCQEWFWVjZHNhMDFSb290Q2FAcnRpLmNvbQIUfQW7kh+Mq136LsibYYeG
+5BzItAAwDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+ATAcBgkqhkiG9w0BCQUxDxcNMjMxMTA5MTc0MzU3WjAvBgkqhkiG9w0BCQQxIgQg
+PuVfHMzUbFnH8vBxmPnXd12B2kCBjPzzwkXqgGD9WF0weQYJKoZIhvcNAQkPMWww
+ajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG
+9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYI
+KoZIhvcNAwICASgwCgYIKoZIzj0EAwIESDBGAiEAgyTkLjRkg7ROrAtq8Xp7Ji3U
+s4THv45c/F5bjyE/YnACIQCASR7r+LmLBPot1X04ffe6rk9nmLgo27MlsadKAXoN
+Eg==
+
+------BA222823706118EEC41E08F8433E9EC4--
+

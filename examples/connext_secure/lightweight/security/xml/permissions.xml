@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="C:\RTI\rti_connext_dds-7.2.0\resource\schema\dds_security_permissions.xsd">
+    <permissions>
+        <grant name="LightParticipantA">
+            <subject_name>/C=US/ST=CA/L=Santa Clara/O=Real Time Innovations/emailAddress=ecdsa01ParticipantA@rti.com/CN=Lightweight Participant A</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="LightParticipantB">
+            <subject_name>/C=US/ST=CA/L=Santa Clara/O=Real Time Innovations/emailAddress=ecdsa01ParticipantB@rti.com/CN=Lightweight Participant B</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2013-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>

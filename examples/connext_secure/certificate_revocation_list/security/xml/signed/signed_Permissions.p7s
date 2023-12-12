@@ -1,0 +1,67 @@
+MIME-Version: 1.0
+Content-Type: multipart/signed; protocol="application/x-pkcs7-signature"; micalg="sha-256"; boundary="----62E23A1CFDB4ACC5D777D74F1B645647"
+
+This is an S/MIME signed message
+
+------62E23A1CFDB4ACC5D777D74F1B645647
+Content-Type: text/plain
+
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="CrlParticipantA">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantA@rti.com, CN = Crl Participant A</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="CrlParticipantB">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantB@rti.com, CN = Crl Participant B</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>
+
+------62E23A1CFDB4ACC5D777D74F1B645647
+Content-Type: application/x-pkcs7-signature; name="smime.p7s"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="smime.p7s"
+
+MIIEfQYJKoZIhvcNAQcCoIIEbjCCBGoCAQExDzANBglghkgBZQMEAgEFADALBgkq
+hkiG9w0BBwGgggI3MIICMzCCAdkCFD5qIh7DUlSQzSeNjoQpKhVWb82YMAoGCCqG
+SM49BAMCMIGbMQswCQYDVQQGEwJVUzELMAkGA1UECAwCQ0ExFDASBgNVBAcMC1Nh
+bnRhIENsYXJhMR4wHAYDVQQKDBVSZWFsIFRpbWUgSW5ub3ZhdGlvbnMxIzAhBgNV
+BAMMGlJUSSBFQ0RTQTAxIChwMjU2KSBST09UIENBMSQwIgYJKoZIhvcNAQkBFhVl
+Y2RzYTAxUm9vdENhQHJ0aS5jb20wHhcNMjMxMTA5MTk0MjM2WhcNMjgxMTA3MTk0
+MjM2WjCBmzELMAkGA1UEBhMCVVMxCzAJBgNVBAgMAkNBMRQwEgYDVQQHDAtTYW50
+YSBDbGFyYTEeMBwGA1UECgwVUmVhbCBUaW1lIElubm92YXRpb25zMSMwIQYDVQQD
+DBpSVEkgRUNEU0EwMSAocDI1NikgUk9PVCBDQTEkMCIGCSqGSIb3DQEJARYVZWNk
+c2EwMVJvb3RDYUBydGkuY29tMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAE/04k
+Be96iq8PMqN1ucoWCvLT5HR9hwMqgmgqGRLDOEJG5dUloc9mB1HJyMzYydVektfT
+W+miY3aLQHAiXfORdTAKBggqhkjOPQQDAgNIADBFAiBNXpfyBFH4ux9TZtiqZZ8a
+SW4e9eXL9UKJz0s9ZNAlXwIhAL3VVi8aN3EJkk+6ZoeziVmuuiJUCe69VjwAHh0l
+Uc5lMYICCjCCAgYCAQEwgbQwgZsxCzAJBgNVBAYTAlVTMQswCQYDVQQIDAJDQTEU
+MBIGA1UEBwwLU2FudGEgQ2xhcmExHjAcBgNVBAoMFVJlYWwgVGltZSBJbm5vdmF0
+aW9uczEjMCEGA1UEAwwaUlRJIEVDRFNBMDEgKHAyNTYpIFJPT1QgQ0ExJDAiBgkq
+hkiG9w0BCQEWFWVjZHNhMDFSb290Q2FAcnRpLmNvbQIUPmoiHsNSVJDNJ42OhCkq
+FVZvzZgwDQYJYIZIAWUDBAIBBQCggeQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEH
+ATAcBgkqhkiG9w0BCQUxDxcNMjMxMTA5MTk0MjM3WjAvBgkqhkiG9w0BCQQxIgQg
+Ljz/M2uRs3gWk7iWa/vSHWPoyjYGaH34cbJ/blpruwYweQYJKoZIhvcNAQkPMWww
+ajALBglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG
+9w0DBzAOBggqhkiG9w0DAgICAIAwDQYIKoZIhvcNAwICAUAwBwYFKw4DAgcwDQYI
+KoZIhvcNAwICASgwCgYIKoZIzj0EAwIESDBGAiEA6tpH6e5jgl1IVJSrMouzMAsM
+K89z8i0kh9+Y5Mz8R2oCIQDg/CADl6m4Nb3tBGmEFEfsRgcORsNdrQMB+YRcSTak
+OQ==
+
+------62E23A1CFDB4ACC5D777D74F1B645647--
+
