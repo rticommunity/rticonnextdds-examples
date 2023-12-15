@@ -23,58 +23,57 @@
 #include <rti/util/util.hpp>  // for sleep()
 
 
-namespace application
+namespace application {
+// Catch control-C and tell application to shut down
+extern bool shutdown_requested;
+
+inline void stop_handler(int)
 {
-    // Catch control-C and tell application to shut down
-    extern bool shutdown_requested;
+    shutdown_requested = true;
+    std::cout << "preparing to shut down..." << std::endl;
+}
 
-    inline void stop_handler(int)
+inline void setup_signal_handlers()
+{
+    signal(SIGINT, stop_handler);
+    signal(SIGTERM, stop_handler);
+}
+
+enum class ParseReturn { ok, failure, exit };
+
+enum class ApplicationType { unknown, record, replay, publish };
+
+struct ApplicationArguments {
+    ParseReturn parse_result;
+    unsigned int domain_id;
+    unsigned int sample_count;
+    ApplicationType application_type = ApplicationType::unknown;
+    std::string file_name;
+    rti::config::Verbosity verbosity;
+
+    ApplicationArguments(
+            ParseReturn parse_result_param,
+            unsigned int domain_id_param,
+            unsigned int sample_count_param,
+            ApplicationType application_type_param,
+            const std::string &file_name_param,
+            rti::config::Verbosity verbosity_param)
+            : parse_result(parse_result_param),
+              domain_id(domain_id_param),
+              sample_count(sample_count_param),
+              application_type(application_type_param),
+              file_name(file_name_param),
+              verbosity(verbosity_param)
     {
-        shutdown_requested = true;
-        std::cout << "preparing to shut down..." << std::endl;
     }
+};
 
-    inline void setup_signal_handlers()
-    {
-        signal(SIGINT, stop_handler);
-        signal(SIGTERM, stop_handler);
-    }
+inline void set_verbosity(
+        rti::config::Verbosity &verbosity,
+        int verbosity_value);
 
-    enum class ParseReturn { ok, failure, exit };
-
-    enum class ApplicationType { unknown, record, replay, publish };
-
-    struct ApplicationArguments {
-        ParseReturn parse_result;
-        unsigned int domain_id;
-        unsigned int sample_count;
-        ApplicationType application_type = ApplicationType::unknown;
-        std::string file_name;
-        rti::config::Verbosity verbosity;
-
-        ApplicationArguments(
-                ParseReturn parse_result_param,
-                unsigned int domain_id_param,
-                unsigned int sample_count_param,
-                ApplicationType application_type_param,
-                const std::string &file_name_param,
-                rti::config::Verbosity verbosity_param)
-                : parse_result(parse_result_param),
-                  domain_id(domain_id_param),
-                  sample_count(sample_count_param),
-                  application_type(application_type_param),
-                  file_name(file_name_param),
-                  verbosity(verbosity_param)
-        {
-        }
-    };
-
-    inline void set_verbosity(
-            rti::config::Verbosity & verbosity,
-            int verbosity_value);
-
-    // Parses application arguments for example.
-    ApplicationArguments parse_arguments(int argc, char *argv[]);
+// Parses application arguments for example.
+ApplicationArguments parse_arguments(int argc, char *argv[]);
 
 }  // namespace application
 

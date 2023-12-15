@@ -57,120 +57,116 @@ void publish_example_data(
 }  // namespace util
 
 namespace application {
-    bool shutdown_requested = false;
+bool shutdown_requested = false;
 
-    void set_verbosity(
-            rti::config::Verbosity & verbosity,
-            int verbosity_value)
-    {
-        switch (verbosity_value) {
-        case 0:
-            verbosity = rti::config::Verbosity::SILENT;
-            break;
-        case 1:
-            verbosity = rti::config::Verbosity::EXCEPTION;
-            break;
-        case 2:
-            verbosity = rti::config::Verbosity::WARNING;
-            break;
-        case 3:
-            verbosity = rti::config::Verbosity::STATUS_ALL;
-            break;
-        default:
-            verbosity = rti::config::Verbosity::EXCEPTION;
-            break;
-        }
-    }
-
-    ApplicationArguments parse_arguments(int argc, char *argv[])
-    {
-        int arg_processing = 1;
-        bool show_usage = false;
-        ParseReturn parse_result = ParseReturn::ok;
-        unsigned int domain_id = 0;
-        unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
-        ApplicationType app_type = ApplicationType::unknown;
-        std::string file_name;
-        rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
-
-        while (arg_processing < argc) {
-            if ((argc > arg_processing + 1)
-                    && (strcmp(argv[arg_processing], "-d") == 0
-                            || strcmp(argv[arg_processing], "--domain") == 0)) {
-                domain_id = atoi(argv[arg_processing + 1]);
-                arg_processing += 2;
-            } else if (
-                    (argc > arg_processing + 1)
-                    && (strcmp(argv[arg_processing], "-s") == 0
-                            || strcmp(argv[arg_processing], "--sample-count")
-                                    == 0)) {
-                sample_count = atoi(argv[arg_processing + 1]);
-                arg_processing += 2;
-            } else if (
-                    (argc > arg_processing + 1)
-                    && (strcmp(argv[arg_processing], "-v") == 0
-                            || strcmp(argv[arg_processing], "--verbosity")
-                                    == 0)) {
-                set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
-                arg_processing += 2;
-                // parse file_name
-            } else if (
-                    (argc > arg_processing + 1)
-                    && (strcmp(argv[arg_processing], "--record") == 0)) {
-                file_name = argv[arg_processing + 1];
-                app_type = ApplicationType::record;
-                arg_processing += 2;
-            } else if (
-                    (argc > arg_processing + 1)
-                    && (strcmp(argv[arg_processing], "--replay") == 0)) {
-                file_name = argv[arg_processing + 1];
-                app_type = ApplicationType::replay;
-                arg_processing += 2;
-            } else if (strcmp(argv[arg_processing], "--publish") == 0) {
-                app_type = ApplicationType::publish;
-                arg_processing += 1;
-            } else if (
-                    strcmp(argv[arg_processing], "-h") == 0
-                    || strcmp(argv[arg_processing], "--help") == 0) {
-                std::cout << "Example application." << std::endl;
-                show_usage = true;
-                parse_result = ParseReturn::exit;
-                break;
-            } else {
-                std::cout << "Bad parameter." << std::endl;
-                show_usage = true;
-                parse_result = ParseReturn::failure;
-                break;
-            }
-        }
-
-        if (app_type == ApplicationType::unknown) {
-            std::cout << "Must specify --record, --replay, or --publish."
-                      << std::endl;
-            show_usage = true;
-            parse_result = ParseReturn::failure;
-        }
-
-        if (show_usage) {
-            std::cout
-                    << "Options:\n"
-                       "    --record <file name>       Record to a file.\n"
-                       "    --replay <file name>       Replay from a file.\n"
-                       "    --publish                  Publish example data.\n"
-                       "    -d, --domain <int>         Domain ID this "
-                       "application will\n"
-                       "                               publish or subscribe "
-                       "in.  \n"
-                       "                               Default: 0\n"
-                    << std::endl;
-        }
-
-        return ApplicationArguments(
-                parse_result,
-                domain_id,
-                sample_count,
-                app_type,
-                file_name,
-                verbosity);
+void set_verbosity(rti::config::Verbosity &verbosity, int verbosity_value)
+{
+    switch (verbosity_value) {
+    case 0:
+        verbosity = rti::config::Verbosity::SILENT;
+        break;
+    case 1:
+        verbosity = rti::config::Verbosity::EXCEPTION;
+        break;
+    case 2:
+        verbosity = rti::config::Verbosity::WARNING;
+        break;
+    case 3:
+        verbosity = rti::config::Verbosity::STATUS_ALL;
+        break;
+    default:
+        verbosity = rti::config::Verbosity::EXCEPTION;
+        break;
     }
 }
+
+ApplicationArguments parse_arguments(int argc, char *argv[])
+{
+    int arg_processing = 1;
+    bool show_usage = false;
+    ParseReturn parse_result = ParseReturn::ok;
+    unsigned int domain_id = 0;
+    unsigned int sample_count = (std::numeric_limits<unsigned int>::max)();
+    ApplicationType app_type = ApplicationType::unknown;
+    std::string file_name;
+    rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
+
+    while (arg_processing < argc) {
+        if ((argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-d") == 0
+                        || strcmp(argv[arg_processing], "--domain") == 0)) {
+            domain_id = atoi(argv[arg_processing + 1]);
+            arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-s") == 0
+                        || strcmp(argv[arg_processing], "--sample-count")
+                                == 0)) {
+            sample_count = atoi(argv[arg_processing + 1]);
+            arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-v") == 0
+                        || strcmp(argv[arg_processing], "--verbosity") == 0)) {
+            set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
+            arg_processing += 2;
+            // parse file_name
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "--record") == 0)) {
+            file_name = argv[arg_processing + 1];
+            app_type = ApplicationType::record;
+            arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "--replay") == 0)) {
+            file_name = argv[arg_processing + 1];
+            app_type = ApplicationType::replay;
+            arg_processing += 2;
+        } else if (strcmp(argv[arg_processing], "--publish") == 0) {
+            app_type = ApplicationType::publish;
+            arg_processing += 1;
+        } else if (
+                strcmp(argv[arg_processing], "-h") == 0
+                || strcmp(argv[arg_processing], "--help") == 0) {
+            std::cout << "Example application." << std::endl;
+            show_usage = true;
+            parse_result = ParseReturn::exit;
+            break;
+        } else {
+            std::cout << "Bad parameter." << std::endl;
+            show_usage = true;
+            parse_result = ParseReturn::failure;
+            break;
+        }
+    }
+
+    if (app_type == ApplicationType::unknown) {
+        std::cout << "Must specify --record, --replay, or --publish."
+                  << std::endl;
+        show_usage = true;
+        parse_result = ParseReturn::failure;
+    }
+
+    if (show_usage) {
+        std::cout << "Options:\n"
+                     "    --record <file name>       Record to a file.\n"
+                     "    --replay <file name>       Replay from a file.\n"
+                     "    --publish                  Publish example data.\n"
+                     "    -d, --domain <int>         Domain ID this "
+                     "application will\n"
+                     "                               publish or subscribe "
+                     "in.  \n"
+                     "                               Default: 0\n"
+                  << std::endl;
+    }
+
+    return ApplicationArguments(
+            parse_result,
+            domain_id,
+            sample_count,
+            app_type,
+            file_name,
+            verbosity);
+}
+}  // namespace application
