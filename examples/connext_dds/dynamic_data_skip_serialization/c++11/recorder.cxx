@@ -123,12 +123,16 @@ void replay(const std::string &file_name, int domain_id)
     DynamicData sample(create_type());
     while (!in_file.eof()) {
         // read length and data
-        in_file.read(reinterpret_cast<char *>(&length), sizeof(length));
+        if (!in_file.read(reinterpret_cast<char *>(&length), sizeof(length))) {
+            break;
+        }
 
         std::cout << "Replaying data sample (" << length << " bytes)"
                   << std::endl;
         buffer.resize(length);
-        in_file.read(buffer.data(), length);
+        if (!in_file.read(buffer.data(), length)) {
+            break;
+        }
 
         // By calling the set_cdr_buffer method we override the contents
         // of the DynamicData object with the new serialized data. After

@@ -12,44 +12,48 @@
 
 #include "util.hpp"
 
+#include <numeric>
+
 namespace util {
 
 void publish_example_data(
         unsigned int domain_id,
         const dds::core::xtypes::DynamicType &type)
 {
-    // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
-
-    // Create a Topic with a name and a datatype
     dds::topic::Topic<dds::core::xtypes::DynamicData> topic(
             participant,
             "Example Record",
             type);
 
-    // Create a DataWriter with default QoS
-    dds::pub::DataWriter<dds::core::xtypes::DynamicData> writer(
-            dds::pub::Publisher(participant),
-            topic);
+    auto qos = dds::core::QosProvider::Default().datawriter_qos(
+            rti::core::builtin_profiles::qos_lib::generic_strict_reliable());
+    dds::pub::DataWriter<dds::core::xtypes::DynamicData> writer(topic, qos);
     if (!wait_for_reader(writer)) {
         return;
     }
 
-    rti::util::sleep(dds::core::Duration::from_secs(1));
-
     // Write a few data samples
     dds::core::xtypes::DynamicData data(type);
+    rti::util::sleep(dds::core::Duration::from_secs(1));
     data.value("id", std::string("Example"));
-
-    std::vector<int32_t> payload;
-    for (int i = 0; i < 10; i++) {
-        payload.push_back(i);
-    }
-
+    std::vector<int32_t> payload(10);
+    std::iota(payload.begin(), payload.end(), 0);
     data.set_values("payload", payload);
     writer.write(data);
 
     rti::util::sleep(dds::core::Duration::from_secs(1));
+    data.value("id", std::string("Example2"));
+    payload.resize(5);
+    data.set_values("payload", payload);
+    writer.write(data);
+
+    rti::util::sleep(dds::core::Duration::from_secs(1));
+    data.value("id", std::string("Example3"));
+    payload.resize(30);
+    std::iota(payload.begin(), payload.end(), 100);
+    data.set_values("payload", payload);
+    writer.write(data);
 
     writer.wait_for_acknowledgments(dds::core::Duration(5));
 }
