@@ -2,7 +2,8 @@
 
 ## Building the Example
 
-Remember to set your environment variables with the script in your Connext installation directory before building.
+Remember to set your environment variables with the script in your Connext
+installation directory before building.
 
 ```sh
 cd c++11/
@@ -12,11 +13,15 @@ cmake ..
 cmake --build .
 ```
 
-Note: The build process also copies USER_QOS_PROFILES.xml into the build directory to ensure that it is loaded when you run the examples within the build directory.
+Note: The build process also copies USER_QOS_PROFILES.xml into the build
+directory to ensure that it is loaded when you run the examples within the build
+directory.
 
 ## Setting up Security artifacts
 
-The build process copies the security folder with .cnf files into the build directory. Use the provided python script to initialize them. This means that `build/security` will contain all the security artifacts needed to run this example.
+The build process copies the security folder with .cnf files into the build
+directory. Use the provided python script to initialize them. This means that
+`build/security` will contain all the security artifacts needed to run this example.
 
 ```sh
 cd security
@@ -25,9 +30,14 @@ python3 setup.py
 
 ## Running the example
 
-This example is based on a standard rtiddsgen publisher and subscriber example code. This has been altered to perform set_qos operations at runtime in order to add / remove the subscribers' certificates to / from the publisher's whitelist. This happens automatically in 30 seconds increments, so no external user input is needed to run the example.
+This example is based on a standard rtiddsgen publisher and subscriber example
+code. This has been altered to perform set_qos operations at runtime in order to
+add / remove the subscribers' certificates to / from the publisher's whitelist.
+This happens automatically in 30 second increments, so no external user input
+is needed to run the example.
 
-Run two instances of the subscriber in separate terminal windows, one with the CLI parameter --peer3 so it uses a different set of identity certificates.
+Run two instances of the subscriber in separate terminal windows, one with the
+CLI parameter --peer3 so it uses a different set of identity certificates.
 
 ```sh
 ./Whitelist_subscriber
@@ -37,7 +47,9 @@ Run two instances of the subscriber in separate terminal windows, one with the C
 ./Whitelist_subscriber --peer3
 ```
 
-The subscriber applications will log an error message when they attempt to authenticate each other and fail to do so. The reason is that the subscribers have configured a whitelist with only one entry: the publisher's DomainParticipant.
+The subscriber applications will log an error message when they attempt to
+authenticate each other and fail to do so. The reason is that the subscribers
+have configured a whitelist with only one entry: the publisher's DomainParticipant.
 
 Then, launch the publisher in a third terminal window.
 
@@ -45,7 +57,10 @@ Then, launch the publisher in a third terminal window.
 ./Whitelist_publisher
 ```
 
-Initially, both subscribers have the publisher in their respective whitelists and the publisher has both subscribers in its whitelist. The publisher's whitelist is changed at runtime to cover all possible combinations of two subscribers, so you can see how the data received changes.
+Initially, both subscribers have the publisher in their respective whitelists
+and the publisher has both subscribers in its whitelist. The publisher's
+whitelist is changed at runtime to cover all possible combinations of two
+subscribers, so you can see how the data received changes.
 
 First, both subscribers are in the waitlist, and will both receive all samples:
 
@@ -57,7 +72,8 @@ Whitelist subscriber sleeping up to 1 sec...
 [value: 3]
 ```
 
-Then, they will be removed from the whitelist and no longer recieve samples. The publisher will also print a log message:
+Then, they will be removed from the whitelist and no longer recieve samples.
+The publisher will also print a log message:
 
 ```sh
 Writing Whitelist, count 15
@@ -70,5 +86,10 @@ Writing Whitelist, count 16
 Writing Whitelist, count 17
 ```
 
-The publisher will continue alternating which subscriber is included in the whitelist. Only the subscriber in the whitelist will receive the samples. You will see a log message in the publisher application about the authentication error for the subscriber that is not in the whitelist.
-The example finishes by adding both subscribers back to the whitelist. They should start to receive samples again.
+The publisher will continue alternating which subscriber is included in the
+whitelist. Only the subscriber in the whitelist will receive the samples.
+You will see a log message in the publisher application about the authentication
+error for the subscriber that is not in the whitelist.
+
+The example finishes by adding both subscribers back to the whitelist.
+They should start to receive samples again.

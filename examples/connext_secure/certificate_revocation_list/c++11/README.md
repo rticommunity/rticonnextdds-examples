@@ -2,7 +2,8 @@
 
 ## Building the Example
 
-Remember to set your environment variables with the script in your Connext installation directory before building.
+Remember to set your environment variables with the script in your Connext
+installation directory before building.
 
 ```sh
 cd ../../c++11/
@@ -12,11 +13,15 @@ cmake ..
 cmake --build .
 ```
 
-Note: The build process also copies USER_QOS_PROFILES.xml into the build directory to ensure that it is loaded when you run the examples within the build directory.
+Note: The build process also copies USER_QOS_PROFILES.xml into the build
+directory to ensure that it is loaded when you run the examples within the build
+directory.
 
 ## Setting up Security artifacts
 
-The build process copies the security folder with .cnf files into the build directory. Use the provided python script to initialize them. This means that `build/security` will contain all the security artifacts needed to run this example.
+The build process copies the security folder with .cnf files into the build
+directory. Use the provided python script to initialize them. This means that
+`build/security` will contain all the security artifacts needed to run this example.
 
 ```sh
 cd security
@@ -32,7 +37,8 @@ python3 create_empty_crl.py
 
 ## Running the example
 
-Demo is based on a standard rtiddsgen publisher and subscriber example code. Revoking of the certificate is done via the script in the ca folder:
+Demo is based on a standard rtiddsgen publisher and subscriber example code.
+Revoking of the certificate is done via the script in the ca folder:
 
 Run a publisher and a subscriber in separate terminal windows.
 
@@ -46,7 +52,8 @@ Run a publisher and a subscriber in separate terminal windows.
 
 Verify that they communicate and that the subscriber is receiving data.
 
-Run the revoke.py script from the `build/security/ca` directory in a separate terminal window, and communication between the participants will stop.
+Run the revoke.py script from the `build/security/ca` directory in a separate
+terminal window, and communication between the participants will stop.
 
 ```sh
 cd security/ca
@@ -84,7 +91,8 @@ ERROR [0x94E003CE,0x56F44FC9,0x1A05CFC2:0x000001C1|VALIDATE REMOTE PARTICIPANT I
 
 ## Simulating Certificate Renewal
 
-To restart communication, call the script again to give the participants new certificates. You can do this without restarting the applications.
+To restart communication, call the script again to give the participants new
+certificates. You can do this without restarting the applications.
 
 ```sh
 cd build/security
@@ -93,4 +101,7 @@ cd ca
 python3 create_empty_crl.py
 ```
 
-They will start communicating again, because of the `com.rti.serv.secure.authentication.identity_certificate_file_poll_period.millisec` property. This allows you to renew your certificates without having to restart your applications.
+They will start communicating again, because of the
+`com.rti.serv.secure.authentication.identity_certificate_file_poll_period.millisec`
+property. This allows you to renew your certificates without having to restart
+your applications.

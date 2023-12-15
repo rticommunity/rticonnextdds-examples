@@ -113,7 +113,7 @@ int main(int argc, char *argv[])
 
     try {
         run_subscriber_application(arguments.domain_id, arguments.sample_count);
-    } catch (const std::exception& ex) {
+    } catch (const std::exception &ex) {
         // This will catch DDS exceptions
         std::cerr << "Exception in run_subscriber_application(): " << ex.what()
                   << std::endl;

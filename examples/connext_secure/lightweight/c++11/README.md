@@ -2,7 +2,8 @@
 
 ## Building the Example
 
-Remember to set your environment variables with the script in your Connext installation directory before building.
+Remember to set your environment variables with the script in your Connext
+installation directory before building.
 
 ```sh
 cd c++11/
@@ -12,11 +13,15 @@ cmake ..
 cmake --build .
 ```
 
-Note: The build process also copies USER_QOS_PROFILES.xml into the build directory to ensure that it is loaded when you run the examples within the build directory.
+Note: The build process also copies USER_QOS_PROFILES.xml into the build
+directory to ensure that it is loaded when you run the examples within the
+build directory.
 
 ## Setting up Security artifacts
 
-The build process copies the security folder with .cnf files into the build directory. Use the provided python script to initialize them. This means that `build/security` will contain all the security artifacts needed to run this example.
+The build process copies the security folder with .cnf files into the build
+directory. Use the provided python script to initialize them. This means that
+`build/security` will contain all the security artifacts needed to run this example.
 
 ```sh
 cd security
@@ -25,15 +30,22 @@ python3 setup.py
 
 ## Running the example
 
-This example is based on a standard rtiddsgen publisher and subscriber example code. The code has been modified so that 2 topics are used instead of one. The publisher and one of the subscribers use full security plugins, whereas the other subscriber uses lightweight security. The Governance file used showcases a configuration that is compatible with Lightweight security. However, one of the topics uses a data_protection_kind ENCRYPT topic rule, which breaks compatibility.
+This example is based on a standard rtiddsgen publisher and subscriber example
+code. The code has been modified so that 2 topics are used instead of one.
+The publisher and one of the subscribers use full security plugins, whereas the
+other subscriber uses lightweight security. The Governance file used showcases
+a configuration that is compatible with Lightweight security. However, one of
+the topics uses a data_protection_kind ENCRYPT topic rule, which breaks compatibility.
 
-Run one instance of the subscriber without any CLI arguments. This will use full security by default.
+Run one instance of the subscriber without any CLI arguments.
+This will use full security by default.
 
 ```sh
 ./Lws_subscriber 
 ```
 
-In a separate window, launch another subscriber with the --lw CLI argument, which will create the lightweight subscriber.
+In a separate window, launch another subscriber with the --lw CLI argument,
+which will create the lightweight subscriber.
 
 ```sh
 ./Lws_subscriber -lw

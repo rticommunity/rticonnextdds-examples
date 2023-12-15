@@ -1,7 +1,19 @@
 import subprocess
 
 # Revoke
-subprocess.run(["openssl", "ca", "-config", "Ca.cnf", "-batch", "-revoke", "../identities/ParticipantB/ParticipantB.pem"])
+subprocess.run(
+    [
+        "openssl",
+        "ca",
+        "-config",
+        "Ca.cnf",
+        "-batch",
+        "-revoke",
+        "../identities/ParticipantB/ParticipantB.pem",
+    ]
+)
 
 # Generate CRL
-subprocess.run(["openssl", "ca", "-config", "Ca.cnf", "-batch", "-gencrl", "-out", "CaCrl.crl"])
+subprocess.run(
+    ["openssl", "ca", "-config", "Ca.cnf", "-batch", "-gencrl", "-out", "CaCrl.crl"]
+)
