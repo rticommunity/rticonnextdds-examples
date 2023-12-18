@@ -25,7 +25,7 @@ directory. Use the provided python script to initialize them. This means that
 
 ```sh
 cd security
-python3 setup.py
+python3 setup_security.py
 ```
 
 ## Running the example
