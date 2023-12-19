@@ -10,6 +10,6 @@ subprocess.run(
         "-batch",
         "-gencrl",
         "-out",
-        "CaCrl.crl"
+        "CaCrl.crl",
     ]
 )
