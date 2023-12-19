@@ -39,7 +39,8 @@ def publish_example_data(domain_id: int, type: dds.DynamicType):
     topic = dds.DynamicData.Topic(participant, "Example Record", type)
 
     qos = dds.QosProvider.default.datawriter_qos_from_profile(
-        dds.BuiltinProfiles.generic_strict_reliable)
+        dds.BuiltinProfiles.generic_strict_reliable
+    )
     writer = dds.DynamicData.DataWriter(topic, qos)
     wait_for_reader(writer)
 

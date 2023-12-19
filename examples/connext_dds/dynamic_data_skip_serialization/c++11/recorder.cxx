@@ -21,10 +21,11 @@ dds::core::xtypes::StructType create_type()
 {
     using namespace dds::core::xtypes;
 
-    StructType type("RecordExample", {
-        Member("id", StringType(128)),
-        Member("payload", SequenceType(primitive_type<int32_t>(), 1024))
-    });
+    StructType type(
+            "RecordExample",
+            { Member("id", StringType(128)),
+              Member("payload",
+                     SequenceType(primitive_type<int32_t>(), 1024)) });
 
     return type;
 }

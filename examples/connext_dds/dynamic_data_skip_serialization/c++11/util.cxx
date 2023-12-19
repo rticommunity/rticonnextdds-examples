@@ -97,21 +97,20 @@ ApplicationArguments parse_arguments(int argc, char *argv[])
 
     while (arg_processing < argc) {
         if ((argc > arg_processing + 1)
-                && (strcmp(argv[arg_processing], "-d") == 0
-                        || strcmp(argv[arg_processing], "--domain") == 0)) {
+            && (strcmp(argv[arg_processing], "-d") == 0
+                || strcmp(argv[arg_processing], "--domain") == 0)) {
             domain_id = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
                 && (strcmp(argv[arg_processing], "-s") == 0
-                        || strcmp(argv[arg_processing], "--sample-count")
-                                == 0)) {
+                    || strcmp(argv[arg_processing], "--sample-count") == 0)) {
             sample_count = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
         } else if (
                 (argc > arg_processing + 1)
                 && (strcmp(argv[arg_processing], "-v") == 0
-                        || strcmp(argv[arg_processing], "--verbosity") == 0)) {
+                    || strcmp(argv[arg_processing], "--verbosity") == 0)) {
             set_verbosity(verbosity, atoi(argv[arg_processing + 1]));
             arg_processing += 2;
             // parse file_name

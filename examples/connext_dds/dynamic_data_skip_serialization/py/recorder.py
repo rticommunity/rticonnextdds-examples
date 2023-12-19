@@ -21,12 +21,13 @@ EXAMPLE_TYPE = dds.StructType(
     ),
 )
 
+
 def record(file_name: str, domain_id: int):
     participant = dds.DomainParticipant(domain_id)
 
     # To disable the deserialization on the DataReader and get direct access
     # to the serialized CDR buffer, we need to register the DataReader type
-    # with the DynamicDataTypeSerializationProperty.skip_deserialization set 
+    # with the DynamicDataTypeSerializationProperty.skip_deserialization set
     # to True, and then create the DataReader with the name used to register
     # the type.
     dd_property = dds.DynamicDataTypeSerializationProperty()
@@ -37,12 +38,13 @@ def record(file_name: str, domain_id: int):
     topic = dds.DynamicData.Topic(
         participant,
         topic_name="Example Record",
-        type_name=type_name, # Specify the registered type name
+        type_name=type_name,  # Specify the registered type name
         qos=participant.default_topic_qos,
     )
 
     qos = dds.QosProvider.default.datareader_qos_from_profile(
-        dds.BuiltinProfiles.generic_strict_reliable)
+        dds.BuiltinProfiles.generic_strict_reliable
+    )
     reader = dds.DynamicData.DataReader(topic, qos)
     wait_for_writer(reader)
 
@@ -90,7 +92,8 @@ def replay(file_name: str, domain_id: int):
     topic = dds.DynamicData.Topic(participant, "Example Record", EXAMPLE_TYPE)
 
     qos = dds.QosProvider.default.datawriter_qos_from_profile(
-        dds.BuiltinProfiles.generic_strict_reliable)
+        dds.BuiltinProfiles.generic_strict_reliable
+    )
     writer = dds.DynamicData.DataWriter(topic, qos)
     wait_for_reader(writer)
 
