@@ -67,4 +67,3 @@ Now run the application that replays the data recorded in  `data.bin`:
 ```
 
 The subscriber will print the data that is being replayed.
-
