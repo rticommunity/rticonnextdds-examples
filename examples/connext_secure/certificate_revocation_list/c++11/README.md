@@ -100,7 +100,7 @@ Then, run the following to give the participants new certificates.
 
 ```sh
 cd build/security
-python3 setup.py
+python3 setup_security.py
 cd ca
 python3 create_empty_crl.py
 ```
