@@ -51,11 +51,7 @@ to use the software. -->
                 <value>file:./security/ca/CaCrl.crl</value>
               </element>
               <element>
-                <name>com.rti.serv.secure.authentication.identity_certificate_file_poll_period.millisec</name>
-                <value>5000</value>
-              </element>
-              <element>
-                <name>com.rti.serv.secure.authentication.crl_file_poll_period.millisec</name>
+                <name>com.rti.serv.secure.files_poll_interval</name>
                 <value>5000</value>
               </element>
               <!--

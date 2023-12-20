@@ -19,8 +19,6 @@ new_certs_dir   = ./temporary_files
 database        = $dir/database/CaIndex
 crlnumber       = $dir/crl/crlNumber
 
-# Due to cmake code, we need to use certs/serial
-# serial          = cert/temporary_files/serial
 serial          = $dir/database/CaSerial
 
 # Comment out the following two lines for the "traditional"

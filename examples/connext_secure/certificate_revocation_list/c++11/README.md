@@ -6,7 +6,7 @@ Remember to set your environment variables with the script in your Connext
 installation directory before building.
 
 ```sh
-cd ../../c++11/
+cd c++11/
 mkdir build
 cd build
 cmake ..
@@ -94,6 +94,10 @@ ERROR [0x94E003CE,0x56F44FC9,0x1A05CFC2:0x000001C1|VALIDATE REMOTE PARTICIPANT I
 To restart communication, call the script again to give the participants new
 certificates. You can do this without restarting the applications.
 
+First, delete the contents of `build/security/ca/database/CaIndex`.
+Alternatively, you can delete the file and create a new empty one.
+Then, run the following to give the participants new certificates.
+
 ```sh
 cd build/security
 python3 setup.py
@@ -102,6 +106,6 @@ python3 create_empty_crl.py
 ```
 
 They will start communicating again, because of the
-`com.rti.serv.secure.authentication.identity_certificate_file_poll_period.millisec`
-property. This allows you to renew your certificates without having to restart
+`com.rti.serv.secure.files_poll_interval` property.
+This allows you to renew your certificates without having to restart
 your applications.
