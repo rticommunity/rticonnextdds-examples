@@ -88,7 +88,8 @@ def replay(file_name: str, domain_id: int):
     participant = dds.DomainParticipant(domain_id)
 
     # For the replay application we don't need to register the type with any
-    # particular property
+    # particular property because DynamicData DataWriters are always prepared
+    # to write serialized buffers directly
     topic = dds.DynamicData.Topic(participant, "Example Record", EXAMPLE_TYPE)
 
     qos = dds.QosProvider.default.datawriter_qos_from_profile(

@@ -109,7 +109,8 @@ void replay(const std::string &file_name, int domain_id)
     dds::domain::DomainParticipant participant(domain_id);
 
     // For the replay application we don't need to register the type with any
-    // particular property
+    // particular property because DynamicData DataWriters are always prepared
+    // to write serialized buffers directly
     dds::topic::Topic<DynamicData> topic(
             participant,
             "Example Record",

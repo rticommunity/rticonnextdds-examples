@@ -17,7 +17,7 @@ where a custom Recording application may be useful.
 
 This example implements a simple recording application that uses the DynamicData
 API to receive data in CDR format and directly record it in a file. The example
-also provides an replay option that reads the data buffers from the file
+also provides a replay option that reads the data buffers from the file
 and publishes them back. For convenience, an option to publish a few samples
 to test the record and replay functionality is also provided.
 
