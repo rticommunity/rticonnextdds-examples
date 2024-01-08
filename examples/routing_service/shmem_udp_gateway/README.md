@@ -17,18 +17,18 @@ For your convenience, there are 2 scripts to set up environment variables:
 These are the variables they contain, which you should modify according to your
 system:
 
-- **NDDSHOME**: path to the installation of RTI Connext Professional.
-- **NDDS_QOS_PROFILES**: path to the *qos.xml* file containing QoS profiles.
-- **SHMEM_DOMAIN**: the domain for the applications using SHMEM.
-- **UDP_DOMAIN**: the domain for the applications using UDP (mainly the
+-   **NDDSHOME**: path to the installation of RTI Connext Professional.
+-   **NDDS_QOS_PROFILES**: path to the *qos.xml* file containing QoS profiles.
+-   **SHMEM_DOMAIN**: the domain for the applications using SHMEM.
+-   **UDP_DOMAIN**: the domain for the applications using UDP (mainly the
 DomainParticipant of RTI Routing Service).
-- **APPS**: total number of DomainParticipants on the localhost. By default,
+-   **APPS**: total number of DomainParticipants on the localhost. By default,
 Connext will try to reach out to the first 5 created applications on SHMEM,
 therefore, we need to increase that number if there are more than 5
 applications.
-- **CDS_IP_ADDRESS**: the IP address of the host that contains RTI Cloud
+-   **CDS_IP_ADDRESS**: the IP address of the host that contains RTI Cloud
 Discovery Service.
-- **CDS_PORT**: the UDP port that CDS will use.
+-   **CDS_PORT**: the UDP port that CDS will use.
 
 On Linux, you can use the environment variables by sourcing the file:
 
