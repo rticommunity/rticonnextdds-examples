@@ -1,6 +1,6 @@
-# SHMEM <--> UDP Gateway
+# Shared Memory / UDP Gateway
 
-This repository contains the necessary files to run the RTI Routing Service
+This example contains the necessary files to run the RTI Routing Service
 example from the "How does Connext help you meet the constraints of the
 hospital's IT department?" blogpost. Using RTI DDS Ping as a pub/sub
 application and Routing Service you will be able to create a gateway between
