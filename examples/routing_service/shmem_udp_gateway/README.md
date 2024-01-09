@@ -1,11 +1,18 @@
 # Shared Memory / UDP Gateway
 
 This example contains the necessary files to run the RTI Routing Service
-example from the "How does Connext help you meet the constraints of the
-hospital's IT department?" blogpost. Using RTI DDS Ping as a pub/sub
-application and Routing Service you will be able to create a gateway between
-a Shared Memory domain and a UDP domain that uses only 3 ports. There is also
-a second configuration option using RTI Cloud Discovery Service to use Unicast.
+example from the "Breaking through Hospital IT Silos: The Top 3 Challenges
+to Overcome" blogpost. Routing Service (RS) will help us interfacing
+between the shared memory domain and the UDP domain. Applications local to a
+host will communicate with each other over SHMEM. RS will be the gateway for
+communication between local and remote applications. For this, RS will create
+a SHMEM DP (no UDP ports) and a UDP DP (with the 3 default UDP ports). If
+multicast is disabled, it will only open 2 UDP ports.
+
+In this example, you will use RTI DDS Ping as a pub/sub example application.
+Along with, Routing Service you will be able to create a gateway between a
+Shared Memory domain and a UDP domain that uses only 3 ports. There is also a
+second configuration option using RTI Cloud Discovery Service to use Unicast.
 
 ## Environment variables
 
