@@ -67,18 +67,22 @@ public class keysSubscriber extends Application implements AutoCloseable {
                             "Instance " + sample.code + ": x: " + sample.x
                             + ", y: " + sample.y + "\n");
                 } else {
-                    if (info.instance_state ==
-                            InstanceStateKind.NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
+                    if (info.instance_state
+                            == InstanceStateKind
+                                    .NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
                         System.out.print("Instance has no writers\n");
                     } else {
                         keys dummy = new keys();
                         reader.get_key_value(dummy, info.instance_handle);
-                        if (info.instance_state ==
-                                InstanceStateKind.ALIVE_INSTANCE_STATE) {
-                            System.out.print("Instance " + dummy.code + " is ALIVE\n");
-                        } else if (info.instance_state ==
-                                InstanceStateKind.NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                            System.out.print("Instance " + dummy.code + " is disposed\n");
+                        if (info.instance_state
+                                == InstanceStateKind.ALIVE_INSTANCE_STATE) {
+                            System.out.print(
+                                    "Instance " + dummy.code + " is ALIVE\n");
+                        } else if (info.instance_state
+                                == InstanceStateKind.NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                            System.out.print(
+                                    "Instance " + dummy.code
+                                    + " is disposed\n");
                         }
                     }
                 }

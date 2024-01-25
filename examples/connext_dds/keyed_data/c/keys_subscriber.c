@@ -149,12 +149,13 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
 
         } else {
             printf("No valid data for sample\n");
-            /* 
+            /*
              * An invalid data sample can be in any instance state. The key
              * value may be available if the instance is either ALIVE or
              * NOT_ALIVE_DISPOSED.
              */
-            if (info->instance_state == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
+            if (info->instance_state
+                == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
                 printf("Instance is in NOT_ALIVE_NO_WRITERS instance state\n");
             } else {
                 keys key_value;
@@ -166,11 +167,12 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
                     printf("get_key_value error %d\n", retcode);
                     continue;
                 }
-                printf("Instance %d is in %s instance state\n",
+                printf(
+                        "Instance %d is in %s instance state\n",
                         key_value.code,
-                        info->instance_state == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE
-                                ? "NOT_ALIVE_DISPOSED"
-                                : "ALIVE");
+                        ((info->instance_state == DDS_ALIVE_INSTANCE_STATE)
+                                ? "ALIVE"
+                                : "NOT_ALIVE_DISPOSED"));
             }
         }
         /* End changes for Keyed_Data */
