@@ -167,10 +167,9 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
                     printf("get_key_value error %d\n", retcode);
                     continue;
                 }
-                printf(
-                        "Instance %d is in %s instance state\n",
-                        key_value.code,
-                        ((info->instance_state == DDS_ALIVE_INSTANCE_STATE)
+                printf("Instance %d is in %s instance state\n",
+                       key_value.code,
+                       ((info->instance_state == DDS_ALIVE_INSTANCE_STATE)
                                 ? "ALIVE"
                                 : "NOT_ALIVE_DISPOSED"));
             }
