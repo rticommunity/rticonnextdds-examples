@@ -105,7 +105,7 @@ public class keysPublisher extends Application implements AutoCloseable {
         instance[2].code = 2;
 
         // The keys must have been set before making this call
-        System.out.println("Registering instance" + instance[0].code);
+        System.out.println("Registering instance " + instance[0].code);
         handle[0] = writer.register_instance(instance[0]);
 
         // Modify the data to be sent here
