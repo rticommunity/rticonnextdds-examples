@@ -148,26 +148,29 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
             printf("Instance %d: x: %d, y: %d\n", data->code, data->x, data->y);
 
         } else {
-            /* Since there is not valid data, it may include metadata */
-            keys dummy;
-            retcode = keysDataReader_get_key_value(
-                    keys_reader,
-                    &dummy,
-                    &info->instance_handle);
-            if (retcode != DDS_RETCODE_OK) {
-                printf("get_key_value error %d\n", retcode);
-                continue;
-            }
-
-            /* Here we print a message if the instance state is ALIVE_NO_WRITERS
-             * or ALIVE_DISPOSED */
-            if (info->instance_state
-                == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                printf("Instance %d has no writers\n", dummy.code);
-            } else if (
-                    info->instance_state
-                    == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                printf("Instance %d disposed\n", dummy.code);
+            printf("No valid data for sample\n");
+            /* 
+             * An invalid data sample can be in any instance state. The key
+             * value may be available if the instance is either ALIVE or
+             * NOT_ALIVE_DISPOSED.
+             */
+            if (info->instance_state == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
+                printf("Instance is in NOT_ALIVE_NO_WRITERS instance state\n");
+            } else {
+                keys key_value;
+                retcode = keysDataReader_get_key_value(
+                        keys_reader,
+                        &key_value,
+                        &info->instance_handle);
+                if (retcode != DDS_RETCODE_OK) {
+                    printf("get_key_value error %d\n", retcode);
+                    continue;
+                }
+                printf("Instance %d is in %s instance state\n",
+                        key_value.code,
+                        info->instance_state == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE
+                                ? "NOT_ALIVE_DISPOSED"
+                                : "ALIVE");
             }
         }
         /* End changes for Keyed_Data */
