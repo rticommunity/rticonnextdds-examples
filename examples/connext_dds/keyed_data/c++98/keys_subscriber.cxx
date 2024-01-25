@@ -72,11 +72,11 @@ unsigned int process_data(keysDataReader *typed_reader)
                     continue;
                 }
                 std::cout << "Instance " << dummy.code << " is "
-                        << ((info_seq[i].instance_state
-                            == DDS_ALIVE_INSTANCE_STATE)
-                                    ? "alive"
-                                    : "disposed")
-                        << std::endl;
+                          << ((info_seq[i].instance_state
+                               == DDS_ALIVE_INSTANCE_STATE)
+                                      ? "alive"
+                                      : "disposed")
+                          << std::endl;
             }
         }
         /* End changes for Keyed_Data */

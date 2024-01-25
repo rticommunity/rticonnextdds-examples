@@ -40,7 +40,7 @@ int process_data(dds::sub::DataReader<keys> reader)
             const dds::sub::status::InstanceState &state =
                     info.state().instance_state();
             if (state
-                    == dds::sub::status::InstanceState::not_alive_no_writers()) {
+                == dds::sub::status::InstanceState::not_alive_no_writers()) {
                 std::cout
                         << "Instance is in NOT_ALIVE_NO_WRITERS instance state"
                         << std::endl;
@@ -49,11 +49,11 @@ int process_data(dds::sub::DataReader<keys> reader)
                 keys sample;
                 reader.key_value(sample, info.instance_handle());
                 std::cout << "Instance " << sample.code() << " is "
-                        << ((state
-                            == dds::sub::status::InstanceState::alive())
-                                ? "alive"
-                                : "disposed")
-                        << std::endl;
+                          << ((state
+                               == dds::sub::status::InstanceState::alive())
+                                      ? "alive"
+                                      : "disposed")
+                          << std::endl;
             }
         }
 
