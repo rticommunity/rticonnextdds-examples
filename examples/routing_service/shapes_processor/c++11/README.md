@@ -6,15 +6,17 @@ different architecture, please adapt the commands accordingly.
 
 ## Building the Example :wrench:
 
-To build this example, first run CMake to generate the corresponding build
-files. We recommend you use a separate directory to store all the generated
-files (e.g., ./build).
-
-```sh
+```bash
 mkdir build
 cd build
-cmake -DBUILD_SHARED_LIBS=ON ..
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DBUILD_SHARED_LIBS=ON|OFF \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
+cmake --build .
 ```
+
+**Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
+architecture target installed in your system.
 
 **Note**: when compiling on a Windows 64-bit machine you will need to add the
 `-A x64` parameter to the call to CMake. See

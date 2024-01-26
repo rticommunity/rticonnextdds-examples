@@ -4,23 +4,29 @@ Example Code: MongoDB Adapter
 Building
 --------
 
-In order to build this example, you need to provide the following variables to
-``CMake``:
+In order to build this example, you need to define the variables ``CONNEXTDDS_DIR``
+and ``CONNEXTDDS_ARCH``. You can do so by exporting them manually, by sourcing 
+the ``rtisetenv`` script for your architecture, or by passing them to the ``cmake``
+command as arguments. 
 
-- ``CONNEXTDDS_DIR``: path to the ``Connext`` installation root folder
-- ``CONNEXTDDS_ARCH``: target architecture
-- ``MONGODB_DIR``: path to the ``mongodbcxx`` installation root folder
+You also need to define the variable ``MONGODB_DIR`` as the path to the
+``mongodbcxx`` installation directory, which can be either exported or passed as
+an argument to ``cmake``, but won't be set by ``rtisetenv``.
 
 .. code::
-
     mkdir build
-    cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \
-            -DCONNEXTDDS_ARCH=<Connext DDS Architecture> \
-            -DMONGODB_DIR=<mongodbcxx directory> \
-            -DBUILD_SHARED_LIBS=ON \
-            -DCMAKE_BUILD_TYPE=Release ..
+    cd build
+    cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+          -DCONNEXTDDS_ARCH=<Connext DDS Architecture> \ # If not exported
+          -DMONGODB_DIR=<mongodbcxx directory> \         # If not exported
+          -DBUILD_SHARED_LIBS=ON|OFF \
+          -DCMAKE_BUILD_TYPE=Debug|Release ..
     cmake --build .
 
+.. note::
+
+   You do not need to define ``CONNEXTDDS_ARCH`` if you only have one architecture
+   target installed in your system.
 
 .. note::
 

@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<!-- (c) Copyright, Real-Time Innovations, 2023.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are subject
+to this license. The software is provided "as is", with no warranty of any
+type, including any warranty for fitness for any purpose. RTI is under no
+obligation to maintain or support the software. RTI shall not be liable for
+any incidental or consequential damages arising out of the use or inability
+to use the software. -->
+
+<dds  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_cloud_discovery_service.xsd">
+            
+    <cloud_discovery_service name="secure_cds">
+        <transport>
+          <element>
+            <alias>udpv4</alias>
+            <receive_port>9999</receive_port>
+          </element>
+        </transport>
+        <security>
+          <property>
+            <element>
+              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key</name>
+              <value>str:0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
+            </element>
+            <element>
+              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key_algorithm</name>
+              <value>AES256+GMAC</value>
+            </element>
+          </property>
+        </security>
+    </cloud_discovery_service>
+
+    <cloud_discovery_service name="insecure_cds">
+        <transport>
+          <element>
+            <alias>udpv4</alias>
+            <receive_port>9999</receive_port>
+          </element>
+        </transport>
+    </cloud_discovery_service>
+
+</dds>
