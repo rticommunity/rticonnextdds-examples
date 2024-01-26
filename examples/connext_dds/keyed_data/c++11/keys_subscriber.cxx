@@ -42,9 +42,10 @@ int process_data(dds::sub::DataReader<keys> reader)
             if (state
                 == dds::sub::status::InstanceState::not_alive_no_writers()) {
                 std::cout << "Instance " << sample.code() << " has no writers"
-                        << std::endl;
-            } else if (state
-                == dds::sub::status::InstanceState::not_alive_disposed()) {
+                          << std::endl;
+            } else if (
+                    state
+                    == dds::sub::status::InstanceState::not_alive_disposed()) {
                 std::cout << "Instance " << sample.code() << " is disposed"
                           << std::endl;
             } else {
