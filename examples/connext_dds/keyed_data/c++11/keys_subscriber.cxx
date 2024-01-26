@@ -35,24 +35,20 @@ int process_data(dds::sub::DataReader<keys> reader)
                       << ", x: " << sample.data().x()
                       << ", y: " << sample.data().y() << std::endl;
         } else {
-            // A sample without valid data can be in any instance state, but the
-            // key value is only available if it is ALIVE or NOT_ALIVE_DISPOSED
+            keys sample;
+            reader.key_value(sample, info.instance_handle());
             const dds::sub::status::InstanceState &state =
                     info.state().instance_state();
             if (state
                 == dds::sub::status::InstanceState::not_alive_no_writers()) {
-                std::cout
-                        << "Instance is in NOT_ALIVE_NO_WRITERS instance state"
+                std::cout << "Instance " << sample.code() << " has no writers"
                         << std::endl;
+            } else if (state
+                == dds::sub::status::InstanceState::not_alive_disposed()) {
+                std::cout << "Instance " << sample.code() << " is disposed"
+                          << std::endl;
             } else {
-                // Since there is not valid data, it may include metadata.
-                keys sample;
-                reader.key_value(sample, info.instance_handle());
-                std::cout << "Instance " << sample.code() << " is "
-                          << ((state
-                               == dds::sub::status::InstanceState::alive())
-                                      ? "alive"
-                                      : "disposed")
+                std::cout << "Instance " << sample.code() << " is alive"
                           << std::endl;
             }
         }

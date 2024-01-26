@@ -148,30 +148,24 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
             printf("Instance %d: x: %d, y: %d\n", data->code, data->x, data->y);
 
         } else {
-            printf("No valid data for sample\n");
-            /*
-             * An invalid data sample can be in any instance state. The key
-             * value may be available if the instance is either ALIVE or
-             * NOT_ALIVE_DISPOSED.
-             */
+            /* An invalid data sample can be in any instance state. */
+            keys key_value;
+            retcode = keysDataReader_get_key_value(
+                    keys_reader,
+                    &key_value,
+                    &info->instance_handle);
+            if (retcode != DDS_RETCODE_OK) {
+                printf("get_key_value error %d\n", retcode);
+                continue;
+            }
             if (info->instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                printf("Instance is in NOT_ALIVE_NO_WRITERS instance state\n");
+                printf("Instance %d has no writers\n", key_value.code);
+            } else if (info->instance_state 
+                == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                printf("Instance %d is disposed\n", key_value.code);
             } else {
-                keys key_value;
-                retcode = keysDataReader_get_key_value(
-                        keys_reader,
-                        &key_value,
-                        &info->instance_handle);
-                if (retcode != DDS_RETCODE_OK) {
-                    printf("get_key_value error %d\n", retcode);
-                    continue;
-                }
-                printf("Instance %d is in %s instance state\n",
-                       key_value.code,
-                       ((info->instance_state == DDS_ALIVE_INSTANCE_STATE)
-                                ? "ALIVE"
-                                : "NOT_ALIVE_DISPOSED"));
+                printf("Instance %d is alive\n", key_value.code);
             }
         }
         /* End changes for Keyed_Data */
