@@ -168,7 +168,7 @@ pipeline {
                         sh 'tar zxvf connextdds-staging-${CONNEXTDDS_ARCH}.tgz unlicensed/'
 
                         sh '''
-                            cp ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/openssl-1.*/* \
+                            cp ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/openssl-3.*/* \
                                 ${RTI_INSTALLATION_PATH}/rti_connext_dds-*/lib/${CONNEXTDDS_ARCH}/
                         '''
                     }
