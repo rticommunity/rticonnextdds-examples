@@ -74,9 +74,10 @@ public class keysSubscriber extends Application implements AutoCloseable {
                                    .NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
                         System.out.print(
                                 "Instance " + dummy.code + " has no writers\n");
-                    } else if (info.instance_state
-                        == InstanceStateKind
-                                   .NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                    } else if (
+                            info.instance_state
+                            == InstanceStateKind
+                                       .NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
                         System.out.print(
                                 "Instance " + dummy.code + " is disposed\n");
                     } else {

@@ -161,8 +161,9 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
             if (info->instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
                 printf("Instance %d has no writers\n", key_value.code);
-            } else if (info->instance_state 
-                == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+            } else if (
+                    info->instance_state
+                    == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
                 printf("Instance %d is disposed\n", key_value.code);
             } else {
                 printf("Instance %d is alive\n", key_value.code);

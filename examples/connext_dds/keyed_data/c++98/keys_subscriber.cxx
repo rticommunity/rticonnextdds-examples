@@ -66,18 +66,16 @@ unsigned int process_data(keysDataReader *typed_reader)
             }
             if (info_seq[i].instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                std::cout
-                        << "Instance " << dummy.code << " has no writers"
-                        << std::endl;
-            } else if (info_seq[i].instance_state
-                == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                std::cout
-                        << "Instance " << dummy.code << " is disposed"
-                        << std::endl;
+                std::cout << "Instance " << dummy.code << " has no writers"
+                          << std::endl;
+            } else if (
+                    info_seq[i].instance_state
+                    == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                std::cout << "Instance " << dummy.code << " is disposed"
+                          << std::endl;
             } else {
-                std::cout
-                        << "Instance " << dummy.code << " is alive"
-                        << std::endl;
+                std::cout << "Instance " << dummy.code << " is alive"
+                          << std::endl;
             }
         }
         /* End changes for Keyed_Data */
