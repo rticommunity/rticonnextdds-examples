@@ -55,28 +55,29 @@ unsigned int process_data(keysDataReader *typed_reader)
 
             samples_read++;
         } else {
-            /*
-             * An invalid sample can be in any instance state. The key value is
-             * only available if it is ALIVE or NOT_ALIVE_DISPOSED.
-             */
+            /* An invalid sample can be in any instance state. */
+            keys dummy;
+            retcode = typed_reader->get_key_value(
+                    dummy,
+                    info_seq[i].instance_handle);
+            if (retcode != DDS_RETCODE_OK) {
+                std::cout << "get_key_value error " << retcode << std::endl;
+                continue;
+            }
             if (info_seq[i].instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                std::cout << "Instance has no writers" << std::endl;
+                std::cout
+                        << "Instance " << dummy.code << " has no writers"
+                        << std::endl;
+            } else if (info_seq[i].instance_state
+                == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
+                std::cout
+                        << "Instance " << dummy.code << " is disposed"
+                        << std::endl;
             } else {
-                keys dummy;
-                retcode = typed_reader->get_key_value(
-                        dummy,
-                        info_seq[i].instance_handle);
-                if (retcode != DDS_RETCODE_OK) {
-                    std::cout << "get_key_value error " << retcode << std::endl;
-                    continue;
-                }
-                std::cout << "Instance " << dummy.code << " is "
-                          << ((info_seq[i].instance_state
-                               == DDS_ALIVE_INSTANCE_STATE)
-                                      ? "alive"
-                                      : "disposed")
-                          << std::endl;
+                std::cout
+                        << "Instance " << dummy.code << " is alive"
+                        << std::endl;
             }
         }
         /* End changes for Keyed_Data */
