@@ -6,15 +6,21 @@ different architecture, please adapt the commands accordingly.
 
 ## Building the Example :wrench:
 
-To build this example, first run CMake to generate the corresponding build
-files. We recommend you use a separate directory to store all the generated
-files (e.g., ./build).
+In order to build this example, you need to define the variable `CONNEXTDDS_DIR`
+You can do so by exporting it manually, by sourcing the `rtisetenv` script for
+your architecture, or by passing it to the `cmake` command as arguments:
 
-```sh
+```bash
 mkdir build
 cd build
-cmake -DBUILD_SHARED_LIBS=ON ..
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DBUILD_SHARED_LIBS=ON \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
+cmake --build .
 ```
+
+**Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
+architecture target installed in your system.
 
 **Note**: when compiling on a Windows 64-bit machine you will need to add the
 `-A x64` parameter to the call to CMake. See

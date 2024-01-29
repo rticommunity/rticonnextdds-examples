@@ -28,15 +28,24 @@ The following files are part of the example:
 
 ## Building the Example
 
-Build the example code by running the following command:
+In order to build this example, you need to define the variable `CONNEXTDDS_DIR`
+You can do so by exporting it manually, by sourcing the `rtisetenv` script for
+your architecture, or by passing it to the `cmake` command as arguments:
 
-```sh
+```bash
 mkdir build
 cd build
-cmake ..
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DBUILD_SHARED_LIBS=ON|OFF \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
 
+> **Note**:
+>
+> You do not need to define `CONNEXTDDS_ARCH` if you only have one architecture
+> target installed in your system.
+>
 > **Note**:
 >
 > When using a multi-configuration generator, make sure you specify

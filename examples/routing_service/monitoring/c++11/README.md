@@ -2,36 +2,29 @@
 
 ## Building the Example :wrench:
 
-To build this example, first run CMake to generate the corresponding build
-files. We recommend you use a separate directory to store all the generated
-files (e.g., ./build).
+In order to build this example, you need to define the variables `CONNEXTDDS_DIR`
+and `CONNEXTDDS_ARCH`. You can do so by exporting them manually, by sourcing
+the `rtisetenv` script for your architecture, or by passing them to the `cmake`
+command as arguments:
 
-```sh
+```bash
 mkdir build
 cd build
-cmake ..
-```
-
-Once you have run CMake, you will find a number of new files in your build
-directory (the list of generated files will depend on the specific CMake
-Generator). To build the example, run CMake as follows:
-
-```sh
+cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
+      -DCONNEXTDDS_ARCH=<Connext DDS Architecture> \ # If not exported
+      -DBUILD_SHARED_LIBS=ON|OFF \
+      -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 ```
 
-**Note**: if you are using a multi-configuration generator, such as Visual
-Studio solutions, you can specify the configuration mode to build as follows:
+**Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
+architecture target installed in your system.
 
-```sh
-cmake --build . --config Release|Debug
-```
-
-Alternatively, you can use directly the generated infrastructure (e.g.,
-Makefiles or Visual Studio Solutions) to build the example. If you generated
-Makefiles in the configuration process, run make to build the example. Likewise,
-if you generated a Visual Studio solution, open the solution and follow the
-regular build process.
+Instead of using `cmake --build`, you can directly use the generated
+infrastructure (e.g., Makefiles or Visual Studio Solutions) to build the example.
+If you generated Makefiles in the configuration process, run make to build the
+example. Likewise, if you generated a Visual Studio solution, open the solution
+and follow the regular build process.
 
 ## Running the Example
 
@@ -104,7 +97,7 @@ Also, if you installed libraries for multiple target architectures on your syste
 you want to link against. For example:
 
 ```sh
-cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
+cmake -DCONNEXTDDS_ARCH=<Connext DDS Architecture>..
 ```
 
 ### CMake Build Infrastructure

@@ -35,7 +35,7 @@ We describe here some examples of how to use the Remote Administration
 Platform.
 
 First of all, you have to build the Requester application. So, please follow
-this [guide](c++11/README.md).
+this [guide](./c++11/README.md).
 
 After building the Requester application, we will open two Shapes Demo:
 

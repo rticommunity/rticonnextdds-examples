@@ -4,7 +4,7 @@
 
 This is a second example that shows some advanced concepts related to keyed
 data. As this example builds on [*Keyed
-Data*](https://github.com/rticommunity/rticonnextdds-examples/tree/master/examples/keyed_data)
+Data*](https://github.com/rticommunity/rticonnextdds-examples/tree/master/examples/connext_dds/keyed_data)
 example, it is advisable to understand that example before investigating this
 one.
 

@@ -33,7 +33,7 @@ See the RSConfig.xml file for more details.
 When monitoring is enable, you can use Admin Console to see valuable monitoring
 data in a visual way.
 
-![Routing Service in Admin Console for Monitoring](images/AdminConsoleMonitoringRS.png "Admin Console RS view")
+![Routing Service in Admin Console for Monitoring](./images/AdminConsoleMonitoringRS.png "Admin Console RS view")
 
 The configuration applied to Routing Service in the xml file to enable
 the monitoring framework is the following:
