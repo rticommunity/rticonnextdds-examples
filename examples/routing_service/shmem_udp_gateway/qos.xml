@@ -1,0 +1,54 @@
+<?xml version="1.0"?>
+
+<!-- (c) Copyright, Real-Time Innovations, 2024.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are subject
+to this license. The software is provided "as is", with no warranty of any
+type, including any warranty for fitness for any purpose. RTI is under no
+obligation to maintain or support the software. RTI shall not be liable for
+any incidental or consequential damages arising out of the use or inability
+to use the software. -->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_dds_qos_profiles.xsd">
+    <qos_library name="example_library">
+
+        <qos_profile name="shmem_profile" base_name="BuiltinQosLib::Generic.Common">
+            <domain_participant_qos>
+                <discovery>
+                    <initial_peers>
+                        <element>$(APPS)@builtin.shmem://</element>
+                    </initial_peers>
+                </discovery>
+                <transport_builtin>
+                    <mask>SHMEM</mask>
+                </transport_builtin>
+            </domain_participant_qos>
+        </qos_profile>
+
+        <qos_profile name="multicast" base_name="BuiltinQosLib::Generic.Common">
+            <domain_participant_qos>
+                <transport_builtin>
+                    <mask>UDPv4</mask>
+                </transport_builtin>
+            </domain_participant_qos>
+        </qos_profile>
+
+        <qos_profile name="no_multicast" base_name="BuiltinQosLib::Generic.Common">
+            <domain_participant_qos>
+                <discovery>
+                    <initial_peers>
+                        <element>rtps@$(CDS_IP_ADDRESS):$(CDS_PORT)</element>
+                    </initial_peers>
+                    <multicast_receive_addresses/>
+                </discovery>
+                <transport_builtin>
+                    <mask>UDPv4</mask>
+                    <udpv4>
+                        <multicast_enabled>false</multicast_enabled>
+                    </udpv4>
+                </transport_builtin>
+            </domain_participant_qos>
+        </qos_profile>
+    </qos_library>
+</dds>
