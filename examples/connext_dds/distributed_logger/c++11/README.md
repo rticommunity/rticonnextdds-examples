@@ -114,7 +114,7 @@ on the terminal.
 ### Visualizing the log messages
 
 Once the example application is running, open RTI Spy or
-RTI Admin Console as described in the top-level [README](../../README.md) file.
+RTI Admin Console as described in the top-level [README](../README.md) file.
 
 ## Customizing the Build
 

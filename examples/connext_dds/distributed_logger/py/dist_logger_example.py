@@ -14,6 +14,7 @@ import argparse
 import rti.connextdds as dds
 import rti.logging.distlog as distlog
 
+
 def distlogger_example(application_kind, domain_id, sleep, iterations):
     # First, create the options to personalize Distributed Logger.
     # If no options are provided, default ones will be created.

@@ -1,6 +1,6 @@
 # Example Code: Python Distributed Logger Application
 
-See the example description in the top-level [README](../../README.md) file.
+See the example description in the top-level [README](../README.md) file.
 
 ## Running the Example
 
@@ -20,7 +20,7 @@ on the terminal.
 ### Visualizing the log messages
 
 Once the example application is running, open RTI Spy or
-RTI Admin Console as described in the top-level [README](../../README.md) file.
+RTI Admin Console as described in the top-level [README](../README.md) file.
 
 You should be able to visualize the logging messages being sent
 by the application.
