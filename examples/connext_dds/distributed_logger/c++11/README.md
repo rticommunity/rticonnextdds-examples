@@ -114,12 +114,7 @@ on the terminal.
 ### Visualizing the log messages
 
 Once the example application is running, open RTI Spy or
-RTI Admin Console.
-You should be able to visualize the logging messages being sent
-by the application.
-
-To learn more about RTI Tools, refer to their section in the
-[Connext DDS documentation](https://community.rti.com/documentation).
+RTI Admin Console as described in the top-level [README](../../README.md) file.
 
 ## Customizing the Build
 

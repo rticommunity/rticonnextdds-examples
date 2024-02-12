@@ -23,8 +23,7 @@ For example, you may find RTI Spy in your RTI Connext DDS installation
 and run it from a terminal as follows:
 
 ```sh
-cd rti_connext_dds-7.2.0/bin
-./rtiddsspy -printSample
+<install dir>/bin/rtiddsspy -printSample
 ```
 
 Once the Distributed Logger example is running in a different terminal,
