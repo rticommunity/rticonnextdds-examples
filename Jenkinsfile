@@ -59,6 +59,8 @@ pipeline {
             stages {
                 stage('Download Packages') {
                     steps {
+                        sh 'pip install -r resources/ci_cd/requirements.txt'
+
                         withAWSCredentials {
                             withCredentials([
                                 string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
