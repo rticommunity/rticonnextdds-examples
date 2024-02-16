@@ -56,6 +56,10 @@ pipeline {
                 }
             }
 
+            environment {
+                RTI_INSTALLATION_PATH = "${env.WORKSPACE}"
+            }
+
             stages {
                 stage('Download Packages') {
                     steps {
