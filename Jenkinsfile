@@ -59,7 +59,7 @@ pipeline {
             stages {
                 stage('Download Packages') {
                     steps {
-                        sh 'pip install -r resources/ci_cd/requirements.txt'
+                        sh 'pip3 install -r resources/ci_cd/requirements.txt'
 
                         withAWSCredentials {
                             withCredentials([
