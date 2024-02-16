@@ -26,7 +26,6 @@ pipeline {
     agent none
 
     options {
-        skipDefaultCheckout()
         disableConcurrentBuilds()
         /*
             To avoid excessive resource usage in server, we limit the number
@@ -50,86 +49,60 @@ pipeline {
 
     stages {
         stage('Build sequence') {
-            matrix {
-                agent {
-                    dockerfile {
-                        filename "resources/docker/Dockerfile.${OS}"
-                        customWorkspace "/rti/jenkins/workspace/${env.JOB_NAME}/${OS}"
-                        label "docker-${OS}"
+            agent {
+                dockerfile {
+                    filename 'resources/docker/Dockerfile.x64Linux4gcc7.3.0'
+                    label 'docker'
+                }
+            }
+
+            stages {
+                stage('Download Packages') {
+                    steps {
+                        withAWSCredentials {
+                            withCredentials([
+                                string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
+                                string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
+                            ]) {
+                                sh 'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
+                            }
+                        }
                     }
                 }
 
-                axes {
-                    axis {
-                        name 'OS'
-                        values 'linux'
-                    }
-                }
-
-                stages {
-                    stage ('Parallel stages') {
+                stage('Build all modes') {
+                    matrix {
+                        axes {
+                            axis {
+                                name 'buildMode'
+                                values 'release', 'debug'
+                            }
+                            axis {
+                                name 'linkMode'
+                                values 'static', 'dynamic'
+                            }
+                        }
                         stages {
-                            stage('Checkout') {
+                            stage('Build single mode') {
                                 steps {
-                                    checkout scm
-                                }
-                            }
-
-                            stage('Download Packages') {
-                                steps {
-                                    script {
-                                        connextdds_arch = sh(
-                                            script: 'echo $CONNEXTDDS_ARCH',
-                                            returnStdout: true
-                                        ).trim()
-                                    }
-
-                                    withAWSCredentials {
-                                        withCredentials([
-                                            string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
-                                            string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
-                                        ]) {
-                                            sh "python3 resources/ci_cd/linux_install.py -a ${connextdds_arch}"
-                                        }
-                                    }
-                                }
-                            }
-
-                            stage('Build all modes') {
-                                matrix {
-                                    axes {
-                                        axis {
-                                            name 'buildMode'
-                                            values 'release', 'debug'
-                                        }
-                                        axis {
-                                            name 'linkMode'
-                                            values 'static', 'dynamic'
-                                        }
-                                    }
-                                    stages {
-                                        stage('Build single mode') {
-                                            steps {
-                                                echo("Build ${buildMode}/${linkMode}")
-                                                runBuildStage(buildMode, linkMode)
-                                            }
-                                        }
-                                    }
-                                }
-                            }
-
-                            stage('Static Analysis') {
-                                steps {
-                                    sh "python3 resources/ci_cd/linux_static_analysis.py --build-dir ${get_build_directory('release', 'dynamic')}"
-                                }
-                            }
-                            post {
-                                cleanup {
-                                    cleanWs()
+                                    echo("Build ${buildMode}/${linkMode}")
+                                    runBuildStage(buildMode, linkMode)
                                 }
                             }
                         }
                     }
+                }
+
+                stage('Static Analysis') {
+                    steps {
+                        sh "python3 resources/ci_cd/linux_static_analysis.py --build-dir ${get_build_directory('release', 'dynamic')}"
+                    }
+                }
+            }
+
+            post {
+                cleanup {
+                    cleanWs()
                 }
             }
         }
