@@ -41,14 +41,13 @@ void distlogger_example_main(
     // Instantiate Distributed Logger
     DistLogger dist_logger = DistLogger::get_instance();
 
-    // RTI Distributed Logger provides the ability to interact with its
-    // topics directly. However, for the sake of simplicity in this example,
-    // you may use RTI Tools such as RTI Spy or RTI Admin Console to visualize
-    // the logging.
+
+    // The log messages are published as DDS topics, which allows your DDS
+    // applications to subscribe to them. You can also run rtiddsspy or
+    // RTI Admin Console to visualize the logs.
     for (uint i = 1; i <= iterations; ++i) {
         cout << "\nIteration #" << i << endl;
 
-        // Log messages using the appropiate log levels for your messages.
         dist_logger.debug("This is a debug message");
         dist_logger.warning("This is a warning message");
         dist_logger.error("This is an error message");

@@ -1,0 +1,109 @@
+<?xml version="1.0"?>
+
+<!-- (c) Copyright, Real-Time Innovations, 2024.  All rights reserved.
+RTI grants Licensee a license to use, modify, compile, and create derivative
+works of the software solely for use with RTI Connext DDS. Licensee may
+redistribute copies of the software provided that all such copies are subject
+to this license. The software is provided "as is", with no warranty of any
+type, including any warranty for fitness for any purpose. RTI is under no
+obligation to maintain or support the software. RTI shall not be liable for
+any incidental or consequential damages arising out of the use or inability
+to use the software. -->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_routing_service.xsd">
+
+    <routing_service name="gateway_SHMEM_and_UDP">
+        <annotation>
+            <documentation>
+                Routes all topics between domain 0 (SHMEM) and domain 1 (UDPv4)
+            </documentation>
+        </annotation>
+
+        <!-- The administration tag enables remote administration, and is
+            required when using Admin Console. -->
+        <administration>
+            <domain_id>99</domain_id>
+            <distributed_logger>
+                <enabled>true</enabled>
+                <filter_level>WARNING</filter_level>
+            </distributed_logger>
+        </administration>
+
+        <!-- This is the Monitoring configuration for all the entities in
+            this routing service, and is required when using Admin Console. -->
+        <monitoring>
+            <!-- The domain id where to publish the monitoring information -->
+            <domain_id>99</domain_id>
+            <!-- How often to publish it -->
+            <status_publication_period>
+                <sec>5</sec>
+                <nanosec>0</nanosec>
+            </status_publication_period>
+            <!-- How often to compute statistics -->
+            <statistics_sampling_period>
+                <sec>1</sec>
+                <nanosec>0</nanosec>
+            </statistics_sampling_period>
+        </monitoring>
+
+        <domain_route name="TwoWayDomainRoute">
+
+            <participant name="SHMEM_DP">
+                <domain_id>$(SHMEM_DOMAIN)</domain_id>
+                <!-- You should use your own QoS profiles here -->
+                <domain_participant_qos base_name="example_library::shmem_profile"/>
+            </participant>
+
+            <participant name="UDP_DP">
+                <domain_id>$(UDP_DOMAIN)</domain_id>
+                <!-- You should use your own QoS profiles here -->
+                <domain_participant_qos base_name="example_library::no_multicast"/>
+            </participant>
+
+            <session name="SHMEM_to_UDP_session">
+                <auto_topic_route name="SHMEM_to_UDP_route">
+                    <publish_with_original_info>true</publish_with_original_info>
+                    <input participant="SHMEM_DP">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                        <!-- You should use your own QoS profiles here -->
+                        <datareader_qos base_name="BuiltinQosLib::Generic.Common"/>
+                    </input>
+                    <output participant="UDP_DP">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                        <!-- You should use your own QoS profiles here -->
+                        <datawriter_qos base_name="BuiltinQosLib::Generic.Common"/>
+                    </output>
+                </auto_topic_route>
+            </session>
+
+            <session name="UDP_to_SHMEM_session">
+                <auto_topic_route name="UDP_to_SHMEM_route">
+                    <publish_with_original_info>true</publish_with_original_info>
+                    <input participant="UDP_DP">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                        <!-- You should use your own QoS profiles here -->
+                        <datareader_qos base_name="BuiltinQosLib::Generic.Common"/>
+                    </input>
+                    <output participant="SHMEM_DP">
+                        <allow_topic_name_filter>*</allow_topic_name_filter>
+                        <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
+                        <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <creation_mode>ON_DOMAIN_OR_ROUTE_MATCH</creation_mode>
+                        <!-- You should use your own QoS profiles here -->
+                        <datawriter_qos base_name="BuiltinQosLib::Generic.Common"/>
+                    </output>
+                </auto_topic_route>
+            </session>
+        </domain_route>
+    </routing_service>
+</dds>
