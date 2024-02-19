@@ -442,9 +442,14 @@ void FileStorageStreamReader_read(
     struct FileStorageStreamReader *stream_reader =
             (struct FileStorageStreamReader *) stream_reader_data;
     int i = 0;
-    long long timestamp_limit =
-            (long long) selector->time_range_end.sec * NANOSECS_PER_SEC
-            + selector->time_range_end.nanosec;
+    DDS_LongLong timestamp_limit;
+    if (selector->time_range_end.sec == DDS_TIME_MAX.sec
+            && selector->time_range_end.nanosec == DDS_TIME_MAX.nanosec) {
+        timestamp_limit = selector->time_range_end.sec;
+    } else {
+        timestamp_limit = selector->time_range_end.sec * NANOSECS_PER_SEC;
+        timestamp_limit += selector->time_range_end.nanosec;
+    }
     int read_samples = 0;
     /*
      * The value of the sample selector's max samples could be
