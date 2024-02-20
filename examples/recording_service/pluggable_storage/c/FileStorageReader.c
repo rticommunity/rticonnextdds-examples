@@ -442,6 +442,16 @@ void FileStorageStreamReader_read(
     struct FileStorageStreamReader *stream_reader =
             (struct FileStorageStreamReader *) stream_reader_data;
     int i = 0;
+
+    /*
+     * If the last sample was already provided and we are at the end of the file
+     * we will skip the read operation in order to finalize the execution.
+     */
+    if (stream_reader->current_timestamp == INT64_MAX
+            && feof(stream_reader->file_record.file)) {
+        *count = 0;
+        return;
+    }
     DDS_LongLong timestamp_limit;
     if (selector->time_range_end.sec == DDS_TIME_MAX.sec
             && selector->time_range_end.nanosec == DDS_TIME_MAX.nanosec) {
@@ -466,12 +476,21 @@ void FileStorageStreamReader_read(
         *count = 0;
         return;
     }
-    /* Add the currently read sample and sample info values to the taken data
-     * and info collections (sequences) */
+    /*
+     * Add the currently read sample and sample info values to the taken data
+     * and info collections (sequences)
+     */
     do {
         FileStorageStreamReader_addSampleToData(stream_reader);
-        FileStorageStreamReader_readSample(stream_reader);
         read_samples++;
+        /*
+         * if we reach the end of the file or we cant read a proper sample,
+         * we dont add that sample on this iteration but we should send the
+         * previous samples
+         */
+        if (FileStorageStreamReader_readSample(stream_reader) == FALSE) {
+            break;
+        }
     } while (stream_reader->current_timestamp <= timestamp_limit
              && read_samples < max_samples);
     /* The number of taken samples is the current length of the data sequence */
@@ -588,6 +607,7 @@ int FileStorageStreamReader_initialize(
     /* Bootstrap the take loop: read the first sample */
     if (!FileStorageStreamReader_readSample(stream_reader)) {
         printf("Failed to get first sample from file, maybe EOF was reached\n");
+        return FALSE;
     }
 
     RTI_RecordingServiceStorageStreamReader_initialize(
