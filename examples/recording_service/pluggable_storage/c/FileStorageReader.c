@@ -448,13 +448,13 @@ void FileStorageStreamReader_read(
      * we will skip the read operation in order to finalize the execution.
      */
     if (stream_reader->current_timestamp == INT64_MAX
-            && feof(stream_reader->file_record.file)) {
+        && feof(stream_reader->file_record.file)) {
         *count = 0;
         return;
     }
     DDS_LongLong timestamp_limit;
     if (selector->time_range_end.sec == DDS_TIME_MAX.sec
-            && selector->time_range_end.nanosec == DDS_TIME_MAX.nanosec) {
+        && selector->time_range_end.nanosec == DDS_TIME_MAX.nanosec) {
         timestamp_limit = selector->time_range_end.sec;
     } else {
         timestamp_limit = selector->time_range_end.sec * NANOSECS_PER_SEC;
