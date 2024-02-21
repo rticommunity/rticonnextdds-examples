@@ -9,6 +9,7 @@ on:
     branches:
       - master
       - develop
+      - release/*
     paths:
       - '**/*.md'
 
@@ -16,6 +17,7 @@ on:
     branches:
       - master
       - develop
+      - release/*
     paths:
       - '**/*.md'
 
