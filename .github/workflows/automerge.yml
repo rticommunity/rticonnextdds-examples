@@ -12,7 +12,7 @@ env:
 
   MASTER_REPO: https://github.com/rticommunity/rticonnextdds-examples.git
 
-  MERGE_BRANCH: release/7.3.0
+  SOURCE_BRANCH: release/7.3.0
 
 jobs:
   merge:
@@ -26,5 +26,5 @@ jobs:
         git config user.name "Automerge Bot"
         git config user.email "bot@example.com"
         git config pull.rebase false
-        git pull ${{env.MASTER_REPO}} ${{env.MERGE_BRANCH}}
+        git pull ${{env.MASTER_REPO}} ${{env.SOURCE_BRANCH}}
         git push
