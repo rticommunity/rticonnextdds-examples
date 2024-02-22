@@ -77,7 +77,7 @@ command as follow:
 ```bash
 cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
         -DCONNEXTDDS_DIR=<connext dir> \
-        -DCONNEXTDDS_ARCH=<connext architecture> .. -A x64 
+        -DCONNEXTDDS_ARCH=<connext architecture> .. -A x64
 ```
 
 This will produce a binary directory (*build*) where the `ServiceAsLibExample`
