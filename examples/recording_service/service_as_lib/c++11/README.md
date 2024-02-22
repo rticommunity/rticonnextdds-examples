@@ -48,12 +48,20 @@ In order to build this example, you need to provide the following variables to
 -   `BUILD_SHARED_LIBS`: specifies the link mode. Valid values are ON for
     dynamic linking and OFF for static linking.
 
+-   `CONNEXTDDS_DIR`: specifies the path to your RTI Connext installation
+    folder.
+
+-   `CONNEXTDDS_ARCH`: specifies the architecture of the specific libraries
+    you want to link against.
+
 Build the example code by running the following command:
 
-```sh
+```bash
 mkdir build
 cd build
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON ..
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
+        -DCONNEXTDDS_DIR=<connext dir> \
+        -DCONNEXTDDS_ARCH=<connext architecture> ..
 cmake --build .
 ```
 
@@ -66,8 +74,10 @@ cmake --build .
 In case you are using Windows x64, you have to add the option -A in the cmake
 command as follow:
 
-```sh
-cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON .. -A x64
+```bash
+cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_SHARED_LIBS=ON \
+        -DCONNEXTDDS_DIR=<connext dir> \
+        -DCONNEXTDDS_ARCH=<connext architecture> .. -A x64 
 ```
 
 This will produce a binary directory (*build*) where the `ServiceAsLibExample`
