@@ -17,7 +17,7 @@
     <!-- Adapter entry points are defined here -->
     <adapter_library name="adapters">
         <adapter_plugin name="file">
-            <dll>fileadapter</dll>
+            <dll>FileAdapterC</dll>
             <create_function>RTI_RoutingServiceFileAdapterPlugin_create</create_function>
         </adapter_plugin>
     </adapter_library>

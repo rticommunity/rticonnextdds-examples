@@ -97,10 +97,10 @@ appropriate value of ```SHAPE_TOPIC``` before starting Routing Service.
 To run Routing Service, you will need first to set up your environment as follows.
 
 Before running the RTI Routing Service, you need to specify where the
-`fileadapter` library is located as shown below:
+`FileAdapterC++11` library is located as shown below:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>:<Path to fileadapter library>
+$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>:<Path to FileAdapterC++11 library>
 ```
 
 ```bash
