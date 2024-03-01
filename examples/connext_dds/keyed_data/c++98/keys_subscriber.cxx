@@ -55,7 +55,7 @@ unsigned int process_data(keysDataReader *typed_reader)
 
             samples_read++;
         } else {
-            /* Since there is not valid data, it may include metadata */
+            /* An invalid sample can be in any instance state. */
             keys dummy;
             retcode = typed_reader->get_key_value(
                     dummy,
@@ -64,16 +64,18 @@ unsigned int process_data(keysDataReader *typed_reader)
                 std::cout << "get_key_value error " << retcode << std::endl;
                 continue;
             }
-
-            /* Here we print a message if the instance state is ALIVE_NO_WRITERS
-             * or ALIVE_DISPOSED */
             if (info_seq[i].instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                std::cout << "Instance " << dummy.code << " has no writers\n";
+                std::cout << "Instance " << dummy.code << " has no writers"
+                          << std::endl;
             } else if (
                     info_seq[i].instance_state
                     == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                std::cout << "Instance " << dummy.code << " disposed\n";
+                std::cout << "Instance " << dummy.code << " is disposed"
+                          << std::endl;
+            } else {
+                std::cout << "Instance " << dummy.code << " is alive"
+                          << std::endl;
             }
         }
         /* End changes for Keyed_Data */

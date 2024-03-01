@@ -67,12 +67,8 @@ public class keysSubscriber extends Application implements AutoCloseable {
                             "Instance " + sample.code + ": x: " + sample.x
                             + ", y: " + sample.y + "\n");
                 } else {
-                    // Since there is not valid data, it may include metadata
                     keys dummy = new keys();
                     reader.get_key_value(dummy, info.instance_handle);
-
-                    // Here we print a message if the instance state is
-                    // ALIVE_NO_WRITERS or ALIVE_DISPOSED
                     if (info.instance_state
                         == InstanceStateKind
                                    .NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
@@ -83,7 +79,10 @@ public class keysSubscriber extends Application implements AutoCloseable {
                             == InstanceStateKind
                                        .NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
                         System.out.print(
-                                "Instance " + dummy.code + " disposed\n");
+                                "Instance " + dummy.code + " is disposed\n");
+                    } else {
+                        System.out.print(
+                                "Instance " + dummy.code + " is alive\n");
                     }
                 }
                 samplesRead++;
