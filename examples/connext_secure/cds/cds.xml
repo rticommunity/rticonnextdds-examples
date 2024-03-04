@@ -23,12 +23,16 @@ to use the software. -->
         <security>
           <property>
             <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key</name>
-              <value>str:0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
+              <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+              <value>data:,0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
             </element>
             <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key_algorithm</name>
-              <value>AES256+GMAC</value>
+              <name>dds.sec.crypto.rtps_psk_symmetric_cipher_algorithm</name>
+              <value>AES256+GCM</value>
+            </element>
+            <element>
+                <name>dds.sec.access.rtps_psk_protection_kind</name>
+                <value>SIGN</value>
             </element>
           </property>
         </security>

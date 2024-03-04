@@ -52,8 +52,8 @@ to use the software. -->
                 <value>file:./security/xml/signed/signed_permissions.p7s</value>
               </element>
               <element>
-                <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key</name>
-                <value>str:0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
+                <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+                <value>data:,0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
               </element>
               <element>
                 <name>com.rti.serv.secure.cryptography.encryption_algorithm</name>
@@ -112,11 +112,11 @@ to use the software. -->
                 <value>RTI_SecurityLightweight_PluginSuite_create</value>
               </element>   
               <element>
-                <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key</name>
-                <value>str:0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
+                <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+                <value>data:,0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
               </element>
               <element>
-                <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key_algorithm</name>
+                <name>dds.sec.crypto.rtps_psk_symmetric_cipher_algorithm</name>
                 <value>AES256+GCM</value>
               </element>
               <element>
