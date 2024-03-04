@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="C:\RTI\rti_connext_dds-7.2.0\resource\schema\dds_security_permissions.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/dds_security_permissions.xsd">
     <permissions>
         <grant name="LightParticipantA">
             <subject_name>/C=US/ST=CA/L=Santa Clara/O=Real Time Innovations/emailAddress=ecdsa01ParticipantA@rti.com/CN=Lightweight Participant A</subject_name>
