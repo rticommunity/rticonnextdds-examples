@@ -10,8 +10,8 @@
         <adapter_plugin name="FileAdapter">
             <!--
             By specifing this value, RTI Router will search for
-            libfileadapter.so in Unix systems, fileadapter.dll on
-            Windows systems and libfileadapter.dylib on Mac OS. 
+            libFileAdapterC++11.so in Unix systems, FileAdapterC++11.dll on
+            Windows systems and libFileAdapterC++11.dylib on Mac OS. 
             RTI Routing Service will attempt to load this library from:
                 - Working directory or plugin_search_path
                 - Executable directory
