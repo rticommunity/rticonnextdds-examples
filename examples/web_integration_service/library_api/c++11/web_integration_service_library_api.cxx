@@ -36,8 +36,7 @@ void service_main(
 {
     rti::webdds::ServiceProperty service_property;
 
-    service_property.cfgfile(cfg_file).cfgname(cfg_name).webserver_option(
-            "document_root",
+    service_property.cfgfile(cfg_file).cfgname(cfg_name).document_root(
             document_root);
 
     rti::webdds::Service service(std::move(service_property));

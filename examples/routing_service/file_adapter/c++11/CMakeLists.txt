@@ -39,6 +39,7 @@ set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD_REQUIRED ON)
 
 target_link_libraries(${PROJECT_NAME}
+    RTIConnextDDS::routing_service_cpp2
     RTIConnextDDS::routing_service_infrastructure
     RTIConnextDDS::cpp2_api
 )
