@@ -11,7 +11,7 @@ any incidental or consequential damages arising out of the use or inability
 to use the software. -->
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-        xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_dds_profiles.xsd">
+        xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/rti_dds_profiles.xsd">
   <qos_library name="full_library">
 
       <qos_profile name="peer1" base_name="BuiltinQosSnippetLib::Feature.Security.Enable" is_default_qos="true">
