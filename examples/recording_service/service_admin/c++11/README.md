@@ -47,7 +47,7 @@ Build the example code by running the following command:
 ```sh
 mkdir build
 cd build
-cmake ..
+cmake -DCONNEXTDDS_DIR=<connext dir> -DCONNEXTDDS_ARCH=<connext architecture> ..
 cmake --build .
 ```
 
