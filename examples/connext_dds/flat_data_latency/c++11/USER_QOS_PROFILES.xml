@@ -34,7 +34,7 @@
                     <value>
                         <element>
                             <name>dds.data_writer.history.memory_manager.fast_pool.pool_buffer_max_size</name>
-                            <value>LENGTH_UNLIMITED</value>
+                            <value>-1</value> <!-- unlimited -->
                         </element>
                     </value>
                 </property>
