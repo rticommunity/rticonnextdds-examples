@@ -11,7 +11,7 @@ any incidental or consequential damages arising out of the use or inability
 to use the software. -->
 
 <dds  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/rti_cloud_discovery_service.xsd">
+      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/rti_cloud_discovery_service.xsd">
             
     <cloud_discovery_service name="secure_cds">
         <transport>
@@ -23,12 +23,16 @@ to use the software. -->
         <security>
           <property>
             <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key</name>
-              <value>str:0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
+              <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+              <value>data:,0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
             </element>
             <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_preshared_key_algorithm</name>
-              <value>AES256+GMAC</value>
+              <name>dds.sec.crypto.rtps_psk_symmetric_cipher_algorithm</name>
+              <value>AES256+GCM</value>
+            </element>
+            <element>
+                <name>dds.sec.access.rtps_psk_protection_kind</name>
+                <value>SIGN</value>
             </element>
           </property>
         </security>
