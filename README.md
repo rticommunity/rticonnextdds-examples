@@ -1,7 +1,5 @@
 # rticonnextdds-examples
 
-[![Build and run static analysis](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
-
 This repository includes examples on how to use specific features of RTI
 Connext DDS.
 
@@ -16,9 +14,10 @@ for further information about how to contribute with new examples to this reposi
 The examples contained in the
 [master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
 branch of this repository have been built and tested against RTI Connext DDS
-7.2.0. If you need examples that have been built and tested against older
+7.3.0. If you need examples that have been built and tested against older
 versions of RTI Connext DDS, please check out the appropriate branch:
 
+- [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
 - [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
 - [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
 - [release/6.1.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.1)

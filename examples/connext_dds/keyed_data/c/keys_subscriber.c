@@ -148,26 +148,25 @@ void keysListener_on_data_available(void *listener_data, DDS_DataReader *reader)
             printf("Instance %d: x: %d, y: %d\n", data->code, data->x, data->y);
 
         } else {
-            /* Since there is not valid data, it may include metadata */
-            keys dummy;
+            /* An invalid data sample can be in any instance state. */
+            keys key_value;
             retcode = keysDataReader_get_key_value(
                     keys_reader,
-                    &dummy,
+                    &key_value,
                     &info->instance_handle);
             if (retcode != DDS_RETCODE_OK) {
                 printf("get_key_value error %d\n", retcode);
                 continue;
             }
-
-            /* Here we print a message if the instance state is ALIVE_NO_WRITERS
-             * or ALIVE_DISPOSED */
             if (info->instance_state
                 == DDS_NOT_ALIVE_NO_WRITERS_INSTANCE_STATE) {
-                printf("Instance %d has no writers\n", dummy.code);
+                printf("Instance %d has no writers\n", key_value.code);
             } else if (
                     info->instance_state
                     == DDS_NOT_ALIVE_DISPOSED_INSTANCE_STATE) {
-                printf("Instance %d disposed\n", dummy.code);
+                printf("Instance %d is disposed\n", key_value.code);
+            } else {
+                printf("Instance %d is alive\n", key_value.code);
             }
         }
         /* End changes for Keyed_Data */
