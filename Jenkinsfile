@@ -88,10 +88,12 @@ pipeline {
             stages {
                 stage('Select CMake utils version') {
                     steps {
-                        switchBranch(
-                            reference: params.CMAKE_UTILS_REFERENCE,
-                            repositoryPath: "${env.WORKSPACE}/resources/cmake/rticonnextdds-cmake-utils"
-                        )
+                        script {
+                            switchBranch(
+                                reference: params.CMAKE_UTILS_REFERENCE,
+                                repositoryPath: "${env.WORKSPACE}/resources/cmake/rticonnextdds-cmake-utils"
+                            )
+                        }
                     }
                 }
 
