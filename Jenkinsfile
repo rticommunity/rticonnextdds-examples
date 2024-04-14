@@ -90,8 +90,8 @@ pipeline {
                     steps {
                         script {
                             switchBranch(
-                                reference: params.CMAKE_UTILS_REFERENCE,
-                                repositoryPath: "${env.WORKSPACE}/resources/cmake/rticonnextdds-cmake-utils"
+                                params.CMAKE_UTILS_REFERENCE,
+                                "${env.WORKSPACE}/resources/cmake/rticonnextdds-cmake-utils",
                             )
                         }
                     }
