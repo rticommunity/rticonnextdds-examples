@@ -24,7 +24,12 @@ void runBuildStage(String buildMode, String linkMode) {
     cmd += " --build-mode ${buildMode}"
     cmd += " --link-mode ${linkMode}"
     cmd += " --build-dir ${getBuildDirectory(buildMode, linkMode)}"
-    runCommand(cmd)
+    if (runCommand(cmd)) {
+        error(
+            'There was an error building the examples for the build'
+            + " configuration ${buildMode}/${linkMode}"
+        )
+    }
 }
 
 /**
@@ -101,14 +106,23 @@ pipeline {
                     steps {
                         script {
                             nodeManager.runInsideExecutor() {
-                                runCommand('pip3 install -r resources/ci_cd/requirements.txt')
+                                if (runCommand(
+                                    'pip3 install -r resources/ci_cd/requirements.txt'
+                                )) {
+                                    error('An error ocurred installing Python dependencies')
+                                }
 
                                 withAWSCredentials {
                                     withCredentials([
                                         string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
                                         string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
                                     ]) {
-                                        runCommand('python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH')
+
+                                        if (runCommand(
+                                            'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
+                                        )) {
+                                            error('An error ocurred installing the Connext framework')
+                                        }
                                     }
                                 }
                             }
@@ -147,10 +161,12 @@ pipeline {
                     steps {
                         script {
                             nodeManager.runInsideExecutor() {
-                                runCommand("""
+                                if (runCommand("""
                                     python3 resources/ci_cd/linux_static_analysis.py \
                                     --build-dir ${getBuildDirectory('release', 'dynamic')}
-                                """)
+                                """)) {
+                                    error('An error ocurred running the static analysis')
+                                }
                             }
                         }
                     }
