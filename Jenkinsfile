@@ -24,12 +24,7 @@ void runBuildStage(String buildMode, String linkMode) {
     cmd += " --build-mode ${buildMode}"
     cmd += " --link-mode ${linkMode}"
     cmd += " --build-dir ${getBuildDirectory(buildMode, linkMode)}"
-    if (runCommand(cmd)) {
-        error(
-            'There was an error building the examples for the build'
-            + " configuration ${buildMode}/${linkMode}"
-        )
-    }
+    command.run(cmd)
 }
 
 /**
@@ -43,7 +38,9 @@ String getBuildDirectory(String buildMode, String linkMode) {
 }
 
 pipeline {
-    agent none
+    agent {
+        label "${nodeManager.labelFromJobName()}"
+    }
 
     options {
         disableConcurrentBuilds()
@@ -67,118 +64,75 @@ pipeline {
         timeout(time: 2, unit: 'HOURS')
     }
 
-    parameters {
-        string(
-            name: 'CMAKE_UTILS_REFERENCE',
-            description: '''
-                rticommunity/rticonnextdds-cmake-utils repository reference to use (Branch or PR).
-                 E.g.: PR-123, release/7.3.0, master
-            ''',
-            defaultValue: '',
-            trim: true,
-        )
+    environment {
+        RTI_INSTALLATION_PATH = "${env.WORKSPACE}"
+        VIRTUAL_ENV = "${env.WORKSPACE}/.venv"
     }
 
     stages {
-        stage('Build sequence') {
-            agent {
-                label "${nodeManager.labelFromJobName()}"
+        stage('Download Packages') {
+            steps {
+                script {
+                    nodeManager.runInsideExecutor() {
+                        command.run(
+                            'pip3 install -r resources/ci_cd/requirements.txt'
+                        )
+                        withAWSCredentials {
+                            withCredentials([
+                                string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
+                                string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
+                            ]) {
+                                command.run(
+                                    'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
+                                )
+                            }
+                        }
+                    }
+                }
             }
-
-            environment {
-                RTI_INSTALLATION_PATH = "${env.WORKSPACE}"
-                VIRTUAL_ENV = "${env.WORKSPACE}/.venv"
-            }
-
-            stages {
-                stage('Select CMake utils version') {
-                    steps {
-                        script {
-                            switchBranch(
-                                params.CMAKE_UTILS_REFERENCE,
-                                "${env.WORKSPACE}/resources/cmake/rticonnextdds-cmake-utils",
-                            )
-                        }
+        }
+        stage('Build all modes') {
+            matrix {
+                axes {
+                    axis {
+                        name 'buildMode'
+                        values 'release', 'debug'
+                    }
+                    axis {
+                        name 'linkMode'
+                        values 'static', 'dynamic'
                     }
                 }
-
-                stage('Download Packages') {
-                    steps {
-                        script {
-                            nodeManager.runInsideExecutor() {
-                                if (runCommand(
-                                    'pip3 install -r resources/ci_cd/requirements.txt'
-                                )) {
-                                    error('An error ocurred installing Python dependencies')
-                                }
-
-                                withAWSCredentials {
-                                    withCredentials([
-                                        string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
-                                        string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
-                                    ]) {
-
-                                        if (runCommand(
-                                            'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
-                                        )) {
-                                            error('An error ocurred installing the Connext framework')
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Build all modes') {
-                    matrix {
-                        axes {
-                            axis {
-                                name 'buildMode'
-                                values 'release', 'debug'
-                            }
-                            axis {
-                                name 'linkMode'
-                                values 'static', 'dynamic'
-                            }
-                        }
-                        stages {
-                            stage('Build single mode') {
-                                steps {
-                                    script{
-                                        nodeManager.runInsideExecutor() {
-                                            echo("Build ${buildMode}/${linkMode}")
-                                            runBuildStage(buildMode, linkMode)
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Static Analysis') {
-                    steps {
-                        script {
-                            nodeManager.runInsideExecutor() {
-                                if (runCommand("""
-                                    python3 resources/ci_cd/linux_static_analysis.py \
-                                    --build-dir ${getBuildDirectory('release', 'dynamic')}
-                                """)) {
-                                    error('An error ocurred running the static analysis')
+                stages {
+                    stage('Build single mode') {
+                        steps {
+                            script{
+                                nodeManager.runInsideExecutor() {
+                                    echo("Build ${buildMode}/${linkMode}")
+                                    runBuildStage(buildMode, linkMode)
                                 }
                             }
                         }
                     }
                 }
             }
-
-            post {
-                cleanup {
-                    cleanWs()
+        }
+        stage('Static Analysis') {
+            steps {
+                script {
+                    nodeManager.runInsideExecutor() {
+                        command.run("""
+                            python3 resources/ci_cd/linux_static_analysis.py \
+                            --build-dir ${getBuildDirectory('release', 'dynamic')}
+                        """)
+                    }
                 }
             }
         }
     }
+    post {
+        cleanup {
+            cleanWs()
+        }
+    }
 }
-
