@@ -72,18 +72,20 @@ pipeline {
     stages {
         stage('Download Packages') {
             steps {
-                nodeManager.runInsideExecutor() {
-                    command.run(
-                        'pip3 install -r resources/ci_cd/requirements.txt'
-                    )
-                    withAWSCredentials {
-                        withCredentials([
-                            string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
-                            string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
-                        ]) {
-                            command.run(
-                                'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
-                            )
+                script {
+                    nodeManager.runInsideExecutor() {
+                        command.run(
+                            'pip3 install -r resources/ci_cd/requirements.txt'
+                        )
+                        withAWSCredentials {
+                            withCredentials([
+                                string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
+                                string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
+                            ]) {
+                                command.run(
+                                    'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
+                                )
+                            }
                         }
                     }
                 }
@@ -104,9 +106,11 @@ pipeline {
                 stages {
                     stage('Build single mode') {
                         steps {
-                            nodeManager.runInsideExecutor() {
-                                echo("Build ${buildMode}/${linkMode}")
-                                runBuildStage(buildMode, linkMode)
+                            script{
+                                nodeManager.runInsideExecutor() {
+                                    echo("Build ${buildMode}/${linkMode}")
+                                    runBuildStage(buildMode, linkMode)
+                                }
                             }
                         }
                     }
@@ -115,11 +119,13 @@ pipeline {
         }
         stage('Static Analysis') {
             steps {
-                nodeManager.runInsideExecutor() {
-                    command.run("""
-                        python3 resources/ci_cd/linux_static_analysis.py \
-                        --build-dir ${getBuildDirectory('release', 'dynamic')}
-                    """)
+                script {
+                    nodeManager.runInsideExecutor() {
+                        command.run("""
+                            python3 resources/ci_cd/linux_static_analysis.py \
+                            --build-dir ${getBuildDirectory('release', 'dynamic')}
+                        """)
+                    }
                 }
             }
         }
