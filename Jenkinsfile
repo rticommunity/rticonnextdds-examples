@@ -10,9 +10,6 @@
  * to use the software.
  */
 
-// TODO: Remove when merged
-@Library("rticommunity-jenkins-pipelines@feature/enhance-examples-jenkinsfile") _
-
 /**
  * Build the examples in the specified build and link modes.
  *
