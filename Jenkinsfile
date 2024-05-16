@@ -10,33 +10,16 @@
  * to use the software.
  */
 
-/**
- * Build the examples in the specified build and link modes.
- *
- * @param buildMode The build mode name.
- * @param linkMode The link mode name.
- */
-void runBuildStage(String buildMode, String linkMode) {
-    String cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
-    cmd += " --build-mode ${buildMode}"
-    cmd += " --link-mode ${linkMode}"
-    cmd += " --build-dir ${getBuildDirectory(buildMode, linkMode)}"
-    command.run(cmd)
-}
+@Library("rticommunity-jenkins-pipelines@feature/INSTALL-944") _
 
 /**
- * Craft the build directory name.
- *
- * @param buildMode The build mode name.
- * @param linkMode The link mode name.
+ * Hold information about the pipeline.
  */
-String getBuildDirectory(String buildMode, String linkMode) {
-    return "build_${buildMode}_${linkMode}"
-}
+Map pipelineInfo = [:]
 
 pipeline {
     agent {
-        label "${nodeManager.labelFromJobName()}"
+        label "${runInsideExecutor.labelFromJobName()}"
     }
 
     options {
@@ -61,29 +44,26 @@ pipeline {
         timeout(time: 2, unit: 'HOURS')
     }
 
-    environment {
-        RTI_INSTALLATION_PATH = "${env.WORKSPACE}"
-        VIRTUAL_ENV = "${env.WORKSPACE}/.venv"
-    }
-
     stages {
-        stage('Download Packages') {
+        stage('Configuration') {
             steps {
                 script {
-                    nodeManager.runInsideExecutor() {
-                        command.run(
-                            'pip3 install -r resources/ci_cd/requirements.txt'
+                    pipelineInfo.dockerDir = "${env.WORKSPACE}/resources/docker/"
+                    pipelineInfo.staticAnalysisDir = "${env.WORKSPACE}/static_analysis_report"
+                }
+            }
+        }
+        stage('Download Packages') {
+            steps {
+                runInsideExecutor(
+                    '',
+                    pipelineInfo.dockerDir,
+                ) {
+                    script {
+                        pipelineInfo.connextDir = installConnext(
+                            params.ARCHITECTURE_STRING,
+                            env.WORKSPACE,
                         )
-                        withAWSCredentials {
-                            withCredentials([
-                                string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
-                                string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
-                            ]) {
-                                command.run(
-                                    'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
-                                )
-                            }
-                        }
                     }
                 }
             }
@@ -103,11 +83,17 @@ pipeline {
                 stages {
                     stage('Build single mode') {
                         steps {
-                            script{
-                                nodeManager.runInsideExecutor() {
-                                    echo("Build ${buildMode}/${linkMode}")
-                                    runBuildStage(buildMode, linkMode)
-                                }
+                            runInsideExecutor(
+                                '',
+                                pipelineInfo.dockerDir,
+                            ) {
+                                echo("Building ${buildMode}/${linkMode}")
+                                buildExamples(
+                                    env.WORKSPACE,
+                                    pipelineInfo.connextDir,
+                                    buildMode,
+                                    linkMode,
+                                )
                             }
                         }
                     }
@@ -116,14 +102,24 @@ pipeline {
         }
         stage('Static Analysis') {
             steps {
-                script {
-                    nodeManager.runInsideExecutor() {
-                        command.run("""
-                            python3 resources/ci_cd/linux_static_analysis.py \
-                            --build-dir ${getBuildDirectory('release', 'dynamic')}
-                        """)
-                    }
+                runInsideExecutor(
+                    '',
+                    pipelineInfo.dockerDir,
+                ) {
+                    runStaticAnalysis(
+                        buildExamples.getBuildDirectory('release', 'dynamic'),
+                        pipelineInfo.connextDir,
+                        pipelineInfo.staticAnalysisDir,
+                    )
                 }
+                publishHTML(target: [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: pipelineInfo.staticAnalysisDir,
+                    reportFiles: 'index.html',
+                    reportName: 'LLVM Scan build static analysis',
+                ])
             }
         }
     }
