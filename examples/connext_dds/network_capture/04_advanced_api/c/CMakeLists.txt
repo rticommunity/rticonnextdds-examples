@@ -24,7 +24,7 @@ find_package(RTIConnextDDS
         security_plugins
 )
 
-if(NOT RTIConnextDDS::security_plugins)
+if(NOT TARGET RTIConnextDDS::security_plugins)
     message(WARNING "RTIConnextDDS::security_plugins component is missing. Skipping example")
     return()
 endif()
