@@ -61,7 +61,7 @@ pipeline {
                 ) {
                     script {
                         pipelineInfo.connextDir = installConnext(
-                            "${env.CONNEXTDDS_ARCH}",
+                            getEnvVar('CONNEXTDDS_ARCH'),
                             env.WORKSPACE,
                         )
                     }
