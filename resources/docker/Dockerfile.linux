@@ -11,20 +11,18 @@
 
 FROM ubuntu:20.04
 
-ENV CONNEXTDDS_ARCH="x64Linux4gcc7.3.0"
+ARG USER_NAME=jenkins
+ARG USER_UID
+
 ENV DEBIAN_FRONTEND="noninteractive"
+ENV CONNEXTDDS_ARCH="x64Linux4gcc7.3.0"
 
 RUN apt-get update && apt-get install -y \
-    gcc \
-    g++ \
-    clang \
-    libssl-dev \
-    make \
-    cmake \
-    python3 \
-    python3-pip \
-    clang-tools-10 \
-    && rm -rf /var/lib/apt/lists/* \
-    && useradd -u 789 -m jenkins
+        gcc g++ clang libssl-dev make cmake python3 python3-pip python3-venv \
+        clang-tools-10 python3-distutils \
+    && rm -rf /var/lib/apt/lists/*
 
-ENV PATH=/usr/share/clang/scan-build-py-10/bin:${PATH}
+RUN useradd -u ${USER_UID} -m ${USER_NAME}
+ENV PATH=/home/$USER_NAME/.local/bin:$PATH
+
+USER $USER_NAME
