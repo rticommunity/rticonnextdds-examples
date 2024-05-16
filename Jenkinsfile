@@ -50,6 +50,12 @@ pipeline {
                 script {
                     pipelineInfo.dockerDir = "${env.WORKSPACE}/resources/docker/"
                     pipelineInfo.staticAnalysisDir = "${env.WORKSPACE}/static_analysis_report"
+                    runInsideExecutor(
+                        '',
+                        pipelineInfo.dockerDir,
+                    ) {
+                        pipelineInfo.connextArch = getEnvVar('CONNEXTDDS_ARCH')
+                    }
                 }
             }
         }
@@ -61,7 +67,7 @@ pipeline {
                 ) {
                     script {
                         pipelineInfo.connextDir = installConnext(
-                            getEnvVar('CONNEXTDDS_ARCH'),
+                            pipelineInfo.connextArch,
                             env.WORKSPACE,
                         )
                     }
@@ -89,10 +95,11 @@ pipeline {
                             ) {
                                 echo("Building ${buildMode}/${linkMode}")
                                 buildExamples(
-                                    env.WORKSPACE,
+                                    pipelineInfo.connextArch,
                                     pipelineInfo.connextDir,
                                     buildMode,
                                     linkMode,
+                                    env.WORKSPACE,
                                 )
                             }
                         }
