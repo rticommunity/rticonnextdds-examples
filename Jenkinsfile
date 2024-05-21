@@ -10,8 +10,6 @@
  * to use the software.
  */
 
-@Library("rticommunity-jenkins-pipelines@feature/INSTALL-944") _
-
 /**
  * Hold information about the pipeline.
  */
