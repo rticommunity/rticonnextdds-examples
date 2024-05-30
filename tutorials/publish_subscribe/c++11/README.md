@@ -28,6 +28,13 @@ cmake -DCONNEXTDDS_DIR=/home/rti/rti_connext_dds-x.y.z ..
 cmake --build .
 ```
 
-## Running the Example :rocket:
+## Running the Applications :rocket:
 
-See the tutorial for instructions.
+The applications are built under the `build` directory:
+
+```sh
+cd build
+./home_automation_publisher
+...
+```
+
