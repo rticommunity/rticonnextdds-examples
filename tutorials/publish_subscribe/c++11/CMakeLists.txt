@@ -59,3 +59,14 @@ connextdds_add_application(
     DEPENDENCIES
     ${_CONNEXT_DEPENDENCIES}
 )
+
+connextdds_add_application(
+    TARGET "home_alerts"
+    LANG "C++11"
+    OUTPUT_NAME "home_alerts"
+    SOURCES
+        $<TARGET_OBJECTS:home_automation_CXX11_obj>
+        "${CMAKE_CURRENT_SOURCE_DIR}/home_alerts.cxx"
+    DEPENDENCIES
+    ${_CONNEXT_DEPENDENCIES}
+)
