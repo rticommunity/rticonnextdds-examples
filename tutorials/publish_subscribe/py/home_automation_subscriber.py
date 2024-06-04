@@ -25,4 +25,7 @@ async def sensor_monitoring():
 
 
 if __name__ == "__main__":
-    rti.asyncio.run(sensor_monitoring())
+    try:
+        rti.asyncio.run(sensor_monitoring())
+    except KeyboardInterrupt:
+        pass

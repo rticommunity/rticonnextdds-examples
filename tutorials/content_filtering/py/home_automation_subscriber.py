@@ -9,9 +9,7 @@
 # damages arising out of the use or inability to use the software.
 #
 
-from datetime import datetime
-
-import rti.asyncio  # required by take_async()
+import rti.asyncio  # required by take_data_async()
 import rti.connextdds as dds
 from home_automation import DeviceStatus
 
@@ -19,17 +17,15 @@ from home_automation import DeviceStatus
 async def sensor_monitoring():
     participant = dds.DomainParticipant(domain_id=0)
     topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
-    reader = dds.DataReader(topic)
+    content_filtered_topic = dds.ContentFilteredTopic(
+        topic,
+        "FilterRoomAndOpenWindows",
+        dds.Filter("is_open = true and room_name = 'LivingRoom'"),
+    )
+    reader = dds.DataReader(content_filtered_topic)
 
-    async for data, info in reader.take_async():
-        if not info.valid:
-            continue  # skip updates with only meta-data
-
-        if data.is_open:
-            timestamp = datetime.fromtimestamp(info.source_timestamp.to_seconds())
-            print(
-                f"WARNING: {data.sensor_name} in {data.room_name} is open ({timestamp})"
-            )
+    async for data in reader.take_data_async():
+        print(f"WARNING: {data.sensor_name} in {data.room_name} is open!")
 
 
 if __name__ == "__main__":
