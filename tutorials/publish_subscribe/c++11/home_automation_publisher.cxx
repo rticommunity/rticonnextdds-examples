@@ -33,7 +33,7 @@ void publish_sensor(
 
 int main(int argc, char **argv)
 {
-    std::string sensor_name = (argc > 1) ? argv[1] : "Sensor1";
+    std::string sensor_name = (argc > 1) ? argv[1] : "Window1";
     std::string room_name = (argc > 2) ? argv[2] : "LivingRoom";
     publish_sensor(sensor_name, room_name);
 }
