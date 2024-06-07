@@ -27,6 +27,11 @@ namespace HomeAutomation
                 Console.WriteLine("Starting subscriber...");
                 await Subscriber.MonitorSensors();
             }
+            else if (appKind == "sub_timestamp")
+            {
+                Console.WriteLine("Starting subscriber with timestamp...");
+                await SubscriberWithTimestamp.MonitorSensors();
+            }
             else
             {
                 string sensorName = args.Length > 1 ? args[1] : "Window1";
