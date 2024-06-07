@@ -20,26 +20,32 @@ def sensor_monitoring():
 
     def handler(_):
         matched_status = reader.subscription_matched_status
-        if matched_status.current_count_change > 0:
-            print(f"Publisher matched (Total {matched_status.current_count})")
-        else:
-            print(f"Publisher unmatched (Total {matched_status.current_count})")
+        print(
+            f"\nTotal publishers: {matched_status.current_count}, "
+            + f"Change: {matched_status.current_count_change}"
+        )
 
-        pubs = reader.matched_publications
-        pub_names = [
-            reader.matched_publication_data(pub).publication_name.name for pub in pubs
-        ]
-        print(f"Matched Publishers = {pub_names}\n")
+        pub_handles = reader.matched_publications
+
+        i = 0
+        for pub_handle in pub_handles:
+            builtin_data = reader.matched_publication_data(pub_handle)
+            print(f"Publisher {i}:")
+            print(f"    Publisher Virtual GUID: {builtin_data.virtual_guid}")
+            print(f"    Publisher Topic: {builtin_data.topic_name}")
+            print(f"    Publisher Type: {builtin_data.type_name}")
+            print(f"    Publisher Name: {builtin_data.publication_name.name}")
+            i += 1
 
     status_condition = dds.StatusCondition(reader)
     status_condition.enabled_statuses = dds.StatusMask.SUBSCRIPTION_MATCHED
     status_condition.set_handler(handler)
 
-    waitset = dds.WaitSet()
-    waitset += status_condition
+    wait_set = dds.WaitSet()
+    wait_set += status_condition
 
     while True:
-        waitset.dispatch(4.0)
+        wait_set.dispatch(4.0)
 
 
 if __name__ == "__main__":

@@ -29,32 +29,35 @@ int main(int argc, char **argv)
             {
                 dds::core::status::SubscriptionMatchedStatus status =
                         reader.subscription_matched_status();
-                if (status.current_count_change() > 0) {
-                    std::cout << "Publisher matched ";
-                } else {
-                    std::cout << "Publisher unmatched ";
-                }
-                std::cout << "(Total " << status.current_count() << ")" << std::endl;
+                std::cout << std::endl << "Total publishers: " << status.current_count()
+                        << ", Change: " << status.current_count_change()
+                        << std::endl;
 
-                dds::core::InstanceHandleSeq publications =
+                dds::core::InstanceHandleSeq pub_handles =
                         dds::sub::matched_publications(reader);
 
-                std::cout << "Matched Publishers = [ ";
-                for (int i = 0; i < publications.size(); i++) {
-                    dds::topic::PublicationBuiltinTopicData publication_data =
-                            dds::sub::matched_publication_data(reader, publications[i]);
+                for (int i = 0; i < pub_handles.size(); i++) {
+                    dds::topic::PublicationBuiltinTopicData builtin_data =
+                            dds::sub::matched_publication_data(reader, pub_handles[i]);
 
-                    if (publication_data->publication_name().name()) {
-                        std::cout << publication_data->publication_name().name().value() << " ";
-                    }
+                    std::cout << "Publisher " << i << ": " << std::endl;
+                    std::cout << "    Publisher Virtual GUID: "
+                            << builtin_data->virtual_guid() << std::endl;
+                    std::cout << "    Publisher Topic: "
+                            << builtin_data->topic_name() << std::endl;
+                    std::cout << "    Publisher Type: "
+                            << builtin_data->type_name() << std::endl;
+                    std::cout << "    Publisher Name: "
+                            << (builtin_data->publication_name().name()
+                                    ? builtin_data->publication_name().name().value()
+                                    : "Null") << std::endl;
                 }
-                std::cout << "]" << std::endl << std::endl;
             });
 
-    dds::core::cond::WaitSet waitset;
-    waitset += status_cond;
+    dds::core::cond::WaitSet wait_set;
+    wait_set += status_cond;
 
     while (true) { // wait in a loop
-        waitset.dispatch(dds::core::Duration(4));
+        wait_set.dispatch(dds::core::Duration(4));
     }
 }
