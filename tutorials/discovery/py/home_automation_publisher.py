@@ -19,8 +19,8 @@ from home_automation import DeviceStatus
 def publish_sensor(sensor_name: str, room_name: str):
     participant = dds.DomainParticipant(domain_id=0)
     topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
-    writer_qos = dds.DataWriterQos()
-    writer_qos << dds.EntityName(room_name)
+    writer_qos = participant.default_datawriter_qos
+    writer_qos.entity_name.name = room_name
     writer = dds.DataWriter(topic, writer_qos)
 
     device_status = DeviceStatus(sensor_name, room_name, is_open=False)

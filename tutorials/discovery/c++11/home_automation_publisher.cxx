@@ -22,12 +22,13 @@ void publish_sensor(
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
 
-    dds::pub::qos::DataWriterQos qos;
+    dds::pub::qos::DataWriterQos qos =
+            participant.extensions().default_datawriter_qos();
     qos << rti::core::policy::EntityName(room_name);
     dds::pub::DataWriter<DeviceStatus> writer(topic, qos);
 
     DeviceStatus device_status { sensor_name, room_name, false };
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < 15; i++) {
         device_status.is_open(!device_status.is_open());
         writer.write(device_status);
         std::this_thread::sleep_for(std::chrono::seconds(2));

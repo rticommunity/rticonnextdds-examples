@@ -17,47 +17,62 @@
 #include "rti/sub/SampleProcessor.hpp"
 #include "home_automation.hpp"
 
+class SensorListener
+        : public dds::sub::NoOpDataReaderListener<DeviceStatus> {
+
+    virtual void on_subscription_matched(
+            dds::sub::DataReader<DeviceStatus> &reader,
+            const dds::core::status::SubscriptionMatchedStatus &status)
+    {
+        std::cout << std::endl << "Total publishers: " << status.current_count()
+                << ", Change: " << status.current_count_change()
+                << std::endl;
+
+        dds::core::InstanceHandleSeq publications =
+                dds::sub::matched_publications(reader);
+
+        for (int i = 0; i < publications.size(); i++) {
+            dds::topic::PublicationBuiltinTopicData pub_data =
+                    dds::sub::matched_publication_data(reader, publications[i]);
+
+            std::cout << "Publisher " << i << ": " << std::endl;
+            std::cout << "    Publisher Virtual GUID: "
+                    << pub_data.extensions().virtual_guid() << std::endl;
+            std::cout << "    Publisher Name: "
+                    << (pub_data.extensions().publication_name().name()
+                            ? pub_data->publication_name().name().value()
+                            : "null") << std::endl;
+        }
+    }
+};
+
 int main(int argc, char **argv)
 {
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
     dds::sub::DataReader<DeviceStatus> reader(topic);
+    std::shared_ptr<SensorListener> sensor_listener =
+            std::make_shared<SensorListener>();
 
-    dds::core::cond::StatusCondition status_cond(reader);
-    status_cond.enabled_statuses(dds::core::status::StatusMask::subscription_matched());
-    status_cond->handler([&reader](dds::core::cond::Condition c)
+    reader.set_listener(
+            sensor_listener,
+            dds::core::status::StatusMask::subscription_matched());
+
+    rti::sub::SampleProcessor sample_processor;
+    sample_processor.attach_reader(
+            reader,
+            [](const rti::sub::LoanedSample<DeviceStatus>& sample)
             {
-                dds::core::status::SubscriptionMatchedStatus status =
-                        reader.subscription_matched_status();
-                std::cout << std::endl << "Total publishers: " << status.current_count()
-                        << ", Change: " << status.current_count_change()
-                        << std::endl;
-
-                dds::core::InstanceHandleSeq pub_handles =
-                        dds::sub::matched_publications(reader);
-
-                for (int i = 0; i < pub_handles.size(); i++) {
-                    dds::topic::PublicationBuiltinTopicData builtin_data =
-                            dds::sub::matched_publication_data(reader, pub_handles[i]);
-
-                    std::cout << "Publisher " << i << ": " << std::endl;
-                    std::cout << "    Publisher Virtual GUID: "
-                            << builtin_data->virtual_guid() << std::endl;
-                    std::cout << "    Publisher Topic: "
-                            << builtin_data->topic_name() << std::endl;
-                    std::cout << "    Publisher Type: "
-                            << builtin_data->type_name() << std::endl;
-                    std::cout << "    Publisher Name: "
-                            << (builtin_data->publication_name().name()
-                                    ? builtin_data->publication_name().name().value()
-                                    : "Null") << std::endl;
+                if (sample.info().valid()) { // ignore samples with only meta-data
+                    if (sample.data().is_open()) {
+                        std::cout << "WARNING: " << sample.data().sensor_name()
+                                << " in " << sample.data().room_name()
+                                << " is open!" << std::endl;
+                    }
                 }
             });
 
-    dds::core::cond::WaitSet wait_set;
-    wait_set += status_cond;
-
     while (true) { // wait in a loop
-        wait_set.dispatch(dds::core::Duration(4));
+        std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }

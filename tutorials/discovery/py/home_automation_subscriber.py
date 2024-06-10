@@ -9,47 +9,39 @@
 # damages arising out of the use or inability to use the software.
 #
 
+import rti.asyncio  # required by take_data_async()
 import rti.connextdds as dds
 from home_automation import DeviceStatus
 
 
-def sensor_monitoring():
-    participant = dds.DomainParticipant(domain_id=0)
-    topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
-    reader = dds.DataReader(topic)
-
-    def handler(_):
-        matched_status = reader.subscription_matched_status
+class SensorListener(dds.NoOpDataReaderListener):
+    def on_subscription_matched(self, reader, matched_status):
         print(
             f"\nTotal publishers: {matched_status.current_count}, "
             + f"Change: {matched_status.current_count_change}"
         )
 
-        pub_handles = reader.matched_publications
-
-        i = 0
-        for pub_handle in pub_handles:
-            builtin_data = reader.matched_publication_data(pub_handle)
+        for i, publication in enumerate(reader.matched_publications):
+            pub_data = reader.matched_publication_data(publication)
             print(f"Publisher {i}:")
-            print(f"    Publisher Virtual GUID: {builtin_data.virtual_guid}")
-            print(f"    Publisher Topic: {builtin_data.topic_name}")
-            print(f"    Publisher Type: {builtin_data.type_name}")
-            print(f"    Publisher Name: {builtin_data.publication_name.name}")
-            i += 1
+            print(f"    Publisher Virtual GUID: {pub_data.virtual_guid}")
+            print(f"    Publisher Name: {pub_data.publication_name.name}")
 
-    status_condition = dds.StatusCondition(reader)
-    status_condition.enabled_statuses = dds.StatusMask.SUBSCRIPTION_MATCHED
-    status_condition.set_handler(handler)
 
-    wait_set = dds.WaitSet()
-    wait_set += status_condition
+async def sensor_monitoring():
+    participant = dds.DomainParticipant(domain_id=0)
+    topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
+    reader = dds.DataReader(topic)
 
-    while True:
-        wait_set.dispatch(4.0)
+    reader.set_listener(SensorListener(), dds.StatusMask.SUBSCRIPTION_MATCHED)
+
+    async for data in reader.take_data_async():
+        if data.is_open:
+            print(f"WARNING: {data.sensor_name} in {data.room_name} is open!")
 
 
 if __name__ == "__main__":
     try:
-        sensor_monitoring()
+        rti.asyncio.run(sensor_monitoring())
     except KeyboardInterrupt:
         pass
