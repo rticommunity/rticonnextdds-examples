@@ -41,7 +41,7 @@ class SensorListener
             std::cout << "    Publisher Name: "
                     << (pub_data.extensions().publication_name().name()
                             ? pub_data->publication_name().name().value()
-                            : "null") << std::endl;
+                            : "") << std::endl;
         }
     }
 };
