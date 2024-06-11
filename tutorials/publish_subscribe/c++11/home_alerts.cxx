@@ -39,7 +39,7 @@ int main(int argc, char **argv)
                 alert_writer.write(
                         KeyedString(
                                 sample.data().sensor_name(),
-                                "Window was just opened"),
+                                "Window in " + sample.data().room_name() + " was just opened"),
                         sample.info().source_timestamp());
             });
 

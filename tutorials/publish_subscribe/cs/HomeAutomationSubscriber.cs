@@ -37,7 +37,7 @@ namespace HomeAutomation
             {
                 if (data.is_open)
                 {
-                    Console.WriteLine($"WARNING: {data.sensor_name} in {data.room_name} is open");
+                    Console.WriteLine($"WARNING: {data.sensor_name} in {data.room_name} is open!");
                 }
             }
         }
