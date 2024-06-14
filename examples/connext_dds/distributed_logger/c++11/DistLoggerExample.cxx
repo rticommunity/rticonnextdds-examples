@@ -24,7 +24,7 @@ void distlogger_example_main(
         const string application_kind,
         const int domain_id,
         const int sleep,
-        const uint iterations)
+        const unsigned int iterations)
 {
     // First, create the options to personalize Distributed Logger.
     // If no options are provided, default ones will be created.
@@ -45,7 +45,7 @@ void distlogger_example_main(
     // The log messages are published as DDS topics, which allows your DDS
     // applications to subscribe to them. You can also run rtiddsspy or
     // RTI Admin Console to visualize the logs.
-    for (uint i = 1; i <= iterations; ++i) {
+    for (unsigned int i = 1; i <= iterations; ++i) {
         cout << "\nIteration #" << i << endl;
 
         dist_logger.debug("This is a debug message");
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
     int domain_id = 0;
     int sleep = 1;
-    uint iterations = 50;
+    unsigned int iterations = 50;
 
     for (int i = 1; i < argc;) {
         const string &param = argv[i++];
