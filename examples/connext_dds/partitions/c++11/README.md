@@ -42,24 +42,16 @@ application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 On *Windows* systems run:
 
 ```sh
-partitions_publisher.exe  -d <domain_id> -s <samples_to_send>
-partitions_subscriber.exe -d <domain_id> -s <samples_to_receive>
+.\build\partitions_publisher.exe <sensor_name> <room_name>
+.\build\partitions_subscriber.exe
 ```
 
 On *UNIX* systems run:
 
 ```sh
-./partitions_publisher  -d <domain_id> -s <samples_to_send>
-./partitions_subscriber -d <domain_id> -s <samples_to_receive>
+./build/partitions_publisher  <sensor_name> <room_name>
+./build/partitions_subscriber
 ```
-
-The applications accept up to two arguments:
-
-1.  The `<domain_id>`. Both applications must use the same domain ID in order to
-    communicate. The default is 0.
-
-2.  How long the examples should run, measured in samples. The default is
-    infinite.
 
 ## Customizing the Build
 

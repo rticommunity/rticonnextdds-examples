@@ -9,74 +9,55 @@
 # to use the software.
 
 import sys
-import asyncio
+from time import sleep
 
 import rti.connextdds as dds
-import rti.asyncio
-
-from partitions import PartitionsExample
+from home_automation import DeviceStatus
 
 
-class PartitionsExamplePublisher:
-    def __init__(self, domain_id: int):
-        self.participant = dds.DomainParticipant(domain_id)
+def publish_sensor(sensor_name: str, room_name: str):
+    participant = dds.DomainParticipant(domain_id=0)
+    publisher = dds.Publisher(participant)
+    topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
+    writer = dds.DataWriter(publisher, topic)
 
-        topic = dds.Topic(
-            self.participant, "Example partitions", PartitionsExample
+    device_status = DeviceStatus(sensor_name, room_name, is_open=False)
+
+    partition_names = None
+
+    for i in range(1000):
+
+        if i % 15 == 0:
+            # Multiple partitions, with match
+            partition_names = ["USA/CA/Sunnyvale", "USA/CA/San Francisco"]
+        elif i % 15 == 5:
+            # Wildcard match
+            partition_names = ["USA/CA/*"]
+        elif i % 15 == 10:
+            # No match
+            partition_names = ["USA/NV/Las Vegas"]
+
+        if partition_names is not None:
+            publisher_qos = publisher.qos
+            publisher_qos.partition.name = partition_names
+            publisher.qos = publisher_qos
+            partition_names = None
+
+        # Simulate the window opening and closing
+        device_status.is_open = not device_status.is_open
+
+        print(
+            f"Writing {device_status} on partition(s) {list(publisher.qos.partition.name)}"
         )
 
-        self.publisher = dds.Publisher(self.participant)
-
-        self.writer = dds.DataWriter(self.publisher, topic)
-
-        self.samples_written = 0
-
-    async def run(self, sample_count: int):
-        sample = PartitionsExample()
-        while self.samples_written < sample_count:
-            # Modify the data to be sent here
-            sample.x = self.samples_written
-
-            # Every 5 samples we will change the partition name.
-            # These are the partition expressions we are going to set:
-            # "bar", "A*", "A?C", "X*Z", "zzz" and "A*C".
-            new_partitions = None
-            if (self.samples_written + 1) % 25 == 0:
-                # Matches "ABC", name[1] here can match name[0] there,
-                # as long as there is some overlapping name.
-                new_partitions = ["zzz", "A*C"]
-            elif (self.samples_written + 1) % 25 == 20:
-                # Strings that are regular expressions aren't tested for
-                # literal matches, so this won't match "X*Z".
-                new_partitions = ["X*Z"]
-            elif (self.samples_written + 1) % 25 == 15:
-                # Matches "ABC".
-                new_partitions = ["A?C"]
-            elif (self.samples_written + 1) % 25 == 10:
-                # Matches "ABC".
-                new_partitions = ["A*"]
-            elif (self.samples_written + 1) % 25 == 5:
-                # No literal match for "bar".
-                # For the next iterations we are using only one partition.
-                new_partitions = ["bar"]
-
-            if new_partitions is not None:
-                publisher_qos = self.publisher.qos
-                publisher_qos.partition.name = new_partitions
-                self.publisher.qos = publisher_qos
-                print(
-                    f"Partition set to: {list(self.publisher.qos.partition.name)}"
-                )
-
-            print(f"Writing {sample}")
-            self.writer.write(sample)
-
-            self.samples_written += 1
-            await asyncio.sleep(1)
+        writer.write(device_status)
+        sleep(2)
 
 
 if __name__ == "__main__":
+    sensor_name = sys.argv[1] if len(sys.argv) > 1 else "Window1"
+    room_name = sys.argv[2] if len(sys.argv) > 2 else "LivingRoom"
     try:
-        rti.asyncio.run(PartitionsExamplePublisher(0).run(sys.maxsize))
+        publish_sensor(sensor_name, room_name)
     except KeyboardInterrupt:
         pass

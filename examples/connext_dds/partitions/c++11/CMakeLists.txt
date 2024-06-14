@@ -20,7 +20,30 @@ connextdds_configure_cmake_utils()
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
-connextdds_add_example(
-    IDL "partitions"
+connextdds_call_codegen(
+    IDL "home_automation"
     LANG "C++11"
+    PREFIX "home_automation"
+)
+
+connextdds_add_application(
+    TARGET "publisher"
+    LANG "C++11"
+    OUTPUT_NAME "partitions_publisher"
+    SOURCES
+        $<TARGET_OBJECTS:home_automation_CXX11_obj>
+        "${CMAKE_CURRENT_SOURCE_DIR}/partitions_publisher.cxx"
+    DEPENDENCIES
+    ${_CONNEXT_DEPENDENCIES}
+)
+
+connextdds_add_application(
+    TARGET "subscriber"
+    LANG "C++11"
+    OUTPUT_NAME "partitions_subscriber"
+    SOURCES
+        $<TARGET_OBJECTS:home_automation_CXX11_obj>
+        "${CMAKE_CURRENT_SOURCE_DIR}/partitions_subscriber.cxx"
+    DEPENDENCIES
+    ${_CONNEXT_DEPENDENCIES}
 )

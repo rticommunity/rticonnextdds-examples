@@ -10,14 +10,14 @@ following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
-python partitions_program.py -p
-python partitions_program.py -s
+python partitions_publisher.py
+python partitions_subscriber.py
 ```
 
 Note: you can run multiple publishers and subscribers at the same time.
 
-For the full list of arguments:
+The publisher accepts two arguments:
 
 ```sh
-python partitions_program.py -h
+python partitions_publisher.py <sensor_name> <room_name>
 ```

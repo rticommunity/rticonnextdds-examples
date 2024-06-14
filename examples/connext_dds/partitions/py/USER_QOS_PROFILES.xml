@@ -20,8 +20,8 @@
             <publisher_qos>
                 <partition>
                     <name>
-                        <element>ABC</element>
-                        <element>foo</element>
+                        <element>USA/CA/Sunnyvale</element>
+                        <element>USA/NV/*</element>
                     </name>
                 </partition>
             </publisher_qos>
@@ -31,8 +31,8 @@
             <subscriber_qos>
                 <partition>
                     <name>
-                        <element>ABC</element>
-                        <element>X*Z</element>
+                        <element>USA/CA/Sunnyvale</element>
+                        <element>USA/NV/Reno</element>
                     </name>
                 </partition>
             </subscriber_qos>

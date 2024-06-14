@@ -10,6 +10,9 @@
  * use or inability to use the software.
  */
 
-struct partitions {
-    int32 x;
+struct DeviceStatus {
+    @key string sensor_name;
+    string room_name;
+    boolean is_open;
 };
+

@@ -20,8 +20,8 @@
             <publisher_qos>
                 <partition>
                     <name>
-                        <element>ABC</element>
-                        <element>foo</element>
+                        <element>USA/CA/Sunnyvale</element>
+                        <element>USA/NV/*</element>
                     </name>
                 </partition>
             </publisher_qos>
@@ -31,8 +31,8 @@
             <subscriber_qos>
                 <partition>
                     <name>
-                        <element>ABC</element>
-                        <element>X*Z</element>
+                        <element>USA/CA/Sunnyvale</element>
+                        <element>USA/NV/Reno</element>
                     </name>
                 </partition>
             </subscriber_qos>
@@ -75,7 +75,7 @@
                     Analyzer tool, making it easier for you to tell one application from another
                     when you're debugging. -->
                 <participant_name>
-                    <name>RTI Partitions C++03 Example</name>
+                    <name>RTI Partitions Python Example</name>
                 </participant_name>
 
             </domain_participant_qos>
