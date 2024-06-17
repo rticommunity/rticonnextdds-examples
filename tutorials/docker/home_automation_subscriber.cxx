@@ -17,34 +17,28 @@
 #include "rti/sub/SampleProcessor.hpp"
 #include "home_automation.hpp"
 
-using KeyedString = dds::core::KeyedStringTopicType;
-
 int main(int argc, char **argv)
 {
-    std::cout << "Starting home alert service..." << std::endl;
+    std::cout << "Starting subscriber..." << std::endl;
     dds::domain::DomainParticipant participant(0);
-    dds::topic::Topic<DeviceStatus> status_topic(participant, "WindowStatus");
-    dds::sub::DataReader<DeviceStatus> status_reader(status_topic);
-
-    dds::topic::Topic<KeyedString> alert_topic(participant, "HomeAlerts");
-    dds::pub::DataWriter<KeyedString> alert_writer(alert_topic);
+    dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
+    dds::sub::DataReader<DeviceStatus> reader(topic);
 
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
-            status_reader,
-            [alert_writer](const rti::sub::LoanedSample<DeviceStatus> &sample) mutable {
-                if (!sample.info().valid() || !sample.data().is_open()) {
-                    return;
+            reader,
+            [](const rti::sub::LoanedSample<DeviceStatus>& sample)
+            {
+                if (sample.info().valid()) { // ignore samples with only meta-data
+                    if (sample.data().is_open()) {
+                        std::cout << "WARNING: " << sample.data().sensor_name()
+                                << " in " << sample.data().room_name()
+                                << " is open!" << std::endl;
+                    }
                 }
-
-                alert_writer.write(
-                        KeyedString(
-                                sample.data().sensor_name(),
-                                "Window in " + sample.data().room_name() + " was just opened"),
-                        sample.info().source_timestamp());
             });
 
-    while (true) {  // wait in a loop
+    while (true) { // wait in a loop
         std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }

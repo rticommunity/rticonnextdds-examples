@@ -32,7 +32,8 @@ int main(int argc, char **argv)
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             status_reader,
-            [alert_writer](const rti::sub::LoanedSample<DeviceStatus> &sample) mutable {
+            [alert_writer](const rti::sub::LoanedSample<DeviceStatus>
+                                   &sample) mutable {
                 if (!sample.info().valid() || !sample.data().is_open()) {
                     return;
                 }
@@ -40,7 +41,8 @@ int main(int argc, char **argv)
                 alert_writer.write(
                         KeyedString(
                                 sample.data().sensor_name(),
-                                "Window in " + sample.data().room_name() + " was just opened"),
+                                "Window in " + sample.data().room_name()
+                                        + " was just opened"),
                         sample.info().source_timestamp());
             });
 
