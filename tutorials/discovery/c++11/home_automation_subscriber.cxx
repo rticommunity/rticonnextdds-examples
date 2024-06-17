@@ -20,9 +20,9 @@
 class SensorListener
         : public dds::sub::NoOpDataReaderListener<DeviceStatus> {
 
-    virtual void on_subscription_matched(
+    void on_subscription_matched(
             dds::sub::DataReader<DeviceStatus> &reader,
-            const dds::core::status::SubscriptionMatchedStatus &status)
+            const dds::core::status::SubscriptionMatchedStatus &status) override
     {
         std::cout << std::endl << "Total publishers: " << status.current_count()
                 << ", Change: " << status.current_count_change()
@@ -41,7 +41,7 @@ class SensorListener
             std::cout << "    Publisher Name: "
                     << (pub_data.extensions().publication_name().name()
                             ? pub_data->publication_name().name().value()
-                            : "") << std::endl;
+                            : "(N/A)") << std::endl;
         }
     }
 };
