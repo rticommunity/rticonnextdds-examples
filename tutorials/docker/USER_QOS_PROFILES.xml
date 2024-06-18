@@ -11,10 +11,27 @@
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/current/rti_dds_profiles.xsd">
     <qos_library name="MyLibrary">
-        <qos_profile name="MyProfile">
+        <qos_profile name="MyProfile" is_default_qos="true">
             <base_name>
                 <element>BuiltinQosLib::Generic.StrictReliable</element>
             </base_name>
+
+            <!-- (Optional exercise)
+                 Uncomment for WAN Transport and set the correct IP address
+                 for Cloud Discovery Service
+            -->
+            <!--
+            <domain_participant_qos>
+                <transport_builtin>
+                    <mask>UDPv4_WAN</mask>
+                </transport_builtin>
+                <discovery>
+                    <initial_peers>
+                        <element>udpv4_wan://10.0.0.1:7400</element>
+                    </initial_peers>
+                </discovery>
+            </domain_participant_qos>
+            -->
         </qos_profile>
     </qos_library>
 </dds>
