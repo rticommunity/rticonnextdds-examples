@@ -1,6 +1,7 @@
 # RTI Connext Tutorials
 
-The code included in `tutorials` is meant to be used as supporting material for
-the learning modules in the Connext Developer page.
+The code included in this directory is the supporting material for the tutorials
+in the [Connext Developer](https://community.rti.com/static/documentation/developers/current/index.html) page.
 
-Start at https://connext.rti.com, **Learn Connext**.
+Please follow the instructions for each tutorial under *Learn*.
+

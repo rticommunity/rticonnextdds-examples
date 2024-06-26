@@ -1,6 +1,6 @@
 # Tutorial: Publish-Subscribe
 
-This code is part of the Connext Publish-Subscribe tutorial.
+This code is part of the Connext [Publish-Subscribe](https://community.rti.com/static/documentation/developers/current/learn/publish-subscribe.html) tutorial.
 
 ## Building the Example :wrench:
 

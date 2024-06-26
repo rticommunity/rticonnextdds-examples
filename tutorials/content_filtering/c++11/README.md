@@ -1,6 +1,6 @@
 # Tutorial: Content Filtering
 
-This code is part of the Connext Content Filtering tutorial.
+This code is part of the Connext [Content Filtering](https://community.rti.com/static/documentation/developers/current/learn/content-filtering.html) tutorial.
 
 ## Building the Example :wrench:
 
