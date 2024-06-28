@@ -35,7 +35,7 @@ namespace HomeAutomation
                 is_open = false
             };
 
-            for (int i = 0; i < 1000; i++)
+            for (int i = 0; i < 20; i++)
             {
                 // Simulate the window opening and closing
                 deviceStatus.is_open = !deviceStatus.is_open;
