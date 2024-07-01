@@ -52,4 +52,3 @@ cd build
 ./home_automation_publisher
 ...
 ```
-
