@@ -7,7 +7,7 @@ This code is part of the Connext [Last-Value Cache](https://community.rti.com/st
 You can build the example following the instructions in the tutorial, or you can
 build it using CMake as follows.
 
-1. Generate the build files:
+1.  Generate the build files:
 
 ```sh
 mkdir build
@@ -30,7 +30,7 @@ and platform.
 cmake .. -G "Visual Studio 17 2022" -A x64
 ```
 
-2. Build the applications:
+2.  Build the applications:
 
 ```sh
 cmake --build .

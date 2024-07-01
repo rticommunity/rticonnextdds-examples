@@ -6,12 +6,12 @@ This code is part of the Connext [Publish-Subscribe](https://community.rti.com/s
 
 You can build the example using Gradle as follows.
 
-1. Setting up the environment for Connext:
+1.  Setting up the environment for Connext:
 
 Use the following script to configure your shell environment variables to run
 Connext executables and load dynamic libraries.
 
-* Linux
+- Linux
 
 If you’re using Bash, run this:
 
@@ -25,7 +25,7 @@ If you’re using the Z shell, run this:
 source <installdir>/resource/scripts/rtisetenv_<architecture>.zsh
 ```
 
-* macOS
+- macOS
 
 If you’re using Bash, run this:
 
@@ -45,21 +45,21 @@ If you’re using the tcsh shell, run this:
 source <installdir>/resource/scripts/rtisetenv_<architecture>.tcsh
 ```
 
-* Windows
+- Windows
 
 ```sh
 <installdir>\resource\scripts\rtisetenv_<architecture>.bat
 ```
 
-2. Build the applications:
+2.  Build the applications:
 
-* Linux or macOs
+- Linux or macOs
 
 ```sh
 ./gradlew build
 ```
 
-* Windows
+- Windows
 
 ```sh
 ./gradlew.bat build
@@ -67,7 +67,7 @@ source <installdir>/resource/scripts/rtisetenv_<architecture>.tcsh
 
 ## Running the Applications :rocket:
 
-* Linux or macOs
+- Linux or macOs
 
 ```sh
 ./gradlew runPublisher
@@ -79,7 +79,7 @@ source <installdir>/resource/scripts/rtisetenv_<architecture>.tcsh
 ...
 ```
 
-* Windows
+- Windows
 
 ```sh
 ./gradlew.bat runPublisher

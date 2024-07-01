@@ -4,7 +4,7 @@ This code is part of the Connext [Publish-Subscribe](https://community.rti.com/s
 
 ## Building the Example :wrench:
 
-1. Generate the C# types and the project files file with **rtiddsgen**:
+1.  Generate the C# types and the project files file with **rtiddsgen**:
 
 ```sh
 <install dir>/bin/rtiddsgen -language C# -platform [net5|net6|net8] home_automation.idl
@@ -12,7 +12,7 @@ This code is part of the Connext [Publish-Subscribe](https://community.rti.com/s
 
 Where `<install dir>` refers to your RTI Connext installation.
 
-2. Build the applications:
+2.  Build the applications:
 
 ```sh
 dotnet build

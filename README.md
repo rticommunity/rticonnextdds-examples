@@ -50,6 +50,3 @@ contributions will be reviewed and as soon as they are approved they will
 automatically be included in the [RTI Community Portal Examples
 Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
 for further information about how to contribute with new examples to this repository.
-
-
-
