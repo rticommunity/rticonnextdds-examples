@@ -1,6 +1,8 @@
 # Tutorial: Data Persistence
 
-This code is part of the Connext [Data Persistence](https://community.rti.com/static/documentation/developers/learn/data-persistence.html) tutorial.
+This code is part of the Connext
+[Data Persistence](https://community.rti.com/static/documentation/developers/learn/data-persistence.html)
+tutorial.
 
 ## Building the Example :wrench:
 

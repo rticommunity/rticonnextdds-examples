@@ -1,6 +1,8 @@
 # Tutorial: Remote Procedure Call
 
-This code is part of the Connext [RPC](https://community.rti.com/static/documentation/developers/learn/rpc.html) tutorial.
+This code is part of the Connext
+[RPC](https://community.rti.com/static/documentation/developers/learn/rpc.html)
+tutorial.
 
 ## Building the Example :wrench:
 
