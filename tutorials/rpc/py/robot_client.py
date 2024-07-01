@@ -15,6 +15,7 @@ import rti.rpc as rpc
 from robot import Coordinates, RobotControl
 from time import sleep
 
+
 class RobotControlClient(RobotControl, rpc.ClientBase):
     pass
 
@@ -26,7 +27,9 @@ async def main():
     sleep(2)
 
     print("Calling walk_to...")
-    result = await client.walk_to(destination=Coordinates(x=10, y=10), speed=30.0)
+    result = await client.walk_to(
+        destination=Coordinates(x=10, y=10), speed=30.0
+    )
     print(result)
 
 

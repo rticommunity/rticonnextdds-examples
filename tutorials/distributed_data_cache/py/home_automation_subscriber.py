@@ -35,7 +35,11 @@ if __name__ == "__main__":
     wait_for_input(
         'reader.select().content(dds.Query(reader, "is_open = true")).read_data()'
     )
-    print(reader.select().content(dds.Query(reader, "is_open = true")).read_data())
+    print(
+        reader.select()
+        .content(dds.Query(reader, "is_open = true"))
+        .read_data()
+    )
 
     # Display all the samples with the attribute sensor_name set to Window1
     wait_for_input(
@@ -62,15 +66,21 @@ if __name__ == "__main__":
         'window1_handle = reader.lookup_instance(DeviceStatus(sensor_name="Window1"))\n'
         + "\treader.select().instance(window1_handle).read_data()"
     )
-    window1_handle = reader.lookup_instance(DeviceStatus(sensor_name="Window1"))
+    window1_handle = reader.lookup_instance(
+        DeviceStatus(sensor_name="Window1")
+    )
     print(reader.select().instance(window1_handle).read_data())
 
     # Display all the samples that you have not read yet
-    wait_for_input("reader.select().state(dds.SampleState.NOT_READ).read_data()")
+    wait_for_input(
+        "reader.select().state(dds.SampleState.NOT_READ).read_data()"
+    )
     print(reader.select().state(dds.SampleState.NOT_READ).read_data())
 
     # Display all the samples that you have not read yet
-    wait_for_input("reader.select().state(dds.SampleState.NOT_READ).read_data()")
+    wait_for_input(
+        "reader.select().state(dds.SampleState.NOT_READ).read_data()"
+    )
     print(reader.select().state(dds.SampleState.NOT_READ).read_data())
 
     # Display all the new instances

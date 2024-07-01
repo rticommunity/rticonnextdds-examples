@@ -17,7 +17,6 @@ from home_automation import DeviceStatus
 
 
 class WindowSensor:
-
     def __init__(self, sensor_name: str, room_name: str) -> None:
         self.status = DeviceStatus(sensor_name, room_name, is_open=False)
 
@@ -48,7 +47,6 @@ class WindowSensor:
 
 
 def control_sensor(sensor_name: str, room_name: str):
-
     window_sensor = WindowSensor(sensor_name, room_name)
     help_message = """\nEnter one of the following options:
         - open

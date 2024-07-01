@@ -25,7 +25,9 @@ def publish_sensor(sensor_name: str, room_name: str):
     for i in range(1000):
         # Simulate the window opening and closing
         device_status.is_open = not device_status.is_open
-        print(f"{sensor_name} is now: {'open' if device_status.is_open else 'closed'}")
+        print(
+            f"{sensor_name} is now: {'open' if device_status.is_open else 'closed'}"
+        )
         writer.write(device_status)
         sleep(10)
 

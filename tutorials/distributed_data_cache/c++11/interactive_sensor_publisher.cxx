@@ -15,11 +15,11 @@
 #include "home_automation.hpp"
 
 class WindowSensor {
-  public:
-    WindowSensor(const std::string& sensor_name, const std::string& room_name)
+public:
+    WindowSensor(const std::string &sensor_name, const std::string &room_name)
             : status_(sensor_name, room_name, false),
-            instance_(dds::core::InstanceHandle::nil()),
-            writer_(nullptr)
+              instance_(dds::core::InstanceHandle::nil()),
+              writer_(nullptr)
     {
         dds::domain::DomainParticipant participant(0);
         dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
@@ -56,27 +56,26 @@ class WindowSensor {
         writer_->write(status_, instance_);
     }
 
-  private:
+private:
     DeviceStatus status_;
     dds::core::InstanceHandle instance_;
     std::shared_ptr<dds::pub::DataWriter<DeviceStatus>> writer_;
-
 };
 
 void control_sensor(
-        const std::string& sensor_name,
-        const std::string& room_name)
+        const std::string &sensor_name,
+        const std::string &room_name)
 {
     WindowSensor window_sendor(sensor_name, room_name);
     std::string option;
 
     while (true) {
         std::cout << "\nEnter one of the following options:" << std::endl
-            << "\t- open" << std::endl
-            << "\t- close" << std::endl
-            << "\t- off" << std::endl
-            << "\t- on" << std::endl
-            << "\t- exit" << std::endl;
+                  << "\t- open" << std::endl
+                  << "\t- close" << std::endl
+                  << "\t- off" << std::endl
+                  << "\t- on" << std::endl
+                  << "\t- exit" << std::endl;
 
         std::cin >> option;
 
@@ -91,7 +90,9 @@ void control_sensor(
         } else if (option == "exit") {
             break;
         } else {
-            std::cout << "Invalid option, please enter a valid option [open|close|off|on|exit]." << std::endl;
+            std::cout << "Invalid option, please enter a valid option "
+                         "[open|close|off|on|exit]."
+                      << std::endl;
         }
     }
 }

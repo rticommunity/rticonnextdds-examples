@@ -26,9 +26,7 @@ async def sensor_monitoring():
             continue  # skip updates with only meta-data
 
         timestamp = datetime.fromtimestamp(info.source_timestamp.to_seconds())
-        print(
-            f"{data.sensor_name}: {data.degrees:.2f} degrees ({timestamp})"
-        )
+        print(f"{data.sensor_name}: {data.degrees:.2f} degrees ({timestamp})")
 
 
 if __name__ == "__main__":

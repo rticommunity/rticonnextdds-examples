@@ -21,48 +21,48 @@ import com.rti.dds.publication.Publisher;
 import com.rti.dds.topic.Topic;
 
 
-public class DeviceStatusPublisher extends Application implements AutoCloseable {
-
+public class DeviceStatusPublisher
+        extends Application implements AutoCloseable {
     private DomainParticipant participant = null;
 
-    private void runApplication(String sensorName, String roomName) {
+    private void runApplication(String sensorName, String roomName)
+    {
         participant = Objects.requireNonNull(
-            DomainParticipantFactory.get_instance().create_participant(
-                0,
-                DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                DomainParticipantFactory.get_instance().create_participant(
+                        0,
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         String typeName = DeviceStatusTypeSupport.get_type_name();
         DeviceStatusTypeSupport.register_type(participant, typeName);
 
-        Topic topic = Objects.requireNonNull(
-            participant.create_topic(
+        Topic topic = Objects.requireNonNull(participant.create_topic(
                 "WindowStatus",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
-                null, // listener
+                null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
-        DeviceStatusDataWriter writer = (DeviceStatusDataWriter) Objects.requireNonNull(
-            participant.create_datawriter(
-                topic,
-                Publisher.DATAWRITER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+        DeviceStatusDataWriter writer =
+                (DeviceStatusDataWriter) Objects.requireNonNull(
+                        participant.create_datawriter(
+                                topic,
+                                Publisher.DATAWRITER_QOS_DEFAULT,
+                                null,  // listener
+                                StatusKind.STATUS_MASK_NONE));
 
         DeviceStatus deviceStatus = new DeviceStatus();
         deviceStatus.sensor_name = sensorName;
         deviceStatus.room_name = roomName;
 
         for (int samplesWritten = 0;
-                !isShutdownRequested() && samplesWritten < 1000;
-                samplesWritten++) {
-
+             !isShutdownRequested() && samplesWritten < 1000;
+             samplesWritten++) {
             deviceStatus.is_open = !deviceStatus.is_open;
             writer.write(deviceStatus, InstanceHandle_t.HANDLE_NIL);
             try {
-                final long sendPeriodMillis = 2000; // 1 second
+                final long sendPeriodMillis = 2000;  // 1 second
                 Thread.sleep(sendPeriodMillis);
             } catch (InterruptedException ix) {
                 break;
@@ -70,23 +70,24 @@ public class DeviceStatusPublisher extends Application implements AutoCloseable 
         }
     }
 
-    @Override
-    public void close() {
+    @Override public void close()
+    {
         if (participant != null) {
             participant.delete_contained_entities();
 
-            DomainParticipantFactory.get_instance()
-            .delete_participant(participant);
+            DomainParticipantFactory.get_instance().delete_participant(
+                    participant);
         }
     }
 
 
-    public static void main(String[] args) {
-
+    public static void main(String[] args)
+    {
         String sensorName = args.length > 0 ? args[0] : "Window1";
         String roomName = args.length > 1 ? args[1] : "LivingRoom";
 
-        try (DeviceStatusPublisher publisherApplication = new DeviceStatusPublisher()) {
+        try (DeviceStatusPublisher publisherApplication =
+                     new DeviceStatusPublisher()) {
             publisherApplication.addShutdownHook();
             publisherApplication.runApplication(sensorName, roomName);
         }

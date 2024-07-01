@@ -16,8 +16,8 @@
 #include "home_automation.hpp"
 
 void publish_sensor(
-    const std::string& sensor_name,
-    const std::string& room_name)
+        const std::string &sensor_name,
+        const std::string &room_name)
 {
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");

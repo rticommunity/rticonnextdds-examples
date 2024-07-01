@@ -17,16 +17,14 @@
 #include "rti/sub/SampleProcessor.hpp"
 #include "home_automation.hpp"
 
-class SensorListener
-        : public dds::sub::NoOpDataReaderListener<DeviceStatus> {
-
+class SensorListener : public dds::sub::NoOpDataReaderListener<DeviceStatus> {
     void on_subscription_matched(
             dds::sub::DataReader<DeviceStatus> &reader,
             const dds::core::status::SubscriptionMatchedStatus &status) override
     {
-        std::cout << std::endl << "Total publishers: " << status.current_count()
-                << ", Change: " << status.current_count_change()
-                << std::endl;
+        std::cout << std::endl
+                  << "Total publishers: " << status.current_count()
+                  << ", Change: " << status.current_count_change() << std::endl;
 
         dds::core::InstanceHandleSeq publications =
                 dds::sub::matched_publications(reader);
@@ -37,11 +35,12 @@ class SensorListener
 
             std::cout << "Publisher " << i << ": " << std::endl;
             std::cout << "    Publisher Virtual GUID: "
-                    << pub_data.extensions().virtual_guid() << std::endl;
+                      << pub_data.extensions().virtual_guid() << std::endl;
             std::cout << "    Publisher Name: "
-                    << (pub_data.extensions().publication_name().name()
-                            ? pub_data->publication_name().name().value()
-                            : "(N/A)") << std::endl;
+                      << (pub_data.extensions().publication_name().name()
+                                  ? pub_data->publication_name().name().value()
+                                  : "(N/A)")
+                      << std::endl;
         }
     }
 };
@@ -61,18 +60,18 @@ int main(int argc, char **argv)
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,
-            [](const rti::sub::LoanedSample<DeviceStatus>& sample)
-            {
-                if (sample.info().valid()) { // ignore samples with only meta-data
+            [](const rti::sub::LoanedSample<DeviceStatus> &sample) {
+                if (sample.info().valid()) {  // ignore samples with only
+                                              // meta-data
                     if (sample.data().is_open()) {
                         std::cout << "WARNING: " << sample.data().sensor_name()
-                                << " in " << sample.data().room_name()
-                                << " is open!" << std::endl;
+                                  << " in " << sample.data().room_name()
+                                  << " is open!" << std::endl;
                     }
                 }
             });
 
-    while (true) { // wait in a loop
+    while (true) {  // wait in a loop
         std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }

@@ -16,8 +16,8 @@
 #include "home_automation.hpp"
 
 void publish_sensor(
-    const std::string& sensor_name,
-    const std::string& room_name)
+        const std::string &sensor_name,
+        const std::string &room_name)
 {
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
@@ -27,8 +27,7 @@ void publish_sensor(
     for (int i = 0; i < 1000; i++) {
         device_status.is_open(!device_status.is_open());
         std::cout << sensor_name << " is now: "
-                << (device_status.is_open() ? "open" : "closed")
-                << std::endl;
+                  << (device_status.is_open() ? "open" : "closed") << std::endl;
         writer.write(device_status);
         std::this_thread::sleep_for(std::chrono::seconds(10));
     }

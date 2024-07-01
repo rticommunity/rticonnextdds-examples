@@ -16,6 +16,7 @@ from time import sleep
 import rti.connextdds as dds
 from temperature import Temperature
 
+
 def publish_temperature(sensor_name: str):
     participant = dds.DomainParticipant(domain_id=0)
     topic = dds.Topic(participant, "Temperature", Temperature)

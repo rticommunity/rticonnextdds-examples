@@ -11,20 +11,21 @@
  */
 
 public abstract class Application {
-
     private boolean shutdownRequested = false;
 
-    protected void addShutdownHook() {
+    protected void addShutdownHook()
+    {
         Runtime.getRuntime().addShutdownHook(new Thread() {
-            public void run() {
+            public void run()
+            {
                 System.out.println("Shutting down...");
                 shutdownRequested = true;
             }
         });
     }
 
-    public boolean isShutdownRequested() {
+    public boolean isShutdownRequested()
+    {
         return shutdownRequested;
     }
-
 }

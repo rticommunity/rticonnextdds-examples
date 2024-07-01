@@ -32,18 +32,20 @@ import com.rti.dds.subscription.ViewStateKind;
 import com.rti.dds.topic.Topic;
 
 
-public class DeviceStatusSubscriber extends Application implements AutoCloseable {
-
+public class DeviceStatusSubscriber
+        extends Application implements AutoCloseable {
     private DomainParticipant participant = null;
     private DeviceStatusDataReader reader = null;
     private final DeviceStatusSeq dataSeq = new DeviceStatusSeq();
     private final SampleInfoSeq infoSeq = new SampleInfoSeq();
 
-    private int processData() {
+    private int processData()
+    {
         int samplesRead = 0;
 
         try {
-            reader.take(dataSeq,
+            reader.take(
+                    dataSeq,
                     infoSeq,
                     ResourceLimitsQosPolicy.LENGTH_UNLIMITED,
                     SampleStateKind.ANY_SAMPLE_STATE,
@@ -56,10 +58,10 @@ public class DeviceStatusSubscriber extends Application implements AutoCloseable
                 if (info.valid_data) {
                     DeviceStatus deviceStatus = dataSeq.get(i);
                     if (deviceStatus.is_open) {
-                        System.out.println("WARNING: " + deviceStatus.sensor_name
-                                + " in " + deviceStatus.room_name + " is open!");
+                        System.out.println(
+                                "WARNING: " + deviceStatus.sensor_name + " in "
+                                + deviceStatus.room_name + " is open!");
                     }
-
                 }
                 samplesRead++;
             }
@@ -72,31 +74,31 @@ public class DeviceStatusSubscriber extends Application implements AutoCloseable
         return samplesRead;
     }
 
-    private void runApplication() {
+    private void runApplication()
+    {
         participant = Objects.requireNonNull(
-            DomainParticipantFactory.get_instance().create_participant(
-                0,
-                DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                DomainParticipantFactory.get_instance().create_participant(
+                        0,
+                        DomainParticipantFactory.PARTICIPANT_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         String typeName = DeviceStatusTypeSupport.get_type_name();
         DeviceStatusTypeSupport.register_type(participant, typeName);
 
-        Topic topic = Objects.requireNonNull(
-            participant.create_topic(
+        Topic topic = Objects.requireNonNull(participant.create_topic(
                 "WindowStatus",
                 typeName,
                 DomainParticipant.TOPIC_QOS_DEFAULT,
-                null, // listener
+                null,  // listener
                 StatusKind.STATUS_MASK_NONE));
 
         reader = (DeviceStatusDataReader) Objects.requireNonNull(
-            participant.create_datareader(
-                topic,
-                Subscriber.DATAREADER_QOS_DEFAULT,
-                null, // listener
-                StatusKind.STATUS_MASK_NONE));
+                participant.create_datareader(
+                        topic,
+                        Subscriber.DATAREADER_QOS_DEFAULT,
+                        null,  // listener
+                        StatusKind.STATUS_MASK_NONE));
 
         ReadCondition condition = reader.create_readcondition(
                 SampleStateKind.ANY_SAMPLE_STATE,
@@ -121,19 +123,20 @@ public class DeviceStatusSubscriber extends Application implements AutoCloseable
         }
     }
 
-    @Override
-    public void close() {
+    @Override public void close()
+    {
         if (participant != null) {
             participant.delete_contained_entities();
 
-            DomainParticipantFactory.get_instance()
-            .delete_participant(participant);
+            DomainParticipantFactory.get_instance().delete_participant(
+                    participant);
         }
     }
 
-    public static void main(String[] args) {
-
-        try (DeviceStatusSubscriber subscriberApplication = new DeviceStatusSubscriber()) {
+    public static void main(String[] args)
+    {
+        try (DeviceStatusSubscriber subscriberApplication =
+                     new DeviceStatusSubscriber()) {
             subscriberApplication.addShutdownHook();
             subscriberApplication.runApplication();
         }

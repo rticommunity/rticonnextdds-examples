@@ -19,7 +19,8 @@
 
 void wait_for_input(std::string query)
 {
-    std::cout << std::endl << std::endl
+    std::cout << std::endl
+              << std::endl
               << "Press Enter to " << query << std::endl;
     std::cin.get();
 }
@@ -45,10 +46,9 @@ int main(int argc, char **argv)
 
     wait_for_input(
             "obtain all the samples with the attribute is_open set to true.");
-    print_data(
-            reader.select()
-                    .content(dds::sub::Query(reader, "is_open = true"))
-                    .read());
+    print_data(reader.select()
+                       .content(dds::sub::Query(reader, "is_open = true"))
+                       .read());
 
 
     wait_for_input(
@@ -65,7 +65,8 @@ int main(int argc, char **argv)
             "LivingRoom.");
     print_data(
             reader.select()
-                    .content(dds::sub::Query(reader, "room_name = 'LivingRoom'"))
+                    .content(
+                            dds::sub::Query(reader, "room_name = 'LivingRoom'"))
                     .read());
 
 
@@ -78,24 +79,21 @@ int main(int argc, char **argv)
 
 
     wait_for_input("obtain all the samples that you have not read yet.");
-    print_data(
-            reader.select()
-                    .state(dds::sub::status::SampleState::not_read())
-                    .read());
+    print_data(reader.select()
+                       .state(dds::sub::status::SampleState::not_read())
+                       .read());
 
 
     wait_for_input("obtain again, all the samples that you have not read yet.");
-    print_data(
-            reader.select()
-                .state(dds::sub::status::SampleState::not_read())
-                .read());
+    print_data(reader.select()
+                       .state(dds::sub::status::SampleState::not_read())
+                       .read());
 
 
     wait_for_input("obtain the new instances.");
-    print_data(
-            reader.select()
-                    .state(dds::sub::status::ViewState::new_view())
-                    .read());
+    print_data(reader.select()
+                       .state(dds::sub::status::ViewState::new_view())
+                       .read());
 
 
     wait_for_input(

@@ -11,9 +11,8 @@
 
 import rti.types as idl
 
-@idl.struct(
-    member_annotations={"sensor_name": [idl.key, idl.bound(100)]}
-)
+
+@idl.struct(member_annotations={"sensor_name": [idl.key, idl.bound(100)]})
 class Temperature:
     sensor_name: str = ""
     degrees: float = 0.0

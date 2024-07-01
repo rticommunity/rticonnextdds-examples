@@ -26,10 +26,12 @@ int main(int argc, char **argv)
     dds::sub::LoanedSamples<DeviceStatus> samples {};
     std::set<std::string> disposed_instances {};
 
-    while (true)
-    {
+    while (true) {
         std::this_thread::sleep_for(std::chrono::seconds(4));
-        samples = reader.select().state(dds::sub::status::InstanceState::not_alive_disposed()).read();
+        samples = reader.select()
+                          .state(dds::sub::status::InstanceState::
+                                         not_alive_disposed())
+                          .read();
 
         for (auto sample : samples) {
             DeviceStatus key_holder;
@@ -41,7 +43,7 @@ int main(int argc, char **argv)
         if (disposed_instances.empty()) {
             std::cout << "\tNone" << std::endl;
         } else {
-            for (const auto& instance : disposed_instances) {
+            for (const auto &instance : disposed_instances) {
                 std::cout << "\t" << instance << std::endl;
             }
             disposed_instances.clear();

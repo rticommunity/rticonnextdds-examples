@@ -26,8 +26,7 @@ int main(int argc, char **argv)
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,
-            [](const rti::sub::LoanedSample<Temperature>& sample)
-            {
+            [](const rti::sub::LoanedSample<Temperature> &sample) {
                 if (!sample.info().valid()) {
                     // ignore samples with only meta-data
                     return;
@@ -36,13 +35,13 @@ int main(int argc, char **argv)
                 uint64_t timestamp =
                         sample.info().source_timestamp().to_millisecs();
 
-                std::cout << sample.data().sensor_name() << ": "
-                        << std::fixed << std::setprecision(2)
-                        << sample.data().degrees() << " degrees ("
-                        << timestamp / 1000.0 << "s)" << std::endl;
+                std::cout << sample.data().sensor_name() << ": " << std::fixed
+                          << std::setprecision(2) << sample.data().degrees()
+                          << " degrees (" << timestamp / 1000.0 << "s)"
+                          << std::endl;
             });
 
-    while (true) { // wait in a loop
+    while (true) {  // wait in a loop
         std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }

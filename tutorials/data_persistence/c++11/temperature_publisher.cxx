@@ -15,7 +15,7 @@
 #include <rti/rti.hpp>
 #include "temperature.hpp"
 
-void publish_temperature(const std::string& sensor_name)
+void publish_temperature(const std::string &sensor_name)
 {
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<Temperature> topic(participant, "Temperature");

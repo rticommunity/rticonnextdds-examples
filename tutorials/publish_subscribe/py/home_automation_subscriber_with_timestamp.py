@@ -26,7 +26,9 @@ async def sensor_monitoring():
             continue  # skip updates with only meta-data
 
         if data.is_open:
-            timestamp = datetime.fromtimestamp(info.source_timestamp.to_seconds())
+            timestamp = datetime.fromtimestamp(
+                info.source_timestamp.to_seconds()
+            )
             print(
                 f"WARNING: {data.sensor_name} in {data.room_name} is open ({timestamp})"
             )

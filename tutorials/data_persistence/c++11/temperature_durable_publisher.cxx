@@ -15,19 +15,24 @@
 #include <rti/rti.hpp>
 #include "temperature.hpp"
 
-void publish_temperature(const std::string& sensor_name)
+void publish_temperature(const std::string &sensor_name)
 {
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<Temperature> topic(participant, "Temperature");
 
     dds::pub::qos::DataWriterQos writer_qos {
-            dds::core::QosProvider::Default().datawriter_qos("MyLibrary::Persistence")
+        dds::core::QosProvider::Default().datawriter_qos(
+                "MyLibrary::Persistence")
     };
 
-    writer_qos.policy<dds::core::policy::Durability>().extensions()
-            .storage_settings().enable(true);
-    writer_qos.policy<dds::core::policy::Durability>().extensions()
-            .storage_settings().file_name(sensor_name);
+    writer_qos.policy<dds::core::policy::Durability>()
+            .extensions()
+            .storage_settings()
+            .enable(true);
+    writer_qos.policy<dds::core::policy::Durability>()
+            .extensions()
+            .storage_settings()
+            .file_name(sensor_name);
 
     dds::pub::DataWriter<Temperature> writer(topic, writer_qos);
 

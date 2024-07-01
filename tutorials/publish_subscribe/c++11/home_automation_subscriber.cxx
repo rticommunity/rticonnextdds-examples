@@ -26,18 +26,18 @@ int main(int argc, char **argv)
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,
-            [](const rti::sub::LoanedSample<DeviceStatus>& sample)
-            {
-                if (sample.info().valid()) { // ignore samples with only meta-data
+            [](const rti::sub::LoanedSample<DeviceStatus> &sample) {
+                if (sample.info().valid()) {  // ignore samples with only
+                                              // meta-data
                     if (sample.data().is_open()) {
                         std::cout << "WARNING: " << sample.data().sensor_name()
-                                << " in " << sample.data().room_name()
-                                << " is open!" << std::endl;
+                                  << " in " << sample.data().room_name()
+                                  << " is open!" << std::endl;
                     }
                 }
             });
 
-    while (true) { // wait in a loop
+    while (true) {  // wait in a loop
         std::this_thread::sleep_for(std::chrono::seconds(4));
     }
 }
