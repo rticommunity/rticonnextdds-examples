@@ -40,7 +40,7 @@ class PublisherSimulation:
         )
         self._vehicle_fuel = 100.0
         self._vehicle_route = new_route()
-        self._vehicle_position = self._vehicle_route[0]
+        self._vehicle_position = self._vehicle_route.pop(0)
 
     def __repr__(self):
         return (

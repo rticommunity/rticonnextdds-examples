@@ -71,9 +71,6 @@
 
     <domain_library name="DomainLibrary">
         <domain name="VehicleDomain" domain_id="0">
-            <register_type name="VehicleMetrics" />
-            <register_type name="VehicleTransit" />
-
             <topic name="VehicleMetricsTopic" register_type_ref="VehicleMetrics" />
             <topic name="VehicleTransitTopic" register_type_ref="VehicleTransit" />
         </domain>

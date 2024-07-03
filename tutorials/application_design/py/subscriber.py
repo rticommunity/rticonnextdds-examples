@@ -22,7 +22,7 @@ import rti.connextdds as dds
 from VehicleModeling import VehicleMetrics, VehicleTransit, Coord
 
 
-def new_route(n: int = 5, start: Coord = None, end: Coord = None):
+def new_route(n: int = 5, start: "Coord|None" = None, end: "Coord|None" = None):
 
     def new_random_coord():
         return Coord(
@@ -44,7 +44,7 @@ class DashboardItem:
     fuel_history: "list[float]" = dataclasses.field(default_factory=lambda: [100.0])
     completed_routes: "int" = 0
     current_destination: Coord = None
-    route_destinations: "Counter" = dataclasses.field(default_factory=Counter)
+    reached_destinations: "list[Coord]" = dataclasses.field(default_factory=list)
 
 
 class SubscriberDashboard:
@@ -100,8 +100,8 @@ class SubscriberDashboard:
             for data in self.offline_vehicles.values():
                 print(f"- Vehicle {data.vin}:")
                 print(f"  Mean fuel consumption: {statistics.mean(data.fuel_history) / len(data.fuel_history)}")
-                print(f"  Completed routes: {len(data.route_destinations)}")
-                for coord in data.route_destinations.keys():
+                print(f"  Known reached destinations: {len(data.reached_destinations)}")
+                for coord in data.reached_destinations:
                     print(f"    {coord}")
             print()
             await asyncio.sleep(0.5)
@@ -143,11 +143,8 @@ class SubscriberDashboard:
             else:
                 # Vehicle has finished its route
                 instance_data.current_destination = None
-                finished_destination = (
-                    sample.current_position.lat,
-                    sample.current_position.lon,
-                )
-                instance_data.route_destinations[finished_destination] += 1
+                instance_data.reached_destinations.append(sample.current_position)
+
         print("transit ended")
 
 
@@ -155,7 +152,7 @@ def main():
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
-    qos_provider = dds.QosProvider("VehicleModeling.xml")
+    qos_provider = dds.QosProvider("../VehicleModeling.xml")
 
     with qos_provider.create_participant_from_config(
         "ParticipantLibrary::SubscriberApp"
