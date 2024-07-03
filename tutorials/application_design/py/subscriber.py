@@ -14,12 +14,13 @@ import dataclasses
 import datetime
 import random
 import statistics
-from datetime import datetime
 from collections import Counter, defaultdict
+from datetime import datetime
 
 import rti.asyncio
 import rti.connextdds as dds
-from VehicleModeling import VehicleMetrics, VehicleTransit, Coord
+
+from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 
 def new_route(n: int = 5, start: "Coord|None" = None, end: "Coord|None" = None):
@@ -54,11 +55,7 @@ class SubscriberDashboard:
         self._dashboard_data = defaultdict(DashboardItem)
 
     def __repr__(self):
-        return (
-            f"Dashboard("
-            f"{self._participant=}, "
-            f"{self._dashboard_data=})"
-        )
+        return f"Dashboard({self._participant=}, {self._dashboard_data=})"
 
     async def run(self):
 
@@ -98,8 +95,10 @@ class SubscriberDashboard:
                 print(f"  Last known fuel level: {data.fuel_history[-1]}")
             print(f"Offline vehicles: {len(self.offline_vehicles.keys())}")
             for data in self.offline_vehicles.values():
+                mean_full_consumption = statistics.mean(data.fuel_history) / len(data.fuel_history)
+
                 print(f"- Vehicle {data.vin}:")
-                print(f"  Mean fuel consumption: {statistics.mean(data.fuel_history) / len(data.fuel_history)}")
+                print(f"  Mean fuel consumption: {mean_full_consumption}")
                 print(f"  Known reached destinations: {len(data.reached_destinations)}")
                 for coord in data.reached_destinations:
                     print(f"    {coord}")

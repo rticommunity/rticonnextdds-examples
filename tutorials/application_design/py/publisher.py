@@ -13,7 +13,8 @@ import asyncio
 import random
 
 import rti.connextdds as dds
-from VehicleModeling import VehicleMetrics, VehicleTransit, Coord
+
+from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 
 def new_route(n: int = 5, start: Coord = None, end: Coord = None):
@@ -117,7 +118,6 @@ class PublisherSimulation:
                 self._vehicle_route = new_route()
 
             self._vehicle_position = self._vehicle_route.pop(0)
-
 
 
 def main():
