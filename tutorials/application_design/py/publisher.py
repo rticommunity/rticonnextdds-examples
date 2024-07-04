@@ -9,15 +9,20 @@
 # damages arising out of the use or inability to use the software.
 #
 
-import asyncio
 import random
+import time
+import typing
 
 import rti.connextdds as dds
 
 from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 
-def new_route(n: int = 5, start: Coord = None, end: Coord = None):
+def new_route(
+    n: int = 5,
+    start: typing.Optional[Coord] = None,
+    end: typing.Optional[Coord] = None,
+):
 
     def new_random_coord():
         return Coord(
@@ -65,43 +70,26 @@ class PublisherSimulation:
     def _is_on_standby(self):
         return not self._vehicle_route
 
-    async def run(self):
-        await asyncio.gather(
-            self._metrics_app(),
-            self._transit_app(),
+    def run(self):
+        metrics_writer = dds.DataWriter(
+            self._participant.find_datawriter("MetricsWriter")
+        )
+        transit_writer = dds.DataWriter(
+            self._participant.find_datawriter("TransitWriter")
         )
 
-    async def _metrics_app(self):
-        writer = dds.DataWriter(self._participant.find_datawriter("MetricsWriter"))
-
-        print(f"Starting metrics app: {writer=}")
-        await asyncio.sleep(1)
+        print(f"Starting simulation: {metrics_writer=}, {transit_writer=}")
+        time.sleep(1)
 
         while not self.has_ended:
-            writer.write(
+            metrics_writer.write(
                 VehicleMetrics(
                     self._vehicle_vin,
                     self._vehicle_fuel,
                 )
             )
 
-            await asyncio.sleep(1)
-
-            self._vehicle_fuel -= 10 * random.random()
-
-            if self._is_out_of_fuel:
-                self._vehicle_fuel = 0.0
-
-                print(f"Vehicle '{self._vehicle_vin}' ran out of fuel!")
-
-    async def _transit_app(self):
-        writer = dds.DataWriter(self._participant.find_datawriter("TransitWriter"))
-
-        print(f"Starting transit app: {writer=}")
-        await asyncio.sleep(1)
-
-        while not self.has_ended:
-            writer.write(
+            transit_writer.write(
                 VehicleTransit(
                     self._vehicle_vin,
                     current_route=self._vehicle_route,
@@ -109,31 +97,36 @@ class PublisherSimulation:
                 )
             )
 
-            await asyncio.sleep(1)
+            time.sleep(1)
 
             if self._is_on_standby:
                 print(
                     f"Vehicle '{self._vehicle_vin}' has reached its destination, now moving to a new location..."
                 )
-                self._vehicle_route = new_route()
+                self._vehicle_route = new_route(start=self._vehicle_position)
 
             self._vehicle_position = self._vehicle_route.pop(0)
+            self._vehicle_fuel -= 10 * random.random()
+
+            if self._is_out_of_fuel:
+                self._vehicle_fuel = 0.0
+
+                print(f"Vehicle '{self._vehicle_vin}' ran out of fuel!")
 
 
 def main():
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
-    qos_provider = dds.QosProvider("VehicleModeling.xml")
+    qos_provider = dds.QosProvider("../VehicleModeling.xml")
 
     with qos_provider.create_participant_from_config(
         "ParticipantLibrary::PublisherApp"
     ) as participant:
         simulation = PublisherSimulation(participant)
-
         print(f"Using simulation parameters: {simulation=}")
 
-        asyncio.run(simulation.run())
+        simulation.run()
 
 
 if __name__ == "__main__":
