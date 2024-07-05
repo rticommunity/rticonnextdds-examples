@@ -37,8 +37,13 @@ def new_route(
 
 
 class PublisherSimulation:
-    def __init__(self, participant: dds.DomainParticipant):
-        self._participant = participant
+    def __init__(
+        self,
+        metrics_writer: "dds.DataWriter",
+        transit_writer: "dds.DataWriter",
+    ):
+        self._metrics_writer = metrics_writer
+        self._transit_writer = transit_writer
         self._vehicle_vin: str = "".join(
             random.choices("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=17)
         )
@@ -49,7 +54,8 @@ class PublisherSimulation:
     def __repr__(self):
         return (
             f"Simulation("
-            f"{self._participant=}, "
+            f"{self._metrics_writer=}, "
+            f"{self._transit_writer=}, "
             f"{self._vehicle_vin=}, "
             f"{self._vehicle_fuel=}, "
             f"{self._vehicle_route=}, "
@@ -69,25 +75,15 @@ class PublisherSimulation:
         return not self._vehicle_route
 
     def run(self):
-        metrics_writer = dds.DataWriter(
-            self._participant.find_datawriter("MetricsWriter")
-        )
-        transit_writer = dds.DataWriter(
-            self._participant.find_datawriter("TransitWriter")
-        )
-
-        print(f"Starting simulation: {metrics_writer=}, {transit_writer=}")
-        time.sleep(1)
-
         while not self.has_ended:
-            metrics_writer.write(
+            self._metrics_writer.write(
                 VehicleMetrics(
                     self._vehicle_vin,
                     self._vehicle_fuel,
                 )
             )
 
-            transit_writer.write(
+            self._transit_writer.write(
                 VehicleTransit(
                     self._vehicle_vin,
                     current_route=self._vehicle_route,
@@ -121,9 +117,17 @@ def main():
     with qos_provider.create_participant_from_config(
         "ParticipantLibrary::PublisherApp"
     ) as participant:
-        simulation = PublisherSimulation(participant)
-        print(f"Using simulation parameters: {simulation=}")
+        metrics_writer = dds.DataWriter(
+            participant.find_datawriter("MetricsWriter")
+        )
+        transit_writer = dds.DataWriter(
+            participant.find_datawriter("TransitWriter")
+        )
 
+        simulation = PublisherSimulation(
+            metrics_writer=metrics_writer, transit_writer=transit_writer
+        )
+        print(f"Running simulation: {simulation=}")
         simulation.run()
 
 

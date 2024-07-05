@@ -38,14 +38,19 @@ class DashboardItem:
 
 
 class SubscriberDashboard:
-    def __init__(self, participant: "dds.DomainParticipant"):
-        self._participant = participant
+    def __init__(
+        self,
+        metrics_reader: "dds.DataReader",
+        transit_reader: "dds.DataReader",
+    ):
+        self._metrics_reader = metrics_reader
+        self._transit_reader = transit_reader
         self._dashboard_data: typing.Dict[
             dds.InstanceHandle, DashboardItem
         ] = dict()
 
     def __repr__(self):
-        return f"Dashboard({self._participant=}, {self._dashboard_data=})"
+        return f"Dashboard({self._metrics_reader=}, {self._transit_reader=}, {self._dashboard_data=})"
 
     async def run(self):
         await asyncio.gather(
@@ -96,11 +101,7 @@ class SubscriberDashboard:
             await asyncio.sleep(0.5)
 
     async def _metrics_app(self):
-        reader = dds.DataReader(
-            self._participant.find_datareader("MetricsReader")
-        )
-
-        async for sample, info in reader.take_async():
+        async for sample, info in self._metrics_reader.take_async():
             if info.instance_handle not in self._dashboard_data:
                 if sample is None:
                     continue
@@ -121,11 +122,7 @@ class SubscriberDashboard:
         print("metrics ended")
 
     async def _transit_app(self):
-        reader = dds.DataReader(
-            self._participant.find_datareader("TransitReader")
-        )
-
-        async for sample, info in reader.take_async():
+        async for sample, info in self._transit_reader.take_async():
             if info.instance_handle not in self._dashboard_data:
                 if sample is None:
                     continue
@@ -163,10 +160,18 @@ def main():
     with qos_provider.create_participant_from_config(
         "ParticipantLibrary::SubscriberApp"
     ) as participant:
-        dashboard = SubscriberDashboard(participant)
+        transit_reader = dds.DataReader(
+            participant.find_datareader("TransitReader")
+        )
+        metrics_reader = dds.DataReader(
+            participant.find_datareader("MetricsReader")
+        )
 
-        print(f"Using simulation parameters: {dashboard=}")
+        dashboard = SubscriberDashboard(
+            transit_reader=transit_reader, metrics_reader=metrics_reader
+        )
 
+        print(f"Running dashboard: {dashboard=}")
         asyncio.run(dashboard.run())
 
 
