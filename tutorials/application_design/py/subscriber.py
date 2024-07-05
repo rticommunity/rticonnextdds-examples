@@ -38,7 +38,6 @@ class DashboardItem:
 
 
 class SubscriberDashboard:
-
     def __init__(self, participant: "dds.DomainParticipant"):
         self._participant = participant
         self._dashboard_data: typing.Dict[

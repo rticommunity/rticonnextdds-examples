@@ -23,7 +23,6 @@ def new_route(
     start: typing.Optional[Coord] = None,
     end: typing.Optional[Coord] = None,
 ):
-
     def new_random_coord():
         return Coord(
             (0.5 - random.random()) * 100,
@@ -38,7 +37,6 @@ def new_route(
 
 
 class PublisherSimulation:
-
     def __init__(self, participant: dds.DomainParticipant):
         self._participant = participant
         self._vehicle_vin: str = "".join(
