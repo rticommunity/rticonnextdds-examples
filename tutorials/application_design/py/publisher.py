@@ -118,10 +118,10 @@ def main():
         "ParticipantLibrary::PublisherApp"
     ) as participant:
         metrics_writer = dds.DataWriter(
-            participant.find_datawriter("MetricsWriter")
+            participant.find_datawriter("Publisher::MetricsWriter")
         )
         transit_writer = dds.DataWriter(
-            participant.find_datawriter("TransitWriter")
+            participant.find_datawriter("Publisher::TransitWriter")
         )
 
         simulation = PublisherSimulation(

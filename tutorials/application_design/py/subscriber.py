@@ -161,10 +161,10 @@ def main():
         "ParticipantLibrary::SubscriberApp"
     ) as participant:
         transit_reader = dds.DataReader(
-            participant.find_datareader("TransitReader")
+            participant.find_datareader("Subscriber::TransitReader")
         )
         metrics_reader = dds.DataReader(
-            participant.find_datareader("MetricsReader")
+            participant.find_datareader("Subscriber::MetricsReader")
         )
 
         dashboard = SubscriberDashboard(

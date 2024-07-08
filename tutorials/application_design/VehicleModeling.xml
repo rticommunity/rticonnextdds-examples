@@ -78,26 +78,26 @@
 
     <domain_participant_library name="ParticipantLibrary">
         <domain_participant name="PublisherApp" domain_ref="DomainLibrary::VehicleDomain">
-            <data_writer name="MetricsWriter"
-                         topic_ref="VehicleMetricsTopic">
-                <datawriter_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
-            </data_writer>
+            <publisher name="Publisher">
+                <data_writer name="MetricsWriter" topic_ref="VehicleMetricsTopic">
+                    <datawriter_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
+                </data_writer>
 
-            <data_writer name="TransitWriter"
-                        topic_ref="VehicleTransitTopic">
-                <datawriter_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
+                <data_writer name="TransitWriter" topic_ref="VehicleTransitTopic">
+                    <datawriter_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
             </data_writer>
+        </publisher>
         </domain_participant>
 
         <domain_participant name="SubscriberApp" domain_ref="DomainLibrary::VehicleDomain">
-            <data_reader name="MetricsReader"
-                         topic_ref="VehicleMetricsTopic">
-                <datareader_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
-            </data_reader>
-            <data_reader name="TransitReader"
-                        topic_ref="VehicleTransitTopic">
-                <datareader_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
-            </data_reader>
+            <subscriber name="Subscriber">
+                <data_reader name="MetricsReader" topic_ref="VehicleMetricsTopic">
+                    <datareader_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
+                </data_reader>
+                <data_reader name="TransitReader" topic_ref="VehicleTransitTopic">
+                    <datareader_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
+                </data_reader>
+        </subscriber>
         </domain_participant>
     </domain_participant_library>
 </dds>
