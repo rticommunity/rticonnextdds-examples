@@ -17,7 +17,7 @@ The publisher can be run as a file or module. The expected output contains a
 description of the application. It will end once the vehicle has run out of fuel.
 
 ```console
-$ python3.8 publisher.py
+$ python publisher.py
 Running simulation: simulation=Simulation(self._metrics_writer=<rti.connextdds.DataWriter object at 0x7f7e693cdb30>, self._transit_writer=<rti.connextdds.DataWriter object at 0x7f7e697d83f0>, self._vehicle_vin='3P524A8JB256YZOQY', self._vehicle_fuel=100.0, self._vehicle_route=[Coord(lat=10.851231171123665, lon=4.549741897319626), Coord(lat=-19.336436875210726, lon=45.5761709545348), Coord(lat=-28.473080284108043, lon=-3.3714508132107524), Coord(lat=-44.45875114267031, lon=11.536506807784141), Coord(lat=-30.68510788813299, lon=3.7515235253391954), Coord(lat=-45.485688894791096, lon=-19.45044753805537)], self._vehicle_position=Coord(lat=-9.361148743978752, lon=10.532865637410172))
 Vehicle '3P524A8JB256YZOQY' has reached its destination, now moving to a new location...
 Vehicle '3P524A8JB256YZOQY' has reached its destination, now moving to a new location...
@@ -30,7 +30,7 @@ description of the application, followed by periodic updates on the understandin
 of the system. It will run until interrupted.
 
 ```console
-$ python3.8 subscriber.py
+$ python subscriber.py
 [[ DASHBOARD: 2024-07-11 13:28:39.503181 ]]
 Online vehicles: 1
 - Vehicle F01UV8KCSAY5EVBL3:
