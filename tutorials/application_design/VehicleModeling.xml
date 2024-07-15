@@ -1,51 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<?xml-model href="https://community.rti.com/schema/7.3.0/rti_dds_profiles.xsd" type="application/xml" schematypens="http://www.w3.org/2001/XMLSchema"?>
-<dds>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/rti_routing_service.xsd"
+    version="7.3.0">
     <types>
-        <const name="VIN_LENGTH" type="uint8" value="17"/>
-        <typedef name="VIN" type="string" stringMaxLength="VIN_LENGTH"/>
-
+        <const name="VIN_LENGTH" type="uint8" value="17" />
+        <typedef name="VIN" type="string" stringMaxLength="VIN_LENGTH" />
         <struct name="Coord" extensibility="final" nested="true">
-            <member name="lat" type="float64"/>
-            <member name="lon" type="float64"/>
+            <member name="lat" type="float64" />
+            <member name="lon" type="float64" />
         </struct>
+        <const name="VehicleTransitTopic" type="string" value="&quot;VehicleTransit&quot;" />
         <struct name="VehicleTransit" extensibility="appendable">
-            <member name="vehicle_vin"
-                    type="nonBasic"
-                    nonBasicTypeName="VIN"
-                    key="true" />
-            <member name="current_position"
-                    type="nonBasic"
-                    nonBasicTypeName="Coord" />
-            <member name="current_route"
-                    type="nonBasic"
-                    nonBasicTypeName="Coord"
-                    sequenceMaxLength="-1"
-                    optional="true" /> <!-- 'no route' == standby -->
+            <member name="vehicle_vin" type="nonBasic" nonBasicTypeName="VIN" key="true" />
+            <member name="current_position" type="nonBasic" nonBasicTypeName="Coord" />
+            <member name="current_route" type="nonBasic" nonBasicTypeName="Coord"
+                sequenceMaxLength="-1" optional="true" />
         </struct>
-
-        <typedef name="Percentage" type="float64" min="0.0" max="100.0"/>
+        <typedef name="Percentage" type="float64" min="0.0" max="100.0" />
+        <const name="VehicleMetricsTopic" type="string" value="&quot;VehicleMetrics&quot;" />
         <struct name="VehicleMetrics" extensibility="appendable">
-            <member name="vehicle_vin"
-                    type="nonBasic"
-                    nonBasicTypeName="VIN"
-                    key="true"/>
-            <member name="fuel_level"
-                    type="nonBasic"
-                    nonBasicTypeName="Percentage"/>
+            <member name="vehicle_vin" type="nonBasic" nonBasicTypeName="VIN" key="true" />
+            <member name="fuel_level" type="nonBasic" nonBasicTypeName="Percentage" />
         </struct>
     </types>
 
     <qos_library name="VehicleModeling_Library">
         <qos_profile name="VehicleMetrics_Profile">
-            <datawriter_qos base_name="BuiltinQosLib::Generic.BestEffort">
-                <deadline>
-                    <period>
-                        <sec>10</sec>
-                        <nanosec>0</nanosec>
-                    </period>
-                </deadline>
-            </datawriter_qos>
             <datareader_qos base_name="BuiltinQosLib::Generic.BestEffort">
                 <deadline>
                     <period>
@@ -54,23 +34,33 @@
                     </period>
                 </deadline>
             </datareader_qos>
+            <datawriter_qos base_name="BuiltinQosLib::Generic.BestEffort">
+                <deadline>
+                    <period>
+                        <sec>10</sec>
+                        <nanosec>0</nanosec>
+                    </period>
+                </deadline>
+            </datawriter_qos>
         </qos_profile>
         <qos_profile name="VehicleTransit_Profile">
-            <datawriter_qos base_name="BuiltinQosLib::Generic.StrictReliable">
-                <durability>
-                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
-                </durability>
-            </datawriter_qos>
             <datareader_qos base_name="BuiltinQosLib::Generic.KeepLastReliable">
                 <durability>
                     <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
                 </durability>
             </datareader_qos>
+            <datawriter_qos base_name="BuiltinQosLib::Generic.StrictReliable">
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
         </qos_profile>
     </qos_library>
 
     <domain_library name="DomainLibrary">
         <domain name="VehicleDomain" domain_id="0">
+            <register_type name="VehicleMetrics" />
+            <register_type name="VehicleTransit" />
             <topic name="VehicleMetricsTopic" register_type_ref="VehicleMetrics" />
             <topic name="VehicleTransitTopic" register_type_ref="VehicleTransit" />
         </domain>
@@ -80,24 +70,27 @@
         <domain_participant name="PublisherApp" domain_ref="DomainLibrary::VehicleDomain">
             <publisher name="Publisher">
                 <data_writer name="MetricsWriter" topic_ref="VehicleMetricsTopic">
-                    <datawriter_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
+                    <datawriter_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile">
+                    </datawriter_qos>
                 </data_writer>
-
                 <data_writer name="TransitWriter" topic_ref="VehicleTransitTopic">
-                    <datawriter_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
-            </data_writer>
-        </publisher>
+                    <datawriter_qos base_name="VehicleModeling_Library::VehicleTransit_Profile">
+                    </datawriter_qos>
+                </data_writer>
+            </publisher>
         </domain_participant>
-
         <domain_participant name="SubscriberApp" domain_ref="DomainLibrary::VehicleDomain">
             <subscriber name="Subscriber">
                 <data_reader name="MetricsReader" topic_ref="VehicleMetricsTopic">
-                    <datareader_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile" />
+                    <datareader_qos base_name="VehicleModeling_Library::VehicleMetrics_Profile">
+                    </datareader_qos>
                 </data_reader>
                 <data_reader name="TransitReader" topic_ref="VehicleTransitTopic">
-                    <datareader_qos base_name="VehicleModeling_Library::VehicleTransit_Profile" />
+                    <datareader_qos base_name="VehicleModeling_Library::VehicleTransit_Profile">
+                    </datareader_qos>
                 </data_reader>
-        </subscriber>
+            </subscriber>
         </domain_participant>
     </domain_participant_library>
+
 </dds>
