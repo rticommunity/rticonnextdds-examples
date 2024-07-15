@@ -12,6 +12,17 @@ files (`VehicleModeling_program.py`, `VehicleModeling_subscriber.py`
 and `VehicleModeling_publisher.py`), so nothing needs to be done for
 Python applications.
 
+These files were generated using the following command:
+
+```console
+$ rtiddsgen \
+  -language python \
+  -create typefiles \
+  -create examplefiles \
+  -d . \
+  ../VehicleModeling.xml
+```
+
 ## How to run
 
 The publisher can be run as a file or module. The publisher is a slighly modified
