@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    (c) Copyright, Real-Time Innovations, 2024.  All rights reserved.
+    RTI grants Licensee a license to use, modify, compile, and create derivative
+    works of the software solely for use with RTI Connext DDS. Licensee may
+    redistribute copies of the software provided that all such copies are subject
+    to this license. The software is provided "as is", with no warranty of any
+    type, including any warranty for fitness for any purpose. RTI is under no
+    obligation to maintain or support the software. RTI shall not be liable for
+    any incidental or consequential damages arising out of the use or inability
+    to use the software.
+-->
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="https://community.rti.com/schema/7.3.0/rti_dds_profiles.xsd">
+    <!-- QoS Library containing the QoS profile used in the generated example.
+
+        A QoS library is a named set of QoS profiles.
+    -->
+    <qos_library name="VehicleModeling_Library">
+
+        <!-- QoS profile used to configure reliable communication between the DataWriter
+             and DataReader created in the example code.
+
+             A QoS profile groups a set of related QoS.
+        -->
+        <qos_profile name="VehicleModeling_Profile"
+            base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
+            <!-- QoS used to configure the data writer created in the example code -->
+            <datawriter_qos>
+                <publication_name>
+                    <name>VehicleModelingDataWriter</name>
+                </publication_name>
+            </datawriter_qos>
+
+            <!-- QoS used to configure the data reader created in the example code -->
+            <datareader_qos>
+                <subscription_name>
+                    <name>VehicleModelingDataReader</name>
+                </subscription_name>
+            </datareader_qos>
+            <domain_participant_qos>
+                <!--
+                The participant name, if it is set, will be displayed in the
+                RTI tools, making it easier for you to tell one
+                application from another when you're debugging.
+                -->
+                <participant_name>
+                    <name>VehicleModelingParticipant</name>
+                    <role_name>VehicleModelingParticipantRole</role_name>
+                </participant_name>
+
+            </domain_participant_qos>
+        </qos_profile>
+
+        <qos_profile name="VehicleMetrics_Profile">
+            <datareader_qos base_name="BuiltinQosLib::Generic.BestEffort">
+                <deadline>
+                    <period>
+                        <sec>15</sec>
+                        <nanosec>0</nanosec>
+                    </period>
+                </deadline>
+            </datareader_qos>
+            <datawriter_qos base_name="BuiltinQosLib::Generic.BestEffort">
+                <deadline>
+                    <period>
+                        <sec>10</sec>
+                        <nanosec>0</nanosec>
+                    </period>
+                </deadline>
+            </datawriter_qos>
+        </qos_profile>
+        <qos_profile name="VehicleTransit_Profile">
+            <datareader_qos base_name="BuiltinQosLib::Generic.KeepLastReliable">
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datareader_qos>
+            <datawriter_qos base_name="BuiltinQosLib::Generic.StrictReliable">
+                <durability>
+                    <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                </durability>
+            </datawriter_qos>
+        </qos_profile>
+    </qos_library>
+</dds>
