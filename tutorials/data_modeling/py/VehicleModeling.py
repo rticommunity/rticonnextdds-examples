@@ -21,32 +21,36 @@ VIN_LENGTH = 17
 
 VIN = str
 
-@idl.struct(
-    type_annotations = [idl.final])
+
+@idl.struct(type_annotations=[idl.final])
 class Coord:
     lat: float = 0.0
     lon: float = 0.0
 
+
 VehicleTransitTopic = "VehicleTransit"
 
+
 @idl.struct(
-    member_annotations = {
-        'vehicle_vin': [idl.key, idl.bound(VIN_LENGTH)],
-        'current_route': [idl.bound(100)],
+    member_annotations={
+        "vehicle_vin": [idl.key, idl.bound(VIN_LENGTH)],
+        "current_route": [idl.bound(100)],
     }
 )
 class VehicleTransit:
     vehicle_vin: str = ""
-    current_position: Coord = field(default_factory = Coord)
+    current_position: Coord = field(default_factory=Coord)
     current_route: Optional[Sequence[Coord]] = None
+
 
 Percentage = float
 
 VehicleMetricsTopic = "VehicleMetrics"
 
+
 @idl.struct(
-    member_annotations = {
-        'vehicle_vin': [idl.key, idl.bound(VIN_LENGTH)],
+    member_annotations={
+        "vehicle_vin": [idl.key, idl.bound(VIN_LENGTH)],
     }
 )
 class VehicleMetrics:

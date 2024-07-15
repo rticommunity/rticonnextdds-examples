@@ -1,4 +1,3 @@
-
 #
 # (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 #
@@ -15,6 +14,7 @@ import sys
 import rti.connextdds as dds
 from VehicleModeling import VehicleMetrics
 
+
 class VehicleMetricsPublisher:
 
     @staticmethod
@@ -26,7 +26,9 @@ class VehicleMetricsPublisher:
         participant = dds.DomainParticipant(domain_id)
 
         # A Topic has a name and a datatype.
-        topic = dds.Topic(participant, "Example VehicleMetrics", VehicleMetrics)
+        topic = dds.Topic(
+            participant, "Example VehicleMetrics", VehicleMetrics
+        )
 
         # This DataWriter will write data on Topic "Example VehicleMetrics"
         qos_provider = dds.QosProvider("VehicleModeling.xml")
@@ -34,14 +36,16 @@ class VehicleMetricsPublisher:
         writer_qos = qos_provider.datawriter_qos_from_profile(
             "VehicleModeling_Library::VehicleMetrics_Profile"
         )
-        writer = dds.DataWriter(participant.implicit_publisher, topic, writer_qos)
-        sample = VehicleMetrics()        
+        writer = dds.DataWriter(
+            participant.implicit_publisher, topic, writer_qos
+        )
+        sample = VehicleMetrics()
 
         for count in range(sample_count):
             # Catch control-C interrupt
             try:
                 # Modify the data to be sent here
-                
+
                 print(f"Writing VehicleMetrics, count {count}")
                 writer.write(sample)
                 time.sleep(1)
@@ -53,5 +57,5 @@ class VehicleMetricsPublisher:
 
 if __name__ == "__main__":
     VehicleMetricsPublisher.run_publisher(
-            domain_id=0,
-            sample_count=sys.maxsize)
+        domain_id=0, sample_count=sys.maxsize
+    )

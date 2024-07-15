@@ -1,4 +1,3 @@
-
 #
 # (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 #
@@ -15,6 +14,7 @@ import sys
 import rti.connextdds as dds
 from VehicleModeling import VehicleMetrics
 
+
 class VehicleMetricsSubscriber:
 
     @staticmethod
@@ -25,7 +25,7 @@ class VehicleMetricsSubscriber:
         samples = reader.take_data()
         for sample in samples:
             print(f"Received: {sample}")
-    
+
         return len(samples)
 
     @staticmethod
@@ -37,7 +37,9 @@ class VehicleMetricsSubscriber:
         participant = dds.DomainParticipant(domain_id)
 
         # A Topic has a name and a datatype.
-        topic = dds.Topic(participant, "Example VehicleMetrics", VehicleMetrics)
+        topic = dds.Topic(
+            participant, "Example VehicleMetrics", VehicleMetrics
+        )
 
         # This DataReader reads data on Topic "Example VehicleMetrics".
         qos_provider = dds.QosProvider("VehicleModeling.xml")
@@ -45,7 +47,9 @@ class VehicleMetricsSubscriber:
         reader_qos = qos_provider.datareader_qos_from_profile(
             "VehicleModeling_Library::VehicleMetrics_Profile"
         )
-        reader = dds.DataReader(participant.implicit_subscriber, topic, reader_qos)
+        reader = dds.DataReader(
+            participant.implicit_subscriber, topic, reader_qos
+        )
 
         # Initialize samples_read to zero
         samples_read = 0
@@ -85,5 +89,5 @@ class VehicleMetricsSubscriber:
 
 if __name__ == "__main__":
     VehicleMetricsSubscriber.run_subscriber(
-            domain_id=0,
-            sample_count=sys.maxsize)
+        domain_id=0, sample_count=sys.maxsize
+    )
