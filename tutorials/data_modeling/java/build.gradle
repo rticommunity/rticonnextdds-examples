@@ -1,0 +1,58 @@
+plugins {
+    id 'application'
+}
+
+dependencies {
+    implementation files(System.getenv('NDDSHOME') + '/lib/java/nddsjava.jar')
+}
+
+sourceSets {
+    main {
+        java {
+            srcDirs = ['.']
+        }
+    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
+
+task generateCode(type: Exec) {
+    // Idl file
+    def inputFile = '../VehicleModeling.xml'
+    // Generated file
+    def generatedFile = 'VehicleMetrics.java'
+
+    commandLine System.getenv('NDDSHOME') + '/bin/rtiddsgen',
+        '-language', 'Java',
+        '-replace',
+        '-d', '.',
+        inputFile
+
+    onlyIf {
+        !file(generatedFile).exists()
+            || file(inputFile).lastModified() > file(generatedFile).lastModified()
+
+    }
+}
+
+tasks.withType(JavaCompile) {
+    dependsOn 'generateCode'
+}
+
+task runPublisher(type: JavaExec) {
+    group = 'application'
+    description = 'Run the Publisher application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'VehicleMetricsPublisher'
+}
+
+task runSubscriber(type: JavaExec) {
+    group = 'application'
+    description = 'Run the Subscriber application'
+    classpath = sourceSets.main.runtimeClasspath
+    mainClass = 'VehicleMetricsSubscriber'
+}
