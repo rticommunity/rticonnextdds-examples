@@ -11,6 +11,6 @@
  */
 
 struct Temperature {
-    string<100> sensor_name;
+    @key string<100> sensor_name;
     double degrees;
 };
