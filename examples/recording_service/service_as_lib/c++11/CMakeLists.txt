@@ -64,6 +64,7 @@ target_include_directories(
 target_link_libraries(
     ServiceAsLibExample
     RTIConnextDDS::cpp2_api
+    RTIConnextDDS::service_admin_cpp2
     RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
