@@ -1,7 +1,7 @@
 # Example Code: Remote Procedure Calls
 
 :warning: **Note**: For an overview of this feature, see the
-[Remote Procedure Calls](https://community.rti.com/static/documentation/connext-dds/7.2.0/doc/api/connext_dds/api_python/rpc.html#remote-procedure-calls)
+[Remote Procedure Calls](https://community.rti.com/static/documentation/connext-dds/7.4.0/doc/api/connext_dds/api_python/rpc.html#remote-procedure-calls)
 section of the *Connext* Python API Reference.
 
 ## Running the Example
