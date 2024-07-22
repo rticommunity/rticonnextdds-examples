@@ -1,7 +1,11 @@
 # Example Code: Remote Procedure Calls
 
+:warning: **Connext 7.4.0** This example requires *Connext 7.4.0 or higher*.
+For the same example with support for older versions, check out the
+corresponding release branch, such as `release/7.3.0`.
+
 :warning: **Note**: For an overview of this feature, see the
-[RPC Tutorial](https://community.rti.com/static/documentation/connext-dds/7.2.0/doc/api/connext_dds/api_cpp2/group__RpcTutorialModule.html)
+[RPC Tutorial](https://community.rti.com/static/documentation/connext-dds/7.4.0/doc/api/connext_dds/api_cpp2/group__RpcTutorialModule.html)
 section of the *Connext* Modern C++ API Reference.
 
 ## Building the Example :wrench:
