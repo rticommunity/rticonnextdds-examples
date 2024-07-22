@@ -1,5 +1,0 @@
-# Forbid generated code
-Coord*.java
-VIN*.java
-VehicleMetrics*.java
-VehicleTransit*.java
