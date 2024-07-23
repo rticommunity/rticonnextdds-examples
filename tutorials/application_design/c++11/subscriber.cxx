@@ -12,9 +12,11 @@
 
 #include <iostream>
 #include <thread>
+
 #include <rti/rti.hpp>
 #include "VehicleModeling.hpp"
 
 int main(int argc, char **argv)
 {
+    std::cout << "Subscriber" << '\n';
 }

@@ -21,66 +21,30 @@ connextdds_configure_cmake_utils()
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
-# connextdds_rtiddsgen_convert(
-#     INPUT "VehicleModeling.xml"
-#     FROM XML
-#     TO IDL
-# )
-
 connextdds_call_codegen(
     TYPE_PATH "../VehicleModeling.xml"
     LANG "C++11"
     PREFIX "VehicleModeling"
 )
 
-# connextdds_rtiddsgen_run(
-#     IDL_FILE
-#         "${CMAKE_CURRENT_SOURCE_DIR}/../VehicleModeling.xml"
-#     OUTPUT_DIRECTORY
-#         "${CMAKE_CURRENT_BINARY_DIR}/"
-#     LANG C++11
-# )
-
 connextdds_add_application(
-    TARGET "transit_publisher"
+    TARGET "publisher"
     LANG "C++11"
-    OUTPUT_NAME "VehicleModeling_transit_publisher"
+    OUTPUT_NAME "publisher"
     SOURCES
         $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
-        "${CMAKE_CURRENT_SOURCE_DIR}/VehicleModeling_transit_publisher.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/publisher.cxx"
     DEPENDENCIES
     ${_CONNEXT_DEPENDENCIES}
 )
 
 connextdds_add_application(
-    TARGET "transit_subscriber"
+    TARGET "subscriber"
     LANG "C++11"
-    OUTPUT_NAME "VehicleModeling_transit_subscriber"
+    OUTPUT_NAME "subscriber"
     SOURCES
         $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
-        "${CMAKE_CURRENT_SOURCE_DIR}/VehicleModeling_transit_subscriber.cxx"
-    DEPENDENCIES
-    ${_CONNEXT_DEPENDENCIES}
-)
-
-connextdds_add_application(
-    TARGET "metrics_subscriber"
-    LANG "C++11"
-    OUTPUT_NAME "VehicleModeling_metrics_subscriber"
-    SOURCES
-        $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
-        "${CMAKE_CURRENT_SOURCE_DIR}/VehicleModeling_metrics_subscriber.cxx"
-    DEPENDENCIES
-    ${_CONNEXT_DEPENDENCIES}
-)
-
-connextdds_add_application(
-    TARGET "metrics_publisher"
-    LANG "C++11"
-    OUTPUT_NAME "VehicleModeling_metrics_publisher"
-    SOURCES
-        $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
-        "${CMAKE_CURRENT_SOURCE_DIR}/VehicleModeling_metrics_publisher.cxx"
+        "${CMAKE_CURRENT_SOURCE_DIR}/subscriber.cxx"
     DEPENDENCIES
     ${_CONNEXT_DEPENDENCIES}
 )
