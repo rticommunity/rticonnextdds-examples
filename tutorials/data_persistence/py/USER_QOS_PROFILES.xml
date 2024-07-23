@@ -14,9 +14,21 @@
         <qos_profile name="Persistence" is_default_qos="true">
             <base_name>
                 <element>BuiltinQosSnippetLib::QosPolicy.Durability.Persistent</element>
-                <element>BuiltinQosSnippetLib::QosPolicy.History.KeepAll</element>
                 <element>BuiltinQosSnippetLib::QosPolicy.Reliability.Reliable</element>
             </base_name>
+
+            <datawriter_qos>
+                <history>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                    <depth>10</depth>
+                </history>
+            </datawriter_qos>
+            <datareader_qos>
+                <history>
+                    <kind>KEEP_LAST_HISTORY_QOS</kind>
+                    <depth>10</depth>
+                </history>
+            </datareader_qos>
         </qos_profile>
     </qos_library>
 </dds>
