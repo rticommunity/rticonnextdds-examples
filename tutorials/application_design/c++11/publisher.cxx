@@ -125,7 +125,7 @@ int main(int argc, char **argv)
                     "Publisher::TransitWriter"));
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
-    std::cout << "Running simulation" << utils::to_string(simulation)
+    std::cout << "Running simulation " << utils::to_string(simulation)
               << std::endl;
     simulation.run();
 }
