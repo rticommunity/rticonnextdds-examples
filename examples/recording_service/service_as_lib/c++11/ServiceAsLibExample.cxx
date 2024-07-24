@@ -113,14 +113,15 @@ int main(int argc, char *argv[])
         request.action(RTI::Service::Admin::CommandActionKind::UPDATE_ACTION);
         request.resource_identifier(
                 service_property.application_role()
-                        == rti::recording::ApplicationRoleKind::RECORD_APPLICATION
-                                ? "/recording_services/service_as_lib/state"
-                                : "/replay_services/service_as_lib/state");
+                                == rti::recording::ApplicationRoleKind::
+                                        RECORD_APPLICATION
+                        ? "/recording_services/service_as_lib/state"
+                        : "/replay_services/service_as_lib/state");
         request.string_body("STOPPED");
         RTI::Service::Admin::CommandReply reply =
                 embedded_service.execute_command(request);
         if (reply.retcode()
-                != RTI::Service::Admin::CommandReplyRetcode::OK_RETCODE) {
+            != RTI::Service::Admin::CommandReplyRetcode::OK_RETCODE) {
             std::cerr << "Error stopping the service: " << reply.string_body()
                       << ", native error code = " << reply.native_retcode()
                       << std::endl;
