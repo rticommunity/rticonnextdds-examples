@@ -109,7 +109,6 @@ int main(int argc, char *argv[])
         embedded_service.start();
         // Wait for 'running_seconds' seconds
         std::this_thread::sleep_for(std::chrono::seconds(running_seconds));
-        // embedded_service.stop();
         RTI::Service::Admin::CommandRequest request;
         request.action(RTI::Service::Admin::CommandActionKind::UPDATE_ACTION);
         request.resource_identifier(
