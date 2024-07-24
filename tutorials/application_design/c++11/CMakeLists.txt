@@ -28,23 +28,25 @@ connextdds_call_codegen(
 )
 
 connextdds_add_application(
-    TARGET "publisher"
+    TARGET VehicleModeling_publisher
     LANG "C++11"
     OUTPUT_NAME "publisher"
     SOURCES
         $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
         "${CMAKE_CURRENT_SOURCE_DIR}/publisher.cxx"
     DEPENDENCIES
+    NO_REQUIRE_QOS
     ${_CONNEXT_DEPENDENCIES}
 )
 
 connextdds_add_application(
-    TARGET "subscriber"
+    TARGET VehicleModeling_subscriber
     LANG "C++11"
     OUTPUT_NAME "subscriber"
     SOURCES
         $<TARGET_OBJECTS:VehicleModeling_CXX11_obj>
         "${CMAKE_CURRENT_SOURCE_DIR}/subscriber.cxx"
     DEPENDENCIES
+    NO_REQUIRE_QOS
     ${_CONNEXT_DEPENDENCIES}
 )
