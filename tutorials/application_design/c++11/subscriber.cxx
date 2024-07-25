@@ -12,6 +12,7 @@
 
 #include <iostream>
 #include <thread>
+#include <unordered_map>
 
 #include <rti/rti.hpp>
 #include "VehicleModeling.hpp"
@@ -22,7 +23,7 @@ struct DashboardItem {
     bool is_historical;
     std::vector<double> fuel_history;
     int completed_routes;
-    std::unique_ptr<Coord> current_destination; // TODO: Is there a better optional?
+    rti::core::optional<Coord> current_destination;
     std::vector<Coord> reached_destinations;
 };
 
@@ -35,25 +36,26 @@ struct SubscriberDashboard {
 
     void run()
     {
+        std::mutex mutex;
+
         dds::sub::cond::ReadCondition metrics_condition(
                 metrics_reader_,
-                dds::sub::status::DataState::new_data(),
+                dds::sub::status::DataState::any(),
                 [this]() { metrics_app(); });
 
         dds::sub::cond::ReadCondition transit_condition(
                 transit_reader_,
-                dds::sub::status::DataState::new_data(),
+                dds::sub::status::DataState::any(),
                 [this]() { transit_app(); });
 
         dds::core::cond::GuardCondition display_condition;
-        display_condition.extensions().handler([this, &display_condition]() {
-            display_app();
-            display_condition.extensions().trigger_value(false);
-        });
+        display_condition.extensions().handler(
+                [this, &display_condition]() { display_app(); });
 
-        std::thread display_thread([&display_condition]() {
+        std::thread display_thread([&display_condition, &mutex]() {
             for (;;) {
-                std::this_thread::sleep_for(std::chrono::seconds(10));
+                std::this_thread::sleep_for(std::chrono::milliseconds(500));
+                std::lock_guard<std::mutex> lock(mutex);
                 display_condition.extensions().trigger_value(true);
             }
         });
@@ -63,7 +65,9 @@ struct SubscriberDashboard {
         waitset.attach_condition(display_condition);
 
         for (;;) {
-            waitset.dispatch();
+            waitset.dispatch(dds::core::Duration::from_millisecs(500));
+            std::lock_guard<std::mutex> lock(mutex);
+            display_condition.extensions().trigger_value(false);
         }
     }
 
@@ -73,19 +77,137 @@ private:
     dds::core::cond::WaitSet waitset;
     dds::sub::DataReader<VehicleMetrics> metrics_reader_;
     dds::sub::DataReader<VehicleTransit> transit_reader_;
-    std::map<dds::core::InstanceHandle, DashboardItem> dashboard_data_;
+    std::unordered_map<dds::core::InstanceHandle, DashboardItem>
+            dashboard_data_;
 
     void display_app()
     {
-        std::cout << "Displaying!" << std::chrono::system_clock::now().time_since_epoch().count() << std::endl;
+        std::stringstream ss;
+        auto now = std::chrono::system_clock::now();
+        ss << "[[ DASHBOARD: " << now.time_since_epoch().count() << " ]]\n";
+        {
+            auto online = online_vehicles();
+            ss << "Online vehicles: " << online.size() << "\n";
+            for (auto& item : online) {
+                ss << "- Vehicle " << item.vin << ":\n";
+                ss << "  Fuel updates: " << item.fuel_history.size() << "\n";
+                ss << "  Last known destination: "
+                   << (item.current_destination
+                               ? utils::to_string(*item.current_destination)
+                               : "None")
+                   << "\n";
+                ss << "  Last known fuel level: " << item.fuel_history.back()
+                   << "\n";
+            }
+        }
+        {
+            auto offline = offline_vehicles();
+            ss << "Offline vehicles: " << offline.size() << "\n";
+            for (auto& item : offline) {
+                ss << "- Vehicle " << item.vin << ":\n";
+                ss << "  Mean fuel consumption: "
+                   << std::accumulate(
+                              item.fuel_history.begin(),
+                              item.fuel_history.end(),
+                              0.0)
+                                / item.fuel_history.size()
+                   << "\n";
+                ss << "  Known reached destinations: "
+                   << item.reached_destinations.size() << "\n";
+                for (auto& destination : item.reached_destinations) {
+                    ss << "    - " << utils::to_string(destination) << "\n";
+                }
+            }
+        }
+
+        std::cout << ss.str() << std::endl;
     }
 
     void metrics_app()
     {
+        for (const auto& sample : metrics_reader_.take()) {
+            auto it = dashboard_data_.find(sample.info().instance_handle());
+            // If not a tracked vehicle, track it.
+            if (it == dashboard_data_.end()) {
+                if (!sample.info().valid())
+                    continue;
+
+                it = dashboard_data_
+                             .emplace(
+                                     sample.info().instance_handle(),
+                                     DashboardItem {
+                                             sample.data().vehicle_vin() })
+                             .first;
+            }
+
+            auto& item = it->second;
+            item.is_historical = sample.info().state().instance_state()
+                    != dds::sub::status::InstanceState::alive();
+
+            if (!sample.info().valid() && item.is_historical) {
+                continue;
+            }
+
+            item.fuel_history.push_back(sample.data().fuel_level());
+        }
     }
 
     void transit_app()
     {
+        for (const auto& sample : transit_reader_.take()) {
+            auto it = dashboard_data_.find(sample.info().instance_handle());
+            // If not a tracked vehicle, track it.
+            if (it == dashboard_data_.end()) {
+                if (!sample.info().valid())
+                    continue;
+
+                it = dashboard_data_
+                             .emplace(
+                                     sample.info().instance_handle(),
+                                     DashboardItem {
+                                             sample.data().vehicle_vin() })
+                             .first;
+            }
+
+            auto& item = it->second;
+            item.is_historical = sample.info().state().instance_state()
+                    != dds::sub::status::InstanceState::alive();
+
+            if (!sample.info().valid() && item.is_historical) {
+                continue;
+            }
+
+            auto& current_route = sample.data().current_route();
+            if (current_route->size() > 0) {
+                item.current_destination = current_route->back();
+            } else {
+                item.reached_destinations.push_back(*item.current_destination);
+                item.current_destination.reset();
+                item.completed_routes++;
+            }
+        }
+    }
+
+    std::vector<DashboardItem> online_vehicles()
+    {
+        std::vector<DashboardItem> online;
+        for (auto& item : dashboard_data_) {
+            if (!item.second.is_historical) {
+                online.push_back(item.second);
+            }
+        }
+        return online;
+    }
+
+    std::vector<DashboardItem> offline_vehicles()
+    {
+        std::vector<DashboardItem> offline;
+        for (auto& item : dashboard_data_) {
+            if (item.second.is_historical) {
+                offline.push_back(item.second);
+            }
+        }
+        return offline;
     }
 };
 
@@ -93,7 +215,7 @@ template <>
 std::string utils::to_string(const SubscriberDashboard& dashboard)
 {
     std::ostringstream ss;
-    ss << "Dashboard:\n";
+    ss << "Dashboard()";
     return ss.str();
 }
 
