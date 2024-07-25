@@ -68,7 +68,7 @@ struct PublisherSimulation {
         }
     }
 
-    friend std::string utils::to_string<>(PublisherSimulation const& sim);
+    friend std::string utils::to_string<>(PublisherSimulation const &sim);
 
 private:
     dds::pub::DataWriter<VehicleMetrics> metrics_writer_;
@@ -90,8 +90,8 @@ private:
     }
 };
 
-template <>
-std::string utils::to_string(PublisherSimulation const& sim)
+template<>
+std::string utils::to_string(PublisherSimulation const &sim)
 {
     std::ostringstream ss;
     ss << "PublisherSimulation(vehicle_vin: " << sim.vehicle_vin_;

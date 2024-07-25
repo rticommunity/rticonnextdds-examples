@@ -32,7 +32,8 @@ struct SubscriberDashboard {
             dds::sub::DataReader<VehicleMetrics> metrics_reader,
             dds::sub::DataReader<VehicleTransit> transit_reader)
             : metrics_reader_(metrics_reader), transit_reader_(transit_reader)
-    { }
+    {
+    }
 
     void run()
     {
@@ -71,7 +72,7 @@ struct SubscriberDashboard {
         }
     }
 
-    friend std::string utils::to_string<>(const SubscriberDashboard& dashboard);
+    friend std::string utils::to_string<>(const SubscriberDashboard &dashboard);
 
 private:
     dds::core::cond::WaitSet waitset;
@@ -88,7 +89,7 @@ private:
         {
             auto online = online_vehicles();
             ss << "Online vehicles: " << online.size() << "\n";
-            for (auto& item : online) {
+            for (auto &item : online) {
                 ss << "- Vehicle " << item.vin << ":\n";
                 ss << "  Fuel updates: " << item.fuel_history.size() << "\n";
                 ss << "  Last known destination: "
@@ -103,7 +104,7 @@ private:
         {
             auto offline = offline_vehicles();
             ss << "Offline vehicles: " << offline.size() << "\n";
-            for (auto& item : offline) {
+            for (auto &item : offline) {
                 ss << "- Vehicle " << item.vin << ":\n";
                 ss << "  Mean fuel consumption: "
                    << std::accumulate(
@@ -114,7 +115,7 @@ private:
                    << "\n";
                 ss << "  Known reached destinations: "
                    << item.reached_destinations.size() << "\n";
-                for (auto& destination : item.reached_destinations) {
+                for (auto &destination : item.reached_destinations) {
                     ss << "    - " << utils::to_string(destination) << "\n";
                 }
             }
@@ -125,7 +126,7 @@ private:
 
     void metrics_app()
     {
-        for (const auto& sample : metrics_reader_.take()) {
+        for (const auto &sample : metrics_reader_.take()) {
             auto it = dashboard_data_.find(sample.info().instance_handle());
             // If not a tracked vehicle, track it.
             if (it == dashboard_data_.end()) {
@@ -140,7 +141,7 @@ private:
                              .first;
             }
 
-            auto& item = it->second;
+            auto &item = it->second;
             item.is_historical = sample.info().state().instance_state()
                     != dds::sub::status::InstanceState::alive();
 
@@ -154,7 +155,7 @@ private:
 
     void transit_app()
     {
-        for (const auto& sample : transit_reader_.take()) {
+        for (const auto &sample : transit_reader_.take()) {
             auto it = dashboard_data_.find(sample.info().instance_handle());
             // If not a tracked vehicle, track it.
             if (it == dashboard_data_.end()) {
@@ -169,7 +170,7 @@ private:
                              .first;
             }
 
-            auto& item = it->second;
+            auto &item = it->second;
             item.is_historical = sample.info().state().instance_state()
                     != dds::sub::status::InstanceState::alive();
 
@@ -177,7 +178,7 @@ private:
                 continue;
             }
 
-            auto& current_route = sample.data().current_route();
+            auto &current_route = sample.data().current_route();
             if (current_route->size() > 0) {
                 item.current_destination = current_route->back();
             } else {
@@ -191,7 +192,7 @@ private:
     std::vector<DashboardItem> online_vehicles()
     {
         std::vector<DashboardItem> online;
-        for (auto& item : dashboard_data_) {
+        for (auto &item : dashboard_data_) {
             if (!item.second.is_historical) {
                 online.push_back(item.second);
             }
@@ -202,7 +203,7 @@ private:
     std::vector<DashboardItem> offline_vehicles()
     {
         std::vector<DashboardItem> offline;
-        for (auto& item : dashboard_data_) {
+        for (auto &item : dashboard_data_) {
             if (item.second.is_historical) {
                 offline.push_back(item.second);
             }
@@ -211,8 +212,8 @@ private:
     }
 };
 
-template <>
-std::string utils::to_string(const SubscriberDashboard& dashboard)
+template<>
+std::string utils::to_string(const SubscriberDashboard &dashboard)
 {
     std::ostringstream ss;
     ss << "Dashboard()";

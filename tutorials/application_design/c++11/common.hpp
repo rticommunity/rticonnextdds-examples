@@ -52,22 +52,22 @@ std::string new_vin()
 
 using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
 
-template <typename T>
-std::string to_string(T const& v)
+template<typename T>
+std::string to_string(T const &v)
 {
     return std::to_string(v);
 }
 
-template <>
-std::string to_string(Coord const& coord)
+template<>
+std::string to_string(Coord const &coord)
 {
     std::ostringstream ss;
     ss << "Coord(lat: " << coord.lat() << ", lon: " << coord.lon() << ")";
     return ss.str();
 }
 
-template <>
-std::string to_string(CoordSequence const& route)
+template<>
+std::string to_string(CoordSequence const &route)
 {
     std::ostringstream ss;
     ss << "Route(";
