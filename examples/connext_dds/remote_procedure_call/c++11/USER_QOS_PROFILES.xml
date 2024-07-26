@@ -1,9 +1,10 @@
 <?xml version="1.0"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/current/rti_dds_profiles.xsd">
 
     <qos_library name="RequestReplyExampleProfiles">
+
         <!-- Use these profiles to customize the Requester or Replier QoS -->
 
         <!-- These profiles inherit from the built-in profile
@@ -11,10 +12,15 @@
              the DataWriters and DataReaders created by a Requester or Replier
         -->
         <qos_profile name="RequesterExampleProfile" base_name="BuiltinQosLib::Pattern.RPC">
+            <!-- Set the QoS for the DataReader created by the Requester -->
             <!--
             <datareader_qos>
                 ...
             </datareader_qos>
+            -->
+
+            <!-- Set the QoS for the DataWriter created by the Requester -->
+            <!--
             <datawriter_qos>
                 ...
             </datawriter_qos>
@@ -23,10 +29,15 @@
 
         <qos_profile name="ReplierExampleProfile" base_name="BuiltinQosLib::Pattern.RPC">
 
+            <!-- Set the QoS for the DataReader created by the Replier -->
             <!--
             <datareader_qos>
                 ...
             </datareader_qos>
+            -->
+
+            <!-- Set the QoS for the DataWriter created by the Replier -->
+            <!--
             <datawriter_qos>
                 ...
             </datawriter_qos>
