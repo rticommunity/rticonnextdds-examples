@@ -10,7 +10,7 @@
  * use or inability to use the software.
  */
 
-#include "UdpSocketUtils.hpp"
+#include "UdpSocket.hpp"
 
 #include <rti/core/Exception.hpp>
 

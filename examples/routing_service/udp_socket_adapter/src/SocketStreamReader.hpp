@@ -18,7 +18,7 @@
 #include <thread>
 
 #include "SocketConnection.hpp"
-#include "UdpSocketUtils.hpp"
+#include "UdpSocket.hpp"
 
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 #include <rti/routing/adapter/StreamReader.hpp>

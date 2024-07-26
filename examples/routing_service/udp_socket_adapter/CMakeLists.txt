@@ -37,8 +37,8 @@ add_library(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketInputDiscoveryStreamReader.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamReader.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamReader.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocketUtils.cxx"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocketUtils.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocket.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocket.hpp"
 )
 
 set_property(TARGET ${PROJECT_NAME} PROPERTY CXX_STANDARD 11)

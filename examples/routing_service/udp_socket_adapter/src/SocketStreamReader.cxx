@@ -111,10 +111,11 @@ void SocketStreamReader::take(
          * This is the hardcoded type information about ShapeType.
          * You are advised to change this as per your type definition
          */
-        sample->value("color", std::string("RED")); // Hardcoding red because strings are hard to serialize
         sample->value("x", shape->x);
         sample->value("y", shape->y);
         sample->value("shapesize", shape->shapesize);
+        // Hardcoding red because strings are not as straightforward to serialize
+        sample->value("color", std::string("RED"));
 
         samples[0] = sample.release();
 
