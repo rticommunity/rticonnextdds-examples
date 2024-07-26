@@ -22,12 +22,13 @@ struct PublisherSimulation {
     explicit PublisherSimulation(
             dds::pub::DataWriter<VehicleMetrics> metrics_writer,
             dds::pub::DataWriter<VehicleTransit> transit_writer)
-            : metrics_writer_(metrics_writer), transit_writer_(transit_writer)
+            : metrics_writer_(metrics_writer),
+              transit_writer_(transit_writer),
+              vehicle_vin_(utils::new_vin()),
+              vehicle_fuel_(100.0),
+              vehicle_route_(utils::new_route()),
+              vehicle_position_(vehicle_route_[0])
     {
-        vehicle_vin_ = utils::new_vin();
-        vehicle_fuel_ = 100.0;
-        vehicle_route_ = utils::new_route();
-        vehicle_position_ = vehicle_route_[0];
     }
 
     bool has_ended() const
@@ -35,38 +36,7 @@ struct PublisherSimulation {
         return is_out_of_fuel();
     }
 
-    void run()
-    {
-        while (!has_ended()) {
-            metrics_writer_.write(
-                    VehicleMetrics { vehicle_vin_, vehicle_fuel_ });
-
-            transit_writer_.write(VehicleTransit { vehicle_vin_,
-                                                   vehicle_position_,
-                                                   vehicle_route_ });
-
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-
-            if (is_on_standby()) {
-                std::cout << "Vehicle '" << vehicle_vin_
-                          << "' has reached its destination, now moving to a "
-                             "new location..."
-                          << std::endl;
-                vehicle_route_ = utils::new_route();
-                vehicle_route_[0] = vehicle_position_;
-            }
-
-            vehicle_fuel_ -= 10 * utils::random_stduniform();
-            vehicle_position_ = vehicle_route_.front();
-            vehicle_route_.erase(vehicle_route_.begin());
-
-            if (is_out_of_fuel()) {
-                vehicle_fuel_ = 0.0;
-                std::cout << "Vehicle '" << vehicle_vin_ << "' ran out of fuel!"
-                          << std::endl;
-            }
-        }
-    }
+    void run();
 
     friend std::string utils::to_string<>(PublisherSimulation const &sim);
 
@@ -89,6 +59,38 @@ private:
         return vehicle_route_.empty();
     }
 };
+
+void PublisherSimulation::run()
+{
+    while (!has_ended()) {
+        metrics_writer_.write(VehicleMetrics { vehicle_vin_, vehicle_fuel_ });
+
+        transit_writer_.write(VehicleTransit { vehicle_vin_,
+                                               vehicle_position_,
+                                               vehicle_route_ });
+
+        std::this_thread::sleep_for(std::chrono::seconds(1));
+
+        if (is_on_standby()) {
+            std::cout << "Vehicle '" << vehicle_vin_
+                      << "' has reached its destination, now moving to a "
+                         "new location..."
+                      << std::endl;
+            vehicle_route_ = utils::new_route();
+            vehicle_route_[0] = vehicle_position_;
+        }
+
+        vehicle_fuel_ -= 10 * utils::random_stduniform();
+        vehicle_position_ = vehicle_route_.front();
+        vehicle_route_.erase(vehicle_route_.begin());
+
+        if (is_out_of_fuel()) {
+            vehicle_fuel_ = 0.0;
+            std::cout << "Vehicle '" << vehicle_vin_ << "' ran out of fuel!"
+                      << std::endl;
+        }
+    }
+}
 
 template<>
 std::string utils::to_string(PublisherSimulation const &sim)
