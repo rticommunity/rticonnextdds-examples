@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/rti_routing_service.xsd"
-    version="7.3.0">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/current/rti_dds_profiles.xsd">
     <types>
         <const name="VIN_LENGTH" type="uint8" value="17" />
         <typedef name="VIN" type="string" stringMaxLength="VIN_LENGTH" />
