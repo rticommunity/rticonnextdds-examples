@@ -1,0 +1,69 @@
+<?xml version="1.0"?>
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/rti_routing_service.xsd">
+
+    <types>
+        <include file="Types.xml" />
+    </types>
+
+    <plugin_library name="AdapterLib">
+        <adapter_plugin name="SocketAdapter">
+            <!--
+            By specifing this value, RTI Router will search for
+            libSocketAdapterCpp.so in Unix systems, SocketAdapterCpp.dll on
+            Windows systems and libSocketAdapterCpp.dylib on Mac OS. 
+            RTI Routing Service will attempt to load this library from:
+                - Working directory or plugin_search_path
+                - Executable directory
+                - Environment library path
+            -->
+            <dll>SocketAdapterCpp</dll>
+            <create_function>SocketAdapter_create_adapter_plugin</create_function>
+        </adapter_plugin>
+    </plugin_library>
+
+    <!-- Demonstrates a scenario where the SocketAdapter reads squares data from a socket 
+            and the DDSAdapter writes it to a DDS domain which can be subscribed to in 
+            Shapes Demo or using 'rtiddsspy -printSample' -->
+    <routing_service name="SocketAdapterToDDS">
+        <domain_route name="SocketBridge">
+            <connection name="SocketConnection" plugin_name="AdapterLib::SocketAdapter">
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </connection>
+            <participant name="DDSConnection">
+                <domain_id>0</domain_id>
+                <domain_participant_qos base_name="BuiltinQosLib::Generic.Common"/>
+                
+                <registered_type name="ShapeType" type_name="ShapeType"/>
+            </participant>
+            <session name="session">
+                <route>
+                    <input connection="SocketConnection">
+                        <creation_mode>ON_DOMAIN_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <stream_name>Square</stream_name>
+                        <property>
+                            <value>
+                                <element>
+                                    <name>receive_address</name>
+                                    <value>127.0.0.1</value>
+                                </element>
+                                <element>
+                                    <name>receive_port</name>
+                                    <value>10203</value>
+                                </element>
+                            </value>
+                        </property>
+                    </input>
+                    <dds_output participant="DDSConnection">
+                        <creation_mode>ON_ROUTE_MATCH</creation_mode>
+                        <registered_type_name>ShapeType</registered_type_name>
+                        <topic_name>Square</topic_name>
+                        <datawriter_qos base_name="BuiltinQosLib::Generic.Common"/>
+                    </dds_output>
+                </route>
+            </session>
+        </domain_route>
+    </routing_service>
+
+</dds>
