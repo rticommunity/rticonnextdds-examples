@@ -105,7 +105,7 @@ void SubscriberDashboard::run()
     waitset.attach_condition(display_condition);
 
     for (;;) {
-        waitset.dispatch(dds::core::Duration::from_millisecs(500));
+        waitset.dispatch();
         std::lock_guard<std::mutex> lock(mutex);
         display_condition.extensions().trigger_value(false);
     }
