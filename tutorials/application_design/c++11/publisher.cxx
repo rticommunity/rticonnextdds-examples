@@ -18,7 +18,8 @@
 #include "VehicleModeling.hpp"
 #include "common.hpp"
 
-struct PublisherSimulation {
+class PublisherSimulation {
+public:
     explicit PublisherSimulation(
             dds::pub::DataWriter<VehicleMetrics> metrics_writer,
             dds::pub::DataWriter<VehicleTransit> transit_writer)
@@ -38,7 +39,7 @@ struct PublisherSimulation {
 
     void run();
 
-    friend std::string utils::to_string<>(PublisherSimulation const &sim);
+    friend std::string utils::to_string<>(const PublisherSimulation &sim);
 
 private:
     dds::pub::DataWriter<VehicleMetrics> metrics_writer_;
@@ -93,7 +94,7 @@ void PublisherSimulation::run()
 }
 
 template<>
-std::string utils::to_string(PublisherSimulation const &sim)
+std::string utils::to_string(const PublisherSimulation &sim)
 {
     std::ostringstream ss;
     ss << "PublisherSimulation(vehicle_vin: " << sim.vehicle_vin_;
@@ -110,21 +111,21 @@ int main(int argc, char **argv)
 
     dds::core::QosProvider qos_provider("../VehicleModeling.xml");
 
-    dds::domain::DomainParticipant participant =
+    auto participant =
             qos_provider.extensions().create_participant_from_config(
                     "ParticipantLibrary::PublisherApp");
 
     using MetricsWriter = dds::pub::DataWriter<VehicleMetrics>;
-    MetricsWriter metrics_writer(
+    auto metrics_writer =
             rti::pub::find_datawriter_by_name<MetricsWriter>(
                     participant,
-                    "Publisher::MetricsWriter"));
+                    "Publisher::MetricsWriter");
 
     using TransitWriter = dds::pub::DataWriter<VehicleTransit>;
-    TransitWriter transit_writer(
+    auto transit_writer =
             rti::pub::find_datawriter_by_name<TransitWriter>(
                     participant,
-                    "Publisher::TransitWriter"));
+                    "Publisher::TransitWriter");
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
     std::cout << "Running simulation " << utils::to_string(simulation)

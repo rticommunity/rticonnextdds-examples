@@ -28,7 +28,8 @@ struct DashboardItem {
     std::vector<Coord> reached_destinations;
 };
 
-struct SubscriberDashboard {
+class SubscriberDashboard {
+public:
     explicit SubscriberDashboard(
             dds::sub::DataReader<VehicleMetrics> metrics_reader,
             dds::sub::DataReader<VehicleTransit> transit_reader)
@@ -51,10 +52,10 @@ private:
     void metrics_app();
     void transit_app();
 
-    std::vector<DashboardItem> online_vehicles()
+    std::vector<DashboardItem> online_vehicles() const
     {
         std::vector<DashboardItem> online;
-        for (auto &item : dashboard_data_) {
+        for (const auto &item : dashboard_data_) {
             if (!item.second.is_historical) {
                 online.push_back(item.second);
             }
@@ -62,10 +63,10 @@ private:
         return online;
     }
 
-    std::vector<DashboardItem> offline_vehicles()
+    std::vector<DashboardItem> offline_vehicles() const
     {
         std::vector<DashboardItem> offline;
-        for (auto &item : dashboard_data_) {
+        for (const auto &item : dashboard_data_) {
             if (item.second.is_historical) {
                 offline.push_back(item.second);
             }
@@ -90,13 +91,13 @@ void SubscriberDashboard::run()
 
     dds::core::cond::GuardCondition display_condition;
     display_condition.extensions().handler(
-            [this, &display_condition]() { display_app(); });
+            [this]() { display_app(); });
 
     std::thread display_thread([&display_condition, &mutex]() {
         for (;;) {
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
             std::lock_guard<std::mutex> lock(mutex);
-            display_condition.extensions().trigger_value(true);
+            display_condition.trigger_value(true);
         }
     });
 
@@ -107,7 +108,7 @@ void SubscriberDashboard::run()
     for (;;) {
         waitset.dispatch();
         std::lock_guard<std::mutex> lock(mutex);
-        display_condition.extensions().trigger_value(false);
+        display_condition.trigger_value(false);
     }
 }
 
@@ -231,21 +232,21 @@ int main(int argc, char **argv)
 
     dds::core::QosProvider qos_provider("../VehicleModeling.xml");
 
-    dds::domain::DomainParticipant participant =
+    auto participant =
             qos_provider.extensions().create_participant_from_config(
                     "ParticipantLibrary::SubscriberApp");
 
     using MetricsReader = dds::sub::DataReader<VehicleMetrics>;
-    MetricsReader metrics_reader(
+    auto metrics_reader =
             rti::sub::find_datareader_by_name<MetricsReader>(
                     participant,
-                    "Subscriber::MetricsReader"));
+                    "Subscriber::MetricsReader");
 
     using TransitReader = dds::sub::DataReader<VehicleTransit>;
-    TransitReader transit_reader(
+    auto transit_reader =
             rti::sub::find_datareader_by_name<TransitReader>(
                     participant,
-                    "Subscriber::TransitReader"));
+                    "Subscriber::TransitReader");
 
     SubscriberDashboard dashboard(metrics_reader, transit_reader);
     std::cout << "Running dashboard " << utils::to_string(dashboard)

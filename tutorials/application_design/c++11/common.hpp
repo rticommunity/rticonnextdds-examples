@@ -53,13 +53,15 @@ std::string new_vin()
 using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
 
 template<typename T>
-std::string to_string(T const &v)
+std::string to_string(const T &v)
 {
-    return std::to_string(v);
+    std::ostringstream ss;
+    ss << v;
+    return ss.str();
 }
 
 template<>
-std::string to_string(Coord const &coord)
+std::string to_string(const Coord &coord)
 {
     std::ostringstream ss;
     ss << "Coord(lat: " << coord.lat() << ", lon: " << coord.lon() << ")";
@@ -67,7 +69,7 @@ std::string to_string(Coord const &coord)
 }
 
 template<>
-std::string to_string(CoordSequence const &route)
+std::string to_string(const CoordSequence &route)
 {
     std::ostringstream ss;
     ss << "Route(";
