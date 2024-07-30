@@ -111,21 +111,18 @@ int main(int argc, char **argv)
 
     dds::core::QosProvider qos_provider("../VehicleModeling.xml");
 
-    auto participant =
-            qos_provider.extensions().create_participant_from_config(
-                    "ParticipantLibrary::PublisherApp");
+    auto participant = qos_provider.extensions().create_participant_from_config(
+            "ParticipantLibrary::PublisherApp");
 
     using MetricsWriter = dds::pub::DataWriter<VehicleMetrics>;
-    auto metrics_writer =
-            rti::pub::find_datawriter_by_name<MetricsWriter>(
-                    participant,
-                    "Publisher::MetricsWriter");
+    auto metrics_writer = rti::pub::find_datawriter_by_name<MetricsWriter>(
+            participant,
+            "Publisher::MetricsWriter");
 
     using TransitWriter = dds::pub::DataWriter<VehicleTransit>;
-    auto transit_writer =
-            rti::pub::find_datawriter_by_name<TransitWriter>(
-                    participant,
-                    "Publisher::TransitWriter");
+    auto transit_writer = rti::pub::find_datawriter_by_name<TransitWriter>(
+            participant,
+            "Publisher::TransitWriter");
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
     std::cout << "Running simulation " << utils::to_string(simulation)

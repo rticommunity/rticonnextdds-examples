@@ -90,8 +90,7 @@ void SubscriberDashboard::run()
             [this]() { transit_app(); });
 
     dds::core::cond::GuardCondition display_condition;
-    display_condition.extensions().handler(
-            [this]() { display_app(); });
+    display_condition.extensions().handler([this]() { display_app(); });
 
     std::thread display_thread([&display_condition, &mutex]() {
         for (;;) {
@@ -232,21 +231,18 @@ int main(int argc, char **argv)
 
     dds::core::QosProvider qos_provider("../VehicleModeling.xml");
 
-    auto participant =
-            qos_provider.extensions().create_participant_from_config(
-                    "ParticipantLibrary::SubscriberApp");
+    auto participant = qos_provider.extensions().create_participant_from_config(
+            "ParticipantLibrary::SubscriberApp");
 
     using MetricsReader = dds::sub::DataReader<VehicleMetrics>;
-    auto metrics_reader =
-            rti::sub::find_datareader_by_name<MetricsReader>(
-                    participant,
-                    "Subscriber::MetricsReader");
+    auto metrics_reader = rti::sub::find_datareader_by_name<MetricsReader>(
+            participant,
+            "Subscriber::MetricsReader");
 
     using TransitReader = dds::sub::DataReader<VehicleTransit>;
-    auto transit_reader =
-            rti::sub::find_datareader_by_name<TransitReader>(
-                    participant,
-                    "Subscriber::TransitReader");
+    auto transit_reader = rti::sub::find_datareader_by_name<TransitReader>(
+            participant,
+            "Subscriber::TransitReader");
 
     SubscriberDashboard dashboard(metrics_reader, transit_reader);
     std::cout << "Running dashboard " << utils::to_string(dashboard)
