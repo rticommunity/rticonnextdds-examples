@@ -20,18 +20,21 @@
 
 namespace utils {
 
+namespace details {
+
+static std::random_device rd;
+static std::mt19937 gen { rd() };
+
+}; // namespace details
+
+void set_random_seed(unsigned seed)
+{
+    details::gen.seed(seed);
+}
+
 double random_range(double min, double max)
 {
-    struct SrandInit {
-        explicit SrandInit(int seed) : seed_(seed)
-        {
-            std::srand(seed_);
-        }
-
-        int seed_;
-    } static const srand_init(std::time(nullptr));
-
-    return min + (max - min) * ((double) std::rand() / (RAND_MAX));
+    return std::uniform_real_distribution<>(min, max)(details::gen);
 }
 
 double random_stduniform()

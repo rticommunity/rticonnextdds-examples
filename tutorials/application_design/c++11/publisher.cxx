@@ -106,6 +106,8 @@ std::string utils::to_string(const PublisherSimulation &sim)
 
 int main(int argc, char **argv)
 {
+    utils::set_random_seed(std::time(nullptr));
+
     rti::domain::register_type<VehicleMetrics>();
     rti::domain::register_type<VehicleTransit>();
 
