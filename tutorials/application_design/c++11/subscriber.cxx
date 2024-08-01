@@ -39,7 +39,7 @@ public:
 
     void run();
 
-    friend std::string utils::to_string<>(const SubscriberDashboard &dashboard);
+    friend std::string to_string(const SubscriberDashboard &dashboard);
 
 private:
     dds::sub::DataReader<VehicleMetrics> metrics_reader_;
@@ -113,6 +113,9 @@ void SubscriberDashboard::run()
 
 void SubscriberDashboard::display_app()
 {
+    using std::to_string;
+    using ::to_string;
+
     std::stringstream ss;
     auto now = std::chrono::system_clock::now();
     ss << "[[ DASHBOARD: " << now.time_since_epoch().count() << " ]]\n";
@@ -124,13 +127,13 @@ void SubscriberDashboard::display_app()
             ss << "  Fuel updates: " << item.fuel_history.size() << "\n";
             ss << "  Last known destination: "
                << (item.current_destination
-                           ? utils::to_string(*item.current_destination)
+                           ? to_string(*item.current_destination)
                            : "None")
                << "\n";
             ss << "  Last known fuel level: "
                << (item.fuel_history.empty()
                            ? "None"
-                           : utils::to_string(item.fuel_history.back()))
+                           : to_string(item.fuel_history.back()))
                << "\n";
         }
     }
@@ -149,7 +152,7 @@ void SubscriberDashboard::display_app()
             ss << "  Known reached destinations: "
                << item.reached_destinations.size() << "\n";
             for (auto &destination : item.reached_destinations) {
-                ss << "    - " << utils::to_string(destination) << "\n";
+                ss << "    - " << to_string(destination) << "\n";
             }
         }
     }
@@ -216,8 +219,7 @@ void SubscriberDashboard::transit_app()
     }
 }
 
-template<>
-std::string utils::to_string(const SubscriberDashboard &dashboard)
+std::string to_string(const SubscriberDashboard &dashboard)
 {
     std::ostringstream ss;
     ss << "Dashboard()";
@@ -247,7 +249,7 @@ int main(int argc, char **argv)
             "Subscriber::TransitReader");
 
     SubscriberDashboard dashboard(metrics_reader, transit_reader);
-    std::cout << "Running dashboard " << utils::to_string(dashboard)
+    std::cout << "Running dashboard " << to_string(dashboard)
               << std::endl;
     dashboard.run();
 }

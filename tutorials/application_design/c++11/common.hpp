@@ -18,6 +18,39 @@
 
 #include "VehicleModeling.hpp"
 
+using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
+
+namespace { // Coord namespace
+
+std::string to_string(const Coord &coord)
+{
+    std::ostringstream ss;
+    ss << "Coord(lat: " << coord.lat() << ", lon: " << coord.lon() << ")";
+    return ss.str();
+}
+
+} // namespace Coord
+
+namespace rti::core { // bounded_sequence namespace
+
+std::string to_string(const CoordSequence &route)
+{
+    using ::to_string;
+
+    std::ostringstream ss;
+    ss << "Route(";
+    for (auto it = route.begin(); it != route.end();) {
+        ss << to_string(*it);
+        if (++it != route.end()) {
+            ss << ", ";
+        }
+    }
+    ss << ")";
+    return ss.str();
+}
+
+} // namespace rti::core
+
 namespace utils {
 
 namespace details {
@@ -53,38 +86,6 @@ std::string new_vin()
     return ss.str();
 }
 
-using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
-
-template<typename T>
-std::string to_string(const T &v)
-{
-    std::ostringstream ss;
-    ss << v;
-    return ss.str();
-}
-
-template<>
-std::string to_string(const Coord &coord)
-{
-    std::ostringstream ss;
-    ss << "Coord(lat: " << coord.lat() << ", lon: " << coord.lon() << ")";
-    return ss.str();
-}
-
-template<>
-std::string to_string(const CoordSequence &route)
-{
-    std::ostringstream ss;
-    ss << "Route(";
-    for (auto it = route.begin(); it != route.end();) {
-        ss << to_string(*it);
-        if (++it != route.end()) {
-            ss << ", ";
-        }
-    }
-    ss << ")";
-    return ss.str();
-}
 
 CoordSequence new_route(int n = 5)
 {

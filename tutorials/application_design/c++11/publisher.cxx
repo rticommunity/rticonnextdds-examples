@@ -39,7 +39,7 @@ public:
 
     void run();
 
-    friend std::string utils::to_string<>(const PublisherSimulation &sim);
+    friend std::string to_string(const PublisherSimulation &sim);
 
 private:
     dds::pub::DataWriter<VehicleMetrics> metrics_writer_;
@@ -47,7 +47,7 @@ private:
 
     std::string vehicle_vin_;
     double vehicle_fuel_;
-    utils::CoordSequence vehicle_route_;
+    CoordSequence vehicle_route_;
     Coord vehicle_position_;
 
     bool is_out_of_fuel() const
@@ -93,8 +93,7 @@ void PublisherSimulation::run()
     }
 }
 
-template<>
-std::string utils::to_string(const PublisherSimulation &sim)
+std::string to_string(const PublisherSimulation &sim)
 {
     std::ostringstream ss;
     ss << "PublisherSimulation(vehicle_vin: " << sim.vehicle_vin_;
@@ -127,7 +126,7 @@ int main(int argc, char **argv)
             "Publisher::TransitWriter");
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
-    std::cout << "Running simulation " << utils::to_string(simulation)
+    std::cout << "Running simulation " << to_string(simulation)
               << std::endl;
     simulation.run();
 }
