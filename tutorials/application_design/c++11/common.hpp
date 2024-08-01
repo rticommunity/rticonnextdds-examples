@@ -20,7 +20,7 @@
 
 using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
 
-namespace { // Coord namespace
+namespace {  // Coord namespace
 
 std::string to_string(const Coord &coord)
 {
@@ -29,9 +29,9 @@ std::string to_string(const Coord &coord)
     return ss.str();
 }
 
-} // namespace Coord
+}  // namespace
 
-namespace rti::core { // bounded_sequence namespace
+namespace rti::core {  // bounded_sequence namespace
 
 std::string to_string(const CoordSequence &route)
 {
@@ -49,7 +49,7 @@ std::string to_string(const CoordSequence &route)
     return ss.str();
 }
 
-} // namespace rti::core
+}  // namespace rti::core
 
 namespace utils {
 
@@ -58,7 +58,7 @@ namespace details {
 static std::random_device rd;
 static std::mt19937 gen { rd() };
 
-}; // namespace details
+};  // namespace details
 
 void set_random_seed(unsigned seed)
 {

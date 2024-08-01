@@ -113,8 +113,8 @@ void SubscriberDashboard::run()
 
 void SubscriberDashboard::display_app()
 {
-    using std::to_string;
     using ::to_string;
+    using std::to_string;
 
     std::stringstream ss;
     auto now = std::chrono::system_clock::now();
@@ -249,7 +249,6 @@ int main(int argc, char **argv)
             "Subscriber::TransitReader");
 
     SubscriberDashboard dashboard(metrics_reader, transit_reader);
-    std::cout << "Running dashboard " << to_string(dashboard)
-              << std::endl;
+    std::cout << "Running dashboard " << to_string(dashboard) << std::endl;
     dashboard.run();
 }
