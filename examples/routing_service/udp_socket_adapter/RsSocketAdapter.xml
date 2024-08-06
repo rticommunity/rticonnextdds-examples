@@ -52,6 +52,10 @@
                                     <name>receive_port</name>
                                     <value>10203</value>
                                 </element>
+                                <element>
+                                    <name>shape_color</name>
+                                    <value>RED</value>
+                                </element>
                             </value>
                         </property>
                     </input>

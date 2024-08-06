@@ -35,7 +35,8 @@ StreamReader *SocketConnection::create_stream_reader(
 
 void SocketConnection::delete_stream_reader(StreamReader *reader)
 {
-    SocketStreamReader *socket_reader = dynamic_cast<SocketStreamReader *>(reader);
+    SocketStreamReader *socket_reader =
+            dynamic_cast<SocketStreamReader *>(reader);
     socket_reader->shutdown_socket_reader_thread();
     delete reader;
 }

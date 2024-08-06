@@ -43,11 +43,9 @@ public:
             output_stream_discovery_reader() final;
 
     /**
-     * @brief This function is called by the SocketStreamReader to indicate that
-     * it has reached EOF and its time to dispose the route. The dispose set by
-     * the SocketInputDiscoveryStreamReader starts the chain of cleanup procedure.
-     * Remember that the <creation_mode> for <output> should be ON_ROUTE_MATCH
-     * for the cleanup to be propagated to the StreamWriter as well.
+     * @brief This function is called by the SocketStreamReader to indicate
+     * that it's time to dispose the route. The dispose set by the
+     * SocketInputDiscoveryStreamReader starts the chain of cleanup procedure.
      *
      * @param stream_info \b in. Reference to a StreamInfo object which should
      * be used when creating a new StreamInfo sample with disposed set to true

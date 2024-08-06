@@ -27,11 +27,10 @@ Connection *SocketAdapter::create_connection(
                 *output_stream_discovery_listener,
         const PropertySet &properties)
 {
-    SocketConnection *sc = new SocketConnection(
+    return new SocketConnection(
             input_stream_discovery_listener,
             output_stream_discovery_listener,
             properties);
-    return sc;
 }
 
 void SocketAdapter::delete_connection(Connection *connection)

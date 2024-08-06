@@ -26,6 +26,7 @@
 #define BUFFER_MAX_SIZE 1024
 #define RECEIVE_ADDRESS_STRING "receive_address"
 #define RECEIVE_PORT_STRING "receive_port"
+#define SHAPE_COLOR_STRING "shape_color"
 
 class SocketStreamReader : public rti::routing::adapter::DynamicDataStreamReader {
 public:
@@ -35,9 +36,9 @@ public:
             const rti::routing::PropertySet &,
             rti::routing::adapter::StreamReaderListener *listener);
 
-    void
-            take(std::vector<dds::core::xtypes::DynamicData *> &,
-                 std::vector<dds::sub::SampleInfo *> &) final;
+    void take(
+            std::vector<dds::core::xtypes::DynamicData *> &,
+            std::vector<dds::sub::SampleInfo *> &) final;
 
     void take(
             std::vector<dds::core::xtypes::DynamicData *> &,
@@ -66,12 +67,14 @@ private:
 
     std::thread socketreader_thread_;
     bool stop_thread_;
-    int receive_port_;
 
     std::ifstream input_socket_stream_;
     std::string receive_address_;
+    int receive_port_;
+    std::string shape_color_;
     char received_buffer_[BUFFER_MAX_SIZE]; // Value that's high enough
     int received_bytes_;
+    std::mutex buffer_mutex_;
 
     rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;

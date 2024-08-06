@@ -67,7 +67,10 @@ void UdpSocket::bind_socket(const char* ip, int port) {
     inet_pton(AF_INET, ip, &(server_addr.sin_addr));
     server_addr.sin_port = htons(port);
 
-    if (bind(sockfd, (const struct sockaddr *)&server_addr, sizeof(server_addr)) == -1) {
+    if (bind(
+            sockfd,
+            (const struct sockaddr *)&server_addr,
+            sizeof(server_addr)) == -1) {
         throw dds::core::IllegalOperationError(
                 "Bind failed");
     }

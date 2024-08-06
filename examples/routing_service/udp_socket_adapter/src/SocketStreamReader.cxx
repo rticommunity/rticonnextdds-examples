@@ -39,8 +39,17 @@ using namespace rti::routing::adapter;
 void SocketStreamReader::socket_reading_thread()
 {
     while (!stop_thread_) {
-
-        socket->receive_data(received_buffer_, &received_bytes_, BUFFER_MAX_SIZE);
+        /**
+         * Essential to protect against concurrent data access to
+         * buffer_ from the take() methods running on a different
+         * Routing Service thread.
+         */
+        std::unique_lock<std::mutex> lock(buffer_mutex_);
+        socket->receive_data(
+                received_buffer_,
+                &received_bytes_,
+                BUFFER_MAX_SIZE);
+        lock.unlock();
 
         // Most likely received nothing or there was an error
         // Not doing any error handling here
@@ -79,7 +88,17 @@ SocketStreamReader::SocketStreamReader(
             receive_address_ = property.second;
         } else if (property.first == RECEIVE_PORT_STRING) {
             receive_port_ = std::stoi(property.second);
+        } else if (property.first == SHAPE_COLOR_STRING) {
+            shape_color_ = property.second;
         }
+    }
+
+    if (receive_address_.size() == 0
+            || receive_port_ == 0
+            || shape_color_.size() == 0) {
+        throw dds::core::IllegalOperationError(
+                "You must set receive_address, receive_port and" \
+                " shape_color in the RsSocketAdapter.xml file");
     }
 
     socket = std::unique_ptr<UdpSocket>(new UdpSocket(
@@ -95,12 +114,16 @@ void SocketStreamReader::take(
         std::vector<dds::sub::SampleInfo *> &infos)
 {
     if (stream_info_.stream_name() == "Square") {
-
+        /**
+         * This protection is required since take() executes on a different
+         * Routing Service thread.
+         */
+        std::unique_lock<std::mutex> lock(buffer_mutex_);
         ShapeType* shape = reinterpret_cast<ShapeType*>(received_buffer_);
-        //print_shape(*shape);
+        lock.unlock();
 
         /**
-         * Note that we read one packet at a time socket_reading_thread()
+         * Note that we read one packet at a time from socket_reading_thread()
          */
         samples.resize(1);
         infos.resize(1);
@@ -114,8 +137,8 @@ void SocketStreamReader::take(
         sample->value("x", shape->x);
         sample->value("y", shape->y);
         sample->value("shapesize", shape->shapesize);
-        // Hardcoding red because strings are not as straightforward to serialize
-        sample->value("color", std::string("RED"));
+        // Color is retrieved from the XML configuration
+        sample->value("color", shape_color_);
 
         samples[0] = sample.release();
 

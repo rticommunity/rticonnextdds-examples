@@ -38,7 +38,11 @@ public:
             int size_of_original_buffer);
 
 private:
+#ifdef _WIN32
+    SOCKET sockfd;
+#else
     int sockfd;
+#endif
     struct sockaddr_in server_addr, client_addr;
 
     void init_socket();
