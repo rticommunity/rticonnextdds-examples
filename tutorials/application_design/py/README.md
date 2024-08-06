@@ -1,4 +1,4 @@
-# Tutorial: Data Persistence
+# Tutorial: Application Design
 
 This code is part of the Connext Application Design tutorial and is included
 here in full for convenience.
