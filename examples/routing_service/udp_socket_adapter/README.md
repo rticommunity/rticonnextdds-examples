@@ -10,15 +10,17 @@ receive data from a UDP socket using RTI Routing Service.
 
 The code in this directory provides the following components:
 
--   `SocketAdapter` implements the plugin that is loaded by *RTI Routing Service*.
+-   `src/SocketAdapter` implements the plugin that is loaded by *RTI Routing Service*.
 It is responsible to create and delete connections.
--   `SocketConnection` implements a connection. This component is responsible of the
+-   `src/SocketConnection` implements a connection. This component is responsible of the
 creation and deletion of `StreamReaders`.
--   `SocketInputDiscoveryStreamReader` implements the logic necessary to propagate
+-   `src/SocketInputDiscoveryStreamReader` implements the logic necessary to propagate
 information about the discovered input streams (in this case sockets) to the
 Routing Service.
--   `SocketStreamReader` implements an `StreamReader` that reads sample information
+-   `src/SocketStreamReader` implements an `StreamReader` that reads sample information
 from a UDP socket.
+-   `test/send_shape_to_socket.py` implements a simple tester to send
+shape type data to a UDP socket.
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
 
@@ -37,13 +39,16 @@ cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
       -DBUILD_SHARED_LIBS=ON|OFF \                   # ON is preferred for this example
       -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
+export LD_LIBRARY_PATH=build/:$LD_LIBRARY_PATH
+cd ..
 ```
 
 Example command for Windows:
 
-```
+```bash
 cmake .. -DCONNEXTDDS_DIR="%NDDSHOME%" -DCONNEXTDDS_ARCH=x64Win64VS2015 -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -A x64 -G "Visual Studio 17 2022"
 set PATH=build\Release;%PATH%
+cd ..
 ```
 
 **Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
@@ -62,9 +67,9 @@ cmake --build . --config Release|Debug
 Here is more information about generating
 [Visual Studio Solutions for Windows using CMake](https://cmake.org/cmake/help/v3.16/generator/Visual%20Studio%2016%202019.html#platform-selection).
 
-**Note:** The `BUILD_SHARED_LIBS` allows you to control if the generated library
+**Note:** `BUILD_SHARED_LIBS` allows you to control if the generated library
 for this example is a static or a dynamic shared library. The following sections
-assume you are building a dynamic shared library. However Routing Service also
+assume you are building a dynamic shared library. However, Routing Service also
 supports static linking of adapters. To use this functionality you would need to
 create an application that uses Routing Service as a library component and
 statically links to this `SocketAdapter` library.
@@ -95,16 +100,15 @@ Then you can call CMake like this:
 
 ## Running C++ example
 
-To run the example, you just need to run the following commands from the top level folder.
+To run the example, you just need to run the following commands from the top
+level folder. This example has been written to allow easy experimentation with
+the Shapes Demo shipped with *RTI Connext DDS* installer bundle.
 
-This example has been written to allow easy experimentation with the Shapes Demo
-shipped with *RTI Connext DDS* installer bundle.
+There is 1 configuration (`-cfgName`) in the Routing Service XML file:
 
-There is 1 configuration (cfgName) in the Routing Service XML file:
-
--   **SocketAdapterToDDS** - This reads data from a UDP socket using the SocketAdapter and
-outputs it to DDS. You can visualize the ouptut by subscribing to Squares in Shapes Demo or
-running:
+-   **SocketAdapterToDDS** - It reads data from a UDP socket using the SocketAdapter
+and outputs it to DDS. You can visualize the ouptut by subscribing to Squares
+in Shapes Demo or running:
 
 ```bash
  $NDDSHOME/bin/rtiddsspy -printSample
@@ -119,7 +123,7 @@ Before running the RTI Routing Service, you need to specify where the
 $export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<Connext DDS Architecture>:<Path to SocketAdapterCpp library>
 ```
 
-The SocketAdapterCpp library will be in the ./build folder.
+The SocketAdapterCpp library will be in the `./build` folder.
 
 ```bash
 # From the build/ directory
@@ -129,19 +133,19 @@ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdap
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=~/rti_connext_dds-7.3.0/lib/x64Linux4gcc7.3.0:~/rs_socket_adapter
+$export RTI_LD_LIBRARY_PATH=~/rti_connext_dds-7.3.0/lib/x64Linux4gcc7.3.0:~/udp_socket_adapter/build/
 
 $~/rti_connext_dds-7.3.0/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
 RTI Routing Service 7.3.0 executing (with name SocketAdapterToSocketAdapter)
 ```
 
-Now you'll need to send data to the UDP sockets. By default, Shapes are expected on
-127.0.0.1:10203. You can change these default values on `RsSocketAdapter.xml`.
+Now you'll need to send data to the UDP sockets. By default, Shapes are
+expected on `127.0.0.1:10203`. You can change these default values on
+`RsSocketAdapter.xml`.
 
 To run the Shape tester:
 ```bash
-cd test
-python3 send_shape_to_socket_tester.py 127.0.0.1 10203
+python3 test/send_shape_to_socket.py 127.0.0.1 10203
 ```
 
 You can now open a Shapes Demo instance on domain 0 and subscribe to Squares. You
@@ -152,6 +156,6 @@ should start receiving a red Square.
 To run this example you will need:
 
 - RTI Connext Professional version 6.0.0 or higher.
-- CMake version 3.10 or higher
+- CMake version 3.10 or higher.
 - A target platform with support for RTI Routing Service and C++11.
-- Python3
+- Python3.
