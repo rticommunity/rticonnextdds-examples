@@ -93,6 +93,7 @@ SocketStreamReader::SocketStreamReader(
         }
     }
 
+    // If any of the mandatory properties is not specified, throw exception
     if (receive_address_.size() == 0
             || receive_port_ == 0
             || shape_color_.size() == 0) {
@@ -101,14 +102,21 @@ SocketStreamReader::SocketStreamReader(
                 " shape_color in the RsSocketAdapter.xml file");
     }
 
+    // Create the UDP socket to receive data
     socket = std::unique_ptr<UdpSocket>(new UdpSocket(
             receive_address_.c_str(),
             receive_port_));
 
-    socketreader_thread_ =
-            std::thread(&SocketStreamReader::socket_reading_thread, this);
+    // Start the receive thread for UDP data
+    socketreader_thread_ = std::thread(
+            &SocketStreamReader::socket_reading_thread,
+            this);
 }
 
+/**
+ * This is the Routing Service take(). It's called when the
+ * socket_receive_thread calls on_data_available()
+ */
 void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
@@ -140,26 +148,20 @@ void SocketStreamReader::take(
         // Color is retrieved from the XML configuration
         sample->value("color", shape_color_);
 
+        // Routing Service will send the DDS sample here
         samples[0] = sample.release();
-
     }
 
     return;
 }
-
-void SocketStreamReader::print_shape(ShapeType shape) {
-
-    std::cout << "x: " << shape.x << std::endl;
-    std::cout << "y: " << shape.y << std::endl;
-    std::cout << "shapesize: " << shape.shapesize << std::endl;
-};
 
 void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos,
         const SelectorState &selector_state)
 {
-    take(samples, infos);
+    // We're not doing anything with SelectorState in this example
+    this->take(samples, infos);
 }
 
 void SocketStreamReader::return_loan(

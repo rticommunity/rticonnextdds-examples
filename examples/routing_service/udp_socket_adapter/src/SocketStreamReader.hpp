@@ -84,8 +84,6 @@ private:
         int y;
         int shapesize;
     };
-
-    void print_shape(ShapeType shape);
 };
 
 #endif

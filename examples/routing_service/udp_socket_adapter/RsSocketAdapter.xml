@@ -42,16 +42,20 @@
                         <creation_mode>ON_DOMAIN_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
                         <stream_name>Square</stream_name>
+                        <!-- You must set these 3 properties -->
                         <property>
                             <value>
+                                <!-- Receive address for UDP data -->
                                 <element>
                                     <name>receive_address</name>
                                     <value>127.0.0.1</value>
                                 </element>
+                                <!-- Receive port for UDP data -->
                                 <element>
                                     <name>receive_port</name>
                                     <value>10203</value>
                                 </element>
+                                <!-- Shape color. This information is not sent to the UDP socket -->
                                 <element>
                                     <name>shape_color</name>
                                     <value>RED</value>
@@ -62,6 +66,7 @@
                     <dds_output participant="DDSConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
+                        <!-- Topic used to send data. You can also choose Circle or Triangle -->
                         <topic_name>Square</topic_name>
                         <datawriter_qos base_name="BuiltinQosLib::Generic.Common"/>
                     </dds_output>

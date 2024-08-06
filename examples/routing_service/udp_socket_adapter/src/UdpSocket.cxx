@@ -20,28 +20,28 @@ UdpSocket::UdpSocket(const char* ip, int port) {
 #ifdef _WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
-        std::cerr << "WSAStartup failed." << std::endl;
-        exit(1);
+        throw dds::core::IllegalOperationError("WSAStartup failed");
     }
 #endif
 
+    // Socket initialization
     init_socket();
-
     memset(&server_addr, 0, sizeof(server_addr));
 
+    // Using non-blocking sockets for easier thread management
 #ifdef _WIN32
     unsigned long nonBlocking = 1;
     if (ioctlsocket(sockfd, FIONBIO, &nonBlocking) != 0) {
         std::cerr << "Error setting socket to non-blocking\n";
         closesocket(sockfd);
         WSACleanup();
-        throw dds::core::IllegalOperationError(
-                "ioctlsocket failed");
+        throw dds::core::IllegalOperationError("ioctlsocket failed");
     }
 #else
     fcntl(sockfd, F_SETFL, O_NONBLOCK);
 #endif
 
+    // Bind the socket
     bind_socket(ip, port);
 }
 
@@ -56,8 +56,7 @@ UdpSocket::~UdpSocket() {
 
 void UdpSocket::init_socket() {
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
-        throw dds::core::IllegalOperationError(
-                "Socket creation failed");
+        throw dds::core::IllegalOperationError("Socket creation failed");
     }
 }
 
@@ -84,6 +83,9 @@ void UdpSocket::receive_data(
 
     socklen_t client_addr_len = sizeof(client_addr);
 
+    /** Receive data.Since it's non-blocking, it will return right away most
+     * of the times
+     */
     *received_bytes = recvfrom(
             sockfd,
             received_buffer,
