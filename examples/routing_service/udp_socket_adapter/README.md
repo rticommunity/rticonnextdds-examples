@@ -145,6 +145,7 @@ expected on `127.0.0.1:10203`. You can change these default values on
 `RsSocketAdapter.xml`.
 
 To run the Shape tester:
+
 ```bash
 python3 test/send_shape_to_socket.py 127.0.0.1 10203
 ```
