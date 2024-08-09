@@ -29,19 +29,6 @@
             <sec>5</sec>
             <nanosec>0</nanosec>
           </participant_liveliness_assert_period>
-          <!-- Required when IP fragmentation is disabled -->
-          <publication_writer_publish_mode>
-            <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
-          </publication_writer_publish_mode>
-          <subscription_writer_publish_mode>
-              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
-          </subscription_writer_publish_mode>
-          <secure_volatile_writer_publish_mode>
-              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
-          </secure_volatile_writer_publish_mode>
-          <service_request_writer_publish_mode>
-              <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
-          </service_request_writer_publish_mode>
         </discovery_config>
         <property>
           <value>

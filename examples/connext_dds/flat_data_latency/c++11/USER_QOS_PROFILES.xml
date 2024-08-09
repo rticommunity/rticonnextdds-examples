@@ -19,8 +19,6 @@
     -->
     <qos_library name="CameraImage_Library">
 
-        <!-- Base for profiles that need asynchronous publisher (flat_types
-             and plain_types) -->
         <qos_profile name="FlatData"
                      base_name="BuiltinQosLibExp::Generic.StrictReliable.LargeData" is_default_qos="true">
             <datawriter_qos>
