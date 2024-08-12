@@ -19,6 +19,7 @@ def initialize_position():
     direction_y = random.choice([-1, 1])
     return x, y, direction_x, direction_y
 
+
 def move_position(x, y, direction_x, direction_y):
     x += direction_x * step_size
     y += direction_y * step_size
@@ -33,15 +34,19 @@ def move_position(x, y, direction_x, direction_y):
 
     return x, y, direction_x, direction_y
 
+
 # Send the data to the socket
 def send_data(sock, server_address, port, x, y):
     # The data is "packed" as 3 int types
-    data = struct.pack('iii', x, y, shapesize)
+    data = struct.pack("iii", x, y, shapesize)
     sock.sendto(data, (server_address, port))
+
 
 def main():
     if len(sys.argv) != 3:
-        print("Usage: python3 send_shape_to_socket_tester.py <server_address> <port>")
+        print(
+            "Usage: python3 send_shape_to_socket_tester.py <server_address> <port>"
+        )
         return
 
     # Input arguments
@@ -58,20 +63,23 @@ def main():
 
             while True:
                 # Figure out the next position of the shape
-                x, y, direction_x, direction_y = move_position(x, y, direction_x, direction_y)
+                x, y, direction_x, direction_y = move_position(
+                    x, y, direction_x, direction_y
+                )
                 # Send the data to the socket
                 send_data(sock, server_address, port, x, y)
-                
-                # Simple counter to print every 100 messages
+
+                 # Simple counter to print every 100 messages
                 samples_sent += 1
-                if (samples_sent % 100 == 0):
+                if samples_sent % 100 == 0:
                     print(f"Samples sent: {samples_sent}")
 
                 # Same frequency as Shapes Demo
-                time.sleep(1/16)
+                time.sleep(1 / 16)
 
         except KeyboardInterrupt:
             print("\nExiting...")
+
 
 if __name__ == "__main__":
     main()

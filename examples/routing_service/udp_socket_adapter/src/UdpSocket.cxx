@@ -15,7 +15,8 @@
 #include <rti/core/Exception.hpp>
 
 
-UdpSocket::UdpSocket(const char* ip, int port) {
+UdpSocket::UdpSocket(const char *ip, int port)
+{
 
 #ifdef _WIN32
     WSADATA wsaData;
@@ -45,7 +46,8 @@ UdpSocket::UdpSocket(const char* ip, int port) {
     bind_socket(ip, port);
 }
 
-UdpSocket::~UdpSocket() {
+UdpSocket::~UdpSocket()
+{
 #ifdef _WIN32
     closesocket(sockfd);
     WSACleanup();
@@ -54,31 +56,33 @@ UdpSocket::~UdpSocket() {
 #endif
 }
 
-void UdpSocket::init_socket() {
+void UdpSocket::init_socket()
+{
     if ((sockfd = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP)) < 0) {
         throw dds::core::IllegalOperationError("Socket creation failed");
     }
 }
 
-void UdpSocket::bind_socket(const char* ip, int port) {
+void UdpSocket::bind_socket(const char* ip, int port)
+{
 
     server_addr.sin_family = AF_INET;
     inet_pton(AF_INET, ip, &(server_addr.sin_addr));
     server_addr.sin_port = htons(port);
 
-    if (bind(
-            sockfd,
-            (const struct sockaddr *)&server_addr,
-            sizeof(server_addr)) == -1) {
-        throw dds::core::IllegalOperationError(
-                "Bind failed");
+    if (bind(sockfd,
+             (const struct sockaddr *) &server_addr,
+             sizeof(server_addr))
+        == -1) {
+        throw dds::core::IllegalOperationError("Bind failed");
     }
 }
 
 void UdpSocket::receive_data(
-        char* received_buffer,
+        char *received_buffer,
         int *received_bytes,
-        int size_of_original_buffer) {
+        int size_of_original_buffer)
+{
     socklen_t len = sizeof(server_addr);
 
     socklen_t client_addr_len = sizeof(client_addr);
@@ -91,7 +95,7 @@ void UdpSocket::receive_data(
             received_buffer,
             size_of_original_buffer,
             0,
-            (struct sockaddr*)&client_addr,
+            (struct sockaddr *) &client_addr,
             &client_addr_len);
 
     return;

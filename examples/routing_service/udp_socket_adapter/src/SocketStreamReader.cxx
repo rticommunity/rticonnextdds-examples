@@ -94,23 +94,20 @@ SocketStreamReader::SocketStreamReader(
     }
 
     // If any of the mandatory properties is not specified, throw exception
-    if (receive_address_.size() == 0
-            || receive_port_ == 0
-            || shape_color_.size() == 0) {
+    if (receive_address_.size() == 0 || receive_port_ == 0
+        || shape_color_.size() == 0) {
         throw dds::core::IllegalOperationError(
-                "You must set receive_address, receive_port and" \
+                "You must set receive_address, receive_port and"
                 " shape_color in the RsSocketAdapter.xml file");
     }
 
     // Create the UDP socket to receive data
-    socket = std::unique_ptr<UdpSocket>(new UdpSocket(
-            receive_address_.c_str(),
-            receive_port_));
+    socket = std::unique_ptr<UdpSocket>(
+            new UdpSocket(receive_address_.c_str(), receive_port_));
 
     // Start the receive thread for UDP data
-    socketreader_thread_ = std::thread(
-            &SocketStreamReader::socket_reading_thread,
-            this);
+    socketreader_thread_ =
+            std::thread(&SocketStreamReader::socket_reading_thread, this);
 }
 
 /**
@@ -127,7 +124,7 @@ void SocketStreamReader::take(
          * Routing Service thread.
          */
         std::unique_lock<std::mutex> lock(buffer_mutex_);
-        ShapeType* shape = reinterpret_cast<ShapeType*>(received_buffer_);
+        ShapeType *shape = reinterpret_cast<ShapeType *>(received_buffer_);
         lock.unlock();
 
         /**

@@ -52,9 +52,10 @@ void SocketInputDiscoveryStreamReader::dispose(
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
-    std::unique_ptr<rti::routing::StreamInfo> stream_info_disposed(new StreamInfo(
-            stream_info.stream_name(),
-            stream_info.type_info().type_name()));
+    std::unique_ptr<rti::routing::StreamInfo> stream_info_disposed(
+            new StreamInfo(
+                    stream_info.stream_name(),
+                    stream_info.type_info().type_name()));
     stream_info_disposed.get()->disposed(true);
 
     this->data_samples_.push_back(std::move(stream_info_disposed));
