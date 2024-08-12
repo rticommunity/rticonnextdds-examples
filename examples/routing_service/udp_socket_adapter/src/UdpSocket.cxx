@@ -17,7 +17,6 @@
 
 UdpSocket::UdpSocket(const char *ip, int port)
 {
-
 #ifdef _WIN32
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
@@ -65,7 +64,6 @@ void UdpSocket::init_socket()
 
 void UdpSocket::bind_socket(const char* ip, int port)
 {
-
     server_addr.sin_family = AF_INET;
     inet_pton(AF_INET, ip, &(server_addr.sin_addr));
     server_addr.sin_port = htons(port);

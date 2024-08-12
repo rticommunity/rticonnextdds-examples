@@ -69,7 +69,7 @@ def main():
                 # Send the data to the socket
                 send_data(sock, server_address, port, x, y)
 
-                 # Simple counter to print every 100 messages
+                # Simple counter to print every 100 messages
                 samples_sent += 1
                 if samples_sent % 100 == 0:
                     print(f"Samples sent: {samples_sent}")
