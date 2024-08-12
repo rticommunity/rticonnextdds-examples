@@ -62,7 +62,7 @@ void UdpSocket::init_socket()
     }
 }
 
-void UdpSocket::bind_socket(const char* ip, int port)
+void UdpSocket::bind_socket(const char *ip, int port)
 {
     server_addr.sin_family = AF_INET;
     inet_pton(AF_INET, ip, &(server_addr.sin_addr));
