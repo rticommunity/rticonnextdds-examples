@@ -9,6 +9,7 @@
 # damages arising out of the use or inability to use the software.
 #
 
+from abc import ABC
 from dataclasses import field
 from typing import Sequence
 import rti.idl as idl
@@ -32,7 +33,7 @@ class UnknownItemError(Exception):
 
 
 @rpc.service
-class InventoryService:
+class InventoryService(ABC):
     @rpc.operation
     def get_inventory(self) -> InventoryContents:
         """Get the current inventory inventory"""
