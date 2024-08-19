@@ -50,11 +50,11 @@ feature:
 The FlatData profile used in this example inherits from the builtin
 `StrictReliable.LargeData` profile. This builtin profile sets up the middleware
 for sending large data by enabling some optimizations in the reliability
-protocol, the history, and how dynamic memory allocations are handled. In the
+protocol, the history, and the handling of dynamic memory allocations. In the
 FlatData profile, the *Durability QoS* of the DataWriter is set to volatile to
 enable managed samples to be reused when they are acknowledged. The
-*DataRepresentation QoS* is set to *Extended CDR version 2* at both the
-DataWriter and the DataReader as FlatData language binding is only supported
+*DataRepresentation QoS* is set to *Extended CDR version 2* on both the
+DataWriter and the DataReader since FlatData language binding is only supported
 with this data representation. The transport settings of the participant are
 also tuned to ensure reduced latency while sending large data.
 
