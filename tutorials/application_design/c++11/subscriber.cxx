@@ -228,8 +228,6 @@ std::string to_string(const SubscriberDashboard &dashboard)
 
 int main(int argc, char **argv)
 {
-    utils::set_random_seed(std::time(nullptr));
-
     rti::domain::register_type<VehicleMetrics>();
     rti::domain::register_type<VehicleTransit>();
 

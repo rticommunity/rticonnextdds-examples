@@ -60,11 +60,6 @@ static std::mt19937 gen { rd() };
 
 };  // namespace details
 
-void set_random_seed(unsigned seed)
-{
-    details::gen.seed(seed);
-}
-
 double random_range(double min, double max)
 {
     return std::uniform_real_distribution<>(min, max)(details::gen);
