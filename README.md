@@ -1,15 +1,27 @@
-# rticonnextdds-examples
+# RTI Connext Examples
 
-This repository includes examples on how to use specific features of RTI
-Connext DDS.
+This repository includes:
 
-To contribute enhancements or additional examples to the repository, follow the
-instructions on our [RTI Connext DDS Examples
-Wiki](https://github.com/rticommunity/rticonnextdds-examples/wiki). Your
-contributions will be reviewed and as soon as they are approved they will
-automatically be included in the [RTI Community Portal Examples
-Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
-for further information about how to contribute with new examples to this repository.
+- Code examples on how to use specific Connext features (under [examples/](./examples))
+- Supporting code for learning materials (under [tutorials/](./tutorials))
+
+## Cloning the repository
+
+To clone the repository you will need to run `git clone` as follows to download
+both the repository and its submodule dependencies:
+
+```bash
+git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-examples.git
+```
+
+If you forget to clone the repository with `--recurse-submodule`, simply run
+the following command to pull all the dependencies:
+
+```bash
+git submodule update --init --recursive
+```
+
+## Versioning
 
 The examples contained in the
 [master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
@@ -29,18 +41,12 @@ versions of RTI Connext DDS, please check out the appropriate branch:
 - [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
 - [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
 
-## Cloning Repository
+## How to contribute
 
-To clone the repository you will need to run `git clone` as follows to download
-both the repository and its submodule dependencies:
-
-```bash
-git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-examples.git
-```
-
-If you forget to clone the repository with `--recurse-submodule`, simply run
-the following command to pull all the dependencies:
-
-```bash
-git submodule update --init --recursive
-```
+To contribute enhancements or additional examples to the repository, follow the
+instructions on our [RTI Connext DDS Examples
+Wiki](https://github.com/rticommunity/rticonnextdds-examples/wiki). Your
+contributions will be reviewed and as soon as they are approved they will
+automatically be included in the [RTI Community Portal Examples
+Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
+for further information about how to contribute with new examples to this repository.
