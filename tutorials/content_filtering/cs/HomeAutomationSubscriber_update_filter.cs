@@ -31,8 +31,6 @@ namespace HomeAutomation
             Topic<DeviceStatus> topic =
                 participant.CreateTopic<DeviceStatus>("WindowStatus");
 
-            //Rti.Types.Sequence<String> parameters1 = new Rti.Types.Sequence<String>();
-            //parameters1.Add("'LivingRoom'");
             List<String> parameters = new List<String>();
             parameters.Add("'LivingRoom'");
 
