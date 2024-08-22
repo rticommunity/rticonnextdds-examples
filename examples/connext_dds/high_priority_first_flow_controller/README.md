@@ -15,10 +15,9 @@ actual samples based on the scheduling policy specified by the flow controller.
 
 Large data is defined as samples larger than the message_size_max of the
 installed transports. Sending large data requires a sample to be fragmented into
-smaller messages, and reassembled at the other end. Sending large data RELIABLY
-requires the use of an asynchronous publisher.
+smaller messages, and reassembled at the other end.
 
-The default QoS configuration must be modified to use a high priority flow
+The default QoS configuration can be modified to use a high priority flow
 controller and asynchronous publishing. Further optimizations can be made for
 large data.
 
@@ -70,8 +69,7 @@ Flow Controller. The stock examples is modified as follows:
     HPF_MAX_PAYLOAD_SIZE = 8192*16; // 131MB
     ```
 
-    so that we can easily test the the flow controller with asynchronous large
-    data.
+    so that we can easily test the the flow controller with large data.
 
 2.  A HelloWorld example is generated in C++
 
