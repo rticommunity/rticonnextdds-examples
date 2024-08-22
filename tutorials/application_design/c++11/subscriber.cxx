@@ -39,95 +39,48 @@ public:
 
     void run();
 
-    friend std::string to_string(const SubscriberDashboard &dashboard);
+    std::string to_string() const;
 
 private:
     dds::sub::DataReader<VehicleMetrics> metrics_reader_;
     dds::sub::DataReader<VehicleTransit> transit_reader_;
-    dds::core::cond::WaitSet waitset;
+
+    std::string output_string();
+
     std::unordered_map<dds::core::InstanceHandle, DashboardItem>
-            dashboard_data_;
-
-    void display_app();
-    void metrics_app();
-    void transit_app();
-
-    std::vector<DashboardItem> online_vehicles() const
-    {
-        std::vector<DashboardItem> online;
-        for (const auto &item : dashboard_data_) {
-            if (!item.second.is_historical) {
-                online.push_back(item.second);
-            }
-        }
-        return online;
-    }
-
-    std::vector<DashboardItem> offline_vehicles() const
-    {
-        std::vector<DashboardItem> offline;
-        for (const auto &item : dashboard_data_) {
-            if (item.second.is_historical) {
-                offline.push_back(item.second);
-            }
-        }
-        return offline;
-    }
+    dashboard_data();
 };
 
 void SubscriberDashboard::run()
 {
-    std::mutex mutex;
-
-    dds::sub::cond::ReadCondition metrics_condition(
-            metrics_reader_,
-            dds::sub::status::DataState::any(),
-            [this]() { metrics_app(); });
-
-    dds::sub::cond::ReadCondition transit_condition(
-            transit_reader_,
-            dds::sub::status::DataState::any(),
-            [this]() { transit_app(); });
-
-    dds::core::cond::GuardCondition display_condition;
-    display_condition.extensions().handler([this]() { display_app(); });
-
-    std::thread display_thread([&display_condition, &mutex]() {
-        for (;;) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(500));
-            std::lock_guard<std::mutex> lock(mutex);
-            display_condition.trigger_value(true);
-        }
-    });
-
-    waitset.attach_condition(metrics_condition);
-    waitset.attach_condition(transit_condition);
-    waitset.attach_condition(display_condition);
-
     for (;;) {
-        waitset.dispatch();
-        std::lock_guard<std::mutex> lock(mutex);
-        display_condition.trigger_value(false);
+        std::cout << output_string() << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
     }
 }
 
-void SubscriberDashboard::display_app()
+std::string SubscriberDashboard::output_string()
 {
     using ::to_string;
     using std::to_string;
-
     std::stringstream ss;
     auto now = std::chrono::system_clock::now();
     ss << "[[ DASHBOARD: " << now.time_since_epoch().count() << " ]]\n";
+    auto data = dashboard_data();
     {
-        auto online = online_vehicles();
+        std::vector<DashboardItem> online;
+        for (const auto &item : data) {
+            if (!item.second.is_historical) {
+                online.push_back(item.second);
+            }
+        }
         ss << "Online vehicles: " << online.size() << "\n";
         for (auto &item : online) {
             ss << "- Vehicle " << item.vin << ":\n";
             ss << "  Fuel updates: " << item.fuel_history.size() << "\n";
             ss << "  Last known destination: "
                << (item.current_destination
-                           ? to_string(*item.current_destination)
+                           ? to_string(item.current_destination.value())
                            : "None")
                << "\n";
             ss << "  Last known fuel level: "
@@ -138,7 +91,12 @@ void SubscriberDashboard::display_app()
         }
     }
     {
-        auto offline = offline_vehicles();
+        std::vector<DashboardItem> offline;
+        for (const auto &item : data) {
+            if (item.second.is_historical) {
+                offline.push_back(item.second);
+            }
+        }
         ss << "Offline vehicles: " << offline.size() << "\n";
         for (auto &item : offline) {
             ss << "- Vehicle " << item.vin << ":\n";
@@ -157,73 +115,84 @@ void SubscriberDashboard::display_app()
         }
     }
 
-    std::cout << ss.str() << std::endl;
+    return ss.str();
 }
 
-void SubscriberDashboard::metrics_app()
+std::unordered_map<dds::core::InstanceHandle, DashboardItem>
+SubscriberDashboard::dashboard_data()
 {
-    for (const auto &sample : metrics_reader_.take()) {
-        auto it = dashboard_data_.find(sample.info().instance_handle());
-        // If not a tracked vehicle, track it.
-        if (it == dashboard_data_.end()) {
-            if (!sample.info().valid())
+    {
+        std::unordered_map<dds::core::InstanceHandle, DashboardItem> data;
+        auto metric_samples = metrics_reader_.read();
+        auto transit_samples = transit_reader_.read();
+
+        for (const auto &sample : metric_samples) {
+            auto it = data.find(sample.info().instance_handle());
+            // If not a tracked vehicle, track it.
+            if (it == data.end()) {
+                if (!sample.info().valid())
+                    continue;
+
+                auto new_handle = sample.info().instance_handle();
+                auto new_data = DashboardItem { sample.data().vehicle_vin() };
+                it = data.emplace(new_handle, new_data).first;
+            }
+
+            auto &item = it->second;
+            item.is_historical = sample.info().state().instance_state()
+                    != dds::sub::status::InstanceState::alive();
+
+            if (!sample.info().valid() && item.is_historical) {
                 continue;
+            }
 
-            auto new_handle = sample.info().instance_handle();
-            auto new_data = DashboardItem { sample.data().vehicle_vin() };
-            it = dashboard_data_.emplace(new_handle, new_data).first;
+            item.fuel_history.push_back(sample.data().fuel_level());
+        }
+        for (const auto &sample : transit_samples) {
+            auto it = data.find(sample.info().instance_handle());
+            // If not a tracked vehicle, track it.
+            if (it == data.end()) {
+                if (!sample.info().valid())
+                    continue;
+
+                auto new_handle = sample.info().instance_handle();
+                auto new_data = DashboardItem { sample.data().vehicle_vin() };
+                it = data.emplace(new_handle, new_data).first;
+            }
+
+            auto &item = it->second;
+            item.is_historical = sample.info().state().instance_state()
+                    != dds::sub::status::InstanceState::alive();
+
+            if (!sample.info().valid() && item.is_historical) {
+                continue;
+            }
+
+            auto &current_route = sample.data().current_route();
+            if (current_route->size() > 0) {
+                item.current_destination = current_route->back();
+            } else {
+                // TODO: This crashes on runtime
+                item.reached_destinations.push_back(*item.current_destination);
+                item.current_destination.reset();
+                item.completed_routes++;
+            }
         }
 
-        auto &item = it->second;
-        item.is_historical = sample.info().state().instance_state()
-                != dds::sub::status::InstanceState::alive();
-
-        if (!sample.info().valid() && item.is_historical) {
-            continue;
-        }
-
-        item.fuel_history.push_back(sample.data().fuel_level());
+        return data;
     }
 }
 
-void SubscriberDashboard::transit_app()
-{
-    for (const auto &sample : transit_reader_.take()) {
-        auto it = dashboard_data_.find(sample.info().instance_handle());
-        // If not a tracked vehicle, track it.
-        if (it == dashboard_data_.end()) {
-            if (!sample.info().valid())
-                continue;
-
-            auto new_handle = sample.info().instance_handle();
-            auto new_data = DashboardItem { sample.data().vehicle_vin() };
-            it = dashboard_data_.emplace(new_handle, new_data).first;
-        }
-
-        auto &item = it->second;
-        item.is_historical = sample.info().state().instance_state()
-                != dds::sub::status::InstanceState::alive();
-
-        if (!sample.info().valid() && item.is_historical) {
-            continue;
-        }
-
-        auto &current_route = sample.data().current_route();
-        if (current_route->size() > 0) {
-            item.current_destination = current_route->back();
-        } else {
-            item.reached_destinations.push_back(*item.current_destination);
-            item.current_destination.reset();
-            item.completed_routes++;
-        }
-    }
-}
-
-std::string to_string(const SubscriberDashboard &dashboard)
+std::string SubscriberDashboard::to_string() const
 {
     std::ostringstream ss;
     ss << "Dashboard()";
     return ss.str();
+}
+
+std::string to_string(const SubscriberDashboard &dashboard)
+{
+    return dashboard.to_string();
 }
 
 int main(int argc, char **argv)
