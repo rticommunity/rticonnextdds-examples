@@ -38,3 +38,9 @@ Running subscriber
 dotnet run -- sub
 ...
 ```
+
+Running filter update
+```sh
+dotnet run -- filter
+...
+```
