@@ -9,14 +9,11 @@
 # damages arising out of the use or inability to use the software.
 #
 
-import asyncio
 import dataclasses
-import datetime
-import statistics
+import time
 import typing
 from datetime import datetime
 
-import rti.asyncio
 import rti.connextdds as dds
 
 from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
@@ -30,11 +27,7 @@ class DashboardItem:
     fuel_history: typing.List[float] = dataclasses.field(
         default_factory=lambda: [100.0]
     )
-    completed_routes: int = 0
     current_destination: typing.Optional[Coord] = None
-    reached_destinations: typing.List[Coord] = dataclasses.field(
-        default_factory=list
-    )
 
 
 class SubscriberDashboard:
@@ -45,71 +38,46 @@ class SubscriberDashboard:
     ):
         self._metrics_reader = metrics_reader
         self._transit_reader = transit_reader
-        self._dashboard_data: typing.Dict[
-            dds.InstanceHandle, DashboardItem
-        ] = dict()
 
     def __repr__(self):
-        return f"Dashboard({self._metrics_reader=}, {self._transit_reader=}, {self._dashboard_data=})"
+        return f"Dashboard({self._metrics_reader=}, {self._transit_reader=})"
 
-    async def run(self):
-        await asyncio.gather(
-            self._display_app(),
-            self._metrics_app(),
-            self._transit_app(),
-        )
-
-    @property
-    def online_vehicles(self):
-        return {
-            handle: data
-            for handle, data in self._dashboard_data.items()
-            if not data.is_historical
-        }
-
-    @property
-    def offline_vehicles(self):
-        return {
-            handle: data
-            for handle, data in self._dashboard_data.items()
-            if data.is_historical
-        }
-
-    async def _display_app(self):
+    def run(self):
         while True:
             print(f"[[ DASHBOARD: {datetime.now()} ]]")
-            print(f"Online vehicles: {len(self.online_vehicles)}")
-            for data in self.online_vehicles.values():
-                print(f"- Vehicle {data.vin}:")
+
+            dashboard_data = self._dashboard_data()
+            online_vehicles = [
+                data for data in dashboard_data.values() if not data.is_historical
+            ]
+            offline_vehicles = [
+                data for data in dashboard_data.values() if data.is_historical
+            ]
+            print(f"Online vehicles: {len(online_vehicles)}")
+            for data in online_vehicles:
+                print(f"- Vehicle {data.vin}")
                 print(f"  Fuel updates: {len(data.fuel_history)}")
                 print(f"  Last known destination: {data.current_destination}")
                 print(f"  Last known fuel level: {data.fuel_history[-1]}")
-            print(f"Offline vehicles: {len(self.offline_vehicles.keys())}")
-            for data in self.offline_vehicles.values():
-                mean_full_consumption = statistics.mean(
-                    data.fuel_history
-                ) / len(data.fuel_history)
-
-                print(f"- Vehicle {data.vin}:")
-                print(f"  Mean fuel consumption: {mean_full_consumption}")
-                print(
-                    f"  Known reached destinations: {len(data.reached_destinations)}"
-                )
-                for coord in data.reached_destinations:
-                    print(f"    - {coord}")
+            print(f"Offline vehicles: {len(offline_vehicles)}")
+            for data in offline_vehicles:
+                print(f"- Vehicle {data.vin}")
             print()
-            await asyncio.sleep(0.5)
+            time.sleep(0.5)
 
-    async def _metrics_app(self):
-        async for sample, info in self._metrics_reader.take_async():
-            if info.instance_handle not in self._dashboard_data:
+    def _dashboard_data(self):
+        data: typing.Dict[dds.InstanceHandle, DashboardItem] = {}
+
+        metrics = self._metrics_reader.read()
+        transit = self._transit_reader.read()
+
+        for sample, info in metrics:
+            if info.instance_handle not in data:
                 if sample is None:
                     continue
-                self._dashboard_data[info.instance_handle] = DashboardItem(
-                    sample.vehicle_vin
-                )
+                data[info.instance_handle] = DashboardItem(sample.vehicle_vin)
 
-            instance_data = self._dashboard_data[info.instance_handle]
+            instance_data = data[info.instance_handle]
             instance_data.is_historical = (
                 info.state.instance_state != dds.InstanceState.ALIVE
             )
@@ -119,18 +87,13 @@ class SubscriberDashboard:
 
             instance_data.fuel_history.append(sample.fuel_level)
 
-        print("metrics ended")
-
-    async def _transit_app(self):
-        async for sample, info in self._transit_reader.take_async():
-            if info.instance_handle not in self._dashboard_data:
+        for sample, info in transit:
+            if info.instance_handle not in data:
                 if sample is None:
                     continue
-                self._dashboard_data[info.instance_handle] = DashboardItem(
-                    sample.vehicle_vin
-                )
+                data[info.instance_handle] = DashboardItem(sample.vehicle_vin)
 
-            instance_data = self._dashboard_data[info.instance_handle]
+            instance_data = data[info.instance_handle]
             instance_data.is_historical = (
                 info.state.instance_state != dds.InstanceState.ALIVE
             )
@@ -144,11 +107,8 @@ class SubscriberDashboard:
             else:
                 # Vehicle has finished its route
                 instance_data.current_destination = None
-                instance_data.reached_destinations.append(
-                    sample.current_position
-                )
 
-        print("transit ended")
+        return data
 
 
 def main():
@@ -172,7 +132,7 @@ def main():
         )
 
         print(f"Running dashboard: {dashboard=}")
-        asyncio.run(dashboard.run())
+        dashboard.run()
 
 
 if __name__ == "__main__":

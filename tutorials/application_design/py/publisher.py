@@ -44,22 +44,23 @@ class PublisherSimulation:
     ):
         self._metrics_writer = metrics_writer
         self._transit_writer = transit_writer
-        self._vehicle_vin: str = "".join(
+
+        vehicle_vin = "".join(
             random.choices("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=17)
         )
-        self._vehicle_fuel = 100.0
-        self._vehicle_route = new_route()
-        self._vehicle_position = self._vehicle_route.pop(0)
+        vehicle_route = new_route()
+        vehicle_position = vehicle_route.pop(0)
+
+        self._metrics = VehicleMetrics(vehicle_vin, 100.0)
+        self._transit = VehicleTransit(vehicle_vin, vehicle_position, vehicle_route)
 
     def __repr__(self):
         return (
             f"Simulation("
             f"{self._metrics_writer=}, "
             f"{self._transit_writer=}, "
-            f"{self._vehicle_vin=}, "
-            f"{self._vehicle_fuel=}, "
-            f"{self._vehicle_route=}, "
-            f"{self._vehicle_position=})"
+            f"{self._metrics=}, "
+            f"{self._transit=})"
         )
 
     @property
@@ -68,44 +69,34 @@ class PublisherSimulation:
 
     @property
     def _is_out_of_fuel(self):
-        return self._vehicle_fuel <= 0.0
+        return self._metrics.fuel_level <= 0.0
 
     @property
     def _is_on_standby(self):
-        return not self._vehicle_route
+        return not self._transit.current_route
 
     def run(self):
         while not self.has_ended:
-            self._metrics_writer.write(
-                VehicleMetrics(
-                    self._vehicle_vin,
-                    self._vehicle_fuel,
-                )
-            )
-
-            self._transit_writer.write(
-                VehicleTransit(
-                    self._vehicle_vin,
-                    current_route=self._vehicle_route,
-                    current_position=self._vehicle_position,
-                )
-            )
+            self._metrics_writer.write(self._metrics)
+            self._transit_writer.write(self._transit)
 
             time.sleep(1)
 
             if self._is_on_standby:
                 print(
-                    f"Vehicle '{self._vehicle_vin}' has reached its destination, now moving to a new location..."
+                    f"Vehicle '{self._metrics.vehicle_vin}' has reached its destination, now moving to a new location..."
                 )
-                self._vehicle_route = new_route(start=self._vehicle_position)
+                self._transit.current_route = new_route(
+                    start=self._transit.current_position
+                )
 
-            self._vehicle_position = self._vehicle_route.pop(0)
-            self._vehicle_fuel -= 10 * random.random()
+            self._transit.current_position = self._transit.current_route.pop(0)
+            self._metrics.fuel_level -= 10 * random.random()
 
             if self._is_out_of_fuel:
-                self._vehicle_fuel = 0.0
+                self._metrics.fuel_level = 0.0
 
-                print(f"Vehicle '{self._vehicle_vin}' ran out of fuel!")
+                print(f"Vehicle '{self._metrics.vehicle_vin}' ran out of fuel!")
 
 
 def main():
