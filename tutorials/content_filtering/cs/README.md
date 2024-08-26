@@ -25,21 +25,21 @@ dotnet build
 
 ## Running the Example :rocket:
 
-Running publisher
+Run the publisher
 
 ```sh
 dotnet run -- pub
 ...
 ```
 
-Running subscriber
+Run the subscriber
 
 ```sh
 dotnet run -- sub
 ...
 ```
 
-Running filter update
+(Optional) Run the subscriber that updates the filter
 ```sh
 dotnet run -- filter
 ...
