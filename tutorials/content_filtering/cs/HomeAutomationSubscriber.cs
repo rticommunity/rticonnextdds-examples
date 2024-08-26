@@ -30,21 +30,18 @@ namespace HomeAutomation
             Topic<DeviceStatus> topic =
                 participant.CreateTopic<DeviceStatus>("WindowStatus");
 
-            ContentFilteredTopic<DeviceStatus> content_filtered_topic = 
+            ContentFilteredTopic<DeviceStatus> contentFilteredTopic = 
                 participant.CreateContentFilteredTopic<DeviceStatus>(
                     "FilterRoomAndOpenWindows",
                     topic,
                     new Filter("is_open = true and room_name = 'LivingRoom'"));
 
             DataReader<DeviceStatus> reader = 
-                participant.ImplicitSubscriber.CreateDataReader(content_filtered_topic);
+                participant.ImplicitSubscriber.CreateDataReader(contentFilteredTopic);
 
             await foreach (var data in reader.TakeAsync().ValidData())
             {
-                if (data.is_open)
-                {
-                    Console.WriteLine($"WARNING: {data.sensor_name} in {data.room_name} is open!");
-                }
+                Console.WriteLine($"WARNING: {data.sensor_name} in {data.room_name} is open!");
             }
         }
     }

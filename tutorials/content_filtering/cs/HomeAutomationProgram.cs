@@ -30,7 +30,7 @@ namespace HomeAutomation
             else if(appKind == "filter")
             {
                 Console.WriteLine("Starting subscriber_update_filter...");
-                await Subscriber_Update_Filter.MonitorSensors();
+                await SubscriberUpdateFilter.MonitorSensors();
             }
             else
             {
