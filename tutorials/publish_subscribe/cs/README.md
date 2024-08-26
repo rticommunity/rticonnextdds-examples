@@ -22,21 +22,21 @@ dotnet build
 
 ## Running the Applications :rocket:
 
-Running publisher
+Run the publisher
 
 ```sh
 dotnet run -- pub
 ...
 ```
 
-Running subscriber
+Run the subscriber
 
 ```sh
 dotnet run -- sub
 ...
 ```
 
-Extra. Running subscriber with timestamp
+Extra. Run the subscriber with timestamp
 
 ```sh
 dotnet run -- sub_timestamp
