@@ -23,9 +23,7 @@ struct DashboardItem {
     std::string vin;
     bool is_historical;
     std::vector<double> fuel_history;
-    int completed_routes;
     rti::core::optional<Coord> current_destination;
-    std::vector<Coord> reached_destinations;
 };
 
 class SubscriberDashboard {
@@ -77,7 +75,7 @@ std::string SubscriberDashboard::output_string()
         ss << "Online vehicles: " << online.size() << "\n";
         for (auto &item : online) {
             ss << "- Vehicle " << item.vin << ":\n";
-            ss << "  Fuel updates: " << item.fuel_history.size() << "\n";
+            ss << "  Known fuel updates: " << item.fuel_history.size() << "\n";
             ss << "  Last known destination: "
                << (item.current_destination
                            ? to_string(item.current_destination.value())
@@ -100,18 +98,6 @@ std::string SubscriberDashboard::output_string()
         ss << "Offline vehicles: " << offline.size() << "\n";
         for (auto &item : offline) {
             ss << "- Vehicle " << item.vin << ":\n";
-            ss << "  Mean fuel consumption: "
-               << std::accumulate(
-                          item.fuel_history.begin(),
-                          item.fuel_history.end(),
-                          0.0)
-                            / item.fuel_history.size()
-               << "\n";
-            ss << "  Known reached destinations: "
-               << item.reached_destinations.size() << "\n";
-            for (auto &destination : item.reached_destinations) {
-                ss << "    - " << to_string(destination) << "\n";
-            }
         }
     }
 
@@ -172,10 +158,7 @@ SubscriberDashboard::dashboard_data()
             if (current_route->size() > 0) {
                 item.current_destination = current_route->back();
             } else {
-                // TODO: This crashes on runtime
-                item.reached_destinations.push_back(*item.current_destination);
                 item.current_destination.reset();
-                item.completed_routes++;
             }
         }
 
