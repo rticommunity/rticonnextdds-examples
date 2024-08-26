@@ -74,7 +74,7 @@ std::string SubscriberDashboard::output_string()
         }
         ss << "Online vehicles: " << online.size() << "\n";
         for (auto &item : online) {
-            ss << "- Vehicle " << item.vin << ":\n";
+            ss << "- Vehicle " << item.vin << "\n";
             ss << "  Known fuel updates: " << item.fuel_history.size() << "\n";
             ss << "  Last known destination: "
                << (item.current_destination
@@ -97,7 +97,7 @@ std::string SubscriberDashboard::output_string()
         }
         ss << "Offline vehicles: " << offline.size() << "\n";
         for (auto &item : offline) {
-            ss << "- Vehicle " << item.vin << ":\n";
+            ss << "- Vehicle " << item.vin << "\n";
         }
     }
 
