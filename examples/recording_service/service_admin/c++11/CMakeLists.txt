@@ -42,7 +42,6 @@ target_compile_features(Requester PRIVATE cxx_std_11)
 target_link_libraries(
     Requester
     RTIConnextDDS::messaging_cpp2_api
-    RTIConnextDDS::service_admin_cpp2
     RTIConnextDDS::recording_service
     ${CONNEXTDDS_EXTERNAL_LIBS}
 )
