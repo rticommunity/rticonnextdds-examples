@@ -10,6 +10,8 @@
  * to use the software.
  */
 
+@Library("rticommunity-jenkins-pipelines@feature/COMMUNITY-95") _
+
 /**
  * Hold information about the pipeline.
  */
