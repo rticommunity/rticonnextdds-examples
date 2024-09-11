@@ -43,7 +43,8 @@ private:
     dds::sub::DataReader<VehicleMetrics> metrics_reader_;
     dds::sub::DataReader<VehicleTransit> transit_reader_;
 
-    std::string output_string();
+    std::string new_position_string(dds::sub::cond::ReadCondition &condition);
+    std::string dashboard_string();
 
     std::unordered_map<dds::core::InstanceHandle, DashboardItem>
     dashboard_data();
@@ -51,13 +52,64 @@ private:
 
 void SubscriberDashboard::run()
 {
+    dds::sub::cond::ReadCondition new_position_condition(
+            transit_reader_,
+            dds::sub::status::DataState::new_data(),
+            [this, &new_position_condition]() {
+                std::cout << new_position_string(new_position_condition) << std::endl;
+            });
+
+    dds::core::cond::GuardCondition dashboard_condition;
+    dashboard_condition.extensions().handler(
+            [this]() { std::cout << dashboard_string() << std::endl; });
+
+    std::mutex mutex;
+    std::thread display_thread([&dashboard_condition, &mutex]() {
+        for (;;) {
+            std::this_thread::sleep_for(std::chrono::seconds(5));
+            std::lock_guard<std::mutex> lock(mutex);
+            dashboard_condition.trigger_value(true);
+        }
+    });
+
+    dds::core::cond::WaitSet waitset;
+    waitset += new_position_condition;
+    waitset += dashboard_condition;
+
     for (;;) {
-        std::cout << output_string() << std::endl;
-        std::this_thread::sleep_for(std::chrono::seconds(1));
+        waitset.dispatch();
+        std::lock_guard<std::mutex> lock(mutex);
+        dashboard_condition.trigger_value(false);
     }
 }
 
-std::string SubscriberDashboard::output_string()
+std::string SubscriberDashboard::new_position_string(
+        dds::sub::cond::ReadCondition &condition)
+{
+    using ::to_string;
+    using std::to_string;
+    std::stringstream ss;
+    auto transit_samples = transit_reader_.select().condition(condition).read();
+    for (const auto &sample : transit_samples) {
+        if (!sample.info().valid()) {
+            continue;
+        }
+
+        ss << "[INFO] Vehicle " << sample.data().vehicle_vin();
+        auto &current_route = sample.data().current_route();
+        if (current_route.has_value() && !current_route->empty()) {
+            ss << " is enroute to " << to_string(current_route->back())
+               << " from " << to_string(sample.data().current_position());
+        } else {
+            ss << " has arrived at its destination in "
+               << to_string(sample.data().current_position());
+        }
+        ss << "\n";
+    }
+    return ss.str();
+}
+
+std::string SubscriberDashboard::dashboard_string()
 {
     using ::to_string;
     using std::to_string;
