@@ -56,7 +56,8 @@ void SubscriberDashboard::run()
             transit_reader_,
             dds::sub::status::DataState::new_data(),
             [this, &new_position_condition]() {
-                std::cout << new_position_string(new_position_condition) << std::endl;
+                std::cout << new_position_string(new_position_condition)
+                          << std::endl;
             });
 
     dds::core::cond::GuardCondition dashboard_condition;

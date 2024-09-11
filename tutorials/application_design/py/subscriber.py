@@ -58,14 +58,15 @@ class SubscriberDashboard:
 
         dashboard_condition.set_handler(dashboard_handler)
 
-
         display_handler_sentinel = threading.Event()
         display_handler_condition = threading.Condition()
+
         def display_handler():
             while not display_handler_sentinel.is_set():
                 with display_handler_condition:
                     display_handler_condition.wait(5)
                     dashboard_condition.trigger_value = True
+
         display_thread = threading.Thread(target=display_handler)
 
         waitset = dds.WaitSet()
