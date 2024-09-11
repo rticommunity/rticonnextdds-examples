@@ -10,7 +10,7 @@
 #
 
 import dataclasses
-import time
+import threading
 import typing
 from datetime import datetime
 
@@ -43,27 +43,90 @@ class SubscriberDashboard:
         return f"Dashboard({self._metrics_reader=}, {self._transit_reader=})"
 
     def run(self):
-        while True:
-            print(f"[[ DASHBOARD: {datetime.now()} ]]")
 
-            dashboard_data = self._dashboard_data()
-            online_vehicles = [
-                data for data in dashboard_data.values() if not data.is_historical
+        def new_position_handler(_):
+            print(self._new_position_string(new_position_condition))
+
+        new_position_condition = dds.ReadCondition(
+            self._transit_reader, dds.DataState.new_data, new_position_handler
+        )
+
+        dashboard_condition = dds.GuardCondition()
+
+        def dashboard_handler(_):
+            print(self._dashboard_string())
+
+        dashboard_condition.set_handler(dashboard_handler)
+
+
+        display_handler_sentinel = threading.Event()
+        display_handler_condition = threading.Condition()
+        def display_handler():
+            while not display_handler_sentinel.is_set():
+                with display_handler_condition:
+                    display_handler_condition.wait(5)
+                    dashboard_condition.trigger_value = True
+        display_thread = threading.Thread(target=display_handler)
+
+        waitset = dds.WaitSet()
+        waitset.attach_condition(new_position_condition)
+        waitset.attach_condition(dashboard_condition)
+
+        display_thread.start()
+        try:
+            while True:
+                waitset.dispatch()
+                dashboard_condition.trigger_value = False
+        except KeyboardInterrupt:
+            with display_handler_condition:
+                display_handler_sentinel.set()
+                display_handler_condition.notify_all()
+
+        display_thread.join()
+
+    def _new_position_string(self, condition):
+        string = str()
+        for sample, info in self._transit_reader.select().condition(condition).read():
+            if not info.valid:
+                continue
+
+            string += f"[INFO] Vehicle {sample.vehicle_vin}"
+            if sample.current_route and len(sample.current_route):
+                string += f" is enroute to {sample.current_route[-1]} from {sample.current_position}"
+            else:
+                string += (
+                    f" has arrived at its destination in {sample.current_position}"
+                )
+            string += "\n"
+        return string
+
+    def _dashboard_string(self):
+        dashboard_data = self._dashboard_data()
+        online_vehicles = [
+            data for data in dashboard_data.values() if not data.is_historical
+        ]
+        offline_vehicles = [
+            data for data in dashboard_data.values() if data.is_historical
+        ]
+
+        online_str = "\n".join(
+            f"Vehicle {data.vin}:\n"
+            f"  Fuel updates: {len(data.fuel_history)}\n"
+            f"  Last known destination: {data.current_destination}\n"
+            f"  Last known fuel level: {data.fuel_history[-1]}\n"
+            for data in online_vehicles
+        )
+        offline_str = "\n".join(f"Vehicle {data.vin}" for data in offline_vehicles)
+
+        return "\n".join(
+            [
+                f"[[ DASHBOARD: {datetime.now()} ]]",
+                f"Online vehicles: {len(online_vehicles)}",
+                online_str,
+                f"Offline vehicles: {len(offline_vehicles)}",
+                offline_str,
             ]
-            offline_vehicles = [
-                data for data in dashboard_data.values() if data.is_historical
-            ]
-            print(f"Online vehicles: {len(online_vehicles)}")
-            for data in online_vehicles:
-                print(f"- Vehicle {data.vin}")
-                print(f"  Fuel updates: {len(data.fuel_history)}")
-                print(f"  Last known destination: {data.current_destination}")
-                print(f"  Last known fuel level: {data.fuel_history[-1]}")
-            print(f"Offline vehicles: {len(offline_vehicles)}")
-            for data in offline_vehicles:
-                print(f"- Vehicle {data.vin}")
-            print()
-            time.sleep(0.5)
+        )
 
     def _dashboard_data(self):
         data: typing.Dict[dds.InstanceHandle, DashboardItem] = {}
