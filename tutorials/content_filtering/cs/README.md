@@ -40,6 +40,7 @@ dotnet run -- sub
 ```
 
 (Optional) Run the subscriber that updates the filter
+
 ```sh
 dotnet run -- filter
 ...
