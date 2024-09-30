@@ -33,9 +33,9 @@ class DashboardItem:
 class SubscriberDashboard:
     def __init__(
         self,
-        metrics_reader: "dds.DataReader",
-        transit_reader: "dds.DataReader",
-    ):
+        metrics_reader: dds.DataReader,
+        transit_reader: dds.DataReader,
+    ) -> None:
         self._metrics_reader = metrics_reader
         self._transit_reader = transit_reader
 

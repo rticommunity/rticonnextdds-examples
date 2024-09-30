@@ -39,9 +39,9 @@ def new_route(
 class PublisherSimulation:
     def __init__(
         self,
-        metrics_writer: "dds.DataWriter",
-        transit_writer: "dds.DataWriter",
-    ):
+        metrics_writer: dds.DataWriter,
+        transit_writer: dds.DataWriter,
+    ) -> None:
         self._metrics_writer = metrics_writer
         self._transit_writer = transit_writer
 
