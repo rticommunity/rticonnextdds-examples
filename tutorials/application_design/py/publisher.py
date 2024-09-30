@@ -18,20 +18,20 @@ import rti.connextdds as dds
 from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 
-def new_route(
+def create_new_route(
     n: int = 5,
     start: typing.Optional[Coord] = None,
     end: typing.Optional[Coord] = None,
 ):
-    def new_random_coord():
+    def create_new_random_coord():
         return Coord(
             (0.5 - random.random()) * 100,
             (0.5 - random.random()) * 100,
         )
 
-    start = start or new_random_coord()
-    intermediate = (new_random_coord() for _ in range(n))
-    end = end or new_random_coord()
+    start = start or create_new_random_coord()
+    intermediate = (create_new_random_coord() for _ in range(n))
+    end = end or create_new_random_coord()
 
     return [start, *intermediate, end]
 
@@ -48,7 +48,7 @@ class PublisherSimulation:
         vehicle_vin = "".join(
             random.choices("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=17)
         )
-        vehicle_route = new_route()
+        vehicle_route = create_new_route()
         vehicle_position = vehicle_route.pop(0)
 
         self._metrics = VehicleMetrics(vehicle_vin, 100.0)
@@ -86,7 +86,7 @@ class PublisherSimulation:
                 print(
                     f"Vehicle '{self._metrics.vehicle_vin}' has reached its destination, now moving to a new location..."
                 )
-                self._transit.current_route = new_route(
+                self._transit.current_route = create_new_route(
                     start=self._transit.current_position
                 )
 

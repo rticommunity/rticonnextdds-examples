@@ -44,56 +44,55 @@ class SubscriberDashboard:
 
     def run(self):
 
+        # Create a new handler for newly-received data.
+        # This handler will be called as data comes by, by dispatching
+        # the WaitSet that has attached this ReadCondition.
         def new_position_handler(_):
-            print(self._new_position_string(new_position_condition))
+            print(self._create_new_position_string(new_position_condition))
 
         new_position_condition = dds.ReadCondition(
             self._transit_reader, dds.DataState.new_data, new_position_handler
         )
 
-        dashboard_condition = dds.GuardCondition()
-
+        # Create a new handler for printing the dashboard.
+        # This handler will be called whenever the GuardCondition is triggered,
+        # which we're periodically doing on a background thread.
         def dashboard_handler(_):
-            print(self._dashboard_string())
+            print(self._create_dashboard_string())
 
+        dashboard_condition = dds.GuardCondition()
         dashboard_condition.set_handler(dashboard_handler)
 
-        display_handler_sentinel = threading.Event()
-        display_handler_condition = threading.Condition()
-
+        # Create a background thread that will trigger the dashboard condition.
         def display_handler():
-            while not display_handler_sentinel.is_set():
-                with display_handler_condition:
-                    display_handler_condition.wait(5)
-                    dashboard_condition.trigger_value = True
+            dashboard_condition.trigger_value = True
 
         display_thread = threading.Thread(target=display_handler)
 
+        # Create a WaitSet and attach the conditions to it.
         waitset = dds.WaitSet()
         waitset.attach_condition(new_position_condition)
         waitset.attach_condition(dashboard_condition)
 
+        # Start the thread now that the WaitSet has been created.
         display_thread.start()
+
         try:
             while True:
                 waitset.dispatch()
                 dashboard_condition.trigger_value = False
         except KeyboardInterrupt:
-            with display_handler_condition:
-                display_handler_sentinel.set()
-                display_handler_condition.notify_all()
+            pass
 
-        display_thread.join()
-
-    def _new_position_string(self, condition):
-        string = str()
+    def _create_new_position_string(self, condition):
+        string = ""
         for sample, info in self._transit_reader.select().condition(condition).read():
             if not info.valid:
                 continue
 
             string += f"[INFO] Vehicle {sample.vehicle_vin}"
             if sample.current_route and len(sample.current_route):
-                string += f" is enroute to {sample.current_route[-1]} from {sample.current_position}"
+                string += f" is en route to {sample.current_route[-1]} from {sample.current_position}"
             else:
                 string += (
                     f" has arrived at its destination in {sample.current_position}"
@@ -101,8 +100,8 @@ class SubscriberDashboard:
             string += "\n"
         return string
 
-    def _dashboard_string(self):
-        dashboard_data = self._dashboard_data()
+    def _create_dashboard_string(self):
+        dashboard_data = self._build_dashboard_data()
         online_vehicles = [
             data for data in dashboard_data.values() if not data.is_historical
         ]
@@ -129,7 +128,7 @@ class SubscriberDashboard:
             ]
         )
 
-    def _dashboard_data(self):
+    def _build_dashboard_data(self):
         data: typing.Dict[dds.InstanceHandle, DashboardItem] = {}
 
         metrics = self._metrics_reader.read()
