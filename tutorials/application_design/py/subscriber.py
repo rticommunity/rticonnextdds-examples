@@ -86,7 +86,9 @@ class SubscriberDashboard:
 
     def _create_new_position_string(self, condition):
         string = ""
-        for sample, info in self._transit_reader.select().condition(condition).read():
+        for sample, info in (
+            self._transit_reader.select().condition(condition).read()
+        ):
             if not info.valid:
                 continue
 
@@ -94,9 +96,7 @@ class SubscriberDashboard:
             if sample.current_route and len(sample.current_route):
                 string += f" is en route to {sample.current_route[-1]} from {sample.current_position}"
             else:
-                string += (
-                    f" has arrived at its destination in {sample.current_position}"
-                )
+                string += f" has arrived at its destination in {sample.current_position}"
             string += "\n"
         return string
 
@@ -116,7 +116,9 @@ class SubscriberDashboard:
             f"  Last known fuel level: {data.fuel_history[-1]}\n"
             for data in online_vehicles
         )
-        offline_str = "\n".join(f"Vehicle {data.vin}" for data in offline_vehicles)
+        offline_str = "\n".join(
+            f"Vehicle {data.vin}" for data in offline_vehicles
+        )
 
         return "\n".join(
             [

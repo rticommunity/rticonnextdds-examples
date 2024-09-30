@@ -52,7 +52,9 @@ class PublisherSimulation:
         vehicle_position = vehicle_route.pop(0)
 
         self._metrics = VehicleMetrics(vehicle_vin, 100.0)
-        self._transit = VehicleTransit(vehicle_vin, vehicle_position, vehicle_route)
+        self._transit = VehicleTransit(
+            vehicle_vin, vehicle_position, vehicle_route
+        )
 
     def __repr__(self):
         return (
@@ -96,7 +98,9 @@ class PublisherSimulation:
             if self._is_out_of_fuel:
                 self._metrics.fuel_level = 0.0
 
-                print(f"Vehicle '{self._metrics.vehicle_vin}' ran out of fuel!")
+                print(
+                    f"Vehicle '{self._metrics.vehicle_vin}' ran out of fuel!"
+                )
 
 
 def main():
