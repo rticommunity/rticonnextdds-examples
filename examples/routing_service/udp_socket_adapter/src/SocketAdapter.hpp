@@ -19,6 +19,10 @@
 #include <rti/routing/RoutingService.hpp>
 #include <rti/routing/adapter/AdapterPlugin.hpp>
 
+/*
+ * This is the initialization of the RS adapter. For simplicity, this adapter
+ * only reads from UDP and writes to DDS, not the other way around
+ */
 class SocketAdapter : public rti::routing::adapter::AdapterPlugin {
 public:
     explicit SocketAdapter(rti::routing::PropertySet &);

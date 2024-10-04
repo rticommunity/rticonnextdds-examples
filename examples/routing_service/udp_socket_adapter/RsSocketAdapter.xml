@@ -66,7 +66,9 @@
                     <dds_output participant="DDSConnection">
                         <creation_mode>ON_ROUTE_MATCH</creation_mode>
                         <registered_type_name>ShapeType</registered_type_name>
-                        <!-- Topic used to send data. You can also choose Circle or Triangle -->
+                        <!-- Topic used to send data. We only support 1 topic for simplicity.
+                            You could use Triangle or Circle if you also modify the other
+                            references to Square that are hardcoded in the adapter code -->
                         <topic_name>Square</topic_name>
                         <datawriter_qos base_name="BuiltinQosLib::Generic.Common"/>
                     </dds_output>

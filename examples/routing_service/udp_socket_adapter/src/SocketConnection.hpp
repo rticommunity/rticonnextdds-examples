@@ -18,6 +18,10 @@
 
  #include "SocketInputDiscoveryStreamReader.hpp"
 
+/*
+ * This class creates the RS Connection, which is an access point to our
+ * example data domain (a UDP socket)
+ */
 class SocketConnection : public rti::routing::adapter::Connection {
 public:
     SocketConnection(
@@ -33,14 +37,12 @@ public:
             const rti::routing::PropertySet &properties,
             rti::routing::adapter::StreamReaderListener *listener) final;
 
+    // This function will also stop the receiving socket thread
     void delete_stream_reader(
             rti::routing::adapter::StreamReader *reader) final;
 
     rti::routing::adapter::DiscoveryStreamReader *
             input_stream_discovery_reader() final;
-
-    rti::routing::adapter::DiscoveryStreamReader *
-            output_stream_discovery_reader() final;
 
     /**
      * @brief This function is called by the SocketStreamReader to indicate

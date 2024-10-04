@@ -39,16 +39,16 @@ cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
       -DBUILD_SHARED_LIBS=ON|OFF \                   # ON is preferred
       -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
-export LD_LIBRARY_PATH=build/:$LD_LIBRARY_PATH
 cd ..
+export LD_LIBRARY_PATH=build/:$LD_LIBRARY_PATH
 ```
 
 Example command for Windows:
 
 ```bash
 cmake .. -DCONNEXTDDS_DIR="%NDDSHOME%" -DCONNEXTDDS_ARCH=x64Win64VS2015 -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -A x64 -G "Visual Studio 17 2022"
-set PATH=build\Release;%PATH%
 cd ..
+set PATH=build\Release;%PATH%
 ```
 
 **Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
@@ -102,7 +102,9 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file crea
 
 To run the example, you just need to run the following commands from the top
 level folder. This example has been written to allow easy experimentation with
-the Shapes Demo shipped with *RTI Connext DDS* installer bundle.
+the Shapes Demo shipped with *RTI Connext DDS* installer bundle. You will find
+some hardcoded references to ShapeType and Square. If you wish to create a
+real Routing Service adapter, you should modify the code and XML accordingly.
 
 There is 1 configuration (`-cfgName`) in the Routing Service XML file:
 
@@ -144,7 +146,7 @@ Now you'll need to send data to the UDP sockets. By default, Shapes are
 expected on `127.0.0.1:10203`. You can change these default values on
 `RsSocketAdapter.xml`.
 
-To run the Shape tester:
+To run the Shape tester that mimics a legacy UDP socket sender, run:
 
 ```bash
 python3 test/send_shape_to_socket.py 127.0.0.1 10203

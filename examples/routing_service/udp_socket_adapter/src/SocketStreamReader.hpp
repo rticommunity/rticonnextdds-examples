@@ -40,11 +40,6 @@ public:
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &) final;
 
-    void take(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &,
-            const rti::routing::adapter::SelectorState &selector_state) final;
-
     void return_loan(
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &) final;

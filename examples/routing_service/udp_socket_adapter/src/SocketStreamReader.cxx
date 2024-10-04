@@ -118,12 +118,20 @@ void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
-    if (stream_info_.stream_name() == "Square") {
+    if (stream_info_.stream_name() == "Square" ||
+            stream_info_.stream_name() == "Circle" ||
+            stream_info_.stream_name() == "Triangle") {
         /**
          * This protection is required since take() executes on a different
          * Routing Service thread.
          */
         std::unique_lock<std::mutex> lock(buffer_mutex_);
+        /*
+         * The data we're sending from the socket comes in a format that makes
+         * it easy to just use reinterpret_cast. With a real type, a
+         * step-by-step mapping may be necessary
+         */
+
         ShapeType *shape = reinterpret_cast<ShapeType *>(received_buffer_);
         lock.unlock();
 
@@ -150,15 +158,6 @@ void SocketStreamReader::take(
     }
 
     return;
-}
-
-void SocketStreamReader::take(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos,
-        const SelectorState &selector_state)
-{
-    // We're not doing anything with SelectorState in this example
-    this->take(samples, infos);
 }
 
 void SocketStreamReader::return_loan(

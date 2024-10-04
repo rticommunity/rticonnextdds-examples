@@ -41,11 +41,6 @@ void SocketConnection::delete_stream_reader(StreamReader *reader)
     delete reader;
 }
 
-DiscoveryStreamReader *SocketConnection::output_stream_discovery_reader()
-{
-    return nullptr;
-}
-
 DiscoveryStreamReader *SocketConnection::input_stream_discovery_reader()
 {
     return &input_discovery_reader_;
