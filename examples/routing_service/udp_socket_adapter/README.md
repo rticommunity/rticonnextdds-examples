@@ -2,11 +2,8 @@
 
 ## Example Description
 
-This example shows how to implement a custom `Routing Service Adapter plugin`,
-build it into a shared library and load it with Routing Service.
-
-In this concrete example, we show how to write a simple adapter in C++11 to
-receive data from a UDP socket using RTI Routing Service.
+This example shows how to implement a simple Routing Service Adapter plugin
+in C++11 to receive data from a UDP socket using RTI Routing Service.
 
 The code in this directory provides the following components:
 
@@ -40,7 +37,6 @@ cmake -DCONNEXTDDS_DIR=<Connext DDS Directory> \     # If not exported
       -DCMAKE_BUILD_TYPE=Debug|Release ..
 cmake --build .
 cd ..
-export LD_LIBRARY_PATH=build/:$LD_LIBRARY_PATH
 ```
 
 Example command for Windows:
@@ -48,7 +44,6 @@ Example command for Windows:
 ```bash
 cmake .. -DCONNEXTDDS_DIR="%NDDSHOME%" -DCONNEXTDDS_ARCH=x64Win64VS2015 -DBUILD_SHARED_LIBS=ON -DCMAKE_BUILD_TYPE=Release -A x64 -G "Visual Studio 17 2022"
 cd ..
-set PATH=build\Release;%PATH%
 ```
 
 **Note**: You do not need to define `CONNEXTDDS_ARCH` if you only have one
@@ -122,8 +117,16 @@ follows.
 Before running the RTI Routing Service, you need to specify where the
 `SocketAdapterCpp` library is located as shown below:
 
+Linux:
+
 ```bash
-$export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<Connext DDS Architecture>:<Path to SocketAdapterCpp library>
+$export RTI_LD_LIBRARY_PATH=$NDDSHOME/lib/<Connext DDS Architecture>:<Path to SocketAdapterCpp library, the build/ folder>
+```
+
+Windows:
+
+```bash
+set PATH=%NDDSHOME%/lib/<Connext DDS Architecture>;<Path to SocketAdapterCpp library, the build/Release folder>
 ```
 
 The SocketAdapterCpp library will be in the `./build` folder.
@@ -136,9 +139,9 @@ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdap
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=~/rti_connext_dds-7.3.0/lib/x64Linux4gcc7.3.0:~/udp_socket_adapter/build/
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter/build/
 
-$~/rti_connext_dds-7.3.0/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
 RTI Routing Service 7.3.0 executing (with name SocketAdapterToSocketAdapter)
 ```
 
