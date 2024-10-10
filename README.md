@@ -29,6 +29,7 @@ branch of this repository have been built and tested against RTI Connext DDS
 7.3.0. If you need examples that have been built and tested against older
 versions of RTI Connext DDS, please check out the appropriate branch:
 
+- [release/7.4.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.4.0)
 - [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
 - [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
 - [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
