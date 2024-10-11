@@ -2,8 +2,8 @@
 
 This repository includes:
 
-- Code examples on how to use specific Connext features (under [examples/](./examples))
-- Supporting code for learning materials (under [tutorials/](./tutorials))
+-  Code examples on how to use specific Connext features (under [examples/](./examples))
+-  Supporting code for learning materials (under [tutorials/](./tutorials))
 
 ## Cloning the repository
 
@@ -29,22 +29,22 @@ branch of this repository were built and tested against **RTI Connext 7.3.0 LTS*
 
 If you are using a newer feature release, check out the appropriate branch:
 
-- [release/7.4.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.4.0)
-  (early access release)
+-  [release/7.4.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.4.0)
+   (early access release)
 
 If are you using an older release, check out the appropriate branch:
 
-- [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
-- [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
-- [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
-- [release/6.1.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.1)
-- [release/6.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.0)
-- [release/6.0.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.1)
-- [release/6.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.0)
-- [release/5.3.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.3.0)
-- [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
-- [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
-- [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
+-  [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
+-  [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
+-  [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
+-  [release/6.1.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.1)
+-  [release/6.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.0)
+-  [release/6.0.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.1)
+-  [release/6.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.0)
+-  [release/5.3.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.3.0)
+-  [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
+-  [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
+-  [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
 
 ## How to contribute
 
