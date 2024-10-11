@@ -15,7 +15,6 @@ project(connext-tutorial-docker-pub-sub)
 
 # Include Connext CMake utilities
 list(APPEND CMAKE_MODULE_PATH
-    # "/opt/rti.com/rticonnextdds-examples/resources/cmake/Modules/"
     "/app/rticonnextdds-examples/resources/cmake/Modules/"
 )
 include(ConnextDdsConfigureCmakeUtils)
