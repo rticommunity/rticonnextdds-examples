@@ -25,9 +25,14 @@ git submodule update --init --recursive
 
 The examples contained in the
 [master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
-branch of this repository have been built and tested against RTI Connext DDS
-7.3.0. If you need examples that have been built and tested against older
-versions of RTI Connext DDS, please check out the appropriate branch:
+branch of this repository were built and tested against **RTI Connext 7.3.0 LTS**.
+
+If you are using a newer feature release, check out the appropriate branch:
+
+-   [release/7.4.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.4.0)
+    (early access release)
+
+If are you using an older release, check out the appropriate branch:
 
 - [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
 - [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
