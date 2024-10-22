@@ -23,13 +23,12 @@ def subscriber_main(domain_id, sample_count):
     topic = dds.Topic(participant, "Example waitset_status_cond", waitset_status_cond)
 
     # Create a DataReader with default QoS (Subscriber created in-line)
-    subscriber = dds.Subscriber(participant)
-    reader = dds.DataReader(subscriber, topic)
+    reader = dds.DataReader(dds.Subscriber(participant), topic)
 
     # Create a Status Condition for the reader
     status_condition = dds.StatusCondition(reader)
 
-    # Enable statuses configuration for the liveliness_changed status
+    # Enable statuses configuration for the Status Condition
     status_condition.enabled_statuses = (
         dds.StatusMask.LIVELINESS_CHANGED | dds.StatusMask.DATA_AVAILABLE
     )

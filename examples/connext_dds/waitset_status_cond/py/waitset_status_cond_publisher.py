@@ -17,19 +17,25 @@ from waitset_status_cond import waitset_status_cond
 
 
 def publisher_main(domain_id, sample_count):
+    # Create a DomainParticipant with default QoS
     participant = dds.DomainParticipant(domain_id)
 
+    # Create a Topic and automatically register the type
     topic = dds.Topic(participant, "Example waitset_status_cond", waitset_status_cond)
+
+    # Create a DataWriter with default QoS (Publisher created in-line)
     writer = dds.DataWriter(dds.Publisher(participant), topic)
 
-    instance = waitset_status_cond()
+    # Instantiate a sample
+    sample = waitset_status_cond()
 
+    # Write every second until the specified amount of samples is reached
     count = 0
     while (sample_count == 0) or (count < sample_count):
         print("Writing waitset_status_cond, count = {}".format(count))
-        instance.x = count
+        sample.x = count
 
-        writer.write(instance)
+        writer.write(sample)
         count += 1
         time.sleep(1)
 
