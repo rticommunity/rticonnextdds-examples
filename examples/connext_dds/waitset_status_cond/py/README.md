@@ -10,8 +10,8 @@ following commands from the example directory (this is necessary to ensure the
 application loads the QoS defined in *USER_QOS_PROFILES.xml*):
 
 ```sh
-python waitset_status_cond_program.py --pub
-python waitset_status_cond_program.py --sub
+python waitset_status_cond_publisher.py
+python waitset_status_cond_subscriber.py
 ```
 
 Note: you can run multiple publishers and subscribers at the same time.

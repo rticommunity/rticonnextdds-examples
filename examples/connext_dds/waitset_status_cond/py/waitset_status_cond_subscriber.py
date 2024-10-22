@@ -1,4 +1,3 @@
-
 # (c) Copyright, Real-Time Innovations, 2024.  All rights reserved.
 # RTI grants Licensee a license to use, modify, compile, and create derivative
 # works of the software solely for use with RTI Connext DDS. Licensee may
@@ -9,80 +8,80 @@
 # any incidental or consequential damages arising out of the use or inability
 # to use the software.
 
-import sys
+import argparse
+
 import rti.connextdds as dds
-import rti.asyncio
 
 from waitset_status_cond import waitset_status_cond
 
-class waitset_status_condSubscriber:
 
-    class Listener(dds.NoOpDataReaderListener):
-        def on_requested_deadline_missed(self, reader: dds.DataReader, status: dds.RequestedDeadlineMissedStatus):
-            print("Deadline missed")
+def subscriber_main(domain_id, sample_count):
+    # Create a DomainParticipant with default QoS
+    participant = dds.DomainParticipant(domain_id)
 
-        def on_sample_rejected(self, reader: dds.DataReader, status: dds.SampleRejectedStatus):
-            print("Sample rejected")
+    # Create a Topic and automatically register the type
+    topic = dds.Topic(participant, "Example waitset_status_cond", waitset_status_cond)
 
-        def on_sample_lost(self, reader: dds.DataReader, status: dds.SampleLostStatus):
-            print("Sample lost")
+    # Create a DataReader with default QoS (Subscriber created in-line)
+    subscriber = dds.Subscriber(participant)
+    reader = dds.DataReader(subscriber, topic)
 
-        def on_requested_incompatible_qos(self, reader: dds.DataReader, status: dds.RequestedIncompatibleQosStatus):
-            print("Requested incompatible QoS")
+    # Create a Status Condition for the reader
+    status_condition = dds.StatusCondition(reader)
 
-        def on_subscription_matched(self, reader: dds.DataReader, status: dds.SubscriptionMatchedStatus):
-            print("Subscription matched")
+    # Enable statuses configuration for the liveliness_changed status
+    status_condition.enabled_statuses = (
+        dds.StatusMask.LIVELINESS_CHANGED | dds.StatusMask.DATA_AVAILABLE
+    )
 
-        def on_liveliness_changed(self, reader: dds.DataReader, status: dds.LivelinessChangedStatus):
-            print("Liveliness changed")
+    # This counter will keep track of the samples we have processed
+    samples_read = 0
 
-            
-    def __init__(self, domain_id: int):
-        # Start communicating in a domain. Usually there is one participant
-        # per application. Load a QoS profile from USER_QOS_PROFILES.xml
-        participant_qos = dds.QosProvider.default.participant_qos_from_profile(
-            "waitset_status_cond_Library::waitset_status_cond_Profile")
-        self.participant = dds.DomainParticipant(domain_id, participant_qos)
+    # Define a handler for the status_condition
+    def status_handler(_):
+        status_mask = reader.status_changes
 
-        # A Topic has a name and a datatype.
-        topic = dds.Topic(self.participant, "Example waitset_status_cond", waitset_status_cond)
+        # Handle liveliness status changes
+        if dds.StatusMask.LIVELINESS_CHANGED in status_mask:
+            st = reader.liveliness_changed_status
+            print(f"Liveliness changed => Active writers = {st.alive_count}")
 
-        # Create a Subscriber, loading QoS profile from USER_QOS_PROFILES.xml
-        subscriber_qos = dds.QosProvider.default.subscriber_qos_from_profile(
-            "waitset_status_cond_Library::waitset_status_cond_Profile")
-        subscriber = dds.Subscriber(self.participant, subscriber_qos)
+        # Handle when there's new data available
+        if dds.StatusMask.DATA_AVAILABLE in status_mask:
+            nonlocal samples_read
+            for data, info in reader.take():
+                if info.valid:
+                    samples_read += 1
+                    print(data)
 
-        # Create a DataReader, loading QoS profile from USER_QOS_PROFILES.xml,
-        # and using a listener for events. Note that the DATA_AVAILABLE event is
-        # not handled. We will take the data asynchronously in the run() method.
-        reader_qos = dds.QosProvider.default.datareader_qos_from_profile(
-            "waitset_status_cond_Library::waitset_status_cond_Profile")
-        listener = waitset_status_condSubscriber.Listener()
-        status_mask = dds.StatusMask.REQUESTED_DEADLINE_MISSED \
-            | dds.StatusMask.SAMPLE_REJECTED \
-            | dds.StatusMask.SAMPLE_LOST \
-            | dds.StatusMask.REQUESTED_INCOMPATIBLE_QOS \
-            | dds.StatusMask.SUBSCRIPTION_MATCHED \
-            | dds.StatusMask.LIVELINESS_CHANGED
-        self.reader = dds.DataReader(
-            subscriber,
-            topic,
-            reader_qos,
-            listener,
-            status_mask)
+    status_condition.set_handler(status_handler)
 
-        self.samples_read = 0
+    # Create a WaitSet and attach our Status Condition
+    waitset = dds.WaitSet()
+    waitset += status_condition
 
-    async def run(self, sample_count: int):
-        async for data in self.reader.take_data_async():
-            print(data)
-            self.samples_read += 1
-            if self.samples_read >= sample_count:
-                break
+    # Loop until the application is shut down or the sample count is reached
+    while samples_read < sample_count:
+        # Catch control-C interrupt
+        try:
+            # Dispatch will call the handlers associated to the
+            # WaitSet conditions when they activate
+            waitset.dispatch(dds.Duration(4, 0))  # Wait up to 4s each time
+        except KeyboardInterrupt:
+            break
 
 
 if __name__ == "__main__":
-    try:
-        rti.asyncio.run(waitset_status_condSubscriber(0).run(sys.maxsize))
-    except KeyboardInterrupt:
-        pass
+    parser = argparse.ArgumentParser(
+        description="RTI Connext DDS Example: Waitsets with Status Conditions (Subscriber)"
+    )
+    parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
+    parser.add_argument(
+        "-c", "--count", type=int, default=0, help="Number of samples to send"
+    )
+
+    args = parser.parse_args()
+    assert 0 <= args.domain < 233
+    assert args.count >= 0
+
+    subscriber_main(args.domain, args.count)
