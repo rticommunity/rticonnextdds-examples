@@ -60,7 +60,7 @@ def subscriber_main(domain_id, sample_count):
     waitset += status_condition
 
     # Loop until the application is shut down or the sample count is reached
-    while samples_read < sample_count:
+    while (sample_count == 0) or (samples_read < sample_count):
         # Catch control-C interrupt
         try:
             # Dispatch will call the handlers associated to the
