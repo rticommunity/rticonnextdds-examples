@@ -8,7 +8,6 @@
 # any incidental or consequential damages arising out of the use or inability
 # to use the software.
 
-import time
 import argparse
 
 import rti.connextdds as dds
@@ -32,20 +31,10 @@ def publisher_main(domain_id, sample_count):
     # Enable statuses configuration for the Status Condition
     status_condition.enabled_statuses = dds.StatusMask.PUBLICATION_MATCHED
 
-    # This enables start sending samples when we know there's a match
-    send_samples = False
-
     # Define a handler for the Status Condition
     def status_handler(_):
-        nonlocal send_samples
-        status_mask = writer.status_changes
         st = writer.publication_matched_status
-
-        if dds.StatusMask.PUBLICATION_MATCHED in status_mask:
-            if st.current_count > 0:
-                send_samples = True
-            else:
-                send_samples = False
+        print(f"Publication matched changed => Matched readers = {st.current_count}")
 
     status_condition.set_handler(status_handler)
 
@@ -65,12 +54,10 @@ def publisher_main(domain_id, sample_count):
             # WaitSet conditions when they activate
             waitset.dispatch(dds.Duration(1, 0))  # Wait up to 1s each time
 
-            if send_samples:
-                print(f"Writing Foo, count = {samples_sent}")
-                sample.x = samples_sent
-                writer.write(sample)
-
-                samples_sent += 1
+            print(f"Writing Foo, count = {samples_sent}")
+            sample.x = samples_sent
+            writer.write(sample)
+            samples_sent += 1
         except KeyboardInterrupt:
             break
 
