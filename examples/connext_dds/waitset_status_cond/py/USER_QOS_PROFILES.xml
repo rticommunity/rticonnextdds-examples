@@ -21,12 +21,12 @@
     <!-- QoS Library containing the QoS profile used in the generated example
         A QoS library is a named set of QoS profiles.
     -->
-    <qos_library name="waitset_cond_py_Library">
+    <qos_library name="waitset_status_cond_py_Library">
         <!-- QoS profile used to configure reliable communication between the DataWriter
              and DataReader created in the example code.
              A QoS profile groups a set of related QoS.
         -->
-        <qos_profile name="waitset_cond_py_Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
+        <qos_profile name="waitset_status_cond_py_Profile" base_name="BuiltinQosLibExp::Generic.StrictReliable" is_default_qos="true">
             <!-- QoS used to configure the data writer created in the example code -->
             <datawriter_qos>
                 <reliability>
