@@ -20,10 +20,10 @@ def subscriber_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic and automatically register the type
-    topic = dds.Topic(participant, "Example waitset_status_cond", Foo)
+    topic = dds.Topic(participant, "Example Foo", Foo)
 
-    # Create a DataReader with default QoS (Subscriber created in-line)
-    reader = dds.DataReader(dds.Subscriber(participant), topic)
+    # Create a DataReader with default QoS
+    reader = dds.DataReader(topic)
 
     # Create a Status Condition for the reader
     status_condition = dds.StatusCondition(reader)
@@ -36,7 +36,7 @@ def subscriber_main(domain_id, sample_count):
     # This counter will keep track of the samples we have processed
     samples_read = 0
 
-    # Define a handler for the status_condition
+    # Define a handler for the Status Condition
     def status_handler(_):
         status_mask = reader.status_changes
 
@@ -48,10 +48,9 @@ def subscriber_main(domain_id, sample_count):
         # Handle when there's new data available
         if dds.StatusMask.DATA_AVAILABLE in status_mask:
             nonlocal samples_read
-            for data, info in reader.take():
-                if info.valid:
-                    samples_read += 1
-                    print(data)
+            for data in reader.take_data():
+                samples_read += 1
+                print(data)
 
     status_condition.set_handler(status_handler)
 

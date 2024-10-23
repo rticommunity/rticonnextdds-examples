@@ -11,6 +11,6 @@
 import rti.idl as idl
 
 
-@idl.struct()
+@idl.struct
 class Foo:
     x: idl.int16 = 0

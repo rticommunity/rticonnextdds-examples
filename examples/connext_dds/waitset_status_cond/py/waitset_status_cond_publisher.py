@@ -21,25 +21,56 @@ def publisher_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic and automatically register the type
-    topic = dds.Topic(participant, "Example waitset_status_cond", Foo)
+    topic = dds.Topic(participant, "Example Foo", Foo)
 
-    # Create a DataWriter with default QoS (Publisher created in-line)
-    writer = dds.DataWriter(dds.Publisher(participant), topic)
+    # Create a DataWriter with default QoS
+    writer = dds.DataWriter(topic)
+
+    # Create a Status Condition for the writer
+    status_condition = dds.StatusCondition(writer)
+
+    # Enable statuses configuration for the Status Condition
+    status_condition.enabled_statuses = dds.StatusMask.PUBLICATION_MATCHED
+
+    # This enables start sending samples when we know there's a match
+    send_samples = False
+
+    # Define a handler for the Status Condition
+    def status_handler(_):
+        nonlocal send_samples
+        status_mask = writer.status_changes
+        st = writer.publication_matched_status
+
+        if dds.StatusMask.PUBLICATION_MATCHED in status_mask:
+            if st.current_count > 0:
+                send_samples = True
+            else:
+                send_samples = False
+
+    status_condition.set_handler(status_handler)
+
+    # Create a WaitSet and attach our Status Condition
+    waitset = dds.WaitSet()
+    waitset += status_condition
 
     # Instantiate a sample
     sample = Foo()
 
     # Write every second until the specified amount of samples is reached
-    count = 0
-    while (sample_count == 0) or (count < sample_count):
+    samples_sent = 0
+    while (sample_count == 0) or (samples_sent < sample_count):
         # Catch control-C interrupt
         try:
-            print(f"Writing Foo, count = {count}")
-            sample.x = count
-            writer.write(sample)
-            count += 1
+            # Dispatch will call the handlers associated to the
+            # WaitSet conditions when they activate
+            waitset.dispatch(dds.Duration(1, 0))  # Wait up to 1s each time
 
-            time.sleep(1)
+            if send_samples:
+                print(f"Writing Foo, count = {samples_sent}")
+                sample.x = samples_sent
+                writer.write(sample)
+
+                samples_sent += 1
         except KeyboardInterrupt:
             break
 
