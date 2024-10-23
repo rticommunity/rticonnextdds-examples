@@ -34,7 +34,9 @@ def publisher_main(domain_id, sample_count):
     # Define a handler for the Status Condition
     def status_handler(_):
         st = writer.publication_matched_status
-        print(f"Publication matched changed => Matched readers = {st.current_count}")
+        print(
+            f"Publication matched changed => Matched readers = {st.current_count}"
+        )
 
     status_condition.set_handler(status_handler)
 
