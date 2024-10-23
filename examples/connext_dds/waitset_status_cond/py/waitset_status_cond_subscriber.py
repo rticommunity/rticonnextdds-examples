@@ -12,7 +12,7 @@ import argparse
 
 import rti.connextdds as dds
 
-from waitset_status_cond import waitset_status_cond
+from foo import Foo
 
 
 def subscriber_main(domain_id, sample_count):
@@ -20,7 +20,7 @@ def subscriber_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic and automatically register the type
-    topic = dds.Topic(participant, "Example waitset_status_cond", waitset_status_cond)
+    topic = dds.Topic(participant, "Example waitset_status_cond", Foo)
 
     # Create a DataReader with default QoS (Subscriber created in-line)
     reader = dds.DataReader(dds.Subscriber(participant), topic)
@@ -76,7 +76,7 @@ if __name__ == "__main__":
     )
     parser.add_argument("-d", "--domain", type=int, default=0, help="DDS Domain ID")
     parser.add_argument(
-        "-c", "--count", type=int, default=0, help="Number of samples to send"
+        "-c", "--count", type=int, default=0, help="Number of samples to receive"
     )
 
     args = parser.parse_args()

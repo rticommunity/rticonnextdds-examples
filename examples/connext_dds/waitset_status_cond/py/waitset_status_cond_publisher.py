@@ -13,7 +13,7 @@ import argparse
 
 import rti.connextdds as dds
 
-from waitset_status_cond import waitset_status_cond
+from foo import Foo
 
 
 def publisher_main(domain_id, sample_count):
@@ -21,23 +21,27 @@ def publisher_main(domain_id, sample_count):
     participant = dds.DomainParticipant(domain_id)
 
     # Create a Topic and automatically register the type
-    topic = dds.Topic(participant, "Example waitset_status_cond", waitset_status_cond)
+    topic = dds.Topic(participant, "Example waitset_status_cond", Foo)
 
     # Create a DataWriter with default QoS (Publisher created in-line)
     writer = dds.DataWriter(dds.Publisher(participant), topic)
 
     # Instantiate a sample
-    sample = waitset_status_cond()
+    sample = Foo()
 
     # Write every second until the specified amount of samples is reached
     count = 0
     while (sample_count == 0) or (count < sample_count):
-        print("Writing waitset_status_cond, count = {}".format(count))
-        sample.x = count
+        # Catch control-C interrupt
+        try:
+            print(f"Writing Foo, count = {count}")
+            sample.x = count
+            writer.write(sample)
+            count += 1
 
-        writer.write(sample)
-        count += 1
-        time.sleep(1)
+            time.sleep(1)
+        except KeyboardInterrupt:
+            break
 
 
 if __name__ == "__main__":

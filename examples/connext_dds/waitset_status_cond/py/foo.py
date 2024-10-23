@@ -12,5 +12,5 @@ import rti.idl as idl
 
 
 @idl.struct()
-class waitset_status_cond:
+class Foo:
     x: idl.int16 = 0
