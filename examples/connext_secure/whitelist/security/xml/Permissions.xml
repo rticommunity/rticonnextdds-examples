@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.2.0/dds_security_permissions.xsd">
+    <permissions>
+        <grant name="WhitelistParticipantA">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantA@rti.com, CN = Whitelist Participant A</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="WhitelistParticipantB">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantB@rti.com, CN = Whitelist Participant B</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2014-06-01T13:00:00</not_before>
+                <not_after>2037-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+        <grant name="WhitelistParticipantC">
+            <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantC@rti.com, CN = Whitelist Participant C</subject_name>
+            <validity>
+                <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
+                <not_before>2022-06-01T13:00:00</not_before>
+                <not_after>2032-06-01T13:00:00</not_after>
+            </validity>
+            <default>ALLOW</default>
+        </grant>
+    </permissions>
+</dds>

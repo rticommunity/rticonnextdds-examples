@@ -75,6 +75,7 @@ if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
         "custom_transport"
         "deadline_contentfilter"
         # "discovery_snapshot"
+        "distributed_logger"
         "dynamic_data_using_publisher_subscriber"
         "flat_data_api"
         "flat_data_latency"

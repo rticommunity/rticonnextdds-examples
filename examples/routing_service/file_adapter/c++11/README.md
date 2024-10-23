@@ -66,6 +66,30 @@ supports static linking of adapters. To use this functionality you would need to
 create an application that uses Routing Service as a library component and
 statically links to this `FileAdapter` library.
 
+### Cross-compilation
+
+When you need to cross-compile the example, the above
+command will not work, the assigned compiler won't be the cross-compiler and
+errors may happen when linking against the cross-compiled Connext binaries.
+To fix this, you have to create a file with the architecture name and call
+CMake with a specific flag called ``-DCMAKE_TOOLCHAIN_FILE``.
+An example of the file to create with the toolchain settings (e.g. for an
+ARM architectures):
+
+```cmake
+set(CMAKE_SYSTEM_NAME Linux)
+set(toolchain_path "<path to>/arm-bcm2708/gcc-linaro-arm-linux-gnueabihf-raspbian")
+set(CMAKE_C_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-gcc")
+set(CMAKE_CXX_COMPILER "${toolchain_path}/bin/arm-linux-gnueabihf-g++")
+```
+
+Then you can call CMake like this:
+
+```bash
+    cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file created above>
+            -DCONNEXTDDS_ARCH=<connext architecture> ..
+```
+
 ## Running C++ example
 
 To run the example, you just need to run the following command from the `build`
@@ -97,10 +121,10 @@ appropriate value of ```SHAPE_TOPIC``` before starting Routing Service.
 To run Routing Service, you will need first to set up your environment as follows.
 
 Before running the RTI Routing Service, you need to specify where the
-`fileadapter` library is located as shown below:
+`FileAdapterC++11` library is located as shown below:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>:<Path to fileadapter library>
+$export RTI_LD_LIBRARY_PATH=<Connext DDS Directory>/lib/<Connext DDS Architecture>:<Path to FileAdapterC++11 library>
 ```
 
 ```bash

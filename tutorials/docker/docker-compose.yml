@@ -1,0 +1,52 @@
+#
+# (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+#
+# RTI grants Licensee a license to use, modify, compile, and create derivative
+# works of the Software.  Licensee has the right to distribute object form
+# only for use with RTI products.  The Software is provided "as is", with no
+# warranty of any type, including any warranty for fitness for any purpose.
+# RTI is under no obligation to maintain or support the Software.  RTI shall
+# not be liable for any incidental or consequential damages arising out of the
+# use or inability to use the software.
+#
+
+version: '3.8'
+
+services:
+  home-automation-base:
+    image: home-automation
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+  sensor1-publisher:
+    image: home-automation
+    depends_on:
+      - home-automation-base
+    network_mode: host
+    environment:
+      - NDDS_QOS_PROFILES=sensor_publisher_qos.xml
+    command: ["./home_automation_publisher", "Sensor1", "LivingRoom"]
+
+  sensor2-publisher:
+    image: home-automation
+    depends_on:
+      - home-automation-base
+    network_mode: host
+    environment:
+      - NDDS_QOS_PROFILES=sensor_publisher_qos.xml
+    command: ["./home_automation_publisher", "Sensor2", "Kitchen"]
+
+  alert-service:
+    image: home-automation
+    depends_on:
+      - home-automation-base
+    network_mode: host
+    environment:
+      - NDDS_QOS_PROFILES=alert_service_qos.xml
+    command: ["./home_alerts"]
+
+  alert-spy:
+    image: rticom/dds-spy:7.3.0-EAR
+    network_mode: host
+    command: ["-printSample COMPACT -topic HomeAlerts"]

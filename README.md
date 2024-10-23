@@ -1,36 +1,11 @@
-# rticonnextdds-examples
+# RTI Connext Examples
 
-[![Build and run static analysis](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml/badge.svg?branch=master)](https://github.com/rticommunity/rticonnextdds-examples/actions/workflows/build.yml)
+This repository includes:
 
-This repository includes examples on how to use specific features of RTI
-Connext DDS.
+- Code examples on how to use specific Connext features (under [examples/](./examples))
+- Supporting code for learning materials (under [tutorials/](./tutorials))
 
-To contribute enhancements or additional examples to the repository, follow the
-instructions on our [RTI Connext DDS Examples
-Wiki](https://github.com/rticommunity/rticonnextdds-examples/wiki). Your
-contributions will be reviewed and as soon as they are approved they will
-automatically be included in the [RTI Community Portal Examples
-Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
-for further information about how to contribute with new examples to this repository.
-
-The examples contained in the
-[master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
-branch of this repository have been built and tested against RTI Connext DDS
-7.2.0. If you need examples that have been built and tested against older
-versions of RTI Connext DDS, please check out the appropriate branch:
-
-- [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
-- [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
-- [release/6.1.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.1)
-- [release/6.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.0)
-- [release/6.0.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.1)
-- [release/6.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.0)
-- [release/5.3.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.3.0)
-- [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
-- [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
-- [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
-
-## Cloning Repository
+## Cloning the repository
 
 To clone the repository you will need to run `git clone` as follows to download
 both the repository and its submodule dependencies:
@@ -45,3 +20,38 @@ the following command to pull all the dependencies:
 ```bash
 git submodule update --init --recursive
 ```
+
+## Versioning
+
+The examples contained in the
+[master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
+branch of this repository were built and tested against **RTI Connext 7.3.0 LTS**.
+
+If you are using a newer feature release, check out the appropriate branch:
+
+-   [release/7.4.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.4.0)
+    (early access release)
+
+If are you using an older release, check out the appropriate branch:
+
+- [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
+- [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
+- [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
+- [release/6.1.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.1)
+- [release/6.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.1.0)
+- [release/6.0.1](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.1)
+- [release/6.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/6.0.0)
+- [release/5.3.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.3.0)
+- [release/5.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.2.0)
+- [release/5.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.1.0)
+- [release/5.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/5.0.0)
+
+## How to contribute
+
+To contribute enhancements or additional examples to the repository, follow the
+instructions on our [RTI Connext DDS Examples
+Wiki](https://github.com/rticommunity/rticonnextdds-examples/wiki). Your
+contributions will be reviewed and as soon as they are approved they will
+automatically be included in the [RTI Community Portal Examples
+Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
+for further information about how to contribute with new examples to this repository.

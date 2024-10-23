@@ -136,7 +136,13 @@ def get_git_files(
         command.append("ls-files")
         print("Getting all the repository files.")
     else:
-        command = ["diff", "--no-commit-id", "--name-only", "-r"]
+        command = [
+            "diff",
+            "--no-commit-id",
+            "--name-only",
+            "-r",
+            "--diff-filter=dr",
+        ]
 
         if commits:
             command.extend([*commits])
