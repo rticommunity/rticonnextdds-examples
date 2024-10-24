@@ -33,10 +33,13 @@ def publisher_main(domain_id, sample_count):
 
     # Define a handler for the Status Condition
     def status_handler(_):
+        status_mask = writer.status_changes
         st = writer.publication_matched_status
-        print(
-            f"Publication matched changed => Matched readers = {st.current_count}"
-        )
+
+        if dds.StatusMask.PUBLICATION_MATCHED in status_mask:
+            print(
+                f"Publication matched changed => Matched readers = {st.current_count}"
+            )
 
     status_condition.set_handler(status_handler)
 
