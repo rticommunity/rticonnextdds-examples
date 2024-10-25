@@ -1,4 +1,3 @@
-# FROM rticom/connext-sdk:7.3.0-EAR as build-stage
 FROM ubuntu:20.04 as build-stage
 
 ARG RTI_LICENSE_AGREEMENT_ACCEPTED=false
@@ -32,20 +31,5 @@ RUN export DEBIAN_FRONTEND=noninteractive \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists
 
-# For armv8 uncomment the following line
-# ENV CONNEXTDDS_ARCH=armv8Linux4gcc7.3.0
-WORKDIR /app
-
-# Copy the necessary files to the container
 COPY rti_license.dat /opt/rti.com/rti_connext_dds-7.3.0/
-COPY CMakeLists.txt .
-COPY home_automation.idl .
-COPY *.cxx ./
-COPY *.xml ./
 RUN git clone --recurse-submodule https://github.com/rticommunity/rticonnextdds-examples.git
-
-# Build the applications
-RUN mkdir build
-WORKDIR /app/build
-RUN cmake .. -DCONNEXTDDS_DIR=/opt/rti.com/rti_connext_dds-7.3.0/
-RUN make -j4
