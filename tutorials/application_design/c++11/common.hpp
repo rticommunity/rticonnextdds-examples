@@ -82,7 +82,7 @@ std::string new_vin()
 }
 
 
-CoordSequence new_route(int n = 5)
+CoordSequence create_new_route(int n = 5)
 {
     CoordSequence route;
     for (int i = 0; i < n; ++i) {

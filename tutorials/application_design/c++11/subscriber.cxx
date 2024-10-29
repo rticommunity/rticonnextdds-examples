@@ -43,11 +43,12 @@ private:
     dds::sub::DataReader<VehicleMetrics> metrics_reader_;
     dds::sub::DataReader<VehicleTransit> transit_reader_;
 
-    std::string new_position_string(dds::sub::cond::ReadCondition &condition);
-    std::string dashboard_string();
+    std::string create_new_position_string(
+            dds::sub::cond::ReadCondition &condition);
+    std::string create_dashboard_string();
 
     std::unordered_map<dds::core::InstanceHandle, DashboardItem>
-    dashboard_data();
+    build_dashboard_data();
 };
 
 void SubscriberDashboard::run()
@@ -56,13 +57,13 @@ void SubscriberDashboard::run()
             transit_reader_,
             dds::sub::status::DataState::new_data(),
             [this, &new_position_condition]() {
-                std::cout << new_position_string(new_position_condition)
+                std::cout << create_new_position_string(new_position_condition)
                           << std::endl;
             });
 
     dds::core::cond::GuardCondition dashboard_condition;
     dashboard_condition.extensions().handler(
-            [this]() { std::cout << dashboard_string() << std::endl; });
+            [this]() { std::cout << create_dashboard_string() << std::endl; });
 
     std::mutex mutex;
     std::thread display_thread([&dashboard_condition, &mutex]() {
@@ -84,7 +85,7 @@ void SubscriberDashboard::run()
     }
 }
 
-std::string SubscriberDashboard::new_position_string(
+std::string SubscriberDashboard::create_new_position_string(
         dds::sub::cond::ReadCondition &condition)
 {
     using ::to_string;
@@ -99,7 +100,7 @@ std::string SubscriberDashboard::new_position_string(
         ss << "[INFO] Vehicle " << sample.data().vehicle_vin();
         auto &current_route = sample.data().current_route();
         if (current_route.has_value() && !current_route->empty()) {
-            ss << " is enroute to " << to_string(current_route->back())
+            ss << " is en route to " << to_string(current_route->back())
                << " from " << to_string(sample.data().current_position());
         } else {
             ss << " has arrived at its destination in "
@@ -110,58 +111,56 @@ std::string SubscriberDashboard::new_position_string(
     return ss.str();
 }
 
-std::string SubscriberDashboard::dashboard_string()
+std::string SubscriberDashboard::create_dashboard_string()
 {
     using ::to_string;
     using std::to_string;
     std::stringstream ss;
-    auto now = std::chrono::system_clock::now();
-    ss << "[[ DASHBOARD: " << now.time_since_epoch().count() << " ]]\n";
-    auto data = dashboard_data();
-    {
-        std::vector<DashboardItem> online;
-        for (const auto &item : data) {
-            if (!item.second.is_historical) {
-                online.push_back(item.second);
-            }
-        }
-        ss << "Online vehicles: " << online.size() << "\n";
-        for (auto &item : online) {
-            ss << "- Vehicle " << item.vin << "\n";
-            ss << "  Known fuel updates: " << item.fuel_history.size() << "\n";
-            ss << "  Last known destination: "
-               << (item.current_destination
-                           ? to_string(item.current_destination.value())
-                           : "None")
-               << "\n";
-            ss << "  Last known fuel level: "
-               << (item.fuel_history.empty()
-                           ? "None"
-                           : to_string(item.fuel_history.back()))
-               << "\n";
+    auto data = build_dashboard_data();
+
+    std::vector<DashboardItem> online_vehicles;
+    std::vector<DashboardItem> offline_vehicles;
+    for (const auto &item : data) {
+        if (!item.second.is_historical) {
+            online_vehicles.push_back(item.second);
+        } else {
+            offline_vehicles.push_back(item.second);
         }
     }
-    {
-        std::vector<DashboardItem> offline;
-        for (const auto &item : data) {
-            if (item.second.is_historical) {
-                offline.push_back(item.second);
-            }
-        }
-        ss << "Offline vehicles: " << offline.size() << "\n";
-        for (auto &item : offline) {
-            ss << "- Vehicle " << item.vin << "\n";
-        }
+
+    ss << "[[ DASHBOARD: "
+       << std::chrono::system_clock::now().time_since_epoch().count()
+       << " ]]\n";
+
+    ss << "Online vehicles: " << online_vehicles.size() << "\n";
+    for (auto &item : online_vehicles) {
+        ss << "- Vehicle " << item.vin << "\n";
+        ss << "  Known fuel updates: " << item.fuel_history.size() << "\n";
+        ss << "  Last known destination: "
+           << (item.current_destination
+                       ? to_string(item.current_destination.value())
+                       : "None")
+           << "\n";
+        ss << "  Last known fuel level: "
+           << (item.fuel_history.empty() ? "None"
+                                         : to_string(item.fuel_history.back()))
+           << "\n";
+    }
+
+    ss << "Offline vehicles: " << offline_vehicles.size() << "\n";
+    for (auto &item : offline_vehicles) {
+        ss << "- Vehicle " << item.vin << "\n";
     }
 
     return ss.str();
 }
 
 std::unordered_map<dds::core::InstanceHandle, DashboardItem>
-SubscriberDashboard::dashboard_data()
+SubscriberDashboard::build_dashboard_data()
 {
     {
         std::unordered_map<dds::core::InstanceHandle, DashboardItem> data;
+
         auto metric_samples = metrics_reader_.read();
         auto transit_samples = transit_reader_.read();
 
@@ -219,17 +218,6 @@ SubscriberDashboard::dashboard_data()
     }
 }
 
-std::string SubscriberDashboard::to_string() const
-{
-    std::ostringstream ss;
-    ss << "Dashboard()";
-    return ss.str();
-}
-
-std::string to_string(const SubscriberDashboard &dashboard)
-{
-    return dashboard.to_string();
-}
 
 int main(int argc, char **argv)
 {
@@ -252,6 +240,7 @@ int main(int argc, char **argv)
             "Subscriber::TransitReader");
 
     SubscriberDashboard dashboard(metrics_reader, transit_reader);
-    std::cout << "Running dashboard " << to_string(dashboard) << std::endl;
+
+    std::cout << "Running dashboard:" << std::endl;
     dashboard.run();
 }

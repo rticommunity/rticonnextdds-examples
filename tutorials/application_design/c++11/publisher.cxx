@@ -26,7 +26,7 @@ public:
             : metrics_writer_(metrics_writer), transit_writer_(transit_writer)
     {
         auto new_vin = utils::new_vin();
-        auto new_route = utils::new_route();
+        auto new_route = utils::create_new_route();
 
         metrics_.vehicle_vin(new_vin);
         metrics_.fuel_level(100.0);
@@ -42,8 +42,6 @@ public:
     }
 
     void run();
-
-    std::string to_string() const;
 
 private:
     dds::pub::DataWriter<VehicleMetrics> metrics_writer_;
@@ -68,7 +66,6 @@ void PublisherSimulation::run()
 {
     while (!has_ended()) {
         metrics_writer_.write(metrics_);
-
         transit_writer_.write(transit_);
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
@@ -78,9 +75,9 @@ void PublisherSimulation::run()
                       << "' has reached its destination, now moving to a "
                          "new location..."
                       << std::endl;
-            auto new_route = utils::new_route();
-            new_route.front() = transit_.current_position();
 
+            auto new_route = utils::create_new_route();
+            new_route.front() = transit_.current_position();
             transit_.current_route(new_route);
         }
 
@@ -91,23 +88,11 @@ void PublisherSimulation::run()
 
         if (is_out_of_fuel()) {
             metrics_.fuel_level(0.0);
+
             std::cout << "Vehicle '" << metrics_.vehicle_vin()
                       << "' ran out of fuel!" << std::endl;
         }
     }
-}
-
-std::string to_string(const PublisherSimulation &sim)
-{
-    return sim.to_string();
-}
-
-std::string PublisherSimulation::to_string() const
-{
-    std::ostringstream ss;
-    ss << "PublisherSimulation(metrics: " << metrics_;
-    ss << ", transit: " << transit_ << ")";
-    return ss.str();
 }
 
 int main(int argc, char **argv)
@@ -131,6 +116,6 @@ int main(int argc, char **argv)
             "Publisher::TransitWriter");
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
-    std::cout << "Running simulation " << to_string(simulation) << std::endl;
+    std::cout << "Running simulation:" << std::endl;
     simulation.run();
 }
