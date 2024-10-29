@@ -11,7 +11,8 @@
 
 import random
 import time
-import typing
+
+from typing import List, Optional
 
 import rti.connextdds as dds
 
@@ -20,10 +21,10 @@ from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 def create_new_route(
     n: int = 5,
-    start: typing.Optional[Coord] = None,
-    end: typing.Optional[Coord] = None,
-):
-    def create_new_random_coord():
+    start: Optional[Coord] = None,
+    end: Optional[Coord] = None,
+) -> List[Coord]:
+    def create_new_random_coord() -> Coord:
         return Coord(
             (0.5 - random.random()) * 100,
             (0.5 - random.random()) * 100,
@@ -56,28 +57,19 @@ class PublisherSimulation:
             vehicle_vin, vehicle_position, vehicle_route
         )
 
-    def __repr__(self):
-        return (
-            f"Simulation("
-            f"{self._metrics_writer=}, "
-            f"{self._transit_writer=}, "
-            f"{self._metrics=}, "
-            f"{self._transit=})"
-        )
-
     @property
-    def has_ended(self):
+    def has_ended(self) -> bool:
         return self._is_out_of_fuel
 
     @property
-    def _is_out_of_fuel(self):
+    def _is_out_of_fuel(self) -> bool:
         return self._metrics.fuel_level <= 0.0
 
     @property
-    def _is_on_standby(self):
+    def _is_on_standby(self) -> bool:
         return not self._transit.current_route
 
-    def run(self):
+    def run(self) -> None:
         while not self.has_ended:
             self._metrics_writer.write(self._metrics)
             self._transit_writer.write(self._transit)
@@ -92,8 +84,8 @@ class PublisherSimulation:
                     start=self._transit.current_position
                 )
 
-            self._transit.current_position = self._transit.current_route.pop(0)
             self._metrics.fuel_level -= 10 * random.random()
+            self._transit.current_position = self._transit.current_route.pop(0)
 
             if self._is_out_of_fuel:
                 self._metrics.fuel_level = 0.0
@@ -103,7 +95,7 @@ class PublisherSimulation:
                 )
 
 
-def main():
+def main() -> None:
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
@@ -122,7 +114,7 @@ def main():
         simulation = PublisherSimulation(
             metrics_writer=metrics_writer, transit_writer=transit_writer
         )
-        print(f"Running simulation: {simulation=}")
+        print(f"Running simulation:")
         simulation.run()
 
 

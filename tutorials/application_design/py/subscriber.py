@@ -11,6 +11,7 @@
 
 import dataclasses
 import threading
+import time
 import typing
 from datetime import datetime
 
@@ -39,10 +40,7 @@ class SubscriberDashboard:
         self._metrics_reader = metrics_reader
         self._transit_reader = transit_reader
 
-    def __repr__(self):
-        return f"Dashboard({self._metrics_reader=}, {self._transit_reader=})"
-
-    def run(self):
+    def run(self) -> None:
 
         # Create a new handler for newly-received data.
         # This handler will be called as data comes by, by dispatching
@@ -57,17 +55,30 @@ class SubscriberDashboard:
         # Create a new handler for printing the dashboard.
         # This handler will be called whenever the GuardCondition is triggered,
         # which we're periodically doing on a background thread.
-        def dashboard_handler(_):
+        def dashboard_handler(condition: dds.GuardCondition):
+            print("dashboard_handler")
             print(self._create_dashboard_string())
+            condition.trigger_value = False
 
         dashboard_condition = dds.GuardCondition()
         dashboard_condition.set_handler(dashboard_handler)
 
         # Create a background thread that will trigger the dashboard condition.
-        def display_handler():
-            dashboard_condition.trigger_value = True
+        def display_handler(
+            condition: dds.GuardCondition, exit_event: threading.Event
+        ):
+            try:
+                while not exit_event.is_set():
+                    condition.trigger_value = True
+                    time.sleep(1)
+            except:
+                pass
 
-        display_thread = threading.Thread(target=display_handler)
+        display_thread_exit = threading.Event()
+        display_thread = threading.Thread(
+            target=display_handler,
+            args=(dashboard_condition, display_thread_exit),
+        )
 
         # Create a WaitSet and attach the conditions to it.
         waitset = dds.WaitSet()
@@ -78,29 +89,31 @@ class SubscriberDashboard:
         display_thread.start()
 
         try:
-            while True:
-                waitset.dispatch()
-                dashboard_condition.trigger_value = False
-        except KeyboardInterrupt:
-            pass
 
-    def _create_new_position_string(self, condition):
+            while True:
+                waitset.dispatch(dds.Duration(1))
+        except KeyboardInterrupt:
+            waitset.detach_all()
+            raise
+        finally:
+            display_thread_exit.set()
+            display_thread.join()
+
+    def _create_new_position_string(self, condition) -> str:
         string = ""
-        for sample, info in (
-            self._transit_reader.select().condition(condition).read()
+        for sample in (
+            self._transit_reader.select().condition(condition).read_data()
         ):
-            if not info.valid:
-                continue
 
             string += f"[INFO] Vehicle {sample.vehicle_vin}"
-            if sample.current_route and len(sample.current_route):
+            if sample.current_route:
                 string += f" is en route to {sample.current_route[-1]} from {sample.current_position}"
             else:
                 string += f" has arrived at its destination in {sample.current_position}"
             string += "\n"
         return string
 
-    def _create_dashboard_string(self):
+    def _create_dashboard_string(self) -> str:
         dashboard_data = self._build_dashboard_data()
         online_vehicles = [
             data for data in dashboard_data.values() if not data.is_historical
@@ -130,7 +143,9 @@ class SubscriberDashboard:
             ]
         )
 
-    def _build_dashboard_data(self):
+    def _build_dashboard_data(
+        self,
+    ) -> typing.Dict[dds.InstanceHandle, DashboardItem]:
         data: typing.Dict[dds.InstanceHandle, DashboardItem] = {}
 
         metrics = self._metrics_reader.read()
@@ -176,7 +191,7 @@ class SubscriberDashboard:
         return data
 
 
-def main():
+def main() -> None:
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
@@ -196,7 +211,7 @@ def main():
             transit_reader=transit_reader, metrics_reader=metrics_reader
         )
 
-        print(f"Running dashboard: {dashboard=}")
+        print(f"Running dashboard:")
         dashboard.run()
 
 
