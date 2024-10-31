@@ -96,6 +96,7 @@ async def main():
     participant = dds.DomainParticipant(args.domain)
     service = rpc.Service(InventoryImpl(args.delay), participant, "Inventory")
 
+    print("InventoryService running... ")
     service_task = asyncio.create_task(run_service(service))
 
     await asyncio.sleep(args.server_timeout)
