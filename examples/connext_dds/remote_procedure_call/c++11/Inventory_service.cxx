@@ -126,7 +126,7 @@ int main(int argc, char *argv[])
     ::InventoryServiceService service(service_impl, server, params);
 
     std::cout << "InventoryService running... " << std::endl;
-    server.run();
+    server.run(std::chrono::seconds(arguments.service_timeout));
 
     // Releases the memory used by the participant factory. Optional at
     // application exit
