@@ -10,6 +10,7 @@
 #
 
 import argparse
+import asyncio
 import rti.connextdds as dds
 import rti.rpc as rpc
 import rti.asyncio
@@ -21,7 +22,6 @@ from Inventory import (
     InventoryService,
     UnknownItemError,
 )
-
 
 class InventoryImpl(InventoryService):
     """Implements a simple InventoryService"""
@@ -59,6 +59,11 @@ class InventoryImpl(InventoryService):
         if self.inventory[item.name] <= 0:
             del self.inventory[item.name]
 
+async def run_service(service: rpc.Service):
+    try:
+        await service.run(close_on_cancel=True)
+    except asyncio.CancelledError:
+        pass
 
 async def main():
     parser = argparse.ArgumentParser(description="Inventory client")
@@ -78,16 +83,29 @@ async def main():
         help="Delay in seconds for the add and remove operations (default: 0)",
     )
 
+    parser.add_argument(
+        "-s",
+        "--server-timeout",
+        type=int,
+        default=60,
+        help="Numbers of senconds the service will run (default: 60)",
+    )
+
     args = parser.parse_args()
 
     participant = dds.DomainParticipant(args.domain)
     service = rpc.Service(InventoryImpl(args.delay), participant, "Inventory")
 
-    await service.run()
+    service_task = asyncio.create_task(run_service(service))
+
+    await asyncio.sleep(args.server_timeout)
+
+    service_task.cancel()
 
 
 if __name__ == "__main__":
-    dds.Logger.instance.verbosity = dds.Verbosity.WARNING
+    # Uncomment this to turn on additional logging
+    # dds.Logger.instance.verbosity = dds.Verbosity.WARNING
     try:
         # Run the service until Ctrl-C is pressed
         rti.asyncio.run(main())

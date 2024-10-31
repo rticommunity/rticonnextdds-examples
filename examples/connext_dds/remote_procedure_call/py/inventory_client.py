@@ -33,6 +33,11 @@ async def run_client(args):
     )
     await wait_for_service(client)
 
+    # this is the correct way to do it
+    # uncomment the line below before merge
+    # await client.wait_for_service_async(dds.Duration(20))
+
+
     print("Initial inventory: ", await client.get_inventory())
 
     if args.add:
