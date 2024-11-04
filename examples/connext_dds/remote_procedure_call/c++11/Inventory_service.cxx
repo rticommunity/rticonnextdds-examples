@@ -81,10 +81,7 @@ private:
     std::mutex mutex;
 };
 
-void run_server(
-    int domain_id,
-    unsigned int delay,
-    unsigned int service_timeout)
+void run_server(int domain_id, unsigned int delay, unsigned int service_timeout)
 {
     // Create a DomainParticipant with default Qos. The Service will communicate
     // only with Clients that join the same domain_id
