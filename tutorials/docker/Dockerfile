@@ -4,7 +4,6 @@ FROM connext-sdk:latest as build-stage
 WORKDIR /app
 
 # Copy the necessary files to the container
-COPY --from=connext-sdk /opt/rti.com/rti_connext_dds-7.3.0 ./opt/rti.com/rti_connext_dds-7.3.0
 COPY --from=connext-sdk rticonnextdds-examples ./rticonnextdds-examples
 COPY CMakeLists.txt .
 COPY home_automation.idl .
