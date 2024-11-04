@@ -23,6 +23,7 @@ from Inventory import (
     UnknownItemError,
 )
 
+
 class InventoryImpl(InventoryService):
     """Implements a simple InventoryService"""
 
@@ -59,11 +60,13 @@ class InventoryImpl(InventoryService):
         if self.inventory[item.name] <= 0:
             del self.inventory[item.name]
 
+
 async def run_service(service: rpc.Service):
     try:
         await service.run(close_on_cancel=True)
     except asyncio.CancelledError:
         pass
+
 
 async def main():
     parser = argparse.ArgumentParser(description="Inventory client")

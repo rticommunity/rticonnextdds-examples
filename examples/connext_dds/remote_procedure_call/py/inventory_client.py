@@ -17,8 +17,7 @@ import rti.asyncio
 from Inventory import Item, InventoryService, UnknownItemError
 
 
-class InventoryClient(InventoryService, rpc.ClientBase):
-    ...
+class InventoryClient(InventoryService, rpc.ClientBase): ...
 
 
 async def run_client(args):
@@ -50,9 +49,7 @@ async def run_client(args):
 def main():
     parser = argparse.ArgumentParser(description="Inventory client")
     group = parser.add_mutually_exclusive_group(required=True)
-    group.add_argument(
-        "-r", "--remove", type=str, help="Remove item from inventory"
-    )
+    group.add_argument("-r", "--remove", type=str, help="Remove item from inventory")
     group.add_argument("-a", "--add", type=str, help="Add item to inventory")
 
     parser.add_argument(
