@@ -1,0 +1,71 @@
+apps:
+  -
+    name: test_client_cpp11
+    product: pro
+    version: 7.4.0
+    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/c++11/Inventory_client.sh
+  -
+    name: test_service_cpp11
+    product: pro
+    version: 7.4.0
+    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/c++11/Inventory_service.sh
+  -
+    name: test_client_py
+    product: pro
+    version: 7.4.0
+    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/py/inventory_client.sh
+  -
+    name: test_service_py
+    product: pro
+    version: 7.4.0
+    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/py/inventory_service.sh
+test_scenarios:
+  -
+    test_cases: [remote_procedure_call_example_test_01_1]
+    actions:
+      -
+        action:
+          run test_client_cpp11 with args '--domain $domain_id --add banana --quantity 7' on $740_arch
+        verification:
+          - stdout contains "Add 7 banana"
+          - 'stdout contains "[name: banana, quantity: 7]"'
+          - stdout does_not_contain "ERROR"
+          - stdout does_not_contain "Exception in run_client()"
+      -
+        action:
+          run test_client_cpp11 with args '--domain $domain_id --remove blueberry' on $740_arch
+        verification:
+          - stdout contains "Remove 1 blueberry"
+          - 'stdout contains "Unknown item: blueberry"'
+          - stdout does_not_contain "ERROR"
+          - stdout does_not_contain "Exception in run_client()"
+      -
+        action:
+          run test_service_cpp11 with args '--domain $domain_id --service-timeout 15' on $740_arch
+        verification:
+          - stdout contains "InventoryService running..."
+          - stdout does_not_contain "ERROR"
+          - stdout does_not_contain "Exception in run_server()"
+  -
+    test_cases: [remote_procedure_call_example_test_01_2]
+    actions:
+      -
+        action:
+          run test_client_py with args '--domain $domain_id --add banana --quantity 7' on $740_arch
+        verification:
+          - stdout contains "Add 7 banana"
+          - stdout contains "Item(name='banana', quantity=7)]"
+          - stdout does_not_contain "ERROR"
+      -
+        action:
+          run test_client_py with args '--domain $domain_id --remove blueberry' on $740_arch
+        verification:
+          - stdout contains "Remove 1 blueberry"
+          - 'stdout contains "Unknown item: blueberry"'
+          - stdout does_not_contain "ERROR"
+      -
+        action:
+          run test_service_py with args '--domain $domain_id --service-timeout 15' on $740_arch
+        verification:
+          - stdout contains "InventoryService running..."
+          - stdout does_not_contain "ERROR"

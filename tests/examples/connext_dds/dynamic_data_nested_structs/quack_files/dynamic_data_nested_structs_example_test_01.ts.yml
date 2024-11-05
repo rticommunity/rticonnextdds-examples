@@ -1,0 +1,24 @@
+requirement: dynamic_data_nested_structs_example_test_01
+analysis: |-
+  This test case validates that Request Reply examples.
+test_cases:
+  -
+    id: 1
+    description: |-
+      The test case validates that the example dynamic_data_nested_structs compiles and run without errors for C.
+      test passes
+  -
+    id: 2
+    description: |-
+      The test case validates that the example dynamic_data_nested_structs compiles and run without errors for C++98.
+      test passes
+  -
+    id: 3
+    description: |-
+      The test case validates that the example dynamic_data_nested_structs compiles and run without errors for C++11.
+      test passes
+  -
+    id: 4
+    description: |-
+      The test case validates that the example dynamic_data_nested_structs compiles and run without errors for Java.
+      test passes

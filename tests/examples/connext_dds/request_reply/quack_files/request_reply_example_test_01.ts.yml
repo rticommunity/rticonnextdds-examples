@@ -1,0 +1,14 @@
+requirement: request_reply_example_test_01
+analysis: |-
+  This test case validates that Request Reply examples.
+test_cases:
+  -
+    id: 1
+    description: |-
+      The test case validates Request Reply example in Python.
+      test passes
+  -
+    id: 2
+    description: |-
+      The test case validates Request Reply example in C#.
+      test passes
