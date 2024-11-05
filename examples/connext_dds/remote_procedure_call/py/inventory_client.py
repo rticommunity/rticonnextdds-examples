@@ -21,14 +21,21 @@ class InventoryClient(InventoryService, rpc.ClientBase):
     ...
 
 
+async def wait_for_service(client: InventoryClient):
+    while client.matched_service_count == 0:
+        await sleep(0.1)
+
+
 async def run_client(args):
     participant = dds.DomainParticipant(args.domain)
     client = InventoryClient(
         participant, "Inventory", max_wait_per_call=dds.Duration(20)
     )
 
-    # Wait until the service is started
-    await client.wait_for_service_async(dds.Duration(20))
+    # For versions 7.4.0 and below:
+    await wait_for_service(client)
+    # For newer versions you can use the following:
+    #await client.wait_for_service_async(dds.Duration(20))
 
     print("Initial inventory: ", await client.get_inventory())
 
