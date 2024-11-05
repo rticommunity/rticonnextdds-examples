@@ -19,12 +19,18 @@ from time import sleep
 class RobotControlClient(RobotControl, rpc.ClientBase):
     pass
 
+async def wait_for_service(client: RobotControlClient):
+    while client.matched_service_count == 0:
+        await sleep(0.1)
 
 async def main():
     participant = dds.DomainParticipant(domain_id=0)
     client = RobotControlClient(participant, "MyRobotControl")
 
-    await client.wait_for_service_async(dds.Duration(20))
+    # For versions 7.4.0 and below:
+    await wait_for_service(client)
+    # For newer versions you can use the following:
+    # await client.wait_for_service_async(dds.Duration(20))
 
     print("Calling walk_to...")
     result = await client.walk_to(

@@ -111,7 +111,7 @@ If you want to modify the DDS Service in the idl you will have to re-generate
 the service code using **rtiddsgen**
 
 ```sh
-<install dir>/bin/rtiddsgen -language Python -replace Inventory.idl
+<install dir>/bin/rtiddsgen -language Python -update typefiles Inventory.idl
 ```
 
 Where `<install dir>` refers to your RTI Connext installation.

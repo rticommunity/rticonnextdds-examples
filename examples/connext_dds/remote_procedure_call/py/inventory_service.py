@@ -11,6 +11,7 @@
 
 import argparse
 import asyncio
+import sys
 import rti.connextdds as dds
 import rti.rpc as rpc
 import rti.asyncio
@@ -88,10 +89,10 @@ async def main():
 
     parser.add_argument(
         "-s",
-        "--server-timeout",
+        "--service-timeout",
         type=int,
-        default=60,
-        help="Numbers of senconds the service will run (default: 60)",
+        default=sys.maxsize,
+        help="Numbers of senconds the service will run (default: infinite)",
     )
 
     args = parser.parse_args()
@@ -102,7 +103,7 @@ async def main():
     print("InventoryService running...")
     service_task = asyncio.create_task(run_service(service))
 
-    await asyncio.sleep(args.server_timeout)
+    await asyncio.sleep(args.service_timeout)
 
     service_task.cancel()
 

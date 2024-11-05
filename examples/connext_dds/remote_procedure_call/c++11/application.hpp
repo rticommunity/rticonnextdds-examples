@@ -85,7 +85,7 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
     unsigned int domain_id = 0;
     unsigned int quantity = 1;
     unsigned int delay = 0;
-    unsigned int service_timeout = 60;
+    unsigned int service_timeout = INT32_MAX;
     std::string item_name = "";
     bool add = true;
     rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
@@ -165,7 +165,7 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
         "    -q, --quantity <int>        Number of items to add or remove\n"\
         "                                Default: 1\n"
         "    -s, --service-timeout <int> Numbers of senconds the service will run\n"\
-        "                                Default: 60\n"
+        "                                Default: infinite\n"
         "    -v, --verbosity    <int>    How much debugging output to show.\n"\
         "                                Range: 0-3 \n"
         "                                Default: 1"
