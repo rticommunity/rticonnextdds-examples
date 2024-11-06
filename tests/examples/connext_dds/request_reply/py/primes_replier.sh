@@ -1,6 +1,5 @@
 #!/bin/bash
 
-cd "$(dirname "$0")"
-file_name=$(basename $0 .sh)
-/bin/python3 $file_name.py $@
+cd /test/connextdds_examples_suite/connextdds_examples_repo/examples/connext_dds/request_reply/py
+/bin/python3 primes_replier.py $@
 rm -rf __pycache__

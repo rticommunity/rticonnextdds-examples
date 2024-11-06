@@ -5,5 +5,5 @@
 # to try to avoid the issue
 sleep 10
 
-cd "$(dirname "$0")"
+cd /test/connextdds_examples_suite/connextdds_examples_repo/examples/connext_dds/request_reply/cs
 /usr/bin/dotnet run -- --requester $@
