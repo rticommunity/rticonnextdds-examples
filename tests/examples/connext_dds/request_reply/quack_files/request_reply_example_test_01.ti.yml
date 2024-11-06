@@ -3,22 +3,22 @@ apps:
     name: test_requester_py
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/request_reply/py/primes_requester.sh
+    executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_requester.sh
   -
     name: test_replier_py
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/request_reply/py/primes_replier.sh
+    executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_replier.sh
   -
     name: test_requester_cs
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/request_reply/cs/PrimesRequester.sh
+    executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesRequester.sh
   -
     name: test_replier_cs
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/request_reply/cs/PrimesReplier.sh
+    executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesReplier.sh
 test_scenarios:
   -
     test_cases: [request_reply_example_test_01_1]

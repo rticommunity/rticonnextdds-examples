@@ -3,22 +3,22 @@ apps:
     name: test_dd_nested_structs_c
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/dynamic_data_nested_structs/c/build/dynamic_data_nested_struct
+    executable: rticonnextdds-examples/examples/connext_dds/dynamic_data_nested_structs/c/build/dynamic_data_nested_struct
   -
     name: test_dd_nested_structs_cpp98
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/dynamic_data_nested_structs/c++98/build/dynamic_data_nested_struct
+    executable: rticonnextdds-examples/examples/connext_dds/dynamic_data_nested_structs/c++98/build/dynamic_data_nested_struct
   -
     name: test_dd_nested_structs_cpp11
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/dynamic_data_nested_structs/c++11/build/dynamic_data_nested_struct
+    executable: rticonnextdds-examples/examples/connext_dds/dynamic_data_nested_structs/c++11/build/dynamic_data_nested_struct
   -
     name: test_dd_nested_structs_java
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/dynamic_data_nested_structs/java/DynamicDataNestedStruct.sh
+    executable: rticonnextdds-examples/examples/connext_dds/dynamic_data_nested_structs/java/DynamicDataNestedStruct.sh
 test_scenarios:
   -
     test_cases: [dynamic_data_nested_structs_example_test_01_1]

@@ -3,22 +3,22 @@ apps:
     name: test_client_cpp11
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/c++11/Inventory_client.sh
+    executable: rticonnextdds-examples/examples/connext_dds/remote_procedure_call/c++11/Inventory_client.sh
   -
     name: test_service_cpp11
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/c++11/Inventory_service.sh
+    executable: rticonnextdds-examples/examples/connext_dds/remote_procedure_call/c++11/Inventory_service.sh
   -
     name: test_client_py
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/py/inventory_client.sh
+    executable: rticonnextdds-examples/examples/connext_dds/remote_procedure_call/py/inventory_client.sh
   -
     name: test_service_py
     product: pro
     version: 7.4.0
-    executable: connextdds_examples_repo/examples/connext_dds/remote_procedure_call/py/inventory_service.sh
+    executable: rticonnextdds-examples/examples/connext_dds/remote_procedure_call/py/inventory_service.sh
 test_scenarios:
   -
     test_cases: [remote_procedure_call_example_test_01_1]
