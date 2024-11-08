@@ -9,14 +9,12 @@
 # damages arising out of the use or inability to use the software.
 #
 
-import asyncio
 import dataclasses
-import datetime
-import statistics
+import threading
+import time
 import typing
 from datetime import datetime
 
-import rti.asyncio
 import rti.connextdds as dds
 
 from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
@@ -30,86 +28,136 @@ class DashboardItem:
     fuel_history: typing.List[float] = dataclasses.field(
         default_factory=lambda: [100.0]
     )
-    completed_routes: int = 0
     current_destination: typing.Optional[Coord] = None
-    reached_destinations: typing.List[Coord] = dataclasses.field(
-        default_factory=list
-    )
 
 
 class SubscriberDashboard:
     def __init__(
         self,
-        metrics_reader: "dds.DataReader",
-        transit_reader: "dds.DataReader",
-    ):
+        metrics_reader: dds.DataReader,
+        transit_reader: dds.DataReader,
+    ) -> None:
         self._metrics_reader = metrics_reader
         self._transit_reader = transit_reader
-        self._dashboard_data: typing.Dict[
-            dds.InstanceHandle, DashboardItem
-        ] = dict()
 
-    def __repr__(self):
-        return f"Dashboard({self._metrics_reader=}, {self._transit_reader=}, {self._dashboard_data=})"
+    def run(self) -> None:
 
-    async def run(self):
-        await asyncio.gather(
-            self._display_app(),
-            self._metrics_app(),
-            self._transit_app(),
+        # Create a new handler for newly-received data.
+        # This handler will be called as data comes by, by dispatching
+        # the WaitSet that has attached this ReadCondition.
+        def new_position_handler(_):
+            print(self._create_new_position_string(new_position_condition))
+
+        new_position_condition = dds.ReadCondition(
+            self._transit_reader, dds.DataState.new_data, new_position_handler
         )
 
-    @property
-    def online_vehicles(self):
-        return {
-            handle: data
-            for handle, data in self._dashboard_data.items()
-            if not data.is_historical
-        }
+        # Create a new handler for printing the dashboard.
+        # This handler will be called whenever the GuardCondition is triggered,
+        # which we're periodically doing on a background thread.
+        def dashboard_handler(condition: dds.GuardCondition):
+            print("dashboard_handler")
+            print(self._create_dashboard_string())
+            condition.trigger_value = False
 
-    @property
-    def offline_vehicles(self):
-        return {
-            handle: data
-            for handle, data in self._dashboard_data.items()
-            if data.is_historical
-        }
+        dashboard_condition = dds.GuardCondition()
+        dashboard_condition.set_handler(dashboard_handler)
 
-    async def _display_app(self):
-        while True:
-            print(f"[[ DASHBOARD: {datetime.now()} ]]")
-            print(f"Online vehicles: {len(self.online_vehicles)}")
-            for data in self.online_vehicles.values():
-                print(f"- Vehicle {data.vin}:")
-                print(f"  Fuel updates: {len(data.fuel_history)}")
-                print(f"  Last known destination: {data.current_destination}")
-                print(f"  Last known fuel level: {data.fuel_history[-1]}")
-            print(f"Offline vehicles: {len(self.offline_vehicles.keys())}")
-            for data in self.offline_vehicles.values():
-                mean_full_consumption = statistics.mean(
-                    data.fuel_history
-                ) / len(data.fuel_history)
+        # Create a background thread that will trigger the dashboard condition.
+        def display_handler(
+            condition: dds.GuardCondition, exit_event: threading.Event
+        ):
+            try:
+                while not exit_event.is_set():
+                    condition.trigger_value = True
+                    time.sleep(1)
+            except:
+                pass
 
-                print(f"- Vehicle {data.vin}:")
-                print(f"  Mean fuel consumption: {mean_full_consumption}")
-                print(
-                    f"  Known reached destinations: {len(data.reached_destinations)}"
-                )
-                for coord in data.reached_destinations:
-                    print(f"    - {coord}")
-            print()
-            await asyncio.sleep(0.5)
+        display_thread_exit = threading.Event()
+        display_thread = threading.Thread(
+            target=display_handler,
+            args=(dashboard_condition, display_thread_exit),
+        )
 
-    async def _metrics_app(self):
-        async for sample, info in self._metrics_reader.take_async():
-            if info.instance_handle not in self._dashboard_data:
+        # Create a WaitSet and attach the conditions to it.
+        waitset = dds.WaitSet()
+        waitset.attach_condition(new_position_condition)
+        waitset.attach_condition(dashboard_condition)
+
+        # Start the thread now that the WaitSet has been created.
+        display_thread.start()
+
+        try:
+
+            while True:
+                waitset.dispatch(dds.Duration(1))
+        except KeyboardInterrupt:
+            waitset.detach_all()
+            raise
+        finally:
+            display_thread_exit.set()
+            display_thread.join()
+
+    def _create_new_position_string(self, condition) -> str:
+        string = ""
+        for sample in (
+            self._transit_reader.select().condition(condition).read_data()
+        ):
+
+            string += f"[INFO] Vehicle {sample.vehicle_vin}"
+            if sample.current_route:
+                string += f" is en route to {sample.current_route[-1]} from {sample.current_position}"
+            else:
+                string += f" has arrived at its destination in {sample.current_position}"
+            string += "\n"
+        return string
+
+    def _create_dashboard_string(self) -> str:
+        dashboard_data = self._build_dashboard_data()
+        online_vehicles = [
+            data for data in dashboard_data.values() if not data.is_historical
+        ]
+        offline_vehicles = [
+            data for data in dashboard_data.values() if data.is_historical
+        ]
+
+        online_str = "\n".join(
+            f"Vehicle {data.vin}:\n"
+            f"  Fuel updates: {len(data.fuel_history)}\n"
+            f"  Last known destination: {data.current_destination}\n"
+            f"  Last known fuel level: {data.fuel_history[-1]}\n"
+            for data in online_vehicles
+        )
+        offline_str = "\n".join(
+            f"Vehicle {data.vin}" for data in offline_vehicles
+        )
+
+        return "\n".join(
+            [
+                f"[[ DASHBOARD: {datetime.now()} ]]",
+                f"Online vehicles: {len(online_vehicles)}",
+                online_str,
+                f"Offline vehicles: {len(offline_vehicles)}",
+                offline_str,
+            ]
+        )
+
+    def _build_dashboard_data(
+        self,
+    ) -> typing.Dict[dds.InstanceHandle, DashboardItem]:
+        data: typing.Dict[dds.InstanceHandle, DashboardItem] = {}
+
+        metrics = self._metrics_reader.read()
+        transit = self._transit_reader.read()
+
+        for sample, info in metrics:
+            if info.instance_handle not in data:
                 if sample is None:
                     continue
-                self._dashboard_data[info.instance_handle] = DashboardItem(
-                    sample.vehicle_vin
-                )
+                data[info.instance_handle] = DashboardItem(sample.vehicle_vin)
 
-            instance_data = self._dashboard_data[info.instance_handle]
+            instance_data = data[info.instance_handle]
             instance_data.is_historical = (
                 info.state.instance_state != dds.InstanceState.ALIVE
             )
@@ -119,18 +167,13 @@ class SubscriberDashboard:
 
             instance_data.fuel_history.append(sample.fuel_level)
 
-        print("metrics ended")
-
-    async def _transit_app(self):
-        async for sample, info in self._transit_reader.take_async():
-            if info.instance_handle not in self._dashboard_data:
+        for sample, info in transit:
+            if info.instance_handle not in data:
                 if sample is None:
                     continue
-                self._dashboard_data[info.instance_handle] = DashboardItem(
-                    sample.vehicle_vin
-                )
+                data[info.instance_handle] = DashboardItem(sample.vehicle_vin)
 
-            instance_data = self._dashboard_data[info.instance_handle]
+            instance_data = data[info.instance_handle]
             instance_data.is_historical = (
                 info.state.instance_state != dds.InstanceState.ALIVE
             )
@@ -144,14 +187,11 @@ class SubscriberDashboard:
             else:
                 # Vehicle has finished its route
                 instance_data.current_destination = None
-                instance_data.reached_destinations.append(
-                    sample.current_position
-                )
 
-        print("transit ended")
+        return data
 
 
-def main():
+def main() -> None:
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
@@ -171,8 +211,8 @@ def main():
             transit_reader=transit_reader, metrics_reader=metrics_reader
         )
 
-        print(f"Running dashboard: {dashboard=}")
-        asyncio.run(dashboard.run())
+        print(f"Running dashboard:")
+        dashboard.run()
 
 
 if __name__ == "__main__":

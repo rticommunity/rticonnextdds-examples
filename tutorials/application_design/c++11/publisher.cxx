@@ -23,13 +23,17 @@ public:
     explicit PublisherSimulation(
             dds::pub::DataWriter<VehicleMetrics> metrics_writer,
             dds::pub::DataWriter<VehicleTransit> transit_writer)
-            : metrics_writer_(metrics_writer),
-              transit_writer_(transit_writer),
-              vehicle_vin_(utils::new_vin()),
-              vehicle_fuel_(100.0),
-              vehicle_route_(utils::new_route()),
-              vehicle_position_(vehicle_route_[0])
+            : metrics_writer_(metrics_writer), transit_writer_(transit_writer)
     {
+        auto new_vin = utils::new_vin();
+        auto new_route = utils::create_new_route();
+
+        metrics_.vehicle_vin(new_vin);
+        metrics_.fuel_level(100.0);
+
+        transit_.vehicle_vin(new_vin);
+        transit_.current_route(new_route);
+        transit_.current_position(new_route.front());
     }
 
     bool has_ended() const
@@ -39,74 +43,60 @@ public:
 
     void run();
 
-    friend std::string to_string(const PublisherSimulation &sim);
-
 private:
     dds::pub::DataWriter<VehicleMetrics> metrics_writer_;
     dds::pub::DataWriter<VehicleTransit> transit_writer_;
 
-    std::string vehicle_vin_;
-    double vehicle_fuel_;
-    CoordSequence vehicle_route_;
-    Coord vehicle_position_;
+    VehicleMetrics metrics_;
+    VehicleTransit transit_;
 
     bool is_out_of_fuel() const
     {
-        return vehicle_fuel_ <= 0.0;
+        return metrics_.fuel_level() <= 0.0;
     }
 
     bool is_on_standby() const
     {
-        return vehicle_route_.empty();
+        return !transit_.current_route().has_value()
+                || transit_.current_route().value().empty();
     }
 };
 
 void PublisherSimulation::run()
 {
     while (!has_ended()) {
-        metrics_writer_.write(VehicleMetrics { vehicle_vin_, vehicle_fuel_ });
-
-        transit_writer_.write(VehicleTransit { vehicle_vin_,
-                                               vehicle_position_,
-                                               vehicle_route_ });
+        metrics_writer_.write(metrics_);
+        transit_writer_.write(transit_);
 
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         if (is_on_standby()) {
-            std::cout << "Vehicle '" << vehicle_vin_
+            std::cout << "Vehicle '" << metrics_.vehicle_vin()
                       << "' has reached its destination, now moving to a "
                          "new location..."
                       << std::endl;
-            vehicle_route_ = utils::new_route();
-            vehicle_route_[0] = vehicle_position_;
+
+            auto new_route = utils::create_new_route();
+            new_route.front() = transit_.current_position();
+            transit_.current_route(new_route);
         }
 
-        vehicle_fuel_ -= 10 * utils::random_stduniform();
-        vehicle_position_ = vehicle_route_.front();
-        vehicle_route_.erase(vehicle_route_.begin());
+        metrics_.fuel_level() -= 10 * utils::random_stduniform();
+        transit_.current_position(transit_.current_route().value().front());
+        transit_.current_route().value().erase(
+                transit_.current_route().value().begin());
 
         if (is_out_of_fuel()) {
-            vehicle_fuel_ = 0.0;
-            std::cout << "Vehicle '" << vehicle_vin_ << "' ran out of fuel!"
-                      << std::endl;
+            metrics_.fuel_level(0.0);
+
+            std::cout << "Vehicle '" << metrics_.vehicle_vin()
+                      << "' ran out of fuel!" << std::endl;
         }
     }
 }
 
-std::string to_string(const PublisherSimulation &sim)
-{
-    std::ostringstream ss;
-    ss << "PublisherSimulation(vehicle_vin: " << sim.vehicle_vin_;
-    ss << ", vehicle_fuel: " << sim.vehicle_fuel_;
-    ss << ", vehicle_route: " << to_string(sim.vehicle_route_);
-    ss << ", vehicle_position: " << to_string(sim.vehicle_position_) << ")";
-    return ss.str();
-}
-
 int main(int argc, char **argv)
 {
-    utils::set_random_seed(std::time(nullptr));
-
     rti::domain::register_type<VehicleMetrics>();
     rti::domain::register_type<VehicleTransit>();
 
@@ -126,6 +116,6 @@ int main(int argc, char **argv)
             "Publisher::TransitWriter");
 
     PublisherSimulation simulation(metrics_writer, transit_writer);
-    std::cout << "Running simulation " << to_string(simulation) << std::endl;
+    std::cout << "Running simulation:" << std::endl;
     simulation.run();
 }
