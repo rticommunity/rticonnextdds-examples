@@ -20,17 +20,12 @@ class RobotControlClient(RobotControl, rpc.ClientBase):
     pass
 
 
-async def wait_for_service(client: RobotControlClient):
-    while client.matched_service_count == 0:
-        await sleep(0.1)
-
-
 async def main():
     participant = dds.DomainParticipant(domain_id=0)
     client = RobotControlClient(participant, "MyRobotControl")
 
     # For versions 7.4.0 and below:
-    await wait_for_service(client)
+    sleep(2)
     # For newer versions you can use the following:
     # await client.wait_for_service_async(dds.Duration(20))
 

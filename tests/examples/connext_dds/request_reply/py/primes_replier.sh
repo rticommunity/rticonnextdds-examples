@@ -1,5 +1,5 @@
 #!/bin/bash
 
-cd /test/connextdds_examples_suite/rticonnextdds-examples/examples/connext_dds/request_reply/py
+cd ${BaseExamplePath}/py
 /bin/python3 primes_replier.py $@
 rm -rf __pycache__
