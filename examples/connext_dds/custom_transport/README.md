@@ -1,5 +1,9 @@
 # Example Code: Creating a Custom Transport
 
+**IMPORTANT:** This documentation is out of date, and details may be missing.
+If you are interested in developing a custom transport plugin for RTI Connext,
+please contact your local RTI representative or email sales@rti.com.
+
 ## Concept
 
 RTI Connext DDS interacts with the underlying network/communications transport
