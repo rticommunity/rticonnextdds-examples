@@ -1,0 +1,14 @@
+requirement: remote_procedure_call_example_test_01
+analysis: |-
+  This test case validates that RPC examples.
+test_cases:
+  -
+    id: 1
+    description: |-
+      The test case validates RPC example in C++11.
+      test passes
+  -
+    id: 2
+    description: |-
+      The test case validates RPC example in Python.
+      test passes

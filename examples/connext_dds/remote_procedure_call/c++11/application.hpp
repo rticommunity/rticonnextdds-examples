@@ -29,6 +29,7 @@ struct ApplicationArguments {
     std::string item_name;
     unsigned int quantity;
     unsigned int delay;
+    unsigned int service_timeout;
     rti::config::Verbosity verbosity;
 
     ApplicationArguments(
@@ -38,6 +39,7 @@ struct ApplicationArguments {
             const std::string &item_name_param,
             unsigned int quantity_param,
             unsigned int delay_param,
+            unsigned int service_timeout_param,
             rti::config::Verbosity verbosity_param)
             : parse_result(parse_result_param),
               domain_id(domain_id_param),
@@ -45,6 +47,7 @@ struct ApplicationArguments {
               item_name(item_name_param),
               quantity(quantity_param),
               delay(delay_param),
+              service_timeout(service_timeout_param),
               verbosity(verbosity_param)
     {
     }
@@ -82,6 +85,7 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
     unsigned int domain_id = 0;
     unsigned int quantity = 1;
     unsigned int delay = 0;
+    unsigned int service_timeout = INT32_MAX;
     std::string item_name = "";
     bool add = true;
     rti::config::Verbosity verbosity(rti::config::Verbosity::EXCEPTION);
@@ -131,6 +135,12 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
                     || strcmp(argv[arg_processing], "--delay") == 0)) {
             delay = atoi(argv[arg_processing + 1]);
             arg_processing += 2;
+        } else if (
+                (argc > arg_processing + 1)
+                && (strcmp(argv[arg_processing], "-s") == 0
+                    || strcmp(argv[arg_processing], "--service-timeout") == 0)) {
+            service_timeout = atoi(argv[arg_processing + 1]);
+            arg_processing += 2;
         } else {
             std::cout << "Bad parameter." << std::endl;
             show_usage = true;
@@ -147,16 +157,18 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
 
     if (show_usage) {
         std::cout << "Usage:\n"\
-        "    -d, --domain       <int>   Domain ID this application will\n" \
-        "                               subscribe in.  \n"
-        "                               Default: 0\n"\
-        "    -a, --add <item_name>      Add an item to the inventory\n"\
-        "    -r, --remove <item_name>   Remove an item from the inventory\n"\
-        "    -q, --quantity <int>       Number of items to add or remove\n"\
-        "                               Default: 1\n"
-        "    -v, --verbosity    <int>   How much debugging output to show.\n"\
-        "                               Range: 0-3 \n"
-        "                               Default: 1"
+        "    -d, --domain       <int>    Domain ID this application will\n" \
+        "                                subscribe in.  \n"
+        "                                Default: 0\n"\
+        "    -a, --add <item_name>       Add an item to the inventory\n"\
+        "    -r, --remove <item_name>    Remove an item from the inventory\n"\
+        "    -q, --quantity <int>        Number of items to add or remove\n"\
+        "                                Default: 1\n"
+        "    -s, --service-timeout <int> Numbers of senconds the service will run\n"\
+        "                                Default: infinite\n"
+        "    -v, --verbosity    <int>    How much debugging output to show.\n"\
+        "                                Range: 0-3 \n"
+        "                                Default: 1"
         << std::endl;
     }
 
@@ -167,6 +179,7 @@ inline ApplicationArguments parse_arguments(int argc, char *argv[], bool client)
             item_name,
             quantity,
             delay,
+            service_timeout,
             verbosity);
 }
 
