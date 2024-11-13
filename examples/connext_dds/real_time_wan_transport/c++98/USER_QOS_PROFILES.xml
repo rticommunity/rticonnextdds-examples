@@ -19,9 +19,15 @@
             <binding_ping_period>3000</binding_ping_period>
             <!-- 
               For WAN communications, it is not a good idea to rely on 
-              IP fragmentation. This setting Disables IP fragmentation 
-            -->
+              IP fragmentation. When the message_size_max is set to a value 
+              smaller than the smallest IP MTU in your network path, IP 
+              fragmentation is disabled. The Real-Time WAN Transport already 
+              sets the default value to 1400 bytes, which is sufficiently small 
+              in most cases. If your network path has a smaller MTU, you can 
+              set the message_size_max to a smaller value here.
+            
             <message_size_max>1400</message_size_max>
+            -->
           </udpv4_wan>
         </transport_builtin>
         <discovery_config>
@@ -30,23 +36,6 @@
             <nanosec>0</nanosec>
           </participant_liveliness_assert_period>
         </discovery_config>
-        <property>
-          <value>
-            <element>
-              <!--
-                Connext DDS adds protocol information to every RTPS message 
-                it sends out. If DDS-level fragmentation is used, the amount 
-                of overhead reserved per RTPS message for this protocol 
-                information may become relatively large. This property, 
-                with a default value of 512, is used to adjust the overhead 
-                of the RTPS protocol without including security so that
-                the user payload utilization ratio is larger.
-              -->
-              <name>dds.participant.protocol.rtps_overhead</name>
-              <value>256</value>
-            </element>
-          </value>
-        </property>
       </participant_qos>
     </qos_profile>
 
