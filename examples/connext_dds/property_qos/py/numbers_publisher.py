@@ -13,9 +13,6 @@ import time
 import sys
 import rti.connextdds as dds
 
-# TODO: Out of box experience, below line breaks. 
-# Consider renaming idl file so that it doesn't collide with python "numbers" module
-# FYI, this has only been problematic when launching with a debugger
 from numbers import numbers
 
 class numbersPublisher:
