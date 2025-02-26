@@ -453,6 +453,11 @@ Application::Application(ArgumentsParser &args_parser)
             dds::core::QosProvider::Default().datawriter_qos(
                     "ServiceAdministrationProfiles::"
                     "ServiceAdminRequesterProfile"));
+
+    // configure the requester for compatibility with the RTI routing service
+    // request reply.
+    requester_params_.require_matching_service_on_send_request(false);
+
     /*
      * Now that we have set up all the parameters for the requester instance, we
      * can create it.

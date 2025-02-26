@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
         rti::request::RequesterParams requester_params(participant);
         requester_params.request_topic_name(COMMAND_REQUEST_TOPIC_NAME);
         requester_params.reply_topic_name(COMMAND_REPLY_TOPIC_NAME);
+        // configure the requester for compatibility with the RTI routing service
+        // request reply.
+        requester_params.require_matching_service_on_send_request(false);
 
         rti::request::Requester<
                 RTI::Service::Admin::CommandRequest,
