@@ -52,7 +52,7 @@ to use the software. -->
               </element>
               <element>
                 <name>com.rti.serv.secure.files_poll_interval</name>
-                <value>5000</value>
+                <value>5</value>
               </element>
               <!--
                     Needed to allow a previously-revoked participant to fail

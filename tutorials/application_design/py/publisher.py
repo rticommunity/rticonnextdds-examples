@@ -11,27 +11,28 @@
 
 import random
 import time
-import typing
+
+from typing import List, Optional
 
 import rti.connextdds as dds
 
 from VehicleModeling import Coord, VehicleMetrics, VehicleTransit
 
 
-def new_route(
+def create_new_route(
     n: int = 5,
-    start: typing.Optional[Coord] = None,
-    end: typing.Optional[Coord] = None,
-):
-    def new_random_coord():
+    start: Optional[Coord] = None,
+    end: Optional[Coord] = None,
+) -> List[Coord]:
+    def create_new_random_coord() -> Coord:
         return Coord(
             (0.5 - random.random()) * 100,
             (0.5 - random.random()) * 100,
         )
 
-    start = start or new_random_coord()
-    intermediate = (new_random_coord() for _ in range(n))
-    end = end or new_random_coord()
+    start = start or create_new_random_coord()
+    intermediate = (create_new_random_coord() for _ in range(n))
+    end = end or create_new_random_coord()
 
     return [start, *intermediate, end]
 
@@ -39,76 +40,62 @@ def new_route(
 class PublisherSimulation:
     def __init__(
         self,
-        metrics_writer: "dds.DataWriter",
-        transit_writer: "dds.DataWriter",
-    ):
+        metrics_writer: dds.DataWriter,
+        transit_writer: dds.DataWriter,
+    ) -> None:
         self._metrics_writer = metrics_writer
         self._transit_writer = transit_writer
-        self._vehicle_vin: str = "".join(
+
+        vehicle_vin = "".join(
             random.choices("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ", k=17)
         )
-        self._vehicle_fuel = 100.0
-        self._vehicle_route = new_route()
-        self._vehicle_position = self._vehicle_route.pop(0)
+        vehicle_route = create_new_route()
+        vehicle_position = vehicle_route.pop(0)
 
-    def __repr__(self):
-        return (
-            f"Simulation("
-            f"{self._metrics_writer=}, "
-            f"{self._transit_writer=}, "
-            f"{self._vehicle_vin=}, "
-            f"{self._vehicle_fuel=}, "
-            f"{self._vehicle_route=}, "
-            f"{self._vehicle_position=})"
+        self._metrics = VehicleMetrics(vehicle_vin, 100.0)
+        self._transit = VehicleTransit(
+            vehicle_vin, vehicle_position, vehicle_route
         )
 
     @property
-    def has_ended(self):
+    def has_ended(self) -> bool:
         return self._is_out_of_fuel
 
     @property
-    def _is_out_of_fuel(self):
-        return self._vehicle_fuel <= 0.0
+    def _is_out_of_fuel(self) -> bool:
+        return self._metrics.fuel_level <= 0.0
 
     @property
-    def _is_on_standby(self):
-        return not self._vehicle_route
+    def _is_on_standby(self) -> bool:
+        return not self._transit.current_route
 
-    def run(self):
+    def run(self) -> None:
         while not self.has_ended:
-            self._metrics_writer.write(
-                VehicleMetrics(
-                    self._vehicle_vin,
-                    self._vehicle_fuel,
-                )
-            )
-
-            self._transit_writer.write(
-                VehicleTransit(
-                    self._vehicle_vin,
-                    current_route=self._vehicle_route,
-                    current_position=self._vehicle_position,
-                )
-            )
+            self._metrics_writer.write(self._metrics)
+            self._transit_writer.write(self._transit)
 
             time.sleep(1)
 
             if self._is_on_standby:
                 print(
-                    f"Vehicle '{self._vehicle_vin}' has reached its destination, now moving to a new location..."
+                    f"Vehicle '{self._metrics.vehicle_vin}' has reached its destination, now moving to a new location..."
                 )
-                self._vehicle_route = new_route(start=self._vehicle_position)
+                self._transit.current_route = create_new_route(
+                    start=self._transit.current_position
+                )
 
-            self._vehicle_position = self._vehicle_route.pop(0)
-            self._vehicle_fuel -= 10 * random.random()
+            self._metrics.fuel_level -= 10 * random.random()
+            self._transit.current_position = self._transit.current_route.pop(0)
 
             if self._is_out_of_fuel:
-                self._vehicle_fuel = 0.0
+                self._metrics.fuel_level = 0.0
 
-                print(f"Vehicle '{self._vehicle_vin}' ran out of fuel!")
+                print(
+                    f"Vehicle '{self._metrics.vehicle_vin}' ran out of fuel!"
+                )
 
 
-def main():
+def main() -> None:
     dds.DomainParticipant.register_idl_type(VehicleMetrics, "VehicleMetrics")
     dds.DomainParticipant.register_idl_type(VehicleTransit, "VehicleTransit")
 
@@ -127,7 +114,7 @@ def main():
         simulation = PublisherSimulation(
             metrics_writer=metrics_writer, transit_writer=transit_writer
         )
-        print(f"Running simulation: {simulation=}")
+        print(f"Running simulation:")
         simulation.run()
 
 

@@ -20,28 +20,28 @@ dotnet build
 
 ## Running the Applications :rocket:
 
-Running publisher
+Run the publisher
 
 ```sh
 dotnet run -- pub
 ...
 ```
 
-Running subscriber
+Run the subscriber
 
 ```sh
 dotnet run -- sub
 ...
 ```
 
-Extra. Running interactive publisher
+Extra. Run the interactive publisher
 
 ```sh
 dotnet run -- interactive_pub
 ...
 ```
 
-Extra. Running interactive subscriber
+Extra. Run the interactive subscriber
 
 ```sh
 dotnet run -- interactive_sub

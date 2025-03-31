@@ -1,10 +1,13 @@
-# Tutorial: Publish-Subscribe
+# Tutorial: Content Filtering
 
 This code is part of the Connext
-[Publish-Subscribe](https://community.rti.com/static/documentation/developers/learn/publish-subscribe.html)
+[Content Filtering](https://community.rti.com/static/documentation/developers/learn/content-filtering.html)
 tutorial.
 
 ## Building the Example :wrench:
+
+You can build the example following the instructions in the tutorial, or you can
+build it using CMake as follows.
 
 1.  Generate the C# types and the project files file with **rtiddsgen**:
 
@@ -20,7 +23,7 @@ Where `<install dir>` refers to your RTI Connext installation.
 dotnet build
 ```
 
-## Running the Applications :rocket:
+## Running the Example :rocket:
 
 Run the publisher
 
@@ -36,9 +39,9 @@ dotnet run -- sub
 ...
 ```
 
-Extra. Run the subscriber with timestamp
+(Optional) Run the subscriber that updates the filter
 
 ```sh
-dotnet run -- sub_timestamp
+dotnet run -- filter
 ...
 ```
