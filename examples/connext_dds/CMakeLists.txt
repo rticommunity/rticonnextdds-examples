@@ -107,6 +107,7 @@ if(NOT DEFINED CONNEXTDDS_CONNEXT_DDS_EXAMPLES)
         "compression"
         "detect_samples_dropped"
         "dynamic_data_access_union_discriminator"
+        "dynamic_data_get_enum_value"
         "dynamic_data_nested_structs"
         "dynamic_data_request_reply"
         "dynamic_data_sequences"
