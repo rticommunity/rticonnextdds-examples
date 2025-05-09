@@ -24,7 +24,10 @@ async def main():
     participant = dds.DomainParticipant(domain_id=0)
     client = RobotControlClient(participant, "MyRobotControl")
 
+    # For versions 7.4.0 and below:
     sleep(2)
+    # For newer versions you can use the following:
+    # await client.wait_for_service_async(dds.Duration(20))
 
     print("Calling walk_to...")
     result = await client.walk_to(

@@ -15,7 +15,7 @@ struct Coordinates {
     int64 y;
 };
 
-@service
+@service("DDS")
 interface RobotControl {
     Coordinates walk_to(Coordinates destination, float speed);
     float get_speed();

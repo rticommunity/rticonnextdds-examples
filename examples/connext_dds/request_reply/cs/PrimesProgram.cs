@@ -63,7 +63,9 @@ namespace PrimeCalculator
             }
 
             // Set up signal handler to Dispose the DDS entities
-            var cancellationSource = new CancellationTokenSource();
+            var cancellationSource = arguments.Timeout > 0
+                ? new CancellationTokenSource(TimeSpan.FromSeconds(arguments.Timeout))
+                : new CancellationTokenSource();
             Console.CancelKeyPress += (_, eventArgs) =>
             {
                 Console.WriteLine("Shutting down...");
@@ -100,6 +102,7 @@ namespace PrimeCalculator
             public int Domain { get; set; }
             public int N { get; set; } = int.MaxValue;
             public int PrimesPerReply { get; set; }
+            public int Timeout { get; set; }
         }
 
         // Uses the System.CommandLine package to parse the program arguments.
@@ -124,7 +127,11 @@ namespace PrimeCalculator
                 description: "The number to calculate primes up to (only applicable with --requester)"),
                 new System.CommandLine.Option<int>(
                     new string[] { "--primes-per-reply", "-p" },
-                getDefaultValue: () => 5)
+                getDefaultValue: () => 5),
+                new System.CommandLine.Option<int>(
+                    new string[] { "--timeout" },
+                getDefaultValue: () => 0,
+                description: "Timeout in seconds to wait for the application to finish (default: infinite)"),
             };
 
             rootCommand.Description = "Example RTI Connext Requester and Replier";

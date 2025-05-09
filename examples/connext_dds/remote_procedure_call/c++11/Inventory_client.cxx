@@ -32,8 +32,10 @@ void run_client(
     // Create a client with the ClientParams
     ::InventoryServiceClient client(client_params);
 
-    // Wait until the service is started
-    client.wait_for_service();
+    // Wait until the service is discovered
+    if (!client.wait_for_service(dds::core::Duration(20))) {
+        throw std::runtime_error("Service not available");
+    }
 
     std::cout << "Initial inventory: " << client.get_inventory() << std::endl;
 

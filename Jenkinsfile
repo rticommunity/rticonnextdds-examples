@@ -10,20 +10,15 @@
  * to use the software.
  */
 
-def runBuildStage(String buildMode, String linkMode) {
-    def cmd = "python3 ${env.WORKSPACE}/resources/ci_cd/linux_build.py"
-    cmd += " --build-mode ${buildMode}"
-    cmd += " --link-mode ${linkMode}"
-    cmd += " --build-dir ${get_build_directory(buildMode, linkMode)}"
-    sh(cmd)
-}
-
-def get_build_directory(String buildMode, String linkMode) {
-    return "build_${buildMode}_${linkMode}"
-}
+/**
+ * Hold information about the pipeline.
+ */
+Map pipelineInfo = [:]
 
 pipeline {
-    agent none
+    agent {
+        label "${runInsideExecutor.labelFromJobName()}"
+    }
 
     options {
         disableConcurrentBuilds()
@@ -48,69 +43,94 @@ pipeline {
     }
 
     stages {
-        stage('Build sequence') {
-            agent {
-                dockerfile {
-                    filename 'resources/docker/Dockerfile.linux'
-                    label 'docker'
+        stage('Configuration') {
+            steps {
+                script {
+                    pipelineInfo.dockerDir = "${env.WORKSPACE}/resources/docker/"
+                    pipelineInfo.staticAnalysisDir = "${env.WORKSPACE}/static_analysis_report"
+                    runInsideExecutor(
+                        '',
+                        pipelineInfo.dockerDir,
+                    ) {
+                        pipelineInfo.connextArch = getEnvVar('CONNEXTDDS_ARCH')
+                    }
                 }
             }
-
-            environment {
-                RTI_INSTALLATION_PATH = "${env.WORKSPACE}"
+        }
+        stage('Download Packages') {
+            steps {
+                runInsideExecutor(
+                    '',
+                    pipelineInfo.dockerDir,
+                ) {
+                    script {
+                        pipelineInfo.connextDir = installConnext(
+                            pipelineInfo.connextArch,
+                            env.WORKSPACE,
+                        )
+                    }
+                }
             }
-
-            stages {
-                stage('Download Packages') {
-                    steps {
-                        sh 'pip3 install -r resources/ci_cd/requirements.txt'
-
-                        withAWSCredentials {
-                            withCredentials([
-                                string(credentialsId: 's3-bucket', variable: 'RTI_AWS_BUCKET'),
-                                string(credentialsId: 's3-path', variable: 'RTI_AWS_PATH'),
-                            ]) {
-                                sh 'python3 resources/ci_cd/linux_install.py -a $CONNEXTDDS_ARCH'
+        }
+        stage('Build all modes') {
+            matrix {
+                axes {
+                    axis {
+                        name 'buildMode'
+                        values 'release', 'debug'
+                    }
+                    axis {
+                        name 'linkMode'
+                        values 'static', 'dynamic'
+                    }
+                }
+                stages {
+                    stage('Build single mode') {
+                        steps {
+                            runInsideExecutor(
+                                '',
+                                pipelineInfo.dockerDir,
+                            ) {
+                                echo("Building ${buildMode}/${linkMode}")
+                                buildExamples(
+                                    pipelineInfo.connextArch,
+                                    pipelineInfo.connextDir,
+                                    buildMode,
+                                    linkMode,
+                                    env.WORKSPACE,
+                                )
                             }
                         }
                     }
                 }
-
-                stage('Build all modes') {
-                    matrix {
-                        axes {
-                            axis {
-                                name 'buildMode'
-                                values 'release', 'debug'
-                            }
-                            axis {
-                                name 'linkMode'
-                                values 'static', 'dynamic'
-                            }
-                        }
-                        stages {
-                            stage('Build single mode') {
-                                steps {
-                                    echo("Build ${buildMode}/${linkMode}")
-                                    runBuildStage(buildMode, linkMode)
-                                }
-                            }
-                        }
-                    }
-                }
-
-                stage('Static Analysis') {
-                    steps {
-                        sh "python3 resources/ci_cd/linux_static_analysis.py --build-dir ${get_build_directory('release', 'dynamic')}"
-                    }
-                }
             }
-
-            post {
-                cleanup {
-                    cleanWs()
+        }
+        stage('Static Analysis') {
+            steps {
+                runInsideExecutor(
+                    '',
+                    pipelineInfo.dockerDir,
+                ) {
+                    runStaticAnalysis(
+                        buildExamples.getBuildDirectory('release', 'dynamic'),
+                        pipelineInfo.connextDir,
+                        pipelineInfo.staticAnalysisDir,
+                    )
                 }
+                publishHTML(target: [
+                    allowMissing: true,
+                    alwaysLinkToLastBuild: true,
+                    keepAll: true,
+                    reportDir: pipelineInfo.staticAnalysisDir,
+                    reportFiles: 'index.html',
+                    reportName: 'LLVM Scan build static analysis',
+                ])
             }
+        }
+    }
+    post {
+        cleanup {
+            cleanWs()
         }
     }
 }

@@ -81,31 +81,14 @@ private:
     std::mutex mutex;
 };
 
-int main(int argc, char *argv[])
+void run_server(int domain_id, unsigned int delay, unsigned int service_timeout)
 {
-    using namespace application;
-
-    // Parse arguments
-    auto arguments = parse_arguments(argc, argv, false);
-    if (arguments.parse_result == ParseReturn::exit) {
-        return EXIT_SUCCESS;
-    } else if (arguments.parse_result == ParseReturn::failure) {
-        return EXIT_FAILURE;
-    }
-
-    // Sets Connext verbosity to help debugging
-    rti::config::Logger::instance().verbosity(arguments.verbosity);
-
-    // To turn on additional logging, include <rti/config/Logger.hpp> and
-    // uncomment the following line:
-    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
-
     // Create a DomainParticipant with default Qos. The Service will communicate
     // only with Clients that join the same domain_id
-    dds::domain::DomainParticipant participant(arguments.domain_id);
+    dds::domain::DomainParticipant participant(domain_id);
 
     // Create an instance of the service interface
-    auto service_impl = std::make_shared<InventoryImpl>(arguments.delay);
+    auto service_impl = std::make_shared<InventoryImpl>(delay);
 
     // A server provides the execution environment (a thread pool) for one or
     // more services
@@ -126,7 +109,38 @@ int main(int argc, char *argv[])
     ::InventoryServiceService service(service_impl, server, params);
 
     std::cout << "InventoryService running... " << std::endl;
-    server.run();
+    server.run(std::chrono::seconds(service_timeout));
+}
+
+int main(int argc, char *argv[])
+{
+    using namespace application;
+
+    // Parse arguments
+    auto arguments = parse_arguments(argc, argv, false);
+    if (arguments.parse_result == ParseReturn::exit) {
+        return EXIT_SUCCESS;
+    } else if (arguments.parse_result == ParseReturn::failure) {
+        return EXIT_FAILURE;
+    }
+
+    // Sets Connext verbosity to help debugging
+    rti::config::Logger::instance().verbosity(arguments.verbosity);
+
+    // To turn on additional logging, include <rti/config/Logger.hpp> and
+    // uncomment the following line:
+    // rti::config::Logger::instance().verbosity(rti::config::Verbosity::STATUS_ALL);
+
+    try {
+        run_server(
+                arguments.domain_id,
+                arguments.delay,
+                arguments.service_timeout);
+    } catch (const std::exception &ex) {
+        // This will catch DDS exceptions
+        std::cerr << "Exception in run_server(): " << ex.what() << std::endl;
+        return EXIT_FAILURE;
+    }
 
     // Releases the memory used by the participant factory. Optional at
     // application exit

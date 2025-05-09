@@ -24,15 +24,6 @@
              A QoS profile groups a set of related QoS.
         -->
         <qos_profile name="fragment_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
-            <!-- QoS used to configure the data writer created in the example code -->
-            <datawriter_qos>
-
-                <!-- QoS for asynchronous publishing -->
-                <publish_mode>
-                    <kind>ASYNCHRONOUS_PUBLISH_MODE_QOS</kind>
-                    <flow_controller_name>DDS_FIXED_RATE_FLOW_CONTROLLER_NAME</flow_controller_name>
-                </publish_mode>
-            </datawriter_qos>
             <domain_participant_qos>
                 <transport_builtin>
                     <shmem>

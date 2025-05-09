@@ -1,7 +1,7 @@
 # Example Code: Remote Procedure Calls
 
 :warning: **Note**: For an overview of this feature, see the
-[Remote Procedure Calls](https://community.rti.com/static/documentation/connext-dds/7.2.0/doc/api/connext_dds/api_python/rpc.html#remote-procedure-calls)
+[Remote Procedure Calls](https://community.rti.com/static/documentation/connext-dds/7.4.0/doc/api/connext_dds/api_python/rpc.html#remote-procedure-calls)
 section of the *Connext* Python API Reference.
 
 ## Running the Example
@@ -104,3 +104,14 @@ Updated inventory:  InventoryContents(items=[Item(name='apples', quantity=100), 
 For a description of the concurrency model, see the
 [Remote Procedure Calls](https://community.rti.com/static/documentation/connext-dds/7.2.0/doc/api/connext_dds/api_python/rpc.html#remote-procedure-calls)
 section of the Connext Python API Reference.
+
+## Code Generation
+
+If you want to modify the DDS Service in the idl you will have to re-generate
+the service code using **rtiddsgen**
+
+```sh
+<install dir>/bin/rtiddsgen -language Python -update typefiles Inventory.idl
+```
+
+Where `<install dir>` refers to your RTI Connext installation.

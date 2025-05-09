@@ -31,7 +31,11 @@ async def run_client(args):
     client = InventoryClient(
         participant, "Inventory", max_wait_per_call=dds.Duration(20)
     )
+
+    # For versions 7.4.0 and below:
     await wait_for_service(client)
+    # For newer versions you can use the following:
+    # await client.wait_for_service_async(dds.Duration(20))
 
     print("Initial inventory: ", await client.get_inventory())
 
