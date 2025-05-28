@@ -1,5 +1,5 @@
 /*
-* (c) Copyright, Real-Time Innovations, 2020.  All rights reserved.
+* (c) Copyright, Real-Time Innovations, 2025.  All rights reserved.
 * RTI grants Licensee a license to use, modify, compile, and create derivative
 * works of the software solely for use with RTI Connext DDS. Licensee may
 * redistribute copies of the software provided that all such copies are subject
@@ -15,24 +15,12 @@
 #include <dds/pub/ddspub.hpp>
 #include <rti/util/util.hpp>      // for sleep()
 #include <rti/config/Logger.hpp>  // for logging
-// alternatively, to include all the standard APIs:
-//  <dds/dds.hpp>
-// or to include both the standard APIs and extensions:
-//  <rti/rti.hpp>
-//
-// For more information about the headers and namespaces, see:
-//    https://community.rti.com/static/documentation/connext-dds/7.5.0/doc/api/connext_dds/api_cpp2/group__DDSNamespaceModule.html
-// For information on how to use extensions, see:
-//    https://community.rti.com/static/documentation/connext-dds/7.5.0/doc/api/connext_dds/api_cpp2/group__DDSCpp2Conventions.html
 
 #include "application.hpp"  // for command line parsing and ctrl-c
 #include "dynamic_permissions.hpp"
 
 void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
-    // DDS objects behave like shared pointers or value types
-    // (see https://community.rti.com/best-practices/use-modern-c-types-correctly)
-
     // Start communicating in a domain, usually one participant per application
     dds::domain::DomainParticipant participant(domain_id);
 
