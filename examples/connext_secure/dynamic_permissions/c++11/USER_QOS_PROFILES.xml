@@ -1,0 +1,68 @@
+<?xml version="1.0"?>
+<!--
+ (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ RTI grants Licensee a license to use, modify, compile, and create derivative
+ works of the Software.  Licensee has the right to distribute object form only
+ for use with RTI products.  The Software is provided "as is", with no warranty
+ of any type, including any warranty for fitness for any purpose. RTI is under
+ no obligation to maintain or support the Software.  RTI shall not be liable for
+ any incidental or consequential damages arising out of the use or inability to
+ use the software.
+ -->
+<dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
+    <qos_library name="dynamic_permissions_Library">
+        <qos_profile name="dynamic_permissions_ProfileA" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+          <domain_participant_qos>
+            <property>
+              <value>
+                <element>
+                  <name>dds.sec.auth.identity_ca</name>
+                  <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.auth.identity_certificate</name>
+                  <value>file:security/ecdsa01/certs/peer1_cert.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.auth.private_key</name>
+                  <value>file:security/ecdsa01/certs/peer1_key.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.permissions_ca</name>
+                  <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+                </element>
+                <element>
+                  <name>dds.sec.access.permissions</name>
+                  <value>file:security/ecdsa01/xml/signed/signed_Permissions1.p7s</value>
+                </element>
+              </value>
+            </property>
+          </domain_participant_qos>
+        </qos_profile>
+      <qos_profile name="dynamic_permissions_ProfileB" base_name="dynamic_permissions_ProfileA">
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
+                <name>dds.sec.auth.identity_certificate</name>
+                <value>file:security/ecdsa01/certs/peer2_cert.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.auth.private_key</name>
+                <value>file:security/ecdsa01/certs/peer2_key.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.access.permissions</name>
+                <value>file:security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
+              </element>
+            </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+    </qos_library>
+</dds>
