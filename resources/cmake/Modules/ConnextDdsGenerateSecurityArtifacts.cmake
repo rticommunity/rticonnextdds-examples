@@ -149,6 +149,7 @@ function(connextdds_generate_security_artifacts)
         ECPARAM_NAME prime256v1
         ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparam"
         CONFIG_FILE "${ca_config_file}"
+        CA_EXTENSION v3_ca
         WORKING_DIRECTORY "${openssl_working_dir}"
     )
 
