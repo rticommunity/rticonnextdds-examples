@@ -58,7 +58,7 @@
               </element>
               <element>
                 <name>dds.sec.access.permissions</name>
-                <value>file:security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
+                <value>file:security/ecdsa01/xml/signed/signed_Permissions2_expiring.p7s</value>
               </element>
             </value>
           </property>

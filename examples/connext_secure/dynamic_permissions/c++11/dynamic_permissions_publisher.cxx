@@ -22,7 +22,10 @@
 void run_publisher_application(unsigned int domain_id, unsigned int sample_count)
 {
     // Start communicating in a domain, usually one participant per application
-    dds::domain::DomainParticipant participant(domain_id);
+    dds::domain::DomainParticipant participant(
+            domain_id,
+            dds::core::QosProvider::Default().participant_qos(
+                "dynamic_permissions_Library::dynamic_permissions_ProfileB"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic< ::DynamicPermissions> topic(participant, "Example DynamicPermissions");
