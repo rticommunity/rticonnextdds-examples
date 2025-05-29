@@ -90,7 +90,7 @@ function(connextdds_generate_security_artifacts)
     )
     set(xmls_name Governance Permissions1 Permissions2)
     foreach(xml ${xmls_name})
-        list(APPEND artifacts_input_files "${xml}.xml")
+        list(APPEND artifacts_input_files "${openssl_working_dir}/xml/${xml}.xml")
     endforeach()
 
     add_custom_command(
@@ -143,7 +143,6 @@ function(connextdds_generate_security_artifacts)
         OUTPUT_KEY_FILE "${ca_key_file}"
         OUTPUT_CERT_FILE "${ca_cert_file}"
         CRL_NUMBER_FILE "${openssl_temporary_dir}/crlNumber"
-        TEXT
         DIGEST SHA256
         DAYS ${expiration_days}
         ECPARAM_NAME prime256v1
@@ -158,7 +157,6 @@ function(connextdds_generate_security_artifacts)
         OUTPUT_CERT_FILE "${peer1_cert_file}"
         OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_dir}/peer1_req_cert.pem"
         OUTPUT_KEY_FILE "${peer1_key_file}"
-        TEXT
         ECPARAM_NAME "prime256v1"
         ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparam1"
         CONFIG_FILE "${peer1_config_file}"
@@ -174,7 +172,6 @@ function(connextdds_generate_security_artifacts)
         OUTPUT_CERT_FILE "${peer2_cert_file}"
         OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_dir}/peer2_req_cert.pem"
         OUTPUT_KEY_FILE "${peer2_key_file}"
-        TEXT
         ECPARAM_NAME "prime256v1"
         ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparam1"
         CONFIG_FILE "${peer2_config_file}"

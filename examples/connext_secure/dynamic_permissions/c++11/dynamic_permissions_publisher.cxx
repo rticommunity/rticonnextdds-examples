@@ -25,7 +25,7 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
     dds::domain::DomainParticipant participant(
             domain_id,
             dds::core::QosProvider::Default().participant_qos(
-                "dynamic_permissions_Library::dynamic_permissions_ProfileB"));
+                "dynamic_permissions_Library::publisher"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic< ::DynamicPermissions> topic(participant, "Example DynamicPermissions");

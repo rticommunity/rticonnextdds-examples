@@ -44,7 +44,7 @@ void run_subscriber_application(unsigned int domain_id, unsigned int sample_coun
     dds::domain::DomainParticipant participant(
             domain_id,
             dds::core::QosProvider::Default().participant_qos(
-                "dynamic_permissions_Library::dynamic_permissions_ProfileA"));
+                "dynamic_permissions_Library::subscriber"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic< ::DynamicPermissions> topic(participant, "Example DynamicPermissions");

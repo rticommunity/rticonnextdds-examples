@@ -12,7 +12,7 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
      xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
     <qos_library name="dynamic_permissions_Library">
-        <qos_profile name="dynamic_permissions_ProfileA" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+        <qos_profile name="subscriber" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
           <domain_participant_qos>
             <property>
               <value>
@@ -44,7 +44,7 @@
             </property>
           </domain_participant_qos>
         </qos_profile>
-      <qos_profile name="dynamic_permissions_ProfileB" base_name="dynamic_permissions_ProfileA">
+      <qos_profile name="publisher" base_name="subscriber">
         <domain_participant_qos>
           <property>
             <value>
