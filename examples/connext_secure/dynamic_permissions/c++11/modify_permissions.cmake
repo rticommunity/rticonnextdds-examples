@@ -9,7 +9,7 @@ if(START_INDEX EQUAL -1 OR END_INDEX EQUAL -1)
 endif()
 
 # Compute the new contents
-string(LENGTH <not_after> NOT_AFTER_LENGTH)
+string(LENGTH "<not_after>" NOT_AFTER_LENGTH)
 math(EXPR START_INDEX "${START_INDEX} + ${NOT_AFTER_LENGTH}")
 string(SUBSTRING "${CONTENTS}" 0 ${START_INDEX} BEFORE_START)
 string(SUBSTRING "${CONTENTS}" ${END_INDEX} -1 AFTER_END)
@@ -34,7 +34,7 @@ set(ENV{SOURCE_DATE_EPOCH} ${expiring_epoch})
 string(TIMESTAMP expiring_date "%Y-%m-%dT%H:%M:%S" UTC)
 #
 # Revert old value.
-if (DEFINED ${_old_source_date_epoch})
+if (DEFINED _old_source_date_epoch)
     set(ENV{SOURCE_DATE_EPOCH} ${_old_source_date_epoch})
 else()
     unset(ENV{SOURCE_DATE_EPOCH})

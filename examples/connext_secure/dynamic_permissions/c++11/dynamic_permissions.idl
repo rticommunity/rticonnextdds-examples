@@ -10,5 +10,5 @@
  * use or inability to use the software.
  */
 struct DynamicPermissions {
-    string<128> msg;
+    int32 value;
 };
