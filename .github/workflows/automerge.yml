@@ -1,0 +1,30 @@
+name: Automerge
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 0/12 * * *'
+
+env:
+  REPO: https://rticommunity:${{secrets.GITHUB_TOKEN}}@github.com/rticommunity/rticonnextdds-examples.git
+
+  DESTINATION_BRANCH: develop
+
+  MASTER_REPO: https://github.com/rticommunity/rticonnextdds-examples.git
+
+  SOURCE_BRANCH: release/7.3.0
+
+jobs:
+  merge:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Merge with master
+      run: |
+        git clone ${{env.REPO}} -b ${{env.DESTINATION_BRANCH}} tmp
+        cd tmp
+        git config user.name "Automerge Bot"
+        git config user.email "bot@example.com"
+        git config pull.rebase false
+        git pull ${{env.MASTER_REPO}} ${{env.SOURCE_BRANCH}}
+        git push
