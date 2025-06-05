@@ -2,22 +2,22 @@ apps:
   -
     name: test_requester_py
     product: pro
-    version: 7.5.0
+    version: 7.6.0
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_requester.sh
   -
     name: test_replier_py
     product: pro
-    version: 7.5.0
+    version: 7.6.0
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_replier.sh
   -
     name: test_requester_cs
     product: pro
-    version: 7.5.0
+    version: 7.6.0
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesRequester.sh
   -
     name: test_replier_cs
     product: pro
-    version: 7.5.0
+    version: 7.6.0
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesReplier.sh
 test_scenarios:
   -
