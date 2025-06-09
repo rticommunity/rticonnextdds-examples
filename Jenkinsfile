@@ -21,7 +21,7 @@ pipeline {
     }
 
     options {
-        disableDefaultCheckout()
+        skipDefaultCheckout()
         disableConcurrentBuilds()
         /*
             To avoid excessive resource usage in server, we limit the number
