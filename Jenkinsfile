@@ -21,6 +21,7 @@ pipeline {
     }
 
     options {
+        skipDefaultCheckout()
         disableConcurrentBuilds()
         /*
             To avoid excessive resource usage in server, we limit the number
@@ -46,6 +47,11 @@ pipeline {
         stage('Configuration') {
             steps {
                 script {
+                    checkoutCommunityRepoBranch(
+                        'rticonnextdds-examples',
+                        env.BRANCH_NAME,
+                        false,
+                    )
                     pipelineInfo.dockerDir = "${env.WORKSPACE}/resources/docker/"
                     pipelineInfo.staticAnalysisDir = "${env.WORKSPACE}/static_analysis_report"
                     runInsideExecutor(
