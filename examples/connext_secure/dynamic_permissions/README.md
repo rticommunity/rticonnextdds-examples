@@ -2,7 +2,9 @@
 
 ## Concept
 
-Missing description.
+This example showcases how the Security Plugins enforce Permissions Document
+expiration, and how the Permissions Document can be renewed to resume
+communication.
 
 ## Building the Example
 
@@ -85,3 +87,7 @@ ERROR [PARSE MESSAGE|0xDED844B7,0x87B9550F,0xB66DD964:0x000201C4{Entity=DR,Messa
 Communication will stop.
 
 # Renewing the Permissions Document
+
+This example updates the publisher DomainParticipant's Permissions Document
+after 70 samples. At that point, communication with the subscriber will
+resume.

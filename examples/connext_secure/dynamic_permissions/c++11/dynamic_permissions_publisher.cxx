@@ -49,6 +49,20 @@ void run_publisher_application(unsigned int domain_id, unsigned int sample_count
 
         // Send once every second
         rti::util::sleep(dds::core::Duration(1));
+
+        // The Permissions Document expires after 1 minute (~60 samples).
+        // Let's update it after 70 samples. At this point, the publisher and
+        // subscriber lost communication. This will be fixed by updating the
+        // Permissions Document.
+        if (samples_written == 70) {
+            std::cout << "Updating Permissions Document" << std::endl;
+            dds::domain::qos::DomainParticipantQos updated_qos =
+                    participant.qos();
+            updated_qos->property.set(rti::core::policy::Property::Entry(
+                    "dds.sec.access.permissions",
+                    "security/ecdsa01/xml/signed/signed_Permissions2.p7s"));
+            participant << updated_qos;
+        }
     }
 }
 
