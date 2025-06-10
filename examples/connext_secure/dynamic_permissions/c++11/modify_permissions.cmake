@@ -12,7 +12,10 @@ endif()
 string(LENGTH "<not_after>" NOT_AFTER_LENGTH)
 math(EXPR START_INDEX "${START_INDEX} + ${NOT_AFTER_LENGTH}")
 string(SUBSTRING "${CONTENTS}" 0 ${START_INDEX} BEFORE_START)
-string(SUBSTRING "${CONTENTS}" ${END_INDEX} -1 AFTER_END)
+
+string(LENGTH "${CONTENTS}" TOTAL_LENGTH)
+math(EXPR TRAILING_LENGTH "${TOTAL_LENGTH} - ${END_INDEX}")
+string(SUBSTRING "${CONTENTS}" ${END_INDEX} ${TRAILING_LENGTH} AFTER_END)
 
 # Replace with the current date + 1 minute
 string(TIMESTAMP current_epoch "%s" UTC)
