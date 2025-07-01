@@ -1,27 +1,25 @@
-FROM rticom/connext-sdk:7.3.0-EAR as build-stage
-
 # For armv8 uncomment the following line
 # ENV CONNEXTDDS_ARCH=armv8Linux4gcc7.3.0
-
+FROM connext-sdk:latest as build-stage
 WORKDIR /app
 
 # Copy the necessary files to the container
-COPY rti_license.dat ${NDDSHOME}
 COPY CMakeLists.txt .
 COPY home_automation.idl .
-COPY *.cxx .
-COPY *.xml .
+COPY *.cxx ./
+COPY *.xml ./
 
 # Build the applications
+RUN apt-get install -y cmake
 RUN mkdir build
 WORKDIR /app/build
-RUN cmake ..
+RUN cmake .. -DCONNEXTDDS_DIR=/opt/rti.com/rti_connext_dds-7.3.0/
 RUN make -j4
 
 # Copy the built applications to a new container
-FROM rticom/connext-runtime:7.3.0-EAR as final-stage
+FROM connext-sdk:latest as final-stage
 
 WORKDIR /app
-COPY --chown=rtiuser:rtigroup --from=build-stage ${NDDSHOME}/rti_license.dat ${NDDSHOME}
-COPY --chown=rtiuser:rtigroup --from=build-stage /app/build/ /app
-COPY *.xml /app
+COPY --from=connext-sdk /opt/rti.com/rti_connext_dds-7.3.0/rti_license.dat ./
+COPY --from=build-stage /app/build/ ./
+COPY *.xml ./
