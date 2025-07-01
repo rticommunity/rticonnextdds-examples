@@ -44,8 +44,8 @@ Run a publisher and a subscriber in separate terminal windows.
 ./dynamic_permissions_publisher
 ```
 
-```
-sh./dynamic_permissions_subscriber
+```sh
+./dynamic_permissions_subscriber
 ```
 
 Verify that they communicate and that the subscriber is receiving data.
@@ -86,7 +86,7 @@ ERROR [PARSE MESSAGE|0xDED844B7,0x87B9550F,0xB66DD964:0x000201C4{Entity=DR,Messa
 
 Communication will stop.
 
-# Renewing the Permissions Document
+## Renewing the Permissions Document
 
 This example updates the publisher DomainParticipant's Permissions Document
 after 70 samples. At that point, communication with the subscriber will
