@@ -73,13 +73,6 @@ private:
 	rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;
 
-	struct doNothing {
-		RTI_INT32 CountUp;
-		RTI_INT32 CountDown;
-		RTI_INT32 Pause;
-		//dds::core::optional<RTI_UINT32>ObjectId;
-		RTI_UINT32 ObjectId;
-	};
     struct ShapeType {
         int x;
         int y;
