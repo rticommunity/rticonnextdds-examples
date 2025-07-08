@@ -186,13 +186,13 @@ python3 test/read_shape_from_socket.py 10203
 You can configure a data-diode scenario by using two Routing Services instances;
 - One using **DDSToSocketAdapter** configuration to publish DDS data over a one direction UDP socket
 - The other using **SocketAdapterToDDS** configuration to convert back to DDS samples
-                                                                                        
+```                                                                                        
   ┌───────────┐  ┌─────────────┐                         ┌─────────────┐  ┌───────────┐ 
   │  Connext  │  │   Routing   │    ┌────────────────┐   │   Routing   │  │  Connext  │ 
   │    App    ├─►│   Service   ├───►│ UDP DATA DIODE ├──►│   Service   ├─►│    App    │ 
   │           │  │ DDS TO UDP  │    └────────────────┘   │ UDP TO DDS  │  │           │ 
   └───────────┘  └─────────────┘                         └─────────────┘  └───────────┘ 
-                                                                                        
+```                                                                                        
 To run this example in a local machine:
 ```bash
 $export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_typed/build/
@@ -218,7 +218,7 @@ $ $NDDSHOME/bin/rtishapesdemo -domainId 0
 ```bash
 $ $NDDSHOME/bin/rtishapesdemo -domainId 1
 ```
-
+Then start publishing and subscribing to the Square topic.
 You should be able to see red squares in the subscriber application.
 Keep in mind the shape color has been overwritten in the adapter for showcasing purposes.
 

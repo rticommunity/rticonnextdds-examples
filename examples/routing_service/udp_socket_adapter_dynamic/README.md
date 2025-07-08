@@ -1,4 +1,4 @@
-# Example Code: Routing Service C++11 Socket Adapter
+# Example Code: Routing Service C++11 Socket Adapter using Dynamic Data
 
 ## Example Description
 
@@ -170,13 +170,13 @@ RTI Routing Service 7.3.0 executing (with configuration=DDSToSocketAdapter)
 You can configure a data-diode scenario by using two Routing Services instances;
 - One using **DDSToSocketAdapter** configuration to publish DDS data over a one direction UDP socket
 - The other using **SocketAdapterToDDS** configuration to convert back to DDS samples
-                                                                                        
+```                                                                                        
   ┌───────────┐  ┌─────────────┐                         ┌─────────────┐  ┌───────────┐ 
   │  Connext  │  │   Routing   │    ┌────────────────┐   │   Routing   │  │  Connext  │ 
   │    App    ├─►│   Service   ├───►│ UDP DATA DIODE ├──►│   Service   ├─►│    App    │ 
   │           │  │ DDS TO UDP  │    └────────────────┘   │ UDP TO DDS  │  │           │ 
   └───────────┘  └─────────────┘                         └─────────────┘  └───────────┘ 
-                                                                                        
+```                                                                                        
 To run this example in a local machine:
 ```bash
 $export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_dynamic/build/
