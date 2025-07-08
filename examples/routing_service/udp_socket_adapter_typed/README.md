@@ -5,6 +5,8 @@
 This example shows how to implement a simple Routing Service Adapter plugin
 in C++11 to receive data from a UDP socket using RTI Routing Service.
 
+This example requires including a Types.xml file with the data type information.
+
 The code in this directory provides the following components:
 
 -   `src/SocketAdapter` implements the plugin that is loaded by *RTI Routing
@@ -16,8 +18,12 @@ propagate information about the discovered input streams (in this case
 sockets) to the Routing Service.
 -   `src/SocketStreamReader` implements an `StreamReader` that reads sample
 information from a UDP socket.
+-   `src/SocketStreamWriter` implements an `StreamWriter` that sends sample
+information to a UDP socket.
 -   `test/send_shape_to_socket.py` implements a simple tester to send shape
 type data to a UDP socket.
+-   `test/receive_shape_from_socket.py` implements a simple tester to receive shape
+type data from a UDP socket.
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
 
@@ -101,7 +107,7 @@ the Shapes Demo shipped with *RTI Connext DDS* installer bundle. You will find
 some hardcoded references to ShapeType and Square. If you wish to create a
 real Routing Service adapter, you should modify the code and XML accordingly.
 
-There is 1 configuration (`-cfgName`) in the Routing Service XML file:
+There are 2 configurations (`-cfgName`) in the Routing Service XML file:
 
 -   **SocketAdapterToDDS** - It reads data from a UDP socket using the
 SocketAdapter and outputs it to DDS. You can visualize the ouptut by
@@ -110,6 +116,8 @@ subscribing to Squares in Shapes Demo or running:
 ```bash
  $NDDSHOME/bin/rtiddsspy -printSample
 ```
+
+-   **DDSToSocketAdapter** - It sends data from DDS to a UDP socket. 
 
 To run Routing Service, you will need first to set up your environment as
 follows.
@@ -139,7 +147,7 @@ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdap
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter/build/
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_typed/build/
 
 $ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
 RTI Routing Service 7.3.0 executing (with name SocketAdapterToSocketAdapter)
@@ -157,6 +165,62 @@ python3 test/send_shape_to_socket.py 127.0.0.1 10203
 
 You can now open a Shapes Demo instance on domain 0 and subscribe to Squares.
 You should start receiving a red Square.
+
+Alternatively, you can also execute the test to send UDP sockets from DDS data:
+
+```bash
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_typed/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName DDSToSocketAdapter
+RTI Routing Service 7.3.0 executing (with configuration=DDSToSocketAdapter)
+```
+
+And to test the UDP socket content run:
+```bash
+python3 test/read_shape_from_socket.py 10203
+```
+
+
+## Running a data-diode example
+
+You can configure a data-diode scenario by using two Routing Services instances;
+- One using **DDSToSocketAdapter** configuration to publish DDS data over a one direction UDP socket
+- The other using **SocketAdapterToDDS** configuration to convert back to DDS samples
+                                                                                        
+  ┌───────────┐  ┌─────────────┐                         ┌─────────────┐  ┌───────────┐ 
+  │  Connext  │  │   Routing   │    ┌────────────────┐   │   Routing   │  │  Connext  │ 
+  │    App    ├─►│   Service   ├───►│ UDP DATA DIODE ├──►│   Service   ├─►│    App    │ 
+  │           │  │ DDS TO UDP  │    └────────────────┘   │ UDP TO DDS  │  │           │ 
+  └───────────┘  └─────────────┘                         └─────────────┘  └───────────┘ 
+                                                                                        
+To run this example in a local machine:
+```bash
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_typed/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
+RTI Routing Service 7.3.0 executing (with configuration=SocketAdapterToDDS)
+```
+And in a different terminal:
+```bash
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_typed/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName DDSToSocketAdapter
+RTI Routing Service 7.3.0 executing (with configuration=DDSToSocketAdapter)
+```
+
+Using the default configuration from RsSocketAdapter.xml, you need to publish Squares 
+on domain id 0 and subscribe to Squares on domain id 1 using rtishapes demo:
+
+```bash
+$ $NDDSHOME/bin/rtishapesdemo -domainId 0
+```
+
+```bash
+$ $NDDSHOME/bin/rtishapesdemo -domainId 1
+```
+
+You should be able to see red squares in the subscriber application.
+Keep in mind the shape color has been overwritten in the adapter for showcasing purposes.
 
 ## Requirements
 

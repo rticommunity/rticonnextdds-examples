@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -12,26 +12,27 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <sstream>
 #include <thread>
-#include <chrono>
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #ifdef _WIN32
     #include <winsock2.h>
     #pragma comment(lib, "ws2_32.lib")
 #else
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
     #include <arpa/inet.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+    #include <sys/types.h>
     #include <unistd.h>
 #endif
-
 #include "SocketStreamReader.hpp"
 #include <rti/core/Exception.hpp>
+#include <rti/routing/Logger.hpp>
 #include <rti/topic/cdr/Serialization.hpp>
+
 
 using namespace dds::core::xtypes;
 using namespace rti::routing;
@@ -40,30 +41,26 @@ using namespace rti::routing::adapter;
 void SocketStreamReader::socket_reading_thread()
 {
     while (!stop_thread_) {
-        /**
-         * Essential to protect against concurrent data access to
-         * buffer_ from the take() methods running on a different
-         * Routing Service thread.
-         */
-        std::unique_lock<std::mutex> lock(buffer_mutex_);
+        int received_bytes = 0;
         socket->receive_data(
                 received_buffer_,
-                &received_bytes_,
+                &received_bytes,
                 BUFFER_MAX_SIZE);
-        lock.unlock();
 
         // Most likely received nothing or there was an error
         // Not doing any error handling here
-        if (received_bytes_ <= 0) {
+        if (received_bytes <= 0) {
             // Sleep for a small period of time to avoid busy waiting
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-
         /**
          * Here we notify Routing Service, that there is data available
          * on the StreamReader, triggering a call to take().
          */
+
+         received_bytes_ = received_bytes;
+
         reader_listener_->on_data_available(this);
     }
 
@@ -80,8 +77,7 @@ SocketStreamReader::SocketStreamReader(
 {
     socket_connection_ = connection;
     reader_listener_ = listener;
-    adapter_type_ =
-            static_cast<DynamicType *>(info.type_info().type_representation());
+    adapter_type_ = static_cast<DynamicType *>(info.type_info().type_representation());
 
     // Parse the properties provided in the xml configuration file
     for (const auto &property : properties) {
@@ -92,26 +88,13 @@ SocketStreamReader::SocketStreamReader(
         }
     }
 
-    // If any of the mandatory properties is not specified, throw exception
-    if (receive_address_.size() == 0 || receive_port_ == 0) {
-        throw dds::core::IllegalOperationError(
-                "You must set receive_address and receive_port "
-                "in the RsSocketAdapter.xml file");
-    }
-
-    // Create the UDP socket to receive data
     socket = std::unique_ptr<UdpSocket>(
             new UdpSocket(receive_address_.c_str(), receive_port_));
 
-    // Start the receive thread for UDP data
     socketreader_thread_ =
             std::thread(&SocketStreamReader::socket_reading_thread, this);
 }
 
-/**
- * This is the Routing Service take(). It's called when the
- * socket_receive_thread calls on_data_available()
- */
 void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
@@ -119,8 +102,7 @@ void SocketStreamReader::take(
     dds::core::xtypes::DynamicData deserialized_sample(*adapter_type_);
     std::vector<char> received_buffer = std::vector<char>(received_buffer_, received_buffer_ + received_bytes_);
     rti::core::xtypes::from_cdr_buffer(deserialized_sample, received_buffer);
-    std::cout << deserialized_sample << std::endl;
-
+    
     samples.resize(1);
     infos.resize(1);
     

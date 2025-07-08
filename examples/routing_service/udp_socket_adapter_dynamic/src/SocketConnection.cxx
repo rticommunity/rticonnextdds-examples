@@ -13,6 +13,7 @@
 #include "SocketConnection.hpp"
 #include "SocketStreamReader.hpp"
 #include "SocketStreamWriter.hpp"
+#include "SocketStreamWriter.hpp"
 
 using namespace rti::routing;
 using namespace rti::routing::adapter;
@@ -35,10 +36,10 @@ StreamReader *SocketConnection::create_stream_reader(
 }
 
 StreamWriter *SocketConnection::create_stream_writer(
-        Session *session,
-        const StreamInfo &info,
-        const PropertySet &properties)
-{
+    Session *session,
+    const StreamInfo &info,
+    const PropertySet &properties)
+    {
     return new SocketStreamWriter(this, info, properties);
 }
 
