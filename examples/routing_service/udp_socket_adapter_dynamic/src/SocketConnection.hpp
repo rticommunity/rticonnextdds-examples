@@ -37,12 +37,22 @@ public:
             const rti::routing::PropertySet &properties,
             rti::routing::adapter::StreamReaderListener *listener) final;
 
-    // This function will also stop the receiving socket thread
+    rti::routing::adapter::StreamWriter *create_stream_writer(
+            rti::routing::adapter::Session *session,
+            const rti::routing::StreamInfo &info,
+            const rti::routing::PropertySet &properties) final;
+    
     void delete_stream_reader(
             rti::routing::adapter::StreamReader *reader) final;
 
+    void delete_stream_writer(
+            rti::routing::adapter::StreamWriter *writer) final; 
+            
     rti::routing::adapter::DiscoveryStreamReader *
             input_stream_discovery_reader() final;
+
+    rti::routing::adapter::DiscoveryStreamReader *
+            output_stream_discovery_reader() final;
 
     /**
      * @brief This function is called by the SocketStreamReader to indicate

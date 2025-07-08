@@ -10,6 +10,9 @@
  * use or inability to use the software.
  */
 
+#ifndef UDPSOCKETUTILS_HPP
+#define UDPSOCKETUTILS_HPP
+
 #ifdef _WIN32
     #include <winsock2.h>
     #include <ws2tcpip.h>
@@ -37,6 +40,12 @@ public:
             int* received_bytes,
             int size_of_original_buffer);
 
+    int send_data(
+            char* tx_buffer, 
+            int tx_length, 
+            const char* destAddr,
+			int destPort);        
+
 private:
 #ifdef _WIN32
     SOCKET sockfd;
@@ -48,3 +57,5 @@ private:
     void init_socket();
     void bind_socket(const char* ip, int port);
 };
+
+#endif

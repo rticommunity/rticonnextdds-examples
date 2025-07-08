@@ -12,6 +12,7 @@
 
 #include "SocketConnection.hpp"
 #include "SocketStreamReader.hpp"
+#include "SocketStreamWriter.hpp"
 
 using namespace rti::routing;
 using namespace rti::routing::adapter;
@@ -33,6 +34,14 @@ StreamReader *SocketConnection::create_stream_reader(
     return new SocketStreamReader(this, info, properties, listener);
 }
 
+StreamWriter *SocketConnection::create_stream_writer(
+        Session *session,
+        const StreamInfo &info,
+        const PropertySet &properties)
+{
+    return new SocketStreamWriter(this, info, properties);
+}
+
 void SocketConnection::delete_stream_reader(StreamReader *reader)
 {
     SocketStreamReader *socket_reader =
@@ -40,10 +49,20 @@ void SocketConnection::delete_stream_reader(StreamReader *reader)
     socket_reader->shutdown_socket_reader_thread();
     delete reader;
 }
+void SocketConnection::delete_stream_writer(StreamWriter *writer)
+{
+    SocketStreamWriter *socket_writer = dynamic_cast<SocketStreamWriter *>(writer);
+    delete writer;
+}
 
 DiscoveryStreamReader *SocketConnection::input_stream_discovery_reader()
 {
     return &input_discovery_reader_;
+}
+
+DiscoveryStreamReader *SocketConnection::output_stream_discovery_reader()
+{
+    return nullptr;
 }
 
 void SocketConnection::dispose_discovery_stream(
