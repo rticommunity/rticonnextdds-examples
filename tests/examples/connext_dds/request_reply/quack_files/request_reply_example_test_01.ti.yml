@@ -1,23 +1,23 @@
 apps:
   -
     name: test_requester_py
-    product: pro
-    version: 7.6.0
+    product: {first_product}
+    version: {first_version}
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_requester.sh
   -
     name: test_replier_py
-    product: pro
-    version: 7.6.0
+    product: {first_product}
+    version: {first_version}
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/py/primes_replier.sh
   -
     name: test_requester_cs
-    product: pro
-    version: 7.6.0
+    product: {first_product}
+    version: {first_version}
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesRequester.sh
   -
     name: test_replier_cs
-    product: pro
-    version: 7.6.0
+    product: {first_product}
+    version: {first_version}
     executable: rticonnextdds-examples/examples/connext_dds/request_reply/cs/PrimesReplier.sh
 test_scenarios:
   -
@@ -25,7 +25,7 @@ test_scenarios:
     actions:
       -
         action:
-          run test_requester_py with args '--domain $domain_id --primes-per-reply 5 100' on $740_arch
+          run test_requester_py with args '--domain $domain_id --primes-per-reply 5 100' on $first_architecture
         verification:
           - stdout contains "Sending a request to calculate the prime numbers <= 100 in sequences of 5 or fewer elements"
           - stdout contains "[2, 3, 5, 7, 11]"
@@ -33,7 +33,7 @@ test_scenarios:
           - stdout contains "DONE"
       -
         action:
-          run test_requester_py with args '--domain $domain_id --primes-per-reply 7 120' on $740_arch
+          run test_requester_py with args '--domain $domain_id --primes-per-reply 7 120' on $first_architecture
         verification:
           - stdout contains "Sending a request to calculate the prime numbers <= 120 in sequences of 7 or fewer elements"
           - stdout contains "[2, 3, 5, 7, 11, 13, 17]"
@@ -41,7 +41,7 @@ test_scenarios:
           - stdout contains "DONE"
       -
         action:
-          run test_replier_py with args '--domain $domain_id' on $740_arch
+          run test_replier_py with args '--domain $domain_id' on $first_architecture
         verification:
           - stdout contains "Prime calculation replier started"
           - 'stdout contains "Timeout: no requests received"'
@@ -50,7 +50,7 @@ test_scenarios:
     actions:
       -
         action:
-          run test_requester_cs with args '--domain $domain_id --primes-per-reply 5 --number 100' on $740_arch
+          run test_requester_cs with args '--domain $domain_id --primes-per-reply 5 --number 100' on $first_architecture
         verification:
           - stdout contains "Running PrimesRequester on domain "
           - stdout contains "2 3 5 7 11"
@@ -58,7 +58,7 @@ test_scenarios:
           - stdout contains "DONE"
       -
         action:
-          run test_replier_cs with args '--domain $domain_id --timeout 20' on $740_arch
+          run test_replier_cs with args '--domain $domain_id --timeout 20' on $first_architecture
         verification:
           - stdout contains "Running PrimesReplier on domain "
           - stdout contains "Calculating prime numbers below 100..."
