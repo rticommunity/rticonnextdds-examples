@@ -178,11 +178,11 @@ void publisher_zero_copy(const application::ApplicationArguments &options)
         if ((count == options.sample_count)
             || (send_ts - start_ts >= options.execution_time)) {
             // notify reader about last sample
-            ping_sample->timestamp(0);
+            ping_sample->timestamp = 0;
             writer.write(*ping_sample);
             break;
         }
-        ping_sample->timestamp(send_ts);
+        ping_sample->timestamp = send_ts;
         writer.write(*ping_sample);
 
         if (latency_interval_start_time == 0) {
@@ -198,7 +198,7 @@ void publisher_zero_copy(const application::ApplicationArguments &options)
         if (pong_samples.length() > 0 && pong_samples[0].info().valid()) {
             count++;
             uint64_t recv_ts = participant->current_time().to_microsecs();
-            uint64_t latency = recv_ts - pong_samples[0].data().timestamp();
+            uint64_t latency = recv_ts - pong_samples[0].data().timestamp;
             total_latency += latency;
             if (recv_ts - latency_interval_start_time > 4000000) {
                 print_latency(total_latency, count);
@@ -358,13 +358,13 @@ void publisher_plain(const application::ApplicationArguments &options)
         uint64_t send_ts = participant->current_time().to_microsecs();
         if ((count == options.sample_count)
             || (send_ts - start_ts >= options.execution_time)) {
-            ping_sample->timestamp(0);
+            ping_sample->timestamp = 0;
             writer.write(*ping_sample);
             break;
         }
 
         // Write the ping sample:
-        ping_sample->timestamp(send_ts);
+        ping_sample->timestamp = send_ts;
         writer.write(*ping_sample);
         if (latency_interval_start_time == 0) {
             latency_interval_start_time = send_ts;
@@ -380,7 +380,7 @@ void publisher_plain(const application::ApplicationArguments &options)
         if (pong_samples.length() > 0 && pong_samples[0].info().valid()) {
             count++;
             uint64_t recv_ts = participant->current_time().to_microsecs();
-            uint64_t latency = recv_ts - pong_samples[0].data().timestamp();
+            uint64_t latency = recv_ts - pong_samples[0].data().timestamp;
             total_latency += latency;
             if (recv_ts - latency_interval_start_time > 4000000) {
                 print_latency(total_latency, count);
@@ -409,17 +409,17 @@ void publisher_copy_sample(unsigned int domain_id, unsigned int sample_count)
     int count = 0;
     uint64_t total_latency = 0;
     while (!application::shutdown_requested && count < sample_count) {
-        ping_sample->data()[45345] = count + sample_count + 100;
-        ping_sample->timestamp(participant->current_time().to_microsecs());
+        ping_sample->data[45345] = count + sample_count + 100;
+        ping_sample->timestamp = participant->current_time().to_microsecs();
         *copy = *ping_sample;
-        if (copy->data()[45345] == 3) {
+        if (copy->data[45345] == 3) {
             return;
         }
 
         count++;
 
         uint64_t latency = participant->current_time().to_microsecs()
-                - ping_sample->timestamp();
+                - ping_sample->timestamp;
         total_latency += latency;
         if (count % 10 == 0) {
             std::cout << "Average end-to-end latency: "

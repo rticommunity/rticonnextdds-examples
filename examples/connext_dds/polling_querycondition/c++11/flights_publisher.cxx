@@ -54,8 +54,8 @@ void run_publisher_application(
 
         for (auto &flight : flights_info) {
             // Set the plane altitude lineally (usually the max is at 41,000ft).
-            int altitude = flight.altitude() + samples_written * 100;
-            flight.altitude(altitude >= 41000 ? 41000 : altitude);
+            int altitude = flight.altitude + samples_written * 100;
+            flight.altitude = (altitude >= 41000 ? 41000 : altitude);
             std::cout << "\t" << flight << std::endl;
         }
 

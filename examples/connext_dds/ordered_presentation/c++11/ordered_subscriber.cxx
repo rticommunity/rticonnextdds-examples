@@ -29,8 +29,8 @@ unsigned int poll_readers(std::vector<dds::sub::DataReader<ordered>> &readers)
         for (auto sample : samples) {
             if (sample.info().valid()) {
                 std::cout << std::string(i, '\t') << "Reader " << i
-                          << ": Instance" << sample.data().id()
-                          << "->value = " << sample.data().value() << std::endl;
+                          << ": Instance" << sample.data().id
+                          << "->value = " << sample.data().value << std::endl;
                 samples_read++;
             }
         }

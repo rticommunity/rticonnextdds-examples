@@ -68,15 +68,15 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Update content.
-        instance0.value(samples_written);
-        instance1.value(samples_written);
+        instance0.value = samples_written;
+        instance1.value = samples_written;
 
         // Write the two samples.
-        std::cout << "writing instance0, value->" << instance0.value()
+        std::cout << "writing instance0, value->" << instance0.value
                   << std::endl;
         writer.write(instance0, handle0);
 
-        std::cout << "writing instance1, value->" << instance1.value()
+        std::cout << "writing instance1, value->" << instance1.value
                   << std::endl;
         writer.write(instance1, handle1);
 

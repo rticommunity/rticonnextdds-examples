@@ -54,9 +54,9 @@ void print_average_pixel_fast(const CameraImage &sample)
     unsigned int red_sum = 0, green_sum = 0, blue_sum = 0;
     for (unsigned int i = 0; i < pixel_count; i++) {
         const auto &pixel = pixel_array[i];
-        red_sum += pixel.red();
-        green_sum += pixel.green();
-        blue_sum += pixel.blue();
+        red_sum += pixel.red;
+        green_sum += pixel.green;
+        blue_sum += pixel.blue;
     }
 
     std::cout << "Avg. pixel: (" << red_sum / pixel_count << ", "

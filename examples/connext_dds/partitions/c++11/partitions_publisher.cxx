@@ -75,7 +75,7 @@ void run_publisher_application(
                   << std::endl;
 
         // Modify and send the sample.
-        instance.x(samples_written);
+        instance.x = samples_written;
         writer.write(instance);
 
         // Every 5 samples we will change the partition name.

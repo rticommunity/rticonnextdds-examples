@@ -28,12 +28,12 @@ int process_data(dds::sub::DataReader<keys> reader)
             dds::sub::status::ViewState view_state = info.state().view_state();
             if (view_state == dds::sub::status::ViewState::new_view()) {
                 std::cout << "Found new instance; code = "
-                          << sample.data().code() << std::endl;
+                          << sample.data().code << std::endl;
             }
 
-            std::cout << "Instance " << sample.data().code()
-                      << ", x: " << sample.data().x()
-                      << ", y: " << sample.data().y() << std::endl;
+            std::cout << "Instance " << sample.data().code
+                      << ", x: " << sample.data().x
+                      << ", y: " << sample.data().y << std::endl;
         } else {
             keys sample;
             reader.key_value(sample, info.instance_handle());
@@ -41,15 +41,15 @@ int process_data(dds::sub::DataReader<keys> reader)
                     info.state().instance_state();
             if (state
                 == dds::sub::status::InstanceState::not_alive_no_writers()) {
-                std::cout << "Instance " << sample.code() << " has no writers"
+                std::cout << "Instance " << sample.code << " has no writers"
                           << std::endl;
             } else if (
                     state
                     == dds::sub::status::InstanceState::not_alive_disposed()) {
-                std::cout << "Instance " << sample.code() << " is disposed"
+                std::cout << "Instance " << sample.code << " is disposed"
                           << std::endl;
             } else {
-                std::cout << "Instance " << sample.code() << " is alive"
+                std::cout << "Instance " << sample.code << " is alive"
                           << std::endl;
             }
         }

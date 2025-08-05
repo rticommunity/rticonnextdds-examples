@@ -34,14 +34,14 @@ int main(int argc, char **argv)
             status_reader,
             [alert_writer](const rti::sub::LoanedSample<DeviceStatus>
                                    &sample) mutable {
-                if (!sample.info().valid() || !sample.data().is_open()) {
+                if (!sample.info().valid() || !sample.data().is_open) {
                     return;
                 }
 
                 alert_writer.write(
                         KeyedString(
-                                sample.data().sensor_name(),
-                                "Window in " + sample.data().room_name()
+                                sample.data().sensor_name,
+                                "Window in " + sample.data().room_name
                                         + " was just opened"),
                         sample.info().source_timestamp());
             });

@@ -106,8 +106,8 @@ void run_publisher_application(
          samples_written++) {
         // Update the sample.
         char symbol = (char) ('A' + (samples_written % 26));
-        sample.Symbol(std::string(1, symbol));
-        sample.Price(samples_written);
+        sample.Symbol = std::string(1, symbol);
+        sample.Price = samples_written;
 
         // Send and wait.
         writer.write(sample);

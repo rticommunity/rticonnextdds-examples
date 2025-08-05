@@ -35,7 +35,7 @@ public:
 
                 const deadline_contentfilter &data = sample.data();
                 std::cout << "@ t=" << elapsed_secs << "s, Instance"
-                          << data.code() << ": <" << data.x() << "," << data.y()
+                          << data.code << ": <" << data.x << "," << data.y
                           << ">" << std::endl;
             }
         }
@@ -56,7 +56,7 @@ public:
 
         // Print out which instance missed its deadline.
         std::cout << "Missed deadline @ t=" << elapsed_secs
-                  << "s on instance code = " << affected_sample.code()
+                  << "s on instance code = " << affected_sample.code
                   << std::endl;
     }
 };

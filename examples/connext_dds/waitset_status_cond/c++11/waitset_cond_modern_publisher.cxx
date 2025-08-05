@@ -34,7 +34,7 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         std::cout << "Writing Foo, count " << samples_written << std::endl;
-        sample.x(samples_written);
+        sample.x = samples_written;
         writer.write(sample);
         rti::util::sleep(dds::core::Duration(1));
     }

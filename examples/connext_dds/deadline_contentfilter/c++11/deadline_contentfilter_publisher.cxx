@@ -32,7 +32,7 @@ public:
 
         // Print out which instance missed its deadline.
         std::cout << "Offered deadline missed on instance code = "
-                  << affected_sample.code() << std::endl;
+                  << affected_sample.code << std::endl;
     }
 };
 
@@ -85,18 +85,18 @@ void run_publisher_application(
         rti::util::sleep(dds::core::Duration(1));
 
         // Update non-key fields.
-        sample0.x(samples_written);
-        sample0.y(samples_written);
-        sample1.x(samples_written);
-        sample1.y(samples_written);
+        sample0.x = samples_written;
+        sample0.y = samples_written;
+        sample1.x = samples_written;
+        sample1.y = samples_written;
 
-        std::cout << "Writing instance0, x = " << sample0.x()
-                  << ", y = " << sample0.y() << std::endl;
+        std::cout << "Writing instance0, x = " << sample0.x
+                  << ", y = " << sample0.y << std::endl;
         writer.write(sample0, handle0);
 
         if (samples_written < 15) {
-            std::cout << "Writing instance1, x = " << sample1.x()
-                      << ", y = " << sample1.y() << std::endl;
+            std::cout << "Writing instance1, x = " << sample1.x
+                      << ", y = " << sample1.y << std::endl;
             writer.write(sample1, handle1);
         } else if (samples_written == 15) {
             std::cout << "Stopping writes to instance1" << std::endl;

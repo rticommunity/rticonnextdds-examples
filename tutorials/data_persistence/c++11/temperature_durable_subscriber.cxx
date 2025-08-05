@@ -51,8 +51,8 @@ void sensor_monitoring(std::string subscriber_name)
                 uint64_t timestamp =
                         sample.info().source_timestamp().to_millisecs();
 
-                std::cout << sample.data().sensor_name() << ": " << std::fixed
-                          << std::setprecision(2) << sample.data().degrees()
+                std::cout << sample.data().sensor_name << ": " << std::fixed
+                          << std::setprecision(2) << sample.data().degrees
                           << " degrees (" << timestamp / 1000.0 << "s)"
                           << std::endl;
             });

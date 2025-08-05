@@ -47,7 +47,7 @@ void run_client(
         try {
             client.remove_item(::Item(item_name, quantity));
         } catch (const UnknownItemError &e) {
-            std::cout << "Unknown item: " << e.name() << std::endl;
+            std::cout << "Unknown item: " << e.name << std::endl;
         }
     }
 

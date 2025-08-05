@@ -219,7 +219,7 @@ void run_publisher_application(
         std::cout << "Writing msg, count " << samples_written << std::endl;
 
         // Send count as data
-        instance.x(samples_written);
+        instance.x = samples_written;
 
         // Send it, if using instance_handle:
         // writer.write(instance, instance_handle);
