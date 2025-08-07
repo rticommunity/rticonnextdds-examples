@@ -33,14 +33,14 @@ DynamicData *StructArrayTransformation::convert_sample(
     SensorData native_sensor_data;
 
     /* Map elements from SensorAttributesCollection to SensorData */
-    for (int32_t count = 0; count < native_collection.sensor_array().size();
+    for (int32_t count = 0; count < native_collection.sensor_array.size();
          ++count) {
-        native_sensor_data.id().at(count) =
-                native_collection.sensor_array().at(count).id();
-        native_sensor_data.value().at(count) =
-                native_collection.sensor_array().at(count).value();
-        native_sensor_data.is_active().at(count) =
-                native_collection.sensor_array().at(count).is_active();
+        native_sensor_data.id.at(count) =
+                native_collection.sensor_array.at(count).id;
+        native_sensor_data.value.at(count) =
+                native_collection.sensor_array.at(count).value;
+        native_sensor_data.is_active.at(count) =
+                native_collection.sensor_array.at(count).is_active;
     }
 
     return new DynamicData(rti::core::xtypes::convert(native_sensor_data));
