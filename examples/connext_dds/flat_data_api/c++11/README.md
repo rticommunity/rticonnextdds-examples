@@ -170,6 +170,6 @@ doesn't have the IDL4 C++ mapping enabled by default.
 To fix it, upgrade your Connext version to 7.6+ or check out the branch for the
 Connext version you're using, e.g.
 
-\```
+```sh
 git checkout release/7.3.0
-\```
+```
