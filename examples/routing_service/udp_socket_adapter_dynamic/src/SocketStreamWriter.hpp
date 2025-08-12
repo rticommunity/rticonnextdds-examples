@@ -1,5 +1,5 @@
 /*
- * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -59,18 +59,17 @@ private:
      * @brief Function used by socketreader_thread_ to read samples from the
      * socket.
      */
-    
 
     SocketConnection *socket_connection_;
 
     std::unique_ptr<UdpSocket> socket;
 
     int send_port_;
-	int dest_port_;
+    int dest_port_;
 
     std::string send_address_;
-	std::string dest_address_;
-	rti::routing::StreamInfo stream_info_;
+    std::string dest_address_;
+    rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;
 };
 

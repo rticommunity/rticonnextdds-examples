@@ -28,12 +28,12 @@
     <routing_service name="SocketAdapterToDDS">
         <domain_route name="SocketBridge">
             <connection name="SocketConnection" plugin_name="AdapterLib::SocketAdapter">
-                <registered_type name="ShapeType" type_name="ShapeType" />
+                <register_typename="ShapeType" type_name="ShapeType" />
             </connection>
             <participant name="DDSConnection">
                 <domain_id>1</domain_id>
                 <domain_participant_qos base_name="BuiltinQosLib::Generic.Common" />
-                <registered_type name="ShapeType" type_name="ShapeType" />
+                <register_typename="ShapeType" type_name="ShapeType" />
             </participant>
             <session name="session">
                 <route>
@@ -79,12 +79,12 @@
     <routing_service name="DDSToSocketAdapter">
         <domain_route name="SocketBridge">
             <connection name="SocketConnection" plugin_name="AdapterLib::SocketAdapter">
-                <registered_type name="ShapeType" type_name="ShapeType" />
+                <register_typename="ShapeType" type_name="ShapeType" />
             </connection>
             <participant name="DDSConnection">
                 <domain_id>0</domain_id>
                 <domain_participant_qos base_name="BuiltinQosLib::Generic.Common" />
-                <registered_type name="ShapeType" type_name="ShapeType" />
+                <register_typename="ShapeType" type_name="ShapeType" />
             </participant>
             <session>
                 <route>

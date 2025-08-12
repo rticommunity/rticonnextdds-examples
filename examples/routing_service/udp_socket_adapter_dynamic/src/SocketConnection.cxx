@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -50,9 +50,11 @@ void SocketConnection::delete_stream_reader(StreamReader *reader)
     socket_reader->shutdown_socket_reader_thread();
     delete reader;
 }
+
 void SocketConnection::delete_stream_writer(StreamWriter *writer)
 {
-    SocketStreamWriter *socket_writer = dynamic_cast<SocketStreamWriter *>(writer);
+    SocketStreamWriter *socket_writer = 
+            dynamic_cast<SocketStreamWriter *>(writer);
     delete writer;
 }
 

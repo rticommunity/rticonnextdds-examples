@@ -11,21 +11,21 @@ information beforehand.
 The code in this directory provides the following components:
 
 -   `src/SocketAdapter` implements the plugin that is loaded by *RTI Routing
-Service*. It is responsible to create and delete connections.
+Service*. It responsible for creating and deleting connections.
 -   `src/SocketConnection` implements a connection. This component is
-responsible of the creation and deletion of `StreamReaders`.
+responsible for the creation and deletion of `StreamReaders`.
 -   `src/SocketInputDiscoveryStreamReader` implements the logic necessary to
 propagate information about the discovered input streams (in this case
 sockets) to the Routing Service.
--   `src/SocketStreamReader` implements an `StreamReader` that reads sample
+-   `src/SocketStreamReader` implements a `StreamReader` that reads sample
 information from a UDP socket.
--   `src/SocketStreamWriter` implements an `StreamWriter` that sends sample
+-   `src/SocketStreamWriter` implements a `StreamWriter` that sends sample
 information to a UDP socket.
 
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
 
-## Building C++ example
+## Building the C++ example
 
 In order to build this example, you need to define the variables
 `CONNEXTDDS_DIR` and `CONNEXTDDS_ARCH`. You can do so by exporting them
@@ -97,7 +97,7 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file crea
       -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
 
-## Running C++ example
+## Running the C++ example
 
 To run the example, you just need to run the following commands from the top
 level folder. This example has been written to allow easy experimentation with

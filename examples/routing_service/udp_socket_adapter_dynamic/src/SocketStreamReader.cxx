@@ -1,5 +1,5 @@
 /*
- * (c) 2019 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -54,12 +54,8 @@ void SocketStreamReader::socket_reading_thread()
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
-        /**
-         * Here we notify Routing Service, that there is data available
-         * on the StreamReader, triggering a call to take().
-         */
 
-         received_bytes_ = received_bytes;
+        received_bytes_ = received_bytes;
 
         reader_listener_->on_data_available(this);
     }
@@ -100,7 +96,8 @@ void SocketStreamReader::take(
         std::vector<dds::sub::SampleInfo *> &infos)
 {
     dds::core::xtypes::DynamicData deserialized_sample(*adapter_type_);
-    std::vector<char> received_buffer = std::vector<char>(received_buffer_, received_buffer_ + received_bytes_);
+    std::vector<char> received_buffer = std::vector<char>(
+        received_buffer_, received_buffer_ + received_bytes_);
     rti::core::xtypes::from_cdr_buffer(deserialized_sample, received_buffer);
     
     samples.resize(1);
