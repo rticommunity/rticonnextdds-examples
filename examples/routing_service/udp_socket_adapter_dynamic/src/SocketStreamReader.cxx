@@ -99,7 +99,7 @@ void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
-    std::vector<char> buffer;
+    take_buffer_.clear();
     {
         std::unique_lock<std::mutex> lock(buffer_mutex_);
         if (received_buffers_.empty()) {
@@ -108,12 +108,12 @@ void SocketStreamReader::take(
             infos.clear();
             return;
         }
-        buffer = std::move(received_buffers_.front());
+        take_buffer_ = std::move(received_buffers_.front());
         received_buffers_.pop();
     }
 
     dds::core::xtypes::DynamicData deserialized_sample(*adapter_type_);
-    rti::core::xtypes::from_cdr_buffer(deserialized_sample, buffer);
+    rti::core::xtypes::from_cdr_buffer(deserialized_sample, take_buffer_);
     
     samples.resize(1);
     infos.resize(1);

@@ -30,6 +30,19 @@
 #define DEST_ADDRESS_STRING "dest_address"
 #define DEST_PORT_STRING "dest_port"
 
+/**
+ * @brief StreamWriter implementation for UDP socket output in RTI Routing Service.
+ *
+ * SocketStreamWriter is a specific implementation of rti::routing::adapter::DynamicDataStreamWriter
+ * that sends data to a UDP socket, making it available for external consumers outside DDS.
+ *
+ * This class is responsible for serializing DynamicData samples received from Routing Service
+ * and transmitting them as UDP packets to a specified destination address and port.
+ * It manages socket creation, serialization buffers, and the configuration of destination
+ * parameters via properties.
+ *
+ */
+
 class SocketStreamWriter : public rti::routing::adapter::DynamicDataStreamWriter {
 public:
     explicit SocketStreamWriter(
@@ -46,10 +59,6 @@ public:
 	
 
 private:
-    /**
-     * @brief Function used by socketreader_thread_ to read samples from the
-     * socket.
-     */
 
     SocketConnection *socket_connection_;
     std::vector<char> serialization_buffer_;

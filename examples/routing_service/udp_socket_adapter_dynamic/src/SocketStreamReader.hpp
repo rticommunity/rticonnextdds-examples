@@ -28,6 +28,18 @@
 #define RECEIVE_ADDRESS_STRING "receive_address"
 #define RECEIVE_PORT_STRING "receive_port"
 
+/**
+ * @brief StreamReader implementation for UDP socket input in RTI Routing Service.
+ *
+ * SocketStreamReader is a specific implementation of rti::routing::adapter::DynamicDataStreamReader
+ * that receives data from a UDP socket and makes it available to RTI Routing Service as DynamicData samples.
+ * 
+ * This class manages a background thread to continuously read UDP packets from a specified address and port,
+ * buffering received data for consumption by the Routing Service. It supports thread-safe queuing of incoming
+ * data, loaning and returning DynamicData samples, and clean shutdown of the reading thread.
+ *
+ */
+
 class SocketStreamReader : public rti::routing::adapter::DynamicDataStreamReader {
 public:
     SocketStreamReader(
@@ -69,6 +81,7 @@ private:
     char received_buffer_[BUFFER_MAX_SIZE];
     std::queue<std::vector<char>> received_buffers_;
     std::mutex buffer_mutex_;
+    std::vector<char> take_buffer_;
 
     rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;

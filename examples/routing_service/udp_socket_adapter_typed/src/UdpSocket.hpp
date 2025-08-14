@@ -31,6 +31,20 @@
     #pragma comment(lib, "ws2_32.lib")
 #endif
 
+/**
+ * @brief Utility class for UDP socket communication in the RTI Routing Service UDP Socket Adapter.
+ *
+ * UdpSocket provides a lightweight abstraction for UDP socket communication,
+ * supporting both Windows and POSIX systems. It is designed to be used by the Routing Service
+ * UDP socket adapter to send and receive raw UDP packets as part of data bridging between
+ * external UDP sources and DDS.
+ *
+ * The class handles socket creation, binding to a specified IP address and port, and
+ * ensures non-blocking operation for efficient integration with multi-threaded applications.
+ * It provides methods for receiving data from any UDP client and for sending data to a
+ * specified destination address and port. 
+ */
+
 class UdpSocket {
 public:
     UdpSocket(const char* ip, int port);
