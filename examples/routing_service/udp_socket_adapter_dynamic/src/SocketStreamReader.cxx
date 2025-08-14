@@ -15,6 +15,7 @@
 #include <chrono>
 #include <sstream>
 #include <thread>
+#include <queue>
 
 #include <cstring>
 #include <iostream>
@@ -55,7 +56,10 @@ void SocketStreamReader::socket_reading_thread()
             continue;
         }
 
-        received_bytes_ = received_bytes;
+        {
+            std::lock_guard<std::mutex> lock(buffer_mutex_);
+            received_buffers_.emplace(received_buffer_, received_buffer_ + received_bytes);
+        }
 
         reader_listener_->on_data_available(this);
     }
@@ -95,10 +99,21 @@ void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
+    std::vector<char> buffer;
+    {
+        std::unique_lock<std::mutex> lock(buffer_mutex_);
+        if (received_buffers_.empty()) {
+            // No data available
+            samples.clear();
+            infos.clear();
+            return;
+        }
+        buffer = std::move(received_buffers_.front());
+        received_buffers_.pop();
+    }
+
     dds::core::xtypes::DynamicData deserialized_sample(*adapter_type_);
-    std::vector<char> received_buffer = std::vector<char>(
-        received_buffer_, received_buffer_ + received_bytes_);
-    rti::core::xtypes::from_cdr_buffer(deserialized_sample, received_buffer);
+    rti::core::xtypes::from_cdr_buffer(deserialized_sample, buffer);
     
     samples.resize(1);
     infos.resize(1);

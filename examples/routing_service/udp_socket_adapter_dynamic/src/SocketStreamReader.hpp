@@ -16,6 +16,7 @@
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <queue>
 
 #include "SocketConnection.hpp"
 #include "UdpSocket.hpp"
@@ -65,8 +66,8 @@ private:
     std::ifstream input_socket_stream_;
     std::string receive_address_;
     int receive_port_;
-    char received_buffer_[BUFFER_MAX_SIZE]; // Value that's high enough
-    int received_bytes_;
+    char received_buffer_[BUFFER_MAX_SIZE];
+    std::queue<std::vector<char>> received_buffers_;
     std::mutex buffer_mutex_;
 
     rti::routing::StreamInfo stream_info_;

@@ -38,18 +38,9 @@ public:
             const rti::routing::PropertySet &
             );
 
-    virtual int
-            write(const std::vector<dds::core::xtypes::DynamicData *> &,
-                  const std::vector<dds::sub::SampleInfo *> &) final;
-
     virtual int write(
             const std::vector<dds::core::xtypes::DynamicData *> &,
-            const std::vector<dds::sub::SampleInfo *> &,
-            const rti::routing::adapter::SelectorState &selector_state) final;
-
-    virtual void return_loan(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &) final;
+            const std::vector<dds::sub::SampleInfo *> &) final;
 
     ~SocketStreamWriter();
 	
@@ -61,7 +52,7 @@ private:
      */
 
     SocketConnection *socket_connection_;
-
+    std::vector<char> serialization_buffer_;
     std::unique_ptr<UdpSocket> socket;
 
     int send_port_;

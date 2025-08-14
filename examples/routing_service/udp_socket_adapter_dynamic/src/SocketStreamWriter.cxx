@@ -83,39 +83,17 @@ int SocketStreamWriter::write(
 {
     size_t len = 0;
     for (const auto sample : samples) {
-        std::vector<char> buffer;
-        rti::core::xtypes::to_cdr_buffer(buffer, *sample);
+        serialization_buffer_.clear();
+        rti::core::xtypes::to_cdr_buffer(serialization_buffer_, *sample);
 	 // Send the serialized data
         len = socket->send_data(
-            buffer.data(),
-            buffer.size(),
+            serialization_buffer_.data(),
+            serialization_buffer_.size(),
             dest_address_.c_str(),
             dest_port_);
     }
 	
     return len;
-}
-
-int SocketStreamWriter::write(
-        const std::vector<dds::core::xtypes::DynamicData *> &samples,
-        const std::vector<dds::sub::SampleInfo *> &infos,
-        const SelectorState &selector_state)
-{
-    int len;
-    len = write(samples, infos);
-    return len;
-}
-
-void SocketStreamWriter::return_loan(
-        std::vector<dds::core::xtypes::DynamicData *> &samples,
-        std::vector<dds::sub::SampleInfo *> &infos)
-{
-    for (int i = 0; i < samples.size(); ++i) {
-        delete samples[i];
-        delete infos[i];
-    }
-    samples.clear();
-    infos.clear();
 }
 
 SocketStreamWriter::~SocketStreamWriter()
