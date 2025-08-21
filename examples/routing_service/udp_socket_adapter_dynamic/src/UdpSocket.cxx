@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -97,4 +97,15 @@ void UdpSocket::receive_data(
             &client_addr_len);
 
     return;
+}
+
+int UdpSocket::send_data(char* tx_buffer, int tx_length, const char* destAddr, int destPort)
+{
+    sockaddr_in dest_addr;
+    dest_addr.sin_family = AF_INET;
+	dest_addr.sin_port = htons(destPort);
+    dest_addr.sin_addr.s_addr = inet_addr(destAddr);
+
+    size_t length = sendto(sockfd, tx_buffer, tx_length, 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
+    return (int)length;
 }

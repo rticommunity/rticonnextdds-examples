@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -10,12 +10,13 @@
  * use or inability to use the software.
  */
 
-#ifndef SOCKETSTREAMREADER_HPP
-#define SOCKETSTREAMREADER_HPP
+#ifndef SOCKETSTREAMWRITER_HPP
+#define SOCKETSTREAMWRITER_HPP
 
 #include <fstream>
 #include <iostream>
 #include <thread>
+#include <cstring>
 
 #include "SocketConnection.hpp"
 #include "UdpSocket.hpp"
@@ -24,54 +25,52 @@
 #include <rti/routing/adapter/StreamReader.hpp>
 
 #define BUFFER_MAX_SIZE 1024
-#define RECEIVE_ADDRESS_STRING "receive_address"
-#define RECEIVE_PORT_STRING "receive_port"
-#define SHAPE_COLOR_STRING "shape_color"
+#define SEND_ADDRESS_STRING "send_address"
+#define SEND_PORT_STRING "send_port"
+#define DEST_ADDRESS_STRING "dest_address"
+#define DEST_PORT_STRING "dest_port"
 
-class SocketStreamReader : public rti::routing::adapter::DynamicDataStreamReader {
+class SocketStreamWriter : public rti::routing::adapter::DynamicDataStreamWriter {
 public:
-    SocketStreamReader(
+    explicit SocketStreamWriter(
             SocketConnection *connection,
             const rti::routing::StreamInfo &info,
-            const rti::routing::PropertySet &,
-            rti::routing::adapter::StreamReaderListener *listener);
+            const rti::routing::PropertySet &
+            );
 
-    void take(
+    virtual int
+            write(const std::vector<dds::core::xtypes::DynamicData *> &,
+                  const std::vector<dds::sub::SampleInfo *> &) final;
+
+    virtual int write(
+            const std::vector<dds::core::xtypes::DynamicData *> &,
+            const std::vector<dds::sub::SampleInfo *> &,
+            const rti::routing::adapter::SelectorState &selector_state) final;
+
+    virtual void return_loan(
             std::vector<dds::core::xtypes::DynamicData *> &,
             std::vector<dds::sub::SampleInfo *> &) final;
 
-    void return_loan(
-            std::vector<dds::core::xtypes::DynamicData *> &,
-            std::vector<dds::sub::SampleInfo *> &) final;
-
-    void shutdown_socket_reader_thread();
-
-    ~SocketStreamReader();
+    ~SocketStreamWriter();
+	
 
 private:
     /**
      * @brief Function used by socketreader_thread_ to read samples from the
      * socket.
      */
-    void socket_reading_thread();
+    
 
     SocketConnection *socket_connection_;
-    rti::routing::adapter::StreamReaderListener *reader_listener_;
 
     std::unique_ptr<UdpSocket> socket;
 
-    std::thread socketreader_thread_;
-    bool stop_thread_;
+    int send_port_;
+	int dest_port_;
 
-    std::ifstream input_socket_stream_;
-    std::string receive_address_;
-    int receive_port_;
-    std::string shape_color_;
-    char received_buffer_[BUFFER_MAX_SIZE]; // Value that's high enough
-    int received_bytes_;
-    std::mutex buffer_mutex_;
-
-    rti::routing::StreamInfo stream_info_;
+    std::string send_address_;
+	std::string dest_address_;
+	rti::routing::StreamInfo stream_info_;
     dds::core::xtypes::DynamicType *adapter_type_;
 
     struct ShapeType {
@@ -79,6 +78,7 @@ private:
         int y;
         int shapesize;
     };
+
 };
 
 #endif

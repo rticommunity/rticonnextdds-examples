@@ -1,5 +1,5 @@
 #
-# (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+# (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
 #
 #  RTI grants Licensee a license to use, modify, compile, and create derivative
 #  works of the Software.  Licensee has the right to distribute object form
@@ -37,6 +37,8 @@ add_library(${PROJECT_NAME}
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketInputDiscoveryStreamReader.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamReader.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamReader.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamWriter.cxx"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/SocketStreamWriter.hpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocket.cxx"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/UdpSocket.hpp"
 )

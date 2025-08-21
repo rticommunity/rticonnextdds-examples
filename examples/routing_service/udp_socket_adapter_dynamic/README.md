@@ -1,27 +1,31 @@
-# Example Code: Routing Service C++11 Socket Adapter
+# Example Code: Routing Service C++11 Socket Adapter using Dynamic Data
 
 ## Example Description
 
 This example shows how to implement a simple Routing Service Adapter plugin
 in C++11 to receive data from a UDP socket using RTI Routing Service.
 
+This examples uses dynamic data API and there is no need to know the data type
+information beforehand.
+
 The code in this directory provides the following components:
 
 -   `src/SocketAdapter` implements the plugin that is loaded by *RTI Routing
-Service*. It is responsible to create and delete connections.
+Service*. It responsible for creating and deleting connections.
 -   `src/SocketConnection` implements a connection. This component is
-responsible of the creation and deletion of `StreamReaders`.
+responsible for the creation and deletion of `StreamReaders`.
 -   `src/SocketInputDiscoveryStreamReader` implements the logic necessary to
 propagate information about the discovered input streams (in this case
 sockets) to the Routing Service.
--   `src/SocketStreamReader` implements an `StreamReader` that reads sample
+-   `src/SocketStreamReader` implements a `StreamReader` that reads sample
 information from a UDP socket.
--   `test/send_shape_to_socket.py` implements a simple tester to send shape
-type data to a UDP socket.
+-   `src/SocketStreamWriter` implements a `StreamWriter` that sends sample
+information to a UDP socket.
+
 
 For more details, please refer to the *RTI Routing Service SDK* documentation.
 
-## Building C++ example
+## Building the C++ example
 
 In order to build this example, you need to define the variables
 `CONNEXTDDS_DIR` and `CONNEXTDDS_ARCH`. You can do so by exporting them
@@ -93,23 +97,21 @@ cmake -DCONNEXTDDS_DIR=<connext dir> -DCMAKE_TOOLCHAIN_FILE=<toolchain file crea
       -DCONNEXTDDS_ARCH=<connext architecture> ..
 ```
 
-## Running C++ example
+## Running the C++ example
 
 To run the example, you just need to run the following commands from the top
 level folder. This example has been written to allow easy experimentation with
-the Shapes Demo shipped with *RTI Connext DDS* installer bundle. You will find
-some hardcoded references to ShapeType and Square. If you wish to create a
-real Routing Service adapter, you should modify the code and XML accordingly.
+the RTI DDSPing tool shipped with *RTI Connext DDS* installer bundle. If you wish 
+to create a real Routing Service adapter, you should modify the code and XML accordingly.
 
-There is 1 configuration (`-cfgName`) in the Routing Service XML file:
+There are 2 configurations (`-cfgName`) in the Routing Service XML file:
 
 -   **SocketAdapterToDDS** - It reads data from a UDP socket using the
-SocketAdapter and outputs it to DDS. You can visualize the ouptut by
-subscribing to Squares in Shapes Demo or running:
+SocketAdapter and outputs it to DDS. You can visualize the ouptut by running:
 
-```bash
- $NDDSHOME/bin/rtiddsspy -printSample
-```
+-   **DDSToSocketAdapter** - It sends data from DDS to a UDP socket. You can 
+publish DDS data by running command:
+
 
 To run Routing Service, you will need first to set up your environment as
 follows.
@@ -139,24 +141,67 @@ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdap
 Here is an output from a sample run:
 
 ```bash
-$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter/build/
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_dynamic/build/
 
 $ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
 RTI Routing Service 7.3.0 executing (with name SocketAdapterToSocketAdapter)
 ```
 
-Now you'll need to send data to the UDP sockets. By default, Shapes are
-expected on `127.0.0.1:10203`. You can change these default values on
-`RsSocketAdapter.xml`.
+Now you'll need to send data to the UDP sockets. By default, DDS Ping data is
+expected on `127.0.0.1:10203`. You can change both the expected type and topic name 
+and the UDP socket configuration on `RsSocketAdapter.xml`.
 
-To run the Shape tester that mimics a legacy UDP socket sender, run:
+To run a simple test, run in different terminals:
 
 ```bash
-python3 test/send_shape_to_socket.py 127.0.0.1 10203
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_dynamic/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName DDSToSocketAdapter
+RTI Routing Service 7.3.0 executing (with configuration=DDSToSocketAdapter)
 ```
 
-You can now open a Shapes Demo instance on domain 0 and subscribe to Squares.
-You should start receiving a red Square.
+
+```bash
+ $NDDSHOME/bin/rtiddsping -publisher -domainId 0
+```
+
+## Running a data-diode example
+
+You can configure a data-diode scenario by using two Routing Services instances;
+- One using **DDSToSocketAdapter** configuration to publish DDS data over a one direction UDP socket
+- The other using **SocketAdapterToDDS** configuration to convert back to DDS samples
+```                                                                                        
+  ┌───────────┐  ┌─────────────┐                         ┌─────────────┐  ┌───────────┐ 
+  │  Connext  │  │   Routing   │    ┌────────────────┐   │   Routing   │  │  Connext  │ 
+  │    App    ├─►│   Service   ├───►│ UDP DATA DIODE ├──►│   Service   ├─►│    App    │ 
+  │           │  │ DDS TO UDP  │    └────────────────┘   │ UDP TO DDS  │  │           │ 
+  └───────────┘  └─────────────┘                         └─────────────┘  └───────────┘ 
+```                                                                                        
+To run this example in a local machine:
+```bash
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_dynamic/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName SocketAdapterToDDS
+RTI Routing Service 7.3.0 executing (with configuration=SocketAdapterToDDS)
+```
+And in a different terminal:
+```bash
+$export RTI_LD_LIBRARY_PATH=~/$NDDSHOME/lib/$CONNEXT_ARCH:~/udp_socket_adapter_dynamic/build/
+
+$ $NDDSHOME/bin/rtiroutingservice -cfgFile RsSocketAdapter.xml -cfgName DDSToSocketAdapter
+RTI Routing Service 7.3.0 executing (with configuration=DDSToSocketAdapter)
+```
+
+Using the default configuration from RsSocketAdapter.xml, you need to publish DDS Ping data 
+on domain id 0 and subscribe to DSS Ping data on domain id 1:
+
+```bash
+ $NDDSHOME/bin/rtiddsping -publisher -domainId 0
+```
+
+```bash
+ $NDDSHOME/bin/rtiddsping -subscriber -domainId 1
+```
 
 ## Requirements
 

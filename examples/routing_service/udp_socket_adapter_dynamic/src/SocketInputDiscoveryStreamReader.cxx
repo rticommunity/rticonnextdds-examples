@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -20,24 +20,6 @@ SocketInputDiscoveryStreamReader::SocketInputDiscoveryStreamReader(
         StreamReaderListener *input_stream_discovery_listener)
 {
     input_stream_discovery_listener_ = input_stream_discovery_listener;
-
-    /**
-     * In our example, we provide statically the stream information available.
-     * We do not have a mechanism demonstrating how to perform discovery after
-     * startup. However, as an idea you can have a thread monitoring the socket
-     * updating the list of StreamInfo samples and calling
-     * input_stream_discovery_listener_->on_data_available(this); to notify
-     * that new sockets have been discovered.
-     */
-
-    this->data_samples_.push_back(std::unique_ptr<rti::routing::StreamInfo>(
-            new StreamInfo("Square", "ShapeType")));
-
-    /**
-     * Once the SocketInputDiscoveryStreamReader is initialized, we trigger an
-     * event to notify that the streams are ready.
-     */
-    input_stream_discovery_listener_->on_data_available(this);
 }
 
 void SocketInputDiscoveryStreamReader::dispose(
@@ -47,8 +29,8 @@ void SocketInputDiscoveryStreamReader::dispose(
      * This guard is essential since the take() and return_loan() operations
      * triggered by calling on_data_available() execute on an internal Routing
      * Service thread. The custom dispose() operation doesn't run on that
-     * thread. Since the take() and return_loan() operations also need to
-     * access the data_samples_ list this protection is required.
+     * thread. Since the take() and return_loan() operations also need to access
+     * the data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 
@@ -69,8 +51,8 @@ void SocketInputDiscoveryStreamReader::take(
      * This guard is essential since the take() and return_loan() operations
      * triggered by calling on_data_available() execute on an internal Routing
      * Service thread. The custom dispose() operation doesn't run on that
-     * thread. Since the take() and return_loan() operations also need to
-     * access the data_samples_ list this protection is required.
+     * thread. Since the take() and return_loan() operations also need to access
+     * the data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
     std::transform(
@@ -89,8 +71,8 @@ void SocketInputDiscoveryStreamReader::return_loan(
      * This guard is essential since the take() and return_loan() operations
      * triggered by calling on_data_available() execute on an internal Routing
      * Service thread. The custom dispose() operation doesn't run on that
-     * thread. Since the take() and return_loan() operations also need to
-     * access the data_samples_ list this protection is required.
+     * thread. Since the take() and return_loan() operations also need to access
+     * the data_samples_ list this protection is required.
      */
     std::lock_guard<std::mutex> guard(data_samples_mutex_);
 

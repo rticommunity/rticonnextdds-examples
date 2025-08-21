@@ -1,5 +1,5 @@
 /*
- * (c) 2024 Copyright, Real-Time Innovations, Inc.  All rights reserved.
+ * (c) 2025 Copyright, Real-Time Innovations, Inc.  All rights reserved.
  *
  * RTI grants Licensee a license to use, modify, compile, and create derivative
  * works of the Software.  Licensee has the right to distribute object form
@@ -12,25 +12,28 @@
 
 #include <algorithm>
 #include <cctype>
+#include <chrono>
 #include <sstream>
 #include <thread>
-#include <chrono>
+#include <queue>
 
-#include <iostream>
 #include <cstring>
+#include <iostream>
 #ifdef _WIN32
     #include <winsock2.h>
     #pragma comment(lib, "ws2_32.lib")
 #else
-    #include <sys/types.h>
-    #include <sys/socket.h>
-    #include <netinet/in.h>
     #include <arpa/inet.h>
+    #include <netinet/in.h>
+    #include <sys/socket.h>
+    #include <sys/types.h>
     #include <unistd.h>
 #endif
-
 #include "SocketStreamReader.hpp"
 #include <rti/core/Exception.hpp>
+#include <rti/routing/Logger.hpp>
+#include <rti/topic/cdr/Serialization.hpp>
+
 
 using namespace dds::core::xtypes;
 using namespace rti::routing;
@@ -39,30 +42,25 @@ using namespace rti::routing::adapter;
 void SocketStreamReader::socket_reading_thread()
 {
     while (!stop_thread_) {
-        /**
-         * Essential to protect against concurrent data access to
-         * buffer_ from the take() methods running on a different
-         * Routing Service thread.
-         */
-        std::unique_lock<std::mutex> lock(buffer_mutex_);
+        int received_bytes = 0;
         socket->receive_data(
                 received_buffer_,
-                &received_bytes_,
+                &received_bytes,
                 BUFFER_MAX_SIZE);
-        lock.unlock();
 
         // Most likely received nothing or there was an error
         // Not doing any error handling here
-        if (received_bytes_ <= 0) {
+        if (received_bytes <= 0) {
             // Sleep for a small period of time to avoid busy waiting
             std::this_thread::sleep_for(std::chrono::milliseconds(10));
             continue;
         }
 
-        /**
-         * Here we notify Routing Service, that there is data available
-         * on the StreamReader, triggering a call to take().
-         */
+        {
+            std::lock_guard<std::mutex> lock(buffer_mutex_);
+            received_buffers_.emplace(received_buffer_, received_buffer_ + received_bytes);
+        }
+
         reader_listener_->on_data_available(this);
     }
 
@@ -79,8 +77,7 @@ SocketStreamReader::SocketStreamReader(
 {
     socket_connection_ = connection;
     reader_listener_ = listener;
-    adapter_type_ =
-            static_cast<DynamicType *>(info.type_info().type_representation());
+    adapter_type_ = static_cast<DynamicType *>(info.type_info().type_representation());
 
     // Parse the properties provided in the xml configuration file
     for (const auto &property : properties) {
@@ -88,73 +85,42 @@ SocketStreamReader::SocketStreamReader(
             receive_address_ = property.second;
         } else if (property.first == RECEIVE_PORT_STRING) {
             receive_port_ = std::stoi(property.second);
-        } else if (property.first == SHAPE_COLOR_STRING) {
-            shape_color_ = property.second;
         }
     }
 
-    // If any of the mandatory properties is not specified, throw exception
-    if (receive_address_.size() == 0 || receive_port_ == 0
-        || shape_color_.size() == 0) {
-        throw dds::core::IllegalOperationError(
-                "You must set receive_address, receive_port and"
-                " shape_color in the RsSocketAdapter.xml file");
-    }
-
-    // Create the UDP socket to receive data
     socket = std::unique_ptr<UdpSocket>(
             new UdpSocket(receive_address_.c_str(), receive_port_));
 
-    // Start the receive thread for UDP data
     socketreader_thread_ =
             std::thread(&SocketStreamReader::socket_reading_thread, this);
 }
 
-/**
- * This is the Routing Service take(). It's called when the
- * socket_receive_thread calls on_data_available()
- */
 void SocketStreamReader::take(
         std::vector<dds::core::xtypes::DynamicData *> &samples,
         std::vector<dds::sub::SampleInfo *> &infos)
 {
-    if (stream_info_.stream_name() == "Square"
-        || stream_info_.stream_name() == "Circle"
-        || stream_info_.stream_name() == "Triangle") {
-        /**
-         * This protection is required since take() executes on a different
-         * Routing Service thread.
-         */
+    take_buffer_.clear();
+    {
         std::unique_lock<std::mutex> lock(buffer_mutex_);
-        /**
-         * The data we're sending from the socket comes in a format that makes
-         * it easy to just use reinterpret_cast. With a real type, a
-         * step-by-step mapping may be necessary
-         */
-        ShapeType *shape = reinterpret_cast<ShapeType *>(received_buffer_);
-        lock.unlock();
-
-        /**
-         * Note that we read one packet at a time from socket_reading_thread()
-         */
-        samples.resize(1);
-        infos.resize(1);
-
-        std::unique_ptr<DynamicData> sample(new DynamicData(*adapter_type_));
-
-        /**
-         * This is the hardcoded type information about ShapeType.
-         * You are advised to change this as per your type definition
-         */
-        sample->value("x", shape->x);
-        sample->value("y", shape->y);
-        sample->value("shapesize", shape->shapesize);
-        // Color is retrieved from the XML configuration
-        sample->value("color", shape_color_);
-
-        // Routing Service will send the DDS sample here
-        samples[0] = sample.release();
+        if (received_buffers_.empty()) {
+            // No data available
+            samples.clear();
+            infos.clear();
+            return;
+        }
+        take_buffer_ = std::move(received_buffers_.front());
+        received_buffers_.pop();
     }
+
+    dds::core::xtypes::DynamicData deserialized_sample(*adapter_type_);
+    rti::core::xtypes::from_cdr_buffer(deserialized_sample, take_buffer_);
+    
+    samples.resize(1);
+    infos.resize(1);
+    
+    std::unique_ptr<DynamicData> sample(new DynamicData(*adapter_type_));
+    *sample = deserialized_sample;
+    samples[0] = sample.release();
 
     return;
 }
