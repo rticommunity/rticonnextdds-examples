@@ -78,9 +78,9 @@ void build_data_sample_fast(CameraImageBuilder &builder, int seed)
     auto pixel_array = rti::flat::plain_cast(pixels);
     for (int i = 0; i < PIXEL_COUNT; i++) {
         auto &pixel = pixel_array[i];
-        pixel.red((seed + i) % 100);
-        pixel.green((seed + i + 1) % 100);
-        pixel.blue((seed + i + 2) % 100);
+        pixel.red = (seed + i) % 100;
+        pixel.green = (seed + i + 1) % 100;
+        pixel.blue = (seed + i + 2) % 100;
     }
 }
 

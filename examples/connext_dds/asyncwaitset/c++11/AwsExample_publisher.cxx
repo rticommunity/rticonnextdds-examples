@@ -92,7 +92,7 @@ AwsPublisher::AwsPublisher(
             dds::pub::Publisher(participant),
             topic);
     // set sample key value:
-    sample_.key(publisher_id);
+    sample_.key = publisher_id;
 
 
     // Send condition: to generate application-driven events to send samples
@@ -107,8 +107,8 @@ void AwsPublisher::generate_send_event()
 
 void AwsPublisher::send_sample()
 {
-    std::cout << "Send Sample: " << sample_.number() << std::endl;
-    sample_.number(sample_.number() + 1);
+    std::cout << "Send Sample: " << sample_.number << std::endl;
+    sample_.number = sample_.number + 1;
     sender_.write(sample_);
 }
 

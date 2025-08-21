@@ -36,7 +36,7 @@ int main(int argc, char **argv)
         for (auto sample : samples) {
             DeviceStatus key_holder;
             reader.key_value(key_holder, sample.info().instance_handle());
-            disposed_instances.insert(key_holder.sensor_name());
+            disposed_instances.insert(key_holder.sensor_name);
         }
 
         std::cout << "Disposed instances: " << std::endl;

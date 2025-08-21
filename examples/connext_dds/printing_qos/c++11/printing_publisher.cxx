@@ -65,7 +65,7 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        data.x(static_cast<int16_t>(samples_written));
+        data.x = static_cast<int16_t>(samples_written);
 
         std::cout << "Writing printing, count " << samples_written << std::endl;
 

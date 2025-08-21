@@ -49,7 +49,7 @@ void run_subscriber_application(
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 samples_read++;
-                sum += sample.data().x();
+                sum += sample.data().x;
             }
         }
 

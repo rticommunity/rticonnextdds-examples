@@ -61,11 +61,11 @@ void run_publisher_application(
         // reset the x counter to 0 every time we send 10 samples (x=0,1,..,9).
         // Using the value of count, we can get set x to the appropriate value
         // applying % 10 operation to it.
-        instance.count(samples_written);
-        instance.x(samples_written % 10);
+        instance.count = samples_written;
+        instance.x = samples_written % 10;
 
-        std::cout << "Writing cft, count " << instance.count() << "\t"
-                  << "x=" << instance.x() << std::endl;
+        std::cout << "Writing cft, count " << instance.count << "\t"
+                  << "x=" << instance.x << std::endl;
 
         writer.write(instance, instance_handle);
 

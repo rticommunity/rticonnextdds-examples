@@ -59,21 +59,21 @@ void run_publisher_application(
                   << std::endl;
 
         // Modify twice the first instance and send with the first writer.
-        instance1.message("First sample, Topic 1 sent by DataWriter number 1");
+        instance1.message = "First sample, Topic 1 sent by DataWriter number 1";
         writer1.write(instance1);
-        instance1.message("Second sample, Topic 1 sent by DataWriter number 1");
+        instance1.message = "Second sample, Topic 1 sent by DataWriter number 1";
         writer1.write(instance1);
 
         // Modify twice the second instance and send with the second writer.
-        instance2.message("First sample, Topic 2 sent by DataWriter number 2");
+        instance2.message = "First sample, Topic 2 sent by DataWriter number 2";
         writer2.write(instance2);
-        instance2.message("Second sample, Topic 2 sent by DataWriter number 2");
+        instance2.message = "Second sample, Topic 2 sent by DataWriter number 2";
         writer2.write(instance2);
 
         // Modify twice the third instance and send with the third writer.
-        instance3.message("First sample, Topic 3 sent by DataWriter number 3");
+        instance3.message = "First sample, Topic 3 sent by DataWriter number 3";
         writer3.write(instance3);
-        instance3.message("Second sample, Topic 3 sent by DataWriter number 3");
+        instance3.message = "Second sample, Topic 3 sent by DataWriter number 3";
         writer3.write(instance3);
 
         rti::util::sleep(dds::core::Duration(1));

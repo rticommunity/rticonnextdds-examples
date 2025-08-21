@@ -36,8 +36,8 @@ void publisher_main(int domain_id, int sample_count)
         // Modify the data to be written here
         std::stringstream string_builder;
         string_builder << std::string("Sample string ") << count << std::endl;
-        sample.id(count);
-        sample.msg(string_builder.str());
+        sample.id = count;
+        sample.msg = string_builder.str();
 
 
         std::cout << "Writing HelloMsg, count " << count << std::endl;

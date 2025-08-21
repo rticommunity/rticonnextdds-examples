@@ -51,19 +51,19 @@ void run_publisher_application(
 
     // Declare both ShapeType instances and set the fields that don't change
     ShapeType red_data, blue_data;
-    red_data.shapesize(30);
-    red_data.color("RED");
-    blue_data.shapesize(30);
-    blue_data.color("BLUE");
+    red_data.shapesize = 30;
+    red_data.color = "RED";
+    blue_data.shapesize = 30;
+    blue_data.color = "BLUE";
 
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify (X, Y) coordinates of both instances
-        red_data.x(samples_written);
-        red_data.y(samples_written);
-        blue_data.x(samples_written);
-        blue_data.y(samples_written);
+        red_data.x = samples_written;
+        red_data.y = samples_written;
+        blue_data.x = samples_written;
+        blue_data.y = samples_written;
 
         // Write
         std::cout << "Writing RED ShapeType sample, count " << samples_written

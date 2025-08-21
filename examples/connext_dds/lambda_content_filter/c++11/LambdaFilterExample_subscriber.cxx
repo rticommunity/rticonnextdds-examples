@@ -35,7 +35,7 @@ void run_subscriber_application(
             "stock_cft",
             topic,
             [](const Stock &stock) {
-                return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
+                return stock.symbol == "GOOG" || stock.symbol == "IBM";
             });
 
     dds::sub::DataReader<Stock> reader(

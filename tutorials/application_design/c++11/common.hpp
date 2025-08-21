@@ -25,7 +25,7 @@ using CoordSequence = rti::core::bounded_sequence<Coord, 100>;
 std::string to_string(const Coord &coord)
 {
     std::ostringstream ss;
-    ss << "Coord(lat: " << coord.lat() << ", lon: " << coord.lon() << ")";
+    ss << "Coord(lat: " << coord.lat << ", lon: " << coord.lon << ")";
     return ss.str();
 }
 

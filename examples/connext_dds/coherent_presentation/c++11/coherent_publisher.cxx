@@ -53,7 +53,7 @@ void run_publisher_application(
     dds::pub::DataWriter<coherent> writer(publisher, topic, writer_qos);
 
     coherent sample;
-    sample.id(0);
+    sample.id = 0;
     dds::core::InstanceHandle handle = writer.register_instance(sample);
 
     int num_samples = 7;
@@ -65,10 +65,10 @@ void run_publisher_application(
         for (int i = 0; i < num_samples; i++, count++) {
             rti::util::sleep(dds::core::Duration(1));
 
-            sample.field('a' + i);
-            sample.value((int) (rand() / (RAND_MAX / 10.0)));
-            std::cout << "\tUpdating instance, " << sample.field() << "->"
-                      << sample.value() << std::endl;
+            sample.field = 'a' + i;
+            sample.value = (int) (rand() / (RAND_MAX / 10.0));
+            std::cout << "\tUpdating instance, " << sample.field << "->"
+                      << sample.value << std::endl;
             writer.write(sample, handle);
         }
 

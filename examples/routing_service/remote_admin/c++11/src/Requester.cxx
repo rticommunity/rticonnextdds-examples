@@ -35,7 +35,7 @@ static void send(
         CommandRequest &request)
 {
     dds::topic::topic_type_support<EntityState>::to_cdr_buffer(
-            reinterpret_cast<std::vector<char> &>(request.octet_body()),
+            reinterpret_cast<std::vector<char> &>(request.octet_body),
             EntityState(EntityStateKind::DISABLED));
     /*
      * Send disable
@@ -43,10 +43,10 @@ static void send(
     requester.send_request(request);
     CommandReply reply =
             requester.receive_replies(Duration(WAIT_TIMEOUT_SEC_MAX))[0];
-    if (reply.retcode() == CommandReplyRetcode::OK_RETCODE) {
-        std::cout << "Command returned: " << reply.string_body() << std::endl;
+    if (reply.retcode == CommandReplyRetcode::OK_RETCODE) {
+        std::cout << "Command returned: " << reply.string_body << std::endl;
     } else {
-        std::cout << "Unsuccessful command returned value " << reply.retcode()
+        std::cout << "Unsuccessful command returned value " << reply.retcode
                   << "." << std::endl;
         throw dds::core::Error("Error in replier");
     }
@@ -94,10 +94,10 @@ int main(int argc, char *argv[])
          * Setup command
          */
         CommandRequest request;
-        request.action(args_parser.command_kind());
-        request.resource_identifier(args_parser.resource_identifier());
+        request.action = args_parser.command_kind();
+        request.resource_identifier = args_parser.resource_identifier();
         if (args_parser.body_str() != "") {
-            request.string_body(args_parser.body_str());
+            request.string_body = args_parser.body_str();
         }
         send(requester, request);
 

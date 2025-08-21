@@ -31,8 +31,8 @@ int process_data(dds::sub::DataReader<tbf> reader)
                     sample.info().source_timestamp().to_secs();
 
             const tbf &data = sample.data();
-            std::cout << source_timestamp << "\t" << data.code() << "\t\t"
-                      << data.x() << std::endl;
+            std::cout << source_timestamp << "\t" << data.code << "\t\t"
+                      << data.x << std::endl;
         }
     }
 
