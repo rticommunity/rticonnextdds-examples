@@ -11,14 +11,6 @@
                         <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
                         <value>$(PUBLIC_ADDRESS)</value>
                     </element>
-                    <element>
-                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
-                        <value>1400</value>
-                    </element>
-                    <element>
-                        <name>dds.participant.protocol.rtps_overhead</name>
-                        <value>256</value>
-                    </element>
                 </property>
             </element>
         </transport>
@@ -42,14 +34,6 @@
                     <element>
                         <name>dds.transport.UDPv4_WAN.builtin.public_address</name>
                         <value>$(PUBLIC_ADDRESS)</value>
-                    </element>
-                    <element>
-                        <name>dds.transport.UDPv4_WAN.builtin.parent.message_size_max</name>
-                        <value>1400</value>
-                    </element>
-                    <element>
-                        <name>dds.participant.protocol.rtps_overhead</name>
-                        <value>256</value>
                     </element>
                 </property>
             </element>
