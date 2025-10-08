@@ -82,7 +82,9 @@ private:
 
     static RTI::Service::Admin::CommandActionKind parse_command_kind(char *arg);
 
-    static uint64_t parse_number(char *arg);
+    static uint32_t parse_domain_id(char *arg);
+
+    static uint64_t parse_timestamp(char *arg);
 
     static bool is_number(char *arg);
 };
