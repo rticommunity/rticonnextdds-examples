@@ -11,12 +11,11 @@ automatically be included in the [RTI Community Portal Examples
 Section](http://community.rti.com). See [CONTRIBUTING.md](https://github.com/rticommunity/rticonnextdds-examples/blob/master/CONTRIBUTING.md)
 for further information about how to contribute with new examples to this repository.
 
-The examples contained in the
-[master](https://github.com/rticommunity/rticonnextdds-examples/tree/master)
-branch of this repository have been built and tested against RTI Connext DDS
-7.3.0. If you need examples that have been built and tested against older
-versions of RTI Connext DDS, please check out the appropriate branch:
+The examples contained in this branch were built and tested against **RTI Connext DDS
+7.3.1**. If you need examples that have been built and tested against previous
+versions of RTI Connext DDS, please check out the corresponding release branch:
 
+- [release/7.3.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.3.0)
 - [release/7.2.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.2.0)
 - [release/7.1.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.1.0)
 - [release/7.0.0](https://github.com/rticommunity/rticonnextdds-examples/tree/release/7.0.0)
