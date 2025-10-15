@@ -70,9 +70,11 @@ pipeline {
                     pipelineInfo.dockerDir,
                 ) {
                     script {
+                        def version = readFile('VERSION').readLines()[0].trim()
                         pipelineInfo.connextDir = installConnext(
                             pipelineInfo.connextArch,
                             env.WORKSPACE,
+                            version
                         )
                     }
                 }
