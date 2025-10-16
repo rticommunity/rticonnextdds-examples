@@ -15,7 +15,7 @@ ARG USER_NAME=jenkins
 ARG USER_UID
 
 ENV DEBIAN_FRONTEND="noninteractive"
-ENV CONNEXTDDS_ARCH="x64Linux4gcc7.3.0"
+ENV CONNEXTDDS_ARCH="x64Linux4gcc8.5.0"
 
 RUN apt-get update && apt-get install -y \
         gcc \
