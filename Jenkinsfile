@@ -40,7 +40,7 @@ pipeline {
             )
         )
         // Set a timeout for the entire pipeline
-        timeout(time: 2, unit: 'HOURS')
+        timeout(time: 3, unit: 'HOURS')
     }
 
     stages {
