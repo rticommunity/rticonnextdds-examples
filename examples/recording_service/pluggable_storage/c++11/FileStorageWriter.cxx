@@ -72,6 +72,7 @@ FileStorageWriter::~FileStorageWriter()
 {
     if (info_file_.fail()) {
         std::cerr << "Failed to use file to store metadata";
+        return;
     }
 
     /* Obtain current time */
@@ -79,6 +80,7 @@ FileStorageWriter::~FileStorageWriter()
     if (current_time == -1) {
         // can't throw in a destructor
         std::cerr << "Failed to obtain the current time";
+        return;
     }
     /* Time was returned in seconds. Transform to nanoseconds */
     current_time *= NANOSECS_PER_SEC;
