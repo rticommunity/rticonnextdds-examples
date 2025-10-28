@@ -147,10 +147,12 @@ RTI Recording Service (Recorder) 7.0.0 starting...
 RTI Recording Service started
 ```
 
-*Recorder* will create two files, `Cpp_PluggableStorage.dat` and
-`Cpp_PluggableStorage.dat.info`. The `HelloMsg` recorded samples are in the *.dat*
-file. The *.dat.info* file contains information about when the service started
-and finished.
+*Recorder* will create three files:
+* `Cpp_PluggableStorage.dat`: contains the `HelloMsg` recorded samples.
+* `Cpp_PluggableStorage.dat.info`: contains information about when the service
+started and finished.
+* `Cpp_PluggableStorage.dat.pub`: contains discovery information required to
+replay the recorded database.
 
 ## Running the C++ example (Replay storage reader)
 

@@ -70,16 +70,24 @@ FileStorageWriter::FileStorageWriter(
 
 FileStorageWriter::~FileStorageWriter()
 {
-    if (info_file_.good()) {
-        /* Obtain current time */
-        int64_t current_time = (int64_t) time(NULL);
-        if (current_time == -1) {
-            // can't throw in a destructor
-            std::cerr << "Failed to obtain the current time";
-        }
-        /* Time was returned in seconds. Transform to nanoseconds */
-        current_time *= NANOSECS_PER_SEC;
-        info_file_ << "End timestamp: " << current_time << std::endl;
+    if (info_file_.fail()) {
+        std::cerr << "Failed to use file to store metadata";
+        return;
+    }
+
+    /* Obtain current time */
+    int64_t current_time = (int64_t) time(NULL);
+    if (current_time == -1) {
+        // can't throw in a destructor
+        std::cerr << "Failed to obtain the current time";
+        return;
+    }
+    /* Time was returned in seconds. Transform to nanoseconds */
+    current_time *= NANOSECS_PER_SEC;
+    info_file_ << "End timestamp: " << current_time << std::endl;
+
+    if (info_file_.fail()) {
+        std::cerr << "Failed to write end timestamp";
     }
 }
 

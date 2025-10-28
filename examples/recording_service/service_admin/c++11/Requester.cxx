@@ -44,13 +44,26 @@ CommandActionKind ArgumentsParser::parse_command_kind(char *arg)
     return command_kind;
 }
 
-uint64_t ArgumentsParser::parse_number(char *arg)
+uint32_t ArgumentsParser::parse_domain_id(char *arg)
+{
+    std::stringstream stream(arg);
+    uint32_t value;
+    if (!(stream >> value)) {
+        std::stringstream error_stream;
+        error_stream << "Error: could not parse domain id value provided, '" << arg
+                     << "'";
+        throw std::runtime_error(error_stream.str());
+    }
+    return value;
+}
+
+uint64_t ArgumentsParser::parse_timestamp(char *arg)
 {
     std::stringstream stream(arg);
     uint64_t value;
     if (!(stream >> value)) {
         std::stringstream error_stream;
-        error_stream << "Error: could not parse uint64 value provided, '" << arg
+        error_stream << "Error: could not parse timestamp value provided, '" << arg
                      << "'";
         throw std::runtime_error(error_stream.str());
     }
@@ -237,7 +250,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                                  << DOMAIN_ID_ARG_NAME << " parameter";
                     throw std::runtime_error(error_stream.str());
                 }
-                admin_domain_id_ = parse_number(argv[current_arg + 1]);
+                admin_domain_id_ = parse_domain_id(argv[current_arg + 1]);
                 current_arg += 2;
             } else if (TIME_TAG_ARG_NAME.compare(argv[current_arg]) == 0) {
                 // This parameter may use one or two arguments
@@ -264,7 +277,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                     octet_kind_ = OctetKind::BREAKPOINT;
                     // This parameter may use one or two arguments
                     br_params_.value().timestamp_nanos(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     // Check if a label has been provided
                     if (current_arg + 2 < argc) {
                         br_params_.label(std::string(argv[current_arg + 2]));
@@ -285,14 +298,14 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                     // This parameter may use one or two arguments
                     if (is_number(argv[current_arg + 1])) {
                         br_params_.value().timestamp_nanos(
-                                parse_number(argv[current_arg + 1]));
+                                parse_timestamp(argv[current_arg + 1]));
                     } else {
                         br_params_.label(std::string(argv[current_arg + 1]));
                     }
                     current_arg += 2;
                 } else if (current_arg + 2 < argc) {
                     br_params_.value().timestamp_nanos(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     br_params_.label(std::string(argv[current_arg + 2]));
                     current_arg += 3;
                 } else {
@@ -308,14 +321,14 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                     // This parameter may use one or two arguments
                     if (is_number(argv[current_arg + 1])) {
                         br_params_.value().timestamp_nanos(
-                                parse_number(argv[current_arg + 1]));
+                                parse_timestamp(argv[current_arg + 1]));
                     } else {
                         br_params_.label(std::string(argv[current_arg + 1]));
                     }
                     current_arg += 2;
                 } else if (current_arg + 2 < argc) {
                     br_params_.value().timestamp_nanos(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     br_params_.label(std::string(argv[current_arg + 2]));
                     current_arg += 3;
                 } else {
@@ -330,7 +343,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::CONTINUE;
                     continue_params_.value().offset(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No number of seconds for the continue param
@@ -344,7 +357,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::CONTINUE;
                     continue_params_.value().slices(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No number of slices for the continue param
@@ -357,7 +370,7 @@ ArgumentsParser::ArgumentsParser(int argc, char *argv[])
                 if (current_arg + 1 < argc) {
                     octet_kind_ = OctetKind::TIMESTAMPHOLDER;
                     timestamp_holder_.timestamp_nanos(
-                            parse_number(argv[current_arg + 1]));
+                            parse_timestamp(argv[current_arg + 1]));
                     current_arg += 2;
                 } else {
                     // No timestamp for the jump in time
