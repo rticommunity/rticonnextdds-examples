@@ -137,7 +137,7 @@ void subscriber_zero_copy(const application::ApplicationArguments &options)
 
         auto ping_samples = reader.take();
         if (ping_samples.length() > 0 && ping_samples[0].info().valid()) {
-            if (ping_samples[0].data().timestamp() == 0) {
+            if (ping_samples[0].data().timestamp == 0) {
                 // last sample received, break out of receive loop
                 break;
             }
@@ -147,7 +147,7 @@ void subscriber_zero_copy(const application::ApplicationArguments &options)
 
             // Write the pong sample:
             CameraImage *pong_sample = writer.extensions().get_loan();
-            pong_sample->timestamp(ping_samples[0].data().timestamp());
+            pong_sample->timestamp = ping_samples[0].data().timestamp;
             if (reader->is_data_consistent(ping_samples[0])) {
                 writer.write(*pong_sample);
             }
@@ -281,14 +281,14 @@ void subscriber_plain(const application::ApplicationArguments &options)
 
         // Write the pong sample
         if (ping_samples.length() && ping_samples[0].info().valid()) {
-            if (ping_samples[0].data().timestamp() == 0) {
+            if (ping_samples[0].data().timestamp == 0) {
                 // last sample received, break out of receive loop
                 break;
             }
             if (options.display_sample) {
                 display_plain_sample(ping_samples[0].data());
             }
-            pong_sample->timestamp(ping_samples[0].data().timestamp());
+            pong_sample->timestamp = ping_samples[0].data().timestamp;
             writer.write(*pong_sample);
             count++;
         }

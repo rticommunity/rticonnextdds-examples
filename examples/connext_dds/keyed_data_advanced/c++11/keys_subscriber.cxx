@@ -40,7 +40,7 @@ void new_instance_found(
     // occur due to lost liveliness or missed deadlines, so those
     // listeners would also need to update the instance state.
 
-    int code = msg.code();
+    int code = msg.code;
 
     // If we don't have any information about it, it's a new instance.
     if (sampleState.count(code) == 0) {
@@ -65,8 +65,8 @@ void instance_lost_writers(
         const keys &msg,
         std::map<int, dds::sub::status::InstanceState> &sampleState)
 {
-    std::cout << "Instance has no writers; code = " << msg.code() << std::endl;
-    sampleState[msg.code()] =
+    std::cout << "Instance has no writers; code = " << msg.code << std::endl;
+    sampleState[msg.code] =
             dds::sub::status::InstanceState::not_alive_no_writers();
 }
 
@@ -74,15 +74,15 @@ void instance_disposed(
         const keys &msg,
         std::map<int, dds::sub::status::InstanceState> &sampleState)
 {
-    std::cout << "Instance disposed; code = " << msg.code() << std::endl;
-    sampleState[msg.code()] =
+    std::cout << "Instance disposed; code = " << msg.code << std::endl;
+    sampleState[msg.code] =
             dds::sub::status::InstanceState::not_alive_disposed();
 }
 
 void handle_data(const keys &msg)
 {
-    std::cout << "code: " << msg.code() << ", x: " << msg.x()
-              << ", y: " << msg.y() << std::endl;
+    std::cout << "code: " << msg.code << ", x: " << msg.x
+              << ", y: " << msg.y << std::endl;
 }
 
 int process_data(dds::sub::DataReader<keys> reader)

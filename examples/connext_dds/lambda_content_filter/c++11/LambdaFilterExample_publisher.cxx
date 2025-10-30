@@ -40,7 +40,7 @@ void run_publisher_application(
             "stock_cft",
             participant,
             [](const Stock &stock) {
-                return stock.symbol() == "GOOG" || stock.symbol() == "IBM";
+                return stock.symbol == "GOOG" || stock.symbol == "IBM";
             });
 
     // Create a Topic -- and automatically register the type
@@ -59,8 +59,8 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        sample.symbol(symbols[distribution(random_device)]);
-        sample.value(distribution(random_device) * 1.1);
+        sample.symbol = symbols[distribution(random_device)];
+        sample.value = distribution(random_device) * 1.1;
 
         // Print the sample we're writting
         std::cout << "Writing " << sample << std::endl;

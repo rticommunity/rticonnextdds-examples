@@ -60,12 +60,12 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Update the counter value of the sample.
-        instance.x(samples_written);
+        instance.x = samples_written;
 
         // Send the sample using the DataWriter with "volatile" durability.
         std::cout << "Writing profile_name = volatile_profile,\t x = "
                   << samples_written << std::endl;
-        instance.profile_name("volatile_profile");
+        instance.profile_name = "volatile_profile";
         writer_volatile.write(instance);
 
         // Send the sample using the DataWriter with "transient_local"
@@ -73,7 +73,7 @@ void run_publisher_application(
         std::cout << "Writing profile_name = transient_local_profile,\t x = "
                   << samples_written << std::endl
                   << std::endl;
-        instance.profile_name("transient_local_profile");
+        instance.profile_name = "transient_local_profile";
         writer_transient_local.write(instance);
 
         // Send the sample every second.

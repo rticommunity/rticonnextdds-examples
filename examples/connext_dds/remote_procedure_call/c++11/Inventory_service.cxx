@@ -35,7 +35,7 @@ public:
 
         std::lock_guard<std::mutex> lock(mutex);
         for (const auto &item : inventory) {
-            contents.items().push_back(::Item(item.first, item.second));
+            contents.items.push_back(::Item(item.first, item.second));
         }
 
         return contents;
@@ -48,10 +48,10 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex);
-        if (inventory.find(item.name()) == inventory.end()) {
-            inventory[item.name()] = item.quantity();
+        if (inventory.find(item.name) == inventory.end()) {
+            inventory[item.name] = item.quantity;
         } else {
-            inventory[item.name()] += item.quantity();
+            inventory[item.name] += item.quantity;
         }
     }
 
@@ -62,13 +62,13 @@ public:
         }
 
         std::lock_guard<std::mutex> lock(mutex);
-        if (inventory.find(item.name()) == inventory.end()) {
-            throw UnknownItemError(item.name());
+        if (inventory.find(item.name) == inventory.end()) {
+            throw UnknownItemError(item.name);
         }
 
-        inventory[item.name()] -= item.quantity();
-        if (inventory[item.name()] <= 0) {
-            inventory.erase(item.name());
+        inventory[item.name] -= item.quantity;
+        if (inventory[item.name] <= 0) {
+            inventory.erase(item.name);
         }
     }
 

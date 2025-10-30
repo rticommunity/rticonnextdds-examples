@@ -50,7 +50,7 @@ void publisher_main(
     hello_world sample;
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
         std::cout << "Writing hello_world, count " << count << std::endl;
-        sample.data(initial_value++);
+        sample.data = initial_value++;
         writer.write(sample);
 
         std::this_thread::sleep_for(std::chrono::seconds(1));

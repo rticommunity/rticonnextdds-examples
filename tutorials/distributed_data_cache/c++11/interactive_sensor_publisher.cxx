@@ -33,14 +33,14 @@ public:
     void open_window()
     {
         std::cout << "Opening the window..." << std::endl;
-        status_.is_open(true);
+        status_.is_open = true;
         writer_->write(status_, instance_);
     }
 
     void close_window()
     {
         std::cout << "Closing the window..." << std::endl;
-        status_.is_open(false);
+        status_.is_open = false;
         writer_->write(status_, instance_);
     }
 

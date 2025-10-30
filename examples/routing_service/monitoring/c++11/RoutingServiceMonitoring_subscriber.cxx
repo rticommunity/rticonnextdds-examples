@@ -69,46 +69,46 @@ int processPeriodicData(
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 count++;
-                switch (sample.data().value()._d()) {
+                switch (sample.data().value._d()) {
                 case (RTI::Service::Monitoring::ResourceKind::
                               ROUTING_DOMAIN_ROUTE): {
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
                     std::cout << "Periodic data:\n\tDomain Route: ";
-                    if (config.value()
+                    if (config.value
                                 .routing_domain_route()
-                                .connections()
+                                .connections
                                 .value()
                                 .size()
                         > 0) {
                         std::cout << " { ";
                         for (const auto &connection :
-                             config.value()
+                             config.value
                                      .routing_domain_route()
-                                     .connections()
+                                     .connections
                                      .value()) {
-                            std::cout << connection.name() << ", ";
+                            std::cout << connection.name << ", ";
                         }
                         std::cout << " } " << std::endl;
                     }
 
                     std::cout << "\n\t\t in samples/s (mean): "
                               << sample.data()
-                                         .value()
+                                         .value
                                          .routing_domain_route()
-                                         .in_samples_per_sec()
+                                         .in_samples_per_sec
                                          .value()
-                                         .publication_period_metrics()
-                                         .mean()
+                                         .publication_period_metrics
+                                         .mean
                               << ", out samples/s (mean): "
                               << sample.data()
-                                         .value()
+                                         .value
                                          .routing_domain_route()
-                                         .out_samples_per_sec()
+                                         .out_samples_per_sec
                                          .value()
-                                         .publication_period_metrics()
-                                         .mean()
+                                         .publication_period_metrics
+                                         .mean
                               << std::endl;
                     break;
                 }
@@ -118,19 +118,19 @@ int processPeriodicData(
                             configReader,
                             sample.info().instance_handle());
                     std::cout << "Periodic data:\n\t > Routing Service "
-                              << config.value()
+                              << config.value
                                          .routing_service()
-                                         .application_name()
+                                         .application_name
                               << "\n\t\t cpu usage (mean): "
                               << sample.data()
-                                         .value()
+                                         .value
                                          .routing_service()
-                                         .process()
+                                         .process
                                          .value()
-                                         .cpu_usage_percentage()
+                                         .cpu_usage_percentage
                                          .value()
-                                         .publication_period_metrics()
-                                         .mean()
+                                         .publication_period_metrics
+                                         .mean
                               << " %" << std::endl;
                     break;
                 }
@@ -171,31 +171,31 @@ int processEventData(
         for (const auto &sample : samples) {
             if (sample.info().valid()) {
                 count++;
-                switch (sample.data().value()._d()) {
+                switch (sample.data().value._d()) {
                 case (RTI::Service::Monitoring::ResourceKind::
                               ROUTING_DOMAIN_ROUTE): {
                     std::cout << "\t > The Domain Route status is "
                               << sample.data()
-                                         .value()
+                                         .value
                                          .routing_domain_route()
-                                         .state()
+                                         .state
                               << std::endl;
                     if (sample.data()
-                                .value()
+                                .value
                                 .routing_domain_route()
-                                .connections()
+                                .connections
                                 .value()
                                 .size()
                         > 0) {
                         std::cout << "\t\t Connections available: { ";
                         for (const auto &connection :
                              sample.data()
-                                     .value()
+                                     .value
                                      .routing_domain_route()
-                                     .connections()
+                                     .connections
                                      .value()) {
                             std::cout << " Participant name: "
-                                      << connection.name() << ", ";
+                                      << connection.name << ", ";
                         }
                         std::cout << " } " << std::endl;
                     }
@@ -205,28 +205,28 @@ int processEventData(
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
-                    if (config.value()._d()
+                    if (config.value._d()
                         == RTI::Service::Monitoring::ResourceKind::
                                 ROUTING_INPUT) {
                         std::cout
                                 << "\t > The Input "
-                                << config.value().routing_input().resource_id()
+                                << config.value.routing_input().resource_id
                                 << std::endl;
                         std::cout
                                 << "\t\t status is "
-                                << sample.data().value().routing_input().state()
+                                << sample.data().value.routing_input().state
                                 << std::endl;
                         std::cout
                                 << "\t\t Topic: "
-                                << config.value().routing_input().stream_name()
+                                << config.value.routing_input().stream_name
                                 << ", Type: "
-                                << config.value()
+                                << config.value
                                            .routing_input()
-                                           .registered_type_name()
+                                           .registered_type_name
                                 << ", Participant name: "
-                                << config.value()
+                                << config.value
                                            .routing_input()
-                                           .connection_name()
+                                           .connection_name
                                 << std::endl;
                     }
                     break;
@@ -235,30 +235,30 @@ int processEventData(
                     auto config = getConfig(
                             configReader,
                             sample.info().instance_handle());
-                    if (config.value()._d()
+                    if (config.value._d()
                         == RTI::Service::Monitoring::ResourceKind::
                                 ROUTING_OUTPUT) {
                         std::cout
                                 << "\t > The Output "
-                                << config.value().routing_output().resource_id()
+                                << config.value.routing_output().resource_id
                                 << std::endl;
                         std::cout << "\t > status is "
                                   << sample.data()
-                                             .value()
+                                             .value
                                              .routing_output()
-                                             .state()
+                                             .state
                                   << std::endl;
                         std::cout
                                 << "\t\t Topic: "
-                                << config.value().routing_output().stream_name()
+                                << config.value.routing_output().stream_name
                                 << ", Type: "
-                                << config.value()
+                                << config.value
                                            .routing_output()
-                                           .registered_type_name()
+                                           .registered_type_name
                                 << ", Participant name: "
-                                << config.value()
+                                << config.value
                                            .routing_output()
-                                           .connection_name()
+                                           .connection_name
                                 << std::endl;
                     }
                     break;

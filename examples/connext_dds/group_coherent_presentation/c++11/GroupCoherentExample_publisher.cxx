@@ -93,27 +93,27 @@ void run_publisher_application(
             writer_qos);
 
     Alarm alarm_data;
-    alarm_data.patient_id(1);
-    alarm_data.alarm_code(AlarmCode::PATIENT_OK);
+    alarm_data.patient_id = 1;
+    alarm_data.alarm_code = AlarmCode::PATIENT_OK;
     HeartRate heart_rate_data;
-    heart_rate_data.patient_id(1);
-    heart_rate_data.beats_per_minute(65);
+    heart_rate_data.patient_id = 1;
+    heart_rate_data.beats_per_minute = 65;
     Temperature temperature_data;
-    temperature_data.patient_id(1);
-    temperature_data.temperature(98.6);
+    temperature_data.patient_id = 1;
+    temperature_data.temperature = 98.6;
 
     // Below we will write a coherent set any time the patient's vitals are
     // abnormal. Otherwise, we will publish the patient's vitals normally
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < set_count;
          samples_written++) {
-        heart_rate_data.beats_per_minute(get_patient_heart_rate());
-        temperature_data.temperature(get_patient_temperature());
+        heart_rate_data.beats_per_minute = get_patient_heart_rate();
+        temperature_data.temperature = get_patient_temperature();
 
-        if (heart_rate_data.beats_per_minute() >= 100
-            || heart_rate_data.beats_per_minute() <= 40
-            || temperature_data.temperature() >= 100.0
-            || temperature_data.temperature() <= 95.0) {
+        if (heart_rate_data.beats_per_minute >= 100
+            || heart_rate_data.beats_per_minute <= 40
+            || temperature_data.temperature >= 100.0
+            || temperature_data.temperature <= 95.0) {
             // Sound an alarm. In this case, we want all of the patients vitals
             // along with the alarm to be delivered as a single coherent set of
             // data so that we can correlate the alarm with the set of vitals
@@ -124,7 +124,7 @@ void run_publisher_application(
                 heart_rate_writer.write(heart_rate_data);
                 temperature_writer.write(temperature_data);
 
-                alarm_data.alarm_code(AlarmCode::ABNORMAL_READING);
+                alarm_data.alarm_code = AlarmCode::ABNORMAL_READING;
                 alarm_writer.write(alarm_data);
             }  // end coherent set
         } else {

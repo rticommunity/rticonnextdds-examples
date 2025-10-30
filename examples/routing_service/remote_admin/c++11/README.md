@@ -130,3 +130,20 @@ you want to link against. For example:
 ```sh
 cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 ```
+
+
+## Troubleshooting
+
+### Compilation fails accessing struct field
+
+If the code compilation fails with errors such as "reference to non-static member
+function must be called" for code such as `my_sample.my_field = value` or
+`value = my_sample.my_field` this means that the rtiddsgen version you are using
+doesn't have the IDL4 C++ mapping enabled by default.
+
+To fix it, upgrade your Connext version to 7.6+ or check out the branch for the
+Connext version you're using, e.g.
+
+```sh
+git checkout release/7.3.0
+```

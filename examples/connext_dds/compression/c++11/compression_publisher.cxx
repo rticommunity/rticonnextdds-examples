@@ -98,14 +98,14 @@ void run_publisher_application(
         std::string new_line;
         while (!std::getline(fileToCompress, new_line).eof()) {
             StringLine new_sample;
-            new_sample.str(new_line);
+            new_sample.str = new_line;
             samples.push_back(new_sample);
         }
     } else {
         // Create a sample fill with 1024 zeros to send if no file has been
         // provided
         StringLine new_sample;
-        new_sample.str(std::string(1024, '0'));
+        new_sample.str = std::string(1024, '0');
         samples.push_back(new_sample);
     }
 

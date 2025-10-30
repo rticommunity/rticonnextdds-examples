@@ -37,10 +37,10 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Set x to a random number between 0 and 9.
-        sample.x((int) (rand() / (RAND_MAX / 10.0)));
+        sample.x = (int) (rand() / (RAND_MAX / 10.0));
 
         std::cout << "Writing poll, count " << samples_written
-                  << ", x = " << sample.x() << std::endl;
+                  << ", x = " << sample.x << std::endl;
         writer.write(sample);
 
         rti::util::sleep(dds::core::Duration(1));

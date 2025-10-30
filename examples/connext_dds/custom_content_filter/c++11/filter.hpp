@@ -80,7 +80,7 @@ public:
             const Foo &sample,
             const rti::topic::FilterSampleInfo &meta_data)
     {
-        return compile_data.eval_func(sample.x(), compile_data.param);
+        return compile_data.eval_func(sample.x, compile_data.param);
     }
 
     virtual void finalize(CustomCompileData &compile_data)

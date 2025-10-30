@@ -29,7 +29,7 @@ int process_data(dds::sub::DataReader<coherent> reader)
             rti::sub::valid_samples(samples.end()),
             std::inserter(values, values.begin()),
             [](const coherent &data) {
-                return std::make_pair(data.field(), data.value());
+                return std::make_pair(data.field, data.value);
             });
     std::cout << std::endl;
 

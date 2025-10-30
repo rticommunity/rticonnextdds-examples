@@ -60,7 +60,7 @@ void run_publisher_application(int domain_id, int sample_count)
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        instance.msg("Hello World!");
+        instance.msg = "Hello World!";
 
         std::cout << "Writing HelloWord, count " << samples_written
                   << std::endl;

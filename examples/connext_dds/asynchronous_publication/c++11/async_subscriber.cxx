@@ -33,7 +33,7 @@ int process_data(dds::sub::DataReader<async> reader)
             double elapsed_ticks = clock() - InitTime;
             double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
             std::cout << "@ t=" << elapsed_secs << "s"
-                      << ", got x = " << sample.data().x() << std::endl;
+                      << ", got x = " << sample.data().x << std::endl;
         } else {
             std::cout << "Instance state changed to "
                       << sample.info().state().instance_state() << std::endl;

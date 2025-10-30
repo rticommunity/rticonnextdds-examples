@@ -48,7 +48,7 @@ void run_publisher_application(
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
-        data.msg("Hello World " + std::to_string(samples_written));
+        data.msg = "Hello World " + std::to_string(samples_written);
         std::cout << "Writing NetworkCapture, count " << samples_written
                   << std::endl;
 

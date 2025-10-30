@@ -33,10 +33,10 @@ void publisher_main(int domain_id, int sample_count)
 
     SensorAttributesCollection data;
     for (int count = 0; count < sample_count || sample_count == 0; count++) {
-        for (size_t i = 0; i < data.sensor_array().size(); i++) {
-            data.sensor_array().at(i).id(count);
-            data.sensor_array().at(i).value((float) i / count);
-            data.sensor_array().at(i).is_active(true);
+        for (size_t i = 0; i < data.sensor_array.size(); i++) {
+            data.sensor_array.at(i).id = count;
+            data.sensor_array.at(i).value = (float) i / count;
+            data.sensor_array.at(i).is_active = true;
         }
 
         std::cout << "Writing SensorAttributesCollection, count " << count

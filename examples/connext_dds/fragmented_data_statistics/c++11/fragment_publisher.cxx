@@ -51,7 +51,7 @@ void run_publisher_application(
     fragment data;
     // Create the data to be written, ensuring it is larger than
     // message_size_max */
-    data.data().resize(8000);
+    data.data.resize(8000);
 
     rti::core::status::DataWriterProtocolStatus status;
 
@@ -59,7 +59,7 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        data.x(static_cast<int32_t>(samples_written));
+        data.x = static_cast<int32_t>(samples_written);
 
         std::cout << "Writing fragment, count " << samples_written << std::endl;
 

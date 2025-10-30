@@ -57,19 +57,19 @@ void run_publisher_application(
         // In order to register the instances, we must set their associated
         // keys first.
         keys k;
-        k.code(i);
+        k.code = i;
 
         // Initially, we register only the first sample.
         if (i == 0) {
             // The keys must have been set before making this call.
-            std::cout << "Registering instance " << k.code() << std::endl;
+            std::cout << "Registering instance " << k.code << std::endl;
             instance_handles.push_back(writer.register_instance(k));
         } else {
             instance_handles.push_back(dds::core::InstanceHandle::nil());
         }
 
         // Finally, we modify the data to be sent.
-        k.x((i + 1) * 1000);
+        k.x = (i + 1) * 1000;
         samples.push_back(k);
     }
 
@@ -81,22 +81,22 @@ void run_publisher_application(
 
         if (samples_written == 5) {
             // Start sending the second and third instances.
-            std::cout << "----Registering instance " << samples[1].code()
+            std::cout << "----Registering instance " << samples[1].code
                       << std::endl;
             instance_handles[1] = writer.register_instance(samples[1]);
 
-            std::cout << "----Registering instance " << samples[2].code()
+            std::cout << "----Registering instance " << samples[2].code
                       << std::endl;
             instance_handles[2] = writer.register_instance(samples[2]);
         } else if (samples_written == 10) {
             // Unregister the second instance.
-            std::cout << "----Unregistering instance " << samples[1].code()
+            std::cout << "----Unregistering instance " << samples[1].code
                       << std::endl;
             writer.unregister_instance(instance_handles[1]);
             instance_handles[1] = dds::core::InstanceHandle::nil();
         } else if (samples_written == 15) {
             // Dispose the third instance.
-            std::cout << "----Disposing instance " << samples[2].code()
+            std::cout << "----Disposing instance " << samples[2].code
                       << std::endl;
             writer.dispose_instance(instance_handles[2]);
             instance_handles[2] = dds::core::InstanceHandle::nil();
@@ -105,10 +105,10 @@ void run_publisher_application(
         // Update sample data field and send if handle is not nil.
         for (int i = 0; i < num_samples; i++) {
             if (!instance_handles[i].is_nil()) {
-                samples[i].y(samples_written);
-                std::cout << "Writing instance " << samples[i].code()
-                          << ", x: " << samples[i].x()
-                          << ", y: " << samples[i].y() << std::endl;
+                samples[i].y = samples_written;
+                std::cout << "Writing instance " << samples[i].code
+                          << ", x: " << samples[i].x
+                          << ", y: " << samples[i].y << std::endl;
                 writer.write(samples[i], instance_handles[i]);
             }
         }

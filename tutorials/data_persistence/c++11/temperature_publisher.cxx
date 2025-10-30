@@ -22,9 +22,9 @@ void publish_temperature(const std::string &sensor_name)
     dds::pub::DataWriter<Temperature> writer(topic);
 
     Temperature temp_reading;
-    temp_reading.sensor_name(sensor_name);
+    temp_reading.sensor_name = sensor_name;
     for (int i = 0; i < 1000; i++) {
-        temp_reading.degrees((rand() % 10) + 30);
+        temp_reading.degrees = (rand() % 10) + 30;
         writer.write(temp_reading);
         std::this_thread::sleep_for(std::chrono::seconds(1));
     }

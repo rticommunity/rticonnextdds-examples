@@ -70,7 +70,7 @@ void run_publisher_application(
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        sample.x(samples_written);
+        sample.x = samples_written;
 
         std::cout << "Writing batch_data, count " << samples_written
                   << std::endl;
