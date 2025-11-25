@@ -66,13 +66,13 @@ void populate_flat_sample(CameraImageType &sample, int count)
 template<typename CameraImageType>
 void populate_plain_sample(CameraImageType &sample, int count)
 {
-    sample.format(common::Format::RGB);
-    sample.resolution().height(4320);
-    sample.resolution().width(7680);
+    sample.format = common::Format::RGB;
+    sample.resolution.height = 4320;
+    sample.resolution.width = 7680;
 
     for (int i = 0; i < 4; i++) {
         uint8_t image_value = (48 + count) % 124;
-        sample.data()[i] = image_value;
+        sample.data[i] = image_value;
     }
 }
 
@@ -94,11 +94,11 @@ void display_flat_sample(const CameraImageType &sample)
 template<typename CameraImageType>
 void display_plain_sample(const CameraImageType &sample)
 {
-    std::cout << "\nTimestamp " << sample.timestamp() << " " << sample.format();
+    std::cout << "\nTimestamp " << sample.timestamp << " " << sample.format;
 
     std::cout << " Data (4 Bytes) ";
     for (int i = 0; i < 4; i++) {
-        std::cout << sample.data()[i];
+        std::cout << sample.data[i];
     }
     std::cout << std::endl;
 }

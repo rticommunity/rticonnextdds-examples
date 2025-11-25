@@ -106,6 +106,6 @@ int main(int argc, char **argv)
 
     for (auto sample : samples) {
         reader.key_value(key_holder, sample.info().instance_handle());
-        std::cout << key_holder.sensor_name() << std::endl;
+        std::cout << key_holder.sensor_name << std::endl;
     }
 }

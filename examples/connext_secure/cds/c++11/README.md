@@ -49,3 +49,20 @@ To filter traffic going to CDS in Wireshark, use udp.dstport == 9999. To filter
 traffic relayed by CDS, use rtps.flag.cloud_discovery_service_announcer == 1.
 You will that all traffic is SIGNED when using the secure configuration.
 This means that the secure prefix and postfix are present for all Data(p)s.
+
+
+## Troubleshooting
+
+### Compilation fails accessing struct field
+
+If the code compilation fails with errors such as "reference to non-static member
+function must be called" for code such as `my_sample.my_field = value` or
+`value = my_sample.my_field` this means that the rtiddsgen version you are using
+doesn't have the IDL4 C++ mapping enabled by default.
+
+To fix it, upgrade your Connext version to 7.6+ or check out the branch for the
+Connext version you're using, e.g.
+
+```sh
+git checkout release/7.3.0
+```

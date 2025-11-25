@@ -97,14 +97,14 @@ std::string SubscriberDashboard::create_new_position_string(
             continue;
         }
 
-        ss << "[INFO] Vehicle " << sample.data().vehicle_vin();
-        auto &current_route = sample.data().current_route();
+        ss << "[INFO] Vehicle " << sample.data().vehicle_vin;
+        auto &current_route = sample.data().current_route;
         if (current_route.has_value() && !current_route->empty()) {
             ss << " is en route to " << to_string(current_route->back())
-               << " from " << to_string(sample.data().current_position());
+               << " from " << to_string(sample.data().current_position);
         } else {
             ss << " has arrived at its destination in "
-               << to_string(sample.data().current_position());
+               << to_string(sample.data().current_position);
         }
         ss << "\n";
     }
@@ -172,7 +172,7 @@ SubscriberDashboard::build_dashboard_data()
                     continue;
 
                 auto new_handle = sample.info().instance_handle();
-                auto new_data = DashboardItem { sample.data().vehicle_vin() };
+                auto new_data = DashboardItem { sample.data().vehicle_vin };
                 it = data.emplace(new_handle, new_data).first;
             }
 
@@ -184,7 +184,7 @@ SubscriberDashboard::build_dashboard_data()
                 continue;
             }
 
-            item.fuel_history.push_back(sample.data().fuel_level());
+            item.fuel_history.push_back(sample.data().fuel_level);
         }
         for (const auto &sample : transit_samples) {
             auto it = data.find(sample.info().instance_handle());
@@ -194,7 +194,7 @@ SubscriberDashboard::build_dashboard_data()
                     continue;
 
                 auto new_handle = sample.info().instance_handle();
-                auto new_data = DashboardItem { sample.data().vehicle_vin() };
+                auto new_data = DashboardItem { sample.data().vehicle_vin };
                 it = data.emplace(new_handle, new_data).first;
             }
 
@@ -206,7 +206,7 @@ SubscriberDashboard::build_dashboard_data()
                 continue;
             }
 
-            auto &current_route = sample.data().current_route();
+            auto &current_route = sample.data().current_route;
             if (current_route->size() > 0) {
                 item.current_destination = current_route->back();
             } else {

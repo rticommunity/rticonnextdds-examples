@@ -48,7 +48,7 @@ void run_publisher_application(
          samples_written++) {
         // Update sample and send it.
         std::cout << "Writing msg, count " << samples_written << std::endl;
-        sample.count(samples_written);
+        sample.count = samples_written;
         writer.write(sample);
 
         rti::util::sleep(dds::core::Duration(4));

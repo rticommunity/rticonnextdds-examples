@@ -32,11 +32,11 @@ int main(int argc, char **argv)
                     return;
                 }
 
-                if (sample.data().is_open()) {
+                if (sample.data().is_open) {
                     uint64_t timestamp =
                             sample.info().source_timestamp().to_millisecs();
-                    std::cout << "WARNING: " << sample.data().sensor_name()
-                              << " in " << sample.data().room_name()
+                    std::cout << "WARNING: " << sample.data().sensor_name
+                              << " in " << sample.data().room_name
                               << " is open "
                               << "(" << std::fixed << std::setprecision(2)
                               << timestamp / 1000.0 << "s)" << std::endl;

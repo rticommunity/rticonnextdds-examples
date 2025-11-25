@@ -28,12 +28,12 @@ public:
         auto new_vin = utils::new_vin();
         auto new_route = utils::create_new_route();
 
-        metrics_.vehicle_vin(new_vin);
-        metrics_.fuel_level(100.0);
+        metrics_.vehicle_vin = new_vin;
+        metrics_.fuel_level = 100.0;
 
-        transit_.vehicle_vin(new_vin);
-        transit_.current_route(new_route);
-        transit_.current_position(new_route.front());
+        transit_.vehicle_vin = new_vin;
+        transit_.current_route = new_route;
+        transit_.current_position = new_route.front();
     }
 
     bool has_ended() const
@@ -52,13 +52,13 @@ private:
 
     bool is_out_of_fuel() const
     {
-        return metrics_.fuel_level() <= 0.0;
+        return metrics_.fuel_level <= 0.0;
     }
 
     bool is_on_standby() const
     {
-        return !transit_.current_route().has_value()
-                || transit_.current_route().value().empty();
+        return !transit_.current_route.has_value()
+                || transit_.current_route.value().empty();
     }
 };
 
@@ -71,25 +71,25 @@ void PublisherSimulation::run()
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         if (is_on_standby()) {
-            std::cout << "Vehicle '" << metrics_.vehicle_vin()
+            std::cout << "Vehicle '" << metrics_.vehicle_vin
                       << "' has reached its destination, now moving to a "
                          "new location..."
                       << std::endl;
 
             auto new_route = utils::create_new_route();
-            new_route.front() = transit_.current_position();
-            transit_.current_route(new_route);
+            new_route.front() = transit_.current_position;
+            transit_.current_route = new_route;
         }
 
-        metrics_.fuel_level() -= 10 * utils::random_stduniform();
-        transit_.current_position(transit_.current_route().value().front());
-        transit_.current_route().value().erase(
-                transit_.current_route().value().begin());
+        metrics_.fuel_level -= 10 * utils::random_stduniform();
+        transit_.current_position = transit_.current_route.value().front();
+        transit_.current_route.value().erase(
+                transit_.current_route.value().begin());
 
         if (is_out_of_fuel()) {
-            metrics_.fuel_level(0.0);
+            metrics_.fuel_level = 0.0;
 
-            std::cout << "Vehicle '" << metrics_.vehicle_vin()
+            std::cout << "Vehicle '" << metrics_.vehicle_vin
                       << "' ran out of fuel!" << std::endl;
         }
     }

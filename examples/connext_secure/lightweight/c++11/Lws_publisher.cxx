@@ -45,24 +45,24 @@ void run_publisher_application(
     dds::pub::DataWriter<Shape> writer2(publisher, topic2);
 
     Shape data1, data2;
-    data1.color("BLUE");
-    data2.color("RED");
+    data1.color = "BLUE";
+    data2.color = "RED";
     // Main loop, write data
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
          samples_written++) {
         // Modify the data to be written here
-        data1.x(static_cast<int32_t>(samples_written));
-        data1.y(static_cast<int32_t>(samples_written));
-        data1.shapesize(static_cast<int32_t>(samples_written));
+        data1.x = static_cast<int32_t>(samples_written);
+        data1.y = static_cast<int32_t>(samples_written);
+        data1.shapesize = static_cast<int32_t>(samples_written);
         std::cout << "Writing BLUE Shape, count " << samples_written
                   << std::endl;
 
         writer1.write(data1);
 
-        data2.x(static_cast<int32_t>(samples_written));
-        data2.y(static_cast<int32_t>(samples_written));
-        data2.shapesize(static_cast<int32_t>(samples_written));
+        data2.x = static_cast<int32_t>(samples_written);
+        data2.y = static_cast<int32_t>(samples_written);
+        data2.shapesize = static_cast<int32_t>(samples_written);
         std::cout << "Writing RED Shape, count " << samples_written
                   << std::endl;
 

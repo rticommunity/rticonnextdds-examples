@@ -138,7 +138,7 @@ void run_publisher_application(
                   << std::endl;
 
         // Modify data and send it.
-        instance.x(samples_written);
+        instance.x = samples_written;
         writer.write(instance);
 
         rti::util::sleep(dds::core::Duration(2));

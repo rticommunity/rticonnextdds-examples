@@ -100,7 +100,7 @@ void run_publisher_application(
 
     // Create a sample to write with a long payload.
     cfc sample;
-    sample.str(std::string(999, 'A'));
+    sample.str = std::string(999, 'A');
 
     for (unsigned int samples_written = 0;
          !application::shutdown_requested && samples_written < sample_count;
@@ -109,9 +109,9 @@ void run_publisher_application(
         rti::util::sleep(dds::core::Duration(1));
 
         for (int i = 0; i < 10; i++) {
-            sample.x(samples_written * 10 + i);
+            sample.x = samples_written * 10 + i;
 
-            std::cout << "Writing cfc, sample " << sample.x() << std::endl;
+            std::cout << "Writing cfc, sample " << sample.x << std::endl;
             writer.write(sample);
         }
     }

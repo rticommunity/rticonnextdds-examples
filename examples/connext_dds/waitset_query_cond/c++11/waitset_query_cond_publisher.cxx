@@ -45,13 +45,13 @@ void run_publisher_application(
                   << std::endl;
 
         // Set x value
-        instance.x(samples_written);
+        instance.x = samples_written;
 
         // Set name field
         if (samples_written % 2 == 1) {
-            instance.name("ODD");
+            instance.name = "ODD";
         } else {
-            instance.name("EVEN");
+            instance.name = "EVEN";
         }
 
         writer.write(instance);

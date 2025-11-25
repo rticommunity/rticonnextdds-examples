@@ -43,15 +43,15 @@ void run_publisher_application(
         // Update instance1 (code = 1) every 0.5 seconds => when count is even.
         if ((samples_written + 1) % 2 == 0) {
             std::cout << "Publishing instance 1" << std::endl;
-            sample.code(1);
-            sample.x(samples_written);
+            sample.code = 1;
+            sample.x = samples_written;
             writer.write(sample);
         }
 
         // Update instance 0 (code = 0) every 0.25 seconds.
         std::cout << "Publishing instance 0" << std::endl;
-        sample.code(0);
-        sample.x(samples_written);
+        sample.code = 0;
+        sample.x = samples_written;
         writer.write(sample);
 
         // The loop to write new samples will sleep for 0.25 second.

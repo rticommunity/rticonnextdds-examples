@@ -53,7 +53,7 @@ void run_publisher_application(
         std::cout << "Writing waitsets, count " << samples_written << std::endl;
 
         // Modify sample and send the sample.
-        instance.x(samples_written);
+        instance.x = samples_written;
         writer.write(instance);
 
         // Send a new sample every second.

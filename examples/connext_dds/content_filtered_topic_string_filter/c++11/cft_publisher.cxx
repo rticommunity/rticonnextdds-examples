@@ -48,11 +48,11 @@ void run_publisher_application(
         std::cout << "Writing cft, count " << samples_written << std::endl;
 
         // Modify sample data
-        sample.count(samples_written);
+        sample.count = samples_written;
         if (samples_written % 2 == 1) {
-            sample.name("ODD");
+            sample.name = "ODD";
         } else {
-            sample.name("EVEN");
+            sample.name = "EVEN";
         }
 
         writer.write(sample);

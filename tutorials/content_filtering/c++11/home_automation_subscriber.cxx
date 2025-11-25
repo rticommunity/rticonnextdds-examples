@@ -33,8 +33,8 @@ int main(int argc, char **argv)
             [](const rti::sub::LoanedSample<DeviceStatus> &sample) {
                 if (sample.info().valid()) {  // ignore samples with only
                                               // meta-data
-                    std::cout << "WARNING: " << sample.data().sensor_name()
-                              << " in " << sample.data().room_name()
+                    std::cout << "WARNING: " << sample.data().sensor_name
+                              << " in " << sample.data().room_name
                               << " is open!" << std::endl;
                 }
             });

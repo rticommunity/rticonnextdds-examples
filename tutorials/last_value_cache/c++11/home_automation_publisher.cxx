@@ -25,9 +25,9 @@ void publish_sensor(
 
     DeviceStatus device_status { sensor_name, room_name, false };
     for (int i = 0; i < 1000; i++) {
-        device_status.is_open(!device_status.is_open());
+        device_status.is_open = !device_status.is_open;
         std::cout << sensor_name << " is now: "
-                  << (device_status.is_open() ? "open" : "closed") << std::endl;
+                  << (device_status.is_open ? "open" : "closed") << std::endl;
         writer.write(device_status);
         std::this_thread::sleep_for(std::chrono::seconds(10));
     }

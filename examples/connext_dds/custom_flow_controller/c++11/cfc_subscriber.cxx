@@ -32,7 +32,7 @@ int process_data(dds::sub::DataReader<cfc> reader)
             double elapsed_secs = elapsed_ticks / CLOCKS_PER_SEC;
 
             std::cout << "@ t=" << elapsed_secs
-                      << "s, got x = " << sample.data().x() << std::endl;
+                      << "s, got x = " << sample.data().x << std::endl;
         }
     }
 
