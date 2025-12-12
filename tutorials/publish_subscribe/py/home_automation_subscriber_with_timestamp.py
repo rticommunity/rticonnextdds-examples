@@ -17,15 +17,24 @@ from home_automation import DeviceStatus
 
 
 async def sensor_monitoring():
+
+    # Create a DomainParticipant and WindowStatus topic using the same domain
+    # ID and name as the publisher.
     participant = dds.DomainParticipant(domain_id=0)
     topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
+
+    # Create a DataReader to receive the WindowStatus data.
     reader = dds.DataReader(topic)
 
+    # Take each update with its metadata so we can include the source timestamp
+    # when the window was opened.
     async for data, info in reader.take_async():
         if not info.valid:
             continue  # skip updates with only meta-data
 
         if data.is_open:
+            # Include the original source timestamp of the WindowStatus update
+            # in the alert output.
             timestamp = datetime.fromtimestamp(
                 info.source_timestamp.to_seconds()
             )

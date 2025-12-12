@@ -19,10 +19,17 @@
 
 int main(int argc, char **argv)
 {
+
+    // Create a DomainParticipant and WindowStatus topic using the same domain
+    // ID and name as the publisher.
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
+
+    // Create a DataReader to subscribe to the WindowStatus topic.
     dds::sub::DataReader<DeviceStatus> reader(topic);
 
+    // Use a SampleProcessor callback to react to each update and warn when a
+    // window is open.
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,

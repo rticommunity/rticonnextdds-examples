@@ -19,16 +19,29 @@
 
 using KeyedString = dds::core::KeyedStringTopicType;
 
+// This version turns the subscriber into an alert service that publishes
+// notifications to a HomeAlerts topic using the built-in KeyedString type.
+//
+// You can subscribe to this new topic by running the following command in a
+// terminal:
+//
+// $ rtiddsspy -printSample COMPACT -topic HomeAlerts
+//
 int main(int argc, char **argv)
 {
+
     std::cout << "Starting home alert service..." << std::endl;
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> status_topic(participant, "WindowStatus");
     dds::sub::DataReader<DeviceStatus> status_reader(status_topic);
 
+    // Create the HomeAlerts topic and DataWriter to publish alert messages on
+    // the same domain.
     dds::topic::Topic<KeyedString> alert_topic(participant, "HomeAlerts");
     dds::pub::DataWriter<KeyedString> alert_writer(alert_topic);
 
+    // Publish an alert when a window opens, keeping the original source
+    // timestamp from the WindowStatus update.
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             status_reader,

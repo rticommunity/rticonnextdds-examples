@@ -19,10 +19,17 @@
 
 int main(int argc, char **argv)
 {
+
+    // Create a DomainParticipant and WindowStatus topic using the same domain
+    // ID and name as the publisher.
     dds::domain::DomainParticipant participant(0);
     dds::topic::Topic<DeviceStatus> topic(participant, "WindowStatus");
+
+    // Create a DataReader to receive the WindowStatus data.
     dds::sub::DataReader<DeviceStatus> reader(topic);
 
+    // Take each update with its metadata so we can include the source timestamp
+    // when the window was opened.
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,
@@ -33,6 +40,8 @@ int main(int argc, char **argv)
                 }
 
                 if (sample.data().is_open) {
+                    // Include the original source timestamp of the WindowStatus
+                    // update in the alert output.
                     uint64_t timestamp =
                             sample.info().source_timestamp().to_millisecs();
                     std::cout << "WARNING: " << sample.data().sensor_name

@@ -15,10 +15,17 @@ from home_automation import DeviceStatus
 
 
 async def sensor_monitoring():
+
+    # Create a DomainParticipant and WindowStatus topic using the same domain
+    # ID and name as the publisher.
     participant = dds.DomainParticipant(domain_id=0)
     topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
+
+    # Create a DataReader to subscribe to the WindowStatus topic.
     reader = dds.DataReader(topic)
 
+    # Use an async loop to take updates as they arrive and warn when a window
+    # is open.
     async for data in reader.take_data_async():
         if data.is_open:
             print(f"WARNING: {data.sensor_name} in {data.room_name} is open!")

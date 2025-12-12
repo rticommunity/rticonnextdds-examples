@@ -16,14 +16,26 @@ import rti.connextdds as dds
 from home_automation import DeviceStatus
 
 
+# This publisher simulates a window that opens and closes over time on the
+# WindowStatus topic.
 def publish_sensor(sensor_name: str, room_name: str):
+
+    # Create a DomainParticipant within a domain ID. A domain ID is a logical
+    # partition for your applications; the DomainParticipant joins that domain
+    # and contains all other entities.
     participant = dds.DomainParticipant(domain_id=0)
+
+    # The data shared by a publisher and subscriber is described by a Topic.
     topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
+
+    # Create a DataWriter to publish the WindowStatus topic.
     writer = dds.DataWriter(topic)
 
     device_status = DeviceStatus(sensor_name, room_name, is_open=False)
+
+    # Publish an update every two seconds, simulating the window opening and
+    # closing repeatedly.
     for i in range(1000):
-        # Simulate the window opening and closing
         device_status.is_open = not device_status.is_open
         writer.write(device_status)
         sleep(2)

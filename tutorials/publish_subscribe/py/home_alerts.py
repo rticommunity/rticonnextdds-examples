@@ -15,15 +15,27 @@ from home_automation import DeviceStatus
 from rti.types.builtin import KeyedString
 
 
+# This version publishes alert notifications into a HomeAlerts topic using
+# the built-in KeyedString type instead of printing warnings locally.
+#
+# You can subscribe to this new topic by running the following command in a
+# terminal:
+#
+#   $ rtiddsspy -printSample COMPACT -topic HomeAlerts
+#
 async def sensor_monitoring():
     participant = dds.DomainParticipant(domain_id=0)
 
     status_topic = dds.Topic(participant, "WindowStatus", DeviceStatus)
     status_reader = dds.DataReader(status_topic)
 
+    # Create the HomeAlerts topic and DataWriter to publish alert messages on
+    # the same domain.
     alert_topic = dds.Topic(participant, "HomeAlerts", KeyedString)
     alert_writer = dds.DataWriter(alert_topic)
 
+    # Publish an alert when a window opens, carrying over the original source
+    # timestamp from the WindowStatus update.
     async for data, info in status_reader.take_async():
         if info.valid and data.is_open:
             alert = KeyedString(
