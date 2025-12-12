@@ -1,0 +1,4 @@
+# Rule to not ignore .vscode/tasks.json in this directory
+!/.vscode/
+
+

@@ -1,0 +1,21 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Generate code (rtiddsgen)",
+      "type": "shell",
+      "command": "rtiddsgen",
+      "args": [
+        "-language", "c++11",
+        "-platform", "${env:CONNEXTDDS_ARCH}",
+        "-buildType", "cmake",
+        "-create", "examplefiles",
+        "*.idl"
+      ],
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": []
+    }
+  ]
+}
