@@ -15,8 +15,6 @@ from rti.types import struct, key
 # the sensor name, another string for the room name, and a boolean to indicate
 # whether the door or window is open or closed. The sensor name field is a key
 # so each sensor is treated as a unique instance.
-
-
 @struct(member_annotations={"sensor_name": [key]})
 class DeviceStatus:
     sensor_name: str = ""
