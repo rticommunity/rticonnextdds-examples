@@ -30,6 +30,9 @@ int main(int argc, char **argv)
 
     // Use a SampleProcessor callback to react to each update and warn when a
     // window is open.
+    std::cout << "Subscriber started. Waiting for WindowStatus updates..."
+              << std::endl;
+
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,

@@ -28,6 +28,7 @@ async def sensor_monitoring():
 
     # Take each update with its metadata so we can include the source timestamp
     # when the window was opened.
+    print("Subscriber started. Waiting for WindowStatus updates...")
     async for data, info in reader.take_async():
         if not info.valid:
             continue  # skip updates with only meta-data

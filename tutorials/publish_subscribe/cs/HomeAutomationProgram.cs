@@ -24,12 +24,12 @@ namespace HomeAutomation
 
             if (appKind == "sub")
             {
-                Console.WriteLine("Starting subscriber...");
+                Console.WriteLine("Subscriber started. Waiting for WindowStatus updates...");
                 await Subscriber.MonitorSensors();
             }
             else if (appKind == "sub_timestamp")
             {
-                Console.WriteLine("Starting subscriber with timestamp...");
+                Console.WriteLine("Subscriber started. Waiting for WindowStatus updates...");
                 await SubscriberWithTimestamp.MonitorSensors();
             }
             else

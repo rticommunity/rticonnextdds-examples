@@ -112,6 +112,8 @@ public class DeviceStatusSubscriberWithTimestamp
         waitset.attach_condition(condition);
         final Duration_t waitTimeout = new Duration_t(2, 0);
 
+        System.out.println("Subscriber started. Waiting for WindowStatus updates...");
+
         int samplesRead = 0;
         ConditionSeq activeConditions = new ConditionSeq();
 

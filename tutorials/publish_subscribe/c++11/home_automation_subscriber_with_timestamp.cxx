@@ -30,6 +30,9 @@ int main(int argc, char **argv)
 
     // Take each update with its metadata so we can include the source timestamp
     // when the window was opened.
+    std::cout << "Subscriber started. Waiting for WindowStatus updates..."
+              << std::endl;
+
     rti::sub::SampleProcessor sample_processor;
     sample_processor.attach_reader(
             reader,

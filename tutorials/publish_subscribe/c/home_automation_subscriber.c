@@ -111,6 +111,8 @@ int monitor_sensor(void)
         return -1;
     }
 
+    printf("Subscriber started. Waiting for WindowStatus updates...\n");
+
     for (i = 0; i < 1000; i++) {
         NDDS_Utility_sleep(&poll_period);
     }

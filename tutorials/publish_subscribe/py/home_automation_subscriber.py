@@ -26,6 +26,7 @@ async def sensor_monitoring():
 
     # Use an async loop to take updates as they arrive and warn when a window
     # is open.
+    print("Subscriber started. Waiting for WindowStatus updates...")
     async for data in reader.take_data_async():
         if data.is_open:
             print(f"WARNING: {data.sensor_name} in {data.room_name} is open!")
