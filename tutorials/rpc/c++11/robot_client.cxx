@@ -15,15 +15,21 @@
 
 int main(int argc, char *argv[])
 {
+    // Create a DomainParticipant on the same domain ID as the service.
     dds::domain::DomainParticipant participant(0);
 
+    // Create a client with the same service name as the server. Connext
+    // automatically discovers matching services on the network.
     dds::rpc::ClientParams client_params(participant);
     client_params.service_name("Example RobotControl Service");
 
     RobotControlClient client(client_params);
 
+    // Wait for the service to be discovered before making calls.
     client.wait_for_service();
 
+    // Make an asynchronous remote call to walk_to. The call sends a request to
+    // the service and returns a future that provides the result when ready.
     std::cout << "Calling walk_to..." << std::endl;
     std::future<Coordinates> result =
             client.walk_to_async(Coordinates(5, 10), 30.0);

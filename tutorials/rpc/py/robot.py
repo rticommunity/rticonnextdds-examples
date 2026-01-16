@@ -13,13 +13,16 @@ import abc
 import rti.types as idl
 import rti.rpc as rpc
 
-
+# Defines a data type to hold x,y coordinates for specifying robot destinations.
+# This struct is used as a parameter and return type in the RobotControl service.
 @idl.struct
 class Coordinates:
     x: int = 0
     y: int = 0
 
-
+# Defines the RobotControl service interface with two remote operations: walk_to
+# and get_speed. A service interface is an abstract base class decorated with
+# @rpc.service, containing async methods decorated with @rpc.operation.
 @rpc.service
 class RobotControl(abc.ABC):
     @rpc.operation

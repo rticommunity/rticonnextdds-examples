@@ -15,7 +15,9 @@ import rti.rpc as rpc
 import rti.types as idl
 from robot import Coordinates, RobotControl
 
-
+# This service implements the RobotControl interface, simulating a robot that
+# can walk to destinations and report its speed. Clients on the same domain
+# with the same service name can call these operations remotely.
 class RobotControlExample(RobotControl):
     def __init__(self):
         self.position = Coordinates(0, 0)
@@ -29,6 +31,9 @@ class RobotControlExample(RobotControl):
 
         self.speed = speed
         print(f"Robot walking at {self.speed}mph to {destination}")
+
+        # Simulate the robot walking to the destination; higher speeds take
+        # less time.
         await asyncio.sleep(10.0 - 0.1 * self.speed)
 
         self.speed = 0.0
@@ -42,9 +47,21 @@ class RobotControlExample(RobotControl):
 
 
 async def main():
+    # Create a DomainParticipant within a domain ID. A domain ID is a logical
+    # partition for your applications; the DomainParticipant joins that domain
+    # and contains all other entities.
     participant = dds.DomainParticipant(domain_id=0)
+
+    # Create an instance of the service implementation.
     robot_control = RobotControlExample()
+
+    # Create an RPC Service with the implementation, participant, and service
+    # name. The service will receive remote calls from matching clients.
     service = rpc.Service(robot_control, participant, "MyRobotControl")
+
+    print("RobotControlService running...")
+
+    # Run the service, which will process incoming requests and send replies.
     await service.run()  # runs forever
 
 
