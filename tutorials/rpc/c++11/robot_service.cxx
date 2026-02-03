@@ -12,6 +12,7 @@
 
 
 #include <iostream>
+#include <thread>
 #include "robot.hpp"
 
 // This service implements the RobotControl interface, simulating a robot that
