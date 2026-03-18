@@ -83,19 +83,20 @@ function(connextdds_generate_security_artifacts)
     set(ca_config_file "${openssl_working_dir}/ca.cnf")
     set(peer1_config_file "${openssl_working_dir}/peer1.cnf")
     set(peer2_config_file "${openssl_working_dir}/peer2.cnf")
+    set(peerM_config_file "${openssl_working_dir}/peerM.cnf")
     set(artifacts_input_files
         "${ca_config_file}"
         "${peer1_config_file}"
         "${peer2_config_file}"
+        "${peerM_config_file}"
     )
-    set(xmls_name Governance Permissions1 Permissions2)
+    set(xmls_name Governance Permissions1 Permissions2 PermissionsM)
     foreach(xml ${xmls_name})
         list(APPEND artifacts_input_files "${openssl_working_dir}/xml/${xml}.xml")
     endforeach()
 
     add_custom_command(
         OUTPUT ${artifacts_input_files}
-        PRE_BUILD
         COMMENT "Copying security resources to the example's binary directory"
         COMMAND
             ${CMAKE_COMMAND} -E make_directory ${artifacts_output_dir}
@@ -123,6 +124,8 @@ function(connextdds_generate_security_artifacts)
     set(peer1_cert_file "${certificates_output_dir}/peer1_cert.pem")
     set(peer2_key_file "${certificates_output_dir}/peer2_key.pem")
     set(peer2_cert_file "${certificates_output_dir}/peer2_cert.pem")
+    set(peerM_key_file "${certificates_output_dir}/peerM_key.pem")
+    set(peerM_cert_file "${certificates_output_dir}/peerM_cert.pem")
     set(artifacts_output_files
         "${ca_key_file}"
         "${ca_cert_file}"
@@ -130,6 +133,8 @@ function(connextdds_generate_security_artifacts)
         "${peer1_cert_file}"
         "${peer2_key_file}"
         "${peer2_cert_file}"
+        "${peerM_key_file}"
+        "${peerM_cert_file}"
     )
 
     # Set configuration options for the certificates.
@@ -175,6 +180,21 @@ function(connextdds_generate_security_artifacts)
         ECPARAM_NAME "prime256v1"
         ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparam1"
         CONFIG_FILE "${peer2_config_file}"
+        CA_KEY_FILE "${ca_key_file}"
+        CA_CONFIG_FILE "${ca_config_file}"
+        CA_CERT_FILE "${ca_cert_file}"
+        DAYS ${expiration_days}
+        WORKING_DIRECTORY "${openssl_working_dir}"
+    )
+
+    # RootCa signs PeerMCert.
+    connextdds_openssl_generate_signed_certificate(
+        OUTPUT_CERT_FILE "${peerM_cert_file}"
+        OUTPUT_CERT_REQUEST_FILE "${openssl_temporary_dir}/peerM_req_cert.pem"
+        OUTPUT_KEY_FILE "${peerM_key_file}"
+        ECPARAM_NAME "prime256v1"
+        ECPARAM_OUTPUT_FILE "${openssl_temporary_dir}/ecdsaparamM"
+        CONFIG_FILE "${peerM_config_file}"
         CA_KEY_FILE "${ca_key_file}"
         CA_CONFIG_FILE "${ca_config_file}"
         CA_CERT_FILE "${ca_cert_file}"

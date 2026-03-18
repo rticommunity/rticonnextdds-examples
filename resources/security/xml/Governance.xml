@@ -13,7 +13,8 @@
             <enable_key_revision>true</enable_key_revision>
             <discovery_protection_kind>NONE</discovery_protection_kind>
             <liveliness_protection_kind>NONE</liveliness_protection_kind>
-            <rtps_protection_kind>ENCRYPT</rtps_protection_kind>
+            <rtps_protection_kind>ENCRYPT_WITH_ORIGIN_AUTHENTICATION</rtps_protection_kind>
+            <rtps_psk_protection_kind>ENCRYPT</rtps_psk_protection_kind>
             <topic_access_rules>
                 <topic_rule>
                     <topic_expression>*</topic_expression>
@@ -21,7 +22,33 @@
                     <enable_liveliness_protection>false</enable_liveliness_protection>
                     <enable_read_access_control>true</enable_read_access_control>
                     <enable_write_access_control>true</enable_write_access_control>
-                    <metadata_protection_kind>ENCRYPT</metadata_protection_kind>
+                    <metadata_protection_kind>NONE</metadata_protection_kind>
+                    <data_protection_kind>NONE</data_protection_kind>
+                </topic_rule>
+            </topic_access_rules>
+        </domain_rule>
+
+        <!-- Domain used for the RTI Observability framework. -->
+        <domain_rule>
+            <domains>
+                <id>101</id>
+                <tag>RTI_o11y</tag>
+            </domains>
+            <allow_unauthenticated_participants>false</allow_unauthenticated_participants>
+            <enable_join_access_control>true</enable_join_access_control>
+            <enable_key_revision>true</enable_key_revision>
+            <discovery_protection_kind>NONE</discovery_protection_kind>
+            <liveliness_protection_kind>NONE</liveliness_protection_kind>
+            <rtps_protection_kind>ENCRYPT_WITH_ORIGIN_AUTHENTICATION</rtps_protection_kind>
+            <rtps_psk_protection_kind>ENCRYPT</rtps_psk_protection_kind>
+            <topic_access_rules>
+                <topic_rule>
+                    <topic_expression>*</topic_expression>
+                    <enable_discovery_protection>false</enable_discovery_protection>
+                    <enable_liveliness_protection>false</enable_liveliness_protection>
+                    <enable_read_access_control>true</enable_read_access_control>
+                    <enable_write_access_control>true</enable_write_access_control>
+                    <metadata_protection_kind>NONE</metadata_protection_kind>
                     <data_protection_kind>NONE</data_protection_kind>
                 </topic_rule>
             </topic_access_rules>
