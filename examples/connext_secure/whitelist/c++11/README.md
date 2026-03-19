@@ -17,17 +17,6 @@ Note: The build process also copies USER_QOS_PROFILES.xml into the build
 directory to ensure that it is loaded when you run the examples within the build
 directory.
 
-## Setting up Security artifacts
-
-The build process copies the security folder with .cnf files into the build
-directory. Use the provided python script to initialize them. This means that
-`build/security` will contain all the security artifacts needed to run this example.
-
-```sh
-cd security
-python3 setup_security.py
-```
-
 ## Running the example
 
 This example is based on a standard rtiddsgen publisher and subscriber example

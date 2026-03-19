@@ -45,7 +45,7 @@ void run_subscriber_application(
 
     dds::domain::qos::DomainParticipantQos participant_qos =
             dds::core::QosProvider::Default().participant_qos(
-                    peer3 ? "full_library::peer3" : "full_library::peer2");
+                    peer3 ? "whitelist::peer3" : "whitelist::peer2");
     dds::domain::DomainParticipant participant(domain_id, participant_qos);
 
     // Create a Topic with a name and a datatype
