@@ -16,10 +16,9 @@ to use the software. -->
 
         A QoS library is a named set of QoS profiles.
     -->
-    <qos_library name="lite_library">
+    <qos_library name="library_cds">
 
         <qos_profile name="insecure_peer">
-
             <domain_participant_qos>
                 <transport_builtin>
                     <mask>UDPv4</mask>
@@ -33,22 +32,9 @@ to use the software. -->
                 </discovery>
 
             </domain_participant_qos>
-
-
         </qos_profile>
 
-        <qos_profile name="lite_peer" base_name="insecure_peer" is_default_qos="true">
-
-          <participant_factory_qos>
-            <monitoring>
-                <distribution_settings>
-                    <dedicated_participant>
-                        <participant_qos_profile_name>lite_library::lite_peer</participant_qos_profile_name>
-                    </dedicated_participant>
-                </distribution_settings>
-            </monitoring>
-          </participant_factory_qos>
-
+        <qos_profile name="secure_common" base_name="insecure_peer" >
             <domain_participant_qos>
                 <property>
                     <value>
@@ -78,9 +64,19 @@ to use the software. -->
                         </element>
                     </value>
                 </property>
-
             </domain_participant_qos>
         </qos_profile>
 
+        <qos_profile name="peer" base_name="secure_common" is_default_qos="true">
+          <participant_factory_qos>
+            <monitoring>
+                <distribution_settings>
+                    <dedicated_participant>
+                        <participant_qos_profile_name>library_cds::secure_common</participant_qos_profile_name>
+                    </dedicated_participant>
+                </distribution_settings>
+            </monitoring>
+          </participant_factory_qos>
+        </qos_profile>
     </qos_library>
 </dds>

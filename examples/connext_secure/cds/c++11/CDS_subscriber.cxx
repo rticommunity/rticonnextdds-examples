@@ -46,7 +46,7 @@ void run_subscriber_application(
     dds::domain::DomainParticipant participant(
             domain_id,
             dds::core::QosProvider::Default().participant_qos(
-                    "lite_library::lite_peer"));
+                    "library_cds::peer"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic<Example> topic(participant, "CDS LWS Example");
