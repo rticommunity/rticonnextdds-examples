@@ -23,7 +23,7 @@ to use the software. -->
             <value>
               <element>
                   <name>dds.sec.auth.identity_ca</name>
-                  <value>file:security/Ca/CaCert.pem</value>
+                  <value>file:security/ca/CaCert.pem</value>
               </element>
               <element>
                   <name>dds.sec.access.governance</name>
@@ -31,7 +31,7 @@ to use the software. -->
               </element>
               <element>
                   <name>dds.sec.access.permissions_ca</name>
-                  <value>file:security/Ca/CaCert.pem</value>
+                  <value>file:security/ca/CaCert.pem</value>
               </element>
               <element>
                   <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
