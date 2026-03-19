@@ -17,6 +17,19 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "7.0.0"
+    REQUIRED
+    COMPONENTS
+        core
+        cloud_discovery_service
+)
+
+if(NOT TARGET RTIConnextDDS::cloud_discovery_service_c)
+    message(WARNING "RTIConnextDDS::cloud_discovery_service component is missing. Skipping example")
+    return()
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
