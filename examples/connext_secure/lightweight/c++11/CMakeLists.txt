@@ -41,7 +41,7 @@ include (ConnextDdsGenerateSecurityArtifacts)
 connextdds_generate_security_artifacts()
 
 connextdds_openssl_smime_sign(
-    INPUT "${CMAKE_SOURCE_DIR}/governance_lws.xml"
+    INPUT "${CMAKE_CURRENT_SOURCE_DIR}/governance_lws.xml"
     OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/signed/signed_governance_lws.p7s"
     SIGNER_CERTIFICATE "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/certs/ca_cert.pem"
     PRIVATE_KEY_FILE "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/certs/ca_key.pem"

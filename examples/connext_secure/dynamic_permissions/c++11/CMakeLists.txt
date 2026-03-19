@@ -47,7 +47,7 @@ add_custom_command(
     COMMAND ${CMAKE_COMMAND}
             -DINPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/Permissions2.xml"
             -DOUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/Permissions2_expiring.xml"
-            -P ${CMAKE_SOURCE_DIR}/modify_permissions.cmake
+            -P ${CMAKE_CURRENT_SOURCE_DIR}/modify_permissions.cmake
     DEPENDS "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/Permissions2.xml"
 )
 
