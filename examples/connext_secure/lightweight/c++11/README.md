@@ -24,7 +24,8 @@ code. The code has been modified so that 2 topics are used instead of one.
 The publisher and one of the subscribers use full security plugins, whereas the
 other subscriber uses lightweight security. The Governance file used showcases
 a configuration that is compatible with Lightweight security. However, one of
-the topics uses a data_protection_kind ENCRYPT topic rule, which breaks compatibility.
+the topics uses a data_protection_kind ENCRYPT topic rule, which breaks
+compatibility.
 
 Run one instance of the subscriber without any CLI arguments.
 This will use full security by default.
