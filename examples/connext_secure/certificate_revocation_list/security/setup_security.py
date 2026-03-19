@@ -17,6 +17,8 @@ subprocess.run(
         "ec_paramgen_curve:prime256v1",
         "-keyout",
         "ca/private/CaKey.pem",
+        "-extensions",
+        "v3_ca",
         "-out",
         "ca/CaCert.pem",
         "-config",
@@ -96,6 +98,43 @@ subprocess.run(
         "identities/ParticipantB/ParticipantB.csr",
         "-out",
         "identities/ParticipantB/ParticipantB.pem",
+    ]
+)
+
+subprocess.run(
+    [
+        "openssl",
+        "req",
+        "-nodes",
+        "-new",
+        "-newkey",
+        "rsa:2048",
+        "-config",
+        "identities/ParticipantM/ParticipantM.cnf",
+        "-keyout",
+        "identities/ParticipantM/ParticipantMKey.pem",
+        "-out",
+        "identities/ParticipantM/ParticipantM.csr",
+    ]
+)
+subprocess.run(
+    [
+        "openssl",
+        "x509",
+        "-req",
+        "-days",
+        "730",
+        "-text",
+        "-CAserial",
+        "ca/database/CaSerial",
+        "-CA",
+        "ca/CaCert.pem",
+        "-CAkey",
+        "ca/private/CaKey.pem",
+        "-in",
+        "identities/ParticipantM/ParticipantM.csr",
+        "-out",
+        "identities/ParticipantM/ParticipantM.pem",
     ]
 )
 
