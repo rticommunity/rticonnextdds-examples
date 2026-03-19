@@ -161,12 +161,12 @@ to use the software. -->
                 <value>RTI_SecurityLightweight_PluginSuite_create</value>
               </element>   
               <element>
-                <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
-                <value>data:,0:uIqNqiN11xMbRcuUSdT4BGOEUjLapfosAyzCg7uUBFo=</value>
-              </element>
-              <element>
                   <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
                   <value>data:,0:PLEASE-CHANGE-THIS-DEFAULT-SEED</value>
+              </element>
+              <element>
+                <name>dds.sec.crypto.symmetric_cipher_algorithm</name>
+                <value>AES256+GCM</value>
               </element>
               <element>
                 <name>com.rti.serv.secure.logging.verbosity</name>
