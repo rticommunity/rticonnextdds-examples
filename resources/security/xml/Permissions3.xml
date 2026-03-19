@@ -3,7 +3,7 @@
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/dds_security_permissions.xsd">
     <permissions>
-        <grant name="ecdsa01_peer2">
+        <grant name="ecdsa01_peer3">
             <subject_name>C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, CN=rticonnextdds-examples/emailAddress=ecdsa01-peer3</subject_name>
             <validity>
                 <not_before>2021-01-20T00:00:00</not_before>
