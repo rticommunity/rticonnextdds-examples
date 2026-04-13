@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.3.0/dds_security_permissions.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.7.0/dds_security_permissions.xsd">
     <permissions>
         <grant name="CrlParticipantA">
             <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantA@rti.com, CN = Crl Participant A</subject_name>
             <validity>
                 <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
-                <not_before>2014-06-01T13:00:00</not_before>
-                <not_after>2037-06-01T13:00:00</not_after>
+                <not_before>2026-01-01T13:00:00</not_before>
+                <not_after>2046-01-01T13:00:00</not_after>
             </validity>
             <default>ALLOW</default>
         </grant>
@@ -16,8 +16,8 @@
             <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantB@rti.com, CN = Crl Participant B</subject_name>
             <validity>
                 <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
-                <not_before>2014-06-01T13:00:00</not_before>
-                <not_after>2037-06-01T13:00:00</not_after>
+                <not_before>2026-01-01T13:00:00</not_before>
+                <not_after>2046-01-01T13:00:00</not_after>
             </validity>
             <default>ALLOW</default>
         </grant>
@@ -25,10 +25,26 @@
             <subject_name>C = US, ST = CA, L = Santa Clara, O = Real Time Innovations, emailAddress = ecdsa01ParticipantM@rti.com, CN = Crl Participant M</subject_name>
             <validity>
                 <!-- Format is CCYY-MM-DDThh:mm:ss[Z|(+|-)hh:mm] in GMT -->
-                <not_before>2014-06-01T13:00:00</not_before>
-                <not_after>2037-06-01T13:00:00</not_after>
+                <not_before>2026-01-01T13:00:00</not_before>
+                <not_after>2046-01-01T13:00:00</not_after>
             </validity>
-            <default>ALLOW</default>
+            <allow_rule>
+                <domains>
+                    <id_range>
+                        <!--
+                          The default domain id for observability is 101.
+                          However, the user can change the domain id used for
+                          observability. We use a range here so that there is no
+                          need to modify the Permissions Document in that
+                          scenario.
+                        -->
+                        <min>0</min>
+                    </id_range>
+                    <tag>RTI_o11y</tag>
+                </domains>
+                <subscribe_monitoring>ALL</subscribe_monitoring>
+            </allow_rule>
+            <default>DENY</default>
         </grant>
     </permissions>
 </dds>
