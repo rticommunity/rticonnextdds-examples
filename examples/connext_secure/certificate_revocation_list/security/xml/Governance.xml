@@ -14,6 +14,8 @@
             <enable_join_access_control>true</enable_join_access_control>
             <discovery_protection_kind>ENCRYPT</discovery_protection_kind>
             <liveliness_protection_kind>ENCRYPT</liveliness_protection_kind>
+            <monitoring_metrics_protection_kind>ENCRYPT</monitoring_metrics_protection_kind>
+            <monitoring_logging_protection_kind>ENCRYPT</monitoring_logging_protection_kind>
             <rtps_protection_kind>SIGN</rtps_protection_kind>
             <topic_access_rules>
                 <topic_rule>
