@@ -11,7 +11,16 @@
             </validity>
             <allow_rule>
                 <domains>
-                    <id>101</id>
+                    <id_range>
+                        <!--
+                          The default domain id for observability is 101.
+                          However, the user can change the domain id used for
+                          observability. We use a range here so that there is no
+                          need to modify the Permissions Document in that
+                          scenario.
+                        -->
+                        <min>0</min>
+                    </id_range>
                     <tag>RTI_o11y</tag>
                 </domains>
                 <subscribe_monitoring>METRICS</subscribe_monitoring>
