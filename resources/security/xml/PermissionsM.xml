@@ -23,7 +23,7 @@
                     </id_range>
                     <tag>RTI_o11y</tag>
                 </domains>
-                <subscribe_monitoring>METRICS</subscribe_monitoring>
+                <subscribe_monitoring>ALL</subscribe_monitoring>
             </allow_rule>
             <default>DENY</default>
         </grant>
