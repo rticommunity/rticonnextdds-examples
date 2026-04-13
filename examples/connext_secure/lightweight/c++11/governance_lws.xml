@@ -12,6 +12,7 @@
             </domains>
             <allow_unauthenticated_participants>true</allow_unauthenticated_participants>
             <enable_join_access_control>false</enable_join_access_control>
+            <enable_key_revision>false</enable_key_revision>
             <discovery_protection_kind>NONE</discovery_protection_kind>
             <liveliness_protection_kind>NONE</liveliness_protection_kind>
             <monitoring_metrics_protection_kind>ENCRYPT</monitoring_metrics_protection_kind>

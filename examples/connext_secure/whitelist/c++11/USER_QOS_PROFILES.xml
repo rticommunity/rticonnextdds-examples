@@ -15,9 +15,8 @@ to use the software. -->
   <qos_library name="whitelist">
 
     <qos_profile name="common">
-        <base_name>
-          <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
-        </base_name>
+        <?rti-qos_snippet?>
+
         <domain_participant_qos>
           <property>
               <value>
@@ -42,7 +41,12 @@ to use the software. -->
         </domain_participant_qos>
     </qos_profile>
 
-      <qos_profile name="peer1" base_name="whitelist::common" is_default_qos="true">
+      <qos_profile name="peer1" is_default_qos="true">
+        <base_name>
+            <element>whitelist::common</element>
+            <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+        </base_name>
+
         <participant_factory_qos>
           <monitoring>
               <distribution_settings>
@@ -125,7 +129,12 @@ to use the software. -->
         </domain_participant_qos>
       </qos_profile>
     
-      <qos_profile name="peer3" base_name="whitelist::common">
+      <qos_profile name="peer3">
+        <base_name>
+            <element>whitelist::common</element>
+            <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+        </base_name>
+
         <domain_participant_qos>
           <property>
             <value>
@@ -150,10 +159,10 @@ to use the software. -->
         </domain_participant_qos>
       </qos_profile>
 
-      <qos_profile name="monitor">
+      <qos_profile name="monitor" base_name="BuiltinQosLib::Generic.Monitoring2">
         <base_name>
             <element>whitelist::common</element>
-            <element>BuiltinQosLib::Generic.Monitoring2</element>
+            <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
         </base_name>
         <domain_participant_qos>
           <resource_limits>
