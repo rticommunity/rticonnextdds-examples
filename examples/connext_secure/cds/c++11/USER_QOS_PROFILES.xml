@@ -19,6 +19,8 @@ to use the software. -->
     <qos_library name="library_cds">
 
         <qos_profile name="insecure_snippet">
+            <?rti-qos_snippet?>
+
             <domain_participant_qos>
                 <transport_builtin>
                     <mask>UDPv4</mask>
