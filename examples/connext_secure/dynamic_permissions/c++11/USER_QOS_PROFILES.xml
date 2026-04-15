@@ -101,14 +101,6 @@
             <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
         </base_name>
         <domain_participant_qos>
-          <resource_limits>
-            <participant_property_string_max_length>
-              8192
-            </participant_property_string_max_length>
-            <participant_property_list_max_length>
-              40
-            </participant_property_list_max_length>
-          </resource_limits>
           <property>
             <value>
               <element>
