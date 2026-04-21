@@ -17,6 +17,19 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "7.0.0"
+    REQUIRED
+    COMPONENTS
+        core
+        cloud_discovery_service
+)
+
+if(NOT TARGET RTIConnextDDS::cloud_discovery_service_c)
+    message(WARNING "RTIConnextDDS::cloud_discovery_service component is missing. Skipping example")
+    return()
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
@@ -25,5 +38,4 @@ connextdds_add_example(
     LANG "C++11"
 )
 
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
 file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../cds.xml" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")

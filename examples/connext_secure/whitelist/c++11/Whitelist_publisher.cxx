@@ -32,7 +32,7 @@ void run_publisher_application(
     dds::domain::DomainParticipant participant(
             domain_id,
             dds::core::QosProvider::Default().participant_qos(
-                    "full_library::peer1"));
+                    "whitelist::peer1"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic<Example> topic(participant, "Whitelist Example");
@@ -66,45 +66,41 @@ void run_publisher_application(
         if (samples_written == 30) {
             std::cout
                     << "\nWhitelisting C=US, ST=CA, L=Santa Clara, O=Real Time "
-                       "Innovations, emailAddress=ecdsa01ParticipantB@rti.com, "
-                       "CN=Whitelist Participant B\n"
+                       "Innovations, emailAddress=ecdsa01-peer2, "
+                       "CN=rticonnextdds-examples\n"
                     << std::endl;
             participant.property(
                     "dds.participant.trust_plugins.subject_name_whitelist",
                     "C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, "
-                    "emailAddress=ecdsa01ParticipantB@rti.com, CN=Whitelist "
-                    "Participant B",
+                    "emailAddress=ecdsa01-peer2, CN=rticonnextdds-examples",
                     true);
         }
         if (samples_written == 60) {
             std::cout
                     << "\nWhitelisting C=US, ST=CA, L=Santa Clara, O=Real Time "
-                       "Innovations, emailAddress=ecdsa01ParticipantC@rti.com, "
-                       "CN=Whitelist Participant C\n"
+                       "Innovations, emailAddress=ecdsa01-peer3, "
+                       "CN=rticonnextdds-examples\n"
                     << std::endl;
             participant.property(
                     "dds.participant.trust_plugins.subject_name_whitelist",
                     "C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, "
-                    "emailAddress=ecdsa01ParticipantC@rti.com, CN=Whitelist "
-                    "Participant C",
+                    "emailAddress=ecdsa01-peer3, CN=rticonnextdds-examples",
                     true);
         }
         if (samples_written == 90) {
             std::cout
                     << "\nWhitelisting C=US, ST=CA, L=Santa Clara, O=Real Time "
-                       "Innovations, emailAddress=ecdsa01ParticipantB@rti.com, "
-                       "CN=Whitelist Participant B;C=US, ST=CA, L=Santa Clara, "
+                       "Innovations, emailAddress=ecdsa01-peer2, "
+                       "CN=rticonnextdds-examples;C=US, ST=CA, L=Santa Clara, "
                        "O=Real Time Innovations, "
-                       "emailAddress=ecdsa01ParticipantC@rti.com, CN=Whitelist "
-                       "Participant C"
+                       "emailAddress=ecdsa01-peer3, CN=rticonnextdds-examples"
                     << std::endl;
             participant.property(
                     "dds.participant.trust_plugins.subject_name_whitelist",
                     "C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, "
-                    "emailAddress=ecdsa01ParticipantB@rti.com, CN=Whitelist "
-                    "Participant B;C=US, ST=CA, L=Santa Clara, O=Real Time "
-                    "Innovations, emailAddress=ecdsa01ParticipantC@rti.com, "
-                    "CN=Whitelist Participant C",
+                    "emailAddress=ecdsa01-peer2, CN=rticonnextdds-examples;"
+                    "C=US, ST=CA, L=Santa Clara, O=Real Time Innovations, "
+                    "emailAddress=ecdsa01-peer3, CN=rticonnextdds-examples",
                     true);
         }
 

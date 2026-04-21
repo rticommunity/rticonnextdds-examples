@@ -6,5 +6,5 @@ countryName          = US
 stateOrProvinceName  = CA
 localityName         = Santa Clara
 organizationName     = Real Time Innovations
-emailAddress         = ecdsa01ParticipantC@rti.com
-commonName           = Whitelist Participant C
+emailAddress         = ecdsa01ParticipantM@rti.com
+commonName           = Crl Participant M

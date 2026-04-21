@@ -17,6 +17,18 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "7.0.0"
+    REQUIRED
+    COMPONENTS
+        security_plugins
+)
+
+if(NOT TARGET RTIConnextDDS::security_plugins)
+    message(WARNING "RTIConnextDDS::security_plugins component is missing. Skipping example")
+    return()
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
@@ -25,5 +37,18 @@ connextdds_add_example(
     LANG "C++11"
 )
 
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../security/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/security/")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+include (ConnextDdsGenerateSecurityArtifacts)
+connextdds_generate_security_artifacts()
+
+connextdds_openssl_smime_sign(
+    INPUT "${CMAKE_CURRENT_SOURCE_DIR}/governance_lws.xml"
+    OUTPUT "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/signed/signed_governance_lws.p7s"
+    SIGNER_CERTIFICATE "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/certs/ca_cert.pem"
+    PRIVATE_KEY_FILE "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/certs/ca_key.pem"
+)
+
+add_custom_target(createExpiringPermissions
+    ALL
+    DEPENDS
+        lightweight_securityArtifacts
+        "${CMAKE_CURRENT_BINARY_DIR}/security/ecdsa01/xml/signed/signed_governance_lws.p7s")

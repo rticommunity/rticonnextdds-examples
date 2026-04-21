@@ -31,7 +31,7 @@ void run_publisher_application(
     dds::domain::DomainParticipant participant(
             domain_id,
             dds::core::QosProvider::Default().participant_qos(
-                    "full_library::peer1"));
+                    "crl::peer1"));
 
     // Create a Topic with a name and a datatype
     dds::topic::Topic<Example> topic(participant, "Crl Example");

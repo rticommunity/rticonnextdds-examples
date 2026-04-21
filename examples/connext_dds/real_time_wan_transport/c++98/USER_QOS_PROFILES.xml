@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
+    xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.7.0/rti_dds_qos_profiles.xsd">
   <!-- QoS Library containing the QoS profile used in the generated example.
 
         A QoS library is a named set of QoS profiles.
@@ -12,7 +12,17 @@
     <!-- =============================================================== -->
 
     <qos_profile name="Base_Profile" base_name="BuiltinQosLib::Generic.StrictReliable" is_default_qos="true">
-      <participant_qos>
+      <participant_factory_qos>
+        <monitoring>
+            <distribution_settings>
+                <dedicated_participant>
+                    <participant_qos_profile_name>RWT_Library::Monitor_Security</participant_qos_profile_name>
+                </dedicated_participant>
+            </distribution_settings>
+        </monitoring>
+      </participant_factory_qos>
+
+      <domain_participant_qos>
         <transport_builtin>
           <mask>UDPv4_WAN</mask>
           <udpv4_wan>
@@ -47,27 +57,54 @@
             </element>
           </value>
         </property>
-      </participant_qos>
+      </domain_participant_qos>
     </qos_profile>
 
     <!-- =============================================================== -->
     <!-- Security Snippet                                                -->
     <!-- =============================================================== -->
 
-    <qos_profile name="Publisher_Security_Snippet">
+    <qos_profile name="security_Common">
       <?rti-qos_snippet ?>
 
       <base_name>
         <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
       </base_name>
 
+      <domain_participant_qos>
+        <property>
+            <value>
+            <element>
+                <name>dds.sec.auth.identity_ca</name>
+                <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+            </element>
+            <element>
+                <name>dds.sec.access.governance</name>
+                <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+            </element>
+            <element>
+                <name>dds.sec.access.permissions_ca</name>
+                <value>file:security/ecdsa01/certs/ca_cert.pem</value>
+            </element>
+            <element>
+                <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+                <value>data:,0:PLEASE-CHANGE-THIS-DEFAULT-SEED</value>
+            </element>
+            </value>
+        </property>
+      </domain_participant_qos>
+    </qos_profile>
+
+    <qos_profile name="Publisher_Security_Snippet">
+      <?rti-qos_snippet ?>
+
+      <base_name>
+        <element>RWT_Library::security_Common</element>
+      </base_name>
+
       <participant_qos>
         <property>
           <value>
-            <element>
-              <name>dds.sec.auth.identity_ca</name>
-              <value>file:security/ecdsa01/certs/ca_cert.pem</value>
-            </element>
             <element>
               <name>dds.sec.auth.identity_certificate</name>
               <value>file:security/ecdsa01/certs/peer1_cert.pem</value>
@@ -77,20 +114,8 @@
               <value>file:security/ecdsa01/certs/peer1_key.pem</value>
             </element>
             <element>
-              <name>dds.sec.access.permissions_ca</name>
-              <value>file:security/ecdsa01/certs/ca_cert.pem</value>
-            </element>
-            <element>
-              <name>dds.sec.access.governance</name>
-              <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
-            </element>
-            <element>
               <name>dds.sec.access.permissions</name>
               <value>file:security/ecdsa01/xml/signed/signed_Permissions1.p7s</value>
-            </element>
-            <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_key</name>
-              <value>str:key0</value>
             </element>
           </value>
         </property>
@@ -101,16 +126,12 @@
       <?rti-qos_snippet ?>
 
       <base_name>
-        <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+        <element>RWT_Library::security_Common</element>
       </base_name>
 
       <participant_qos>
         <property>
           <value>
-            <element>
-              <name>dds.sec.auth.identity_ca</name>
-              <value>file:security/ecdsa01/certs/ca_cert.pem</value>
-            </element>
             <element>
               <name>dds.sec.auth.identity_certificate</name>
               <value>file:security/ecdsa01/certs/peer2_cert.pem</value>
@@ -120,39 +141,37 @@
               <value>file:security/ecdsa01/certs/peer2_key.pem</value>
             </element>
             <element>
-              <name>dds.sec.access.permissions_ca</name>
-              <value>file:security/ecdsa01/certs/ca_cert.pem</value>
-            </element>
-            <element>
-              <name>dds.sec.access.governance</name>
-              <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
-            </element>
-            <element>
               <name>dds.sec.access.permissions</name>
               <value>file:security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
-            </element>
-            <element>
-              <name>com.rti.serv.secure.cryptography.rtps_protection_key</name>
-              <value>str:key0</value>
             </element>
           </value>
         </property>
       </participant_qos>
     </qos_profile>
 
-    <qos_profile name="Security_Participant_Key_Snippet">
-      <?rti-qos_snippet ?>
-      <participant_qos>
-        <property>
-          <value>
-            <element>
-              <name>com.rti.serv.secure.authentication.participant_discovery_protection_key</name>
-              <value>str:key1</value>
-            </element>
-          </value>
-        </property>
-      </participant_qos>
-    </qos_profile>
+      <qos_profile name="Monitor_Security" base_name="BuiltinQosLib::Generic.Monitoring2">
+        <base_name>
+            <element>RWT_Library::security_Common</element>
+        </base_name>
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
+                <name>dds.sec.auth.identity_certificate</name>
+                <value>file:security/ecdsa01/certs/peerM_cert.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.auth.private_key</name>
+                <value>file:security/ecdsa01/certs/peerM_key.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.access.permissions</name>
+                <value>file:security/ecdsa01/xml/signed/signed_PermissionsM.p7s</value>
+              </element>
+            </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
 
     <!-- ========================================================================= -->
     <!-- Scenario 1: Private/DefaultPort to Public/SinglePort; no Security; no CDS -->
@@ -230,7 +249,6 @@
       <participant_qos>
         <base_name>
           <element>Publisher_Security_Snippet</element>
-          <element>Security_Participant_Key_Snippet</element>
         </base_name>
       </participant_qos>
     </qos_profile>
@@ -239,7 +257,6 @@
       <participant_qos>
         <base_name>
           <element>Subscriber_Security_Snippet</element>
-          <element>Security_Participant_Key_Snippet</element>
         </base_name>
       </participant_qos>
     </qos_profile>

@@ -10,9 +10,11 @@
  use the software.
  -->
 <dds xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.0.0/rti_dds_qos_profiles.xsd">
+     xsi:noNamespaceSchemaLocation="http://community.rti.com/schema/7.7.0/rti_dds_qos_profiles.xsd">
     <qos_library name="network_capture_Library">
-        <qos_profile name="network_capture_ProfileA" base_name="BuiltinQosLib::Generic.Security" is_default_qos="true">
+        <qos_profile name="network_capture_SnippetCommon">
+          <?rti-qos_snippet?>
+
           <domain_participant_qos>
             <property>
               <value>
@@ -21,20 +23,45 @@
                   <value>file:security/ecdsa01/certs/ca_cert.pem</value>
                 </element>
                 <element>
-                  <name>dds.sec.auth.identity_certificate</name>
-                  <value>file:security/ecdsa01/certs/peer1_cert.pem</value>
-                </element>
-                <element>
-                  <name>dds.sec.auth.private_key</name>
-                  <value>file:security/ecdsa01/certs/peer1_key.pem</value>
+                  <name>dds.sec.access.governance</name>
+                  <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions_ca</name>
                   <value>file:security/ecdsa01/certs/ca_cert.pem</value>
                 </element>
                 <element>
-                  <name>dds.sec.access.governance</name>
-                  <value>file:security/ecdsa01/xml/signed/signed_Governance.p7s</value>
+                  <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
+                  <value>data:,0:PLEASE-CHANGE-THIS-DEFAULT-SEED</value>
+                </element>
+              </value>
+            </property>
+          </domain_participant_qos>
+        </qos_profile>
+        <qos_profile name="network_capture_ProfileA" is_default_qos="true">
+          <base_name>
+              <element>network_capture_Library::network_capture_SnippetCommon</element>
+              <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+          </base_name>
+          <participant_factory_qos>
+            <monitoring>
+                <distribution_settings>
+                    <dedicated_participant>
+                        <participant_qos_profile_name>network_capture_Library::network_capture_ProfileMonitor</participant_qos_profile_name>
+                    </dedicated_participant>
+                </distribution_settings>
+            </monitoring>
+          </participant_factory_qos>
+          <domain_participant_qos>
+            <property>
+              <value>
+                <element>
+                  <name>dds.sec.auth.identity_certificate</name>
+                  <value>file:security/ecdsa01/certs/peer1_cert.pem</value>
+                </element>
+                <element>
+                  <name>dds.sec.auth.private_key</name>
+                  <value>file:security/ecdsa01/certs/peer1_key.pem</value>
                 </element>
                 <element>
                   <name>dds.sec.access.permissions</name>
@@ -67,6 +94,30 @@
               <element>
                 <name>dds.sec.access.permissions</name>
                 <value>file:security/ecdsa01/xml/signed/signed_Permissions2.p7s</value>
+              </element>
+            </value>
+          </property>
+        </domain_participant_qos>
+      </qos_profile>
+      <qos_profile name="network_capture_ProfileMonitor" base_name="BuiltinQosLib::Generic.Monitoring2">
+        <base_name>
+            <element>network_capture_Library::network_capture_SnippetCommon</element>
+            <element>BuiltinQosSnippetLib::Feature.Security.Enable</element>
+        </base_name>
+        <domain_participant_qos>
+          <property>
+            <value>
+              <element>
+                <name>dds.sec.auth.identity_certificate</name>
+                <value>file:security/ecdsa01/certs/peerM_cert.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.auth.private_key</name>
+                <value>file:security/ecdsa01/certs/peerM_key.pem</value>
+              </element>
+              <element>
+                <name>dds.sec.access.permissions</name>
+                <value>file:security/ecdsa01/xml/signed/signed_PermissionsM.p7s</value>
               </element>
             </value>
           </property>

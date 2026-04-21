@@ -17,6 +17,19 @@ list(APPEND CMAKE_MODULE_PATH
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
 
+find_package(RTIConnextDDS
+    "7.0.0"
+    REQUIRED
+    COMPONENTS
+        core
+        security_plugins
+)
+
+if(NOT TARGET RTIConnextDDS::security_plugins)
+    message(WARNING "RTIConnextDDS::security_plugins component is missing. Skipping example")
+    return()
+endif()
+
 # Include ConnextDdsAddExample.cmake from resources/cmake
 include(ConnextDdsAddExample)
 
@@ -25,5 +38,5 @@ connextdds_add_example(
     LANG "C++11"
 )
 
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/../security/" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}/security/")
-file(COPY "${CMAKE_CURRENT_SOURCE_DIR}/USER_QOS_PROFILES.xml" DESTINATION "${CMAKE_CURRENT_BINARY_DIR}")
+include (ConnextDdsGenerateSecurityArtifacts)
+connextdds_generate_security_artifacts()
