@@ -16,6 +16,8 @@
 
 static int publisher_shutdown(DDS_DomainParticipant *participant);
 
+// This publisher simulates a window that opens and closes over time on the
+// WindowStatus topic.
 int publish_sensor(const char *sensor_name, const char *room_name)
 {
     DDS_DomainParticipant *participant = NULL;
@@ -28,6 +30,9 @@ int publish_sensor(const char *sensor_name, const char *room_name)
     struct DDS_Duration_t send_period = { 2, 0 };
     int i;
 
+    // Create a DomainParticipant within a domain ID. A domain ID is a logical
+    // partition for your applications; the DomainParticipant joins that domain
+    // and contains all other entities.
     participant = DDS_DomainParticipantFactory_create_participant(
             DDS_TheParticipantFactory,
             0,
@@ -50,6 +55,7 @@ int publish_sensor(const char *sensor_name, const char *room_name)
         return -1;
     }
 
+    // The data shared by a publisher and subscriber is described by a Topic.
     topic = DDS_DomainParticipant_create_topic(
             participant,
             "WindowStatus",
@@ -64,6 +70,7 @@ int publish_sensor(const char *sensor_name, const char *room_name)
         return -1;
     }
 
+    // Create a DataWriter to publish the WindowStatus topic.
     writer = DDS_DomainParticipant_create_datawriter(
             participant,
             topic,
@@ -95,6 +102,8 @@ int publish_sensor(const char *sensor_name, const char *room_name)
     strncpy(device_status->room_name, room_name, 255);
     device_status->is_open = DDS_BOOLEAN_FALSE;
 
+    // Publish an update every two seconds, simulating the window opening and
+    // closing repeatedly.
     for (i = 0; i < 1000; i++) {
         device_status->is_open =
                 device_status->is_open ? DDS_BOOLEAN_FALSE : DDS_BOOLEAN_TRUE;

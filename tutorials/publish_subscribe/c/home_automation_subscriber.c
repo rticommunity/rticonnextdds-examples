@@ -48,6 +48,8 @@ int monitor_sensor(void)
     struct DDS_Duration_t poll_period = { 2, 0 };
     int i;
 
+    // Create a DomainParticipant and WindowStatus topic using the same domain
+    // ID and name as the publisher.
     participant = DDS_DomainParticipantFactory_create_participant(
             DDS_TheParticipantFactory,
             0,
@@ -84,6 +86,7 @@ int monitor_sensor(void)
         return -1;
     }
 
+    // Create a DataReader to subscribe to the WindowStatus topic.
     reader = DDS_DomainParticipant_create_datareader(
             participant,
             DDS_Topic_as_topicdescription(topic),
@@ -96,6 +99,8 @@ int monitor_sensor(void)
         return -1;
     }
 
+    // Use a SampleProcessor callback to react to each update and warn when a
+    // window is open.
     sample_processor =
             DDS_SampleProcessor_new(&DDS_ASYNC_WAITSET_PROPERTY_DEFAULT);
 

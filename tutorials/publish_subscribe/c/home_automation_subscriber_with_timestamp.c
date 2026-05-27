@@ -26,6 +26,8 @@ void DeviceStatusListener_on_new_sample(
 
     if (sample_info->valid_data) {
         if (device_status->is_open) {
+            // Include the original source timestamp of the WindowStatus
+            // update in the alert output.
             timestamp = sample_info->source_timestamp;
             printf("WARNING: %s in %s is open (%.3f s)\n",
                    device_status->sensor_name,
@@ -51,6 +53,8 @@ int monitor_sensor(void)
     struct DDS_Duration_t poll_period = { 2, 0 };
     int i;
 
+    // Create a DomainParticipant and WindowStatus topic using the same domain
+    // ID and name as the publisher.
     participant = DDS_DomainParticipantFactory_create_participant(
             DDS_TheParticipantFactory,
             0,
@@ -87,6 +91,7 @@ int monitor_sensor(void)
         return -1;
     }
 
+    // Create a DataReader to receive the WindowStatus data.
     reader = DDS_DomainParticipant_create_datareader(
             participant,
             DDS_Topic_as_topicdescription(topic),
@@ -99,6 +104,8 @@ int monitor_sensor(void)
         return -1;
     }
 
+    // Take each update with its metadata so we can include the source timestamp
+    // when the window was opened.
     sample_processor =
             DDS_SampleProcessor_new(&DDS_ASYNC_WAITSET_PROPERTY_DEFAULT);
 
