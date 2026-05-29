@@ -24,6 +24,7 @@ if(NOT DEFINED CONNEXTDDS_CONNEXT_SECURE_EXAMPLES)
     set(CONNEXTDDS_CONNEXT_SECURE_EXAMPLES
         "cds"
         "certificate_revocation_list"
+        "dynamic_permissions"
         "lightweight"
         "whitelist"
     )
