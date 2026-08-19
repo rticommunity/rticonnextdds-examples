@@ -152,22 +152,9 @@ cmake -DCONNEXTDDS_ARCH=x64Linux3gcc5.4.0 ..
 
 ### CMake Build Infrastructure
 
-The `CMakeListst.txt` script that builds this example uses a generic CMake
-function called `connextdds_add_example` that defines all the necessary constructs
-to:
-
-1.  Run RTI Code Generator to generate the serialization/deserialization code
-    for the types defined in the IDL file associated with the example.
-
-2.  Build the corresponding Publisher and Subscriber applications.
-
-3.  Copy the `USER_QOS_PROFILES.xml` file into the directory where the publisher
-    and subscriber executables are generated.
-
-You will find the definition of `connextdds_add_example`, along with detailed
-documentation, in
-[resources/cmake/rticonnextdds-cmake-utils/cmake/Modules/ConnextDdsAddExample.cmake
-](https://github.com/rticommunity/rticonnextdds-cmake-utils/blob/main/cmake/Modules/ConnextDdsAddExample.cmake).
+This example does not require the usage of rtiddsgen. Therefore, the
+`CMakeLists.txt` script just creates the executable and link it with the Connext
+API.
 
 For a more comprehensive example on how to build an RTI Connext application
 using CMake, please refer to the
