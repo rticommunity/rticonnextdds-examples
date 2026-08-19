@@ -41,6 +41,8 @@ which will create the lightweight subscriber.
 ./Lws_subscriber -lw
 ```
 
+The lightweight profile uses the OpenSSL PSL.
+
 Then, in a third window, launch the publisher.
 
 ```sh
@@ -68,6 +70,19 @@ Lws subscriber sleeping up to 1 sec...
 Lws subscriber sleeping up to 1 sec...
 ```
 
+## Notes on Lightweight Platform Support Library (PSL) configuration
+
+The lightweight participant profiles now include explicit PSL configuration
+properties for OpenSSL Cryptographic Library:
+
+- OpenSSL profile (`lightweight_library::peer`):
+  - `com.rti.serv.secure.psl_library=psl_openssl3`
+  - `com.rti.serv.secure.psl_get_interface=PSL_OSSL_get_interface`
+  - `com.rti.serv.secure.psl_get_configuration=PSL_OSSL_get_default_configuration`
+
+This mirrors the newer lightweight security initialization model where PSL abstracts
+cryptography library and enables easy switch between different cryptographic libraries
+with properties.
 
 ## Troubleshooting
 
@@ -84,3 +99,11 @@ Connext version you're using, e.g.
 ```sh
 git checkout release/7.3.0
 ```
+
+### Application does not start because of linking errors
+
+If your application does not start because of errors related to library linking
+or missing symbols, make sure your LD_LIBRARY_PATH contains `lib` directory within
+Connext installation. Check if the `lib` directory contains PSL library matching
+the value of `psl_library` property and make sure `psl_get_interface` and
+`psl_get_configuration` match the functions provided by this library.
