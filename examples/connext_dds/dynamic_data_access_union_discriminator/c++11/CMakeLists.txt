@@ -11,11 +11,25 @@
 #
 cmake_minimum_required(VERSION 3.11)
 project(rtiexamples-dynamic-data-access-union-discriminator)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
 list(APPEND CMAKE_MODULE_PATH
     "${CMAKE_CURRENT_SOURCE_DIR}/../../../../resources/cmake/Modules"
 )
 include(ConnextDdsConfigureCmakeUtils)
 connextdds_configure_cmake_utils()
+
+# Find the RTI Connext DDS libraries
+if(NOT RTIConnextDDS_FOUND)
+    find_package(RTIConnextDDS
+        "7.0.0"
+        REQUIRED
+        COMPONENTS
+            core
+    )
+endif()
 
 add_executable(dynamic_data_union_example_cxx2
     "${CMAKE_CURRENT_SOURCE_DIR}/dynamic_data_union_example.cxx"
