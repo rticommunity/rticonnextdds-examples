@@ -59,7 +59,7 @@ int service_main(const char *cfgName, const char *cfgFile, int runForSecs)
     property.dds_verbosity = RTI_CDS_LOG_VERBOSITY_EXCEPTIONS;
 
 
-    service = RTI_CDS_Service_new(&property);
+    service = RTI_CDS_Service_new(&property, NULL);
     if (service == NULL) {
         printf("Error creating the Cloud Discovery Service instance\n");
         service_shutdown(service, &property);
