@@ -37,12 +37,12 @@ add_library(
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConfig.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoAdapter.cxx"
         "${CMAKE_CURRENT_SOURCE_DIR}/MongoConnection.cxx"
-        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx" MongoStreamReader.cpp MongoStreamReader.hpp)
+        "${CMAKE_CURRENT_SOURCE_DIR}/MongoStreamWriter.cxx" MongoStreamReader.cxx MongoStreamReader.hpp)
 
 # Set target properties for lang requirement output library name
 set_target_properties(mongodbadapter
     PROPERTIES
-        CXX_STANDARD 11
+        CXX_STANDARD 17
         CXX_STANDARD_REQUIRED ON
         OUTPUT_NAME_DEBUG mongodbadapterd
         LIBRARY_OUTPUT_DIRECTORY "${output_dir}"
