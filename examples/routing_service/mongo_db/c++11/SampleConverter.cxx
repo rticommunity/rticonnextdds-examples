@@ -481,7 +481,7 @@ inline void build_document(ToBsonContext &context, DynamicData &data)
         ToArrayContext nested_context(1);
         for (uint32_t i = 0; i < member_info.element_count(); ++i) {
             // Set member_count to allow only one recursion
-            nested_context.member_count = i;
+            nested_context.member_count = i + 1;
             build_document(nested_context, loaned_array.get());
         }
 
@@ -671,7 +671,13 @@ bsoncxx::document::value SampleConverter::to_document(
     SAMPLE_CONVERT_ADD_DOC_MEMBER(dds::core::Time, reception_timestamp);
     SAMPLE_CONVERT_ADD_DOC_MEMBER(
             rti::core::Guid,
+            source_guid);
+    SAMPLE_CONVERT_ADD_DOC_MEMBER(
+            rti::core::Guid,
             original_publication_virtual_guid);
+    SAMPLE_CONVERT_ADD_DOC_MEMBER(
+            rti::core::SequenceNumber,
+            reception_sequence_number);            
     SAMPLE_CONVERT_ADD_DOC_MEMBER(
             rti::core::SequenceNumber,
             original_publication_virtual_sequence_number);
@@ -746,7 +752,7 @@ struct cursor_get<std::string, ItType> {
      */
     static std::string get(ItType it)
     {
-        return it->get_utf8().value.to_string();
+        return std::string(it->get_string().value);
     }
 };
 
@@ -900,7 +906,7 @@ struct member_info_from_element<document::view> {
             dds::core::xtypes::DynamicData &data,
             document::view::const_iterator &it)
     {
-        return data.member_info(it->key().to_string());
+        return data.member_info(std::string(it->key()));
     }
 };
 
@@ -1003,7 +1009,7 @@ public:
     rti::core::xtypes::DynamicDataMemberInfo member_info(
             dds::core::xtypes::DynamicData &data) override
     {
-        return data.member_info(it->key().to_string());
+        return data.member_info(std::string(it->key()));
     }
 };
 

@@ -47,7 +47,14 @@ public:
          * @brief Additional DB connection options in MongoDB URI parameters
          * format. Optional. Default: retryWrites=true&w=majority
          */
-        URI_PARAMS
+        URI_PARAMS,
+        /*
+         * @brief Connection schema
+         * mongodb:  The standard format of the MongoDB connection URI is used to connect to a MongoDB deployment: standalone, replica set, or a sharded cluster.
+         * mongodb+srv: DNS Seed List Connection Format. The +srv indicates to the client that the hostname that follows corresponds to a DNS SRV record.
+         * Optional. Default: mongodb+srv        
+        */
+       SCHEMA
     };
 
     template <MongoConfig::property Prop, typename Type = std::string>
