@@ -118,10 +118,6 @@ to use the software. -->
               <value>PSL_OSSL_get_interface</value>
             </element>
             <element>
-              <name>com.rti.serv.secure.psl_get_configuration</name>
-              <value>PSL_OSSL_get_default_configuration</value>
-            </element>
-            <element>
               <name>dds.sec.crypto.rtps_psk_secret_passphrase</name>
               <value>data:,0:PLEASE-CHANGE-THIS-DEFAULT-SEED</value>
             </element>

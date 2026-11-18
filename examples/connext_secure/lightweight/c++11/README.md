@@ -88,7 +88,6 @@ properties for OpenSSL Cryptographic Library:
 - OpenSSL profile (`lightweight_library::peer`):
   - `com.rti.serv.secure.psl_library=psl_openssl3`
   - `com.rti.serv.secure.psl_get_interface=PSL_OSSL_get_interface`
-  - `com.rti.serv.secure.psl_get_configuration=PSL_OSSL_get_default_configuration`
 
 This mirrors the newer lightweight security initialization model where PSL abstracts
 cryptography library and enables easy switch between different cryptographic libraries
