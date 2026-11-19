@@ -46,7 +46,7 @@ std::string MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(
 template<>
 const std::string &MongoConfig::name<MongoConfig::USER_AND_PASS>()
 {
-    static std::string __name("mongo.uri_params");
+    static std::string __name("mongo.user_and_pass");
     return __name;
 }
 
@@ -111,4 +111,28 @@ std::string MongoConfig::parse<MongoConfig::DB_NAME>(
     }
 
     return it->second;
+}
+
+/*
+ *  --- Schema
+ * -------------------------------------------------------------------
+ */
+template<>
+const std::string &MongoConfig::name<MongoConfig::SCHEMA>()
+{
+    static std::string __name("mongo.schema");
+    return __name;
+}
+
+template<>
+std::string MongoConfig::parse<MongoConfig::SCHEMA>(
+        const rti::routing::PropertySet &properties)
+{
+    rti::routing::PropertySet::const_iterator it =
+            properties.find(MongoConfig::name<MongoConfig::SCHEMA>());
+    if (it != properties.end()) {
+        return it->second;
+    }
+
+    return "mongodb+srv";
 }

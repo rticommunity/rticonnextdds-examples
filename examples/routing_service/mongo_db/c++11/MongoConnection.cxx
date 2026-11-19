@@ -10,6 +10,7 @@
  * use or inability to use the software.
  */
 
+#include <rti/routing/Logger.hpp>
 #include "MongoConnection.hpp"
 #include "MongoStreamReader.hpp"
 #include "MongoStreamWriter.hpp"
@@ -23,17 +24,33 @@ using namespace rti::routing::adapter;
  * --- MongoConnection -------------------------------------------------------
  */
 
+static const std::string SCHEMA_STD = "mongodb";
+static const std::string SCHEMA_SRV = "mongodb+srv";
+
 std::string build_uri(const PropertySet &properties)
 {
+    std::string schema = 
+            MongoConfig::parse<MongoConfig::SCHEMA>(properties);
     std::string cluster_addr =
             MongoConfig::parse<MongoConfig::CLUSTER_ADDRESS>(properties);
     std::string user_and_pass =
             MongoConfig::parse<MongoConfig::USER_AND_PASS>(properties);
+    std::string db_name = 
+            MongoConfig::parse<MongoConfig::DB_NAME>(properties);
     std::string uri_params =
             MongoConfig::parse<MongoConfig::URI_PARAMS>(properties);
 
-    return "mongodb+srv://" + user_and_pass + "@" + cluster_addr
-            + "/<database>?" + uri_params;
+    bool schema_is_srv = (0 == SCHEMA_SRV.compare(schema));
+
+    std::stringstream ss;
+    ss << (schema_is_srv ? SCHEMA_SRV : SCHEMA_STD) << "://" 
+       << "[user:password]" << '@' << cluster_addr << '/' 
+       << (schema_is_srv ? "<database>" : db_name)
+       << '?' << uri_params;
+
+    rti::routing::Logger::instance().warn(std::string("mongodb uri: ") + ss.str());
+
+    return ss.str();
 }
 
 MongoConnection::MongoConnection(const PropertySet &properties)

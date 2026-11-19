@@ -17,7 +17,7 @@ You can find the reference documentation for both products following the links b
 
 - `RTI Routing Service User's Manual (version 7.0.0) <https://community.rti.com/static/documentation/connext-dds/7.0.0/doc/manuals/connext_dds_professional/services/routing_service/index.html>`_
 - `Mongo DB Manual (current version) <https://docs.mongodb.com/manual/>`_
-- `Mongo DB C++ Driver (v3) <http://mongocxx.org/mongocxx-v3/>`_
+- `Mongo DB C++ Driver (current version) <https://www.mongodb.com/docs/languages/cpp/cpp-driver/current/>`_
 
 
 Example Description

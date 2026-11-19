@@ -27,6 +27,14 @@
                 <name>URI_PARAMS</name>
                 <value>retryWrites=true&amp;w=majority&amp;waitqueuetimeoutms=10000</value>
             </element>
+            <!--element>
+                <name>USER_AND_PASS</name>
+                <value>use the command line for security</value>
+            </element-->
+            <element>
+                <name>SCHEMA</name>
+                <value>mongodb+srv</value>
+            </element>
         </value>
     </configuration_variables>
 
@@ -38,7 +46,7 @@
     </plugin_library>
 
     <routing_service name="MongoGateway">
-        <domain_route name="DdsMongo">
+        <domain_route name="OutputDomain">
             <!-- Define a single MongoDB connection to a specific cluster and database -->
             <connection name="MongoConnection" plugin_name="AdapterLib::MongoAdapter">
                 <property>
@@ -59,6 +67,14 @@
                             <name>mongo.user_and_pass</name>
                             <value>$(USER_AND_PASS)</value>
                         </element>
+                        <element>
+                            <name>mongo.schema</name>
+                            <value>$(SCHEMA)</value>
+                        </element>
+                        <element>
+                        <name>mongo.uri_params</name>
+                        <value>$(URI_PARAMS)</value>
+                        </element>
                     </value>
                 </property>
             </connection>
@@ -69,7 +85,7 @@
             </participant>
 
             <!-- This is the domain where samples are written to DDS -->
-            <participant name="DdsOutput">
+            <participant name="OutputDomain">
                 <domain_id>1</domain_id>
             </participant>
             <session>
@@ -86,9 +102,22 @@
                  -->
                 <auto_route name="fromDdsToMongo">
                     <dds_input participant="InputDomain">
+                        <creation_mode>IMMEDIATE</creation_mode>
                         <allow_topic_name_filter>*</allow_topic_name_filter>
                         <allow_registered_type_name_filter>*</allow_registered_type_name_filter>
                         <deny_topic_name_filter>rti/*</deny_topic_name_filter>
+                        <datareader_qos>
+                            <reliability>
+                                <kind>RELIABLE_RELIABILITY_QOS</kind>
+                            </reliability>
+                            <durability>
+                                <kind>TRANSIENT_LOCAL_DURABILITY_QOS</kind>
+                            </durability>
+                            <history>
+                                <kind>KEEP_LAST_HISTORY_QOS</kind>
+                                <depth>100</depth>
+                            </history>
+                        </datareader_qos>
                     </dds_input>
                     <output connection="MongoConnection">
                         <allow_stream_name_filter>*</allow_stream_name_filter>
